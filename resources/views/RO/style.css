@@ -1,0 +1,70 @@
+/* HALAMAN */
+body {
+  /* height: 400vh; 100% dari tinggi viewport */
+  margin: 0;
+  margin-top: 0; /* Menghilangkan margin body */
+  padding-top: 0; /* Menghilangkan padding body */
+  /* background-color: black; */
+}
+
+/* NAVBAR */
+.navbar {
+  position: fixed; /* Mengunci posisi navbar */
+  top: 0; /* Menentukan jarak dari atas */
+  left: 0; /* Menentukan jarak dari kiri */
+  width: 100%; /* Lebar navbar mengikuti lebar layar */
+  background-color: #65c7ee; /* Warna latar belakang */
+  /* padding: 10px; Padding untuk tata letak yang baik */
+  color: rgb(255, 255, 255); /* Warna teks */
+  z-index: 2;
+}
+.foter{
+z-index:-2;}
+
+.navbar-brand {
+  color: rgb(255, 255, 255);
+}
+
+/* Data RO */
+.submit-button {
+  display: block;
+  /* margin: 30px auto 0; */
+}
+
+.dataro {
+  min-width: 100vh;
+  background-color: var(--bg);
+  top: 0;
+  margin: 0;
+}
+
+.dataro form {
+  max-height: 3rem;
+}
+.sticky-header th {
+  position: sticky;
+  top: 0;
+  color: aliceblue;
+  background-color: rgba(133, 95, 95, 0.9); /* Atur warna latar belakang yang diinginkan */
+  z-index: 1; /* Pastikan header tetap di atas konten tabel */
+}
+/* Tambahkan CSS ini dalam tag <style> di dalam <head> */
+.table-container {
+  max-height: 400px; /* Atur tinggi maksimal tabel container sesuai kebutuhan Anda */
+  overflow-y: auto; /* Membuat tabel container dapat digulirkan vertikal jika lebih panjang */
+}
+
+/* form upload */
+.upload {
+  /* position: fixed;
+  top: 500px; */
+  padding-top: 110px;
+  margin-top: 0;
+}
+.cara {
+  margin-left: 7rem;
+}
+
+.lihat {
+  padding-top: 5rem;
+}
