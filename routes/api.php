@@ -9,6 +9,7 @@ use App\Http\Controllers\GudangFarmasiController;
 use App\Http\Controllers\InputController;
 use App\Http\Controllers\IgdController;
 use App\Http\Controllers\KasirController;
+use App\Http\Controllers\NoAntrianController;
 use App\Http\Controllers\PendaftaranKominfoController;
 use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\StokController;
@@ -61,6 +62,7 @@ Route::post('cariTransaksiBmhp', [IgdController::class, 'cariTransaksiBmhp']);
 
 
 //antrian tindakan
+Route::post('cariRMObat', [AntrianController::class, 'cariRMObat']);
 Route::post('cariRM', [AntrianController::class, 'cariRM']);
 Route::post('antrianIGD', [AntrianController::class, 'antrianIGD']);
 
@@ -96,6 +98,7 @@ Route::post('deleteFarmasi', [FarmasiController::class, 'deleteFarmasi']);
 Route::post('editFarmasi', [FarmasiController::class, 'editFarmasi']);
 Route::post('transaksiFarmasi', [FarmasiController::class, 'datatransaksi']);
 Route::post('cariTotalBmhp', [FarmasiController::class, 'cariTotalBmhp']);
+Route::post('riwayatFarmasi', [FarmasiController::class, 'riwayatFarmasi']);
 
 //sumber daya gudang farmasi
 Route::get('supplier', [GudangFarmasiController::class, 'supplier']);
@@ -121,8 +124,14 @@ Route::post('addstokbmhp', [StokController::class, 'addstokbmhp']);
 
 
 //API Riwayat Untuk migrasi SIM RS
-Route::get('riwayat', [RiwayatController::class, 'index']);
+Route::get('riwayatKunjungan', [RiwayatController::class, 'index']);
 
 Route::post('antrianAll', [AntrianController::class, 'all']);
 
 Route::post('antrianKominfo', [PendaftaranKominfoController::class, 'antrianKominfo']);
+
+
+//antrian
+Route::get('noantrian', [NoAntrianController::class, 'index']);
+Route::post('lastNoAntri', [NoAntrianController::class, 'lastNoAntri']);
+Route::post('ambilNo', [NoAntrianController::class, 'store']);

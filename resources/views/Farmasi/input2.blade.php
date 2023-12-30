@@ -9,51 +9,51 @@
                                 <div class="form-grup row">
                                     <label for="norm" class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
                                         :</label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-2 input-group">
                                         <input type="text" name="norm" id="norm" class="form-control"
                                             placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required />
+                                        <div class="input-group-addon btn btn-danger">
+                                            <span class="fa-solid fa-magnifying-glass" onclick="searchRMObat();"
+                                                data-toggle="tooltip" data-placement="top"
+                                                title="Selain Pasien Hari ini"></span>
+                                        </div>
                                     </div>
                                     <label for="layanan" class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
                                         :</label>
                                     <div class="col-sm-2">
-                                        <input type="text" id="layanan"
-                                            class="form-control bg-white border border-white " placeholder="Layanan"
-                                            readonly />
+                                        <input type="text" id="layanan" class="form-control bg-white"
+                                            placeholder="Layanan" readonly />
                                     </div>
                                     <label for="nama" class="col-sm-1 col-form-label font-weight-bold  mb-0">Nama
                                         :</label>
                                     <div class="col-sm-5">
-                                        <input type="text" id="nama"
-                                            class="form-control bg-white border border-white " placeholder="Nama Pasien"
-                                            readonly>
+                                        <input type="text" id="nama" class="form-control bg-white"
+                                            placeholder="Nama Pasien" readonly>
                                     </div>
                                 </div>
-                                <div class="form-grup row">
+                                <div class="form-grup row mt-2">
                                     <label for="tgltind" class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                         :</label>
                                     <div class="col-sm-2">
-                                        <input type="text" id="tgltind"
-                                            class="form-control bg-white border border-white " placeholder="Tanggal"
-                                            readonly hidden />
-                                        <input type="text" id="tgltrans"
-                                            class="form-control bg-white border border-white " placeholder="tgltrans"
-                                            readonly />
+                                        <input type="text" id="tgltind" class="form-control bg-white"
+                                            placeholder="Tanggal" readonly hidden />
+                                        <input type="text" id="tgltrans" class="form-control bg-white"
+                                            placeholder="tgltrans" readonly />
                                     </div>
                                     <label for="notrans" class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
                                         :</label>
                                     <div class="col-sm-2">
-                                        <input type="text" id="notrans"
-                                            class="form-control bg-white border border-white "
+                                        <input type="text" id="notrans" class="form-control bg-white"
                                             placeholder="Nomor Transaksi" readonly />
                                     </div>
                                     <label for="alamat" class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat
                                         :</label>
                                     <div class="col-sm-5">
-                                        <input id="alamat" class="form-control bg-white border border-white "
-                                            placeholder="Alamat Pasien" readonly />
+                                        <input id="alamat" class="form-control bg-white" placeholder="Alamat Pasien"
+                                            readonly />
                                     </div>
                                 </div>
-                                <div class="mt-3 form-grup row d-flex justify-content-center">
+                                <div class="mt-2 form-grup row d-flex justify-content-center">
                                     <label for="apoteker" class="col-sm-1 col-form-label font-weight-bold">Petugas
                                         :</label>
                                     <div class="col-sm-4">
@@ -70,6 +70,12 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="mt-3 form-grup d-flex justify-content-center">
+                                    <button type="button" class="btn btn-primary col" data-toggle="modal"
+                                        data-target="#riwayatModal" onclick="showRiwayat()">Lihat
+                                        Riwayat
+                                        Transaksi</button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -80,18 +86,15 @@
                             <h4 class="card-title">Input Obat</h4>
                         </div>
                         @csrf
-                        <form class="form-horizontal">
+                        <form class="card-body form-horizontal px-1" id="form-obat">
                             <div class="container-fluid d-flex justify-content-center p-2">
                                 <div class="col-sm-6 bg-info border border-danger rounded pb-1 m-1">
-                                    <label for="obat"class="col-form-label"><b>Obat
+                                    <label for="obat"class=" col-form-label"><b>Obat
                                             :</b></label>
                                     <select id="obat" class="form-control select2bs4 border border-primary">
                                         <option value="">--Pilih obat--</option>
                                     </select>
                                 </div>
-                                {{-- </div>
-                            <div class="container-fluid mt-3 mx-0 d-flex justify-content-center row"> --}}
-
                                 <div class="col-sm-1 bg-info border border-danger rounded pb-1 m-1">
                                     <label for="productID" class="col-form-label"><b>ID Produk</b></label>
                                     <input type="text"id="productID" class="form-control  border border-info"
@@ -138,79 +141,79 @@
                                     <input type="text"id="total" class="form-control  border border-info"
                                         placeholder="Total" readonly>
                                 </div>
-                                <div class="col-sm-1 mt-3" id="add">
-                                    <a id="addFarmasi" class="btn btn-success d-flex justify-content-center mb-4">+
+                                <div class="col-sm-1 bg-success border border-danger rounded pb-1 m-1" id="add">
+                                    <a id="addFarmasi" class="btn btn-success mt-2">+
                                         Transaksi Obat</a>
                                 </div>
                             </div>
+                            <div class="container-fluid row mx-0">
+                                <div class="card card-warning col p-0 mr-1">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Data
+                                            Transaksi Obat Farmasi</h4>
+                                    </div>
+                                    <div class="table-responsive pt-2 px-2">
+                                        <table id="dataFarmasi" name="dataFarmasi" class="table table-striped"
+                                            style="width:100%" cellspacing="0">
+                                            <thead class="bg-secondary">
+                                                <tr>
+                                                    <th class="no-total" width="35px">Aksi</th>
+                                                    <th class="col-1 text-center">No</th>
+                                                    <th class="col-1">RM</th>
+                                                    <th class="col-4">Obat</th>
+                                                    <th class="">Qty</th>
+                                                    <th class="no-total">Total</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div id="loadingSpinner" style="display: none;">
+                                        <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
+                                    </div>
+                                </div>
+                                <div class="card card-lime col p-0 ml-1">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Data
+                                            Transaksi Obat & BMHP IGD</h4>
+                                    </div>
+                                    <div class="table-responsive pt-2 px-2">
+                                        <table id="dataIGD" name="dataIGD" class="table table-striped"
+                                            style="width:100%" cellspacing="0">
+                                            <thead class="bg-fuchsia">
+                                                <tr>
+                                                    <th class="no-total" width="35px">Aksi</th>
+                                                    <th class="col-1 text-center">No</th>
+                                                    <th class="col-1">RM</th>
+                                                    <th class="col-3">Obat</th>
+                                                    <th class="">Qty</th>
+                                                    <th class="no-total">Total</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div id="loadingSpinner" style="display: none;">
+                                        <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
+                                    </div>
+                                </div>
+                            </div>
                         </form>
-                    </div>
-                </div>
-                <div class="container-fluid row mx-0">
-                    <div class="card card-warning col p-0 ">
-                        <div class="card-header">
-                            <h4 class="card-title">Data
-                                Transaksi Obat Farmasi</h4>
-                        </div>
-                        <div class="table-responsive pt-2 px-2">
-                            <table id="dataFarmasi" name="dataFarmasi" class="table table-striped"
-                                style="width:100%" cellspacing="0">
-                                <thead class="bg-secondary">
-                                    <tr>
-                                        <th class="no-total" width="35px">Aksi</th>
-                                        <th class="col-1 text-center">No</th>
-                                        <th class="col-1">RM</th>
-                                        <th class="col-4">Obat</th>
-                                        <th class="">Qty</th>
-                                        <th class="no-total">Total</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                        <div id="loadingSpinner" style="display: none;">
-                            <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                        </div>
-                    </div>
-                    <div class="card card-lime col p-0">
-                        <div class="card-header">
-                            <h4 class="card-title">Data
-                                Transaksi Obat & BMHP IGD</h4>
-                        </div>
-                        <div class="table-responsive pt-2 px-2">
-                            <table id="dataIGD" name="dataIGD" class="table table-striped" style="width:100%"
-                                cellspacing="0">
-                                <thead class="bg-fuchsia">
-                                    <tr>
-                                        <th class="no-total" width="35px">Aksi</th>
-                                        <th class="col-1 text-center">No</th>
-                                        <th class="col-1">RM</th>
-                                        <th class="col-3">Obat</th>
-                                        <th class="">Qty</th>
-                                        <th class="no-total">Total</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                        <div id="loadingSpinner" style="display: none;">
-                            <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
+                        <div class="card-footer form-row d-flex justify-content-end">
+                            <div class="col-md-2 d-flex justify-content-end d-flex align-items-center">
+                                <label for="tagihan" class="form-label mb-0"><b>Total
+                                        Tagihan :</b></label>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text"id="tagihan" class="form-control border border-info"
+                                    placeholder="Total Tagihan" readonly>
+                            </div>
+                            <div class="col-auto">
+                                <a class="btn btn-danger" id="tblBatal">Batal</a>
+                            </div>
+                            <div class="col-auto">
+                                <a class="btn btn-success" id="tblSimpan">Selesai</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="container-fluid mb-4">
-                    <div class="form-row d-flex justify-content-end">
-                        <div class="col-md-2 d-flex justify-content-end d-flex align-items-center">
-                            <label for="tagihan" class="form-label mb-0"><b>Total
-                                    Tagihan :</b></label>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text"id="tagihan" class="form-control border border-info"
-                                placeholder="Total Tagihan" readonly>
-                        </div>
-                        <div class="col-auto">
-                            <a class="btn btn-danger" id="tblBatal">Batal</a>
-                        </div>
-                        <div class="col-auto">
-                            <a class="btn btn-success" id="tblSimpan">Selesai</a>
-                        </div>
-                    </div>
+
                 </div>

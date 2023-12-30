@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BiodataModel;
 use App\Models\KunjunganModel;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -231,5 +232,39 @@ class AntrianController extends Controller
             ->get();
 
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
+    public function cariRMObat(Request $request)
+    {
+        $norm = $request->input('norm');
+        $date = $request->input('date', now()->toDateString());
+        $kode = str_replace('-', '', $date);
+
+        $data = BiodataModel::on('mysql')
+            ->where('norm', 'LIKE', '%' . $norm . '%')
+            ->get();
+        $res = [];
+        foreach ($data as $item) {
+            $item["notrans"] =  $item["norm"] . $kode;
+            $res[] = [
+                "norm" => $item->norm,
+                "noktp" => $item->noktp,
+                "nama" => $item->nama,
+                "tglLahir" => $item->tglLahir,
+                "umur" => $item->umur,
+                "gender" => $item->gender,
+                "alamat" => $item->alamat,
+                "provinsi" => $item->provinsi,
+                "kabupaten" => $item->kabupaten,
+                "kecamatan" => $item->kecamatan,
+                "kelurahan" => $item->kelurahan,
+                "rtrw" => $item->rtrw,
+                "agama" => $item->agama,
+                "pendidikan" => $item->pendidikan,
+                "pekerjaan" => $item->pekerjaan,
+                "notrans" => $item->notrans,
+            ];
+        }
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+        // return response()->json($res, 200, [], JSON_PRETTY_PRINT);
     }
 }

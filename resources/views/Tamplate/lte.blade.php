@@ -22,55 +22,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
-    <style>
-        .hidden-time {
-            display: none;
-        }
-
-        .bg-teal,
-        .bg-teal>a {
-            color: #1f2d3d !important;
-        }
-
-        .input-sm {
-            width: 60px;
-            height: 28px;
-        }
-
-        .z-5 {
-            z-index: 5;
-        }
-
-        input,
-        input::-webkit-input-placeholder {
-            font: 1rem;
-        }
-
-
-        .position-absolute {
-            position: absolute;
-            left: 50%;
-            top: 45px;
-            transform: translateX(-50%);
-        }
-
-        .aksi-button:hover i {
-            font-size: 17px;
-        }
-
-        .delete {
-            color: red;
-        }
-
-        .edit:hover i {
-            font-size: 17px;
-        }
-
-        .delete:hover i {
-            font-size: 17px;
-            color: red;
-        }
-    </style>
+    <link type="text/css" rel="stylesheet" href="{{ asset('css/mystyle.css') }}">
 
 </head>
 

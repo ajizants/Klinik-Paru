@@ -88,4 +88,46 @@
         <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
+    <div class="modal fade" id="riwayatModal">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Riwayat Transaksi Farmasi</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="card-body">
+                            <div class=" border border-black">
+                                <div class="card-body card-body-hidden p-2">
+                                    <table id="riwayat" class="table table-striped fs-6" style="width:100%"
+                                        cellspacing="0">
+                                        <thead class="table-secondary table-sm">
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Tanggal</th>
+                                                <th>Data FArmasi</th>
+                                                <th>Data Tindakan</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                    <div id="loadingSpinner" style="display: none;" class="text-center">
+                                        <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 @endsection

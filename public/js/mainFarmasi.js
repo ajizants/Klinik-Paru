@@ -212,6 +212,7 @@ function simpanTransaksi(idAptk, prod_id) {
                     url: "/api/editFarmasi",
                     type: "POST",
                     data: {
+                        idAptk: idAptk,
                         product_id: product_id,
                         idFarmasi: idFarmasi,
                         notrans: notrans,
@@ -223,8 +224,19 @@ function simpanTransaksi(idAptk, prod_id) {
                     success: function (response) {
                         Toast.fire({
                             icon: "success",
-                            title: "Data Berhasil Disimpan, Maturnuwun...!!!",
+                            title: "Data Berhasil diubah, Maturnuwun...!!!",
                         });
+                        idAptk = undefined;
+                        console.log(
+                            "🚀 ~ file: mainFarmasi.js:230 ~ simpanTransaksi ~ idAptk:",
+                            idAptk
+                        );
+                        prod_id = undefined;
+                        console.log(
+                            "🚀 ~ file: mainFarmasi.js:232 ~ simpanTransaksi ~ prod_id:",
+                            prod_id
+                        );
+
                         populateObatOptions();
                         dataFarmasi();
                         $("#obat,#qty,#total,#productID,#tagihan").val("");
@@ -243,29 +255,41 @@ function simpanTransaksi(idAptk, prod_id) {
     }
 }
 
-function panggilAntrian(text) {
-    const speechSynthesis = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(text);
-
-    // Mendapatkan daftar suara yang tersedia
-    const voices = speechSynthesis.getVoices();
-
-    // Mencari suara perempuan Indonesia
-    const indonesianFemaleVoice = voices.find(
-        (voice) => voice.lang === "id-ID" && voice.gender === "female"
-    );
-
-    // Jika suara perempuan Indonesia ditemukan, gunakan suara tersebut
-    if (indonesianFemaleVoice) {
-        utterance.voice = indonesianFemaleVoice;
+async function showRiwayat() {
+    if ($.fn.DataTable.isDataTable("#riwayat")) {
+        var tabel = $("#riwayat").DataTable();
+        tabel.clear().destroy();
     }
-
-    // Pilihan rate dan pitch dapat disesuaikan
-    // utterance.rate = ... (Atur kecepatan pembicaraan)
-    // utterance.pitch = ... (Atur nada suara)
-
-    // Memulai pemutaran suara
-    speechSynthesis.speak(utterance);
+    try {
+        const url = "/api/riwayatFarmasi";
+        const norm = $("#norm").val();
+        const queryParam = { norm: norm };
+        const response = await fetch(url, {
+            method: "POST",
+            body: JSON.stringify(queryParam),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+        data.forEach((item) => {
+            item.tgltrans = moment(item.tgltrans).format("DD-MM-YYYY");
+        });
+        $("#riwayat").DataTable({
+            data: data,
+            columns: [
+                { data: "idFarmasi" },
+                { data: "norm" },
+                { data: "notrans" },
+                { data: "tgltrans" },
+                { data: "qty" },
+                { data: "total" },
+                { data: "petugas" },
+            ],
+        });
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 var Toast = Swal.mixin({
@@ -325,6 +349,16 @@ $(document).ready(function () {
         populateObatOptions();
         antrian();
         scrollToAntrianSection();
+        idAptk = undefined;
+        console.log(
+            "🚀 ~ file: mainFarmasi.js:230 ~ simpanTransaksi ~ idAptk:",
+            idAptk
+        );
+        prod_id = undefined;
+        console.log(
+            "🚀 ~ file: mainFarmasi.js:232 ~ simpanTransaksi ~ prod_id:",
+            prod_id
+        );
     });
 
     $("#tblSimpan").on("click", function (e) {
@@ -344,6 +378,16 @@ $(document).ready(function () {
                 title: "Data Tidak Lengkap...!!! " + dataKurang.join(", "),
             });
             scrollToAntrianSection();
+            idAptk = undefined;
+            console.log(
+                "🚀 ~ file: mainFarmasi.js:230 ~ simpanTransaksi ~ idAptk:",
+                idAptk
+            );
+            prod_id = undefined;
+            console.log(
+                "🚀 ~ file: mainFarmasi.js:232 ~ simpanTransaksi ~ prod_id:",
+                prod_id
+            );
         } else {
             $(
                 "#norm, #nama, #alamat, #layanan, #notrans, #dokter, #apoteker, #obat, #qty,#tagihan,#productID"
@@ -414,6 +458,19 @@ $(document).ready(function () {
         scrollToInputSection();
         dataFarmasi();
         dataBMHP();
+    });
+
+    $("#dataAntrian").on("click", ".panggil", function (e) {
+        e.preventDefault();
+
+        let panggilData = $(this).data("panggil");
+        // panggilData = "coba panggil imam aji santoso";
+        console.log(
+            "🚀 ~ file: mainFarmasi.js:478 ~ panggilData:",
+            panggilData
+        );
+
+        panggilPasien(panggilData);
     });
 
     $("#dataFarmasi").on("click", ".delete", function (e) {

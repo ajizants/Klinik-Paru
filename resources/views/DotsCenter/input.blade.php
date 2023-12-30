@@ -38,7 +38,7 @@
                                                     :</label>
                                                 <div class="col-sm-2">
                                                     <input type="text" id="layanan"
-                                                        class="form-control bg-white border border-white "
+                                                        class="form-control bg-white border border-danger "
                                                         placeholder="Layanan" readonly />
                                                 </div>
                                                 <label for="nama"
@@ -46,7 +46,7 @@
                                                     :</label>
                                                 <div class="col-sm-5">
                                                     <input type="text" id="nama"
-                                                        class="form-control bg-white border border-white "
+                                                        class="form-control bg-white border border-danger "
                                                         placeholder="Nama Pasien" readonly>
                                                 </div>
                                             </div>
@@ -58,7 +58,7 @@
                                                     <input type="date" id="tglKunj"
                                                         class="form-control bg-white" />
                                                     <input type="text" id="tgltind"
-                                                        class="form-control bg-white border border-white "
+                                                        class="form-control bg-white border border-danger "
                                                         placeholder="tgltind" readonly hidden />
                                                 </div>
                                                 <label for="notrans"
@@ -66,15 +66,16 @@
                                                     :</label>
                                                 <div class="col-sm-2">
                                                     <input type="text" id="notrans"
-                                                        class="form-control bg-white border border-white "
+                                                        class="form-control bg-white border border-danger "
                                                         placeholder="Nomor Transaksi" readonly />
                                                 </div>
                                                 <label for="alamat"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat
                                                     :</label>
                                                 <div class="col-sm-5">
-                                                    <textarea id="alamat" class="form-control bg-white border border-white " style="height: 69px;"
-                                                        placeholder="Alamat Pasien" readonly></textarea>
+                                                    <input id="alamat"
+                                                        class="form-control bg-white border border-danger"
+                                                        placeholder="Alamat Pasien" readonly />
                                                 </div>
                                             </div>
                                             <div class="mt-3 form-grup row d-flex justify-content-center">

@@ -17,59 +17,59 @@
                                     <!-- form start -->
                                     @csrf
                                     <form class="form-horizontal">
-                                        <div class="card-body">
+                                        <div class="card-body" id="frm-identitas">
                                             <div class="form-grup row">
                                                 <label for="norm"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
                                                     :</label>
-                                                <div class="col-sm-2">
+                                                <div class="col-sm-2 input-group">
                                                     <input type="text" name="norm" id="norm"
                                                         class="form-control" placeholder="No RM" maxlength="6"
                                                         pattern="[0-9]{6}" required />
+                                                    <div class="input-group-addon btn btn-danger">
+                                                        <span class="fa-solid fa-magnifying-glass"
+                                                            onclick="searchRMObat();" data-toggle="tooltip"
+                                                            data-placement="top" title="Selain Pasien Hari ini"></span>
+                                                    </div>
                                                 </div>
                                                 <label for="layanan"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
                                                     :</label>
                                                 <div class="col-sm-2">
-                                                    <input type="text" id="layanan"
-                                                        class="form-control bg-white border border-white "
+                                                    <input type="text" id="layanan" class="form-control bg-white"
                                                         placeholder="Layanan" readonly />
                                                 </div>
                                                 <label for="nama"
                                                     class="col-sm-1 col-form-label font-weight-bold  mb-0">Nama
                                                     :</label>
-                                                <div class="col-sm-4">
-                                                    <input type="text" id="nama"
-                                                        class="form-control bg-white border border-white "
+                                                <div class="col-sm-5">
+                                                    <input type="text" id="nama" class="form-control bg-white"
                                                         placeholder="Nama Pasien" readonly>
                                                 </div>
                                             </div>
-                                            <div class="form-grup row">
+                                            <div class="form-grup row mt-2">
                                                 <label for="tgltind"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                                     :</label>
                                                 <div class="col-sm-2">
-                                                    <input type="text" id="tgltind"
-                                                        class="form-control bg-white border border-white "
+                                                    <input type="text" id="tgltind" class="form-control bg-white"
                                                         placeholder="Tanggal" readonly />
-                                                    <input type="text" id="tgltrans"
-                                                        class="form-control bg-white border border-white hidden-time"
-                                                        placeholder="tgltrans" readonly />
+                                                    <input type="text" id="tgltrans" class="form-control bg-white"
+                                                        placeholder="tgltrans" readonly hidden />
                                                 </div>
                                                 <label for="notrans"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
                                                     :</label>
                                                 <div class="col-sm-2">
-                                                    <input type="text" id="notrans"
-                                                        class="form-control bg-white border border-white "
+                                                    <input type="text" id="notrans" class="form-control bg-white"
                                                         placeholder="Nomor Transaksi" readonly />
                                                 </div>
                                                 <label for="alamat"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat
                                                     :</label>
-                                                <div class="col-sm-4">
-                                                    <textarea id="alamat" class="form-control bg-white border border-white " style="height: 69px;"
-                                                        placeholder="Alamat Pasien" readonly></textarea>
+                                                <div class="col-sm-5">
+                                                    <input id="alamat" class="form-control bg-white"
+                                                        placeholder="Alamat Pasien" readonly />
                                                 </div>
                                             </div>
                                         </div>
@@ -255,8 +255,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="container-fluid mb-4">
                             <div class="form-row d-flex justify-content-end">
                                 <div class="col-auto">
                                     <a class="btn btn-danger" id="tblBatal">Batal</a>
@@ -267,4 +265,3 @@
                             </div>
                         </div>
                     </div>
-                </div>

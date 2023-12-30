@@ -23,7 +23,8 @@
                             <!-- IGD Section -->
                             @if (auth()->user()->role === 'igd' || auth()->user()->role === 'admin' || auth()->user()->role === 'dots')
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/igd') }}">
+                                    <a class="nav-link" href="{{ url('/igd') }}" id="masukIGD"
+                                        onclick="panggilPasien('selamatbertugas teman teman, aja kelalen madang, lan aja kelalen gosip, haha haha wkwk wkwk');">
                                         <i class="fa-solid fa-truck-medical nav-icon"></i>
                                         <p>IGD</p>
                                     </a>
@@ -65,6 +66,12 @@
                                     <a class="nav-link" href="{{ url('/farmasi') }}">
                                         <i class="fa-solid fa-pills nav-icon"></i>
                                         <p>Farmasi</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Farmasi">
+                                    <a class="nav-link" href="{{ url('/logFarmasi') }}">
+                                        <i class="fa-solid fa-right-to-bracket nav-icon"></i>
+                                        <p>Riwayat Transaksi Farmasi</p>
                                     </a>
                                 </li>
 

@@ -37,6 +37,11 @@ class HomeController extends Controller
         $title = 'FARMASI';
         return view('farmasi.main')->with('title', $title);
     }
+    public function logFarmasi()
+    {
+        $title = 'RIWAYAT TRANSAKSI FARMASI';
+        return view('farmasi.log')->with('title', $title);
+    }
     public function gudangFarmasi()
     {
         $title = 'Gudang Farmasi';
@@ -57,5 +62,11 @@ class HomeController extends Controller
         $title = 'Report IGD';
 
         return view('report.main')->with('title', $title);
+    }
+    public function dispenser()
+    {
+        $title = 'Ambil Antrian';
+
+        return view('dispenser.main')->with('title', $title);
     }
 }

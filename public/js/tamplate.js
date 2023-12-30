@@ -32,6 +32,14 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 $(".select2bs4").select2();
 
+$("#masukIGD").on("click", function () {
+    // setTimeout(function () {
+    panggilPasien(
+        "selamat bertugas teman teman, aja kelalen madang, lan aja kelalen gosip, haha haha wkwk wkwk"
+    );
+    // }, 1000);
+});
+
 $.ajaxSetup({
     headers: {
         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"), // Mengirim token CSRF untuk perlindungan keamanan
@@ -60,11 +68,18 @@ $("#iselesai").on("click", function () {
 });
 
 function scrollToAntrianSection() {
-    $("html, body").animate(
-        // { scrollTop: $("#antrianSection").offset().top },
-        { scrollTop: $("#topSection").offset().top },
-        500
-    );
+    $("html, body").animate({ scrollTop: $("#topSection").offset().top }, 500);
+}
+function panggilPasien(text) {
+    // let synth = window.speechSynthesis;
+    let synth = speechSynthesis;
+    let utterance = new SpeechSynthesisUtterance(text);
+
+    // Set bahasa ke bahasa Indonesia (id-ID)
+    utterance.lang = "id-ID";
+
+    // Jalankan Text-to-Speech
+    synth.speak(utterance);
 }
 
 function setTodayDate() {

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FarmasiModel extends Model
 {
@@ -18,6 +19,10 @@ class FarmasiModel extends Model
         return $this->belongsTo(GudangFarmasiInStokModel::class, 'product_id', 'id');
     }
 
+    public function bmhp()
+    {
+        return $this->hasMany(TransaksiModel::class, 'notrans', 'notrans');
+    }
     public function petugasPegawai()
     {
         return $this->belongsTo(PegawaiModel::class, 'petugas', 'nip');
@@ -32,6 +37,9 @@ class FarmasiModel extends Model
     protected $fillable = [
         'norm',
         'notrans',
+        'product_id',
+        'jumlah',
+        'total',
         'petugas',
         'dokter'
     ];

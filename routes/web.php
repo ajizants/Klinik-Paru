@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::get('report', [HomeController::class, 'report'])->name('report');
     //farmasi
     Route::get('farmasi', [HomeController::class, 'farmasi'])->name('farmasi')->middleware('role:farmasi');
+    Route::get('logFarmasi', [HomeController::class, 'logFarmasi'])->name('logFarmasi')->middleware('role:farmasi');
     Route::get('gudangFarmasi', [HomeController::class, 'gudangFarmasi'])->name('gudangFarmasi')->middleware('role:farmasi');
     //dots
     Route::get('dots', [HomeController::class, 'dots'])->name('dots')->middleware('role:dots');
@@ -37,4 +38,6 @@ Route::middleware('auth')->group(function () {
     //Kasir
     Route::get('kasir', [HomeController::class, 'kasir'])->name('kasir')->middleware('role:kasir');
     Route::get('lte', [HomeController::class, 'lte'])->name('lte')->middleware('role:kasir');
+    //dispenser
 });
+Route::get('dispenser', [HomeController::class, 'dispenser'])->name('dispenser');

@@ -15,6 +15,59 @@ function hitungTotalHarga() {
     var totalharga = hargaJual * qty;
     $("#total").val(totalharga); // Menampilkan total harga dengan pemisah ribuan
 }
+
+async function searchRMObat() {
+    Swal.fire({
+        icon: "success",
+        title: "Sedang mencarikan data pasien...!!!",
+    });
+    var norm = "000001";
+    try {
+        const response = await $.ajax({
+            url: "/api/cariRMObat",
+            type: "post",
+            data: { norm: norm },
+        });
+
+        if (response.length > 0) {
+            Swal.fire({
+                icon: "success",
+                title: "Data pasien ditemukan, lanjutkan transaksi...!!!",
+            });
+
+            // Extracting data from the JSON response
+            var noRM = response[0].norm;
+            var nama = response[0].nama;
+            var notrans = response[0].notrans;
+            var alamat = `${response[0].kelurahan}, ${response[0].rtrw}, ${response[0].kecamatan}, ${response[0].kabupaten}`;
+
+            // Updating HTML elements with the extracted data
+            $("#norm").val(noRM);
+            $("#nama").val(nama);
+            $("#alamat").val(alamat);
+            $("#notrans").val(notrans);
+            $("#layanan").val("UMUM");
+            $("#dokter").val("198907252019022004").trigger("change");
+            $("#apoteker").val("197609262011012003").trigger("change");
+
+            // Additional function calls as needed
+            dataTindakan();
+            dataBMHP();
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Data pasien tidak ditemukan...!!!",
+            });
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        // Handling error if the API request fails
+        Swal.fire({
+            icon: "error",
+            title: "Terjadi kesalahan saat mengambil data pasien...!!!",
+        });
+    }
+}
 $(document).ready(function () {
     $("#dselesai").hide();
     $("#dtunggu").show();
@@ -70,15 +123,16 @@ $(document).ready(function () {
 
     $("#tblBatal").on("click", function (e) {
         $(
-            "#norm, #nama, #alamat, #layanan, #notrans, #dokter, #petugas, #tindakan, #asktind, #bmhp, #qty, #modalidTind, #modalkdTind, #modalnorm, #modaltindakan, #modaldokter, #modalpetugas"
+            "#norm, #nama, #alamat, #layanan,#tglTind,#tglTrans #notrans, #dokter, #petugas, #tindakan, #asktind, #bmhp, #qty, #modalidTind, #modalkdTind, #modalnorm, #modaltindakan, #modaldokter, #modalpetugas"
         ).val("");
+
         $("#dokter, #petugas, #tindakan, #bmhp, #qty").trigger("change");
 
         var tabletindakan = $("#dataTindakan").DataTable();
         tabletindakan.clear().destroy();
         var tablebmhp = $("#transaksiBMHP").DataTable();
         tablebmhp.clear().destroy();
-
+        startConfetti();
         antrian();
         scrollToAntrianSection();
         $("#formbmhp").hide();
@@ -381,4 +435,54 @@ $(document).ready(function () {
 
 $(document).on("select2:open", () => {
     document.querySelector(".select2-search__field").focus();
+});
+document.addEventListener("DOMContentLoaded", function () {
+    let synth = speechSynthesis;
+
+    // Memeriksa dukungan Text-to-Speech API
+    if (synth === undefined) {
+        console.error("Text-to-Speech API is not supported");
+        return;
+    }
+
+    let utterance = new SpeechSynthesisUtterance(
+        "selamat bertugas teman teman, aja kelalen madang, lan aja kelalen gosip, haha haha wkwk wkwk. Selamat tahun baru....!"
+    );
+
+    // Set bahasa ke bahasa Indonesia (id-ID)
+    utterance.lang = "id-ID";
+
+    // Jalankan Text-to-Speech
+    try {
+        synth.speak(utterance);
+    } catch (error) {
+        console.error("Error while attempting to use Text-to-Speech:", error);
+    }
+
+    const jsConfetti = new JSConfetti();
+
+    jsConfetti
+        .addConfetti({})
+        .then(() => jsConfetti.addConfetti())
+        .then(() => {
+            // Create a new element for the greeting message
+            const greetingMessage = document.createElement("div");
+            greetingMessage.textContent = "Selamat Tahun Baru....!"; // Your greeting message here
+            greetingMessage.style.fontSize = "24px";
+            greetingMessage.style.fontWeight = "bold";
+            greetingMessage.style.color = "indigo";
+            greetingMessage.style.position = "absolute";
+            greetingMessage.style.top = "50%";
+            greetingMessage.style.left = "50%";
+            greetingMessage.style.transform = "translate(-50%, -50%)";
+            greetingMessage.style.animation = "zoomIn 3s"; // Add zoom-in animation
+
+            // Append the greeting message to the document body
+            document.body.appendChild(greetingMessage);
+
+            // Remove the greeting message after 3 seconds
+            setTimeout(() => {
+                document.body.removeChild(greetingMessage);
+            }, 3000);
+        });
 });

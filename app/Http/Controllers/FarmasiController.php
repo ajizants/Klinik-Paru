@@ -34,6 +34,22 @@ class FarmasiController extends Controller
                 $status = "belum";
             }
 
+            if ($transaksi["umurthn"] <= 15) {
+                $pang = "anak";
+            } elseif ($transaksi["umurthn"] >= 16 && $transaksi["umurthn"] <= 30) {
+                if ($transaksi["biodata"]["jeniskel"] == "Laki-Laki") {
+                    $pang = "saudara";
+                } else {
+                    $pang = "nona";
+                }
+            } elseif ($transaksi["umurthn"] >= 31) {
+                if ($transaksi["biodata"]["jeniskel"] == "Laki-Laki") {
+                    $pang = "bapak";
+                } else {
+                    $pang = "ibu";
+                }
+            }
+
             $transaksi["status"] = $status;
 
             $formattedData[] = [
@@ -44,6 +60,7 @@ class FarmasiController extends Controller
                 "layanan" => $transaksi["kelompok"]["kelompok"] ?? "null",
                 "biaya" => $transaksi["kelompok"]["biaya"] ?? "null",
                 "noktp" => $transaksi["biodata"]["noktp"] ?? "null",
+                "pang" => $pang ?? "null",
                 "namapasien" => $transaksi["biodata"]["nama"] ?? "null",
                 "alamatpasien" => $transaksi["biodata"]["alamat"] ?? "null",
                 "rtrwpasien" => $transaksi["biodata"]["rtrw"] ?? "null",
@@ -97,20 +114,59 @@ class FarmasiController extends Controller
         return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
         // return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
+    public function riwayatFarmasi(Request $request)
+    {
+        $norm = $request->input('norm');
 
+        $daftariwayat = KunjunganModel::with([
+            'riwayatFarmasi', 'riwayatFarmasi.obat',  'riwayatTindakan.transbmhp.bmhp'
+        ])
+            ->where('norm', $norm)
+            ->orderBy('tgltrans', 'desc')
+            ->get();
+        $res = [];
+        foreach ($daftariwayat as $d) {
+            $res[] = [
+                "notrans" => $d["notrans"] ?? "null",
+                "norm" => $d["norm"] ?? "null",
+                "nourut" => $d["nourut"] ?? "null",
+                "noasuransi" => $d["noasuransi"] ?? "null",
+                "layanan" => $d["kelompok"]["kelompok"] ?? "null",
+                "biaya" => $d["kelompok"]["biaya"] ?? "null",
+                "noktp" => $d["biodata"]["noktp"] ?? "null",
+                "namapasien" => $d["biodata"]["nama"] ?? "null",
+                "alamatpasien" => $d["biodata"]["alamat"] ?? "null",
+                "rtrwpasien" => $d["biodata"]["rtrw"] ?? "null",
+                "kelaminpasien" => $d["biodata"]["jeniskel"] ?? "null",
+                "tgllahir" => $d["biodata"]["tgllahir"] ?? "null",
+            ];
+        }
+        if ($daftariwayat->isEmpty()) {
+            // Handle the case where no records are found
+            return response()->json(['error' => 'Patient not found'], 404);
+        } else {
+            return response()->json($res, 200, [], JSON_PRETTY_PRINT);
+            // return response()->json($daftariwayat, 200, [], JSON_PRETTY_PRINT);
+        }
+    }
 
 
     public function datatransaksi(Request $request)
     {
         $notrans = $request->input('notrans');
+        $norm = $request->input('norm');
+        $tgl = $request->input('tgl');
 
         $datatransaksi = FarmasiModel::with(['obat',  'petugasPegawai', 'dokterPegawai'])
             ->where('notrans', 'LIKE', '%' . $notrans . '%')
+            ->where('norm', 'LIKE', '%' . $norm . '%')
+            ->whereDate('created_at', 'LIKE', '%' . $tgl . '%')
             ->get();
 
         // Ubah struktur respons JSON sesuai kebutuhan
         $formattedData = [];
         foreach ($datatransaksi as $transaksi) {
+            $transaksi['tglTrans'] = $transaksi->created_at->format('d-m-Y');
             $formattedData[] = [
                 'idAptk' => $transaksi->idAptk,
                 'notrans' => $transaksi->notrans,
@@ -122,11 +178,11 @@ class FarmasiController extends Controller
                 'nmObat' => $transaksi->obat->nmObat,
                 'petugas' => $transaksi->petugasPegawai->gelar_d . ' ' . $transaksi->petugasPegawai->nama . ' ' . $transaksi->petugasPegawai->gelar_b,
                 'dokter' => $transaksi->dokterPegawai->gelar_d . ' ' . $transaksi->dokterPegawai->nama . ' ' . $transaksi->dokterPegawai->gelar_b,
+                'tglTrans' => $transaksi->tglTrans,
             ];
         }
 
         return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
-        // return response()->json($datatransaksi, 200, [], JSON_PRETTY_PRINT);
     }
     public function cariTotalBmhp(Request $request)
     {
@@ -135,7 +191,29 @@ class FarmasiController extends Controller
         $data = TransaksiBMHPModel::with(['bmhp', 'tindakan', 'tindakan.petugasPegawai', 'tindakan.dokterPegawai',])
             ->where('notrans', 'LIKE', '%' . $notrans . '%')
             ->get();
+        $res = [];
+        foreach ($data as $item) {
+            $item['norm'] = substr($item->notrans, 0, 6);
+            $item['tglTrans'] = $item->created_at->format('d-m-Y');
 
+            $res[] = [
+                "id" => $item->id,
+                "notrans" => $item->notrans,
+                "norm" => $item->norm,
+                "tgltrans" => $item->tgltrans,
+                "tgl_lahir" => $item->tgl_lahir,
+                "umur" => $item->umur,
+                "gender" => $item->gender,
+                "alamat" => $item->alamat,
+                "nohp" => $item->nohp,
+                // "dokter" => $item->dokterPegawai->gelar_d . ' ' . $item->dokterPegawai->nama . ' ' . $item->dokterPegawai->gelar_b,
+                // "petugas" => $item->tindakan->petugasPegawai->gelar_d . ' ' . $item->tindakan->petugasPegawai->nama . ' ' . $item->tindakan->petugasPegawai->gelar_b,
+                "tindakan" => $item->tindakan->nmTindakan,
+                "biaya" => $item->biaya,
+                "total" => $item->total,
+            ];
+        }
+        // return response()->json($res, 200, [], JSON_PRETTY_PRINT);
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
     public function simpanFarmasi(Request $request)
@@ -222,7 +300,7 @@ class FarmasiController extends Controller
             $product_id = $farmasi->product_id;
             $gudangFarmasiIn = GudangFarmasiInStokModel::where('id', $product_id)->first();
             $idGudang = $gudangFarmasiIn->product_id;
-            dd($idGudang);
+            // dd($idGudang);
             $gudangFarmasi = GudangFarmasiModel::where('product_id', $idGudang)->first();
             // dd($gudangFarmasi);
             //update stok farmasi
@@ -269,10 +347,13 @@ class FarmasiController extends Controller
         $updated_at = Carbon::now()->toDateString();
 
         $farmasi = FarmasiModel::find($idAptk);
-
+        // dd($farmasi);
         if ($farmasi) {
             // Mengambil nilai jumlah yang akan dihapus dari transaksi farmasi
-            $jumlahDihapus = $farmasi->jumlah;
+            $qtyup = $farmasi->jumlah;
+            $qtyupdate = intval($qtyup) - intval($qty);
+            // dd($qtyupdate);
+            $farmasi->update(['jumlah' => $qty, 'total' => $total]);
             $product_id = $farmasi->product_id;
 
             $gudangFarmasiIn = GudangFarmasiInStokModel::where('id', $product_id)->first();
@@ -282,46 +363,30 @@ class FarmasiController extends Controller
             //update stok farmasi
             if ($gudangFarmasi) {
                 $gudangFarmasi->update([
-                    'keluar' => $gudangFarmasi->keluar - $jumlahDihapus,
-                    'sisa' => $this->calculateSisa($gudangFarmasi->stokBaru, $gudangFarmasi->masuk, $gudangFarmasi->keluar - $jumlahDihapus),
+                    'keluar' => $gudangFarmasi->keluar - $qtyupdate,
+                    'sisa' => $this->calculateSisa($gudangFarmasi->stokBaru, $gudangFarmasi->masuk, $gudangFarmasi->keluar - $qtyupdate),
                 ]);
             } else {
                 return response()->json(['message' => 'Obat tidak valid'], 400);
             }
+
             //update farmasi in stok model
             if ($gudangFarmasiIn) {
                 $gudangFarmasiIn->update([
-                    'keluar' => intval($gudangFarmasiIn->keluar) - intval($jumlahDihapus),
+                    'keluar' => intval($gudangFarmasiIn->keluar) - intval($qtyupdate),
 
-                    'sisa' => $this->calculateSisa($gudangFarmasiIn->stokBaru, $gudangFarmasiIn->masuk, intval($gudangFarmasiIn->keluar) - intval($jumlahDihapus)),
+                    'sisa' => $this->calculateSisa($gudangFarmasiIn->stokBaru, $gudangFarmasiIn->masuk, intval($gudangFarmasiIn->keluar) - intval($qtyupdate)),
                 ]);
             } else {
                 return response()->json(['message' => 'Obat tidak valid'], 400);
             }
 
-            $farmasi->update(([
-                ''
-            ]));
-
             // Respon sukses
-            return response()->json(['message' => 'Data transaksi obat berhasil dihapus']);
+            return response()->json(['message' => 'Data transaksi obat berhasil diupdate']);
         } else {
             // Handle case when $kdTind is null, misalnya kirim respon error
             return response()->json(['message' => 'Transaksi apotik dengan iID tersebut tidak ada'], 400);
         }
-
-        // Mengatur nilai-nilai kolom
-        $farmasi->notrans = $notrans;
-        $farmasi->norm = $norm;
-        $farmasi->product_id = $idFarmasi;
-        $farmasi->jumlah = $qty;
-        $farmasi->total = $total;
-        $farmasi->petugas = $petugas;
-        $farmasi->dokter = $dokter;
-        $farmasi->updated_at = $updated_at;
-
-        // Simpan data yang telah diperbarui ke dalam tabel
-        $farmasi->save();
     }
 
     public function updateStokAwal()

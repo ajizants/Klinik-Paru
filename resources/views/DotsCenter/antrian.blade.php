@@ -7,12 +7,13 @@
     <!-- Card Content - Collapse -->
     <div class="collapse show" id="collapseCardAntrian">
         <div class="col-sm-4 d-flex justify-content-center position-absolute">
-            <div class="input-group form-inline col-5">
-                <input type="date" class="form-control bg bg-warning" id="tanggal" value="{{ old('date') }}"
-                    required>
-                <a id="cariantrian" class="input-group-text bg bg-success">
-                    <i class="fa-solid fa-rotate py-1"></i>
-                </a>
+            <div class="input-group col d-flex justify-content-center">
+                <input type="date" class="form-control col-sm-4 bg bg-warning" id="tanggal"
+                    value="{{ old('date') }}" required>
+                <div class="input-group-addon btn btn-danger">
+                    <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top"
+                        title="Update Pasien Hari ini" id="cariantrian"></span>
+                </div>
             </div>
         </div>
         <div class="mt-5">
@@ -99,8 +100,8 @@
                 </div>
                 <div id="dtb" class="card-body card-body-hidden p-2">
                     <div class="table-responsive pt-2 px-2">
-                        <table id="Ptb" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
-                            cellspacing="0">
+                        <table id="Ptb" class="table table-striped table-hover pt-0 mt-0 fs-6"
+                            style="width:100%" cellspacing="0">
                             <thead>
                                 <tr>
                                     <th width="15px">Aksi</th>

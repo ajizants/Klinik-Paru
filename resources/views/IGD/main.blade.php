@@ -2,6 +2,8 @@
 @extends('tamplate.lte')
 
 @section('content')
+    <canvas id="confetti"></canvas>
+
     @include('igd.antrian')
     @include('igd.igd')
 
@@ -23,4 +25,5 @@
     <script src="{{ asset('js/antrianIGD.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
     <script src="{{ asset('js/mainIGD.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
 @endsection

@@ -15,8 +15,8 @@ function fetchDataAntrian(tanggal, callback) {
 function initializeDataAntrian(response) {
     response.forEach(function (item) {
         var alamat = `${item.kelurahan}, ${item.rtrwpasien}, ${item.kecamatan}, ${item.kabupaten}`;
-        var alamat2 = `${item.kelurahan},  ${item.kecamatan}, ${item.kabupaten}`;
-        item.aksi = `<a href="#" class="aksi-button px-2"
+        var alamat2 = `${item.kelurahan} , ${item.kecamatan}`;
+        item.aksi = `<a href="#" class="aksi-button px-2 btn btn-sm btn-danger"
                 data-norm="${item.norm}"
                 data-nama="${item.namapasien}"
                 data-dokter="${item.dokterpoli}"
@@ -25,14 +25,15 @@ function initializeDataAntrian(response) {
                 data-layanan="${item.layanan}"
                 data-notrans="${item.notrans}"
                 data-tgltran="${item.tgltran}"><i class="fas fa-pen-to-square"></i></a>
-                <a href="#" class="panggil px-2">
-                <i class="fa-solid fa-volume-high" onclick="panggilAntrian('${item.namapasien} dari ${alamat2}')"></i></a>`;
+            <a href="#" class="panggil px-2 btn btn-sm btn-success"
+                data-panggil="${item.pang} ${item.namapasien} dari ${alamat2}, silahkan menuju ke loket farmasi">
+                <i class="fa-solid fa-volume-high"></i></a>`;
     });
 
     $("#dataAntrian").DataTable({
         data: response,
         columns: [
-            { data: "aksi", className: "text-center p-2" },
+            { data: "aksi", className: "text-center p-2 col-1" },
             {
                 data: "status",
                 name: "status",
@@ -65,8 +66,8 @@ function antrian() {
             var table = $("#dataAntrian").DataTable();
             response.forEach(function (item) {
                 var alamat = `${item.kelurahan}, ${item.rtrwpasien}, ${item.kecamatan}, ${item.kabupaten}`;
-                var alamat2 = `${item.kelurahan},  ${item.kecamatan}, ${item.kabupaten}`;
-                item.aksi = `<a href="#" class="aksi-button px-2"
+                var alamat2 = `${item.kelurahan} , ${item.kecamatan}`;
+                item.aksi = `<a href="#" class="aksi-button px-2 btn btn-sm btn-danger"
                                     data-norm="${item.norm}"
                                     data-nama="${item.namapasien}"
                                     data-dokter="${item.dokterpoli}"
@@ -76,8 +77,9 @@ function antrian() {
                                     data-notrans="${item.notrans}"
                                     data-tgltran="${item.tgltran}"
                                     ><i class="fas fa-pen-to-square"></i></a>
-                                <a href="#" class="panggil px-2 button button-warning">
-                                <i class="fa-solid fa-volume-high" onclick="panggilAntrian('${item.namapasien} dari ${alamat2}')"></i></a>`;
+                                <a href="#" class="panggil px-2 btn btn-sm btn-success"
+                                    data-panggil="${item.pang} ${item.namapasien} dari ${alamat2}, silahkan menuju ke loket farmasi">
+                                    <i class="fa-solid fa-volume-high"></i></a>`;
             });
             table.clear().rows.add(response).draw();
         } else {
@@ -145,7 +147,58 @@ function searchByRM(norm) {
         },
     });
 }
+async function searchRMObat() {
+    Swal.fire({
+        icon: "success",
+        title: "Sedang mencarikan data pasien...!!!",
+    });
+    var norm = "000001";
+    try {
+        const response = await $.ajax({
+            url: "/api/cariRMObat",
+            type: "post",
+            data: { norm: norm },
+        });
 
+        if (response.length > 0) {
+            Swal.fire({
+                icon: "success",
+                title: "Data pasien ditemukan, lanjutkan transaksi...!!!",
+            });
+
+            // Extracting data from the JSON response
+            var noRM = response[0].norm;
+            var nama = response[0].nama;
+            var notrans = response[0].notrans;
+            var alamat = `${response[0].kelurahan}, ${response[0].rtrw}, ${response[0].kecamatan}, ${response[0].kabupaten}`;
+
+            // Updating HTML elements with the extracted data
+            $("#norm").val(noRM);
+            $("#nama").val(nama);
+            $("#alamat").val(alamat);
+            $("#notrans").val(notrans);
+            $("#layanan").val("UMUM");
+            $("#dokter").val("198907252019022004").trigger("change");
+            $("#apoteker").val("197609262011012003").trigger("change");
+
+            // Additional function calls as needed
+            dataFarmasi();
+            dataBMHP();
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Data pasien tidak ditemukan...!!!",
+            });
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        // Handling error if the API request fails
+        Swal.fire({
+            icon: "error",
+            title: "Terjadi kesalahan saat mengambil data pasien...!!!",
+        });
+    }
+}
 function dataFarmasi() {
     var notrans = $("#notrans").val();
 
