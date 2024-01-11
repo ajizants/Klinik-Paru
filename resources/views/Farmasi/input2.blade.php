@@ -9,7 +9,7 @@
                                 <div class="form-grup row">
                                     <label for="norm" class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
                                         :</label>
-                                    <div class="col-sm-2 input-group">
+                                    <div class="col-sm-2 input-group" style="overflow: hidden;">
                                         <input type="text" name="norm" id="norm" class="form-control"
                                             placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required />
                                         <div class="input-group-addon btn btn-danger">
@@ -17,7 +17,13 @@
                                                 data-toggle="tooltip" data-placement="top"
                                                 title="Selain Pasien Hari ini"></span>
                                         </div>
+                                        <marquee id="ket" class="col-sm-12 text-danger font-weight-bold"
+                                            direction="left" behavior="scroll" scrollamount="5">
+                                            Klik Tombol Cari berwarna merah untuk menginputkan obat non pasien
+                                        </marquee>
                                     </div>
+
+
                                     <label for="layanan" class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
                                         :</label>
                                     <div class="col-sm-2">
@@ -141,8 +147,8 @@
                                     <input type="text"id="total" class="form-control  border border-info"
                                         placeholder="Total" readonly>
                                 </div>
-                                <div class="col-sm-1 bg-success border border-danger rounded pb-1 m-1" id="add">
-                                    <a id="addFarmasi" class="btn btn-success mt-2">+
+                                <div class="col-sm-1 bg-success border border-danger rounded p-0 m-1" id="add">
+                                    <a id="addFarmasi" class="btn btn-success p-3">+
                                         Transaksi Obat</a>
                                 </div>
                             </div>
@@ -215,5 +221,5 @@
                         </div>
                     </div>
                 </div>
-
-                </div>
+{{--
+                </div> --}}

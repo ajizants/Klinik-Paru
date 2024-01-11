@@ -87,21 +87,7 @@ function antrian() {
         }
     });
 }
-function formatNorm(inputElement) {
-    // Pastikan inputElement adalah objek jQuery yang valid
-    if (inputElement && inputElement.val) {
-        // Hapus karakter selain digit
-        let inputValue = inputElement.val().replace(/\D/g, "");
 
-        // Tambahkan 0 di depan jika kurang dari 6 digit
-        while (inputValue.length < 6) {
-            inputValue = "0" + inputValue;
-        }
-
-        // Ambil 6 digit pertama
-        inputElement.val(inputValue.slice(0, 6));
-    }
-}
 function searchByRM(norm) {
     $.ajax({
         url: "/api/cariRM",
@@ -271,7 +257,8 @@ function dataBMHP() {
                                     data-kdBmhp="${item.kdBmhp}"
                                     data-jumlah="${item.jumlah}">
                                     <i class="fas fa-trash"></i></a>`;
-                item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
+                item.no = index + 1;
+                item.biaya = `${item.biaya.toLocaleString()}`;
             });
 
             $("#dataIGD").DataTable({
@@ -283,8 +270,6 @@ function dataBMHP() {
                     { data: "bmhp.nmObat" },
                     { data: "jml" },
                     { data: "biaya", className: "totalHarga" },
-                    // { data: "tindakan.petugas_pegawai.nama" },
-                    // { data: "tindakan.dokter_pegawai.nama" },
                 ],
                 order: [2, "asc"],
                 paging: true,

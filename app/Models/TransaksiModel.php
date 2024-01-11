@@ -22,12 +22,12 @@ class TransaksiModel extends Model
         return $this->hasMany(TransaksiBMHPModel::class, 'idTind');
     }
 
-    public function petugasPegawai()
+    public function petugas()
     {
         return $this->belongsTo(PegawaiModel::class, 'petugas', 'nip');
     }
 
-    public function dokterPegawai()
+    public function dokter()
     {
         return $this->belongsTo(PegawaiModel::class, 'dokter', 'nip');
     }

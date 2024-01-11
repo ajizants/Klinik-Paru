@@ -23,8 +23,7 @@
                             <!-- IGD Section -->
                             @if (auth()->user()->role === 'igd' || auth()->user()->role === 'admin' || auth()->user()->role === 'dots')
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/igd') }}" id="masukIGD"
-                                        onclick="panggilPasien('selamatbertugas teman teman, aja kelalen madang, lan aja kelalen gosip, haha haha wkwk wkwk');">
+                                    <a class="nav-link" href="{{ url('/igd') }}" id="masukIGD">
                                         <i class="fa-solid fa-truck-medical nav-icon"></i>
                                         <p>IGD</p>
                                     </a>
@@ -83,6 +82,15 @@
                                 </li>
                             @endif
 
+                            <!-- lab Section -->
+                            @if (auth()->user()->role === 'lab' || auth()->user()->role === 'admin')
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/lab') }}">
+                                        <i class="fa-solid fa-microscope nav-icon"></i>
+                                        <p>Laboratorium</p>
+                                    </a>
+                                </li>
+                            @endif
                             <!-- Kasir Section -->
                             @if (auth()->user()->role === 'kasir' || auth()->user()->role === 'admin')
                                 <li class="nav-item">

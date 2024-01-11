@@ -57,6 +57,11 @@ class HomeController extends Controller
         $title = 'KASIR';
         return view('kasir.main')->with('title', $title);
     }
+    public function lab()
+    {
+        $title = 'LABORATORIUM';
+        return view('laboratorium.main')->with('title', $title);
+    }
     public function report()
     {
         $title = 'Report IGD';

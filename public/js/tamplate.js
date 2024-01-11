@@ -24,21 +24,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 /(\d{4})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})/,
                 "$1-$2-$3 $4.$5.$6"
             );
-        // tgltindInput.value = formattedDate;
+
         tglTransInput.value = formattedDate;
     }
 
     setInterval(updateDateTime, 1000);
 });
-$(".select2bs4").select2();
 
-$("#masukIGD").on("click", function () {
-    // setTimeout(function () {
-    panggilPasien(
-        "selamat bertugas teman teman, aja kelalen madang, lan aja kelalen gosip, haha haha wkwk wkwk"
-    );
-    // }, 1000);
-});
+
+$(".select2bs4").select2();
 
 $.ajaxSetup({
     headers: {
@@ -67,6 +61,22 @@ $("#iselesai").on("click", function () {
     $("#dtunggu").hide();
 });
 
+function formatNorm(inputElement) {
+    console.log(inputElement);
+    // Pastikan inputElement adalah objek jQuery yang valid
+    if (inputElement && inputElement.val) {
+        // Hapus karakter selain digit
+        let inputValue = inputElement.val().replace(/\D/g, "");
+
+        // Tambahkan 0 di depan jika kurang dari 6 digit
+        while (inputValue.length < 6) {
+            inputValue = "0" + inputValue;
+        }
+
+        // Ambil 6 digit pertama
+        inputElement.val(inputValue.slice(0, 6));
+    }
+}
 function scrollToAntrianSection() {
     $("html, body").animate({ scrollTop: $("#topSection").offset().top }, 500);
 }

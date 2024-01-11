@@ -19,7 +19,7 @@ class FarmasiController extends Controller
     {
         $date = $request->input('date', Carbon::now()->toDateString());
 
-        $data = KunjunganModel::with(['biodata', 'kelompok', 'poli', 'tindakan', 'farmasi',  'petugas.pegawai'])
+        $data = KunjunganModel::with(['biodata', 'kelompok', 'poli', 'tindakan', 'farmasi',  'petugas.pegawai.biodata'])
             ->whereDate('tgltrans', $date)
             ->whereHas('poli', function ($query) {
                 $query->whereNotNull('notrans');
@@ -48,6 +48,16 @@ class FarmasiController extends Controller
                 } else {
                     $pang = "ibu";
                 }
+            }
+            if (
+                isset($transaksi["petugas"]) &&
+                is_array($transaksi["petugas"]) &&
+                isset($transaksi["petugas"]["p_dokter_poli_konsul"]) &&
+                $transaksi["petugas"]["p_dokter_poli_konsul"] !== null
+            ) {
+                $dokter = $transaksi["petugas"]["p_dokter_poli_konsul"];
+            } else {
+                $dokter = isset($transaksi["petugas"]["p_dokter_poli"]) ? $transaksi["petugas"]["p_dokter_poli"] : null;
             }
 
             $transaksi["status"] = $status;
@@ -99,8 +109,8 @@ class FarmasiController extends Controller
                 "oksigenasi" => $transaksi["poli"]["oksigenasi"] ?? "null",
                 "injeksi" => $transaksi["poli"]["injeksi"] ?? "null",
                 "terapi" => $transaksi["poli"]["terapi"] ?? "null",
-                "dokterpoli" => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? "null") . ' ' . ($transaksi["petugas"]["pegawai"]["nama"] ?? "null") . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? "null"),
-                "kddokter" => $transaksi["petugas"]["pegawai"]["nip"],
+                "dokterpoli" => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? "null") . ' ' . ($transaksi["petugas"]["pegawai"]["biodata"]["nama"] ?? "null") . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? "null"),
+                "kddokter" => $dokter ?? "null",
                 "idtindakan" => $transaksi["tindakan"]["id"] ?? "null",
                 "kdTind" => $transaksi["tindakan"]["kdTind"] ?? "null",
                 "petugastindakan" => $transaksi["tindakan"]["petugas"] ?? "null",
@@ -188,7 +198,7 @@ class FarmasiController extends Controller
     {
         $notrans = $request->input('notrans');
         // dd($idTind);
-        $data = TransaksiBMHPModel::with(['bmhp', 'tindakan', 'tindakan.petugasPegawai', 'tindakan.dokterPegawai',])
+        $data = TransaksiBMHPModel::with(['bmhp', 'tindakan'])
             ->where('notrans', 'LIKE', '%' . $notrans . '%')
             ->get();
         $res = [];
@@ -206,8 +216,6 @@ class FarmasiController extends Controller
                 "gender" => $item->gender,
                 "alamat" => $item->alamat,
                 "nohp" => $item->nohp,
-                // "dokter" => $item->dokterPegawai->gelar_d . ' ' . $item->dokterPegawai->nama . ' ' . $item->dokterPegawai->gelar_b,
-                // "petugas" => $item->tindakan->petugasPegawai->gelar_d . ' ' . $item->tindakan->petugasPegawai->nama . ' ' . $item->tindakan->petugasPegawai->gelar_b,
                 "tindakan" => $item->tindakan->nmTindakan,
                 "biaya" => $item->biaya,
                 "total" => $item->total,

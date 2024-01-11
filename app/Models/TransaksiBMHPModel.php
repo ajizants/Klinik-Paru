@@ -29,33 +29,4 @@ class TransaksiBMHPModel extends Model
         'biaya',
         'notrans',
     ];
-
-    // protected static function booted()
-    // {
-    //     // Event saat transaksi disimpan
-    //     static::saved(function ($transaksi) {
-    //         // dd('Event Transaksi Disimpan', $transaksi->id, $transaksi->kdBmhp);
-    //         self::updateStok($transaksi);
-    //     });
-
-    //     // Event saat transaksi dihapus
-    //     static::deleted(function ($transaksi) {
-    //         // dd('Event Transaksi Dihapus', $transaksi->id, $transaksi->kdBmhp);
-    //         self::updateStok($transaksi);
-    //     });
-    // }
-
-    // // Fungsi untuk mengupdate stok
-    // protected static function updateStok($transaksi)
-    // {
-    //     $bmhp = $transaksi->bmhp;
-    //     if ($bmhp) {
-    //         if ($transaksi->jml < 0) {
-    //             // Jika jenis transaksi adalah keluar, kurangi jumlah dari kolom 'keluar' di m_bmhp
-    //             $bmhp->decrement('keluar', abs($transaksi->jml));
-    //         }
-    //         // Update kolom 'sisa' di m_bmhp
-    //         $bmhp->update(['sisa' => $bmhp->stock_awal + $bmhp->masuk - $bmhp->keluar]);
-    //     }
-    // }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BiodataModel;
+use App\Models\PasienModel;
 use App\Models\KunjunganModel;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -13,7 +13,7 @@ class AntrianController extends Controller
     public function antrianIGD(Request $request)
     {
         $date = $request->input('date', now()->toDateString());
-        $data = KunjunganModel::with(['poli', 'biodata', 'tindakan', 'kelompok', 'petugas.pegawai'])
+        $data = KunjunganModel::with(['poli', 'biodata', 'tindakan', 'kelompok', 'petugas.pegawai.biodata'])
             ->whereHas('poli', function ($query) {
                 $query->where(function ($q) {
                     $q->where('oksigenasi', '<>', '')
@@ -103,7 +103,7 @@ class AntrianController extends Controller
                 "created_at" => $transaksi["tindakan"]["created_at"] ?? null,
                 "updated_at" => $transaksi["tindakan"]["updated_at"] ?? null,
                 "nip" => $transaksi["petugas"]["pegawai"]["nip"] ?? null,
-                "dokterpoli" => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? null),
+                "dokterpoli" => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? null),
                 "jabatan" => $transaksi["petugas"]["pegawai"]["nm_jabatan"] ?? null,
             ];
         }
@@ -113,7 +113,7 @@ class AntrianController extends Controller
     public function all(Request $request)
     {
         $date = $request->input('date', now()->toDateString());
-        $data = KunjunganModel::with(['poli', 'tujuan', 'biodata', 'tindakan', 'kelompok', 'petugas.pegawai'])
+        $data = KunjunganModel::with(['poli', 'tujuan', 'biodata', 'tindakan', 'kelompok', 'petugas.pegawai.biodata'])
             ->whereDate('tgltrans', $date)
             ->get();
 
@@ -185,7 +185,7 @@ class AntrianController extends Controller
                 "created_at" => $transaksi["tindakan"]["created_at"] ?? null,
                 "updated_at" => $transaksi["tindakan"]["updated_at"] ?? null,
                 "nip" => $transaksi["petugas"]["pegawai"]["nip"] ?? null,
-                "dokterpoli" => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? null),
+                "dokterpoli" => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? null),
                 "jabatan" => $transaksi["petugas"]["pegawai"]["nm_jabatan"] ?? null,
             ];
         }
@@ -198,7 +198,7 @@ class AntrianController extends Controller
     {
         $date = $request->input('date', now()->toDateString());
 
-        $data = KunjunganModel::with(['poli', 'biodata', 'tindakan', 'kelompok', 'petugas.pegawai'])
+        $data = KunjunganModel::with(['poli', 'biodata', 'tindakan', 'kelompok', 'petugas.pegawai.biodata'])
             ->whereHas('poli', function ($query) {
                 $query->where(function ($q) {
                     $q->where('oksigenasi', '<>', '')
@@ -226,7 +226,7 @@ class AntrianController extends Controller
         $norm = $request->input('norm');
         $date = $request->input('date', now()->toDateString());
 
-        $data = KunjunganModel::with(['poli', 'biodata', 'kelompok', 'petugas.pegawai'])
+        $data = KunjunganModel::with(['poli', 'biodata', 'kelompok', 'petugas.pegawai.biodata'])
             ->where('t_kunjungan.norm', 'LIKE', '%' . $norm . '%')
             ->whereDate('tgltrans', $date)
             ->get();
@@ -239,7 +239,7 @@ class AntrianController extends Controller
         $date = $request->input('date', now()->toDateString());
         $kode = str_replace('-', '', $date);
 
-        $data = BiodataModel::on('mysql')
+        $data = PasienModel::on('mysql')
             ->where('norm', 'LIKE', '%' . $norm . '%')
             ->get();
         $res = [];

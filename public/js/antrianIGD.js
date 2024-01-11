@@ -12,8 +12,8 @@ function dataTindakan() {
         data: { notrans: notrans },
         success: function (response) {
             response.forEach(function (item, index) {
-                var dokter = `${item.dokter_pegawai.gelar_d} ${item.dokter_pegawai.nama} ${item.dokter_pegawai.gelar_b}`;
-                var petugas = `${item.petugas_pegawai.gelar_d} ${item.petugas_pegawai.nama} ${item.petugas_pegawai.gelar_b}`;
+                var dokter = `${item.dokter.gelar_d} ${item.dokter.biodata.nama} ${item.dokter.gelar_b}`;
+                var petugas = `${item.petugas.gelar_d} ${item.petugas.biodata.nama} ${item.petugas.gelar_b}`;
                 var tindakan = `${item.tindakan.nmTindakan}`;
                 item.actions = `<a href="" class="edit"
                                     data-id="${item.id}"
@@ -27,8 +27,8 @@ function dataTindakan() {
                                     data-kdTind="${item.kdTind}"
                                     data-tindakan="${tindakan}"
                                     data-norm="${item.norm}"
-                                    data-petugas="${item.petugas_pegawai.nama}"
-                                    data-dokter="${item.dokter_pegawai.nama}"><i class="fas fa-trash"></i></a>`;
+                                    data-petugas="${petugas}"
+                                    data-dokter="${dokter}"><i class="fas fa-trash"></i></a>`;
                 item.no = index + 1;
                 if (item.transbmhp.length > 0) {
                     item.status = "sudah";
@@ -53,8 +53,8 @@ function dataTindakan() {
                     },
                     { data: "norm", className: "text-center col-2 p-2" },
                     { data: "tindakan.nmTindakan", className: "p-2" },
-                    { data: "petugas_pegawai.nama", className: "p-2" },
-                    { data: "dokter_pegawai.nama", className: "p-2" },
+                    { data: "petugas.biodata.nama", className: "p-2" },
+                    { data: "dokter.biodata.nama", className: "p-2" },
                 ],
                 order: [2, "asc"],
             });

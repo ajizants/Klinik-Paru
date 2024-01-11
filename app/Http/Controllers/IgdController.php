@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BMHPIGDInStokModel;
 use App\Models\BMHPModel;
+use App\Models\PetugasModel;
 use App\Models\TransaksiBMHPModel;
 use App\Models\TransaksiModel;
 use Illuminate\Http\Request;
@@ -38,8 +39,7 @@ class IgdController extends Controller
     public function cariDataTindakan(Request $request)
     {
         $notrans = $request->input('notrans');
-
-        $dataTindakan = TransaksiModel::with(['tindakan', 'transbmhp.tindakan', 'transbmhp.bmhp',  'petugasPegawai', 'dokterPegawai'])
+        $dataTindakan = TransaksiModel::with(['tindakan', 'transbmhp.tindakan', 'transbmhp.bmhp',  'petugas.biodata', 'dokter.biodata'])
             ->where('notrans', 'LIKE', '%' . $notrans . '%')
             ->get();
 
@@ -56,7 +56,6 @@ class IgdController extends Controller
         $dokter = $request->input('dokter');
         $created_at = $request->input('tgltrans');
         // $updated_at = $request->input('tgltind');
-
         // Pastikan $kdTind memiliki nilai yang valid sebelum menyimpan data
         if ($kdTind !== null) {
             // Membuat instance dari model KunjunganTindakan

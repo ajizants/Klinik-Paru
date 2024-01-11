@@ -17,8 +17,23 @@ function hitungTotalHarga() {
 }
 
 async function searchRMObat() {
+    let currentDate = new Date();
+
+    // Mendapatkan nilai tahun, bulan, hari, jam, menit, dan detik
+    let year = currentDate.getFullYear();
+    let month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Perhatikan bahwa getMonth() mengembalikan nilai mulai dari 0
+    let day = String(currentDate.getDate()).padStart(2, "0");
+    let hours = String(currentDate.getHours()).padStart(2, "0");
+    let minutes = String(currentDate.getMinutes()).padStart(2, "0");
+    let seconds = String(currentDate.getSeconds()).padStart(2, "0");
+
+    // Menggabungkan nilai-nilai tersebut menjadi format yang diinginkan
+    let formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    console.log(formattedDate);
+
     Swal.fire({
-        icon: "success",
+        icon: "info",
         title: "Sedang mencarikan data pasien...!!!",
     });
     var norm = "000001";
@@ -30,7 +45,7 @@ async function searchRMObat() {
         });
 
         if (response.length > 0) {
-            Swal.fire({
+            Toast.fire({
                 icon: "success",
                 title: "Data pasien ditemukan, lanjutkan transaksi...!!!",
             });
@@ -46,13 +61,13 @@ async function searchRMObat() {
             $("#nama").val(nama);
             $("#alamat").val(alamat);
             $("#notrans").val(notrans);
+            $("#tgltrans").val(formattedDate);
             $("#layanan").val("UMUM");
             $("#dokter").val("198907252019022004").trigger("change");
             $("#apoteker").val("197609262011012003").trigger("change");
 
             // Additional function calls as needed
             dataTindakan();
-            dataBMHP();
         } else {
             Swal.fire({
                 icon: "error",
@@ -77,9 +92,15 @@ $(document).ready(function () {
 
     $(".bmhp").select2({ theme: "bootstrap4" });
 
-    $("#tanggal").on("change", antrian);
+    $("#tanggal").on("change", function () {
+        antrian();
+        antrianAll();
+    });
 
-    $("#cariantrian").on("click", antrian);
+    $("#cariantrian").on("click", function () {
+        antrian();
+        antrianAll();
+    });
 
     $("#formbmhp").hide();
 
@@ -123,7 +144,7 @@ $(document).ready(function () {
 
     $("#tblBatal").on("click", function (e) {
         $(
-            "#norm, #nama, #alamat, #layanan,#tglTind,#tglTrans #notrans, #dokter, #petugas, #tindakan, #asktind, #bmhp, #qty, #modalidTind, #modalkdTind, #modalnorm, #modaltindakan, #modaldokter, #modalpetugas"
+            "#norm, #nama, #alamat, #layanan,#tglTind,#tglTrans, #notrans, #dokter, #petugas, #tindakan, #asktind, #bmhp, #qty, #modalidTind, #modalkdTind, #modalnorm, #modaltindakan, #modaldokter, #modalpetugas"
         ).val("");
 
         $("#dokter, #petugas, #tindakan, #bmhp, #qty").trigger("change");
@@ -132,7 +153,6 @@ $(document).ready(function () {
         tabletindakan.clear().destroy();
         var tablebmhp = $("#transaksiBMHP").DataTable();
         tablebmhp.clear().destroy();
-        startConfetti();
         antrian();
         scrollToAntrianSection();
         $("#formbmhp").hide();
@@ -195,6 +215,7 @@ $(document).ready(function () {
             if (!kdTind) dataKurang.push("Tindakan");
             if (!petugas) dataKurang.push("Petugas");
             if (!dokter) dataKurang.push("Dokter");
+            if (!tgltrans) dataKurang.push("Tanggal Transaksi");
 
             // Menampilkan notifikasi menggunakan Toast.fire
             swal.fire({
@@ -446,7 +467,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     let utterance = new SpeechSynthesisUtterance(
-        "selamat bertugas teman teman, aja kelalen madang, lan aja kelalen gosip, haha haha wkwk wkwk. Selamat tahun baru....!"
+        "selamat bertugas teman teman, aja kelalen madang, lan aja kelalen gosip, haha haha wkwk wkwk"
     );
 
     // Set bahasa ke bahasa Indonesia (id-ID)
@@ -467,13 +488,13 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(() => {
             // Create a new element for the greeting message
             const greetingMessage = document.createElement("div");
-            greetingMessage.textContent = "Selamat Tahun Baru....!"; // Your greeting message here
+            greetingMessage.textContent = "Selamat Ngodey...!"; // Your greeting message here
             greetingMessage.style.fontSize = "24px";
             greetingMessage.style.fontWeight = "bold";
             greetingMessage.style.color = "indigo";
             greetingMessage.style.position = "absolute";
             greetingMessage.style.top = "50%";
-            greetingMessage.style.left = "50%";
+            greetingMessage.style.left = "40%";
             greetingMessage.style.transform = "translate(-50%, -50%)";
             greetingMessage.style.animation = "zoomIn 3s"; // Add zoom-in animation
 

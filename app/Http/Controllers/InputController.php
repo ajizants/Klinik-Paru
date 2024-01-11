@@ -70,6 +70,7 @@ class InputController extends Controller
 
         $data = BMHPModel::with(['supplier', 'pabrikan'])
             ->get();
+        $formattedData = [];
         foreach ($data as $transaksi) {
             if ($transaksi["jenis"] !== 1) {
                 $nmjenis = "Obat";
@@ -77,8 +78,34 @@ class InputController extends Controller
                 $nmjenis = "BMHP";
             }
             $transaksi["nmjenis"] = $nmjenis;
+
+            $formattedData[] = [
+                "id" => $transaksi["id"],
+                "product_id"    => $transaksi["product_id"],
+                "idObat" => $transaksi["idObat"],
+                "nmObat" => $transaksi["nmObat"],
+                "jenis" => $transaksi["jenis"],
+                "nmPabrikan" => isset($transaksi["pabrikan"]) && is_array($transaksi["pabrikan"]) ? $transaksi["pabrikan"]["nmPabrikan"] : "Tidak Ditentukan",
+                "pabrikan" => isset($transaksi["pabrikan"]) && is_array($transaksi["pabrikan"]) ? $transaksi["pabrikan"]["pabrikan"] : "Tidak Ditentukan",
+                "nmSupplier" => isset($transaksi["supplier"]) && is_array($transaksi["supplier"]) ? $transaksi["supplier"]["nmSupplier"] : "Tidak Ditentukan",
+                "supplier" => isset($transaksi["supplier"]) && is_array($transaksi["supplier"]) ? $transaksi["supplier"]["id"] : "Tidak Ditentukan",
+                "sediaan" => $transaksi["sediaan"],
+                "sumber" => $transaksi["sumber"],
+                "tglPembelian" => $transaksi["tglPembelian"],
+                "ed" => $transaksi["ed"],
+                "hargaBeli" => $transaksi["hargaBeli"],
+                "hargaJual" => $transaksi["hargaJual"],
+                "stokBaru" => $transaksi["stokBaru"],
+                "keluar" => $transaksi["keluar"],
+                "sisa"  => $transaksi["sisa"],
+                "masuk" => $transaksi["masuk"],
+                "created_at" => $transaksi["created_at"],
+                "updated_at" => $transaksi["updated_at"],
+                "nmjenis" => $transaksi["nmjenis"],
+            ];
         }
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+        // return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
     }
     public function dxMedis()
     {
@@ -138,30 +165,5 @@ class InputController extends Controller
             ->where('stok_akhir', '>', 0)
             ->get();
         return response()->json($obat, 200, [], JSON_PRETTY_PRINT);
-    }
-    public function dokter()
-    {
-        $kdjab = [1, 7, 8];
-
-        $dokter = PegawaiModel::on('mysql')->whereIn('kd_jab', $kdjab)->get();
-
-        return response()->json($dokter);
-    }
-
-    public function perawat()
-    {
-        $kdjab = [10, 15];
-
-        $perawat = PegawaiModel::on('mysql')->whereIn('kd_jab', $kdjab)->get();
-
-        return response()->json($perawat, 200, [], JSON_PRETTY_PRINT);
-    }
-    public function apoteker()
-    {
-        $kdjab = [9];
-
-        $apoteker = PegawaiModel::on('mysql')->whereIn('kd_jab', $kdjab)->get();
-
-        return response()->json($apoteker, 200, [], JSON_PRETTY_PRINT);
     }
 }

@@ -21,7 +21,7 @@ class KunjunganModel extends Model
 
     public function biodata()
     {
-        return $this->hasOne(BiodataModel::class, 'norm', 'norm');
+        return $this->hasOne(PasienModel::class, 'norm', 'norm');
     }
 
     public function kelompok()

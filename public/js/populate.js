@@ -108,20 +108,24 @@ function populateBmhpOptions() {
     );
     obatSelectElement.append(placeholderOption).trigger("change");
     $.get("/api/bmhp", function (data) {
-        data.sort(function (a, b) {
-            var namaA = a.nmObat.toUpperCase();
-            var namaB = b.nmObat.toUpperCase();
-            if (namaA < namaB) {
-                return -1;
-            }
-            if (namaA > namaB) {
-                return 1;
-            }
-            return 0;
-        });
+        // data.sort(function (a, b) {
+        //     var namaA = a.nmObat.toUpperCase();
+        //     var namaB = b.nmObat.toUpperCase();
+        //     if (namaA < namaB) {
+        //         return -1;
+        //     }
+        //     if (namaA > namaB) {
+        //         return 1;
+        //     }
+        //     return 0;
+        // });
 
         data.forEach(function (obat) {
-            var obatStok = obat.nmObat + " ----(Stok: " + obat.sisa + ")----";
+            var obatStok =
+                obat.nmObat +
+                " \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0----(Stok: " +
+                obat.sisa +
+                ")----";
             var option = new Option(obatStok, obat.id, false, false);
             // var option = new Option(obat.nmObat, obat.product_id, false, false);
             obatSelectElement.append(option).trigger("change");
@@ -211,7 +215,8 @@ function populateDokterOptions() {
         data.forEach(function (dokter) {
             var namaLengkap =
                 dokter.gelar_d + " " + dokter.nama + " " + dokter.gelar_b;
-            var option = new Option(namaLengkap, dokter.nip, false, false);
+            var nip = dokter.nip.toString();
+            var option = new Option(namaLengkap, nip, false, false);
             dokterSelectElement.append(option).trigger("change");
             dokterModals.append(option).trigger("change");
         });
@@ -243,6 +248,26 @@ function populatePetugasOptions() {
 function populateApotekerOptions() {
     var petugasSelectElement = $("#apoteker");
     $.get("/api/apoteker", function (data) {
+        data.sort(function (a, b) {
+            var namaLengkapA = a.gelar_d + " " + a.nama + " " + a.gelar_b;
+            var namaLengkapB = b.gelar_d + " " + b.nama + " " + b.gelar_b;
+            return namaLengkapA.localeCompare(namaLengkapB, undefined, {
+                numeric: true,
+                sensitivity: "base",
+            });
+        });
+        data.forEach(function (petugas) {
+            var namaLengkap =
+                petugas.gelar_d + " " + petugas.nama + " " + petugas.gelar_b;
+            var option = new Option(namaLengkap, petugas.nip, false, false);
+            petugasSelectElement.append(option).trigger("change");
+        });
+    });
+}
+
+function populateAnalisOptions() {
+    var petugasSelectElement = $("#analis");
+    $.get("/api/analis", function (data) {
         data.sort(function (a, b) {
             var namaLengkapA = a.gelar_d + " " + a.nama + " " + a.gelar_b;
             var namaLengkapB = b.gelar_d + " " + b.nama + " " + b.gelar_b;

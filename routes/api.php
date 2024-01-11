@@ -10,6 +10,7 @@ use App\Http\Controllers\InputController;
 use App\Http\Controllers\IgdController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\NoAntrianController;
+use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PendaftaranKominfoController;
 use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\StokController;
@@ -31,9 +32,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //sumber daya
-Route::get('dokter', [InputController::class, 'dokter']);
-Route::get('perawat', [InputController::class, 'perawat']);
-Route::get('apoteker', [InputController::class, 'apoteker']);
+Route::get('dokter', [PegawaiController::class, 'dokter']);
+Route::get('perawat', [PegawaiController::class, 'perawat']);
+Route::get('apoteker', [PegawaiController::class, 'apoteker']);
+Route::get('analis', [PegawaiController::class, 'analis']);
 Route::get('dxMedis', [InputController::class, 'dxMedis']);
 
 Route::get('bmhp', [InputController::class, 'bmhp']);

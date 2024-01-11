@@ -41,7 +41,7 @@
             text-align: center;
             text-decoration: none;
             color: rgb(0, 0, 0);
-            font-size: 60px;
+            font-size: 100px;
             font-weight: bold;
 
         }
@@ -52,41 +52,57 @@
             border: 2px solid #555555;
             border-radius: 5px;
             text-decoration: none;
-            font-size: 60px;
+            font-size: 100px;
             cursor: pointer;
             transition: 0.3s;
+            -webkit-text-stroke: 2px #535efc;
+            /* Garis tepi untuk WebKit (Chrome, Safari) */
+            text-stroke: 2px #535efc;
+            /* Garis tepi untuk Firefox */
         }
 
         .judul {
             font-size: 4rem;
             font-weight: bold;
-            border: 1px solid #3498db;
-            /* Warna garis tepi dan ketebalan */
             padding: 5px;
-            /* Ruang di dalam garis tepi dan teks */
-            display: inline-block
+            display: inline-block;
+            -webkit-text-stroke: 2px #000000;
+            /* Garis tepi untuk WebKit (Chrome, Safari) */
+            text-stroke: 2px #000000;
+            /* Garis tepi untuk Firefox */
         }
 
         .ket {
             font-weight: bold;
-            border: 1px solid #3498db;
-            /* Warna garis tepi dan ketebalan */
             padding: 5px;
-            /* Ruang di dalam garis tepi dan teks */
-            display: block
+            display: block;
+            -webkit-text-stroke: 2px #000000;
+            /* Garis tepi untuk WebKit (Chrome, Safari) */
+            text-stroke: 2px #000000;
+            /* Garis tepi untuk Firefox */
+        }
+
+        .waktuLokal {
+            font-weight: bold;
+            padding: 5px;
+            display: block;
+            -webkit-text-stroke: 2px #000000;
+            /* Garis tepi untuk WebKit (Chrome, Safari) */
+            text-stroke: 2px #000000;
+            /* Garis tepi untuk Firefox */
         }
     </style>
 </head>
 
 <body>
-    {{-- <div class="container d-flex justify-content-center"> --}}
-    <H1 class="judul text-center text-light">KLINIK UTAMA KESEHATAN PARU MASYARAKAT</H1>
-    {{-- </div> --}}
-    {{-- <div class="container d-flex justify-content-center"> --}}
-    <h2 class="ket text-center text-light"> Silahkan Tekan Tombol Sesuai Jenis Layanan Anda Untuk Mendapatkan Nomor
-        Antrian
-    </h2>
-    {{-- </div> --}}
+    <div class="container d-flex justify-content-center mt-5">
+        <H1 class="judul text-center text-light">KLINIK UTAMA KESEHATAN PARU MASYARAKAT</H1>
+    </div>
+    <div class="container d-flex justify-content-center">
+        <h2 class="ket text-center text-light"> Silahkan Tekan Tombol Sesuai Jenis Layanan Anda Untuk Mendapatkan Nomor
+            Antrian
+        </h2>
+    </div>
     <input type="text" id="noAntrian" class="form-control" placeholder="Nomor Antrian" hidden>
     <input type="text" id="jenis" class="form-control" placeholder="jenis Layanan" hidden>
     <button onclick="cetakNoAntrian()">cetak</button>
@@ -94,11 +110,19 @@
     <div class="container d-flex justify-content-center">
         <button id="umum" class="btn btn-primary ambil" onclick="noUmum()">UMUM</button>
     </div>
-    <div class="container d-flex justify-content-center mt-5">
+    <div class="container d-flex justify-content-center my-5">
         <button id="bpjs" class="btn btn-primary ambil" onclick="noBpjs()">BPJS</button>
     </div>
+    {{-- <div class="container d-flex justify-content-center mt-5"> > --}}
+    <div id="ket" class="text-danger font-weight-bold fs-3 container d-flex justify-content-center bg-lime mt-6">
+        <span class="fs-3">Selamat Datang di Klinik Utama Kesehatan Paru Masyarakat, terimakasih telah menggunakan
+            layanan kami.</span>
+    </div>
 
-
+    <div class="container d-flex justify-content-center">
+        <p id="waktuLokal" class="fw-bold text-light fs-4"></p>
+    </div>
+    {{-- </div> --}}
     <!-- jQuery -->
     <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap 4 -->

@@ -6,17 +6,11 @@ function getLastNoAntrian() {
         success: function (response) {
             console.log(response);
             if ($.isEmptyObject(response)) {
-                let noAntri = 0;
-                $("#noAntrian").val(noAntri);
+                $("#noAntrian").val(0);
             } else {
                 let noAntri = parseInt(response.NoAntri);
-                console.log(
-                    "🚀 ~ file: noAntri.js:9 ~ getLastNoAntrian ~ noAntri:",
-                    noAntri
-                );
                 $("#noAntrian").val(noAntri);
                 $("#jenis").val(response.jenis);
-                var tgl = response.created_at;
             }
         },
         error: function (response) {
@@ -30,12 +24,12 @@ function noUmum() {
     if (noAntri == "") {
         getLastNoAntrian();
         $("#jenis").val("UMUM");
-        addNo();
+        incrementNoAntrian();
     } else {
         let noBaru = parseInt(noAntri) + 1;
         $("#noAntrian").val(noBaru);
         $("#jenis").val("UMUM");
-        addNo();
+        incrementNoAntrian();
     }
 }
 function noBpjs() {
@@ -43,38 +37,26 @@ function noBpjs() {
     if (noAntri == "") {
         getLastNoAntrian();
         $("#jenis").val("BPJS");
-        addNo();
+        incrementNoAntrian();
     } else {
         let noBaru = parseInt(noAntri) + 1;
         $("#noAntrian").val(noBaru);
         $("#jenis").val("BPJS");
-        addNo();
+        incrementNoAntrian();
     }
 }
 
-function addNo() {
-    var noAntri = $("#noAntrian").val();
-    if (noAntri.length < 3) {
-        noAntri = "0".repeat(3 - noAntri.length) + noAntri;
-    }
-    var jenis = $("#jenis").val();
-    console.log(
-        "🚀 ~ file: noAntri.js:55 ~ addNo ~ noAntri:",
-        noAntri,
-        " Jenis :",
-        jenis
-    );
+function incrementNoAntrian() {
+    let noAntri = $("#noAntrian").val() || 0;
+    noAntri = ("000" + noAntri).slice(-3); // Padding dengan nol di depan
+    let jenis = $("#jenis").val();
+
     $.ajax({
         url: "api/ambilNo",
         type: "POST",
-        data: {
-            noAntri: noAntri,
-            jenis: jenis,
-        },
+        data: { noAntri, jenis },
         success: function (response) {
             console.log(response);
-            // let noBaru = parseInt(noAntri) + 1;
-            // $("#noAntrian").val(noBaru);
             cetakNoAntrian();
         },
         error: function (response) {
@@ -84,19 +66,17 @@ function addNo() {
 }
 
 function cetakNoAntrian() {
-    var noAntri = $("#noAntrian").val();
-    if (noAntri.length < 3) {
-        noAntri = "0".repeat(3 - noAntri.length) + noAntri;
-    }
-    var jenis = $("#jenis").val();
-    var date = new Date();
-    var options = {
+    let noAntri = ("000" + $("#noAntrian").val()).slice(-3); // Padding dengan nol di depan
+    let jenis = $("#jenis").val();
+    let date = new Date();
+
+    let options = {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
     };
-    var options2 = {
+    let options2 = {
         hour: "2-digit",
         minute: "numeric",
         second: "numeric",
@@ -104,35 +84,65 @@ function cetakNoAntrian() {
         timeZone: "Asia/Jakarta",
     };
 
-    var tgl = date.toLocaleString("id-ID", options);
-    var jam = date.toLocaleString("id-ID", options2);
+    let tgl = date.toLocaleString("id-ID", options);
+    let jam = date.toLocaleString("id-ID", options2);
 
-    // Buat elemen HTML baru untuk mencetak teks
-    var printWindow = window.open("", "_blank");
+    let printWindow = window.open("", "_blank");
     printWindow.document.write(
-        "<html><head><title>Cetak No Antrian</title>" +
-            "<style>" +
-            "body { text-align: center; }" +
-            "h1 { font-size: 60px; font-family: sans-serif; font-weight: bold; margin-top: 6px;margin-bottom: 6px;}" +
-            ".judul { font-size: 20px; font-family: sans-serif; font-weight: bold; margin-top: 0px;margin-bottom: 0px;}" +
-            ".jenis { font-size: 20px; font-family: sans-serif; font-weight: bold; }" +
-            ".time { font-size: 18px; font-family: sans-serif; margin-top: 0px;margin-bottom: 0px;}" +
-            "</style></head><body>"
+        `<html><head><title>Cetak No Antrian</title>` +
+            `<style>body{text-align:center;}h1{font-size:60px;font-family:sans-serif;font-weight:bold;margin-top:6px;margin-bottom:6px;}` +
+            `.judul{font-size:20px;font-family:sans-serif;font-weight:bold;margin-top:0px;margin-bottom:0px;}` +
+            `.jenis{font-size:20px;font-family:sans-serif;font-weight:bold;}.time{font-size:18px;font-family:sans-serif;margin-top:0px;margin-bottom:0px;}</style></head><body>`
     );
-    printWindow.document.write("<p class='judul'>Klinik Utama Kesehatan</p>");
-    printWindow.document.write("<p class='judul'>Paru Masyarakat</p>");
-    printWindow.document.write("<h1>" + noAntri + "</h1>");
-    printWindow.document.write("<p class='jenis'>" + jenis + "</p>");
-    printWindow.document.write("<p class='time'>" + tgl + "</p>");
-    printWindow.document.write("<p class='time'>" + jam + "</p>");
-    printWindow.document.write("</body></html>");
 
-    // Panggil fungsi cetak pada jendela baru
+    printWindow.document.write(`<p class='judul'>Klinik Utama Kesehatan</p>`);
+    printWindow.document.write(`<p class='judul'>Paru Masyarakat</p>`);
+    printWindow.document.write(`<h1>${noAntri}</h1>`);
+    printWindow.document.write(`<p class='jenis'>${jenis}</p>`);
+    printWindow.document.write(`<p class='time'>${tgl}</p>`);
+    printWindow.document.write(`<p class='time'>${jam}</p>`);
+    printWindow.document.write(`</body></html>`);
+
     printWindow.print();
     printWindow.document.close();
 }
+
 document.addEventListener("DOMContentLoaded", function () {
     getLastNoAntrian();
-    let no = document.getElementById(noAntrian);
-    console.log("🚀 ~ file: noAntri.js:80 ~ no:", no);
+    console.log("🚀 ~ file: noAntri.js:80 ~ no:", $("#noAntrian").val());
 });
+
+// Fungsi untuk memulai antrian
+function startAntrian(jenis) {
+    getLastNoAntrian();
+    $("#jenis").val(jenis);
+    incrementNoAntrian();
+}
+
+// Fungsi untuk mengonversi zona waktu menjadi format yang sesuai
+function konversiZonaWaktu(tanggal) {
+    const opsi = {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        timeZone: "Asia/Jakarta",
+    };
+    return tanggal.toLocaleString("id-ID", opsi);
+}
+
+// Dapatkan waktu lokal saat ini
+const waktuSaatIni = new Date();
+
+// Tampilkan waktu lokal di dalam elemen HTML
+const waktuLokalElemen = document.getElementById("waktuLokal");
+waktuLokalElemen.textContent = "Purwokerto, " + konversiZonaWaktu(waktuSaatIni);
+
+setInterval(function () {
+    const ketElemen = document.getElementById("ket");
+    ketElemen.style.visibility =
+        ketElemen.style.visibility === "visible" ? "hidden" : "visible";
+}, 1000);

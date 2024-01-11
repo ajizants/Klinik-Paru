@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
     //Kasir
     Route::get('kasir', [HomeController::class, 'kasir'])->name('kasir')->middleware('role:kasir');
     Route::get('lte', [HomeController::class, 'lte'])->name('lte')->middleware('role:kasir');
-    //dispenser
+    //Laborat
+    Route::get('lab', [HomeController::class, 'lab'])->name('lab')->middleware('role:lab');
 });
 Route::get('dispenser', [HomeController::class, 'dispenser'])->name('dispenser');
