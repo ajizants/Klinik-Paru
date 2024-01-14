@@ -110,6 +110,89 @@ class AntrianController extends Controller
 
         return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
     }
+    public function antrianLaboratorium(Request $request)
+    {
+        $date = $request->input('date', now()->toDateString());
+        $data = KunjunganModel::with(['poli', 'biodata', 'tindakan', 'kelompok', 'petugas.pegawai.biodata'])
+            ->whereHas('poli', function ($query) {
+                $query->where(function ($q) {
+                    $q->where('oksigenasi', '<>', '')
+                        ->where('oksigenasi', 'NOT LIKE', '%-%')
+                        ->orWhere('nebulizer', '<>', '')
+                        ->where('nebulizer', 'NOT LIKE', '%-%')
+                        ->orWhere('ekg', '<>', '')
+                        ->where('ekg', 'NOT LIKE', '%-%')
+                        ->orWhere('mantoux', '<>', '')
+                        ->where('mantoux', 'NOT LIKE', '%-%')
+                        ->orWhere('spirometri', '<>', '')
+                        ->where('spirometri', 'NOT LIKE', '%-%')
+                        ->orWhere('injeksi', '<>', '')
+                        ->where('injeksi', 'NOT LIKE', '%-%')
+                        ->orWhere('infus', '<>', '')
+                        ->where('infus', 'NOT LIKE', '%-%');
+                });
+            })
+            ->whereDate('tgltrans', $date)
+            ->get();
+
+
+        $formattedData = [];
+        foreach ($data as $transaksi) {
+
+            if (isset($transaksi["tindakan"]) && isset($transaksi["tindakan"]["id"]) && $transaksi["tindakan"]["id"] !== null) {
+                $status = "sudah";
+            } else {
+                $status = "belum";
+            }
+
+            $transaksi["status"] = $status;
+
+            $formattedData[] = [
+                "notrans" => $transaksi["notrans"] ?? null,
+                "norm" => $transaksi["norm"] ?? null,
+                "nourut" => $transaksi["nourut"] ?? null,
+                "noasuransi" => $transaksi["noasuransi"] ?? null,
+                "biaya" => $transaksi["kelompok"]["biaya"] ?? null,
+                "noktp" => $transaksi["biodata"]["noktp"] ?? null,
+                "namapasien" => $transaksi["biodata"]["nama"] ?? null,
+                "alamatpasien" => $transaksi["biodata"]["alamat"] ?? null,
+                "rtrwpasien" => $transaksi["biodata"]["rtrw"] ?? null,
+                "kelaminpasien" => $transaksi["biodata"]["jeniskel"] ?? null,
+                "kelompok" => $transaksi["biodata"]["kelompok"] ?? null,
+                "provinsi" => $transaksi["biodata"]["provinsi"] ?? null,
+                "kabupaten" => $transaksi["biodata"]["kabupaten"] ?? null,
+                "kecamatan" => $transaksi["biodata"]["kecamatan"] ?? null,
+                "kelurahan" => $transaksi["biodata"]["kelurahan"] ?? null,
+                "rtrw" => $transaksi["biodata"]["rtrw"] ?? null,
+                "agama" => $transaksi["biodata"]["agama"] ?? null,
+                "pendidikan" => $transaksi["biodata"]["pendidikan"] ?? null,
+
+                "tgltrans" => $transaksi["poli"]["tgltrans"] ?? null,
+                "rontgen" => $transaksi["poli"]["rontgen"] ?? null,
+                "konsul" => $transaksi["poli"]["konsul"] ?? null,
+                "tcm" => $transaksi["poli"]["tcm"] ?? null,
+                "bta" => $transaksi["poli"]["bta"] ?? null,
+                "hematologi" => $transaksi["poli"]["hematologi"] ?? null,
+                "kimiaDarah" => $transaksi["poli"]["kimiaDarah"] ?? null,
+                "imunoSerologi" => $transaksi["poli"]["imunoSerologi"] ?? null,
+                "terapi" => $transaksi["poli"]["terapi"] ?? null,
+
+                "status" => $status,
+
+                "idtindakan" => $transaksi["tindakan"]["id"] ?? null,
+                "kdTind" => $transaksi["tindakan"]["kdTind"] ?? null,
+                "petugastindakan" => $transaksi["tindakan"]["petugas"] ?? null,
+                "doktertindakan" => $transaksi["tindakan"]["dokter"] ?? null,
+                "created_at" => $transaksi["tindakan"]["created_at"] ?? null,
+                "updated_at" => $transaksi["tindakan"]["updated_at"] ?? null,
+                "nip" => $transaksi["petugas"]["pegawai"]["nip"] ?? null,
+                "dokterpoli" => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? null),
+                "jabatan" => $transaksi["petugas"]["pegawai"]["nm_jabatan"] ?? null,
+            ];
+        }
+
+        return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
+    }
     public function all(Request $request)
     {
         $date = $request->input('date', now()->toDateString());

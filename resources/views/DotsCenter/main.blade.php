@@ -1,5 +1,5 @@
 {{-- @extends('layouts.layout') --}}
-@extends('tamplate.lte')
+@extends('Template.lte')
 
 @section('content')
     @include('DotsCenter.antrian')
@@ -14,11 +14,11 @@
     </div>
     <!-- /.content-wrapper -->
 
-    @include('Tamplate.footer')
+    @include('Template.footer')
 
     </div>
     @include('DotsCenter.modals')
-    @include('Tamplate.script')
+    @include('Template.script')
 
     <!-- my script -->
     <script>

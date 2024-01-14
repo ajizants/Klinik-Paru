@@ -1,5 +1,5 @@
 {{-- @extends('layouts.layout') --}}
-@extends('tamplate.lte')
+@extends('Template.lte')
 
 @section('content')
     <!-- Begin Page Content -->
@@ -38,10 +38,10 @@
     </div>
     <!-- /.content-wrapper -->
 
-    @include('Tamplate.footer')
+    @include('Template.footer')
 
     </div>
-    @include('Tamplate.script')
+    @include('Template.script')
 
     <!-- my script -->
     <script src="{{ asset('vendor/chart.js/Chart.min.js') }}"></script>

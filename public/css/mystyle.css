@@ -92,3 +92,11 @@ div[style*="animation: zoomIn"] {
         font-size: 1.25rem;
     }
 }
+
+#tabelPemeriksaan .select-checkbox,
+#tabelPemeriksaan .form-check-label,
+#tabelPemeriksaan .form-control {
+    display: inline-block;
+    vertical-align: middle; /* Menyelaraskan vertikal */
+    margin-bottom: 0; /* Menghapus margin bawah pada elemen form-control */
+}

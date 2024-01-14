@@ -1,4 +1,4 @@
-@extends('tamplate.lte')
+@extends('Template.lte')
 
 
 @section('content')
@@ -14,14 +14,14 @@
     </div>
     <!-- /.content-wrapper -->
 
-    @include('Tamplate.footer')
+    @include('Template.footer')
 
     </div>
-    @include('Tamplate.script')
+    @include('Template.script')
 
 
     <!-- my script -->
-    <script src="{{ asset('js/tamplate.js') }}"></script>
+    <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
     <script src="{{ asset('js/mainIGD.js') }}"></script>
     <script>

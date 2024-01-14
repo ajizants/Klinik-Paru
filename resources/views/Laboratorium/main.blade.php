@@ -1,9 +1,9 @@
 {{-- @extends('layouts.layout') --}}
-@extends('tamplate.lte')
+@extends('Template.lte')
 
 @section('content')
-    @include('laboratorium.antrian')
-    @include('laboratorium.input')
+    @include('Laboratorium.antrian')
+    @include('Laboratorium.input')
 
 
 
@@ -16,13 +16,13 @@
     </div>
     <!-- /.content-wrapper -->
 
-    @include('Tamplate.footer')
+    @include('Template.footer')
 
     </div>
-    @include('Tamplate.script')
+    @include('Template.script')
 
     <!-- my script -->
-    <script src="{{ asset('js/tamplate.js') }}"></script>
+    <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
     {{-- <script src="{{ asset('js/antrianFarmasi.js') }}"></script> --}}
     <script src="{{ asset('js/mainLab.js') }}"></script>

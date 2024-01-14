@@ -37,11 +37,11 @@
         </div>
 
         <!-- Navbar -->
-        @include('Tamplate.navbar')
+        @include('Template.navbar')
         <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
-        @include('Tamplate.sidebar')
+        @include('Template.sidebar')
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper" id="topSection">

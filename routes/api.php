@@ -14,6 +14,7 @@ use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PendaftaranKominfoController;
 use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\StokController;
+use App\Http\Controllers\LaboratoriumController;
 
 
 /*
@@ -86,9 +87,13 @@ Route::get('editPTB', [DotsController::class, 'editPTB']);
 Route::get('layanan', [KasirController::class, 'Layanan']);
 Route::post('antrianKasir', [KasirController::class, 'index']);
 
+//laboratorium
+Route::post('antrianLaboratorium', [AntrianController::class, 'antrianLaboratorium']);
+Route::get('layananlab', [LaboratoriumController::class, 'layananlab']);
+Route::post('cariLaboratorium', [LaboratoriumController::class, 'index']);
+Route::post('addTransaksiLab', [LaboratoriumController::class, 'addTransaksi']);
 
 //farmasi
-
 //sumberdaya apotik
 Route::post('antrianFarmasi', [FarmasiController::class, 'index']);
 Route::get('stokbmhp', [StokController::class, 'stokbmhp']);

@@ -1,4 +1,4 @@
-@extends('tamplate.lte')
+@extends('Template.lte')
 {{-- @extends('layouts.layout') --}}
 
 @section('content')
@@ -105,10 +105,10 @@
     </div>
     <!-- /.content-wrapper -->
 
-    @include('Tamplate.footer')
+    @include('Template.footer')
 
     </div>
-    @include('Tamplate.script')
+    @include('Template.script')
 
     <!-- my script -->
     <script src="{{ asset('js/report.js') }}"></script>

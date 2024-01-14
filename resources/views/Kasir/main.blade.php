@@ -1,8 +1,8 @@
-@extends('Tamplate.lte')
+@extends('Template.lte')
 
 @section('content')
-    @include('kasir.antrian')
-    @include('kasir.input')
+    @include('Kasir.antrian')
+    @include('Kasir.input')
 
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
@@ -25,7 +25,7 @@
     {{-- --SweetAlert2-- --}}
     <script src=" {{ asset('vendor/sweetalert2/sweetalert2.min.js') }}"></script>
     <!-- my script -->
-    <script src="{{ asset('js/tamplate.js') }}"></script>
+    <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
     <script src="{{ asset('js/antrianKasir.js') }}"></script>
     <script src="{{ asset('js/mainKasir.js') }}"></script>
