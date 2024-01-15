@@ -100,26 +100,29 @@ async function searchRMObat() {
     }
 }
 
-var table; // Declare the DataTable variable outside the function
+let table; // Declare the DataTable variable outside the function
 
-function layanan() {
-    if ($.fn.DataTable.isDataTable("#tabelPemeriksaan")) {
+function layanan(kelas, tb) {
+    // console.log("🚀 ~ layanan ~ tb:", tb);
+    // console.log("🚀 ~ layanan ~ kelas:", kelas);
+    if ($.fn.DataTable.isDataTable("#" + tb)) {
         table.destroy();
     }
-    const kelas = 9;
-    table = $("#tabelPemeriksaan").DataTable({
+
+    // let kelas = kelas;
+    table = $("#" + tb).DataTable({
         ajax: {
             url: "/api/layananlab",
             type: "POST",
             dataType: "json",
-            dataSrc: "data", // Assuming your data is nested under a key called 'data'
+            dataSrc: "data",
             data: { kelas: kelas },
         },
         columns: [
             {
                 data: null,
                 render: function (data, type, row) {
-                    return `<input type="checkbox" class="select-checkbox mt-1 data-checkbox" id="${row.idLayanan}">`;
+                    return `<input type="checkbox" class="select-checkbox mt-1 data-checkbox ${tb}" id="${row.idLayanan}">`;
                 },
             },
             {
@@ -131,7 +134,7 @@ function layanan() {
             {
                 data: null,
                 render: function (data, type, row) {
-                    return `<input type="text" class="form-control-sm col" readonly id="ket${row.idLayanan}">`;
+                    return `<input type="text" class="form-control-sm col-6" readonly id="ket${row.idLayanan}">`;
                 },
             },
             {
@@ -151,61 +154,35 @@ function layanan() {
             },
         ],
         order: [1, "asc"],
-        scrollY: "335px", // Atur tinggi scrol
-        scrollCollapse: true, // Biarkan scrol jika kurang dari tinggi yang ditentukan
+        scrollY: "300px", // Atur tinggi scrol
+        scrollCollapse: false, // Biarkan scrol jika kurang dari tinggi yang ditentukan
         paging: false, // Matikan paging
+        responsive: true,
     });
 
-    initializeTableEvents();
+    initializeTableEvents(tb);
 }
 
-// Function to toggle readonly attribute on text inputs based on checkbox state
 function toggleInputReadonly(isChecked, idLayanan) {
-    var inputId = "#hasil" + idLayanan;
+    var inputId = "#ket" + idLayanan;
     $(inputId).prop("readonly", !isChecked);
 }
-function initializeTableEvents() {
-    // Event listener for pilih-semua checkbox
-    $("#pilih-semua").on("change", function () {
+function initializeTableEvents(tb, idTabel) {
+    $("#" + tb + "tbody").on("change", 'input[type="checkbox"]', function () {
         var isChecked = $(this).prop("checked");
-        $('input[type="checkbox"]', table.rows().nodes()).prop(
-            "checked",
-            isChecked
-        );
-        toggleInputReadonly(isChecked);
+        var rowData = table.row($(this).closest("tr")).data();
+        toggleInputReadonly(isChecked, rowData.idLayanan);
     });
 
-    // Event listener for individual checkboxes
-    $("#tabelPemeriksaan tbody").on(
-        "change",
-        'input[type="checkbox"]',
-        function () {
-            var isChecked = $(this).prop("checked");
-            var rowData = table.row($(this).closest("tr")).data();
-
-            toggleInputReadonly(isChecked, rowData.idLayanan);
-        }
-    );
-
     // Event listener for individual text inputs
-    $("#tabelPemeriksaan tbody").on(
-        "change",
-        'input[type="text"]',
-        function () {
-            var inputValue = $(this).val();
-            var rowData = table.row($(this).closest("tr")).data();
-            // console.log("Input ID:", rowData.idLayanan, "Value:", inputValue);
-        }
-    );
-
-    // Function to toggle readonly attribute on text inputs based on checkbox state
-    function toggleInputReadonly(isChecked, idLayanan) {
-        var inputId = "#ket" + idLayanan;
-        $(inputId).prop("readonly", !isChecked);
-    }
+    $("#" + tb + "tbody").on("change", 'input[type="text"]', function () {
+        var inputValue = $(this).val();
+        var rowData = table.row($(this).closest("tr")).data();
+    });
+    toggleInputReadonly();
 }
 
-function dataLab() {
+async function dataLab() {
     var notrans = $("#notrans").val();
 
     if ($.fn.DataTable.isDataTable("#dataTrans")) {
@@ -213,43 +190,52 @@ function dataLab() {
         table.destroy();
     }
 
-    $.ajax({
-        url: "/api/cariLaboratorium",
-        type: "POST",
-        data: { notrans: notrans },
-        success: function (response) {
-            response.forEach(function (item, index) {
-                item.actions = `<a href="" class="edit"
-                                    data-id="${item.idLab}"
-                                    data-norm="${item.norm}"
-                                    ><i class="fas fa-pen-to-square pr-3"></i></a>
-                                <a href="" class="delete"
-                                    data-id="${item.idLab}"
-                                    data-norm="${item.norm}"
-                                    ><i class="fas fa-trash"></i></a>`;
-                item.no = index + 1;
-            });
+    try {
+        const response = await fetch("/api/cariLaboratorium", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ notrans: notrans }),
+        });
 
-            $("#dataTrans").DataTable({
-                data: response,
-                columns: [
-                    { data: "actions", className: "px-0 col-1 text-center" },
-                    { data: "no" },
-                    { data: "norm" },
-                    { data: "layanan.nmLayanan" },
-                    { data: "ket" },
-                ],
-                order: [1, "asc"],
-                scrollY: "335px", // Atur tinggi scrol
-                scrollCollapse: true, // Biarkan scrol jika kurang dari tinggi yang ditentukan
-                paging: false, // Matikan paging
-            });
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-        },
-    });
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        data.forEach((item, index) => {
+            item.actions = `<a href="" class="edit"
+                                data-id="${item.idLab}"
+                                data-norm="${item.norm}"
+                                ><i class="fas fa-pen-to-square pr-3"></i></a>
+                            <a href="" class="delete"
+                                data-id="${item.idLab}"
+                                data-norm="${item.norm}"
+                                ><i class="fas fa-trash"></i></a>`;
+            item.no = index + 1;
+        });
+
+        $("#dataTrans").DataTable({
+            data: data,
+            columns: [
+                { data: "actions", className: "px-0 col-1 text-center" },
+                { data: "no" },
+                { data: "norm" },
+                { data: "layanan.nmLayanan" },
+                { data: "ket" },
+            ],
+            order: [1, "asc"],
+            scrollY: "320px", // Atur tinggi scroll
+            scrollCollapse: true, // Biarkan scroll jika kurang dari tinggi yang ditentukan
+            paging: false, // Matikan paging
+        });
+    } catch (error) {
+        console.error("Error:", error.message);
+    }
 }
+
 function simpan() {
     var dataTerpilih = [];
     var norm = $("#norm").val();
@@ -305,6 +291,7 @@ function simpan() {
             });
         }
 
+        console.log(dataTerpilih);
         fetch("/api/addTransaksiLab", {
             method: "POST",
             headers: {
@@ -337,6 +324,12 @@ function simpan() {
                     "There has been a problem with your fetch operation:",
                     error
                 );
+                Swal.fire({
+                    icon: "error",
+                    title:
+                        "There has been a problem with your fetch operation:" +
+                        error,
+                });
             });
     }
 }
@@ -351,9 +344,34 @@ $(document).ready(function () {
         }
     });
     $("#tabelData,#dataTrans").DataTable({
-        scrollY: "335px", // Atur tinggi scrol
+        scrollY: "300px", // Atur tinggi scrol
     });
     populateDokterOptions();
     populateAnalisOptions();
-    layanan();
+    layanan(91, "hematologi");
+    layanan(92, "kimia");
+    layanan(93, "imuno");
+    layanan(94, "bakteriologi");
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Fungsi untuk menangani klik pada checkbox "pilih-semua" untuk setiap tabel
+    function handlePilihSemuaClick(pilihSemuaId, checkboxClass) {
+        const pilihSemuaCheckbox = document.getElementById(pilihSemuaId);
+
+        pilihSemuaCheckbox.addEventListener("click", function () {
+            const checkboxes = document.querySelectorAll(`.${checkboxClass}`);
+
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = pilihSemuaCheckbox.checked;
+            });
+        });
+    }
+
+    // Panggil fungsi untuk setiap tabel
+    handlePilihSemuaClick("pilih-hematologi", "hematologi");
+    handlePilihSemuaClick("pilih-bakteriologi", "bakteriologi");
+    handlePilihSemuaClick("pilih-imuno", "imuno");
+    handlePilihSemuaClick("pilih-kimia", "kimia");
+    // ... tambahkan sesuai kebutuhan
 });

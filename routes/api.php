@@ -89,7 +89,7 @@ Route::post('antrianKasir', [KasirController::class, 'index']);
 
 //laboratorium
 Route::post('antrianLaboratorium', [AntrianController::class, 'antrianLaboratorium']);
-Route::get('layananlab', [LaboratoriumController::class, 'layananlab']);
+Route::post('layananlab', [LaboratoriumController::class, 'layananlab']);
 Route::post('cariLaboratorium', [LaboratoriumController::class, 'index']);
 Route::post('addTransaksiLab', [LaboratoriumController::class, 'addTransaksi']);
 

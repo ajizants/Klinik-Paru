@@ -30,6 +30,19 @@ class NoAntrianController extends Controller
 
         return response()->json($antrian, 200, [], JSON_PRETTY_PRINT);
     }
+    private function noakhir(Request $request)
+    {
+        // Ambil tanggal dari request atau gunakan tanggal sekarang jika tidak ada
+        $tgl = $request->input('tgl', now()->toDateString());
+        // dd($tgl);
+        // Ambil nomor antrian terakhir berdasarkan tanggal
+        $antrian = NoAntrianModel::on('antrian')
+            ->whereDate('Tanggal', $tgl)
+            ->orderBy('NoAntri', 'desc')
+            ->first();
+
+        return response()->json($antrian, 200, [], JSON_PRETTY_PRINT);
+    }
 
     /**
      * Store a newly created resource in storage.

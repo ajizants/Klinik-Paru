@@ -24,9 +24,10 @@ class LaboratoriumController extends Controller
     /**
      * Show the form for take resource.
      */
-    public function layananlab()
+    public function layananlab(Request $request)
     {
-        $data = LayananModel::where('kelas', 'like', '%9%')
+        $kelas = $request->input('kelas');
+        $data = LayananModel::where('kelas', 'like', '%' . $kelas . '%')
             ->where('status', 'like', '%1%')
             ->get();
 
@@ -76,7 +77,7 @@ class LaboratoriumController extends Controller
                         'petugas' => $data['petugas'],
                         'dokter' => $data['dokter'],
                         'idLayanan' => $data['idLayanan'],
-                        'hasil' => $data['hasil'],
+                        'ket' => $data['ket'],
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
