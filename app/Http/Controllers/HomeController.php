@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class HomeController extends Controller
 {
     public function lte()
@@ -62,6 +60,11 @@ class HomeController extends Controller
         $title = 'LABORATORIUM';
         return view('Laboratorium.main')->with('title', $title);
     }
+    public function riwayatlab()
+    {
+        $title = 'Riwayat Laboratorium';
+        return view('Laboratorium.RiwayatLab.main')->with('title', $title);
+    }
     public function report()
     {
         $title = 'Report IGD';
@@ -73,5 +76,11 @@ class HomeController extends Controller
         $title = 'Ambil Antrian';
 
         return view('Dispenser.main')->with('title', $title);
+    }
+    public function displayAntrian()
+    {
+        $title = 'Daftar Tunggu';
+
+        return view('Display.main')->with('title', $title);
     }
 }

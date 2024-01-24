@@ -100,3 +100,19 @@ div[style*="animation: zoomIn"] {
     vertical-align: middle; /* Menyelaraskan vertikal */
     margin-bottom: 0; /* Menghapus margin bawah pada elemen form-control */
 }
+
+.rotate {
+    transform: rotate(-90deg);
+    transform-origin: center center;
+}
+
+.LayLab {
+    /* Set lebar kolom menjadi 50% */
+    width: 48%;
+
+    /* Set padding menjadi 0 */
+    padding: 0;
+
+    /* Set margin menjadi 0 */
+    margin: 0;
+}

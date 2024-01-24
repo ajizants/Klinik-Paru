@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KunjunganModel;
 use App\Models\LaboratoriumModel;
 use App\Models\LayananModel;
 use Illuminate\Http\Request;
@@ -15,10 +16,34 @@ class LaboratoriumController extends Controller
     public function index(Request $request)
     {
         $notrans = $request->input('notrans');
-        $lab = LaboratoriumModel::with('layanan', 'petugas.biodata', 'dokter.biodata')
+        $data = LaboratoriumModel::with('layanan', 'petugas.biodata', 'dokter.biodata')
             ->where('notrans', 'like', '%' . $notrans . '%')
             ->get();
-        return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
+
+        $lab = json_decode($data, true);
+        $formattedData = [];
+        foreach ($lab as $transaksi) {
+
+            $formattedData[] = [
+                "idLab" => $transaksi["idLab"] ?? null,
+                "notrans" => $transaksi["notrans"] ?? null,
+                "norm" => $transaksi["norm"] ?? null,
+                "ket" => $transaksi["ket"] ?? null,
+                "idLayanan" => $transaksi["idLayanan"] ?? null,
+                "NamaLayanan" => $transaksi["layanan"]["nmLayanan"] ?? null,
+                "jumlah" => $transaksi["jumlah"] ?? null,
+                "nippetugas" => $transaksi["petugas"]["biodata"]["nip"] ?? null,
+                "petugas" => ($transaksi["petugas"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["gelar_b"] ?? null),
+                "nippetugas" => $transaksi["petugas"]["biodata"]["nip"] ?? null,
+                "dokter" => ($transaksi["dokter"]["gelar_d"] ?? null) . ' ' . ($transaksi["dokter"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["dokter"]["gelar_b"] ?? null),
+                "created_at" => $transaksi["created_at"] ?? null,
+                "updated_at" => $transaksi["updated_at"] ?? null,
+
+            ];
+        }
+        // dd($formattedData);
+        return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
+        // return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
     }
 
     /**
@@ -56,7 +81,7 @@ class LaboratoriumController extends Controller
         // Validasi bahwa dataTerpilih harus array dan tidak boleh kosong
         if (!is_array($dataTerpilih) || empty($dataTerpilih)) {
             return response()->json([
-                'message' => 'Data terpilih tidak valid atau kosong'
+                'message' => 'Data terpilih tidak valid atau kosong',
             ], 400);
         }
         // dd($dataTerpilih);
@@ -83,7 +108,7 @@ class LaboratoriumController extends Controller
                     ];
                 } else {
                     return response()->json([
-                        'message' => 'Data tidak lengkap'
+                        'message' => 'Data tidak lengkap',
                     ], 500);
                 }
             }
@@ -95,41 +120,119 @@ class LaboratoriumController extends Controller
             DB::commit();
 
             return response()->json([
-                'message' => 'Data berhasil disimpan'
+                'message' => 'Data berhasil disimpan',
             ], 201);
         } catch (\Exception $e) {
             // Rollback transaksi database jika terjadi kesalahan
             DB::rollBack();
-
+            dd($e);
             return response()->json([
-                'message' => 'Terjadi kesalahan saat menyimpan data'
+                'message' => 'Terjadi kesalahan saat menyimpan data',
             ], 500);
         }
     }
-
-
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function deleteLab(Request $request)
     {
-        //
+        $id = $request->input("idLab");
+        // dd($id);
+        // Memastikan $id tidak null sebelum memanggil fungsi destroyLab
+        if ($id !== null) {
+            // Memanggil metode destroyLab dari model
+            LaboratoriumModel::destroyLab($id);
+
+            // ... melakukan tindakan lainnya setelah penghapusan ...
+
+            return response()->json(['message' => 'Data laboratorium berhasil dihapus.']);
+        } else {
+            // Handle kasus nilai $id null
+            return response()->json(['message' => 'ID tidak valid.'], 400);
+        }
     }
+
+    public function riwayat(Request $request)
+    {
+        $tglAwal = $request->input('tglAwal', now()->toDateString());
+        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
+        // dd($tglAkhir);
+        $notrans = $request->input('notrans');
+        $data = KunjunganModel::with('riwayatLab', 'riwayatLab.layanan', 'riwayatLab.petugas.biodata', 'riwayatLab.dokter.biodata')
+            ->where('notrans', 'like', '%' . $notrans . '%')
+            ->whereBetween(DB::raw('DATE(tglTrans)'), [$tglAwal, $tglAkhir])
+            ->whereHas('riwayatLab')
+            ->get();
+        // dd($data);
+        $lab = json_decode($data, true);
+        $formattedData = [];
+        foreach ($lab as $transaksi) {
+
+            $formattedData[] = [
+                "idLab" => $transaksi["idLab"] ?? null,
+                "notrans" => $transaksi["notrans"] ?? null,
+                "norm" => $transaksi["norm"] ?? null,
+                "ket" => $transaksi["ket"] ?? null,
+                "idLayanan" => $transaksi["idLayanan"] ?? null,
+                "NamaLayanan" => $transaksi["layanan"]["nmLayanan"] ?? null,
+                "jumlah" => $transaksi["jumlah"] ?? null,
+                "nippetugas" => $transaksi["petugas"]["biodata"]["nip"] ?? null,
+                "petugas" => ($transaksi["petugas"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["gelar_b"] ?? null),
+                "nippetugas" => $transaksi["petugas"]["biodata"]["nip"] ?? null,
+                "dokter" => ($transaksi["dokter"]["gelar_d"] ?? null) . ' ' . ($transaksi["dokter"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["dokter"]["gelar_b"] ?? null),
+                "created_at" => $transaksi["created_at"] ?? null,
+                "updated_at" => $transaksi["updated_at"] ?? null,
+            ];
+        }
+        // dd($formattedData);
+        // return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
+        return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
+    }
+    public function rekapBpjsUmum(Request $request)
+    {
+        $tglAwal = $request->input('tglAwal', now()->toDateString());
+        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
+
+        // dd($tglAkhir);
+        $riwayatLab = DB::table('t_kunjungan_laboratorium')
+            ->join('kasir_m_layanan', 't_kunjungan_laboratorium.idLayanan', '=', 'kasir_m_layanan.idLayanan')
+            ->join('t_kunjungan', 't_kunjungan_laboratorium.notrans', '=', 't_kunjungan.notrans')
+            ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
+            ->select(
+                'm_kelompok.kelompok',
+                'kasir_m_layanan.nmLayanan',
+                't_kunjungan_laboratorium.created_at',
+                DB::raw('COUNT(0) AS Jumlah')
+            )
+            ->groupBy('m_kelompok.kelompok', 'kasir_m_layanan.nmLayanan', 't_kunjungan_laboratorium.created_at')
+            ->whereBetween(DB::raw('DATE(t_kunjungan_laboratorium.created_at)'), [$tglAwal, $tglAkhir])
+            ->get();
+
+        // return view('riwayat_lab.index', compact('riwayatLab'));
+        return response()->json($riwayatLab, 200, [], JSON_PRETTY_PRINT);
+    }
+    public function rekapReagen(Request $request)
+    {
+        $tglAwal = $request->input('tglAwal', now()->toDateString());
+        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
+
+        // dd($tglAkhir);
+        $riwayatLab = DB::table('t_kunjungan_laboratorium')
+            ->join('kasir_m_layanan', 't_kunjungan_laboratorium.idLayanan', '=', 'kasir_m_layanan.idLayanan')
+            ->join('t_kunjungan', 't_kunjungan_laboratorium.notrans', '=', 't_kunjungan.notrans')
+            ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
+            ->select(
+
+                'kasir_m_layanan.nmLayanan',
+                't_kunjungan_laboratorium.created_at',
+                DB::raw('COUNT(0) AS Jumlah')
+            )
+            ->groupBy('kasir_m_layanan.nmLayanan', 't_kunjungan_laboratorium.created_at')
+            ->whereBetween(DB::raw('DATE(t_kunjungan_laboratorium.created_at)'), [$tglAwal, $tglAkhir])
+            ->get();
+
+        // return view('riwayat_lab.index', compact('riwayatLab'));
+        return response()->json($riwayatLab, 200, [], JSON_PRETTY_PRINT);
+    }
+
 }

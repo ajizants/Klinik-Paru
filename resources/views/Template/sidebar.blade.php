@@ -69,7 +69,7 @@
                                 </li>
                                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Farmasi">
                                     <a class="nav-link" href="{{ url('/logFarmasi') }}">
-                                        <i class="fa-solid fa-right-to-bracket nav-icon"></i>
+                                        <i class="fa-solid fa-chart-column nav-icon"></i>
                                         <p>Riwayat Transaksi Farmasi</p>
                                     </a>
                                 </li>
@@ -88,6 +88,12 @@
                                     <a class="nav-link" href="{{ url('/lab') }}">
                                         <i class="fa-solid fa-microscope nav-icon"></i>
                                         <p>Laboratorium</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/riwayatlab') }}">
+                                        <i class="fa-solid fa-chart-column nav-icon"></i>
+                                        <p>Report Laboratorium</p>
                                     </a>
                                 </li>
                             @endif

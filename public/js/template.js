@@ -27,10 +27,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         tglTransInput.value = formattedDate;
     }
-
     setInterval(updateDateTime, 1000);
 });
-
 
 $(".select2bs4").select2();
 

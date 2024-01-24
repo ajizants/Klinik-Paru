@@ -4,7 +4,7 @@
                             <h4 class="card-title">Identitas</h4>
                         </div>
                         @csrf
-                        <form class="form-horizontal">
+                        <form class="form-horizontal" id="frmident">
                             <div class="card-body" id="inputSection">
                                 <div class="form-grup row">
                                     <label for="norm" class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
@@ -36,11 +36,11 @@
                                     </div>
                                 </div>
                                 <div class="form-grup row mt-2">
-                                    <label for="tgltind" class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
+                                    <label for="nik" class="col-sm-1 col-form-label font-weight-bold mb-0">NIK
                                         :</label>
                                     <div class="col-sm-2">
-                                        <input type="text" id="tgltind" class="form-control bg-white"
-                                            placeholder="Tanggal" readonly />
+                                        <input type="text" id="nik" class="form-control bg-white"
+                                            placeholder="nik" readonly />
                                         <input type="text" id="tgltrans" class="form-control bg-white"
                                             placeholder="tgltrans" readonly hidden />
                                     </div>
@@ -92,10 +92,8 @@
                         </div>
                         @csrf
                         <div class="card-body form-horizontal px-1">
-                            <div class="container-fluid d-flex justify-content-center p-2">
-                            </div>
                             <div class="container-fluid row mx-0 d-flex justify-content-center">
-                                <div class="col-5 p-0 ml-4">
+                                <div class="LayLab mr-2">
                                     <div class="card card-danger">
                                         <div class="card-header">
                                             <h4 class="card-title">Pilih Pemeriksaan Bakteriologi</h4>
@@ -114,15 +112,9 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <div class="card-footer py-1">
-                                            <div class="col-auto ">
-                                                <a class="btn btn-success" id="tblSimpan"
-                                                    onclick="simpan();">Simpan</a>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-5 p-0 ml-4">
+                                <div class="LayLab">
                                     <div class="card card-danger">
                                         <div class="card-header">
                                             <h4 class="card-title">Pilih Pemeriksaan Hematologi</h4>
@@ -142,73 +134,58 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <div class="card-footer py-1">
-                                            <div class="col-auto ">
-                                                <a class="btn btn-success" id="tblSimpan"
-                                                    onclick="simpan();">Simpan</a>
+                                    </div>
+                                </div>
+                                <div class="container-fluid d-flex justify-content-center p-2">
+                                    <div class="LayLab mr-2">
+                                        <div class="card card-danger">
+                                            <div class="card-header">
+                                                <h4 class="card-title">Pilih Pemeriksaan Kimia Darah</h4>
+                                            </div>
+                                            <div class="card-body py-1">
+                                                <table id="kimia" class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th><input type="checkbox" id="pilih-kimia">
+                                                            </th>
+                                                            <th>Item Pemeriksaan</th>
+                                                            <th>Keterangan</th>
+                                                            <th>Harga</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-5 p-0 ml-4">
-                                    <div class="card card-danger">
-                                        <div class="card-header">
-                                            <h4 class="card-title">Pilih Pemeriksaan Kimia Darah</h4>
-                                        </div>
-                                        <div class="card-body py-1">
-                                            <table id="kimia" class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th><input type="checkbox" id="pilih-kimia">
-                                                        </th>
-                                                        <th>Item Pemeriksaan</th>
-                                                        <th>Keterangan</th>
-                                                        <th>Harga</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="card-footer py-1">
-                                            <div class="col-auto ">
-                                                <a class="btn btn-success" id="tblSimpan"
-                                                    onclick="simpan();">Simpan</a>
+                                    <div class="LayLab">
+                                        <div class="card card-danger">
+                                            <div class="card-header">
+                                                <h4 class="card-title">Pilih Pemeriksaan Imuno Serologi</h4>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-5 p-0 ml-4">
-                                    <div class="card card-danger">
-                                        <div class="card-header">
-                                            <h4 class="card-title">Pilih Pemeriksaan Imuno Serologi</h4>
-                                        </div>
-                                        <div class="card-body py-1">
-                                            <table id="imuno" class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th><input type="checkbox" id="pilih-imuno">
-                                                        </th>
-                                                        <th>Item Pemeriksaan</th>
-                                                        <th>Keterangan</th>
-                                                        <th>Harga</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="card-footer py-1">
-                                            <div class="col-auto ">
-                                                <a class="btn btn-success" id="tblSimpan"
-                                                    onclick="simpan();">Simpan</a>
+                                            <div class="card-body py-1">
+                                                <table id="imuno" class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th><input type="checkbox" id="pilih-imuno">
+                                                            </th>
+                                                            <th>Item Pemeriksaan</th>
+                                                            <th>Keterangan</th>
+                                                            <th>Harga</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="container-fluid row mx-0 d-flex justify-content-center">
-                                <div class="col p-0 mr-1">
+                                <div class="col p-0">
                                     <div class="card card-success">
                                         <div class="card-header">
                                             <h4 class="card-title">Pemeriksaan yang dilakukan</h4>
@@ -241,13 +218,14 @@
                                         placeholder="Total Tagihan" readonly>
                                 </div>
                                 <div class="col-auto">
-                                    <a class="btn btn-danger" id="tblBatal">Batal</a>
-                                </div>
-                                <div class="col-auto">
                                     <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>
                                 </div>
                                 <div class="col-auto">
-                                    <a class="btn btn-primary" id="tblSelesai">Selesai</a>
+                                    <a class="btn btn-danger" id="tblBatal" onclick="selesai();">Batal</a>
+                                </div>
+
+                                <div class="col-auto">
+                                    <a class="btn btn-primary" id="tblSelesai" onclick="selesai();">Selesai</a>
                                 </div>
                             </div>
                         </div>

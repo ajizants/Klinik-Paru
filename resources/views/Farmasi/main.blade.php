@@ -25,7 +25,7 @@
     <script src="{{ asset('js/antrianFarmasi.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
     <script src="{{ asset('js/mainFarmasi.js') }}"></script>
-    <script>
+    {{-- <script>
         function checkSelectedOption(selectElement) {
             var otherQtyDiv = document.getElementById("otherQty");
             var otherQtyInput = document.getElementById("otherQtyInput");
@@ -38,7 +38,7 @@
                 otherQtyInput.required = false;
             }
         }
-    </script>
+    </script> --}}
 
 
     <div class="modal fade" id="modal-xl">

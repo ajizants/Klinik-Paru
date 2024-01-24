@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class KunjunganModel extends Model
 {
-    use  HasFactory;
+    use HasFactory;
     protected $table = 't_kunjungan';
 
     public function poli()
@@ -36,11 +36,15 @@ class KunjunganModel extends Model
 
     public function tindakan()
     {
-        return $this->hasOne(TransaksiModel::class, 'notrans', 'notrans');
+        return $this->hasMany(TransaksiModel::class, 'notrans', 'notrans');
+    }
+    public function lab()
+    {
+        return $this->hasMany(LaboratoriumModel::class, 'notrans', 'notrans');
     }
     public function farmasi()
     {
-        return $this->hasOne(FarmasiModel::class, 'notrans', 'notrans');
+        return $this->hasMany(FarmasiModel::class, 'notrans', 'notrans');
     }
     public function dots()
     {
@@ -57,5 +61,9 @@ class KunjunganModel extends Model
     public function riwayatTindakan()
     {
         return $this->hasMany(TransaksiModel::class, 'notrans', 'notrans');
+    }
+    public function riwayatLab()
+    {
+        return $this->hasMany(LaboratoriumModel::class, 'notrans', 'notrans');
     }
 }

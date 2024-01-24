@@ -25,4 +25,10 @@ class LaboratoriumModel extends Model
     {
         return $this->belongsTo(PegawaiModel::class, 'dokter', 'nip');
     }
+
+    public static function destroyLab(string $id)
+    {
+        // Menemukan dan menghapus data berdasarkan ID
+        return static::where('idLab', $id)->delete();
+    }
 }

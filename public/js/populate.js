@@ -199,6 +199,28 @@ function populateLayananOptions(kelas) {
     });
 }
 
+function populateJaminan() {
+    var jaminan = $("#jaminan");
+
+    $.get("/api/jaminan", function (data) {
+        data.sort(function (a, b) {
+            // Add your sorting logic here if needed
+            // Example: return a.name.localeCompare(b.name);
+        });
+
+        data.forEach(function (jaminanData) {
+            var kelompok = jaminanData.kelompok;
+            var kode = jaminanData.kkelompok;
+
+            // Creating option elements
+            var option = new Option(kelompok, kode, false, false);
+
+            // Appending options to both jaminan and dokterModals
+            jaminan.append(option).trigger("change");
+        });
+    });
+}
+
 //SDM
 function populateDokterOptions() {
     var dokterSelectElement = $("#dokter");

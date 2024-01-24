@@ -194,7 +194,7 @@ function initializeTableEvents() {
         function () {
             var inputValue = $(this).val();
             var rowData = table.row($(this).closest("tr")).data();
-            // console.log("Input ID:", rowData.idLayanan, "Value:", inputValue);
+            console.log("Input ID:", rowData.idLayanan, "Value:", inputValue);
         }
     );
 
@@ -240,7 +240,7 @@ function dataLab() {
                     { data: "ket" },
                 ],
                 order: [1, "asc"],
-                scrollY: "335px", // Atur tinggi scrol
+                scrollY: "250px", // Atur tinggi scrol
                 scrollCollapse: true, // Biarkan scrol jika kurang dari tinggi yang ditentukan
                 paging: false, // Matikan paging
             });
@@ -351,7 +351,7 @@ $(document).ready(function () {
         }
     });
     $("#tabelData,#dataTrans").DataTable({
-        scrollY: "335px", // Atur tinggi scrol
+        scrollY: "250px", // Atur tinggi scrol
     });
     populateDokterOptions();
     populateAnalisOptions();

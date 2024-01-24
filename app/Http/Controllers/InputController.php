@@ -6,6 +6,7 @@ use App\Models\BMHPModel;
 use App\Models\DiagnosaModel;
 use App\Models\DotsObatModel;
 use App\Models\GudangFarmasiModel;
+use App\Models\KelompokModel;
 use App\Models\ObatModel;
 use App\Models\TindakanModel;
 use App\Models\PegawaiModel;
@@ -13,6 +14,14 @@ use Illuminate\Http\Request;
 
 class InputController extends Controller
 {
+    public function jaminan()
+    {
+
+        $tind = KelompokModel::on('mysql')->get();
+        // $tind = TindakanModel::on('mysql')->get();
+        return response()->json($tind, 200, [], JSON_PRETTY_PRINT);
+        // return response()->json($tind);
+    }
     public function JenisTindakan()
     {
 

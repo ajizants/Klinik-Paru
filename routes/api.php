@@ -1,21 +1,20 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AntrianController;
 use App\Http\Controllers\DotsController;
 use App\Http\Controllers\FarmasiController;
 use App\Http\Controllers\GudangFarmasiController;
-use App\Http\Controllers\InputController;
 use App\Http\Controllers\IgdController;
+use App\Http\Controllers\InputController;
 use App\Http\Controllers\KasirController;
+use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\NoAntrianController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PendaftaranKominfoController;
 use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\StokController;
-use App\Http\Controllers\LaboratoriumController;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +25,7 @@ use App\Http\Controllers\LaboratoriumController;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "api" middleware group. Make something great!
 |
-*/
+ */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -38,9 +37,19 @@ Route::get('perawat', [PegawaiController::class, 'perawat']);
 Route::get('apoteker', [PegawaiController::class, 'apoteker']);
 Route::get('analis', [PegawaiController::class, 'analis']);
 Route::get('dxMedis', [InputController::class, 'dxMedis']);
+Route::get('jaminan', [InputController::class, 'jaminan']);
 
 Route::get('bmhp', [InputController::class, 'bmhp']);
 Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);
+
+//antrian
+Route::post('cariRM', [AntrianController::class, 'cariRM']);
+Route::post('antrianAll', [AntrianController::class, 'all']);
+Route::post('cariRMObat', [AntrianController::class, 'cariRMObat']);
+Route::post('antrianIGD', [AntrianController::class, 'antrianIGD']);
+Route::post('antrianKasir', [AntrianController::class, 'antrianKasir']);
+Route::post('antrianFarmasi', [AntrianController::class, 'antrianFarmasi']);
+Route::post('antrianLaboratorium', [AntrianController::class, 'antrianLaboratorium']);
 
 //transaksi gudang igd
 Route::post('addJenisBmhp', [InputController::class, 'addJenisBmhp']);
@@ -55,19 +64,12 @@ Route::post('deleteTindakan', [IgdController::class, 'deleteTindakan']);
 Route::post('addTransaksiBmhp', [IgdController::class, 'addTransaksiBmhp']);
 Route::post('deleteTransaksiBmhp', [IgdController::class, 'deleteTransaksiBmhp']);
 
-
 //transaksi IGD
 Route::post('cariPoin', [IgdController::class, 'cariPoin']);
 Route::post('cariPoinTotal', [IgdController::class, 'cariPoinTotal']);
 Route::post('cariDataTindakan', [IgdController::class, 'cariDataTindakan']);
 Route::get('chart', [IgdController::class, 'chart'])->name('chart.endpoint');
 Route::post('cariTransaksiBmhp', [IgdController::class, 'cariTransaksiBmhp']);
-
-
-//antrian tindakan
-Route::post('cariRMObat', [AntrianController::class, 'cariRMObat']);
-Route::post('cariRM', [AntrianController::class, 'cariRM']);
-Route::post('antrianIGD', [AntrianController::class, 'antrianIGD']);
 
 // Dots Center
 Route::post('transaksiDots', [DotsController::class, 'transaksiDots']);
@@ -85,17 +87,18 @@ Route::get('editPTB', [DotsController::class, 'editPTB']);
 
 //Kasir
 Route::get('layanan', [KasirController::class, 'Layanan']);
-Route::post('antrianKasir', [KasirController::class, 'index']);
 
 //laboratorium
-Route::post('antrianLaboratorium', [AntrianController::class, 'antrianLaboratorium']);
 Route::post('layananlab', [LaboratoriumController::class, 'layananlab']);
 Route::post('cariLaboratorium', [LaboratoriumController::class, 'index']);
 Route::post('addTransaksiLab', [LaboratoriumController::class, 'addTransaksi']);
+Route::post('deleteLab', [LaboratoriumController::class, 'deleteLab']);
+Route::post('cariRiwayatLab', [LaboratoriumController::class, 'riwayat']);
+Route::post('rekapBpjsUmum', [LaboratoriumController::class, 'rekapBpjsUmum']);
+Route::post('rekapReagen', [LaboratoriumController::class, 'rekapReagen']);
 
 //farmasi
 //sumberdaya apotik
-Route::post('antrianFarmasi', [FarmasiController::class, 'index']);
 Route::get('stokbmhp', [StokController::class, 'stokbmhp']);
 Route::get('obat', [GudangFarmasiController::class, 'gudangFarmasiIn']);
 
@@ -129,16 +132,12 @@ Route::post('stokOpnameGudang', [GudangFarmasiController::class, 'stokOpnameGuda
 
 Route::post('addstokbmhp', [StokController::class, 'addstokbmhp']);
 
-
 //API Riwayat Untuk migrasi SIM RS
 Route::get('riwayatKunjungan', [RiwayatController::class, 'index']);
 
-Route::post('antrianAll', [AntrianController::class, 'all']);
-
 Route::post('antrianKominfo', [PendaftaranKominfoController::class, 'antrianKominfo']);
 
-
-//antrian
+//No Antrian
 Route::get('noantrian', [NoAntrianController::class, 'index']);
 Route::post('lastNoAntri', [NoAntrianController::class, 'lastNoAntri']);
 Route::post('ambilNo', [NoAntrianController::class, 'store']);

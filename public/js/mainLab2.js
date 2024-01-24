@@ -5,112 +5,14 @@ var Toast = Swal.mixin({
     timer: 3000,
 });
 
-function searchByRM(norm) {
-    $.ajax({
-        url: "/api/cariRM",
-        type: "post",
-        data: {
-            norm: norm,
-        },
-        success: function (response) {
-            if (response && response.length > 0) {
-                Swal.fire({
-                    icon: "success",
-                    title: "Data pasien ditemukan, lanjutkan transaksi...!!!",
-                });
-                // Mendapatkan data dari respons JSON
-                var noRM = response[0].norm; // Menggunakan indeks 0 karena respons adalah array
-                var nama = response[0].biodata.nama;
-                var notrans = response[0].notrans;
-                var layanan = response[0].kelompok.kelompok;
-                var dokter = response[0].petugas.p_dokter_poli;
-                var alamat = `${response[0].biodata.kelurahan}, ${response[0].biodata.rtrw}, ${response[0].biodata.kecamatan}, ${response[0].biodata.kabupaten}`;
-                // Dapatkan data lainnya dari respons JSON sesuai kebutuhan
-
-                // Mengisikan data ke dalam elemen-elemen HTML
-                $("#norm").val(noRM);
-                $("#nama").val(nama);
-                $("#alamat").val(alamat);
-                $("#notrans").val(notrans);
-                $("#layanan").val(layanan);
-                $("#dokter").val(dokter);
-                $("#dokter").trigger("change");
-                // Mengisi elemen-elemen lainnya sesuai kebutuhan
-            } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Data pasien tidak ditemukan pada kunjungan hari ini...!!!",
-                });
-            }
-        },
-        error: function (xhr) {
-            // Handle error
-        },
-    });
-}
-async function searchRMObat() {
-    Swal.fire({
-        icon: "success",
-        title: "Sedang mencarikan data pasien...!!!",
-    });
-    var norm = "000001";
-    try {
-        const response = await $.ajax({
-            url: "/api/cariRMObat",
-            type: "post",
-            data: { norm: norm },
-        });
-
-        if (response.length > 0) {
-            Swal.fire({
-                icon: "success",
-                title: "Data pasien ditemukan, lanjutkan transaksi...!!!",
-            });
-
-            // Extracting data from the JSON response
-            var noRM = response[0].norm;
-            var nama = response[0].nama;
-            var notrans = response[0].notrans;
-            var alamat = `${response[0].kelurahan}, ${response[0].rtrw}, ${response[0].kecamatan}, ${response[0].kabupaten}`;
-
-            // Updating HTML elements with the extracted data
-            $("#norm").val(noRM);
-            $("#nama").val(nama);
-            $("#alamat").val(alamat);
-            $("#notrans").val(notrans);
-            $("#layanan").val("UMUM");
-            $("#dokter").val("198907252019022004").trigger("change");
-            $("#apoteker").val("197609262011012003").trigger("change");
-
-            // Additional function calls as needed
-            dataLab();
-        } else {
-            Swal.fire({
-                icon: "error",
-                title: "Data pasien tidak ditemukan...!!!",
-            });
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        // Handling error if the API request fails
-        Swal.fire({
-            icon: "error",
-            title: "Terjadi kesalahan saat mengambil data pasien...!!!",
-        });
-    }
-}
-
 let table; // Declare the DataTable variable outside the function
 
-function layanan(kelas, tb) {
-    // console.log("🚀 ~ layanan ~ tb:", tb);
-    // console.log("🚀 ~ layanan ~ kelas:", kelas);
-    if ($.fn.DataTable.isDataTable("#" + tb)) {
-        table.destroy();
+function layanan(kelas, grupLayanan, pilihSemuaId) {
+    if ($.fn.DataTable.isDataTable("#" + grupLayanan)) {
+        table.clear().destroy();
     }
 
-    // let kelas = kelas;
-    table = $("#" + tb).DataTable({
+    table = $("#" + grupLayanan).DataTable({
         ajax: {
             url: "/api/layananlab",
             type: "POST",
@@ -122,7 +24,7 @@ function layanan(kelas, tb) {
             {
                 data: null,
                 render: function (data, type, row) {
-                    return `<input type="checkbox" class="select-checkbox mt-1 data-checkbox ${tb}" id="${row.idLayanan}">`;
+                    return `<input type="checkbox" class="select-checkbox mt-2 data-checkbox ${grupLayanan}" id="${row.idLayanan}">`;
                 },
             },
             {
@@ -134,13 +36,12 @@ function layanan(kelas, tb) {
             {
                 data: null,
                 render: function (data, type, row) {
-                    return `<input type="text" class="form-control-sm col-6" readonly id="ket${row.idLayanan}">`;
+                    return `<input type="text" class="form-control-sm col-6" id="ket${row.idLayanan}">`;
                 },
             },
             {
                 data: "tarif",
                 render: function (data, type, row) {
-                    // Ubah nilai ke dalam format mata uang Rupiah
                     var formattedTarif = parseInt(data).toLocaleString(
                         "id-ID",
                         {
@@ -154,32 +55,22 @@ function layanan(kelas, tb) {
             },
         ],
         order: [1, "asc"],
-        scrollY: "300px", // Atur tinggi scrol
-        scrollCollapse: false, // Biarkan scrol jika kurang dari tinggi yang ditentukan
-        paging: false, // Matikan paging
+        scrollY: "200px",
+        scrollCollapse: false,
+        paging: false,
         responsive: true,
     });
-
-    initializeTableEvents(tb);
 }
 
-function toggleInputReadonly(isChecked, idLayanan) {
-    var inputId = "#ket" + idLayanan;
-    $(inputId).prop("readonly", !isChecked);
-}
-function initializeTableEvents(tb, idTabel) {
-    $("#" + tb + "tbody").on("change", 'input[type="checkbox"]', function () {
-        var isChecked = $(this).prop("checked");
-        var rowData = table.row($(this).closest("tr")).data();
-        toggleInputReadonly(isChecked, rowData.idLayanan);
-    });
+function handlePilihSemuaClick(pilihSemuaId, checkboxClass) {
+    const pilihSemuaCheckbox = document.getElementById(pilihSemuaId);
 
-    // Event listener for individual text inputs
-    $("#" + tb + "tbody").on("change", 'input[type="text"]', function () {
-        var inputValue = $(this).val();
-        var rowData = table.row($(this).closest("tr")).data();
+    pilihSemuaCheckbox.addEventListener("change", function () {
+        const isChecked = this.checked;
+        const checkboxes = $("." + checkboxClass);
+
+        checkboxes.prop("checked", isChecked);
     });
-    toggleInputReadonly();
 }
 
 async function dataLab() {
@@ -210,10 +101,10 @@ async function dataLab() {
                                 data-id="${item.idLab}"
                                 data-norm="${item.norm}"
                                 ><i class="fas fa-pen-to-square pr-3"></i></a>
-                            <a href="" class="delete"
+                            <a class="delete"
                                 data-id="${item.idLab}"
-                                data-norm="${item.norm}"
-                                ><i class="fas fa-trash"></i></a>`;
+                                data-layanan="${item.NamaLayanan}"
+                                onclick="deletLab();"><i class="fas fa-trash"></i></a>`;
             item.no = index + 1;
         });
 
@@ -223,13 +114,13 @@ async function dataLab() {
                 { data: "actions", className: "px-0 col-1 text-center" },
                 { data: "no" },
                 { data: "norm" },
-                { data: "layanan.nmLayanan" },
+                { data: "NamaLayanan" },
                 { data: "ket" },
             ],
             order: [1, "asc"],
-            scrollY: "320px", // Atur tinggi scroll
-            scrollCollapse: true, // Biarkan scroll jika kurang dari tinggi yang ditentukan
-            paging: false, // Matikan paging
+            scrollY: "320px",
+            scrollCollapse: true,
+            paging: false,
         });
     } catch (error) {
         console.error("Error:", error.message);
@@ -243,7 +134,6 @@ function simpan() {
     var petugas = $("#analis").val();
     var dokter = $("#dokter").val();
 
-    // Validasi untuk memeriksa elemen yang tidak boleh kosong
     if (!norm || !notrans || !petugas || !dokter) {
         var dataKurang = [];
         if (!norm) dataKurang.push("No RM ");
@@ -251,7 +141,6 @@ function simpan() {
         if (!petugas) dataKurang.push("Petugas ");
         if (!dokter) dataKurang.push("Dokter ");
 
-        // Menampilkan notifikasi menggunakan Toast.fire
         Swal.fire({
             icon: "error",
             title:
@@ -262,7 +151,6 @@ function simpan() {
     } else {
         var pemeriksaan = $(".data-checkbox:checked");
 
-        // Validasi untuk memeriksa setidaknya satu checkbox telah dicentang
         if (pemeriksaan.length === 0) {
             Swal.fire({
                 icon: "error",
@@ -285,7 +173,6 @@ function simpan() {
                 })
                 .get();
 
-            // Filter elemen yang null (elemen yang kosong) dari array dataTerpilih
             dataTerpilih = dataTerpilih.filter(function (item) {
                 return item !== null;
             });
@@ -296,7 +183,6 @@ function simpan() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                // Tambahkan header lain jika diperlukan
             },
             body: JSON.stringify({ dataTerpilih: dataTerpilih }),
         })
@@ -313,11 +199,8 @@ function simpan() {
                     title: "Data berhasil tersimpan...!!!",
                 });
                 dataLab();
-                $('input[type="checkbox"]', table.rows().nodes()).prop(
-                    "checked",
-                    false
-                );
-                toggleInputReadonly(false);
+
+                // toggleInputReadonly(false);
             })
             .catch((error) => {
                 console.error(
@@ -333,45 +216,123 @@ function simpan() {
             });
     }
 }
+function deletLab(idLab, layanan) {
+    Swal.fire({
+        title: "Konfirmasi",
+        text: "Apakah Anda yakin ingin menghapus transaksi" + layanan + " ?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Hapus!",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "/api/deleteLab",
+                type: "POST",
+                data: { idLab: idLab },
+                success: function (response) {
+                    Toast.fire({
+                        icon: "success",
+                        title: "Data transaksi obat berhasil dihapus...!!!",
+                    });
+                    dataLab();
+                },
+                error: function (xhr, status, error) {
+                    Toast.fire({
+                        icon: "success",
+                        title: error + "...!!!",
+                    });
+                },
+            });
+        } else {
+            // Logika jika pembatalan (cancel)
+            console.log("Penghapusan dibatalkan.");
+        }
+    });
+}
+
+function selesai() {
+    $('table thead input[type="checkbox"]').prop("checked", false);
+    $('table tbody input[type="checkbox"]').prop("checked", false);
+    document.getElementById("frmident").reset();
+
+    if ($.fn.DataTable.isDataTable("#dataTrans")) {
+        let tableTrans = $("#dataTrans").DataTable();
+        tableTrans.clear().destroy();
+    }
+
+    // Scroll to the top
+    scrollToTop();
+}
 
 $(document).ready(function () {
+    setTodayDate();
+    handlePilihSemuaClick("pilih-hematologi", "hematologi");
+    handlePilihSemuaClick("pilih-kimia", "kimia");
+    handlePilihSemuaClick("pilih-imuno", "imuno");
+    handlePilihSemuaClick("pilih-bakteriologi", "bakteriologi");
     $("#norm").on("keyup", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();
-            console.log("Enter pressed");
             formatNorm($("#norm"));
             searchByRM($("#norm").val());
         }
     });
     $("#tabelData,#dataTrans").DataTable({
-        scrollY: "300px", // Atur tinggi scrol
+        scrollY: "200px",
     });
     populateDokterOptions();
     populateAnalisOptions();
-    layanan(91, "hematologi");
-    layanan(92, "kimia");
-    layanan(93, "imuno");
-    layanan(94, "bakteriologi");
-});
+    layanan(91, "hematologi", "pilih-hematologi");
+    layanan(92, "kimia", "pilih-kimia");
+    layanan(93, "imuno", "pilih-imuno");
+    layanan(94, "bakteriologi", "pilih-bakteriologi");
+    antrian();
+    $("#tanggal").on("change", antrian);
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Fungsi untuk menangani klik pada checkbox "pilih-semua" untuk setiap tabel
-    function handlePilihSemuaClick(pilihSemuaId, checkboxClass) {
-        const pilihSemuaCheckbox = document.getElementById(pilihSemuaId);
+    $("#dataAntrian").on("click", ".aksi-button", function (e) {
+        e.preventDefault();
+        $("#add").show();
+        $("#edit").hide();
+        var norm = $(this).data("norm");
+        var nama = $(this).data("nama");
+        var nik = $(this).data("nik");
+        var dokter = $(this).data("kddokter");
+        var alamat = $(this).data("alamat");
+        var layanan = $(this).data("layanan");
+        var notrans = $(this).data("notrans");
+        var tgltrans = $(this).data("tgltrans");
 
-        pilihSemuaCheckbox.addEventListener("click", function () {
-            const checkboxes = document.querySelectorAll(`.${checkboxClass}`);
+        $("#norm").val(norm);
+        $("#nik").val(nik);
+        $("#nama").val(nama);
+        $("#dokter").val(dokter).trigger("change");
+        $("#apoteker").val("197609262011012003").trigger("change");
+        $("#alamat").val(alamat);
+        $("#layanan").val(layanan);
+        $("#notrans").val(notrans);
+        $("#tgltrans").val(tgltrans);
 
-            checkboxes.forEach(function (checkbox) {
-                checkbox.checked = pilihSemuaCheckbox.checked;
-            });
-        });
-    }
+        scrollToInputSection();
+        dataLab();
+    });
 
-    // Panggil fungsi untuk setiap tabel
-    handlePilihSemuaClick("pilih-hematologi", "hematologi");
-    handlePilihSemuaClick("pilih-bakteriologi", "bakteriologi");
-    handlePilihSemuaClick("pilih-imuno", "imuno");
-    handlePilihSemuaClick("pilih-kimia", "kimia");
-    // ... tambahkan sesuai kebutuhan
+    $("#dataAntrian").on("click", ".panggil", function (e) {
+        e.preventDefault();
+
+        let panggilData = $(this).data("panggil");
+        console.log(
+            "🚀 ~ file: mainFarmasi.js:478 ~ panggilData:",
+            panggilData
+        );
+
+        panggilPasien(panggilData);
+    });
+    $("#dataTrans").on("click", ".delete", function (e) {
+        e.preventDefault();
+        let idLab = $(this).data("id");
+        let layanan = $(this).data("layanan");
+        deletLab(idLab, layanan);
+    });
 });

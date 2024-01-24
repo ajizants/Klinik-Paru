@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PasienModel;
 use App\Models\KunjunganModel;
-use Illuminate\Http\Request;
+use App\Models\PasienModel;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class AntrianController extends Controller
 {
@@ -34,7 +34,6 @@ class AntrianController extends Controller
             })
             ->whereDate('tgltrans', $date)
             ->get();
-
 
         $formattedData = [];
         foreach ($data as $transaksi) {
@@ -112,37 +111,37 @@ class AntrianController extends Controller
     }
     public function antrianLaboratorium(Request $request)
     {
+        $norm = $request->input("norm");
         $date = $request->input('date', now()->toDateString());
-        $data = KunjunganModel::with(['poli', 'biodata', 'tindakan', 'kelompok', 'petugas.pegawai.biodata'])
-            ->whereHas('poli', function ($query) {
-                $query->where(function ($q) {
-                    $q->where('oksigenasi', '<>', '')
-                        ->where('oksigenasi', 'NOT LIKE', '%-%')
-                        ->orWhere('nebulizer', '<>', '')
-                        ->where('nebulizer', 'NOT LIKE', '%-%')
-                        ->orWhere('ekg', '<>', '')
-                        ->where('ekg', 'NOT LIKE', '%-%')
-                        ->orWhere('mantoux', '<>', '')
-                        ->where('mantoux', 'NOT LIKE', '%-%')
-                        ->orWhere('spirometri', '<>', '')
-                        ->where('spirometri', 'NOT LIKE', '%-%')
-                        ->orWhere('injeksi', '<>', '')
-                        ->where('injeksi', 'NOT LIKE', '%-%')
-                        ->orWhere('infus', '<>', '')
-                        ->where('infus', 'NOT LIKE', '%-%');
-                });
-            })
+        $data = KunjunganModel::with(['poli', 'biodata', 'lab', 'kelompok', 'petugas.pegawai.biodata'])
+            ->where('norm', 'like', '%' . $norm . '%')
             ->whereDate('tgltrans', $date)
             ->get();
 
-
         $formattedData = [];
+        // dd($data);
         foreach ($data as $transaksi) {
 
-            if (isset($transaksi["tindakan"]) && isset($transaksi["tindakan"]["id"]) && $transaksi["tindakan"]["id"] !== null) {
-                $status = "sudah";
-            } else {
+            if (count($transaksi["lab"]) === 0) {
                 $status = "belum";
+            } else {
+                $status = "sudah";
+            }
+            // dd($status);
+            if ($transaksi["umurthn"] <= 15) {
+                $pang = "anak";
+            } elseif ($transaksi["umurthn"] >= 16 && $transaksi["umurthn"] <= 30) {
+                if ($transaksi["biodata"]["jeniskel"] == "Laki-Laki") {
+                    $pang = "saudara";
+                } else {
+                    $pang = "nona";
+                }
+            } elseif ($transaksi["umurthn"] >= 31) {
+                if ($transaksi["biodata"]["jeniskel"] == "Laki-Laki") {
+                    $pang = "bapak";
+                } else {
+                    $pang = "ibu";
+                }
             }
 
             $transaksi["status"] = $status;
@@ -152,7 +151,6 @@ class AntrianController extends Controller
                 "norm" => $transaksi["norm"] ?? null,
                 "nourut" => $transaksi["nourut"] ?? null,
                 "noasuransi" => $transaksi["noasuransi"] ?? null,
-                "biaya" => $transaksi["kelompok"]["biaya"] ?? null,
                 "noktp" => $transaksi["biodata"]["noktp"] ?? null,
                 "namapasien" => $transaksi["biodata"]["nama"] ?? null,
                 "alamatpasien" => $transaksi["biodata"]["alamat"] ?? null,
@@ -178,11 +176,8 @@ class AntrianController extends Controller
                 "terapi" => $transaksi["poli"]["terapi"] ?? null,
 
                 "status" => $status,
+                "pang" => $pang,
 
-                "idtindakan" => $transaksi["tindakan"]["id"] ?? null,
-                "kdTind" => $transaksi["tindakan"]["kdTind"] ?? null,
-                "petugastindakan" => $transaksi["tindakan"]["petugas"] ?? null,
-                "doktertindakan" => $transaksi["tindakan"]["dokter"] ?? null,
                 "created_at" => $transaksi["tindakan"]["created_at"] ?? null,
                 "updated_at" => $transaksi["tindakan"]["updated_at"] ?? null,
                 "nip" => $transaksi["petugas"]["pegawai"]["nip"] ?? null,
@@ -192,6 +187,129 @@ class AntrianController extends Controller
         }
 
         return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
+        // return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
+    public function antrianFarmasi(Request $request)
+    {
+        $date = $request->input('date', Carbon::now()->toDateString());
+
+        $data = KunjunganModel::with(['biodata', 'kelompok', 'poli', 'tindakan', 'farmasi', 'petugas.pegawai.biodata'])
+            ->whereDate('tgltrans', $date)
+            ->whereHas('poli', function ($query) {
+                $query->whereNotNull('notrans');
+            })
+            ->get();
+        $formattedData = [];
+        foreach ($data as $transaksi) {
+
+            if (isset($transaksi["farmasi"]) && isset($transaksi["farmasi"]["idAptk"]) && $transaksi["farmasi"]["idAptk"] !== null) {
+                $status = "sudah";
+            } else {
+                $status = "belum";
+            }
+
+            if ($transaksi["umurthn"] <= 15) {
+                $pang = "anak";
+            } elseif ($transaksi["umurthn"] >= 16 && $transaksi["umurthn"] <= 30) {
+                if ($transaksi["biodata"]["jeniskel"] == "Laki-Laki") {
+                    $pang = "saudara";
+                } else {
+                    $pang = "nona";
+                }
+            } elseif ($transaksi["umurthn"] >= 31) {
+                if ($transaksi["biodata"]["jeniskel"] == "Laki-Laki") {
+                    $pang = "bapak";
+                } else {
+                    $pang = "ibu";
+                }
+            }
+            if (
+                isset($transaksi["petugas"]) &&
+                is_array($transaksi["petugas"]) &&
+                isset($transaksi["petugas"]["p_dokter_poli_konsul"]) &&
+                $transaksi["petugas"]["p_dokter_poli_konsul"] !== null
+            ) {
+                $dokter = $transaksi["petugas"]["p_dokter_poli_konsul"];
+            } else {
+                $dokter = isset($transaksi["petugas"]["p_dokter_poli"]) ? $transaksi["petugas"]["p_dokter_poli"] : null;
+            }
+
+            $transaksi["status"] = $status;
+
+            $formattedData[] = [
+                "notrans" => $transaksi["notrans"] ?? "null",
+                "norm" => $transaksi["norm"] ?? "null",
+                "nourut" => $transaksi["nourut"] ?? "null",
+                "noasuransi" => $transaksi["noasuransi"] ?? "null",
+                "layanan" => $transaksi["kelompok"]["kelompok"] ?? "null",
+                "biaya" => $transaksi["kelompok"]["biaya"] ?? "null",
+                "noktp" => $transaksi["biodata"]["noktp"] ?? "null",
+                "pang" => $pang ?? "null",
+                "namapasien" => $transaksi["biodata"]["nama"] ?? "null",
+                "alamatpasien" => $transaksi["biodata"]["alamat"] ?? "null",
+                "rtrwpasien" => $transaksi["biodata"]["rtrw"] ?? "null",
+                "kelaminpasien" => $transaksi["biodata"]["jeniskel"] ?? "null",
+                "tgllahir" => $transaksi["biodata"]["tgllahir"] ?? "null",
+                "umurpasien" => $transaksi["biodata"]["umur"] ?? "null",
+                "nohppasien" => $transaksi["biodata"]["nohp"] ?? "null",
+                "provinsi" => $transaksi["biodata"]["provinsi"] ?? "null",
+                "kabupaten" => $transaksi["biodata"]["kabupaten"] ?? "null",
+                "kecamatan" => $transaksi["biodata"]["kecamatan"] ?? "null",
+                "kelurahan" => $transaksi["biodata"]["kelurahan"] ?? "null",
+                "rtrw" => $transaksi["biodata"]["rtrw"] ?? "null",
+                "agama" => $transaksi["biodata"]["agama"] ?? "null",
+                "pendidikan" => $transaksi["biodata"]["pendidikan"] ?? "null",
+
+                "status" => $status,
+
+                "tgltrans" => $transaksi["poli"]["tgltrans"] ?? "null",
+                "rontgen" => $transaksi["poli"]["rontgen"] ?? "null",
+                "konsul" => $transaksi["poli"]["konsul"] ?? "null",
+                "tcm" => $transaksi["poli"]["tcm"] ?? "null",
+                "bta" => $transaksi["poli"]["bta"] ?? "null",
+                "hematologi" => $transaksi["poli"]["hematologi"] ?? "null",
+                "kimiaDarah" => $transaksi["poli"]["kimiaDarah"] ?? "null",
+                "imunoSerologi" => $transaksi["poli"]["imunoSerologi"] ?? "null",
+                "mantoux" => $transaksi["poli"]["mantoux"] ?? "null",
+                "ekg" => $transaksi["poli"]["ekg"] ?? "null",
+                "mikroCo" => $transaksi["poli"]["mikroCo"] ?? "null",
+                "spirometri" => $transaksi["poli"]["spirometri"] ?? "null",
+                "spo2" => $transaksi["poli"]["spo2"] ?? "null",
+                "diagnosa1" => $transaksi["poli"]["diagnosa1"] ?? "null",
+                "diagnosa2" => $transaksi["poli"]["diagnosa2"] ?? "null",
+                "diagnosa3" => $transaksi["poli"]["diagnosa3"] ?? "null",
+                "nebulizer" => $transaksi["poli"]["nebulizer"] ?? "null",
+                "infus" => $transaksi["poli"]["infus"] ?? "null",
+                "oksigenasi" => $transaksi["poli"]["oksigenasi"] ?? "null",
+                "injeksi" => $transaksi["poli"]["injeksi"] ?? "null",
+                "terapi" => $transaksi["poli"]["terapi"] ?? "null",
+                "dokterpoli" => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? "null") . ' ' . ($transaksi["petugas"]["pegawai"]["biodata"]["nama"] ?? "null") . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? "null"),
+                "kddokter" => $dokter ?? "null",
+                "idtindakan" => $transaksi["tindakan"]["id"] ?? "null",
+                "kdTind" => $transaksi["tindakan"]["kdTind"] ?? "null",
+                "petugastindakan" => $transaksi["tindakan"]["petugas"] ?? "null",
+                "doktertindakan" => $transaksi["tindakan"]["dokter"] ?? "null",
+                "jabatan" => $transaksi["petugas"]["pegawai"]["nm_jabatan"] ?? "null",
+                "farmasi" => $transaksi["farmasi"] ?? "null",
+
+            ];
+        }
+
+        return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
+        // return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
+    public function antrianKasir(Request $request)
+    {
+        $date = $request->input('date', Carbon::now()->toDateString());
+
+        $data = KunjunganModel::with(['poli', 'biodata', 'tindakan', 'farmasi', 'kelompok', 'petugas.pegawai'])
+            ->whereDate('tgltrans', $date)
+            ->whereHas('poli', function ($query) {
+                $query->whereNotNull('notrans');
+            })
+            ->get();
+
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
     public function all(Request $request)
     {
@@ -199,7 +317,6 @@ class AntrianController extends Controller
         $data = KunjunganModel::with(['poli', 'tujuan', 'biodata', 'tindakan', 'kelompok', 'petugas.pegawai.biodata'])
             ->whereDate('tgltrans', $date)
             ->get();
-
 
         $formattedData = [];
         foreach ($data as $transaksi) {
@@ -276,7 +393,6 @@ class AntrianController extends Controller
         return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
         // return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
-
     public function cariTgl(Request $request)
     {
         $date = $request->input('date', now()->toDateString());
@@ -303,7 +419,6 @@ class AntrianController extends Controller
 
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
-
     public function cariRM(Request $request)
     {
         $norm = $request->input('norm');
@@ -327,7 +442,7 @@ class AntrianController extends Controller
             ->get();
         $res = [];
         foreach ($data as $item) {
-            $item["notrans"] =  $item["norm"] . $kode;
+            $item["notrans"] = $item["norm"] . $kode;
             $res[] = [
                 "norm" => $item->norm,
                 "noktp" => $item->noktp,

@@ -9,19 +9,7 @@ use Illuminate\Http\Request;
 
 class KasirController extends Controller
 {
-    public function index(Request $request)
-    {
-        $date = $request->input('date', Carbon::now()->toDateString());
 
-        $data = KunjunganModel::with(['poli', 'biodata', 'tindakan', 'farmasi', 'kelompok', 'petugas.pegawai'])
-            ->whereDate('tgltrans', $date)
-            ->whereHas('poli', function ($query) {
-                $query->whereNotNull('notrans');
-            })
-            ->get();
-
-        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
-    }
     public function Layanan(Request $request)
     {
 

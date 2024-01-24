@@ -32,6 +32,7 @@
                                 <th width="20px">No</th>
                                 <th width="40px">NoRM</th>
                                 <th width="36px">Layanan</th>
+                                <th width="12rem">NIK</th>
                                 <th width="12rem">Nama</th>
                                 <th width="20rem">Dokter</th>
                             </tr>
