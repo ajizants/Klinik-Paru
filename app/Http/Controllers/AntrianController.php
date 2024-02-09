@@ -114,8 +114,12 @@ class AntrianController extends Controller
         $norm = $request->input("norm");
         $date = $request->input('date', now()->toDateString());
         $data = KunjunganModel::with(['poli', 'biodata', 'lab', 'kelompok', 'petugas.pegawai.biodata'])
-            ->where('norm', 'like', '%' . $norm . '%')
             ->whereDate('tgltrans', $date)
+            ->where('norm', 'like', '%' . $norm . '%')
+            ->where('ktujuan', 'like', '%' . 5 . '%')
+        // ->whereHas('lab', function ($query) {
+        //     $query->whereNotNull('idLab'); // Adjust this condition based on your lab model's primary key or other relevant column
+        // })
             ->get();
 
         $formattedData = [];
@@ -314,8 +318,10 @@ class AntrianController extends Controller
     public function all(Request $request)
     {
         $date = $request->input('date', now()->toDateString());
-        $data = KunjunganModel::with(['poli', 'tujuan', 'biodata', 'tindakan', 'kelompok', 'petugas.pegawai.biodata'])
+        $ruang = $request->input('ruang');
+        $data = KunjunganModel::with(['poli', 'tujuan', 'biodata', 'lab', 'tindakan', 'kelompok', 'petugas.pegawai.biodata'])
             ->whereDate('tgltrans', $date)
+            ->where('ktujuan', '<>', $ruang)
             ->get();
 
         $formattedData = [];
@@ -324,6 +330,12 @@ class AntrianController extends Controller
                 $status = "BARU"; // Set $status to "Baru" if $transaksi["kunj"] is equal to 'B'
             } else {
                 $status = "LAMA"; // Set $status to "Lama" for all other cases
+            }
+
+            if (count($transaksi["lab"]) === 0) {
+                $lab = "belum";
+            } else {
+                $lab = "sudah";
             }
 
             $transaksi["kunjungan"] = $status;
@@ -377,6 +389,7 @@ class AntrianController extends Controller
                 "oksigenasi" => $transaksi["poli"]["oksigenasi"] ?? null,
                 "injeksi" => $transaksi["poli"]["injeksi"] ?? null,
                 "terapi" => $transaksi["poli"]["terapi"] ?? null,
+                "laborat" => $lab,
 
                 "idtindakan" => $transaksi["tindakan"]["id"] ?? null,
                 "kdTind" => $transaksi["tindakan"]["kdTind"] ?? null,

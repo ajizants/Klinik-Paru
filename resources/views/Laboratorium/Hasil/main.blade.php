@@ -2,9 +2,7 @@
 @extends('Template.lte')
 
 @section('content')
-    @include('Laboratorium.antrian')
-    {{-- @include('Laboratorium.input') --}}
-    @include('Laboratorium.input2')
+    @include('Laboratorium.Hasil.input2')
 
 
 
@@ -25,9 +23,7 @@
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
-    <script src="{{ asset('js/antrianLab.js') }}"></script>
-    {{-- <script src="{{ asset('js/mainLab.js') }}"></script> --}}
-    <script src="{{ asset('js/mainLab2.js') }}"></script>
+    <script src="{{ asset('js/mainLabHasil.js') }}"></script>
 
     <div class="modal fade" id="modal-xl">
         <div class="modal-dialog modal-xl">

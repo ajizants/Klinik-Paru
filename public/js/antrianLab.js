@@ -192,3 +192,12 @@ async function searchRMObat() {
         });
     }
 }
+
+function showTunggu() {
+    $("#dtunggu").show();
+    $("#dselesai").hide();
+}
+function showAll() {
+    $("#dtunggu").hide();
+    $("#dselesai").show();
+}

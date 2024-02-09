@@ -48,16 +48,6 @@
     <script src="{{ asset('vendor/chart.js/Chart.bundle.min.js') }}"></script>
 
     <script src="{{ asset('js/chart.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-                    $("#masukIGD").on("click", function() {
-                            panggilPasien(
-                                "selamat bertugas teman teman, aja kelalen madang, lan aja kelalen gosip, haha haha wkwk wkwk"
-                            );
-                        }
-                    });
-    </script>
-
 
     </body>
 

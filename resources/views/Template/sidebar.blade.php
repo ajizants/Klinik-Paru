@@ -86,14 +86,20 @@
                             @if (auth()->user()->role === 'lab' || auth()->user()->role === 'admin')
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url('/lab') }}">
+                                        <i class="fa-regular fa-id-card nav-icon"></i>
+                                        <p>Pendaftaran Laboratorium</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/hasilLab') }}">
                                         <i class="fa-solid fa-microscope nav-icon"></i>
-                                        <p>Laboratorium</p>
+                                        <p>Input Hasil Laboratorium</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url('/riwayatlab') }}">
                                         <i class="fa-solid fa-chart-column nav-icon"></i>
-                                        <p>Report Laboratorium</p>
+                                        <p>Laporan Laboratorium</p>
                                     </a>
                                 </li>
                             @endif

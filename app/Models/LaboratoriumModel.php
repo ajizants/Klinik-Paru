@@ -11,6 +11,11 @@ class LaboratoriumModel extends Model
     public $timestamps = true;
     protected $table = "t_kunjungan_laboratorium";
 
+    public function kunjungan()
+    {
+        return $this->hasOne(KunjunganModel::class, 'notrans', 'notrans');
+
+    }
     public function layanan()
     {
         return $this->belongsTo(LayananModel::class, 'idLayanan', 'idLayanan');

@@ -12,8 +12,7 @@ class LayananModel extends Model
     protected $connection = ('mysql');
 
     protected $table = ('kasir_m_layanan');
-    protected $primaryKey = ('idLayanan');
-
+    // protected $primaryKey = ('idLayanan');
 
     protected $filable = [
         'kelas',
@@ -21,4 +20,9 @@ class LayananModel extends Model
         'tarif',
         'status',
     ];
+
+    public function kelas()
+    {
+        return $this->hasOne(LayananKelasModel::class, 'kelas', 'kelas');
+    }
 }

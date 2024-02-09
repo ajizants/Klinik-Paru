@@ -9,7 +9,7 @@ class KunjunganModel extends Model
 {
     use HasFactory;
     protected $table = 't_kunjungan';
-
+    public $timestamps = false;
     public function poli()
     {
         return $this->hasOne(PoliModel::class, 'notrans', 'notrans');
@@ -66,4 +66,6 @@ class KunjunganModel extends Model
     {
         return $this->hasMany(LaboratoriumModel::class, 'notrans', 'notrans');
     }
+    public function updateTujuan()
+    {}
 }

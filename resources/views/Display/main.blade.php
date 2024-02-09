@@ -37,7 +37,7 @@
 
 <body>
 
-    <iframe class="custom-iframe"src="https://kkpm.banyumaskab.go.id/administrator/display_tv/ruang_tensi"></iframe>
+    <iframe class="custom-iframe"src="https://kkpm.banyumaskab.go.id/administrator/auth"></iframe>
     {{-- <iframe src="https://kkpm.banyumaskab.go.id/administrator/display_tv/ruang_tensi" width="50%" --}}
     {{-- height="500"></iframe> --}}
 

@@ -12,16 +12,22 @@
                 <i class="fa fa-spinner fa-spin"> </i>Sedang Mencari data...
             </div>
             <ul class="nav nav-tabs">
-                <div class="input-group col d-flex justify-content-center">
+                <li class="nav-item">
+                    <button class="nav-link active" id="itunggu" onclick="showTunggu();"><b>Tunggu</b></button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="iselesai" onclick="showAll();"><b>Semua</b></button>
+                </li>
+                <div class="input-group col d-flex justify-content-start ml-5">
                     <input type="date" class="form-control col-sm-2 bg bg-warning" id="tanggal"
                         value="{{ old('date') }}" required>
                     <div class="input-group-addon btn btn-danger">
                         <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top"
-                            title="Update Pasien Hari ini" id="cariantrian"></span>
+                            title="Update Pasien Hari ini" id="cariantrian" onclick="antrian(); antrianAll();"></span>
                     </div>
                 </div>
             </ul>
-            <div class="card-body card-body-hidden p-2">
+            <div id="dtunggu" class="card-body card-body-hidden p-2">
                 <div class="table-responsive pt-2 px-2">
                     <table id="dataAntrian" class="table table-striped pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
@@ -35,6 +41,25 @@
                                 <th width="12rem">NIK</th>
                                 <th width="12rem">Nama</th>
                                 <th width="20rem">Dokter</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div id="dselesai" class="card-body card-body-hidden p-2">
+                <div class="table-responsive pt-2 px-2">
+                    <table id="antrianall" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
+                        cellspacing="0">
+                        <thead class="bg bg-teal">
+                            <tr>
+                                <th width="15px">Aksi</th>
+                                <th width="25px">Lokasi</th>
+                                <th width="15px">No</th>
+                                <th width="15px">NoRM</th>
+                                <th width="15px">Layanan</th>
+                                <th width="36px">Ket</th>
+                                <th width="">Nama</th>
+                                <th width="">Dokter</th>
                             </tr>
                         </thead>
                     </table>

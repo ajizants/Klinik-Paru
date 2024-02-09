@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Route::middleware('auth')->group(function () {
 //sumber daya
 Route::get('dokter', [PegawaiController::class, 'dokter']);
 Route::get('perawat', [PegawaiController::class, 'perawat']);
@@ -38,6 +39,7 @@ Route::get('apoteker', [PegawaiController::class, 'apoteker']);
 Route::get('analis', [PegawaiController::class, 'analis']);
 Route::get('dxMedis', [InputController::class, 'dxMedis']);
 Route::get('jaminan', [InputController::class, 'jaminan']);
+Route::get('tujuan', [InputController::class, 'tujuan']);
 
 Route::get('bmhp', [InputController::class, 'bmhp']);
 Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);
@@ -90,12 +92,16 @@ Route::get('layanan', [KasirController::class, 'Layanan']);
 
 //laboratorium
 Route::post('layananlab', [LaboratoriumController::class, 'layananlab']);
-Route::post('cariLaboratorium', [LaboratoriumController::class, 'index']);
+Route::post('cariLaboratorium', [LaboratoriumController::class, 'transaksi']);
 Route::post('addTransaksiLab', [LaboratoriumController::class, 'addTransaksi']);
+Route::post('addHasilLab', [LaboratoriumController::class, 'addHasil']);
 Route::post('deleteLab', [LaboratoriumController::class, 'deleteLab']);
 Route::post('cariRiwayatLab', [LaboratoriumController::class, 'riwayat']);
 Route::post('rekapBpjsUmum', [LaboratoriumController::class, 'rekapBpjsUmum']);
-Route::post('rekapReagen', [LaboratoriumController::class, 'rekapReagen']);
+Route::post('rekapReagenHari', [LaboratoriumController::class, 'rekapReagen']);
+Route::post('rekapReagenBln', [LaboratoriumController::class, 'rekapReagenBln']);
+Route::post('rekapKunjunganLab', [LaboratoriumController::class, 'rekapKunjungan']);
+Route::post('poinLab', [LaboratoriumController::class, 'poinPetugas']);
 
 //farmasi
 //sumberdaya apotik
@@ -141,3 +147,4 @@ Route::post('antrianKominfo', [PendaftaranKominfoController::class, 'antrianKomi
 Route::get('noantrian', [NoAntrianController::class, 'index']);
 Route::post('lastNoAntri', [NoAntrianController::class, 'lastNoAntri']);
 Route::post('ambilNo', [NoAntrianController::class, 'store']);
+// });

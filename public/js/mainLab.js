@@ -220,11 +220,11 @@ function dataLab() {
         success: function (response) {
             response.forEach(function (item, index) {
                 item.actions = `<a href="" class="edit"
-                                    data-id="${item.idLab}"
+                                    data-id="${item.IdLab}"
                                     data-norm="${item.norm}"
                                     ><i class="fas fa-pen-to-square pr-3"></i></a>
                                 <a href="" class="delete"
-                                    data-id="${item.idLab}"
+                                    data-id="${item.IdLab}"
                                     data-norm="${item.norm}"
                                     ><i class="fas fa-trash"></i></a>`;
                 item.no = index + 1;
@@ -235,9 +235,9 @@ function dataLab() {
                 columns: [
                     { data: "actions", className: "px-0 col-1 text-center" },
                     { data: "no" },
-                    { data: "norm" },
-                    { data: "layanan.nmLayanan" },
-                    { data: "ket" },
+                    { data: "NORM" },
+                    { data: "NamaPemeriksaan" },
+                    { data: "Ket" },
                 ],
                 order: [1, "asc"],
                 scrollY: "250px", // Atur tinggi scrol

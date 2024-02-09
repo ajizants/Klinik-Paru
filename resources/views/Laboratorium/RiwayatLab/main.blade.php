@@ -24,4 +24,5 @@
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
     <script src="{{ asset('js/reportLab.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
 @endsection

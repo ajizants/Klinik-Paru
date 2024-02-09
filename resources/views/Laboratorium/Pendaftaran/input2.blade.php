@@ -57,24 +57,7 @@
                                             readonly />
                                     </div>
                                 </div>
-                                <div class="mt-2 form-grup row d-flex justify-content-center">
-                                    <label for="analis" class="col-sm-1 col-form-label font-weight-bold">Petugas
-                                        :</label>
-                                    <div class="col-sm-4">
-                                        <select id="analis" class="form-control select2bs4 border border-primary"
-                                            required>
-                                            <option value="">--Pilih Petugas--</option>
-                                        </select>
-                                    </div>
-                                    <label for="dokter" class="col-sm-1 col-form-label font-weight-bold">Dokter
-                                        :</label>
-                                    <div class="col-sm-4">
-                                        <select id="dokter"
-                                            class="form-control select2bs4 mb-3 border border-primary" required>
-                                            <option value="">--Pilih Dokter--</option>
-                                        </select>
-                                    </div>
-                                </div>
+
                                 <div class="mt-3 form-grup d-flex justify-content-center">
                                     <button type="button" class="btn btn-primary col" data-toggle="modal"
                                         data-target="#riwayatModal" onclick="showRiwayat()">Lihat
@@ -106,6 +89,8 @@
                                                         <th>Item Pemeriksaan</th>
                                                         <th>Keterangan</th>
                                                         <th>Harga</th>
+                                                        {{-- <th><input type="checkbox" id="pilih-tag-bakteriologi"></th>
+                                                        <th>Tagihan</th> --}}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -123,11 +108,12 @@
                                             <table id="hematologi" class="table">
                                                 <thead>
                                                     <tr>
-                                                        <th><input type="checkbox" id="pilih-hematologi">
-                                                        </th>
+                                                        <th><input type="checkbox" id="pilih-hematologi"></th>
                                                         <th>Item Pemeriksaan</th>
                                                         <th>Keterangan</th>
                                                         <th>Harga</th>
+                                                        {{-- <th><input type="checkbox" id="pilih-tag-hematologi"></th>
+                                                        <th>Tagihan</th> --}}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -146,11 +132,12 @@
                                                 <table id="kimia" class="table">
                                                     <thead>
                                                         <tr>
-                                                            <th><input type="checkbox" id="pilih-kimia">
-                                                            </th>
+                                                            <th><input type="checkbox" id="pilih-kimia"></th>
                                                             <th>Item Pemeriksaan</th>
                                                             <th>Keterangan</th>
                                                             <th>Harga</th>
+                                                            {{-- <th><input type="checkbox" id="pilih-tag-kimia"></th>
+                                                            <th>Tagihan</th> --}}
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -168,11 +155,12 @@
                                                 <table id="imuno" class="table">
                                                     <thead>
                                                         <tr>
-                                                            <th><input type="checkbox" id="pilih-imuno">
-                                                            </th>
+                                                            <th><input type="checkbox" id="pilih-imuno"></th>
                                                             <th>Item Pemeriksaan</th>
                                                             <th>Keterangan</th>
                                                             <th>Harga</th>
+                                                            {{-- <th><input type="checkbox" id="pilih-tag-imuno"></th>
+                                                            <th>Tagihan</th> --}}
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -208,24 +196,55 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-footer form-row d-flex justify-content-end">
-                                <div class="col-md-2 d-flex justify-content-end d-flex align-items-center">
+                            <form id="frmPetugas">
+                                <div class="mx-2 form-grup row">
+                                    <label for="analis" class="col-sm-1 col-form-label font-weight-bold">Admin
+                                        :</label>
+                                    <div class="col-sm-3">
+                                        <select id="analis" class="form-control select2bs4 border border-primary"
+                                            required>
+                                            <option value="">--Pilih Petugas--</option>
+                                        </select>
+                                    </div>
+                                    <label for="dokter" class="col-sm-1 col-form-label font-weight-bold">Dokter
+                                        :</label>
+                                    <div class="col-sm-3">
+                                        <select id="dokter"
+                                            class="form-control select2bs4 mb-3 border border-primary" required>
+                                            <option value="">--Pilih Dokter--</option>
+                                        </select>
+                                    </div>
+                                    <label for="tujuan" class="col-sm-1 col-form-label font-weight-bold">Tujuan
+                                        :</label>
+                                    <div class="col-sm-2">
+                                        <select id="tujuan" class="form-control select2bs4 border border-primary"
+                                            required>
+                                            <option value="">--Pilih Tujuan--</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="card-footer form-row d-flex justify-content-end  d-flex align-items-center">
+                                <div class="col-md-2 d-flex justify-content-end">
                                     <label for="tagihan" class="form-label mb-0"><b>Total
                                             Tagihan :</b></label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text"id="tagihan" class="form-control border border-info"
+                                    <input type="text"id="tagihan" class="form-control-sm border border-info"
                                         placeholder="Total Tagihan" readonly>
                                 </div>
+
                                 <div class="col-auto">
                                     <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>
                                 </div>
                                 <div class="col-auto">
-                                    <a class="btn btn-danger" id="tblBatal" onclick="selesai();">Batal</a>
+                                    <a class="btn btn-danger" id="tblBatal"
+                                        onclick="resetForm('dibatalkan');">Batal</a>
                                 </div>
 
                                 <div class="col-auto">
-                                    <a class="btn btn-primary" id="tblSelesai" onclick="selesai();">Selesai</a>
+                                    <a class="btn btn-primary" id="tblSelesai"
+                                        onclick="resetForm('selesai');">Selesai</a>
                                 </div>
                             </div>
                         </div>

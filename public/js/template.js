@@ -60,7 +60,6 @@ $("#iselesai").on("click", function () {
 });
 
 function formatNorm(inputElement) {
-    console.log(inputElement);
     // Pastikan inputElement adalah objek jQuery yang valid
     if (inputElement && inputElement.val) {
         // Hapus karakter selain digit

@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\BMHPModel;
 use App\Models\DiagnosaModel;
-use App\Models\DotsObatModel;
 use App\Models\GudangFarmasiModel;
 use App\Models\KelompokModel;
-use App\Models\ObatModel;
 use App\Models\TindakanModel;
-use App\Models\PegawaiModel;
+use App\Models\TujuanModel;
 use Illuminate\Http\Request;
 
 class InputController extends Controller
@@ -90,7 +88,7 @@ class InputController extends Controller
 
             $formattedData[] = [
                 "id" => $transaksi["id"],
-                "product_id"    => $transaksi["product_id"],
+                "product_id" => $transaksi["product_id"],
                 "idObat" => $transaksi["idObat"],
                 "nmObat" => $transaksi["nmObat"],
                 "jenis" => $transaksi["jenis"],
@@ -106,7 +104,7 @@ class InputController extends Controller
                 "hargaJual" => $transaksi["hargaJual"],
                 "stokBaru" => $transaksi["stokBaru"],
                 "keluar" => $transaksi["keluar"],
-                "sisa"  => $transaksi["sisa"],
+                "sisa" => $transaksi["sisa"],
                 "masuk" => $transaksi["masuk"],
                 "created_at" => $transaksi["created_at"],
                 "updated_at" => $transaksi["updated_at"],
@@ -169,10 +167,18 @@ class InputController extends Controller
     {
         // $jenis = ('2');
         $obat = GudangFarmasiModel::on('mysql')
-            // ->where('jenis', $jenis)
+        // ->where('jenis', $jenis)
             ->whereNotNull('stok_akhir')
             ->where('stok_akhir', '>', 0)
             ->get();
         return response()->json($obat, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function tujuan()
+    {
+        $tujuan = TujuanModel::on()
+            ->where('stat', 1)
+            ->get();
+        return response()->json($tujuan, 200, [], JSON_PRETTY_PRINT);
     }
 }

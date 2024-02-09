@@ -3,6 +3,9 @@
                         <a class="nav-link active" id="ikunjungan" onclick="showKunjungan();"><b>Laporan Kunjungan</b></a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" id="ipenjamin" onclick="showPenjamin();"><b>Laporan Penjamin</b></a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" id="ireagen" onclick="showReagen();"><b>Laporan Reagen</b></a>
                     </li>
                     <li class="nav-item">
@@ -37,9 +40,17 @@
                                         <a class="btn btn-success d-flex justify-content-center mx-2"
                                             onclick="reportKunjungan();">Cari</a>
                                     </div>
+                                    <div id="cariPenjamin">
+                                        <a class="btn btn-success d-flex justify-content-center mx-2"
+                                            onclick="reportPenjamin();">Cari</a>
+                                    </div>
                                     <div id="cariReagen">
                                         <a class="btn btn-success d-flex justify-content-center mx-2"
-                                            onclick="reportReagen();">Cari</a>
+                                            onclick="reportReagen();">Cari Per Hari</a>
+                                    </div>
+                                    <div id="cariReagenBln">
+                                        <a class="btn btn-success d-flex justify-content-center mx-2"
+                                            onclick="reportReagenBln();">Cari Per Bulan</a>
                                     </div>
                                     <div id="cariHasil">
                                         <a class="btn btn-success d-flex justify-content-center mx-2"
@@ -57,11 +68,49 @@
                 <div class="container-fluid" id="kunjungan">
                     <div class="card card-primary">
                         <div class="card-header">
+                            <h4 class="card-title">Laporan Kunjungan</h4>
+                        </div>
+                        <div class="card-body shadow">
+                            <div class="table-responsive pt-2 px-2">
+                                <table id="reportKunjungan"class="table table-striped pt-0 mt-0 fs-6" style="width:100%"
+                                    cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Tanggal</th>
+                                            <th>NoRM</th>
+                                            <th>NIK</th>
+                                            <th>Jaminan</th>
+                                            <th>Pasien</th>
+                                            <th>JK</th>
+                                            <th>Alamat</th>
+                                            <th>Dokter</th>
+                                            <th>Pemeriksaan</th>
+                                        </tr>
+                                        {{-- <tr>
+                                            @foreach ($col as $col)
+                                                <th id="{{ $col['idLayanan'] }}">{{ $col['nmLayanan'] }}</th>
+                                                <th>Jumlah</th>
+                                            @endforeach
+                                        </tr> --}}
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-fluid" id="penjamin">
+                    <div class="card card-info">
+                        <div class="card-header">
                             <h4 class="card-title">Laporan Kunjungan Berdasarkan Penjamin</h4>
                         </div>
                         <div class="card-body shadow">
-                            <div class="form-inline d-flex justify-content-start p-2">
-                                <table id="reportKunjungan"class="table table-striped pt-0 mt-0 fs-6" style="width:100%"
+                            <div class="table-responsive pt-2 px-2">
+                                <table id="reportPenjamin"class="table table-striped pt-0 mt-0 fs-6" style="width:100%"
                                     cellspacing="0">
                                     <thead>
                                         <tr>
@@ -87,7 +136,7 @@
                             <h4 class="card-title">Laporan Jumlah total pemeriksaan (penggunaan reagen)</h4>
                         </div>
                         <div class="card-body shadow">
-                            <div class="form-inline d-flex justify-content-start p-2">
+                            <div class="table-responsive pt-2 px-2">
                                 <table id="reportReagen"class="table table-striped pt-0 mt-0 fs-6" style="width:100%"
                                     cellspacing="0">
                                     <thead>
@@ -111,7 +160,7 @@
                             <h4 class="card-title">Laporan Hasil Pemeriksaan</h4>
                         </div>
                         <div class="card-body shadow">
-                            <div class="form-inline d-flex justify-content-start p-2">
+                            <div class="table-responsive pt-2 px-2">
                                 <table id="reportHasil"class="table table-striped pt-0 mt-0 fs-6" style="width:100%"
                                     cellspacing="0">
                                     <thead>
@@ -135,12 +184,13 @@
                             <h4 class="card-title">Laporan Jumlah Pemeriksaan Petugas</h4>
                         </div>
                         <div class="card-body shadow">
-                            <div class="form-inline d-flex justify-content-start p-2">
+                            <div class="table-responsive pt-2 px-2">
                                 <table id="reportPoin"class="table table-striped pt-0 mt-0 fs-6" style="width:100%"
                                     cellspacing="0">
                                     <thead>
                                         <tr>
                                             <th>No</th>
+                                            <th>NIP</th>
                                             <th>Nama</th>
                                             <th>Pemeriksaan</th>
                                             <th>Jumlah</th>

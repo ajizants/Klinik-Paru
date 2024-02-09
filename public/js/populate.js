@@ -1,9 +1,10 @@
-function fetchAntrianAll(tanggal, callback) {
+function fetchAntrianAll(tanggal, ruang, callback) {
     $.ajax({
         url: "/api/antrianAll",
         type: "POST",
         data: {
             date: tanggal,
+            ruang: ruang,
         },
         success: function (response) {
             callback(response);
@@ -47,11 +48,11 @@ function initializeAntrianAll(response) {
     // .container()
     // .appendTo("#antrianall_wrapper .col-md-6:eq(0)");
 }
-function antrianAll() {
+function antrianAll(ruang) {
     $("#loadingSpinner").show();
     var tanggal = $("#tanggal").val();
 
-    fetchAntrianAll(tanggal, function (response) {
+    fetchAntrianAll(tanggal, ruang, function (response) {
         $("#loadingSpinner").hide();
         if ($.fn.DataTable.isDataTable("#antrianall")) {
             var table = $("#antrianall").DataTable();
@@ -220,6 +221,25 @@ function populateJaminan() {
         });
     });
 }
+function populateTujuan() {
+    var tujuanSelectElement = $("#tujuan");
+    $.get("/api/tujuan", function (data) {
+        data.sort(function (a, b) {
+            var namaLengkapA = a.tujuan;
+            var namaLengkapB = b.tujuan;
+            return namaLengkapA.localeCompare(namaLengkapB, undefined, {
+                numeric: true,
+                sensitivity: "base",
+            });
+        });
+        data.forEach(function (tujuan) {
+            var nmTujuan = tujuan.tujuan;
+            var kode = tujuan.kd_tujuan.toString();
+            var option = new Option(nmTujuan, kode, false, false);
+            tujuanSelectElement.append(option).trigger("change");
+        });
+    });
+}
 
 //SDM
 function populateDokterOptions() {
@@ -303,6 +323,52 @@ function populateAnalisOptions() {
                 petugas.gelar_d + " " + petugas.nama + " " + petugas.gelar_b;
             var option = new Option(namaLengkap, petugas.nip, false, false);
             petugasSelectElement.append(option).trigger("change");
+        });
+    });
+}
+function populateAnalisHasil() {
+    var analisDarah = $("#darah");
+    var analisBakteri = $("#bakteri");
+    var analisImuno = $("#imuno");
+
+    $.get("/api/analis", function (data) {
+        data.sort(function (a, b) {
+            var namaLengkapA = a.gelar_d + " " + a.nama + " " + a.gelar_b;
+            var namaLengkapB = b.gelar_d + " " + b.nama + " " + b.gelar_b;
+            return namaLengkapA.localeCompare(namaLengkapB, undefined, {
+                numeric: true,
+                sensitivity: "base",
+            });
+        });
+
+        data.forEach(function (petugas) {
+            var namaLengkap =
+                petugas.gelar_d + " " + petugas.nama + " " + petugas.gelar_b;
+
+            // Create separate Option instances for each select element
+            var optionDarah = new Option(
+                namaLengkap,
+                petugas.nip,
+                false,
+                false
+            );
+            var optionBakteri = new Option(
+                namaLengkap,
+                petugas.nip,
+                false,
+                false
+            );
+            var optionImuno = new Option(
+                namaLengkap,
+                petugas.nip,
+                false,
+                false
+            );
+
+            // Append options to the respective select elements
+            analisDarah.append(optionDarah).trigger("change");
+            analisBakteri.append(optionBakteri).trigger("change");
+            analisImuno.append(optionImuno).trigger("change");
         });
     });
 }

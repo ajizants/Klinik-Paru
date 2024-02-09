@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::get('lte', [HomeController::class, 'lte'])->name('lte')->middleware('role:kasir');
     //Laborat
     Route::get('lab', [HomeController::class, 'lab'])->name('lab')->middleware('role:lab');
+    Route::get('hasilLab', [HomeController::class, 'hasilLab'])->name('hasilLab')->middleware('role:lab');
     Route::get('riwayatlab', [HomeController::class, 'riwayatlab'])->name('riwayatlab')->middleware('role:lab');
 });
 Route::get('dispenser', [HomeController::class, 'dispenser'])->name('dispenser');

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LayananModel;
+
 class HomeController extends Controller
 {
     public function lte()
@@ -57,13 +59,31 @@ class HomeController extends Controller
     }
     public function lab()
     {
-        $title = 'LABORATORIUM';
-        return view('Laboratorium.main')->with('title', $title);
+        $title = 'Pendaftaran Laboratorium';
+        return view('Laboratorium.Pendaftaran.main')->with('title', $title);
+    }
+    public function hasilLab()
+    {
+        $title = 'Input Hasil Laboratorium';
+        return view('Laboratorium.Hasil.main')->with('title', $title);
     }
     public function riwayatlab()
     {
         $title = 'Riwayat Laboratorium';
-        return view('Laboratorium.RiwayatLab.main')->with('title', $title);
+
+        $query = LayananModel::on('mysql')
+            ->where('status', '1')
+            ->where('kelas', 'like', '%9%')
+            ->get();
+        $col = [];
+        foreach ($query as $d) {
+            $col[] = [
+                "idLayanan" => $d["idLayanan"] ?? null,
+                "nmLayanan" => $d["nmLayanan"] ?? null,
+            ];
+        }
+
+        return view('Laboratorium.RiwayatLab.main', ['col' => $col])->with('title', $title);
     }
     public function report()
     {

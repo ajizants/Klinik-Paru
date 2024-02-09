@@ -53,6 +53,18 @@ function layanan(kelas, grupLayanan, pilihSemuaId) {
                     return `<label type="text" class="form-check-label mt-1" for="${row.idLayanan}" style="font-size: medium;">${formattedTarif}</label>`;
                 },
             },
+            // {
+            //     data: null,
+            //     render: function (data, type, row) {
+            //         return `<input type="checkbox" class="select-checkbox mt-2 data-checkbox ${grupLayanan}" id="biaya${row.idLayanan}">`;
+            //     },
+            // },
+            // {
+            //     data: null,
+            //     render: function (data, type, row) {
+            //         return `<input type="text" class="form-control-sm col-6" id="tagihan${row.idLayanan}">`;
+            //     },
+            // },
         ],
         order: [1, "asc"],
         scrollY: "200px",
@@ -98,12 +110,12 @@ async function dataLab() {
 
         data.forEach((item, index) => {
             item.actions = `<a href="" class="edit"
-                                data-id="${item.idLab}"
+                                data-id="${item.IdLab}"
                                 data-norm="${item.norm}"
                                 ><i class="fas fa-pen-to-square pr-3"></i></a>
                             <a class="delete"
-                                data-id="${item.idLab}"
-                                data-layanan="${item.NamaLayanan}"
+                                data-id="${item.IdLab}"
+                                data-layanan="${item.NamaPemeriksaan}"
                                 onclick="deletLab();"><i class="fas fa-trash"></i></a>`;
             item.no = index + 1;
         });
@@ -113,9 +125,9 @@ async function dataLab() {
             columns: [
                 { data: "actions", className: "px-0 col-1 text-center" },
                 { data: "no" },
-                { data: "norm" },
-                { data: "NamaLayanan" },
-                { data: "ket" },
+                { data: "NORM" },
+                { data: "NamaPemeriksaan" },
+                { data: "Ket" },
             ],
             order: [1, "asc"],
             scrollY: "320px",
@@ -133,13 +145,15 @@ function simpan() {
     var notrans = $("#notrans").val();
     var petugas = $("#analis").val();
     var dokter = $("#dokter").val();
+    var tujuan = $("#tujuan").val();
 
-    if (!norm || !notrans || !petugas || !dokter) {
+    if (!norm || !notrans || !petugas || !dokter || !tujuan) {
         var dataKurang = [];
         if (!norm) dataKurang.push("No RM ");
         if (!notrans) dataKurang.push("Nomor Transaksi ");
         if (!petugas) dataKurang.push("Petugas ");
         if (!dokter) dataKurang.push("Dokter ");
+        if (!tujuan) dataKurang.push("Tujuan ");
 
         Swal.fire({
             icon: "error",
@@ -184,10 +198,16 @@ function simpan() {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ dataTerpilih: dataTerpilih }),
+            body: JSON.stringify({
+                notrans: notrans,
+                tujuan: tujuan,
+                dataTerpilih: dataTerpilih,
+            }),
         })
             .then((response) => {
                 if (!response.ok) {
+                    console.log("Response status:", response.status);
+                    console.log("Response status text:", response.statusText);
                     throw new Error("Network response was not ok");
                 }
                 return response.json();
@@ -199,6 +219,7 @@ function simpan() {
                     title: "Data berhasil tersimpan...!!!",
                 });
                 dataLab();
+                antrian();
 
                 // toggleInputReadonly(false);
             })
@@ -252,17 +273,21 @@ function deletLab(idLab, layanan) {
     });
 }
 
-function selesai() {
+function resetForm(message) {
     $('table thead input[type="checkbox"]').prop("checked", false);
     $('table tbody input[type="checkbox"]').prop("checked", false);
     document.getElementById("frmident").reset();
+    document.getElementById("frmPetugas").reset();
+    $("#analis,#dokter,#tujuan").trigger("change");
 
     if ($.fn.DataTable.isDataTable("#dataTrans")) {
         let tableTrans = $("#dataTrans").DataTable();
         tableTrans.clear().destroy();
     }
-
-    // Scroll to the top
+    Swal.fire({
+        icon: "info",
+        title: "Transaksi " + message + " maturnuwun...!!!",
+    });
     scrollToTop();
 }
 
@@ -284,11 +309,18 @@ $(document).ready(function () {
     });
     populateDokterOptions();
     populateAnalisOptions();
+    populateTujuan();
+    showTunggu();
+    antrian();
+    antrianAll("5");
+    setInterval(function () {
+        antrianAll("5");
+        antrian();
+    }, 150000);
     layanan(91, "hematologi", "pilih-hematologi");
     layanan(92, "kimia", "pilih-kimia");
     layanan(93, "imuno", "pilih-imuno");
     layanan(94, "bakteriologi", "pilih-bakteriologi");
-    antrian();
     $("#tanggal").on("change", antrian);
 
     $("#dataAntrian").on("click", ".aksi-button", function (e) {

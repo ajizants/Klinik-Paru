@@ -13,32 +13,67 @@ class LaboratoriumController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function transaksi(Request $request)
     {
         $notrans = $request->input('notrans');
-        $data = LaboratoriumModel::with('layanan', 'petugas.biodata', 'dokter.biodata')
+        $tglAwal = $request->input('tglAwal');
+        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
+        // dd($tglAkhir);
+        $data = LaboratoriumModel::with('kunjungan.biodata', 'layanan.kelas', 'petugas.biodata', 'dokter.biodata')
             ->where('notrans', 'like', '%' . $notrans . '%')
+            ->whereBetween('created_at', [
+                \Carbon\Carbon::parse($tglAwal)->startOfDay(), // Menambahkan waktu mulai hari
+                \Carbon\Carbon::parse($tglAkhir)->endOfDay(), // Menambahkan waktu akhir hari
+            ])
             ->get();
 
         $lab = json_decode($data, true);
+        // dd($lab);
         $formattedData = [];
         foreach ($lab as $transaksi) {
 
             $formattedData[] = [
-                "idLab" => $transaksi["idLab"] ?? null,
-                "notrans" => $transaksi["notrans"] ?? null,
-                "norm" => $transaksi["norm"] ?? null,
-                "ket" => $transaksi["ket"] ?? null,
-                "idLayanan" => $transaksi["idLayanan"] ?? null,
-                "NamaLayanan" => $transaksi["layanan"]["nmLayanan"] ?? null,
-                "jumlah" => $transaksi["jumlah"] ?? null,
-                "nippetugas" => $transaksi["petugas"]["biodata"]["nip"] ?? null,
-                "petugas" => ($transaksi["petugas"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["gelar_b"] ?? null),
-                "nippetugas" => $transaksi["petugas"]["biodata"]["nip"] ?? null,
-                "dokter" => ($transaksi["dokter"]["gelar_d"] ?? null) . ' ' . ($transaksi["dokter"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["dokter"]["gelar_b"] ?? null),
-                "created_at" => $transaksi["created_at"] ?? null,
-                "updated_at" => $transaksi["updated_at"] ?? null,
+                "IdLab" => $transaksi["idLab"] ?? null,
+                "NoTrans" => $transaksi["notrans"] ?? null,
+                "NORM" => $transaksi["norm"] ?? null,
+                "IdLayanan" => $transaksi["idLayanan"] ?? null,
+                "Jumlah" => $transaksi["jumlah"] ?? null,
+                "Tagihan" => $transaksi["total"] ?? null,
 
+                "NipPetugas" => $transaksi["petugas"]["nip"] ?? null,
+                "NamaPetugas" => ($transaksi["petugas"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["gelar_b"] ?? null),
+                "NipDokter" => $transaksi["dokter"]["nip"] ?? null,
+                "NamaDokter" => ($transaksi["dokter"]["gelar_d"] ?? null) . ' ' . ($transaksi["dokter"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["dokter"]["gelar_b"] ?? null),
+
+                "Ket" => $transaksi["ket"] ?? null,
+                "TglTrans" => $transaksi["created_at"]?\Carbon\Carbon::parse($transaksi["created_at"])->toDateTimeString() : null,
+
+                // "kunjungan" => [
+                "NoUrut" => $transaksi["kunjungan"]["nourut"] ?? null,
+                "JenisKunjungan" => $transaksi["kunjungan"]["kunj"] ?? null,
+                "JenisKelaminPasien" => $transaksi["kunjungan"]["jeniskel"] ?? null,
+                "UmurPasien" => $transaksi["kunjungan"]["umurthn"] ?? null,
+                "NIKPasien" => $transaksi["kunjungan"]["biodata"]["noktp"] ?? null,
+                "NamaPasien" => $transaksi["kunjungan"]["biodata"]["nama"] ?? null,
+                "Domisili" => $transaksi["kunjungan"]["biodata"]["alamat"] ?? null,
+                "rtrw" => $transaksi["kunjungan"]["biodata"]["rtrw"] ?? null,
+                "jeniskel" => $transaksi["kunjungan"]["biodata"]["jeniskel"] ?? null,
+                "jkel" => $transaksi["kunjungan"]["biodata"]["jkel"] ?? null,
+                "NoHP" => $transaksi["kunjungan"]["biodata"]["nohp"] ?? null,
+                "Perkawinan" => $transaksi["kunjungan"]["biodata"]["statKawin"] ?? null,
+                "Pekerjaan" => $transaksi["kunjungan"]["biodata"]["pekerjaan"] ?? null,
+                "Jaminan" => $transaksi["kunjungan"]["biodata"]["kelompok"] ?? null,
+                "provinsi" => $transaksi["kunjungan"]["biodata"]["provinsi"] ?? null,
+                "kabupaten" => $transaksi["kunjungan"]["biodata"]["kabupaten"] ?? null,
+                "kecamatan" => $transaksi["kunjungan"]["biodata"]["kecamatan"] ?? null,
+                "kelurahan" => $transaksi["kunjungan"]["biodata"]["kelurahan"] ?? null,
+                "AlamatLengkap" => ($transaksi["kunjungan"]["biodata"]["kelurahan"] ?? null) . ' ' . ($transaksi["kunjungan"]["biodata"]["rtrw"] ?? null) . ', ' . ($transaksi["kunjungan"]["biodata"]["kecamatan"] ?? null) . ', ' . ($transaksi["kunjungan"]["biodata"]["kabupaten"] ?? null),
+
+                // ],
+                // "layanan" => [
+                "NamaPemeriksaan" => $transaksi["layanan"]["nmLayanan"] ?? null,
+                "Tarif" => $transaksi["layanan"]["tarif"] ?? null,
+                // ],
             ];
         }
         // dd($formattedData);
@@ -84,7 +119,7 @@ class LaboratoriumController extends Controller
                 'message' => 'Data terpilih tidak valid atau kosong',
             ], 400);
         }
-        // dd($dataTerpilih);
+
         try {
             // Memulai transaksi database
             DB::beginTransaction();
@@ -112,7 +147,78 @@ class LaboratoriumController extends Controller
                     ], 500);
                 }
             }
-            // dd($dataToInsert);
+
+            // Simpan data ke database
+            LaboratoriumModel::insert($dataToInsert);
+
+            // Commit transaksi database
+            DB::commit();
+
+            // Extract notrans and tujuan from the request
+            $notrans = $request->input('notrans');
+            $tujuan = $request->input('tujuan');
+
+            // Update the KunjunganModel
+            $affectedRows = KunjunganModel::where('notrans', $notrans)
+                ->update(['ktujuan' => $tujuan]);
+
+            if ($affectedRows > 0) {
+                return response()->json([
+                    'message' => 'Data berhasil disimpan dan diupdate',
+                ], 201);
+            } else {
+                return response()->json([
+                    'message' => 'Terjadi kesalahan saat update data KunjunganModel',
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            // Rollback transaksi database jika terjadi kesalahan
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat menyimpan data',
+            ], 500);
+        }
+    }
+    public function addHasil(Request $request)
+    {
+        // Mendapatkan dataTerpilih dari permintaan
+        $dataTerpilih = $request->input('dataTerpilih');
+
+        // Validasi bahwa dataTerpilih harus array dan tidak boleh kosong
+        if (!is_array($dataTerpilih) || empty($dataTerpilih)) {
+            return response()->json([
+                'message' => 'Data terpilih tidak valid atau kosong',
+            ], 400);
+        }
+
+        try {
+            // Memulai transaksi database
+            DB::beginTransaction();
+
+            // Membuat array untuk menyimpan data yang akan disimpan
+            $dataToInsert = [];
+
+            // Looping untuk mengolah dataTerpilih
+            foreach ($dataTerpilih as $data) {
+                // Validasi data yang diperlukan pada setiap elemen dataTerpilih
+                if (isset($data['idLayanan']) && isset($data['notrans'])) {
+                    $dataToInsert[] = [
+                        'idLab' => $data['idLab'],
+                        'notrans' => $data['notrans'],
+                        'norm' => $data['norm'],
+                        'idLayanan' => $data['idLayanan'],
+                        'petugas' => $data['petugas'],
+                        'hasil' => $data['hasil'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                } else {
+                    return response()->json([
+                        'message' => 'Data tidak lengkap',
+                    ], 500);
+                }
+            }
+
             // Simpan data ke database
             LaboratoriumModel::insert($dataToInsert);
 
@@ -120,17 +226,18 @@ class LaboratoriumController extends Controller
             DB::commit();
 
             return response()->json([
-                'message' => 'Data berhasil disimpan',
+                'message' => 'Data Berhasil Disimpan',
             ], 201);
+
         } catch (\Exception $e) {
             // Rollback transaksi database jika terjadi kesalahan
             DB::rollBack();
-            dd($e);
             return response()->json([
                 'message' => 'Terjadi kesalahan saat menyimpan data',
             ], 500);
         }
     }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -167,21 +274,32 @@ class LaboratoriumController extends Controller
         $lab = json_decode($data, true);
         $formattedData = [];
         foreach ($lab as $transaksi) {
+            if ($transaksi["kkelompok"] === 1) {
+                $jaminan = "UMUM";
+            } elseif ($transaksi["kkelompok"] === 1) {
+                $jaminan = "BPJS";
+            } else {
+                $jaminan = "";
+            }
 
             $formattedData[] = [
-                "idLab" => $transaksi["idLab"] ?? null,
                 "notrans" => $transaksi["notrans"] ?? null,
                 "norm" => $transaksi["norm"] ?? null,
+                "nourut" => $transaksi["nourut"] ?? null,
+                "tgltrans" => $transaksi["tgltrans"] ?? null,
+                "janiman" => $jaminan,
+
+                "idLab" => $transaksi["riwayat_lab"]["idLab"] ?? null,
                 "ket" => $transaksi["ket"] ?? null,
-                "idLayanan" => $transaksi["idLayanan"] ?? null,
-                "NamaLayanan" => $transaksi["layanan"]["nmLayanan"] ?? null,
-                "jumlah" => $transaksi["jumlah"] ?? null,
-                "nippetugas" => $transaksi["petugas"]["biodata"]["nip"] ?? null,
-                "petugas" => ($transaksi["petugas"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["gelar_b"] ?? null),
-                "nippetugas" => $transaksi["petugas"]["biodata"]["nip"] ?? null,
-                "dokter" => ($transaksi["dokter"]["gelar_d"] ?? null) . ' ' . ($transaksi["dokter"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["dokter"]["gelar_b"] ?? null),
-                "created_at" => $transaksi["created_at"] ?? null,
-                "updated_at" => $transaksi["updated_at"] ?? null,
+                "idLayanan" => $transaksi["riwayat_lab"]["idLayanan"] ?? null,
+                // "NamaLayanan" => $transaksi["layanan"]["nmLayanan"] ?? null,
+                // "jumlah" => $transaksi["jumlah"] ?? null,
+                // "nippetugas" => $transaksi["petugas"]["biodata"]["nip"] ?? null,
+                // "petugas" => ($transaksi["petugas"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["gelar_b"] ?? null),
+                // "nippetugas" => $transaksi["petugas"]["biodata"]["nip"] ?? null,
+                // "dokter" => ($transaksi["dokter"]["gelar_d"] ?? null) . ' ' . ($transaksi["dokter"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["dokter"]["gelar_b"] ?? null),
+                // "created_at" => $transaksi["created_at"] ?? null,
+                // "updated_at" => $transaksi["updated_at"] ?? null,
             ];
         }
         // dd($formattedData);
@@ -233,6 +351,223 @@ class LaboratoriumController extends Controller
 
         // return view('riwayat_lab.index', compact('riwayatLab'));
         return response()->json($riwayatLab, 200, [], JSON_PRETTY_PRINT);
+    }
+    public function rekapReagenBln(Request $request)
+    {
+        $tglAwal = $request->input('tglAwal', now()->toDateString());
+        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
+
+        $riwayatLab = DB::table('t_kunjungan_laboratorium')
+            ->join('kasir_m_layanan', 't_kunjungan_laboratorium.idLayanan', '=', 'kasir_m_layanan.idLayanan')
+            ->join('t_kunjungan', 't_kunjungan_laboratorium.notrans', '=', 't_kunjungan.notrans')
+            ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
+            ->select(
+                'kasir_m_layanan.nmLayanan',
+                DB::raw('CONCAT(MONTH(t_kunjungan_laboratorium.created_at), "-", YEAR(t_kunjungan_laboratorium.created_at)) as created_at'),
+                DB::raw('COUNT(0) AS Jumlah')
+            )
+            ->groupBy('kasir_m_layanan.nmLayanan', 'created_at')
+            ->whereBetween(DB::raw('DATE(t_kunjungan_laboratorium.created_at)'), [$tglAwal, $tglAkhir])
+            ->get();
+
+        return response()->json($riwayatLab, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function rekapKunjungan2(Request $request)
+    {
+        $notrans = $request->input('notrans');
+        $tglAwal = $request->input('tglAwal', now()->toDateString());
+        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
+        // dd($tglAkhir);
+        $data = LaboratoriumModel::with('kunjungan.biodata', 'layanan.kelas', 'petugas.biodata', 'dokter.biodata')
+            ->where('notrans', 'like', '%' . $notrans . '%')
+            ->whereBetween('created_at', [
+                \Carbon\Carbon::parse($tglAwal)->startOfDay(), // Menambahkan waktu mulai hari
+                \Carbon\Carbon::parse($tglAkhir)->endOfDay(), // Menambahkan waktu akhir hari
+            ])
+            ->get();
+
+        $lab = json_decode($data, true);
+        // dd($lab);
+        $formattedData = [];
+        foreach ($lab as $transaksi) {
+
+            $formattedData[] = [
+                "IdLab" => $transaksi["idLab"] ?? null,
+                "NoTrans" => $transaksi["notrans"] ?? null,
+                "NORM" => $transaksi["norm"] ?? null,
+                "IdLayanan" => $transaksi["idLayanan"] ?? null,
+                "Jumlah" => $transaksi["jumlah"] ?? null,
+                "Tagihan" => $transaksi["total"] ?? null,
+
+                "NipPetugas" => $transaksi["petugas"]["nip"] ?? null,
+                "NamaPetugas" => ($transaksi["petugas"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["gelar_b"] ?? null),
+                "NipDokter" => $transaksi["dokter"]["nip"] ?? null,
+                "NamaDokter" => ($transaksi["dokter"]["gelar_d"] ?? null) . ' ' . ($transaksi["dokter"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["dokter"]["gelar_b"] ?? null),
+
+                "Ket" => $transaksi["ket"] ?? null,
+                "TglTrans" => $transaksi["created_at"]?\Carbon\Carbon::parse($transaksi["created_at"])->toDateTimeString() : null,
+
+                // "kunjungan" => [
+                "NoUrut" => $transaksi["kunjungan"]["nourut"] ?? null,
+                "JenisKunjungan" => $transaksi["kunjungan"]["kunj"] ?? null,
+                "JenisKelaminPasien" => $transaksi["kunjungan"]["jeniskel"] ?? null,
+                "UmutPasien" => $transaksi["kunjungan"]["umurthn"] ?? null,
+                "NIKPasien" => $transaksi["kunjungan"]["biodata"]["noktp"] ?? null,
+                "NamaPasien" => $transaksi["kunjungan"]["biodata"]["nama"] ?? null,
+                "Domisili" => $transaksi["kunjungan"]["biodata"]["alamat"] ?? null,
+                "rtrw" => $transaksi["kunjungan"]["biodata"]["rtrw"] ?? null,
+                "jeniskel" => $transaksi["kunjungan"]["biodata"]["jeniskel"] ?? null,
+                "jkel" => $transaksi["kunjungan"]["biodata"]["jkel"] ?? null,
+                "NoHP" => $transaksi["kunjungan"]["biodata"]["nohp"] ?? null,
+                "Perkawinan" => $transaksi["kunjungan"]["biodata"]["statKawin"] ?? null,
+                "Pekerjaan" => $transaksi["kunjungan"]["biodata"]["pekerjaan"] ?? null,
+                "Jaminan" => $transaksi["kunjungan"]["biodata"]["kelompok"] ?? null,
+                "provinsi" => $transaksi["kunjungan"]["biodata"]["provinsi"] ?? null,
+                "kabupaten" => $transaksi["kunjungan"]["biodata"]["kabupaten"] ?? null,
+                "kecamatan" => $transaksi["kunjungan"]["biodata"]["kecamatan"] ?? null,
+                "kelurahan" => $transaksi["kunjungan"]["biodata"]["kelurahan"] ?? null,
+                "AlamatLengkap" => ($transaksi["kunjungan"]["biodata"]["kelurahan"] ?? null) . ' ' . ($transaksi["kunjungan"]["biodata"]["rtrw"] ?? null) . ', ' . ($transaksi["kunjungan"]["biodata"]["kecamatan"] ?? null) . ', ' . ($transaksi["kunjungan"]["biodata"]["kabupaten"] ?? null),
+
+                // ],
+                // "layanan" => [
+                "NamaPemeriksaan" => $transaksi["layanan"]["nmLayanan"] ?? null,
+                "Tarif" => $transaksi["layanan"]["tarif"] ?? null,
+                // ],
+            ];
+        }
+        // dd($formattedData);
+        return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
+        // return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
+    }
+    public function rekapKunjungan(Request $request)
+    {
+        $notrans = $request->input('notrans');
+        $tglAwal = $request->input('tglAwal', now()->toDateString());
+        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
+        // dd($tglAkhir);
+        $data = KunjunganModel::with('kelompok', 'biodata', 'riwayatLab.layanan.kelas', 'riwayatLab.petugas.biodata', 'riwayatLab.dokter.biodata')
+            ->where('notrans', 'like', '%' . $notrans . '%')
+            ->whereBetween('tgltrans', [
+                \Carbon\Carbon::parse($tglAwal)->startOfDay(), // Menambahkan waktu mulai hari
+                \Carbon\Carbon::parse($tglAkhir)->endOfDay(), // Menambahkan waktu akhir hari
+            ])
+            ->whereHas('riwayatLab')
+            ->get();
+
+        $lab = json_decode($data, true);
+        // // dd($lab);
+        $formattedData = [];
+        foreach ($lab as $transaksi) {
+            $riwayatLabData = [];
+
+            foreach ($transaksi["riwayat_lab"] as $labResult) {
+                $riwayatLabData[] = [
+                    "IdLab" => $labResult["idLab"] ?? null,
+                    "NoTrans" => $labResult["notrans"] ?? null,
+                    "Norm" => $labResult["norm"] ?? null,
+                    "IdLayanan" => $labResult["idLayanan"] ?? null,
+                    "Jumlah" => $labResult["jumlah"] ?? null,
+                    "Total" => $labResult["total"] ?? null,
+                    "NipPetugas" => $labResult["petugas"]["nip"] ?? null,
+                    "NamaPetugas" => ($labResult["petugas"]["gelar_d"] ?? null) . "" . ($labResult["petugas"]["biodata"]["nama"] ?? null) . " " . ($labResult["petugas"]["gelar_b"] ?? null),
+                    "NipDokter" => $labResult["dokter"]["nip"] ?? null,
+                    "NamaDokter" => ($labResult["dokter"]["gelar_d"] ?? null) . " " . ($labResult["dokter"]["biodata"]["nama"] ?? null) . " " . ($labResult["dokter"]["gelar_b"] ?? null),
+                    "Ket" => $labResult["ket"] ?? null,
+                    // "CreatedAt" => $labResult["created_at"] ?? null,
+                    // "UpdatedAt" => $labResult["updated_at"] ?? null,
+                    "Kelas" => $labResult["layanan"]["kelas"]["kelas"] ?? null,
+                    "NmKelas" => $labResult["layanan"]["kelas"]["nmKelas"] ?? null,
+                    "NmLayanan" => $labResult["layanan"]["nmLayanan"] ?? null,
+                    "Tarif" => $labResult["layanan"]["tarif"] ?? null,
+                    "Status" => $labResult["layanan"]["status"] ?? null,
+                    "CreatedAt" => $labResult["created_at"]?\Carbon\Carbon::parse($labResult["created_at"])->toDateTimeString() : null,
+                    "UpdatedAt" => $labResult["updated_at"]?\Carbon\Carbon::parse($labResult["updated_at"])->toDateTimeString() : null,
+                ];
+            }
+
+            $formattedData[] = [
+                "NoTrans" => $transaksi["notrans"] ?? null,
+                "Norm" => $transaksi["norm"] ?? null,
+                "RMLama" => $transaksi["rmlama"] ?? null,
+                "NoUrut" => $transaksi["nourut"] ?? null,
+                "TglTrans" => $transaksi["tgltrans"] ?? null,
+                "Kunj" => $transaksi["kunj"] ?? null,
+                "JenisKelamin" => $transaksi["jeniskel"] ?? null,
+                "Jaminan" => $transaksi["kelompok"]["kelompok"] ?? null,
+                "NoAsuransi" => $transaksi["noasuransi"] ?? null,
+                "Ktujuan" => $transaksi["ktujuan"] ?? null,
+                "Kabupaten" => $transaksi["kkabupaten"] ?? null,
+                "UmurTahun" => $transaksi["umurthn"] ?? null,
+                "Biaya" => $transaksi["biaya"] ?? null,
+                "NIKPasien" => $transaksi["biodata"]["noktp"] ?? null,
+                "NamaPasien" => $transaksi["biodata"]["nama"] ?? null,
+                "Domisili" => $transaksi["biodata"]["alamat"] ?? null,
+                "jeniskel" => $transaksi["biodata"]["jeniskel"] ?? null,
+                "jkel" => $transaksi["biodata"]["jkel"] ?? null,
+                "NoHP" => $transaksi["biodata"]["nohp"] ?? null,
+                "Perkawinan" => $transaksi["biodata"]["statKawin"] ?? null,
+                "Pekerjaan" => $transaksi["biodata"]["pekerjaan"] ?? null,
+                "provinsi" => $transaksi["biodata"]["provinsi"] ?? null,
+                "kabupaten" => $transaksi["biodata"]["kabupaten"] ?? null,
+                "kecamatan" => $transaksi["biodata"]["kecamatan"] ?? null,
+                "kelurahan" => $transaksi["biodata"]["kelurahan"] ?? null,
+                "AlamatLengkap" => ($transaksi["biodata"]["kelurahan"] ?? null) . ' ' . ($transaksi["biodata"]["rtrw"] ?? null) . ', ' . ($transaksi["biodata"]["kecamatan"] ?? null) . ', ' . ($transaksi["biodata"]["kabupaten"] ?? null),
+
+                // "RiwayatLab" => [
+                //     [
+                //         "IdLab" => $transaksi["riwayat_lab"][0]["idLab"] ?? null,
+                //         "NoTrans" => $transaksi["riwayat_lab"][0]["notrans"] ?? null,
+                //         "Norm" => $transaksi["riwayat_lab"][0]["norm"] ?? null,
+                //         "IdLayanan" => $transaksi["riwayat_lab"][0]["idLayanan"] ?? null,
+                //         "Jumlah" => $transaksi["riwayat_lab"][0]["jumlah"] ?? null,
+                //         "Total" => $transaksi["riwayat_lab"][0]["total"] ?? null,
+                //         "NipPetugas" => $transaksi["riwayat_lab"][0]["petugas"]["nip"] ?? null,
+                //         "NamaPetugas" => ($transaksi["riwayat_lab"][0]["petugas"]["gelar_d"] ?? null) . "" . ($transaksi["riwayat_lab"][0]["petugas"]["biodata"]["nama"] ?? null) . " " . ($transaksi["riwayat_lab"][0]["petugas"]["gelar_b"] ?? null),
+                //         "NipDokter" => $transaksi["riwayat_lab"][0]["dokter"]["nip"] ?? null,
+                //         "NamaDokter" => ($transaksi["riwayat_lab"][0]["dokter"]["gelar_d"] ?? null) . " " . ($transaksi["riwayat_lab"][0]["dokter"]["biodata"]["nama"] ?? null) . " " . ($transaksi["riwayat_lab"][0]["dokter"]["gelar_b"] ?? null),
+                //         "Ket" => $transaksi["riwayat_lab"][0]["ket"] ?? null,
+                //         "CreatedAt" => $transaksi["riwayat_lab"][0]["created_at"] ?? null,
+                //         "UpdatedAt" => $transaksi["riwayat_lab"][0]["updated_at"] ?? null,
+                //         "IdLayanan" => $transaksi["riwayat_lab"][0]["layanan"]["idLayanan"] ?? null,
+                //         "Kelas" => $transaksi["riwayat_lab"][0]["layanan"]["kelas"]["kelas"] ?? null,
+                //         "NmKelas" => $transaksi["riwayat_lab"][0]["layanan"]["kelas"]["nmKelas"] ?? null,
+                //         "NmLayanan" => $transaksi["riwayat_lab"][0]["layanan"]["nmLayanan"] ?? null,
+                //         "Tarif" => $transaksi["riwayat_lab"][0]["layanan"]["tarif"] ?? null,
+                //         "Status" => $transaksi["riwayat_lab"][0]["layanan"]["status"] ?? null,
+                //         "CreatedAt" => $transaksi["riwayat_lab"][0]["layanan"]["created_at"] ?? null,
+                //         "UpdatedAt" => $transaksi["riwayat_lab"][0]["layanan"]["updated_at"] ?? null,
+                //     ],
+                // ],
+                "RiwayatLab" => $riwayatLabData,
+            ];
+        }
+        // dd($formattedData);
+        return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
+        // return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function poinPetugas(Request $request)
+    {
+        $tglAwal = $request->input('tglAwal', now()->toDateString());
+        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
+
+        $poin = LaboratoriumModel::on()
+            ->whereBetween(DB::raw('DATE(t_kunjungan_laboratorium.created_at)'), [$tglAwal, $tglAkhir])
+            ->selectRaw('
+                petugas AS NIP,
+                peg_m_biodata.nama,
+                kasir_m_kelas_layanan.kelas,
+                kasir_m_kelas_layanan.nmKelas,
+                COUNT(*) AS Jumlah
+            ')
+            ->join('kasir_m_layanan', 't_kunjungan_laboratorium.idLayanan', '=', 'kasir_m_layanan.idLayanan')
+            ->join('kasir_m_kelas_layanan', 'kasir_m_layanan.kelas', '=', 'kasir_m_kelas_layanan.kelas')
+            ->join('peg_m_biodata', 't_kunjungan_laboratorium.petugas', '=', 'peg_m_biodata.nip')
+            ->groupBy('t_kunjungan_laboratorium.petugas', 'kasir_m_kelas_layanan.kelas', 'kasir_m_kelas_layanan.nmKelas', 'peg_m_biodata.nama') // Include petugas in GROUP BY
+            ->get();
+
+        return response()->json($poin, 200, [], JSON_PRETTY_PRINT);
     }
 
 }

@@ -8,7 +8,7 @@
                     <a href="home" class="nav-link" id="top">Home</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="http://172.16.10.10/rsparu" target="_blank"" class="nav-link">RS Paru</a>
+                    <a href="http://rsparu.kkpm.local" target="_blank"" class="nav-link">RS Paru</a>
                 </li>
             </ul>
 
