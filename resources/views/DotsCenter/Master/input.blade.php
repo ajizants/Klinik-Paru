@@ -22,16 +22,16 @@
                                     <!-- /.card-header -->
                                     <!-- form start -->
                                     @csrf
-                                    <form class="form-horizontal" id="formIdentitas">
+                                    <form class="form-horizontal">
                                         <div class="card-body">
                                             <div class="form-grup row">
                                                 <label for="norm"
-                                                    class="col-sm-1 col-form-label font-weight-bold mb-0">No RM
+                                                    class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
                                                     :</label>
                                                 <div class="col-sm-2">
                                                     <input type="text" name="norm" id="norm"
                                                         class="form-control" placeholder="No RM" maxlength="6"
-                                                        pattern="[0-9]{6}" required onkeyup="handleKeyUp(event)" />
+                                                        pattern="[0-9]{6}" required />
                                                 </div>
                                                 <label for="layanan"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
@@ -118,7 +118,7 @@
                                                 <!-- /.card-header -->
                                                 <div class="card-body p-2">
                                                     @csrf
-                                                    <form class="form-grup col" id="formKunjungan">
+                                                    <form class="form-grup col">
                                                         <div class="form-group">
                                                             <label for="bta"> Hasil
                                                                 BTA</label>
@@ -128,7 +128,6 @@
                                                                 <option value="1">Positif 1</option>
                                                                 <option value="2">Positif 2</option>
                                                                 <option value="3">Positif 3</option>
-                                                                <option value="1-9">Positif 1-9</option>
                                                             </select>
                                                         </div>
                                                         <div class="form-group">
@@ -145,7 +144,7 @@
                                                             <input id="nxKontrol" type="date"
                                                                 class="form-control-sm col border border-primary" />
                                                         </div>
-                                                        <div class="form-group" id="obatD">
+                                                        <div class="form-group">
                                                             <label for="obatDots">
                                                                 Obat </label>
                                                             <select id="obatDots"
@@ -168,8 +167,7 @@
                                                         </div>
                                                         <br>
                                                         <a id="addDataKunj"
-                                                            class="btn btn-success d-flex justify-content-center mb-4"
-                                                            onclick="addKunjunganDots();">Simpan
+                                                            class="btn btn-success d-flex justify-content-center mb-4">Simpan
                                                             Kunjungan</a>
                                                     </form>
                                                 </div>
@@ -183,23 +181,15 @@
                                                 <!-- /.card-header -->
                                                 <div class="card-body p-2">
                                                     <div class="table-responsive">
-                                                        <div id="loadingSpinner" style="display: none;"
-                                                            class="badge bg-primary text-wrap text-center z-3 position-absolute mt-5">
-                                                            <i class="fa fa-spinner fa-spin"></i> Sedang Mencari
-                                                            data...
-                                                        </div>
                                                         <table id="kunjDots" name="dataTindakan"
                                                             class="table table-striped" style="width:100%"
                                                             cellspacing="0">
                                                             <thead>
                                                                 <tr>
                                                                     <th class="col-1">Aksi</th>
-                                                                    <th class="col-1">No RM</th>
-                                                                    <th class="col-1">Tanggal</th>
-                                                                    <th class="col-1">BB</th>
-                                                                    <th class="col-1">Bln Ke</th>
-                                                                    <th class="col-1">BTA</th>
-                                                                    <th class="col-2">Terapi</th>
+                                                                    <th class="col-1">Status</th>
+                                                                    <th class="col-2">No RM</th>
+                                                                    <th class="col-3">Tindakan</th>
                                                                     <th class="col-2">Petugas</th>
                                                                     <th class="col-2">Dokter</th>
                                                                 </tr>
@@ -219,11 +209,10 @@
                         <div class="container-fluid mb-4">
                             <div class="form-row d-flex justify-content-end">
                                 <div class="col-auto">
-                                    <a class="btn btn-danger" id="tblBatal" onclick="transaksiBatal();">Batal</a>
+                                    <a class="btn btn-danger" id="tblBatal">Batal</a>
                                 </div>
                                 <div class="col-auto">
-                                    <a class="btn btn-success" id="tblSimpan"
-                                        onclick="transaksiSelesai();">Selesai</a>
+                                    <a class="btn btn-success" id="tblSimpan">Selesai</a>
                                 </div>
                             </div>
                         </div>

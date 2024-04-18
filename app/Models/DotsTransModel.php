@@ -4,25 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class DotsTransModel extends Model
 {
     use HasFactory;
 
     protected $table = 't_kunjungan_dots';
-    protected $primaryKey = 'id';
-
-
-    protected $fillable = [
-        'norm',
-        'noHP',
-        'notrans',
-        'kdDx',
-        'tglMulai',
-        'petugas',
-        'dokter',
-    ];
+    // protected $primaryKey = 'id';
 
     public function biodata()
     {
@@ -34,6 +23,14 @@ class DotsTransModel extends Model
     }
     public function dokter()
     {
-        return $this->belongsTo(PegawaiModel::class, 'dokter', 'nip');
+        return $this->hasOne(PegawaiModel::class, 'nip', 'dokter');
+    }
+    public function petugas()
+    {
+        return $this->hasOne(PegawaiModel::class, 'nip', 'petugas');
+    }
+    public function obat()
+    {
+        return $this->HasOne(DotsObatModel::class, 'id', 'terapi');
     }
 }

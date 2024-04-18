@@ -10,10 +10,5 @@ class DotsObatModel extends Model
     use HasFactory;
 
     protected $table = 'm_dots_obat';
-    protected $primaryKey = 'id';
-
-
-    protected $fillable = [
-        'nmPengobatan',
-    ];
+    // protected $primaryKey = 'id';
 }

@@ -17,4 +17,8 @@ class PoliModel extends Model
     {
         return $this->hasOne(DiagnosaModel::class, 'kdDiag', 'diagnosa2');
     }
+    public function dx3()
+    {
+        return $this->hasOne(DiagnosaModel::class, 'kdDiag', 'diagnosa3');
+    }
 }

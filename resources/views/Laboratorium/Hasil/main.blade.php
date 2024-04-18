@@ -2,7 +2,7 @@
 @extends('Template.lte')
 
 @section('content')
-    @include('Laboratorium.Hasil.input2')
+    @include('Laboratorium.Hasil.input')
 
 
 

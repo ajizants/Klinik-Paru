@@ -24,19 +24,20 @@
                 </div>
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link active" id="ikontrol"><b>Pasien Kontrol</b></a>
+                        <a class="nav-link active bg-blue" id="ikontrol" onclick="antrianKontrol();"><b>Pasien
+                                Kontrol</b></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="itelat"><b>Pasien Telat</b></a>
+                        <a class="nav-link" id="itelat" onclick="antrianTelat();"><b>Pasien Telat</b></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="ido"><b>Pasien DO</b></a>
+                        <a class="nav-link" id="ido" onclick="antrianDo();"><b>Pasien DO</b></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="itb"><b>Pasien TB</b></a>
+                        <a class="nav-link" id="itb" onclick="antrianTb();"><b>Pasien TB</b></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="iall"><b>Paien Hari Ini</b></a>
+                        <a class="nav-link" id="iall" onclick="antrianToday();"><b>Paien Hari Ini</b></a>
                     </li>
                 </ul>
                 <div id="dkontrol" class="card-body card-body-hidden p-2">
@@ -49,10 +50,10 @@
                                     <th width="35px">Status</th>
                                     <th width="15px"class="text-center">No</th>
                                     <th width="15px" class="text-center">NoRM</th>
-                                    <th width="15px"class="text-center">No HP</th>
                                     <th width="36px"class="text-center">Ket</th>
                                     <th width="">Nama</th>
                                     <th width="">Dokter</th>
+                                    <th width="">Diagnosa</th>
                                 </tr>
                             </thead>
                         </table>

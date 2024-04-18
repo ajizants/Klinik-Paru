@@ -189,7 +189,6 @@
                                     cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
                                             <th>NIP</th>
                                             <th>Nama</th>
                                             <th>Pemeriksaan</th>

@@ -26,7 +26,6 @@ async function dataLab(notrans) {
 
         const data = await response.json();
 
-        // Fetch data from /api/analis separately
         const analisResponse = await fetch("/api/analis", {
             method: "GET",
             headers: {
@@ -52,32 +51,33 @@ async function dataLab(notrans) {
             data: data,
             columns: [
                 { data: "actions", className: "px-0 col-1 text-center" },
-                { data: "no" },
+                {
+                    data: "no",
+                },
+
                 { data: "NORM" },
                 {
                     data: "NamaPemeriksaan",
                     render: function (data, type, row) {
-                        return `<input type="text" class="form-control-sm col-6 hasil" id="hasil${data.idLayanan}" value="${data.idLayanan}" readonly>`;
+                        return `<p type="text" class="form-control-sm col-6 hasil" id="layanan${row.IdLayanan}" value="${row.IdLayanan}" readonly>${data}</p>`;
                     },
                 },
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return `<input type="text" class="form-control-sm col-6 hasil" id="hasil${row.idLayanan}">`;
+                        return `<input type="text" class="form-control-sm col-6 hasil" id="hasil${row.IdLab}">`;
                     },
                 },
                 {
                     data: null,
                     render: function (data, type, row) {
-                        // Use row.idLayanan to create a unique identifier for each input field
-                        var inputId = "analis" + row.idLayanan;
-
+                        var inputId = "analis" + row.IdLab;
                         var inputField = `<select id="${inputId}" class="form-control-sm col-6 analis">`;
+                        inputField += `<option value="">--- Pilih Petugas ---</option>`;
                         analisData.forEach(function (petugas) {
                             inputField += `<option value="${petugas.nip}">${petugas.gelar_d} ${petugas.nama} ${petugas.gelar_b}</option>`;
                         });
                         inputField += "</select>";
-
                         return inputField;
                     },
                 },
@@ -110,72 +110,65 @@ function simpan() {
                 "Belum Diisi",
         });
     } else {
-        var hasil = $(".hasil");
+        var table = $("#inputHasil").DataTable();
+        var dataRows = table.rows().data();
 
-        if (hasil.length === 0) {
-            Swal.fire({
-                icon: "error",
-                title: "Mohon pilih setidaknya satu layanan.",
-            });
-        } else {
-            dataTerpilih = hasil
-                .map(function () {
-                    var id = $(this).attr("id");
-                    var hasil = $("#hasil" + id).val();
-                    var petugas = $("#analis" + id).val();
+        dataRows.each(function (row, index) {
+            var idLab = row.IdLab;
+            var idLayanan = row.IdLayanan;
+            var hasil = $("#hasil" + idLab).val();
+            var petugas = $("#analis" + idLab).val();
 
-                    return {
-                        idLayanan: id,
-                        norm: norm,
-                        notrans: notrans,
-                        hasil: hasil,
-                        petugas: petugas,
-                    };
-                })
-                .get();
+            var rowData = {
+                idLab: idLab,
+                idLayanan: idLayanan,
+                norm: norm,
+                notrans: notrans,
+                hasil: hasil,
+                petugas: petugas,
+            };
 
-            dataTerpilih = dataTerpilih.filter(function (item) {
-                return item !== null;
-            });
-        }
+            dataTerpilih.push(rowData);
+        });
 
         console.log(dataTerpilih);
-        // fetch("/api/addHasilLab", {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify({ dataTerpilih: dataTerpilih }),
-        // })
-        //     .then((response) => {
-        //         if (!response.ok) {
-        //             throw new Error("Network response was not ok");
-        //         }
-        //         return response.json();
-        //     })
-        //     .then((data) => {
-        //         console.log(data);
-        //         Swal.fire({
-        //             icon: "success",
-        //             title: "Data berhasil tersimpan...!!!",
-        //         });
-        //         dataLab();
-        //         antrian();
 
-        //         // toggleInputReadonly(false);
-        //     })
-        //     .catch((error) => {
-        //         console.error(
-        //             "There has been a problem with your fetch operation:",
-        //             error
-        //         );
-        //         Swal.fire({
-        //             icon: "error",
-        //             title:
-        //                 "There has been a problem with your fetch operation:" +
-        //                 error,
-        //         });
-        //     });
+        fetch("/api/addHasilLab", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ dataTerpilih: dataTerpilih }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+                Swal.fire({
+                    icon: "success",
+                    title: "Data berhasil tersimpan...!!!",
+                });
+                dataLab();
+                antrian();
+
+                // toggleInputReadonly(false);
+            })
+            .catch((error) => {
+                console.error(
+                    "There has been a problem with your fetch operation:",
+                    error
+                );
+                Swal.fire({
+                    icon: "error",
+                    title:
+                        "There has been a problem with your fetch operation:" +
+                        error,
+                });
+            });
     }
 }
 

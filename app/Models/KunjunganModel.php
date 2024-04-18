@@ -66,6 +66,5 @@ class KunjunganModel extends Model
     {
         return $this->hasMany(LaboratoriumModel::class, 'notrans', 'notrans');
     }
-    public function updateTujuan()
-    {}
+
 }

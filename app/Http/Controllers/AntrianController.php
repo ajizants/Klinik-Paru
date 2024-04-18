@@ -38,13 +38,13 @@ class AntrianController extends Controller
         $formattedData = [];
         foreach ($data as $transaksi) {
 
-            if (isset($transaksi["tindakan"]) && isset($transaksi["tindakan"]["id"]) && $transaksi["tindakan"]["id"] !== null) {
-                $status = "sudah";
-            } else {
+            if (count($transaksi["tindakan"]) === 0) {
                 $status = "belum";
+            } else {
+                $status = "sudah";
             }
 
-            $transaksi["status"] = $status;
+            // $transaksi["status"] = $status;
 
             $formattedData[] = [
                 "notrans" => $transaksi["notrans"] ?? null,
@@ -113,16 +113,28 @@ class AntrianController extends Controller
     {
         $norm = $request->input("norm");
         $date = $request->input('date', now()->toDateString());
+        // dd($date);
         $data = KunjunganModel::with(['poli', 'biodata', 'lab', 'kelompok', 'petugas.pegawai.biodata'])
             ->whereDate('tgltrans', $date)
-            ->where('norm', 'like', '%' . $norm . '%')
-            ->where('ktujuan', 'like', '%' . 5 . '%')
-        // ->whereHas('lab', function ($query) {
-        //     $query->whereNotNull('idLab'); // Adjust this condition based on your lab model's primary key or other relevant column
-        // })
+            ->where('norm', 'LIKE', '%' . $norm . '%')
+            ->whereHas('poli', function ($query) {
+                $query->where(function ($q) {
+                    $q->where('tcm', 1)
+                    // ->where('tcm', 'NOT LIKE', '%-%')
+                        ->orWhere('bta', 1)
+                    // ->where('bta', 'NOT LIKE', '%-%')
+                        ->orWhere('hematologi', 1)
+                    // ->where('hematologi', 'NOT LIKE', '%-%')
+                        ->orWhere('kimiaDarah', 1)
+                    // ->where('kimiaDarah', 'NOT LIKE', '%-%')
+                        ->orWhere('imunoSerologi', 1);
+                    // ->where('imunoSerologi', 'NOT LIKE', '%-%');
+                });
+            })
+            ->orWhere('ktujuan', 5)
             ->get();
 
-        $formattedData = [];
+            $formattedData = [];
         // dd($data);
         foreach ($data as $transaksi) {
 
@@ -155,6 +167,8 @@ class AntrianController extends Controller
                 "norm" => $transaksi["norm"] ?? null,
                 "nourut" => $transaksi["nourut"] ?? null,
                 "noasuransi" => $transaksi["noasuransi"] ?? null,
+                "ktujuan" => $transaksi["ktujuan"] ?? null,
+                "tgltrans" => $transaksi["tgltrans"] ?? null,
                 "noktp" => $transaksi["biodata"]["noktp"] ?? null,
                 "namapasien" => $transaksi["biodata"]["nama"] ?? null,
                 "alamatpasien" => $transaksi["biodata"]["alamat"] ?? null,
@@ -169,7 +183,6 @@ class AntrianController extends Controller
                 "agama" => $transaksi["biodata"]["agama"] ?? null,
                 "pendidikan" => $transaksi["biodata"]["pendidikan"] ?? null,
 
-                "tgltrans" => $transaksi["poli"]["tgltrans"] ?? null,
                 "rontgen" => $transaksi["poli"]["rontgen"] ?? null,
                 "konsul" => $transaksi["poli"]["konsul"] ?? null,
                 "tcm" => $transaksi["poli"]["tcm"] ?? null,

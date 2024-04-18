@@ -94,21 +94,38 @@
                                     </div>
                                 </div>
                             </div>
-                            <form id="frmPetugas">
+                            {{-- <form id="frmPetugas">
                                 <div class="mx-2 form-grup row">
+                                    <label for="sampling" class="col-sm-1 col-form-label font-weight-bold">Sampling
+                                        :</label>
+                                    <div class="col-sm-3">
+                                        <select id="sampling" class="form-control select2bs4 border border-primary"
+                                            required>
+                                            <option value="">--Pilih Petugas--</option>
+                                        </select>
+                                        <label for="bakteri"
+                                            class="col-sm-1 col-form-label font-weight-bold">Bakteriologi
+                                            :</label>
+                                        <div class="col-sm-3">
+                                            <select id="bakteri"
+                                                class="form-control select2bs4 mb-3 border border-primary" required>
+                                                <option value="">--Pilih Petugas--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <label for="admin" class="col-sm-1 col-form-label font-weight-bold">Administrasi
+                                        :</label>
+                                    <div class="col-sm-3">
+                                        <select id="admin"
+                                            class="form-control select2bs4 mb-3 border border-primary" required>
+                                            <option value="">--Pilih Petugas--</option>
+                                        </select>
+                                    </div>
                                     <label for="darah" class="col-sm-1 col-form-label font-weight-bold">Darah
                                         :</label>
                                     <div class="col-sm-3">
                                         <select id="darah" class="form-control select2bs4 border border-primary"
                                             required>
-                                            <option value="">--Pilih Petugas--</option>
-                                        </select>
-                                    </div>
-                                    <label for="bakteri" class="col-sm-1 col-form-label font-weight-bold">Bakteriologi
-                                        :</label>
-                                    <div class="col-sm-3">
-                                        <select id="bakteri"
-                                            class="form-control select2bs4 mb-3 border border-primary" required>
                                             <option value="">--Pilih Petugas--</option>
                                         </select>
                                     </div>
@@ -121,16 +138,8 @@
                                         </select>
                                     </div>
                                 </div>
-                            </form>
+                            </form> --}}
                             <div class="card-footer form-row d-flex justify-content-end">
-                                <div class="col-md-2 d-flex justify-content-end d-flex align-items-center">
-                                    <label for="tagihan" class="form-label mb-0"><b>Total
-                                            Tagihan :</b></label>
-                                </div>
-                                <div class="col-md-2">
-                                    <input type="text"id="tagihan" class="form-control border border-info"
-                                        placeholder="Total Tagihan" readonly>
-                                </div>
                                 <div class="col-auto">
                                     <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>
                                 </div>

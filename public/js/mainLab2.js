@@ -147,11 +147,10 @@ function simpan() {
     var dokter = $("#dokter").val();
     var tujuan = $("#tujuan").val();
 
-    if (!norm || !notrans || !petugas || !dokter || !tujuan) {
+    if (!norm || !notrans || !dokter || !tujuan) {
         var dataKurang = [];
         if (!norm) dataKurang.push("No RM ");
         if (!notrans) dataKurang.push("Nomor Transaksi ");
-        if (!petugas) dataKurang.push("Petugas ");
         if (!dokter) dataKurang.push("Dokter ");
         if (!tujuan) dataKurang.push("Tujuan ");
 
@@ -181,8 +180,8 @@ function simpan() {
                         norm: norm,
                         notrans: notrans,
                         ket: ket,
-                        petugas: petugas,
-                        dokter: dokter,
+                        // petugas: petugas,
+                        // dokter: dokter,
                     };
                 })
                 .get();
@@ -201,13 +200,16 @@ function simpan() {
             body: JSON.stringify({
                 notrans: notrans,
                 tujuan: tujuan,
+                ket: ket,
+                petugas: petugas,
+                dokter: dokter,
                 dataTerpilih: dataTerpilih,
             }),
         })
             .then((response) => {
                 if (!response.ok) {
                     console.log("Response status:", response.status);
-                    console.log("Response status text:", response.statusText);
+                    console.log("Response status text:", response.message);
                     throw new Error("Network response was not ok");
                 }
                 return response.json();
@@ -360,6 +362,34 @@ $(document).ready(function () {
         );
 
         panggilPasien(panggilData);
+    });
+
+    $("#antrianall").on("click", ".aksi-button", function (e) {
+        e.preventDefault();
+        $("#add").show();
+        $("#edit").hide();
+        var norm = $(this).data("norm");
+        console.log("🚀 ~ inputData ~ norm:", norm);
+        var nama = $(this).data("nama");
+        var nik = $(this).data("nik");
+        var dokter = $(this).data("kddokter");
+        var alamat = $(this).data("alamat");
+        var layanan = $(this).data("layanan");
+        var notrans = $(this).data("notrans");
+        var tgltrans = $(this).data("tgltrans");
+
+        $("#norm").val(norm);
+        $("#nik").val(nik);
+        $("#nama").val(nama);
+        $("#dokter").val(dokter).trigger("change");
+        $("#apoteker").val("197609262011012003").trigger("change");
+        $("#alamat").val(alamat);
+        $("#layanan").val(layanan);
+        $("#notrans").val(notrans);
+        $("#tgltrans").val(tgltrans);
+
+        scrollToInputSection();
+        dataLab();
     });
     $("#dataTrans").on("click", ".delete", function (e) {
         e.preventDefault();

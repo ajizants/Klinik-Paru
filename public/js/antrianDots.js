@@ -5,68 +5,8 @@ var Toast = Swal.mixin({
     timer: 3000,
 });
 
-function scrollToAntrianSection() {
-    $("html, body").animate(
-        { scrollTop: $("#antrianSection").offset().top },
-        500
-    );
-}
-
-function setTodayDate() {
-    var today = new Date().toISOString().split("T")[0];
-    $("#tanggal").val(today);
-}
-
-function scrollToInputSection() {
-    $("html, body").animate(
-        { scrollTop: $("#inputSection").offset().top },
-        500
-    );
-}
-
 $(document).on("select2:open", () => {
     document.querySelector(".select2-search__field").focus();
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    // var tgltindInput = document.getElementById("tgltind");
-    var tglTransInput = document.getElementById("waktu");
-
-    function updateDateTime() {
-        var now = new Date();
-        var options = {
-            timeZone: "Asia/Jakarta",
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-        };
-        // var formattedDate = now.toLocaleString("id-ID", options);
-        var formattedDate = now
-            .toLocaleString("id-ID", options)
-            .replace(
-                /(\d{4})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})/,
-                "$1-$2-$3 $4.$5.$6"
-            );
-        // tgltindInput.value = formattedDate;
-        tglTransInput.value = formattedDate;
-    }
-
-    setInterval(updateDateTime, 1000);
-
-    // Mendapatkan elemen input tanggal
-    var tglKunjInput = document.getElementById("tglKunj");
-
-    // Mendapatkan tanggal hari ini
-    var today = new Date();
-
-    // Mendapatkan nilai tanggal hari ini dalam format "yyyy-mm-dd"
-    var formattedDate = today.toISOString().split("T")[0];
-
-    // Menetapkan nilai ke input tglKunj
-    tglKunjInput.value = formattedDate;
 });
 
 function formatNorm(inputElement) {
@@ -85,7 +25,7 @@ function formatNorm(inputElement) {
     }
 }
 
-function searchByRM(norm) {
+function searchByRM(norm, date) {
     // Check if the patient ID exists in "/api/Ptb"
     $.ajax({
         url: "/api/Ptb",
@@ -95,8 +35,7 @@ function searchByRM(norm) {
         },
         success: function (response) {
             if (response.exists) {
-                // If the patient ID exists, proceed with the original AJAX request to "/api/cariRM"
-                performCariRM(norm);
+                performCariRM(norm, date);
             } else {
                 // If the patient ID does not exist, show an error toast
                 Swal.fire({
@@ -114,7 +53,7 @@ function searchByRM(norm) {
                     // Display a confirmation dialog
                     if (result.isConfirmed) {
                         $("#modal-pasienTB").modal("show");
-                        performCariRMmodal(norm);
+                        performCariRMmodal(norm, date);
                     } else {
                     }
                 });
@@ -127,13 +66,14 @@ function searchByRM(norm) {
 }
 
 // Separate function to perform the original AJAX request to "/api/cariRM"
-function performCariRM(norm) {
+function performCariRM(norm, date) {
     // The original AJAX request to "/api/cariRM"
     $.ajax({
         url: "/api/cariRM",
         type: "POST",
         data: {
             norm: norm,
+            date: date,
         },
         success: function (response) {
             if (response.length > 0) {
@@ -149,9 +89,9 @@ function performCariRM(norm) {
                 $("#alamat").val(alamat);
                 $("#notrans").val(notrans);
                 $("#layanan").val(layanan);
-                $("#dokter").val(dokter);
-                $("#dokter").trigger("change");
-
+                $("#dokter").val(dokter).trigger("change");
+                showKunjungan();
+                showRiwayatKunjungan(noRM);
                 scrollToInputSection();
             } else {
                 Toast.fire({
@@ -165,30 +105,42 @@ function performCariRM(norm) {
         },
     });
 }
-function performCariRMmodal(norm) {
+function performCariRMmodal(norm, date) {
     // The original AJAX request to "/api/cariRM"
     $.ajax({
         url: "/api/cariRM",
         type: "POST",
         data: {
             norm: norm,
+            date: date,
         },
         success: function (response) {
             if (response.length > 0) {
+                let dx1 = "";
                 var noRM = response[0].norm;
                 var nama = response[0].biodata.nama;
                 var notrans = response[0].notrans;
                 var layanan = response[0].kelompok.kelompok;
+                var nik = response[0].biodata.noktp;
                 var dokter = response[0].petugas.p_dokter_poli;
                 var alamat = `${response[0].biodata.kelurahan}, ${response[0].biodata.rtrw}, ${response[0].biodata.kecamatan}, ${response[0].biodata.kabupaten}`;
-
+                if (response.poli !== null) {
+                    dx1 = "";
+                    console.log("true");
+                } else {
+                    dx1 = response[0].poli.diagnosa1;
+                    console.log("else");
+                }
+                console.log("🚀 ~ performCariRMmodal ~ dx1:", dx1);
                 $("#modal-pasienTB #modal-norm").val(noRM);
                 $("#modal-pasienTB #modal-nama").val(nama);
                 $("#modal-pasienTB #modal-alamat").val(alamat);
                 $("#modal-pasienTB #modal-notrans").val(notrans);
                 $("#modal-pasienTB #modal-layanan").val(layanan);
+                $("#modal-pasienTB #modal-nik").val(nik);
                 $("#modal-pasienTB #modal-dokter").val(dokter);
                 $("#modal-pasienTB #modal-dokter").trigger("change");
+                $("#modal-pasienTB #modal-kdDx").val(dx1).trigger("change");
             } else {
                 Toast.fire({
                     icon: "error",
@@ -201,7 +153,6 @@ function performCariRMmodal(norm) {
         },
     });
 }
-
 function pasienKontrol() {
     var tanggal = $("#tanggal").val();
     $("#loadingSpinner").show();
@@ -217,22 +168,21 @@ function pasienKontrol() {
         success: function (response) {
             $("#loadingSpinner").hide();
             response.forEach(function (item, index) {
-                var alamat = `${item.biodata.kelurahan} ${item.biodata.rtrw} ${item.biodata.kecamatan}${item.biodata.kabupaten}`;
+                var alamat = `${item.kelurahan} ${item.rtrw} ${item.kecamatan}${item.kabupaten}`;
+                item.diagnosa = `${item.diagnosa1}, ${item.diagnosa2}, ${item.diagnosa3}`;
 
-                item.pasien = `${item.biodata.nama}`;
+                item.pasien = `${item.namapasien}`;
                 item.actions = `<a href="#" class="edit"
                                 data-id="${item.id}"
                                 data-norm="${item.norm}"
-                    data-dokter="${item.biodata.nama}"
-                    data-kddokter="${item.nip}"
+                    data-nama="${item.namapasien}"
                     data-alamat="${alamat}"
                     data-layanan="${item.kelompok}"
                     data-notrans="${item.notrans}"
                     data-tgltrans="${item.tgltrans}"
                                 ><i class="fas fa-pen-to-square pr-3"></i></a>`;
                 item.no = index + 1;
-                item.dokter = `${item.petugas.pegawai.gelar_d} ${item.petugas.pegawai.nama} ${item.petugas.pegawai.gelar_b}`;
-                if (item.dots !== null) {
+                if (item.idKunjunganDots !== null) {
                     item.status = "sudah";
                 } else {
                     item.status = "belum";
@@ -244,13 +194,22 @@ function pasienKontrol() {
                     data: response,
                     columns: [
                         { data: "actions", className: "col-1 text-center" },
-                        { data: "status" },
-                        { data: "no" },
+                        {
+                            data: "status",
+                            name: "idKunjunganDots",
+                            render: function (data, type, row) {
+                                var backgroundColor =
+                                    data === "belum" ? "danger" : "success";
+                                return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                            },
+                            className: "p-2",
+                        },
+                        { data: "nourut" },
                         { data: "norm" },
-                        { data: "biodata.nohp" },
-                        { data: "blnKe" },
-                        { data: "pasien" },
-                        { data: "dokter" },
+                        { data: "noktp" },
+                        { data: "namapasien" },
+                        { data: "dokterpoli" },
+                        { data: "diagnosa" },
                     ],
                     order: [2, "asc"],
                     paging: true,
@@ -272,7 +231,8 @@ function pasienKontrol() {
             $(".edit").on("click", function (e) {
                 e.preventDefault();
                 var norm = $(this).data("norm");
-                searchPTB(norm);
+                var date = $("#tanggal").val();
+                searchByRM(norm, date);
             });
         },
         error: function (xhr, status, error) {
@@ -465,8 +425,8 @@ function pasienDo() {
 }
 function pasienTB() {
     $("#loadingSpinner").show();
-    if ($.fn.DataTable.isDataTable("#Ptb")) {
-        var table = $("#Ptb").DataTable();
+    if ($.fn.DataTable.isDataTable("#Ptb,#modal-Ptb")) {
+        var table = $("#Ptb,#modal-Ptb").DataTable();
         table.destroy();
     }
 
@@ -478,14 +438,20 @@ function pasienTB() {
             var dataArray = response.data || [];
             dataArray.forEach(function (item, index) {
                 item.pasien = `${item.biodata.nama}`;
-                item.actions = `<a href="#" class="edit"
+                item.actions = `<button class="editTB bg-danger"
                                 data-id="${item.id}"
                                 data-norm="${item.norm}"
                                 data-petugas="${item.petugas}"
                                 data-dokter="${item.dokter}"
-                                ><i class="fas fa-pen-to-square pr-3"></i></a>`;
+                                ><i class="fas fa-pen-to-square"></i></button>
+                                <button class="riwayat bg-green"
+                                data-id="${item.id}"
+                                data-norm="${item.norm}"
+                                data-petugas="${item.petugas}"
+                                data-dokter="${item.dokter}"
+                                onclick="showRiwayatKunjungan();" data-toggle="modal" data-target="#modal-RiwayatKunjungan"><i class="fa-regular fa-folder-open"></i></button>`;
                 item.no = index + 1;
-                item.dokter = `${item.dokter.gelar_d} ${item.dokter.nama} ${item.dokter.gelar_b}`;
+                item.dokter = `${item.dokter.gelar_d} ${item.dokter.biodata.nama} ${item.dokter.gelar_b}`;
                 item.alamat = `${item.biodata.kelurahan} ${item.biodata.rtrw} ${item.biodata.kecamatan}${item.biodata.kabupaten}`;
             });
 
@@ -519,12 +485,16 @@ function pasienTB() {
                 .container()
                 .appendTo("#Ptb_wrapper .col-md-6:eq(0)");
 
+            console.log("🚀 ~ table generate");
             // Menangani klik pada tombol edit
-            $(".edit").on("click", function (e) {
+            $(".editTB").on("click", function (e) {
                 e.preventDefault();
                 var norm = $(this).data("norm");
-
-                searchPTB(norm);
+                var date = $("#tanggal").val();
+                console.log("🚀 ~ date:", date);
+                console.log("🚀 ~ norm:", norm);
+                performCariRM(norm);
+                // searchPTB(norm);
             });
         },
         error: function (xhr, status, error) {
@@ -533,56 +503,108 @@ function pasienTB() {
     });
 }
 
-function searchPTB(norm) {
-    // Show the modal
-    $("#modal-pasienTB").modal("show");
+function showRiwayatKunjungan(norm) {
+    $("#loadingSpinner").show();
+    if ($.fn.DataTable.isDataTable("#kunjDots")) {
+        var table = $("#kunjDots").DataTable();
+        table.destroy();
+    }
 
-    // Make an Ajax request to check patient ID existence
     $.ajax({
-        url: "/api/Ptb",
+        url: "/api/kunjunganDots",
         type: "POST",
         data: {
             norm: norm,
         },
         success: function (response) {
-            console.log("Ajax response:", response);
-            // Check if the response is an array and has at least one element
-            if (Array.isArray(response) && response.length > 0) {
-                // Extract data from the first element
-                var data = response[0];
+            $("#loadingSpinner").hide();
+            var dataArray = response.data || [];
+            dataArray.forEach(function (item, index) {
+                item.pasien = `${item.biodata.nama}`;
+                item.actions = `<button class="editTB bg-danger"
+                                data-id="${item.id}"
+                                data-norm="${item.norm}"
+                                ><i class="fas fa-pen-to-square"></i></button>`;
+                item.no = index + 1;
+                item.dokter = `${item.dokter.gelar_d} ${item.dokter.biodata.nama} ${item.dokter.gelar_b}`;
+                item.petugas = `${item.petugas.gelar_d} ${item.petugas.biodata.nama} ${item.petugas.gelar_b}`;
+                item.alamat = `${item.biodata.kelurahan} ${item.biodata.rtrw} ${item.biodata.kecamatan}${item.biodata.kabupaten}`;
+            });
 
-                // Check if necessary properties are present in the response
-                if (data.norm && data.biodata && data.biodata.kelompok) {
-                    // Populate modal fields with data
-                    $("#modal-pasienTB #modal-norm").val(data.norm);
-                    $("#modal-pasienTB #modal-layanan").val(
-                        data.biodata.kelompok
-                    );
-                    $("#modal-pasienTB #modal-nama").val(data.biodata.nama);
-                    $("#modal-pasienTB #modal-hp").val(data.noHP);
-                    $("#modal-pasienTB #modal-status").val(data.hasilBerobat);
+            $("#kunjDots")
+                .DataTable({
+                    data: dataArray,
+                    columns: [
+                        { data: "actions", className: "col-1 text-center" },
+                        { data: "norm" },
+                        { data: "created_at", className: "col-1 text-center" },
+                        { data: "bb" },
+                        { data: "blnKe" },
+                        { data: "bta" },
+                        { data: "obat.nmPengobatan" },
+                        { data: "petugas" },
+                        { data: "dokter" },
+                    ],
+                    order: [2, "dsc"],
+                    paging: true,
+                    lengthMenu: [
+                        [5, 10, 25, 50, -1],
+                        [5, 10, 25, 50, "All"],
+                    ],
+                    pageLength: 5,
+                    responsive: true,
+                    lengthChange: false,
+                    autoWidth: false,
+                    buttons: ["copyHtml5", "excelHtml5", "pdfHtml5", "colvis"],
+                })
+                .buttons()
+                .container()
+                .appendTo("#kunjDots_wrapper .col-md-6:eq(0)");
 
-                    // Construct the address string
-                    var alamat = `${data.biodata.kelurahan}, ${data.biodata.rtrw}, ${data.biodata.kecamatan}, ${data.biodata.kabupaten}`;
-                    $("#modal-pasienTB #modal-alamat").val(alamat);
-
-                    // Continue populating other fields...
-
-                    // Trigger change events if needed
-                    $("#modal-pasienTB #modal-dokter").trigger("change");
-                    $("#modal-pasienTB #modal-petugas").trigger("change");
-                } else {
-                    // Handle case where essential data is missing
-                    console.error("Incomplete or missing data in the response");
-                }
-            } else {
-                // Handle case where no data is returned
-                console.error("No data returned in the response");
-            }
+            console.log("🚀 ~ table generate");
+            // Menangani klik pada tombol edit
+            $(".editTB").on("click", function (e) {
+                e.preventDefault();
+                var norm = $(this).data("norm");
+                var date = $("#tanggal").val();
+                console.log("🚀 ~ date:", date);
+                console.log("🚀 ~ norm:", norm);
+                performCariRM(norm);
+                // searchPTB(norm);
+            });
         },
-        error: function (xhr) {
-            // Handle error
-            console.error("Error in Ajax request:", xhr.statusText);
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
         },
     });
 }
+// function searchPTB(norm) {
+//     // Show the modal
+
+//     // Make an Ajax request to check patient ID existence
+//     $.ajax({
+//         url: "/api/Ptb",
+//         type: "POST",
+//         data: {
+//             norm: norm,
+//         },
+//         success: function (response) {
+//             console.log("Ajax response:", response);
+//             // Check if the response is an array and has at least one element
+//             if (Array.isArray(response) && response.length > 0) {
+//                 // Extract data from the first element
+//                 console.log("data Ditemukan");
+//             } else {
+//                 // Handle case where no data is returned
+//                 console.error("No data returned in the response");
+//                 $("#modal-pasienTB").modal("show");
+//                 console.log(norm);
+
+//             }
+//         },
+//         error: function (xhr) {
+//             // Handle error
+//             console.error("Error in Ajax request:", xhr.statusText);
+//         },
+//     });
+// }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LayananModel;
+use App\Models\ROJenisFoto;
 
 class HomeController extends Controller
 {
@@ -85,6 +86,24 @@ class HomeController extends Controller
 
         return view('Laboratorium.RiwayatLab.main', ['col' => $col])->with('title', $title);
     }
+    public function masterlab()
+    {
+        $title = 'Master Laboratorium';
+
+        $query = LayananModel::on('mysql')
+            ->where('status', '1')
+            ->where('kelas', 'like', '%9%')
+            ->get();
+        $col = [];
+        foreach ($query as $d) {
+            $col[] = [
+                "idLayanan" => $d["idLayanan"] ?? null,
+                "nmLayanan" => $d["nmLayanan"] ?? null,
+            ];
+        }
+
+        return view('Laboratorium.MasterLab.main', ['col' => $col])->with('title', $title);
+    }
     public function report()
     {
         $title = 'Report IGD';
@@ -102,5 +121,12 @@ class HomeController extends Controller
         $title = 'Daftar Tunggu';
 
         return view('Display.main')->with('title', $title);
+    }
+    public function masterRo()
+    {
+        $title = 'Master Radiologi';
+        $dataROJenisFoto = ROJenisFoto::all(); // Mengambil semua data ROJenisFoto
+        // dd($dataROJenisFoto);
+        return view('RO.Master.main', compact('title', 'dataROJenisFoto'));
     }
 }

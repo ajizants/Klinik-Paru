@@ -14,10 +14,16 @@ function fetchAntrianAll(tanggal, ruang, callback) {
 }
 function initializeAntrianAll(response) {
     response.forEach(function (item) {
-        item.aksi = `<a href="#" class="aksi-button px-2 icon-link icon-link-hover"
-                data-norm="${item.norm}"
-                data-nama="${item.namapasien}"
-                ><i class="fas fa-pen-to-square"></i></a>`;
+        item.aksi = `<a href="#" class="aksi-button px-2 btn btn-sm btn-danger"
+        data-norm="${item.norm}"
+        data-nama="${item.namapasien}"
+        data-dokter="${item.dokterpoli}"
+        data-kddokter="${item.nip}"
+        data-alamat="${alamat}"
+        data-kelompok="${item.kelompok}"
+        data-notrans="${item.notrans}"
+        data-nik="${item.noktp}"
+        data-tgltrans="${item.tgltrans}"><i class="fas fa-pen-to-square"></i></a>`;
     });
 
     $("#antrianall").DataTable({
@@ -57,10 +63,16 @@ function antrianAll(ruang) {
         if ($.fn.DataTable.isDataTable("#antrianall")) {
             var table = $("#antrianall").DataTable();
             response.forEach(function (item) {
-                item.aksi = `<a href="#" class="aksi-button px-2 icon-link icon-link-hover"
+                item.aksi = `<a href="#" class="aksi-button px-2 btn btn-sm btn-danger"
                 data-norm="${item.norm}"
                 data-nama="${item.namapasien}"
-                ><i class="fas fa-pen-to-square"></i></a>`;
+                data-dokter="${item.dokterpoli}"
+                data-kddokter="${item.nip}"
+                data-alamat="${alamat}"
+                data-kelompok="${item.kelompok}"
+                data-notrans="${item.notrans}"
+                data-nik="${item.noktp}"
+                data-tgltrans="${item.tgltrans}"><i class="fas fa-pen-to-square"></i></a>`;
             });
             table.clear().rows.add(response).draw();
         } else {
@@ -245,48 +257,104 @@ function populateTujuan() {
 function populateDokterOptions() {
     var dokterSelectElement = $("#dokter");
     var dokterModals = $("#modal-pasienTB #modal-dokter");
+
+    if (!dokterSelectElement.length || !dokterModals.length) {
+        console.error(
+            "One or both of the elements (dokterSelectElement, dokterModals) not found."
+        );
+        return;
+    }
+
     $.get("/api/dokter", function (data) {
-        data.sort(function (a, b) {
-            var namaLengkapA = a.gelar_d + " " + a.nama + " " + a.gelar_b;
-            var namaLengkapB = b.gelar_d + " " + b.nama + " " + b.gelar_b;
-            return namaLengkapA.localeCompare(namaLengkapB, undefined, {
-                numeric: true,
-                sensitivity: "base",
-            });
-        });
-        data.forEach(function (dokter) {
+        if (!Array.isArray(data)) {
+            console.error("Invalid data format received from server.");
+            return;
+        }
+
+        data.sort((a, b) =>
+            (a.gelar_d + " " + a.nama + " " + a.gelar_b).localeCompare(
+                b.gelar_d + " " + b.nama + " " + b.gelar_b,
+                undefined,
+                { numeric: true, sensitivity: "base" }
+            )
+        );
+
+        data.forEach((dokter) => {
             var namaLengkap =
                 dokter.gelar_d + " " + dokter.nama + " " + dokter.gelar_b;
             var nip = dokter.nip.toString();
-            var option = new Option(namaLengkap, nip, false, false);
-            dokterSelectElement.append(option).trigger("change");
-            dokterModals.append(option).trigger("change");
+
+            if (!dokterSelectElement.find(`option[value="${nip}"]`).length) {
+                dokterSelectElement
+                    .append(new Option(namaLengkap, nip))
+                    .trigger("change");
+            }
+
+            if (!dokterModals.find(`option[value="${nip}"]`).length) {
+                dokterModals
+                    .append(new Option(namaLengkap, nip))
+                    .trigger("change");
+            }
         });
+    }).fail((xhr, status, error) => {
+        console.error("Error fetching data:", error);
+        // Tindakan yang sesuai untuk menangani kesalahan
     });
 }
+
 function populatePetugasOptions() {
     var petugasSelectElement = $("#petugas");
-    var petugasSelectModals = $("#modal-petugas");
-    var petugasSelectModals1 = $("#modal-pasienTB #modal-petugas");
+    var petugasSelectModals = $("#modal-pasienTB #modal-petugas");
+
+    if (!petugasSelectElement.length || !petugasSelectModals.length) {
+        console.error(
+            "One or both of the elements (petugasSelectElement, petugasSelectModals) not found."
+        );
+        return;
+    }
+
     $.get("/api/perawat", function (data) {
-        data.sort(function (a, b) {
-            var namaLengkapA = a.gelar_d + " " + a.nama + " " + a.gelar_b;
-            var namaLengkapB = b.gelar_d + " " + b.nama + " " + b.gelar_b;
-            return namaLengkapA.localeCompare(namaLengkapB, undefined, {
-                numeric: true,
-                sensitivity: "base",
-            });
-        });
-        data.forEach(function (petugas) {
+        if (!Array.isArray(data)) {
+            console.error("Invalid data format received from server.");
+            return;
+        }
+
+        data.sort((a, b) =>
+            (a.gelar_d + " " + a.nama + " " + a.gelar_b).localeCompare(
+                b.gelar_d + " " + b.nama + " " + b.gelar_b,
+                undefined,
+                { numeric: true, sensitivity: "base" }
+            )
+        );
+
+        data.forEach((petugas) => {
             var namaLengkap =
                 petugas.gelar_d + " " + petugas.nama + " " + petugas.gelar_b;
-            var option = new Option(namaLengkap, petugas.nip, false, false);
-            petugasSelectElement.append(option).trigger("change");
-            petugasSelectModals.append(option).trigger("change");
-            petugasSelectModals1.append(option).trigger("change");
+
+            if (
+                !petugasSelectElement.find(`option[value="${petugas.nip}"]`)
+                    .length
+            ) {
+                petugasSelectElement
+                    .append(new Option(namaLengkap, petugas.nip))
+                    .trigger("change");
+            }
+
+            if (
+                !petugasSelectModals.find(`option[value="${petugas.nip}"]`)
+                    .length
+            ) {
+                petugasSelectModals
+                    .append(new Option(namaLengkap, petugas.nip))
+                    .trigger("change");
+            }
         });
+    }).fail((xhr, status, error) => {
+        console.error("Error fetching data:", error);
+        // Tindakan yang sesuai untuk menangani kesalahan
     });
 }
+
 function populateApotekerOptions() {
     var petugasSelectElement = $("#apoteker");
     $.get("/api/apoteker", function (data) {
@@ -330,6 +398,8 @@ function populateAnalisHasil() {
     var analisDarah = $("#darah");
     var analisBakteri = $("#bakteri");
     var analisImuno = $("#imuno");
+    var analisSampling = $("#sampling");
+    var analisAdmin = $("#admin");
 
     $.get("/api/analis", function (data) {
         data.sort(function (a, b) {
@@ -364,11 +434,25 @@ function populateAnalisHasil() {
                 false,
                 false
             );
+            var optionSampling = new Option(
+                namaLengkap,
+                petugas.nip,
+                false,
+                false
+            );
+            var optionAdmin = new Option(
+                namaLengkap,
+                petugas.nip,
+                false,
+                false
+            );
 
             // Append options to the respective select elements
             analisDarah.append(optionDarah).trigger("change");
             analisBakteri.append(optionBakteri).trigger("change");
             analisImuno.append(optionImuno).trigger("change");
+            analisAdmin.append(optionAdmin).trigger("change");
+            analisSampling.append(optionSampling).trigger("change");
         });
     });
 }
@@ -693,7 +777,7 @@ function populateSupplierOptions() {
 //DOTS CENTER
 function populateBlnKeOptions() {
     var blnKeSelectElement = $("#blnKe");
-    var tglKunjunganInput = $("#tglKunj");
+    var tglKunjunganInput = $("#waktu");
     var tglKontrolInput = $("#nxKontrol");
 
     $.ajax({
@@ -722,7 +806,7 @@ function populateBlnKeOptions() {
                 }
 
                 // Get the current value of tglKunjunganInput and convert it to a Date object
-                var tglKunjunganValue = new Date(tglKunjunganInput.val());
+                var tglKunjunganValue = new Date();
 
                 // Add the selectedValue to the date
                 tglKunjunganValue.setDate(
@@ -765,8 +849,50 @@ function populateDxMedis() {
         });
     });
 }
-function populateObatDotsOptions() {
-    var obatDots = $("#obatDots");
+// function populateObatDotsOptions() {
+//     var obatDots = $("#obatD #obatDots");
+//     var obatDotsModal = $("#modal-pasienTB #modal-obtDots");
+//     // console.log("🚀 ~ populateObatDotsOptions ~ obatDotsModal:", obatDotsModal);
+//     // console.log($("#obatDots"));
+
+//     if (!obatDots.length || !obatDotsModal.length) {
+//         console.error(
+//             "One or both of the elements (obatDots, obatDotsModal) not found."
+//         );
+//         return;
+//     }
+
+//     $.get("/api/obatDots", function (data) {
+//         if (!Array.isArray(data)) {
+//             console.error("Invalid data format received from server.");
+//             return;
+//         }
+
+//         data.sort((a, b) =>
+//             a.nmPengobatan.localeCompare(b.nmPengobatan, undefined, {
+//                 sensitivity: "base",
+//             })
+//         );
+
+//         data.forEach((obtDot) => {
+//             var option = new Option(obtDot.nmPengobatan, obtDot.id);
+
+//             if (!obatDots.find(`option[value="${obtDot.id}"]`).length) {
+//                 obatDots.append(option).trigger("change");
+//             }
+//         });
+//         data.forEach((obtDot) => {
+//             if (!obatDotsModal.find(`option[value="${obtDot.id}"]`).length) {
+//             }
+//         });
+//     }).fail((xhr, status, error) => {
+//         console.error("Error fetching data:", error);
+//         // Tindakan yang sesuai untuk menangani kesalahan
+//     });
+// }
+
+function populateObat() {
+    var obatDots = $("#obatD #obatDots");
     var obatDotsModal = $("#modal-pasienTB #modal-obtDots");
     $.get("/api/obatDots", function (data) {
         data.sort(function (a, b) {
@@ -780,14 +906,13 @@ function populateObatDotsOptions() {
             }
             return 0;
         });
-        data.forEach(function (obtDot) {
-            var option = new Option(
-                obtDot.nmPengobatan,
-                obtDot.id,
-                false,
-                false
-            );
+
+        data.forEach(function (obat) {
+            var option = new Option(obat.nmPengobatan, obat.id, false, false);
             obatDots.append(option).trigger("change");
+        });
+        data.forEach(function (obat) {
+            var option = new Option(obat.nmPengobatan, obat.id, false, false);
             obatDotsModal.append(option).trigger("change");
         });
     });

@@ -9,7 +9,7 @@ class DotsModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'm_dots';
+    protected $table = 'm_dots_pasien';
     protected $primaryKey = 'id';
 
 
@@ -32,6 +32,10 @@ class DotsModel extends Model
     public function biodata()
     {
         return $this->hasOne(PasienModel::class, 'norm', 'norm');
+    }
+    public function layanan()
+    {
+        return $this->hasOne(KunjunganModel::class, 'norm', 'norm');
     }
     public function diagnosa()
     {

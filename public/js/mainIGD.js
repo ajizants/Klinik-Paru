@@ -34,7 +34,9 @@ async function searchRMObat() {
 
     Swal.fire({
         icon: "info",
-        title: "Sedang mencarikan data pasien...!!!",
+        title: "Sedang mencari data...!!!",
+        allowOutsideClick: false,
+        showConfirmButton: false,
     });
     var norm = "000001";
     try {
@@ -45,9 +47,12 @@ async function searchRMObat() {
         });
 
         if (response.length > 0) {
-            Toast.fire({
+            Swal.fire({
                 icon: "success",
                 title: "Data pasien ditemukan, lanjutkan transaksi...!!!",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                timer: 1500,
             });
 
             // Extracting data from the JSON response
@@ -83,6 +88,62 @@ async function searchRMObat() {
         });
     }
 }
+function addBmhp() {
+    // Get data from input fields
+    var idTind = $("#modalidTind").val();
+    var kdTind = $("#modalkdTind").val();
+    var kdBmhp = $("#bmhp").val();
+    var jumlah = $("#qty").val();
+    var total = $("#total").val();
+    var notrans = $("#notrans").val();
+    var productID = $("#productID").val();
+
+    // Memeriksa apakah ada nilai yang kosong
+    if (!kdBmhp || !jumlah) {
+        // Menampilkan notifikasi jika ada nilai yang kosong
+        var dataKurang = [];
+        if (!kdBmhp) dataKurang.push("BMHP Belum Diisi");
+        if (!jumlah) dataKurang.push("jumlah Belum Diisi");
+
+        // Menampilkan notifikasi menggunakan Toast.fire
+        Swal.fire({
+            icon: "error",
+            title: "Data Tidak Lengkap...!!! " + dataKurang.join(", "),
+        });
+    } else {
+        // Send AJAX POST request to Laravel route
+        $.ajax({
+            type: "POST",
+            url: "/api/addTransaksiBmhp", // Replace with your Laravel route
+            data: {
+                idTind: idTind,
+                kdTind: kdTind,
+                kdBmhp: kdBmhp,
+                jml: jumlah,
+                total: total,
+                notrans: notrans,
+                productID: productID,
+            },
+            success: function (response) {
+                Toast.fire({
+                    icon: "success",
+                    title: "Data Berhasil Disimpan, Maturnuwun...!!!",
+                });
+                dataBMHP();
+                $("#bmhp, #qty").val("");
+                $("#bmhp").trigger("change");
+                quantity = 0;
+                console.log(quantity);
+                dataTindakan();
+            },
+            error: function (error) {
+                // Handle error response here
+                console.log(error);
+            },
+        });
+    }
+}
+
 $(document).ready(function () {
     $("#dselesai").hide();
     $("#dtunggu").show();
@@ -108,7 +169,6 @@ $(document).ready(function () {
     const qtyInput = document.getElementById("qty");
     const increaseBtn = document.getElementById("increaseBtn");
     const decreaseBtn = document.getElementById("decreaseBtn");
-
     // Menambahkan event listener untuk penambahan qty
     increaseBtn.addEventListener("click", function () {
         quantity++;
@@ -126,6 +186,7 @@ $(document).ready(function () {
         }
         hitungTotalHarga();
     });
+
     $("#qty").on("input", function (e) {
         hitungTotalHarga();
     });
@@ -154,6 +215,7 @@ $(document).ready(function () {
         var tablebmhp = $("#transaksiBMHP").DataTable();
         tablebmhp.clear().destroy();
         antrian();
+        quantity = 0;
         scrollToAntrianSection();
         $("#formbmhp").hide();
         $("#formtind").show();
@@ -184,7 +246,7 @@ $(document).ready(function () {
             tabletindakan.clear().destroy();
             var tablebmhp = $("#transaksiBMHP").DataTable();
             tablebmhp.clear().destroy();
-
+            quantity = 0;
             antrian();
             scrollToAntrianSection();
             $("#formbmhp").hide();
@@ -261,6 +323,12 @@ $(document).ready(function () {
         if (event.key === "Enter") {
             event.preventDefault();
             searchByRM($("#norm").val());
+        }
+    });
+    $("#qty").on("keyup", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            addBmhp();
         }
     });
 

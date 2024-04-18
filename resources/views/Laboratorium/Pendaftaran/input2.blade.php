@@ -198,20 +198,20 @@
                             </div>
                             <form id="frmPetugas">
                                 <div class="mx-2 form-grup row">
+                                    <label for="dokter" class="col-sm-1 col-form-label font-weight-bold">Dokter
+                                        :</label>
+                                        <div class="col-sm-3">
+                                            <select id="dokter"
+                                            class="form-control select2bs4 mb-3 border border-primary" required>
+                                            <option value="">--Pilih Dokter--</option>
+                                        </select>
+                                    </div>
                                     <label for="analis" class="col-sm-1 col-form-label font-weight-bold">Admin
                                         :</label>
                                     <div class="col-sm-3">
                                         <select id="analis" class="form-control select2bs4 border border-primary"
                                             required>
                                             <option value="">--Pilih Petugas--</option>
-                                        </select>
-                                    </div>
-                                    <label for="dokter" class="col-sm-1 col-form-label font-weight-bold">Dokter
-                                        :</label>
-                                    <div class="col-sm-3">
-                                        <select id="dokter"
-                                            class="form-control select2bs4 mb-3 border border-primary" required>
-                                            <option value="">--Pilih Dokter--</option>
                                         </select>
                                     </div>
                                     <label for="tujuan" class="col-sm-1 col-form-label font-weight-bold">Tujuan

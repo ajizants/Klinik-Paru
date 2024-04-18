@@ -3,6 +3,12 @@ const Akhir = document.getElementById("tglAkhir");
 const jaminan = document.getElementById("jaminan");
 
 function reportKunjungan() {
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencari data...!!!",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+    });
     if ($.fn.DataTable.isDataTable("#reportKunjungan")) {
         var tabletindakan = $("#reportKunjungan").DataTable();
         tabletindakan.clear().destroy();
@@ -193,6 +199,7 @@ function reportKunjungan() {
                 .buttons()
                 .container()
                 .appendTo("#reportKunjungan_wrapper .col-md-6:eq(0)");
+            Swal.close();
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -333,6 +340,12 @@ function reportKunjungan2() {
     });
 }
 function reportPenjamin() {
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencari data...!!!",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+    });
     if ($.fn.DataTable.isDataTable("#reportPenjamin")) {
         var tabletindakan = $("#reportPenjamin").DataTable();
         tabletindakan.clear().destroy();
@@ -405,6 +418,7 @@ function reportPenjamin() {
                 .buttons()
                 .container()
                 .appendTo("#reportPenjamin_wrapper .col-md-6:eq(0)");
+            Swal.close();
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
@@ -413,6 +427,12 @@ function reportPenjamin() {
 }
 
 function reportReagen() {
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencari data...!!!",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+    });
     if ($.fn.DataTable.isDataTable("#reportReagen")) {
         var tabletindakan = $("#reportReagen").DataTable();
         tabletindakan.clear().destroy();
@@ -484,6 +504,7 @@ function reportReagen() {
                 .buttons()
                 .container()
                 .appendTo("#reportPenjamin_wrapper .col-md-6:eq(0)");
+            Swal.close();
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
@@ -491,6 +512,12 @@ function reportReagen() {
     });
 }
 function reportReagenBln() {
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencari data...!!!",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+    });
     if ($.fn.DataTable.isDataTable("#reportReagen")) {
         var tabletindakan = $("#reportReagen").DataTable();
         tabletindakan.clear().destroy();
@@ -533,14 +560,14 @@ function reportReagenBln() {
                         {
                             data: "created_at",
                             render: function (data) {
-                                // Format the date using JavaScript
-                                const formattedDate = new Date(
-                                    data
-                                ).toLocaleString("id-ID", {
-                                    year: "numeric",
-                                    month: "numeric",
-                                    day: "numeric",
-                                });
+                                // Parse the date using a specific format
+                                const parsedDate = moment(data, "MMMM YYYY");
+
+                                // Format the date in Indonesian locale
+                                const formattedDate = parsedDate
+                                    .locale("id")
+                                    .format("MMMM YYYY");
+
                                 return formattedDate;
                             },
                         },
@@ -574,7 +601,8 @@ function reportReagenBln() {
                 })
                 .buttons()
                 .container()
-                .appendTo("#reportPenjamin_wrapper .col-md-6:eq(0)");
+                .appendTo("#reportReagen_wrapper .col-md-6:eq(0)");
+            Swal.close();
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
@@ -600,30 +628,28 @@ function reportPoin() {
         },
         success: function (response) {
             response.forEach(function (item, index) {
-                item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
-                const monthYearArray = item.created_at.split("-");
-                const month = parseInt(monthYearArray[0]);
-                const year = parseInt(monthYearArray[1]);
-                const formattedDate = new Date(
-                    year,
-                    month - 1,
-                    1
-                ).toLocaleDateString("id-ID", {
-                    month: "long",
-                    year: "numeric",
-                });
-
-                item.created_at = formattedDate;
+                // const monthYearArray = item.created_at.split("-");
+                // const month = parseInt(monthYearArray[0]);
+                // const year = parseInt(monthYearArray[1]);
+                // const formattedDate = new Date(
+                //     year,
+                //     month - 1,
+                //     1
+                // ).toLocaleDateString("id-ID", {
+                //     month: "long",
+                //     year: "numeric",
+                // });
+                // item.created_at = formattedDate;
             });
             console.log("🚀 ~ reportPoin ~ response:", response);
             $("#reportPoin")
                 .DataTable({
                     data: response,
                     columns: [
-                        { data: "no" },
-                        { data: "NIP" },
-                        { data: "nmKelas" },
-                        { data: "Jumlah" },
+                        { data: "nip" },
+                        { data: "nama" },
+                        { data: "tindakan" },
+                        { data: "jml" },
                     ],
                     order: [0, "asc"],
                     lengthChange: false,
@@ -652,7 +678,7 @@ function reportPoin() {
                 })
                 .buttons()
                 .container()
-                .appendTo("#reportPenjamin_wrapper .col-md-6:eq(0)");
+                .appendTo("#reportPoin_wrapper .col-md-6:eq(0)");
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);

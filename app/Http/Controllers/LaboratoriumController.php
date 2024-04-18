@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\KunjunganModel;
+use App\Models\LaboratoriumHasilModel;
+use App\Models\LaboratoriumKunjunganModel;
 use App\Models\LaboratoriumModel;
 use App\Models\LayananModel;
 use Illuminate\Http\Request;
@@ -84,6 +86,31 @@ class LaboratoriumController extends Controller
     /**
      * Show the form for take resource.
      */
+    public function layanan()
+    {
+        $data = LayananModel::where('kelas', 'like', '%9%')
+            ->get();
+
+        $layanan = [];
+
+        foreach ($data as $d) {
+            if ($d['status'] === "0") {
+                $status = "Tidak Tersedia";
+            } else {
+                $status = "Tersedia";
+            }
+            $layanan[] = [
+                'idLayanan' => $d->idLayanan,
+                'kelas' => $d->kelas,
+                'nmLayanan' => $d->nmLayanan,
+                'tarif' => $d->tarif,
+                'status' => $d->status,
+                'statusTx' => $status,
+            ];
+        }
+
+        return response()->json($layanan, 200, [], JSON_PRETTY_PRINT);
+    }
     public function layananlab(Request $request)
     {
         $kelas = $request->input('kelas');
@@ -148,16 +175,32 @@ class LaboratoriumController extends Controller
                 }
             }
 
-            // Simpan data ke database
+            // Simpan data permintaan laborat ke database
             LaboratoriumModel::insert($dataToInsert);
-
-            // Commit transaksi database
             DB::commit();
 
             // Extract notrans and tujuan from the request
             $notrans = $request->input('notrans');
+            $norm = $request->input('norm');
+            $dokter = $request->input('dokter');
+            $petugas = $request->input('petugas');
             $tujuan = $request->input('tujuan');
+            if ($notrans !== null) {
+                //add t_kunjungan
+                $kunjunganLab = new LaboratoriumKunjunganModel();
 
+                $kunjunganLab->norm = $norm;
+                $kunjunganLab->notrans = $notrans;
+                $kunjunganLab->petugas = $petugas;
+                $kunjunganLab->dokter = $dokter;
+                $kunjunganLab->save();
+
+                // Respon sukses atau redirect ke halaman lain
+                return response()->json(['message' => 'Data berhasil disimpan']);
+            } else {
+                // Handle case when $kdTind is null, misalnya kirim respon error
+                return response()->json(['message' => 'kdTind tidak valid'], 400);
+            }
             // Update the KunjunganModel
             $affectedRows = KunjunganModel::where('notrans', $notrans)
                 ->update(['ktujuan' => $tujuan]);
@@ -168,8 +211,8 @@ class LaboratoriumController extends Controller
                 ], 201);
             } else {
                 return response()->json([
-                    'message' => 'Terjadi kesalahan saat update data KunjunganModel',
-                ], 500);
+                    'message' => 'Tujuan berikutnya sama dengan tujuan sebelumnya',
+                ], 200);
             }
         } catch (\Exception $e) {
             // Rollback transaksi database jika terjadi kesalahan
@@ -197,6 +240,7 @@ class LaboratoriumController extends Controller
 
             // Membuat array untuk menyimpan data yang akan disimpan
             $dataToInsert = [];
+            // dd($dataToInsert);
 
             // Looping untuk mengolah dataTerpilih
             foreach ($dataTerpilih as $data) {
@@ -207,11 +251,12 @@ class LaboratoriumController extends Controller
                         'notrans' => $data['notrans'],
                         'norm' => $data['norm'],
                         'idLayanan' => $data['idLayanan'],
-                        'petugas' => $data['petugas'],
                         'hasil' => $data['hasil'],
+                        'petugas' => $data['petugas'],
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
+                    // dd($dataTerpilih);
                 } else {
                     return response()->json([
                         'message' => 'Data tidak lengkap',
@@ -220,7 +265,7 @@ class LaboratoriumController extends Controller
             }
 
             // Simpan data ke database
-            LaboratoriumModel::insert($dataToInsert);
+            LaboratoriumHasilModel::insert($dataToInsert);
 
             // Commit transaksi database
             DB::commit();
@@ -234,6 +279,7 @@ class LaboratoriumController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Terjadi kesalahan saat menyimpan data',
+                'error' => $e->getMessage(), // tambahkan ini untuk mendapatkan pesan kesalahan
             ], 500);
         }
     }
@@ -549,25 +595,35 @@ class LaboratoriumController extends Controller
 
     public function poinPetugas(Request $request)
     {
-        $tglAwal = $request->input('tglAwal', now()->toDateString());
-        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
+        $mulaiTgl = $request->input('tglAwal', now()->toDateString());
+        $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
 
-        $poin = LaboratoriumModel::on()
-            ->whereBetween(DB::raw('DATE(t_kunjungan_laboratorium.created_at)'), [$tglAwal, $tglAkhir])
-            ->selectRaw('
-                petugas AS NIP,
-                peg_m_biodata.nama,
-                kasir_m_kelas_layanan.kelas,
-                kasir_m_kelas_layanan.nmKelas,
-                COUNT(*) AS Jumlah
-            ')
-            ->join('kasir_m_layanan', 't_kunjungan_laboratorium.idLayanan', '=', 'kasir_m_layanan.idLayanan')
-            ->join('kasir_m_kelas_layanan', 'kasir_m_layanan.kelas', '=', 'kasir_m_kelas_layanan.kelas')
-            ->join('peg_m_biodata', 't_kunjungan_laboratorium.petugas', '=', 'peg_m_biodata.nip')
-            ->groupBy('t_kunjungan_laboratorium.petugas', 'kasir_m_kelas_layanan.kelas', 'kasir_m_kelas_layanan.nmKelas', 'peg_m_biodata.nama') // Include petugas in GROUP BY
-            ->get();
+        $labHasilPemeriksaan = DB::table('lab_hasil_pemeriksaan')
+            ->select(
+                DB::raw('COUNT(lab_hasil_pemeriksaan.id) AS jml'),
+                'peg_m_biodata.nip',
+                'peg_m_biodata.nama',
+                'kasir_m_layanan.nmLayanan AS tindakan'
+            )
+            ->join('peg_m_biodata', 'lab_hasil_pemeriksaan.petugas', '=', 'peg_m_biodata.nip')
+            ->join('kasir_m_layanan', 'lab_hasil_pemeriksaan.idLayanan', '=', 'kasir_m_layanan.idLayanan')
+            ->whereBetween(DB::raw('DATE_FORMAT(lab_hasil_pemeriksaan.created_at, "%Y-%m-%d")'), [$mulaiTgl, $selesaiTgl])
+            ->groupBy('peg_m_biodata.nip', 'peg_m_biodata.nama', 'kasir_m_layanan.idLayanan', 'kasir_m_layanan.nmLayanan');
 
-        return response()->json($poin, 200, [], JSON_PRETTY_PRINT);
+        $tKunjunganLab = DB::table('t_kunjungan_lab')
+            ->select(
+                DB::raw('COUNT(t_kunjungan_lab.id) AS jml'),
+                'peg_m_biodata.nip',
+                'peg_m_biodata.nama',
+                DB::raw('"Sampling" AS tindakan')
+            )
+            ->join('peg_m_biodata', 't_kunjungan_lab.petugas', '=', 'peg_m_biodata.nip')
+            ->whereBetween(DB::raw('DATE_FORMAT(t_kunjungan_lab.created_at, "%Y-%m-%d")'), [$mulaiTgl, $selesaiTgl])
+            ->groupBy('peg_m_biodata.nip', 'peg_m_biodata.nama');
+
+        $query = $labHasilPemeriksaan->union($tKunjunganLab)->get();
+
+        return response()->json($query, 200, [], JSON_PRETTY_PRINT);
     }
 
 }

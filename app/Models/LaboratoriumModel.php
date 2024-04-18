@@ -9,7 +9,7 @@ class LaboratoriumModel extends Model
 {
     use HasFactory;
     public $timestamps = true;
-    protected $table = "t_kunjungan_laboratorium";
+    protected $table = "lab_pendaftaran_pemeriksaan";
 
     public function kunjungan()
     {

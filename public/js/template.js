@@ -28,37 +28,36 @@ document.addEventListener("DOMContentLoaded", function () {
         tglTransInput.value = formattedDate;
     }
     setInterval(updateDateTime, 1000);
-});
 
-$(".select2bs4").select2();
+    $(".select2bs4").select2();
 
-$.ajaxSetup({
-    headers: {
-        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"), // Mengirim token CSRF untuk perlindungan keamanan
-    },
-});
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"), // Mengirim token CSRF untuk perlindungan keamanan
+        },
+    });
 
-$(".nav-link").on("click", function () {
-    // Menghapus class 'active' dari semua elemen dengan class 'nav-link'
-    $(".nav-link").removeClass("active");
-    $(".nav-link").removeClass("bg-white");
-    // Menambah class 'active' ke elemen yang diklik
-    $(this).addClass("active");
-    if ($(this).hasClass("active")) {
-        // Jika iya, ubah warna latar belakang menjadi putih
-        $(this).addClass("bg-white");
-    }
-});
+    $(".nav-link").on("click", function () {
+        // Menghapus class 'active' dari semua elemen dengan class 'nav-link'
+        $(".nav-link").removeClass("active");
+        $(".nav-link").removeClass("bg-blue");
+        // Menambah class 'active' ke elemen yang diklik
+        $(this).addClass("active");
+        if ($(this).hasClass("active")) {
+            // Jika iya, ubah warna latar belakang menjadi putih
+            $(this).addClass("bg-blue");
+        }
+    });
 
-$("#itunggu").on("click", function () {
-    $("#dselesai").hide();
-    $("#dtunggu").show();
+    $("#itunggu").on("click", function () {
+        $("#dselesai").hide();
+        $("#dtunggu").show();
+    });
+    $("#iselesai").on("click", function () {
+        $("#dselesai").show();
+        $("#dtunggu").hide();
+    });
 });
-$("#iselesai").on("click", function () {
-    $("#dselesai").show();
-    $("#dtunggu").hide();
-});
-
 function formatNorm(inputElement) {
     // Pastikan inputElement adalah objek jQuery yang valid
     if (inputElement && inputElement.val) {
@@ -92,6 +91,7 @@ function panggilPasien(text) {
 function setTodayDate() {
     var today = new Date().toISOString().split("T")[0];
     $("#tanggal").val(today);
+    $("#tglKunj").val(today);
 }
 
 function scrollToInputSection() {

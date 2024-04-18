@@ -2,8 +2,7 @@
 @extends('Template.lte')
 
 @section('content')
-    @include('DotsCenter.antrian')
-    @include('DotsCenter.input')
+    @include('DotsCenter.Master.input')
 
 
 
@@ -17,14 +16,10 @@
     @include('Template.footer')
 
     </div>
-    @include('DotsCenter.modals')
     @include('Template.script')
 
     <!-- my script -->
-
     <script src="{{ asset('js/alert.js') }}"></script>
-    <script src="{{ asset('js/antrianDots.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
-    <script src="{{ asset('js/template.js') }}"></script>
-    <script src="{{ asset('js/mainDots.js') }}"></script>
+    <script src="{{ asset('js/MasterDots.js') }}"></script>
 @endsection

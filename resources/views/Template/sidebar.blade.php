@@ -97,9 +97,36 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/riwayatlab') }}">
+                                    <a class="nav-link" href="{{ url('/riwayatLab') }}">
                                         <i class="fa-solid fa-chart-column nav-icon"></i>
                                         <p>Laporan Laboratorium</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/masterLab') }}">
+                                        <i class="fa-solid fa-database nav-icon"></i>
+                                        <p>Master Laboratorium</p>
+                                    </a>
+                                </li>
+                            @endif
+                            <!-- RO Section -->
+                            @if (auth()->user()->role === 'ro' || auth()->user()->role === 'admin')
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/ro') }}">
+                                        <i class="fa-regular fa-id-card nav-icon"></i>
+                                        <p>Input Radiologi</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/riwayatRO') }}">
+                                        <i class="fa-solid fa-chart-column nav-icon"></i>
+                                        <p>Laporan Radiologi</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/masterRo') }}">
+                                        <i class="fa-solid fa-database nav-icon"></i>
+                                        <p>Master Radiologi</p>
                                     </a>
                                 </li>
                             @endif

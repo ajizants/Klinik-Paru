@@ -12,7 +12,9 @@ use App\Http\Controllers\NoAntrianController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PendaftaranKominfoController;
 use App\Http\Controllers\RiwayatController;
+use App\Http\Controllers\RoTransController;
 use App\Http\Controllers\StokController;
+use App\Models\ROTransaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -74,7 +76,7 @@ Route::get('chart', [IgdController::class, 'chart'])->name('chart.endpoint');
 Route::post('cariTransaksiBmhp', [IgdController::class, 'cariTransaksiBmhp']);
 
 // Dots Center
-Route::post('transaksiDots', [DotsController::class, 'transaksiDots']);
+Route::post('kunjunganDots', [DotsController::class, 'kunjunganDots']);
 Route::get('obatDots', [DotsController::class, 'obatDots']);
 Route::get('blnKeDots', [DotsController::class, 'blnKeDots']);
 //pasien dots
@@ -84,6 +86,7 @@ Route::get('telatDots', [DotsController::class, 'telat']);
 Route::get('doDots', [DotsController::class, 'do']);
 //transaksi dots
 Route::post('addPTB', [DotsController::class, 'addPTB']);
+Route::post('simpanDots', [DotsController::class, 'simpanDots']);
 Route::get('deletePTB', [DotsController::class, 'deletePTB']);
 Route::get('editPTB', [DotsController::class, 'editPTB']);
 
@@ -91,6 +94,7 @@ Route::get('editPTB', [DotsController::class, 'editPTB']);
 Route::get('layanan', [KasirController::class, 'Layanan']);
 
 //laboratorium
+Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);
 Route::post('layananlab', [LaboratoriumController::class, 'layananlab']);
 Route::post('cariLaboratorium', [LaboratoriumController::class, 'transaksi']);
 Route::post('addTransaksiLab', [LaboratoriumController::class, 'addTransaksi']);
@@ -147,4 +151,11 @@ Route::post('antrianKominfo', [PendaftaranKominfoController::class, 'antrianKomi
 Route::get('noantrian', [NoAntrianController::class, 'index']);
 Route::post('lastNoAntri', [NoAntrianController::class, 'lastNoAntri']);
 Route::post('ambilNo', [NoAntrianController::class, 'store']);
+
+//Radiologi
+Route::get('addTrnasaksiRo', [RoTransController::class, 'store']);
+
+
+
+
 // });

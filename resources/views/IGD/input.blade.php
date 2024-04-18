@@ -165,12 +165,12 @@
                                                     <br>
                                                     <div class="input-group d-flex justify-content-center">
                                                         <a type="button" class="btn btn-danger"
-                                                            id="decreaseBtn">-</a>
+                                                            id="decreaseBtn" >-</a>
                                                         <input type="text"id="qty"
                                                             class="form-control col-5 border border-primary text-center"
                                                             placeholder="Jumlah">
                                                         <a type="button" class="btn btn-success"
-                                                            id="increaseBtn">+</a>
+                                                            id="increaseBtn" >+</a>
                                                     </div>
                                                     <br>
                                                     <div class="input-group d-flex justify-content-center">
@@ -186,7 +186,7 @@
                                                     </div>
                                                     <br>
                                                     <a id="addBMHP"
-                                                        class="btn btn-success d-flex justify-content-center mb-4">+
+                                                        class="btn btn-success d-flex justify-content-center mb-4" >Tambah
                                                         BMHP</a>
                                                     <a id="addBMHPSelesai"
                                                         class="btn btn-primary d-flex justify-content-center mb-4">Input

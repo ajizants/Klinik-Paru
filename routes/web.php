@@ -41,7 +41,13 @@ Route::middleware('auth')->group(function () {
     //Laborat
     Route::get('lab', [HomeController::class, 'lab'])->name('lab')->middleware('role:lab');
     Route::get('hasilLab', [HomeController::class, 'hasilLab'])->name('hasilLab')->middleware('role:lab');
-    Route::get('riwayatlab', [HomeController::class, 'riwayatlab'])->name('riwayatlab')->middleware('role:lab');
+    Route::get('riwayatLab', [HomeController::class, 'riwayatLab'])->name('riwayatLab')->middleware('role:lab');
+    Route::get('masterLab', [HomeController::class, 'masterLab'])->name('masterLab')->middleware('role:lab');
+    //RO
+    Route::get('ro', [HomeController::class, 'ro'])->name('ro')->middleware('role:ro');
+    Route::get('masterRo', [HomeController::class, 'masterRo'])->name('masterRo')->middleware('role:ro');
+    Route::get('hasilLab', [HomeController::class, 'hasilLab'])->name('hasilLab')->middleware('role:lab');
+    Route::get('riwayatLab', [HomeController::class, 'riwayatLab'])->name('riwayatLab')->middleware('role:lab');
 });
 Route::get('dispenser', [HomeController::class, 'dispenser'])->name('dispenser');
 Route::get('displayAntrian', [HomeController::class, 'displayAntrian'])->name('displayAntrian');
