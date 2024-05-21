@@ -134,7 +134,7 @@ class AntrianController extends Controller
             ->orWhere('ktujuan', 5)
             ->get();
 
-            $formattedData = [];
+        $formattedData = [];
         // dd($data);
         foreach ($data as $transaksi) {
 
@@ -468,7 +468,7 @@ class AntrianController extends Controller
             ->get();
         $res = [];
         foreach ($data as $item) {
-            $item["notrans"] = $item["norm"] . $kode;
+            $item["notrans"] = $kode . $item["norm"];
             $res[] = [
                 "norm" => $item->norm,
                 "noktp" => $item->noktp,

@@ -2,10 +2,9 @@ $(document).on("select2:open", () => {
     document.querySelector(".select2-search__field").focus();
 });
 
+var tglTransInput = document.getElementById("waktu");
+let tglnow = "";
 document.addEventListener("DOMContentLoaded", function () {
-    // var tgltindInput = document.getElementById("tgltind");
-    var tglTransInput = document.getElementById("waktu");
-
     function updateDateTime() {
         var now = new Date();
         var options = {
@@ -18,14 +17,14 @@ document.addEventListener("DOMContentLoaded", function () {
             second: "2-digit",
         };
         // var formattedDate = now.toLocaleString("id-ID", options);
-        var formattedDate = now
+        let tglnow = now
             .toLocaleString("id-ID", options)
             .replace(
                 /(\d{4})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})/,
                 "$1-$2-$3 $4.$5.$6"
             );
 
-        tglTransInput.value = formattedDate;
+        tglTransInput.value = tglnow;
     }
     setInterval(updateDateTime, 1000);
 
@@ -59,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 function formatNorm(inputElement) {
+    console.log("🚀 ~ formatNorm ~ inputElement:", inputElement);
     // Pastikan inputElement adalah objek jQuery yang valid
     if (inputElement && inputElement.val) {
         // Hapus karakter selain digit
@@ -92,6 +92,7 @@ function setTodayDate() {
     var today = new Date().toISOString().split("T")[0];
     $("#tanggal").val(today);
     $("#tglKunj").val(today);
+    $("#tglRO").val(today);
 }
 
 function scrollToInputSection() {

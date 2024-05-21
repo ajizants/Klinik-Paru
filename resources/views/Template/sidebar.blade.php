@@ -118,7 +118,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/riwayatRO') }}">
+                                    <a class="nav-link" href="{{ url('/riwayatRo') }}">
                                         <i class="fa-solid fa-chart-column nav-icon"></i>
                                         <p>Laporan Radiologi</p>
                                     </a>

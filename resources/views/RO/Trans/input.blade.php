@@ -1,0 +1,256 @@
+                {{-- input tindakan --}}
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Accordion -->
+                    <a href="#collapseCardExample" class="d-block card-header py-1 bg bg-info" data-toggle="collapse"
+                        role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                        <h4 id="inputSection" class="m-0 font-weight-bold text-dark text-center">Transaksi</h4>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse show" id="collapseCardExample">
+                        <div class="card-body p-2">
+                            <div class="container-fluid">
+                                <div class="card card-warning">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Identitas</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <!-- form start -->
+                                    @csrf
+                                    <form class="form-horizontal">
+                                        <div class="card-body" id="frm-identitas">
+                                            <div class="form-grup row">
+                                                <label for="norm"
+                                                    class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
+                                                    :</label>
+                                                <div class="col-sm-2 input-group">
+                                                    <input type="text" name="norm" id="norm"
+                                                        class="form-control" placeholder="No RM" maxlength="6"
+                                                        pattern="[0-9]{6}" required />
+                                                    <div class="input-group-addon btn btn-danger">
+                                                        <span class="fa-solid fa-magnifying-glass"
+                                                            onclick="cariPasien();" data-toggle="tooltip"
+                                                            data-placement="top" title="Selain Pasien Hari ini"></span>
+                                                    </div>
+                                                </div>
+                                                <label for="layanan"
+                                                    class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
+                                                    :</label>
+                                                <div class="col-sm-2">
+                                                    <select name="layanan" id="layanan" class="form-control select2"
+                                                        required>
+                                                        <option value="">--Pilih Penjamin--
+                                                        <option value="UMUM">UMUM
+                                                        <option value="BPJS">BPJS
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <label for="nama"
+                                                    class="col-sm-1 col-form-label font-weight-bold  mb-0">Nama
+                                                    :</label>
+                                                <div class="col-sm-5">
+                                                    <input type="text" id="nama" class="form-control bg-white"
+                                                        placeholder="Nama Pasien" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="form-grup row mt-2">
+                                                <label for="tglRo"
+                                                    class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
+                                                    :</label>
+                                                <div class="col-sm-2">
+                                                    <input type="date" id="tglRo" class="form-control bg-white"
+                                                        placeholder="tglRo" />
+                                                </div>
+                                                <label for="notrans"
+                                                    class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
+                                                    :</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" id="notrans" class="form-control bg-white"
+                                                        placeholder="Nomor Transaksi" readonly />
+                                                </div>
+                                                <label for="alamat"
+                                                    class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat
+                                                    :</label>
+                                                <div class="col-sm-5">
+                                                    <input id="alamat" class="form-control bg-white"
+                                                        placeholder="Alamat Pasien" readonly />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </form>
+                                </div>
+                            </div>
+                            @csrf
+                            <form class="">
+                                <div class="container-fluid" id="formtrans">
+                                    <div class="form-group">
+                                        <div class="card card-success">
+                                            <div class="card-header">
+                                                <h3 class="card-title">Hasil Pemotretan</h3>
+                                            </div>
+                                            <!-- /.card-header -->
+                                            <div class="card-body">
+
+                                                <div class="form-grup row">
+                                                    <label class="col-sm-1 py-3 col-form-label" for="pasienRawat">Pasien
+                                                        Rawat</label>
+                                                    <div class="col-sm-10 py-3">
+                                                        <label for="pasienRawat0" class="mr-4">
+                                                            <input type="radio" name="pasienRawat" id="pasienRawat0"
+                                                                value="0" checked=""> IRJA
+                                                        </label>
+
+                                                        <label for="pasienRawat1">
+                                                            <input type="radio" name="pasienRawat" id="pasienRawat1"
+                                                                value="1"> IGD / IRNA
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="pl-5">
+                                                    <div class="form-group row">
+                                                        <label for="noreg" class="col-sm-1 col-form-label">No.
+                                                            Reg.</label>
+                                                        <div class="col-sm-2">
+                                                            <input type="text" name="noreg" maxlength="6"
+                                                                class="form-control form-control-sm" id="noreg"
+                                                                placeholder="NO. Reg." required="">
+                                                        </div>
+
+                                                        <label class="col-sm-1 col-form-label">Nama Foto</label>
+                                                        <div class="col-sm-3 mr-5">
+                                                            <select name="kdFoto" id="kdFoto"
+                                                                class="form-control select2bs4 ">
+                                                                <option value="">--Pilih Foto--
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <label for="kdFilm" class="col-sm-1 col-form-label">Ukuran
+                                                            Film</label>
+                                                        <div class="col-sm-3">
+                                                            <select name="kdFilm" id="kdFilm"
+                                                                class="form-control select2bs4 ">
+                                                                <option value="">--Pilih Ukuran
+                                                                    Film--
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label for="kdKondisiRo"
+                                                            class="col-sm-1 col-form-label">Kondisi</label>
+                                                        <div class="col-sm-2">
+                                                            <select name="kv" id="kv"
+                                                                class="form-control select2bs4 ">
+                                                                <option value="">--Pilih KV--
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-sm-2">
+                                                            <select name="ma" id="ma"
+                                                                class="form-control select2bs4 ">
+                                                                <option value="">--Pilih mA--
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-sm-2">
+                                                            <select name="s" id="s"
+                                                                class="form-control select2bs4 ">
+                                                                <option value="">--Pilih S--
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <label for="kdMesin"
+                                                            class="ml-5 col-sm-1 text-right col-form-label">Mesin</label>
+                                                        <div class="col-sm-3">
+                                                            <select name="kdMesin" id="kdMesin"
+                                                                class="form-control select2bs4 " required="">
+                                                                <option value="">--Pilih Mesin--</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group row">
+                                                        <label for="jmlExpose" class="col-1 col-form-label">Jml
+                                                            Expose</label>
+                                                        <div class="col-sm-1">
+                                                            <input type="text" name="jmlExpose" id="jmlExpose"
+                                                                class="form-control form-control-sm"
+                                                                placeholder="Jml Expose" value="1">
+                                                        </div>
+
+                                                        <label for="jmlFilmDipakai"
+                                                            class="ml-5 col-1 text-right col-form-label">Film
+                                                            Dipakai</label>
+                                                        <div class="col-sm-1">
+                                                            <input type="text" name="jmlFilmDipakai"
+                                                                id="jmlFilmDipakai"
+                                                                class="form-control form-control-sm"
+                                                                placeholder="Jml Film Dipakai" value="1">
+                                                        </div>
+
+                                                        <label for="jmlFilmRusak"
+                                                            class="ml-5 col-1 text-right col-form-label">Film
+                                                            Rusak</label>
+                                                        <div class="col-sm-1">
+                                                            <input type="text" name="jmlFilmRusak"
+                                                                id="jmlFilmRusak" class="form-control form-control-sm"
+                                                                placeholder="Jml Film Rusak" value="0">
+                                                        </div>
+
+                                                        <label for="proyeksi"
+                                                            class="ml-5 col-sm-1 text-right col-form-label">Proyeksi</label>
+                                                        <div class="col-sm-3">
+                                                            <select name="kdProyeksi" id="kdProyeksi"
+                                                                class="form-control select2bs4 " required="">
+                                                                <option value="">--Pilih Proyeksi--</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label for="catatan" class="col-sm-1">Catatan</label>
+                                                        <div class="col-sm-10">
+                                                            <textarea name="catatan" id="catatan" class="form-control textarea" rows="5"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label for="fileRo" class="col-form-label">Upload
+                                                            Foto</label>
+                                                        <div class="col-sm-5 ml-2">
+                                                            <input type="file" name="foto" id="fileRo"
+                                                                class="form-control-sm" placeholder=" Pilih Foto"
+                                                                title="Foto Ro" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body-->
+                                    </div>
+                                </div>
+
+                                <div class="form-row d-flex justify-content-end">
+                                    <label class="col-form-label" for="dokter">Dokter</label>
+                                    <div class="col-3">
+                                        <select id="dokter"
+                                            class="select2bs4 form-control mb-3 border border-primary">
+                                            <option value="">--Pilih Dokter--</option>
+                                        </select>
+                                    </div>
+                                    <label class="col-sm-1 text-right col-form-label" for="p_rontgen">Petugas</label>
+                                    <div class="col-sm-3">
+                                        <select id="p_rontgen" name="p_rontgen"
+                                            class="form-control select2bs4 petugas" required="">
+                                            <option value="">--Pilih--</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a class="btn btn-danger" id="tblBatal">Batal</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>

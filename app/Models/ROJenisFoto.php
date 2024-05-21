@@ -7,5 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ROJenisFoto extends Model
 {
     protected $table = 'm_rontgen_foto';
-    public $timestamps = false;
+    protected $primaryKey = 'kdFoto';
+    // public $timestamps = false;
+
 }

@@ -11,7 +11,7 @@ return [
     | by the framework. The "local" disk, as well as a variety of cloud
     | based disks are available to your application. Just store away!
     |
-    */
+     */
 
     'default' => env('FILESYSTEM_DISK', 'local'),
 
@@ -26,7 +26,7 @@ return [
     |
     | Supported Drivers: "local", "ftp", "sftp", "s3"
     |
-    */
+     */
 
     'disks' => [
 
@@ -36,12 +36,26 @@ return [
             'throw' => false,
         ],
 
+        'local_remote' => [
+            'driver' => 'local',
+            'root' => 'http://172.16.10.88/ro/file',
+            'url' => env('APP_URL') . '/foto',
+            'visibility' => 'public',
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
             'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
+        ],
+
+        'ro_storage' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/hasilRo'), // Sesuaikan dengan direktori tempat Anda ingin menyimpan gambar
+            'url' => env('APP_URL') . '/storage/hasilRo', // URL untuk mengakses gambar
+            'visibility' => 'public',
         ],
 
         's3' => [
@@ -67,7 +81,6 @@ return [
             'timeout' => 30,
         ],
 
-
     ],
 
     /*
@@ -79,7 +92,7 @@ return [
     | `storage:link` Artisan command is executed. The array keys should be
     | the locations of the links and the values should be their targets.
     |
-    */
+     */
 
     'links' => [
         public_path('storage') => storage_path('app/public'),

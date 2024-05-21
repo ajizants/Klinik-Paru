@@ -20,6 +20,7 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('vendor/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/plugins/daterangepicker/daterangepicker.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
     <link type="text/css" rel="stylesheet" href="{{ asset('css/mystyle.css') }}">

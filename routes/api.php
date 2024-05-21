@@ -9,12 +9,12 @@ use App\Http\Controllers\InputController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\NoAntrianController;
+use App\Http\Controllers\PasienKominfoController;
 use App\Http\Controllers\PegawaiController;
-use App\Http\Controllers\PendaftaranKominfoController;
 use App\Http\Controllers\RiwayatController;
-use App\Http\Controllers\RoTransController;
+use App\Http\Controllers\RoMasterController;
+use App\Http\Controllers\ROTransaksiController;
 use App\Http\Controllers\StokController;
-use App\Models\ROTransaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,6 +38,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('dokter', [PegawaiController::class, 'dokter']);
 Route::get('perawat', [PegawaiController::class, 'perawat']);
 Route::get('apoteker', [PegawaiController::class, 'apoteker']);
+Route::get('radiografer', [PegawaiController::class, 'radiografer']);
 Route::get('analis', [PegawaiController::class, 'analis']);
 Route::get('dxMedis', [InputController::class, 'dxMedis']);
 Route::get('jaminan', [InputController::class, 'jaminan']);
@@ -145,7 +146,8 @@ Route::post('addstokbmhp', [StokController::class, 'addstokbmhp']);
 //API Riwayat Untuk migrasi SIM RS
 Route::get('riwayatKunjungan', [RiwayatController::class, 'index']);
 
-Route::post('antrianKominfo', [PendaftaranKominfoController::class, 'antrianKominfo']);
+Route::post('pasienKominfo', [PasienKominfoController::class, 'getDataPasien']);
+Route::post('pasienKominfoDaftar', [PasienKominfoController::class, 'getDataPasienDaftar']);
 
 //No Antrian
 Route::get('noantrian', [NoAntrianController::class, 'index']);
@@ -153,9 +155,30 @@ Route::post('lastNoAntri', [NoAntrianController::class, 'lastNoAntri']);
 Route::post('ambilNo', [NoAntrianController::class, 'store']);
 
 //Radiologi
-Route::get('addTrnasaksiRo', [RoTransController::class, 'store']);
+Route::get('fotoRo', [RoMasterController::class, 'fotoRo']);
+Route::get('filmRo', [RoMasterController::class, 'filmRo']);
+Route::get('mesinRo', [RoMasterController::class, 'mesinRo']);
+Route::post('kondisiRo', [RoMasterController::class, 'kondisiRo']);
+Route::get('proyeksiRo', [RoMasterController::class, 'proyeksiRo']);
 
+Route::post('simpanFotoRo', [RoMasterController::class, 'simpanFotoRo']);
+Route::post('simpanFilmRo', [RoMasterController::class, 'simpanFilmRo']);
+Route::post('simpanMesinRo', [RoMasterController::class, 'simpanMesinRo']);
+Route::post('simpanKondisiRo', [RoMasterController::class, 'simpanKondisiRo']);
+Route::post('simpanproyeksiRo', [RoMasterController::class, 'simpanproyeksiRo']);
 
+Route::put('editfotoRo', [RoMasterController::class, 'editfotoRo']);
+Route::put('editfilmRo', [RoMasterController::class, 'editfilmRo']);
+Route::put('editKondisiRo', [RoMasterController::class, 'editKondisiRo']);
+Route::put('editProyeksiRo', [RoMasterController::class, 'editProyeksiRo']);
 
+Route::post('deletefotoRo', [RoMasterController::class, 'deletefotoRo']);
+Route::post('deletefilmRo', [RoMasterController::class, 'deletefilmRo']);
+Route::post('deletemesinRo', [RoMasterController::class, 'deletemesinRo']);
+Route::post('deletekondisiRo', [RoMasterController::class, 'deletekondisiRo']);
+Route::post('deleteproyeksiRo', [RoMasterController::class, 'deleteproyeksiRo']);
 
+Route::post('addTransaksiRo', [ROTransaksiController::class, 'addTransaksiRo']);
+Route::post('dataTransaksiRo', [ROTransaksiController::class, 'dataTransaksiRo']);
+Route::post('hasilRo', [ROTransaksiController::class, 'hasilRo']);
 // });

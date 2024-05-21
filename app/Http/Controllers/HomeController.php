@@ -129,4 +129,16 @@ class HomeController extends Controller
         // dd($dataROJenisFoto);
         return view('RO.Master.main', compact('title', 'dataROJenisFoto'));
     }
+    public function ro()
+    {
+        $title = 'Radiologi';
+
+        return view('RO.Trans.main')->with('title', $title);
+    }
+    public function riwayatRo()
+    {
+        $title = 'Riwayat Rontgen';
+
+        return view('RO.Hasil.main')->with('title', $title);
+    }
 }

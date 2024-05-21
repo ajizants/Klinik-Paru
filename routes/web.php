@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LoginController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LoginController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,7 +13,7 @@ use App\Http\Controllers\HomeController;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
 |
-*/
+ */
 
 //login
 Route::get('/', [LoginController::class, 'login'])->name('login');
@@ -46,8 +46,7 @@ Route::middleware('auth')->group(function () {
     //RO
     Route::get('ro', [HomeController::class, 'ro'])->name('ro')->middleware('role:ro');
     Route::get('masterRo', [HomeController::class, 'masterRo'])->name('masterRo')->middleware('role:ro');
-    Route::get('hasilLab', [HomeController::class, 'hasilLab'])->name('hasilLab')->middleware('role:lab');
-    Route::get('riwayatLab', [HomeController::class, 'riwayatLab'])->name('riwayatLab')->middleware('role:lab');
+    Route::get('riwayatRo', [HomeController::class, 'riwayatRo'])->name('hasilRo')->middleware('role:ro');
 });
 Route::get('dispenser', [HomeController::class, 'dispenser'])->name('dispenser');
 Route::get('displayAntrian', [HomeController::class, 'displayAntrian'])->name('displayAntrian');

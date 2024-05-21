@@ -144,7 +144,25 @@ function addBmhp() {
     }
 }
 
+let tanggalFormat;
+let kdtgl;
+function setTglRo() {
+    var inputTanggal = document.getElementById("tgltind");
+    var tanggalHariIni = new Date();
+
+    var tahun = tanggalHariIni.getFullYear();
+    var bulan = String(tanggalHariIni.getMonth() + 1).padStart(2, "0");
+    var tanggal = String(tanggalHariIni.getDate()).padStart(2, "0");
+
+    tanggalFormat = tahun + "-" + bulan + "-" + tanggal;
+    kdtglFormat = tahun + "-" + bulan + "-" + tanggal;
+
+    inputTanggal.value = tanggalFormat;
+    kdtgl = kdtglFormat.replace(/-/g, "");
+}
+
 $(document).ready(function () {
+    setTglRo();
     $("#dselesai").hide();
     $("#dtunggu").show();
     scrollToAntrianSection();
@@ -322,7 +340,8 @@ $(document).ready(function () {
     $("#norm").on("keyup", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();
-            searchByRM($("#norm").val());
+            // searchByRM($("#norm").val());
+            cariKominfo();
         }
     });
     $("#qty").on("keyup", function (event) {
@@ -525,53 +544,53 @@ $(document).ready(function () {
 $(document).on("select2:open", () => {
     document.querySelector(".select2-search__field").focus();
 });
-document.addEventListener("DOMContentLoaded", function () {
-    let synth = speechSynthesis;
+// document.addEventListener("DOMContentLoaded", function () {
+//     let synth = speechSynthesis;
 
-    // Memeriksa dukungan Text-to-Speech API
-    if (synth === undefined) {
-        console.error("Text-to-Speech API is not supported");
-        return;
-    }
+//     // Memeriksa dukungan Text-to-Speech API
+//     if (synth === undefined) {
+//         console.error("Text-to-Speech API is not supported");
+//         return;
+//     }
 
-    let utterance = new SpeechSynthesisUtterance(
-        "selamat bertugas teman teman, aja kelalen madang, lan aja kelalen gosip, haha haha wkwk wkwk"
-    );
+//     let utterance = new SpeechSynthesisUtterance(
+//         "selamat bertugas teman teman, aja kelalen madang, lan aja kelalen gosip, haha haha wkwk wkwk"
+//     );
 
-    // Set bahasa ke bahasa Indonesia (id-ID)
-    utterance.lang = "id-ID";
+//     // Set bahasa ke bahasa Indonesia (id-ID)
+//     utterance.lang = "id-ID";
 
-    // Jalankan Text-to-Speech
-    try {
-        synth.speak(utterance);
-    } catch (error) {
-        console.error("Error while attempting to use Text-to-Speech:", error);
-    }
+//     // Jalankan Text-to-Speech
+//     try {
+//         synth.speak(utterance);
+//     } catch (error) {
+//         console.error("Error while attempting to use Text-to-Speech:", error);
+//     }
 
-    const jsConfetti = new JSConfetti();
+//     const jsConfetti = new JSConfetti();
 
-    jsConfetti
-        .addConfetti({})
-        .then(() => jsConfetti.addConfetti())
-        .then(() => {
-            // Create a new element for the greeting message
-            const greetingMessage = document.createElement("div");
-            greetingMessage.textContent = "Selamat Ngodey...!"; // Your greeting message here
-            greetingMessage.style.fontSize = "24px";
-            greetingMessage.style.fontWeight = "bold";
-            greetingMessage.style.color = "indigo";
-            greetingMessage.style.position = "absolute";
-            greetingMessage.style.top = "50%";
-            greetingMessage.style.left = "40%";
-            greetingMessage.style.transform = "translate(-50%, -50%)";
-            greetingMessage.style.animation = "zoomIn 3s"; // Add zoom-in animation
+//     jsConfetti
+//         .addConfetti({})
+//         .then(() => jsConfetti.addConfetti())
+//         .then(() => {
+//             // Create a new element for the greeting message
+//             const greetingMessage = document.createElement("div");
+//             greetingMessage.textContent = "Selamat Ngodey...!"; // Your greeting message here
+//             greetingMessage.style.fontSize = "24px";
+//             greetingMessage.style.fontWeight = "bold";
+//             greetingMessage.style.color = "indigo";
+//             greetingMessage.style.position = "absolute";
+//             greetingMessage.style.top = "50%";
+//             greetingMessage.style.left = "40%";
+//             greetingMessage.style.transform = "translate(-50%, -50%)";
+//             greetingMessage.style.animation = "zoomIn 3s"; // Add zoom-in animation
 
-            // Append the greeting message to the document body
-            document.body.appendChild(greetingMessage);
+//             // Append the greeting message to the document body
+//             document.body.appendChild(greetingMessage);
 
-            // Remove the greeting message after 3 seconds
-            setTimeout(() => {
-                document.body.removeChild(greetingMessage);
-            }, 3000);
-        });
-});
+//             // Remove the greeting message after 3 seconds
+//             setTimeout(() => {
+//                 document.body.removeChild(greetingMessage);
+//             }, 3000);
+//         });
+// });

@@ -1,3 +1,10 @@
+var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+});
+
 function fetchAntrianAll(tanggal, ruang, callback) {
     $.ajax({
         url: "/api/antrianAll",
@@ -81,6 +88,124 @@ function antrianAll(ruang) {
     });
 }
 
+//pasien Kominfo
+function cariKominfo() {
+    console.log("🚀 ~ setTglRo ~ tanggalFormat:", tanggalFormat);
+
+    var normValue = $("#norm").val();
+    // console.log(normValue)
+    // Add leading zeros if the value has less than 6 digits
+    while (normValue.length < 6) {
+        normValue = "0" + normValue;
+    }
+    if (
+        isNaN(normValue) ||
+        normValue === null ||
+        normValue === undefined ||
+        normValue == 0
+    ) {
+        Swal.fire({
+            icon: "error",
+            title: "No Rm Tidak Valid...!!! ",
+        });
+    } else {
+        Swal.fire({
+            icon: "info",
+            title: "Sedang mencari data pasien dari Kominfo...!!! ",
+        });
+        setTimeout(function () {
+            Swal.close();
+        }, 1000);
+        $.ajax({
+            // url: "http://kkpm.local/api/pasienKominfo",
+            url: "/api/pasienKominfo",
+            method: "POST",
+            data: {
+                no_rm: normValue,
+            },
+            dataType: "json",
+            success: function (response) {
+                // console.log(response);
+                if (response.error) {
+                    console.error("Error: " + response.error);
+                } else {
+                    var data = response.response.data;
+
+                    console.log("🚀 ~ cariKominfo ~ kdtgl:", kdtgl);
+
+                    var notrans = kdtgl + data.pasien_no_rm;
+                    console.log("🚀 ~ cariKominfo ~ notrans:", notrans);
+                    var alamat =
+                        data.kelurahan_nama +
+                        " RT " +
+                        data.pasien_rt +
+                        " RW " +
+                        data.pasien_rw +
+                        ", " +
+                        data.kecamatan_nama +
+                        ", " +
+                        data.kabupaten_nama;
+                    $("#norm").val(data.pasien_no_rm);
+                    $("#nama").val(data.pasien_nama);
+                    $("#alamat").val(alamat);
+                    $("#notrans").val(notrans);
+                }
+            },
+            error: function (error) {
+                console.error("Error fetching data:", error);
+            },
+        });
+    }
+}
+
+async function searchRMObat(norm) {
+    Swal.fire({
+        icon: "success",
+        title: "Sedang mencarikan data pasien...!!!",
+    });
+    // var norm = "000001";
+    try {
+        const response = await $.ajax({
+            url: "/api/cariRMObat",
+            type: "post",
+            data: { norm: norm },
+        });
+
+        if (response.length > 0) {
+            Swal.fire({
+                icon: "success",
+                title: "Data pasien ditemukan, lanjutkan transaksi...!!!",
+            });
+
+            // Extracting data from the JSON response
+            var noRM = response[0].norm;
+            var nama = response[0].nama;
+            var notrans = response[0].notrans;
+            var alamat = `${response[0].kelurahan}, ${response[0].rtrw}, ${response[0].kecamatan}, ${response[0].kabupaten}`;
+
+            // Updating HTML elements with the extracted data
+            $("#norm").val(noRM);
+            $("#nama").val(nama);
+            $("#alamat").val(alamat);
+            $("#notrans").val(notrans);
+            $("#layanan").val("UMUM");
+            $("#dokter").val("198907252019022004").trigger("change");
+            $("#apoteker").val("197609262011012003").trigger("change");
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Data pasien tidak ditemukan...!!!",
+            });
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        // Handling error if the API request fails
+        Swal.fire({
+            icon: "error",
+            title: "Terjadi kesalahan saat mengambil data pasien...!!!",
+        });
+    }
+}
 //IGD
 function populateTindakanOptions() {
     var tindakanSelectElement = $("#tindakan");
@@ -258,12 +383,12 @@ function populateDokterOptions() {
     var dokterSelectElement = $("#dokter");
     var dokterModals = $("#modal-pasienTB #modal-dokter");
 
-    if (!dokterSelectElement.length || !dokterModals.length) {
-        console.error(
-            "One or both of the elements (dokterSelectElement, dokterModals) not found."
-        );
-        return;
-    }
+    // if (!dokterSelectElement.length || !dokterModals.length) {
+    //     console.error(
+    //         "One or both of the elements (dokterSelectElement, dokterModals) not found."
+    //     );
+    //     return;
+    // }
 
     $.get("/api/dokter", function (data) {
         if (!Array.isArray(data)) {
@@ -306,12 +431,12 @@ function populatePetugasOptions() {
     var petugasSelectElement = $("#petugas");
     var petugasSelectModals = $("#modal-pasienTB #modal-petugas");
 
-    if (!petugasSelectElement.length || !petugasSelectModals.length) {
-        console.error(
-            "One or both of the elements (petugasSelectElement, petugasSelectModals) not found."
-        );
-        return;
-    }
+    // if (!petugasSelectElement.length || !petugasSelectModals.length) {
+    //     console.error(
+    //         "One or both of the elements (petugasSelectElement, petugasSelectModals) not found."
+    //     );
+    //     return;
+    // }
 
     $.get("/api/perawat", function (data) {
         if (!Array.isArray(data)) {
@@ -355,6 +480,25 @@ function populatePetugasOptions() {
     });
 }
 
+function populateRadiograferOptions() {
+    var petugasSelectElement = $("#p_rontgen");
+    $.get("/api/radiografer", function (data) {
+        data.sort(function (a, b) {
+            var namaLengkapA = a.gelar_d + " " + a.nama + " " + a.gelar_b;
+            var namaLengkapB = b.gelar_d + " " + b.nama + " " + b.gelar_b;
+            return namaLengkapA.localeCompare(namaLengkapB, undefined, {
+                numeric: true,
+                sensitivity: "base",
+            });
+        });
+        data.forEach(function (petugas) {
+            var namaLengkap =
+                petugas.gelar_d + " " + petugas.nama + " " + petugas.gelar_b;
+            var option = new Option(namaLengkap, petugas.nip, false, false);
+            petugasSelectElement.append(option).trigger("change");
+        });
+    });
+}
 function populateApotekerOptions() {
     var petugasSelectElement = $("#apoteker");
     $.get("/api/apoteker", function (data) {
@@ -914,6 +1058,97 @@ function populateObat() {
         data.forEach(function (obat) {
             var option = new Option(obat.nmPengobatan, obat.id, false, false);
             obatDotsModal.append(option).trigger("change");
+        });
+    });
+}
+
+//Radiologi
+function populateFoto() {
+    var fotoRo = $("#kdFoto");
+    $.get("/api/fotoRo", function (data) {
+        data.forEach(function (foto) {
+            var option = new Option(foto.nmFoto, foto.kdFoto, false, false);
+            fotoRo.append(option).trigger("change");
+        });
+    });
+}
+function populateUkuranFilm() {
+    var film = $("#kdFilm");
+    $.get("/api/filmRo", function (data) {
+        data.forEach(function (foto) {
+            var option = new Option(foto.ukuranFilm, foto.kdFilm, false, false);
+            film.append(option).trigger("change");
+        });
+    });
+}
+function populateProyeksi() {
+    var film = $("#kdProyeksi");
+    $.get("/api/proyeksiRo", function (data) {
+        data.forEach(function (foto) {
+            var option = new Option(
+                foto.proyeksi,
+                foto.idProyeksi,
+                false,
+                false
+            );
+            film.append(option).trigger("change");
+        });
+    });
+}
+function populateMesin() {
+    var film = $("#kdMesin");
+    $.get("/api/mesinRo", function (data) {
+        data.forEach(function (foto) {
+            var option = new Option(foto.nmMesin, foto.kdMesin, false, false);
+            film.append(option).trigger("change");
+        });
+    });
+}
+function populateKv() {
+    var film = $("#kv");
+    var grup = "KV";
+    var status = "1";
+    $.post("/api/kondisiRo", { grup: grup, status: status }, function (data) {
+        data.forEach(function (foto) {
+            var option = new Option(
+                foto.nmKondisi,
+                foto.kdKondisiRo,
+                false,
+                false
+            );
+            film.append(option).trigger("change");
+        });
+    });
+}
+function populateMa() {
+    var film = $("#ma");
+    var grup = "mA";
+    var status = "1";
+    $.post("/api/kondisiRo", { grup: grup, status: status }, function (data) {
+        data.forEach(function (foto) {
+            var option = new Option(
+                foto.nmKondisi,
+                foto.kdKondisiRo,
+                false,
+                false
+            );
+            film.append(option).trigger("change");
+        });
+    });
+}
+function populateS() {
+    var film = $("#s");
+    var grup = "S";
+    var status = "1";
+    $.post("/api/kondisiRo", { grup: grup, status: status }, function (data) {
+        data.forEach(function (foto) {
+            var option = new Option(
+                foto.nmKondisi,
+                foto.kdKondisiRo,
+                false,
+                false
+            );
+            film.append(option).trigger("change");
         });
     });
 }

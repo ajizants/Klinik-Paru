@@ -40,6 +40,8 @@
     <script src="{{ asset('vendor/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('vendor/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('vendor/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+
+    <script src="{{ asset('vendor/plugins/daterangepicker/daterangepicker.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
 

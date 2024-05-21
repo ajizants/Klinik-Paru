@@ -6,80 +6,139 @@ use App\Models\ROJenisFilm;
 use App\Models\ROJenisFoto;
 use App\Models\ROJenisKondisi;
 use App\Models\ROJenisMesin;
+use App\Models\RoProyeksiModel;
 use Illuminate\Http\Request;
 
-class MasterRoController extends Controller
+class RoMasterController extends Controller
 {
-    public function index()
-    {
-        // Ambil data dari masing-masing model
-        $jenisFoto = ROJenisFoto::all();
-        $jenisFilm = ROJenisFilm::all();
-        $jenisKondisi = ROJenisKondisi::all();
-        $jenisMesin = ROJenisMesin::all();
 
-        // Kirim data ke view
-        return view('RO.Master.index', compact('jenisFoto', 'jenisFilm', 'jenisKondisi', 'jenisMesin'));
+    //layanan Ro
+    public function fotoRo()
+    {
+        $data = ROJenisFoto::all();
+
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+
+    }
+    public function editfotoRo(Request $request)
+    {
+        $kdFoto = $request->kdFoto;
+
+        $data = ROJenisFoto::where('kdFoto', $kdFoto)->first();
+        // dd($data);
+        if (!$data) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
+        $data->nmFoto = $request->nmFoto;
+        $data->tarif = $request->tarif;
+        $data->save();
+
+        // Kirim data yang sudah diupdate sebagai respons
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function create()
+    public function deletefotoRo(Request $request)
     {
-        // Tampilkan formulir untuk membuat data baru
-        return view('RO.Master.create');
+        $data = ROJenisFoto::all();
+
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+
     }
 
-    public function store(Request $request)
+    //Ukuran Film
+    public function filmRo()
     {
-        // Validasi input dari formulir
-        $request->validate([
-            // Sesuaikan dengan aturan validasi Anda
-        ]);
+        $data = ROJenisFilm::all();
 
-        // Simpan data baru ke dalam database
-        // Misalnya untuk jenis foto
-        ROJenisFoto::create([
-            'nama' => $request->nama,
-            // Tambahkan kolom lainnya sesuai kebutuhan
-        ]);
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
 
-        // Redirect kembali dengan pesan sukses
-        return redirect()->route('masterRo.index')->with('success', 'Data berhasil disimpan.');
+    }
+    public function editfilmRo(Request $request)
+    {
+        $kdFilm = $request->kdFilm;
+
+        $data = ROJenisFilm::where('kdFilm', $kdFilm)->first();
+        // dd($data);
+        if (!$data) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
+        $data->ukuranFilm = $request->ukuranFilm;
+        $data->save();
+
+        // Kirim data yang sudah diupdate sebagai respons
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function edit($id)
+    //Kondisi Pemotretan
+    public function kondisiRo(Request $request)
     {
-        // Ambil data yang akan diedit
-        $jenisFoto = ROJenisFoto::findOrFail($id);
+        $grup = $request->input('grup');
+        $status = $request->input('status');
+        $query = ROJenisKondisi::query();
+        if (!empty($status)) {
+            $query->where('status', $status);
+        }
+        if (!empty($grup)) {
+            $query->where('grup', $grup);
+        }
 
-        // Tampilkan formulir untuk mengedit data
-        return view('RO.Master.edit', compact('jenisFoto'));
+        $data = $query->get();
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function update(Request $request, $id)
+    public function editKondisiRo(Request $request)
     {
-        // Validasi input dari formulir
-        $request->validate([
-            // Sesuaikan dengan aturan validasi Anda
-        ]);
+        $kdKondisiRo = $request->kdKondisi;
+        // dd($kdKondisiRo);
+        $data = ROJenisKondisi::where('kdKondisiRo', $kdKondisiRo)->first();
+        // dd($data);
+        if (!$data) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
 
-        // Update data yang telah diedit
-        $jenisFoto = ROJenisFoto::findOrFail($id);
-        $jenisFoto->update([
-            'nama' => $request->nama,
-            // Update kolom lainnya sesuai kebutuhan
-        ]);
+        $data->nmKondisi = $request->nmKondisi;
+        $data->grup = $request->grup;
+        $data->status = $request->status;
+        $data->save();
 
-        // Redirect kembali dengan pesan sukses
-        return redirect()->route('masterRo.index')->with('success', 'Data berhasil diperbarui.');
+        // Kirim data yang sudah diupdate sebagai respons
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function destroy($id)
+    //Proyeksi
+    public function proyeksiRo()
     {
-        // Hapus data
-        $jenisFoto = ROJenisFoto::findOrFail($id);
-        $jenisFoto->delete();
+        $data = RoProyeksiModel::all();
 
-        // Redirect kembali dengan pesan sukses
-        return redirect()->route('masterRo.index')->with('success', 'Data berhasil dihapus.');
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+
     }
+    public function editProyeksiRo(Request $request)
+    {
+        $kdProyeksi = $request->kdProyeksi;
+        // dd($kdProyeksi);
+        $data = RoProyeksiModel::where('kdProyeksi', $kdProyeksi)->first();
+        // dd($data);
+        if (!$data) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
+        $data->proyeksi = $request->nmProyeksi;
+        $data->save();
+
+        // Kirim data yang sudah diupdate sebagai respons
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    //Mesin RO
+    public function mesinRo()
+    {
+        $data = ROJenisMesin::all();
+
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+
+    }
+
 }
