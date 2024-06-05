@@ -6,9 +6,11 @@ use App\Models\BMHPModel;
 use App\Models\DiagnosaModel;
 use App\Models\GudangFarmasiModel;
 use App\Models\KelompokModel;
+use App\Models\KunjunganModel;
 use App\Models\TindakanModel;
 use App\Models\TujuanModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InputController extends Controller
 {
@@ -180,5 +182,54 @@ class InputController extends Controller
             ->where('stat', 1)
             ->get();
         return response()->json($tujuan, 200, [], JSON_PRETTY_PRINT);
+    }
+    public function waktuLayanan(Request $request)
+    {
+        // Ambil nilai input dari permintaan
+        $mulaiTgl = $request->input('mulaiTgl', now());
+        $selesaiTgl = $request->input('selesaiTgl', now());
+
+        // Ubah format tanggal menjadi format yang sesuai dengan database
+        $mulaiTgl = date('Y-m-d', strtotime($mulaiTgl)) . ' 00:00:00';
+        $selesaiTgl = date('Y-m-d', strtotime($selesaiTgl)) . ' 23:59:59';
+
+        // Query menggunakan whereBetween dengan raw SQL untuk memformat tanggal
+        $data = KunjunganModel::with(['biodata', 'tensi', 'poli', 'poli.dx1', 'poli.dx2', 'poli.dx3'])
+            ->whereBetween(DB::raw('DATE_FORMAT(t_kunjungan.tgltrans, "%Y-%m-%d %H:%i:%s")'), [$mulaiTgl, $selesaiTgl])
+            ->get();
+
+        $formattedData = [];
+        foreach ($data as $transaksi) {
+            $alamatpasien = ($transaksi["biodata"]["kelurahan"] ?? null) . ' ' . ($transaksi["biodata"]["rtrw"] ?? null) . ' ' . ($transaksi["biodata"]["kecamatan"] ?? null) . ' ' . ($transaksi["biodata"]["kabupaten"] ?? null);
+
+            if ($transaksi["kkelompok"] === 2) {
+                $jaminan = "BPJS";
+            } else {
+                $jaminan = "UMUM";
+            }
+
+            $formattedData[] = [
+                "notrans" => $transaksi["notrans"] ?? null,
+                "norm" => $transaksi["norm"] ?? null,
+                "noktp" => $transaksi["biodata"]["noktp"] ?? null,
+                "namapasien" => $transaksi["biodata"]["nama"] ?? null,
+                "alamatpasien" => $alamatpasien ?? null,
+                "kelaminpasien" => $transaksi["biodata"]["jeniskel"] ?? null,
+                "tmptlahir" => $transaksi["biodata"]["tmptlahir"] ?? null,
+                "tgllahir" => $transaksi["biodata"]["tgllahir"] ?? null,
+                "umurpasien" => $transaksi["biodata"]["umur"] ?? null,
+                "nohppasien" => $transaksi["biodata"]["nohp"] ?? null,
+                "statKawinpasien" => $transaksi["biodata"]["statKawin"] ?? null,
+                "agama" => $transaksi["biodata"]["agama"] ?? null,
+                "pendidikan" => $transaksi["biodata"]["pendidikan"] ?? null,
+                "jaminan" => $jaminan ?? null,
+
+                "waktuDaftar" => $transaksi["tgltrans"] ?? null,
+                "waktuTensi" => $transaksi["tensi"]["tgltrans"] ?? null,
+                "waktuPoli" => $transaksi["poli"]["tgltrans"] ?? null,
+            ];
+        }
+        // return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+        return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
     }
 }

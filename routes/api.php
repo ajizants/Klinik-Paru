@@ -43,6 +43,7 @@ Route::get('analis', [PegawaiController::class, 'analis']);
 Route::get('dxMedis', [InputController::class, 'dxMedis']);
 Route::get('jaminan', [InputController::class, 'jaminan']);
 Route::get('tujuan', [InputController::class, 'tujuan']);
+Route::post('waktuLayanan', [InputController::class, 'waktuLayanan']);
 
 Route::get('bmhp', [InputController::class, 'bmhp']);
 Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);

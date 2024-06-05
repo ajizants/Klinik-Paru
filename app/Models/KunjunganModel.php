@@ -14,6 +14,10 @@ class KunjunganModel extends Model
     {
         return $this->hasOne(PoliModel::class, 'notrans', 'notrans');
     }
+    public function tensi()
+    {
+        return $this->hasOne(TensiModel::class, 'notrans', 'notrans');
+    }
     public function tujuan()
     {
         return $this->hasOne(TujuanModel::class, 'kd_tujuan', 'ktujuan');

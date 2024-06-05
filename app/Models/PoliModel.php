@@ -21,4 +21,12 @@ class PoliModel extends Model
     {
         return $this->hasOne(DiagnosaModel::class, 'kdDiag', 'diagnosa3');
     }
+    public function pasien()
+    {
+        return $this->hasOne(PasienModel::class, 'norm', 'norm');
+    }
+    public function kunjungan()
+    {
+        return $this->hasOne(KunjunganModel::class, 'notrans', 'notrans');
+    }
 }

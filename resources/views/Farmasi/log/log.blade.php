@@ -8,6 +8,14 @@
         <li class="nav-item">
             <a class="nav-link" onclick="showriwayat()"><b>Riwayat</b></a>
         </li>
+        <div class="input-group col d-flex justify-content-start ml-5">
+            <input type="date" class="form-control col-sm-2 bg bg-warning" id="tanggal" value="{{ old('date') }}"
+                required>
+            <div class="input-group-addon btn btn-danger">
+                <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top" title="Update Pasien Hari ini"
+                    id="cariantrian"></span>
+            </div>
+        </div>
     </ul>
 
 
@@ -17,38 +25,44 @@
                 <h4 class="card-title">Kajian Resep</h4>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <label class="col-form-label">Rentang Tanggal :</label>
-                    <div class="form-group col-3">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="far fa-calendar-alt"></i>
-                                </span>
-                            </div>
-                            <input type="text" class="form-control float-right" id="reservation">
-                        </div>
-                    </div>
-                </div>
-                <div class="table-responsive pt-2 px-2">
-                    <table id="dataTelaah" name="telaah" class="table table-bordered" style="border-width: 3px;">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>No RM</th>
-                                <th>Nama</th>
-                                <th>Alamat</th>
-                                <th>Waktu Daftar</th>
-                                <th>Waktu Tunggu Tensi (Menit)</th>
-                                <th>Waktu Tensi</th>
-                                <th>Waktu TungguPoli (Menit)</th>
-                                <th>Waktu R/ Masuk</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                {{-- <div class="table-responsive pt-2 px-2"> --}}
+                <table id="telaah" name="telaah" class="table table-bordered" style="border-width: 3px;">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">No</th>
+                            <th rowspan="2">Nama</th>
+                            <th rowspan="2">Alamat</th>
+                            <th rowspan="2">Waktu R/ Masuk</th>
+                            <th colspan="5">Telaah resep</th>
+                            <th colspan="6">Pemberian Informasi Obat</th>
+                            <th colspan="2">Sesuai Formularium</th>
+                            <th rowspan="2"class="rotate text-nowrap">Rekonsiliasi</th>
+                            <th rowspan="2"class="rotate text-nowrap">Konseling</th>
+                            <th rowspan="2">Waktu Selesai</th>
+                            <th rowspan="2">Petugas</th>
+                        </tr>
+                        <tr>
+                            <th class="rotate text-nowrap">Pasien</th>
+                            <th class="rotate text-nowrap">Obat</th>
+                            <th class="rotate text-nowrap">Dosis</th>
+                            <th class="rotate text-nowrap">Cara Pemberian</th>
+                            <th class="rotate text-nowrap">Informasi</th>
+                            <th class="rotate text-nowrap">Nama Obat</th>
+                            <th class="rotate text-nowrap">Dosis</th>
+                            <th class="rotate text-nowrap">Indikasi</th>
+                            <th class="rotate text-nowrap">Cara Pakai</th>
+                            <th class="rotate text-nowrap">Cara Simpan</th>
+                            <th class="rotate text-nowrap">Efek Samping</th>
+                            <th class="rotate text-nowrap">Selesai</th>
+                            <th class="rotate text-nowrap">Tidak Selesai</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    </tbody>
+                </table>
+                {{-- </div> --}}
             </div>
             <div class="card-footer">
             </div>
@@ -99,8 +113,8 @@
                             <div class="col-sm-2">
                                 <input type="text" id="tgltind" class="form-control bg-white" placeholder="Tanggal"
                                     readonly hidden />
-                                <input type="text" id="tgltrans" class="form-control bg-white" placeholder="tgltrans"
-                                    readonly />
+                                <input type="text" id="tgltrans" class="form-control bg-white"
+                                    placeholder="tgltrans" readonly />
                             </div>
                             <label for="notrans" class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
                                 :</label>
@@ -111,7 +125,8 @@
                             <label for="alamat" class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat
                                 :</label>
                             <div class="col-sm-5">
-                                <input id="alamat" class="form-control bg-white" placeholder="Alamat Pasien" readonly />
+                                <input id="alamat" class="form-control bg-white" placeholder="Alamat Pasien"
+                                    readonly />
                             </div>
                         </div>
                         <div class="mt-2 form-grup row d-flex justify-content-center">
@@ -224,9 +239,6 @@
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
     <script>
-        let startDate = ""
-        let endDate = ""
-
         function dataFarmasi() {
             var norm = $("#norm").val();
             var tgl = $("#norm").val();
@@ -373,126 +385,8 @@
             riwayat.style.display = 'none'; // Menampilkan elemen dengan ID "riwayat"
         }
 
-        function waktuResep(startDate, endDate) {
-            if ($.fn.DataTable.isDataTable("#dataTelaah")) {
-                var tabletindakan = $("#dataTelaah").DataTable();
-                tabletindakan.clear().destroy();
-            }
-
-            Swal.fire({
-                icon: "info",
-                title: "Sedang mencari data pasien ...!!! ",
-            });
-
-            $.ajaxSetup({
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
-                        "content"), // Mengirim token CSRF untuk perlindungan keamanan
-                },
-            });
-            const cookiestring = document.cookie.split("=");
-            $.ajax({
-                url: "/api/waktuLayanan",
-                type: "post",
-                data: {
-                    mulaiTgl: startDate,
-                    selesaiTgl: endDate,
-                },
-                success: function(response) {
-                    response.forEach(function(item, index) {
-                        item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
-
-                        var waktuDaftar = new Date(item.waktuDaftar);
-                        var waktuTensi = new Date(item.waktuTensi);
-                        var waktuPoli = new Date(item.waktuPoli);
-
-                        // Hitung selisih waktu dalam milidetik
-                        var selisihMsTungguTensi = waktuTensi - waktuDaftar;
-                        var selisihMsTungguPoli = waktuPoli - waktuTensi;
-
-                        // Ubah selisih waktu menjadi menit
-                        var tunggu_Tensi = Math.floor(selisihMsTungguTensi /
-                            60000);
-                        var tunggu_Poli = Math.floor(selisihMsTungguPoli /
-                            60000);
-                        item.tungguTensi = tunggu_Tensi;
-                        item.tungguPoli = tunggu_Poli;
-                    });
-
-                    $("#dataTelaah").DataTable({
-                            data: response,
-                            columns: [{
-                                    data: "no",
-                                    className: "col-1 text-center"
-                                },
-                                {
-                                    data: "norm",
-                                    className: "col-1 "
-                                },
-                                {
-                                    data: "namapasien"
-                                },
-                                {
-                                    data: "alamatpasien"
-                                },
-                                {
-                                    data: "waktuDaftar"
-                                },
-                                {
-                                    data: "tungguTensi"
-                                },
-                                {
-                                    data: "waktuTensi"
-                                },
-                                {
-                                    data: "tungguPoli"
-                                },
-                                {
-                                    data: "waktuPoli"
-                                },
-                            ],
-                            order: [0, "asc"],
-                            autoWidth: false,
-                            buttons: [{
-                                    extend: 'copyHtml5',
-                                    title: 'Data_Copy'
-                                },
-                                {
-                                    extend: 'excelHtml5',
-                                    title: 'Waktu Layanan KKPM' + startDate + ' ' + ' s.d.' + ' ' +
-                                        endDate
-                                },
-                                'colvis'
-                            ],
-                        })
-                        .buttons()
-                        .container()
-                        .appendTo("#dataTelaah_wrapper .col-md-6:eq(0)");
-                    Swal.close();
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error:", error);
-                },
-
-            });
-
-        }
         $(document).ready(function() {
-            showtelaah();
-            // Inisialisasi daterangepicker
-            $('#reservation').daterangepicker({
-                locale: {
-                    format: 'YYYY-MM-DD'
-                }
-            });
-
-            // Event handler untuk menangkap perubahan pada date range
-            $('#reservation').on('apply.daterangepicker', function(ev, picker) {
-                var startDate = picker.startDate.format('YYYY-MM-DD');
-                var endDate = picker.endDate.format('YYYY-MM-DD');
-
-                waktuResep(startDate, endDate)
-            });
-        });
+            showtelaah()
+        })
     </script>
 @endsection
