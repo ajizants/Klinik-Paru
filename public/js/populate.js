@@ -111,11 +111,14 @@ function cariKominfo() {
     } else {
         Swal.fire({
             icon: "info",
-            title: "Sedang mencari data pasien dari Kominfo...!!! ",
+            title: "Sedang Mencari Data Pasien di Aplikasi KOMINFO",
+            showConfirmButton: false, // Menyembunyikan tombol OK
+            allowOutsideClick: false, // Mencegah interaksi di luar dialog
+            didOpen: () => {
+                Swal.showLoading(); // Menampilkan loading spinner
+            },
         });
-        setTimeout(function () {
-            Swal.close();
-        }, 1000);
+
         $.ajax({
             // url: "http://kkpm.local/api/pasienKominfo",
             url: "/api/pasienKominfo",
@@ -125,32 +128,44 @@ function cariKominfo() {
             },
             dataType: "json",
             success: function (response) {
-                // console.log(response);
                 if (response.error) {
                     console.error("Error: " + response.error);
+                } else if (
+                    response.metadata &&
+                    response.metadata.code === 404
+                ) {
+                    // Data Pasien Tidak Ditemukan Pada Kunjungan Hari Ini
+                    console.log(
+                        "Data Pasien Tidak Ditemukan Pada Kunjungan Hari Ini"
+                    );
+
+                    // Lakukan sesuatu di sini, misalnya tampilkan pesan ke pengguna
+                    Swal.fire({
+                        icon: "info",
+                        title: response.metadata.message,
+                    });
+                    // Swal.close();
                 } else {
-                    var data = response.response.data;
+                    Swal.fire({
+                        icon: "info",
+                        title: response.metadata.message,
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                    });
+                    console.log("🚀 ~ cariKominfo ~ data:", response);
+                    var data = response.response.data[0]; // Mengambil data pertama dari array data
 
-                    console.log("🚀 ~ cariKominfo ~ kdtgl:", kdtgl);
-
-                    var notrans = kdtgl + data.pasien_no_rm;
-                    console.log("🚀 ~ cariKominfo ~ notrans:", notrans);
-                    var alamat =
-                        data.kelurahan_nama +
-                        " RT " +
-                        data.pasien_rt +
-                        " RW " +
-                        data.pasien_rw +
-                        ", " +
-                        data.kecamatan_nama +
-                        ", " +
-                        data.kabupaten_nama;
                     $("#norm").val(data.pasien_no_rm);
+                    $("#layanan").val(data.penjamin_nama).trigger("change"); // Trigger change event jika diperlukan
                     $("#nama").val(data.pasien_nama);
-                    $("#alamat").val(alamat);
-                    $("#notrans").val(notrans);
+                    $("#alamat").val(data.pasien_alamat);
+                    $("#notrans").val(data.no_trans);
+                    setTimeout(function () {
+                        Swal.close();
+                    }, 1000);
                 }
             },
+
             error: function (error) {
                 console.error("Error fetching data:", error);
             },

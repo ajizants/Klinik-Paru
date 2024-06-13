@@ -117,14 +117,15 @@
                                                         </div>
 
                                                         <label class="col-sm-1 col-form-label">Nama Foto</label>
-                                                        <div class="col-sm-3 mr-5">
+                                                        <div class="col-sm-3">
                                                             <select name="kdFoto" id="kdFoto"
                                                                 class="form-control select2bs4 ">
                                                                 <option value="">--Pilih Foto--
                                                                 </option>
                                                             </select>
                                                         </div>
-                                                        <label for="kdFilm" class="col-sm-1 col-form-label">Ukuran
+                                                        <label for="kdFilm"
+                                                            class="ml-2 col-sm-1 col-form-label text-right">Ukuran
                                                             Film</label>
                                                         <div class="col-sm-3">
                                                             <select name="kdFilm" id="kdFilm"
@@ -160,7 +161,7 @@
                                                             </select>
                                                         </div>
                                                         <label for="kdMesin"
-                                                            class="ml-5 col-sm-1 text-right col-form-label">Mesin</label>
+                                                            class="ml-2 col-sm-1 text-right col-form-label">Mesin</label>
                                                         <div class="col-sm-3">
                                                             <select name="kdMesin" id="kdMesin"
                                                                 class="form-control select2bs4 " required="">
@@ -179,7 +180,7 @@
                                                         </div>
 
                                                         <label for="jmlFilmDipakai"
-                                                            class="ml-5 col-1 text-right col-form-label">Film
+                                                            class=" col-1 text-right col-form-label">Film
                                                             Dipakai</label>
                                                         <div class="col-sm-1">
                                                             <input type="text" name="jmlFilmDipakai"
@@ -189,7 +190,7 @@
                                                         </div>
 
                                                         <label for="jmlFilmRusak"
-                                                            class="ml-5 col-1 text-right col-form-label">Film
+                                                            class=" col-1 text-right col-form-label">Film
                                                             Rusak</label>
                                                         <div class="col-sm-1">
                                                             <input type="text" name="jmlFilmRusak"
@@ -198,7 +199,10 @@
                                                         </div>
 
                                                         <label for="proyeksi"
-                                                            class="ml-5 col-sm-1 text-right col-form-label">Proyeksi</label>
+                                                            class=" col-sm-1 text-right col-form-label"></label>
+
+                                                        <label for="proyeksi"
+                                                            class=" ml-2 col-sm-1 text-right col-form-label">Proyeksi</label>
                                                         <div class="col-sm-3">
                                                             <select name="kdProyeksi" id="kdProyeksi"
                                                                 class="form-control select2bs4 " required="">
@@ -208,7 +212,7 @@
                                                     </div>
                                                     <div class="form-group row">
                                                         <label for="catatan" class="col-sm-1">Catatan</label>
-                                                        <div class="col-sm-10">
+                                                        <div class="col-sm-10 pr-0">
                                                             <textarea name="catatan" id="catatan" class="form-control textarea" rows="5"></textarea>
                                                         </div>
                                                     </div>

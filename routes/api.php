@@ -147,6 +147,7 @@ Route::post('addstokbmhp', [StokController::class, 'addstokbmhp']);
 //API Riwayat Untuk migrasi SIM RS
 Route::get('riwayatKunjungan', [RiwayatController::class, 'index']);
 
+// Route::post('pasienKominfo', [PasienKominfoController::class, 'pasienKominfo']);
 Route::post('pasienKominfo', [PasienKominfoController::class, 'getDataPasien']);
 Route::post('pasienKominfoDaftar', [PasienKominfoController::class, 'getDataPasienDaftar']);
 
