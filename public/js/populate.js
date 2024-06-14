@@ -89,10 +89,8 @@ function antrianAll(ruang) {
 }
 
 //pasien Kominfo
-function cariKominfo() {
-    console.log("🚀 ~ setTglRo ~ tanggalFormat:", tanggalFormat);
-
-    var normValue = $("#norm").val();
+function cariKominfo(norm) {
+    var normValue = norm ? norm : $("#norm").val();
     // console.log(normValue)
     // Add leading zeros if the value has less than 6 digits
     while (normValue.length < 6) {

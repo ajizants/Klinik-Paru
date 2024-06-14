@@ -2,7 +2,7 @@
 @extends('Template.lte')
 
 @section('content')
-    {{-- @include('RO.Trans.antrian') --}}
+    @include('RO.Trans.antrian')
     @include('RO.Trans.input')
 
 

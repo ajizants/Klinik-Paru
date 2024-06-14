@@ -96,13 +96,13 @@
                                                         Rawat</label>
                                                     <div class="col-sm-10 py-3">
                                                         <label for="pasienRawat0" class="mr-4">
-                                                            <input type="radio" name="pasienRawat" id="pasienRawat0"
-                                                                value="0" checked=""> IRJA
+                                                            <input type="radio" name="pasienRawat" value="0"
+                                                                checked=""> IRJA
                                                         </label>
 
                                                         <label for="pasienRawat1">
-                                                            <input type="radio" name="pasienRawat" id="pasienRawat1"
-                                                                value="1"> IGD / IRNA
+                                                            <input type="radio" name="pasienRawat" value="1"> IGD
+                                                            / IRNA
                                                         </label>
                                                     </div>
                                                 </div>

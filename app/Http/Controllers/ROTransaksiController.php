@@ -96,6 +96,7 @@ class ROTransaksiController extends Controller
             $transaksi->norm = $request->input('norm');
             $transaksi->tgltrans = $request->input('tglRo');
             $transaksi->noreg = $request->input('noreg');
+            $transaksi->pasienRawat = $request->input('pasienRawat');
             $transaksi->kdFoto = $request->input('kdFoto');
             $transaksi->ma = $request->input('ma');
             $transaksi->kv = $request->input('kv');

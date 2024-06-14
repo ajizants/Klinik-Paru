@@ -148,8 +148,9 @@ Route::post('addstokbmhp', [StokController::class, 'addstokbmhp']);
 Route::get('riwayatKunjungan', [RiwayatController::class, 'index']);
 
 // Route::post('pasienKominfo', [PasienKominfoController::class, 'pasienKominfo']);
-Route::post('pasienKominfo', [PasienKominfoController::class, 'getDataPasien']);
-Route::post('pasienKominfoDaftar', [PasienKominfoController::class, 'getDataPasienDaftar']);
+Route::post('pasienKominfo', [PasienKominfoController::class, 'pasienKominfo']);
+Route::post('antrianKominfo', [PasienKominfoController::class, 'antrianKominfoFullData']);
+Route::post('noAntrianKominfo', [PasienKominfoController::class, 'noAntrianKominfo']);
 
 //No Antrian
 Route::get('noantrian', [NoAntrianController::class, 'index']);

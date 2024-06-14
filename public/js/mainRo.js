@@ -14,18 +14,6 @@ function setTglRo() {
     inputTanggal.value = tanggalFormat;
     kdtgl = kdtglFormat.replace(/-/g, "");
 }
-var pasienRawat;
-var radioPasienRawat0 = document.getElementById("pasienRawat0");
-var radioPasienRawat1 = document.getElementById("pasienRawat1");
-
-// Tambahkan event listener untuk mengubah nilai pasienRawat ketika radio button diubah
-radioPasienRawat0.addEventListener("change", function () {
-    pasienRawat = 0;
-});
-
-radioPasienRawat1.addEventListener("change", function () {
-    pasienRawat = 1;
-});
 
 function simpan1() {
     var notras = document.getElementById("notrans").value;
@@ -102,6 +90,9 @@ async function simpan() {
         var norm = document.getElementById("norm").value;
         var tglRo = document.getElementById("tglRo").value;
         var noreg = document.getElementById("noreg").value;
+        var pasienRawat = document.querySelector(
+            'input[name="pasienRawat"]:checked'
+        ).value;
         var kdFoto = document.getElementById("kdFoto").value;
         var ma = document.getElementById("ma").value;
         var kv = document.getElementById("kv").value;
@@ -115,7 +106,13 @@ async function simpan() {
         var p_rontgen = document.getElementById("p_rontgen").value;
         var dokter = document.getElementById("dokter").value;
 
-        var gambar = document.getElementById("fileRo").files[0];
+        var gambar = gambarInput.files[0];
+
+        if (gambar) {
+            console.log("Nama file:", gambar.name);
+        } else {
+            console.log("File belum dipilih");
+        }
 
         // Membuat objek FormData untuk mengirim data dengan file
         var formData = new FormData();
@@ -124,6 +121,7 @@ async function simpan() {
         formData.append("tglRo", tglRo);
         formData.append("noreg", noreg);
         formData.append("kdFoto", kdFoto);
+        formData.append("pasienRawat", pasienRawat);
         formData.append("ma", ma);
         formData.append("kv", kv);
         formData.append("s", s);
@@ -161,8 +159,97 @@ function cariPasien() {
     searchRMObat($("#norm").val());
 }
 
+var gambarInput = document.getElementById("fileRo");
+
+gambarInput.addEventListener("change", function () {
+    var gambar = this.files[0];
+    if (gambar) {
+        console.log("Nama file:", gambar.name);
+    } else {
+        console.log("File belum dipilih");
+    }
+});
+
+function fetchDataAntrian(tanggal, callback) {
+    $.ajax({
+        url: "/api/noAntrianKominfo",
+        type: "post",
+        data: {
+            tanggal: tanggal,
+        },
+        success: function (response) {
+            callback(response);
+        },
+        error: function (xhr) {},
+    });
+}
+function initializeDataAntrian(response) {
+    // Check if response has data array
+    if (response && response.response && response.response.data) {
+        // Iterate over each item in the data array
+        response.response.data.forEach(function (item) {
+            // Check if pasien_no_rm is not empty
+            if (item.pasien_no_rm) {
+                // Construct the action button HTML
+                item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                        onclick="cariKominfo('${item.pasien_no_rm}')"><i class="fas fa-pen-to-square"></i></a>`;
+            }
+        });
+
+        // Initialize DataTable with processed data
+        $("#dataAntrian").DataTable({
+            data: response.response.data,
+            columns: [
+                { data: "aksi", className: "text-center p-2 col-1" }, // Action column
+                { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
+                { data: "pasien_no_rm", className: "text-center p-2" }, // Pasien No. RM column
+                { data: "pasien_nama", className: "p-2" }, // Pasien Nama column
+                { data: "poli_nama", className: "p-2" }, // Poli column
+                { data: "tanggal", className: "p-2" }, // Tanggal column
+                { data: "dokter_nama", className: "p-2" }, // Dokter column
+            ],
+            order: [[1, "asc"]], // Order by Antrean Nomor ascending
+        });
+    } else {
+        console.error(
+            "Response format is incorrect or data array is missing:",
+            response
+        );
+        // Handle the case where the response format is incorrect or data array is missing
+    }
+}
+
+function antrian() {
+    $("#loadingSpinner").show();
+    var tanggal = $("#tanggal").val();
+    console.log("🚀 ~ antrian ~ tanggal:", tanggal);
+
+    fetchDataAntrian(tanggal, function (response) {
+        $("#loadingSpinner").hide();
+
+        // Check if DataTable already initialized
+        if ($.fn.DataTable.isDataTable("#dataAntrian")) {
+            var table = $("#dataAntrian").DataTable();
+
+            // Modify response data to add action column
+            response.response.data.forEach(function (item) {
+                item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                        onclick="cariKominfo('${item.pasien_no_rm}')"><i class="fas fa-pen-to-square"></i></a>`;
+            });
+
+            // Clear existing data, add new data, and redraw table
+            table.clear().rows.add(response.response.data).draw();
+        } else {
+            // Initialize DataTable with the response data
+            initializeDataAntrian(response);
+        }
+    });
+}
+
 window.addEventListener("load", function () {
     setTglRo();
+    setTodayDate();
+    antrian();
     populateRadiograferOptions();
     populateDokterOptions();
     populateFoto();

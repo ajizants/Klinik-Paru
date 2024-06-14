@@ -133,8 +133,12 @@ class HomeController extends Controller
     {
         $title = 'Radiologi';
 
-        return view('RO.Trans.main')->with('title', $title);
+        return view('RO.Trans.main')->with([
+            'title' => $title,
+
+        ]);
     }
+
     public function riwayatRo()
     {
         $title = 'Riwayat Rontgen';
