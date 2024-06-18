@@ -1,8 +1,8 @@
 @extends('Template.lte')
 
 @section('content')
-    @include('Farmasi.antrian')
-    @include('Farmasi.input2')
+    @include('Farmasi.Transaksi.antrian')
+    @include('Farmasi.Transaksi.input2')
 
 
 

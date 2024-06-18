@@ -107,135 +107,114 @@ function dataBMHP() {
         },
     });
 }
-function fetchDataAntrian(params, callback) {
-    console.log("🚀 ~ fetchDataAntrian ~ params:", params);
+function fetchDataAntrian(tanggal, callback) {
     $.ajax({
-        url: "/api/cpptKominfo",
+        url: "/api/antrianIGD",
         type: "post",
-        data: params, // Mengirimkan array params sebagai data
+        data: {
+            date: tanggal,
+        },
         success: function (response) {
             callback(response);
         },
-        error: function (xhr) {
-            // Tangani kesalahan jika diperlukan
-        },
+        error: function (xhr) {},
     });
 }
-
 function initializeDataAntrian(response) {
-    // Pastikan response.data adalah objek yang berisi data pasien
-    if (response && response.response && response.response.data) {
-        var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
+    response.forEach(function (item) {
+        var asktind = "";
+        if (item.nebulizer) asktind += "Nebu: " + item.nebulizer + ", " + "\n";
+        if (item.oksigenasi) asktind += "O2: " + item.oksigenasi + ", " + "\n";
+        if (item.injeksi) asktind += "Injeksi: " + item.injeksi + ", " + "\n";
+        if (item.infus) asktind += "Infus: " + item.infus + ", " + "\n";
+        if (item.mantoux == "1") asktind += "Mantoux" + ", ";
+        if (item.ekg == "1") asktind += "EKG" + ", ";
+        if (item.spirometri == "1") asktind += "Spirometri" + ", ";
 
-        dataArray.forEach(function (item) {
-            var asktind = "";
-            // Pastikan item.tindakan adalah array sebelum mengaksesnya
-            if (item.tindakan && Array.isArray(item.tindakan)) {
-                item.tindakan.forEach(function (tindakan) {
-                    asktind += `${tindakan.nama_tindakan} : ${tindakan.nama_obat},\n`;
-                });
-            }
-            item.asktind = asktind;
-            item.index = dataArray.indexOf(item);
+        item.asktind = asktind;
+        var trim = `${item.tgltrans}`;
+        var tgl = new Date(trim).toISOString().split("T")[0];
+        var alamat = `${item.kelurahan}, ${item.rtrw}, ${item.kecamatan}, ${item.kabupaten}`;
+        item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                data-norm="${item.norm}"
+                data-nama="${item.namapasien}"
+                data-dokter="${item.dokterpoli}"
+                data-asktind="${asktind}"
+                data-kddokter="${item.nip}"
+                data-alamat="${alamat}"
+                data-layanan="${item.kelompok}"
+                data-notrans="${item.notrans}"
+                data-tgl="${tgl}"
+                data-tgltrans="${item.tgltrans}"><i class="fas fa-pen-to-square"></i></a>`;
+    });
 
-            var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-            item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-                            data-norm="${item.pasien_no_rm}"
-                            data-nama="${item.pasien_nama}"
-                            data-dokter="${item.dokter_nama}"
-                            data-asktind="${asktind}"
-                            data-kddokter="${item.dokter_username}"
-                            data-alamat="${alamat}"
-                            data-layanan="${item.penjamin_nama}"
-                            data-notrans="${item.no_trans}"
-                            data-tgltrans="${item.tanggal}"><i class="fas fa-pen-to-square"></i></a>`;
-        });
-
-        $("#dataAntrian").DataTable({
-            data: dataArray,
-            columns: [
-                { data: "aksi", className: "text-center p-2" },
-                {
-                    data: "status",
-                    className: "text-center p-2",
-                    render: function (data, type, row) {
-                        var backgroundColor =
-                            data === "belum" ? "danger" : "success";
-                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-                    },
+    $("#dataAntrian").DataTable({
+        data: response,
+        columns: [
+            { data: "aksi", className: "text-center p-2" },
+            {
+                data: "status",
+                className: "text-center p-2",
+                name: "status",
+                render: function (data, type, row) {
+                    var backgroundColor =
+                        data === "belum" ? "danger" : "success";
+                    return `<div class="badge badge-${backgroundColor}">${data}</div>`;
                 },
-                { data: "index", className: "text-center p-2" },
-                { data: "pasien_no_rm", className: "text-center p-2" },
-                { data: "penjamin_nama", className: "text-center p-2" },
-                { data: "pasien_nama", className: "p-2" },
-                { data: "asktind", className: "p-2" },
-                { data: "dokter_nama", className: "p-2" },
-            ],
-            order: [
-                [1, "asc"],
-                [2, "asc"],
-            ],
-        });
-    } else {
-        console.error(
-            "Invalid response or response.response.data is not available:",
-            response
-        );
-        // Handle error or display appropriate message
-    }
-}
+            },
 
+            { data: "nourut", className: "text-center p-2" },
+            { data: "norm", className: "text-center p-2" },
+            { data: "kelompok", className: "text-center p-2" },
+            { data: "namapasien", className: " p-2" },
+            { data: "asktind", className: " p-2" },
+            { data: "dokterpoli", className: " p-2" },
+        ],
+        order: [
+            [1, "asc"],
+            [2, "asc"],
+        ],
+    });
+}
 function antrian() {
     $("#loadingSpinner").show();
-    var tanggal_awal = $("#tanggal").val(); // Ganti id input tanggal_awal
-    var tanggal_akhir = $("#tanggal").val(); // Ganti id input tanggal_akhir
-    var no_rm = $("#norm").val(); // Ganti id input no_rm
+    var tanggal = $("#tanggal").val();
 
-    var param = {
-        tanggal_awal: tanggal_awal,
-        tanggal_akhir: tanggal_akhir,
-        no_rm: no_rm,
-    };
-
-    fetchDataAntrian(param, function (response) {
+    fetchDataAntrian(tanggal, function (response) {
         $("#loadingSpinner").hide();
-
         if ($.fn.DataTable.isDataTable("#dataAntrian")) {
             var table = $("#dataAntrian").DataTable();
-            if (response && response.response && response.response.data) {
-                var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
+            response.forEach(function (item) {
+                var asktind = "";
+                if (item.nebulizer)
+                    asktind += "Nebu: " + item.nebulizer + ", " + "\n";
+                if (item.oksigenasi)
+                    asktind += "O2: " + item.oksigenasi + ", " + "\n";
+                if (item.injeksi)
+                    asktind += "Injeksi: " + item.injeksi + ", " + "\n";
+                if (item.infus) asktind += "Infus: " + item.infus + ", " + "\n";
+                if (item.mantoux == "1") asktind += "Mantoux" + ", ";
+                if (item.ekg == "1") asktind += "EKG" + ", ";
+                if (item.spirometri == "1") asktind += "Spirometri" + ", ";
 
-                dataArray.forEach(function (item) {
-                    var asktind = "";
-                    // Pastikan item.tindakan adalah array sebelum mengaksesnya
-                    if (item.tindakan && Array.isArray(item.tindakan)) {
-                        item.tindakan.forEach(function (tindakan) {
-                            asktind += `${tindakan.nama_tindakan} : ${tindakan.nama_obat},\n`;
-                        });
-                    }
-                    item.asktind = asktind;
-                    item.index = dataArray.indexOf(item);
+                item.asktind = asktind;
+                var trim = `${item.tgltrans}`;
+                var tgl = new Date(trim).toISOString().split("T")[0];
+                var alamat = `${item.kelurahan}, ${item.rtrw}, ${item.kecamatan}, ${item.kabupaten}`;
+                item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                data-norm="${item.norm}"
+                data-nama="${item.namapasien}"
+                data-dokter="${item.dokterpoli}"
+                data-asktind="${asktind}"
+                data-kddokter="${item.nip}"
+                data-alamat="${alamat}"
+                data-layanan="${item.kelompok}"
+                data-notrans="${item.notrans}"
+                data-tgl="${tgl}"
+                data-tgltrans="${item.tgltrans}"><i class="fas fa-pen-to-square"></i></a>`;
+            });
 
-                    var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-                    item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-                                    data-norm="${item.pasien_no_rm}"
-                                    data-nama="${item.pasien_nama}"
-                                    data-dokter="${item.dokter_nama}"
-                                    data-asktind="${asktind}"
-                                    data-kddokter="${item.dokter_username}"
-                                    data-alamat="${alamat}"
-                                    data-layanan="${item.penjamin_nama}"
-                                    data-notrans="${item.no_trans}"
-                                    data-tgltrans="${item.tanggal}"><i class="fas fa-pen-to-square"></i></a>`;
-                });
-            } else {
-                console.error(
-                    "Invalid response or response.response.data is not available:",
-                    response
-                );
-                // Handle error or display appropriate message
-            }
-            table.clear().rows.add(response.response.data).draw();
+            table.clear().rows.add(response).draw();
         } else {
             initializeDataAntrian(response);
         }

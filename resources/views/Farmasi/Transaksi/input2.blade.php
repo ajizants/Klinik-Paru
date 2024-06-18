@@ -94,25 +94,25 @@
                         @csrf
                         <form class="card-body form-horizontal px-1" id="form-obat">
                             <div class="container-fluid d-flex justify-content-center p-2">
-                                <div class="col-sm-6 bg-info border border-danger rounded pb-1 m-1">
-                                    <label for="obat"class=" col-form-label"><b>Obat
-                                            :</b></label>
+                                <div class="col-sm-6 ">
+                                    {{-- <label for="obat"class=" col-form-label"><b>Obat
+                                            :</b></label> --}}
                                     <select id="obat" class="form-control select2bs4 border border-primary">
                                         <option value="">--Pilih obat--</option>
                                     </select>
                                 </div>
-                                <div class="col-sm-1 bg-info border border-danger rounded pb-1 m-1">
-                                    <label for="productID" class="col-form-label"><b>ID Produk</b></label>
+                                <div class="col-sm-1 ">
+                                    {{-- <label for="productID" class="col-form-label"><b>ID Produk</b></label> --}}
                                     <input type="text"id="productID" class="form-control  border border-info"
-                                        placeholder="ID Produk">
+                                        placeholder="ID Produk" readonly>
                                 </div>
-                                <div class="col-sm-1 bg-info border border-danger rounded pb-1 m-1">
-                                    <label for="qty" class="col-form-label"><b>Jumlah
-                                            :</b></label>
-                                    <input type="text"id="qty" class="form-control  border border-info"
+                                <div class="col-sm-1 ">
+                                    {{-- <label for="qty" class="col-form-label"><b>Jumlah
+                                            :</b></label> --}}
+                                    <input type="number"id="qty" class="form-control  border border-info"
                                         placeholder="Jumlah">
                                 </div>
-                                {{-- <div class="col-sm-1 bg-info border border-danger rounded pb-1 m-1">
+                                {{-- <div class="col-sm-1 ">
                                     <label for="qty" class="col-form-label"><b>Jumlah :</b></label>
                                     <select id="qty" class="form-control border border-info"
                                         onchange="checkSelectedOption(this)">
@@ -129,28 +129,27 @@
                                             class="form-control border border-info" placeholder="Masukkan Jumlah">
                                     </div>
                                 </div> --}}
-                                <div class="col-sm-1 bg-info border border-danger rounded pb-1 m-1">
-                                    <label for="jual" class="col-form-label"><b>Harga
-                                            Jual:</b></label>
+                                <div class="col-sm-1 ">
+                                    {{-- <label for="jual" class="col-form-label"><b>Harga
+                                            Jual:</b></label> --}}
                                     <input type="text"id="jual" class="form-control  border border-info"
                                         placeholder="Jual">
                                 </div>
-                                <div class="col-sm-1 bg-info border border-danger rounded pb-1 m-1" hidden>
-                                    <label for="beli" class="col-form-label"><b>Harga Beli
-                                            :</b></label>
+                                <div class="col-sm-1 " hidden>
+                                    {{-- <label for="beli" class="col-form-label"><b>Harga Beli
+                                            :</b></label> --}}
                                     <input type="text"id="beli" class="form-control  border border-info"
                                         placeholder="Beli" readonly>
                                 </div>
-                                <div class="col-sm-1 bg-info border border-danger rounded pb-1 m-1">
-                                    <label for="total" class="col-form-label"><b>Total Harga
-                                            :</b></label>
+                                <div class="col-sm-1 ">
+                                    {{-- <label for="total" class="col-form-label"><b>Total Harga
+                                            :</b></label> --}}
                                     <input type="text"id="total" class="form-control  border border-info"
                                         placeholder="Total" readonly>
                                 </div>
-                                <div class="col-sm-1 bg-success border border-danger rounded p-0 m-1" id="add">
-                                    <a id="addFarmasi" class="btn btn-success p-3">+
-                                        Transaksi Obat</a>
-                                </div>
+                                {{-- <div class="col-sm-1 bg-success border border-danger rounded m-1" id="add"> --}}
+                                <button id="addFarmasi" class="btn btn-success">+ Obat</button>
+                                {{-- </div> --}}
                             </div>
                             <div class="container-fluid row mx-0">
                                 <div class="card card-warning col p-0 mr-1">
@@ -221,5 +220,5 @@
                         </div>
                     </div>
                 </div>
-{{--
+                {{--
                 </div> --}}

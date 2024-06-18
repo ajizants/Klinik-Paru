@@ -1,17 +1,21 @@
                 <div class="container-fluid">
                     <ul class="nav nav-tabs">
                         <li class="nav-item">
-                            <a class="nav-link active bg-blue" id="iperiksa" onclick="showPeriksa();"><b>Jenis
+                            <a type="button" class="nav-link active bg-blue" id="iperiksa"
+                                onclick="showPeriksa();"><b>Jenis
                                     Pemeriksaan</b></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="iUkuran" onclick="showUkuran();"><b>Ukuran Film</b></a>
+                            <a type="button" class="nav-link" id="iUkuran" onclick="showUkuran();"><b>Ukuran
+                                    Film</b></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="ikondisi" onclick="showKondisi();"><b>Kondisi Pemotretan</b></a>
+                            <a type="button" class="nav-link" id="ikondisi" onclick="showKondisi();"><b>Kondisi
+                                    Pemotretan</b></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="iproyeksi" onclick="showProyeksi();"><b>Proyeksi Pemotretan</b></a>
+                            <a type="button" class="nav-link" id="iproyeksi" onclick="showProyeksi();"><b>Proyeksi
+                                    Pemotretan</b></a>
                         </li>
                     </ul>
                 </div>

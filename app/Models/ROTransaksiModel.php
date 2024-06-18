@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class ROTransaksiModel extends Model
 {
     protected $table = 't_rontgen';
+    protected $primaryKey = 'notrans';
+    public $incrementing = false;
+    protected $keyType = 'string';
     public $timestamps = false;
 
     public function film()
@@ -40,5 +43,17 @@ class ROTransaksiModel extends Model
     public function hasil()
     {
         return $this->hasMany(ROTransaksiHasilModel::class, 'norm', 'norm');
+    }
+    public function pasien()
+    {
+        return $this->hasOne(PasienModel::class, 'norm', 'norm');
+    }
+    public function radiografer()
+    {
+        return $this->hasOne(TransPetugasModel::class, 'norm', 'norm');
+    }
+    public function dokter()
+    {
+        return $this->hasOne(TransPetugasModel::class, 'norm', 'norm');
     }
 }

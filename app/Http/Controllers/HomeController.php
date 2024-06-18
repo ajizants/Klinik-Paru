@@ -36,7 +36,7 @@ class HomeController extends Controller
     public function farmasi()
     {
         $title = 'FARMASI';
-        return view('Farmasi.main')->with('title', $title);
+        return view('Farmasi.Transaksi.main')->with('title', $title);
     }
     public function logFarmasi()
     {

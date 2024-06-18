@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\RoHasilModel;
 use App\Models\ROTransaksiHasilModel;
 use App\Models\ROTransaksiModel;
+use App\Models\TransPetugasModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 // Sesuaikan dengan nama model Anda
@@ -87,9 +89,15 @@ class ROTransaksiController extends Controller
     // }
     public function addTransaksiRo(Request $request)
     {
+        DB::beginTransaction(); // Mulai transaksi
+
         try {
-            // Buat instance baru dari model ROTransaksiModel
-            $transaksi = new ROTransaksiModel();
+            // Cari data berdasarkan notrans
+            $transaksi = ROTransaksiModel::where('notrans', $request->input('notrans'))->first();
+            if (!$transaksi) {
+                // Jika tidak ada, buat entitas baru
+                $transaksi = new ROTransaksiModel();
+            }
 
             // Isi properti model dengan data dari permintaan
             $transaksi->notrans = $request->input('notrans');
@@ -98,6 +106,7 @@ class ROTransaksiController extends Controller
             $transaksi->noreg = $request->input('noreg');
             $transaksi->pasienRawat = $request->input('pasienRawat');
             $transaksi->kdFoto = $request->input('kdFoto');
+            $transaksi->kdFilm = $request->input('kdFilm');
             $transaksi->ma = $request->input('ma');
             $transaksi->kv = $request->input('kv');
             $transaksi->s = $request->input('s');
@@ -114,41 +123,73 @@ class ROTransaksiController extends Controller
             // Simpan data ke dalam database
             $transaksi->save();
 
-            // Jika ingin memberikan respons JSON, bisa seperti ini:
-
-            // Mengunggah file gambar
-            if ($request->hasFile('gambar')) {
-                // Mendapatkan file yang diunggah
-                $gambar = $request->file('gambar');
-
-                // Tambahkan informasi debug
-                Log::info('Informasi file gambar:', [
-                    'nama' => $gambar->getClientOriginalName(),
-                    'ukuran' => $gambar->getSize(),
-                    'mime_type' => $gambar->getMimeType(),
-                ]);
-
-                // Menyimpan file gambar ke dalam direktori yang ditentukan
-                $gambarPath = $gambar->store('hasilRo', 'ro_storage');
-
-                // Tambahkan informasi debug
-                Log::info('Path gambar yang disimpan:', ['path' => $gambarPath]);
-
-                $roTransaksiHasiFoto = new ROTransaksiHasilModel();
-                $roTransaksiHasiFoto->norm = $request->input('norm');
-                $roTransaksiHasiFoto->tanggal = $request->input('tglRo');
-                $roTransaksiHasiFoto->foto = $gambarPath; // Menyimpan path foto dalam database
-
-                // Tambahkan informasi debug
-                Log::info('Data yang akan disimpan ke dalam tabel ROTransaksiHasilModel:', $roTransaksiHasiFoto->toArray());
-
-                $roTransaksiHasiFoto->save();
+            // Simpan transaksi petugas, cari data berdasarkan notrans, jika ada update, jika tidak ada create
+            $petugas = TransPetugasModel::where('notrans', $request->input('notrans'))->first();
+            if (!$petugas) {
+                $petugas = new TransPetugasModel();
+                $petugas->notrans = $request->input('notrans');
             }
 
+            $petugas->p_dokter_poli = $request->input('dokter');
+            $petugas->p_rontgen = $request->input('p_rontgen');
+            $petugas->save();
+
+            // Upload gambar
+            $upload = ROTransaksiHasilModel::where('norm', $request->input('norm'))
+                ->whereDate('tanggal', $request->input('tglRo'))
+                ->first();
+
+            if (!$upload) {
+                // Jika tidak ada data, buat entitas baru
+                $upload = new ROTransaksiHasilModel();
+                $upload->norm = $request->input('norm');
+                $upload->tanggal = $request->input('tglRo');
+
+                // Upload gambar karena data belum ada
+                if ($request->hasFile('gambar')) {
+                    $file = $request->file('gambar');
+                    $fileName = $file->getClientOriginalName();
+                    $filePath = $file->getPathname();
+
+                    $param = [
+                        [
+                            'name' => 'norm',
+                            'contents' => $request->input('norm'),
+                        ],
+                        [
+                            'name' => 'notrans',
+                            'contents' => $request->input('notrans'),
+                        ],
+                        [
+                            'name' => 'tanggal',
+                            'contents' => $request->input('tglRo'),
+                        ],
+                        [
+                            'name' => 'nama',
+                            'contents' => $request->input('nama'),
+                        ],
+                        [
+                            'name' => 'foto',
+                            'contents' => fopen($filePath, 'r'),
+                            'filename' => $fileName,
+                        ],
+                    ];
+
+                    // Simpan foto dengan memanggil metode simpanFoto()
+                    $upload->simpanFoto($param);
+                }
+                // Simpan entitas baru ke database
+                $upload->save();
+            } else {
+                // Jika data sudah ada, tidak perlu melakukan apapun
+                // Anda bisa menambahkan pesan atau logika tambahan di sini jika diperlukan
+            }
+
+            DB::commit(); // Commit transaksi jika semua berhasil
             return response()->json(['message' => 'Data berhasil disimpan'], 200);
 
         } catch (\Exception $e) {
-            // Tangani kesalahan
+            DB::rollback(); // Rollback transaksi jika terjadi kesalahan
             Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
             return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
         }
@@ -167,6 +208,57 @@ class ROTransaksiController extends Controller
             ->get();
         return response()->json(['data' => $data], 200, [], JSON_PRETTY_PRINT);
     }
+
+    public function cariTransaksiRo(Request $request)
+    {
+        $tgl = $request->input('tgl', date('Y-m-d'));
+        $norm = $request->input('norm');
+
+        // Query untuk mendapatkan data transaksi berdasarkan tanggal dan norm
+        $data = ROTransaksiModel::with('pasien')
+            ->when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
+                return $query->where('norm', $norm);
+            })
+            ->where('tglTrans', $tgl)
+            ->first();
+
+        if (!$data) {
+            return response()->json([
+                'metadata' => [
+                    'message' => 'Data transaksi tidak ditemukan',
+                    'status' => 404,
+                ],
+            ], 404, [], JSON_PRETTY_PRINT);
+        }
+
+        $notrans = $data->notrans;
+
+        // Query untuk mendapatkan data petugas berdasarkan nilai 'notrans'
+        $petugas = TransPetugasModel::where('notrans', $notrans)->first();
+
+        if (!$petugas) {
+            return response()->json([
+                'metadata' => [
+                    'message' => 'Data petugas tidak ditemukan',
+                    'status' => 404,
+                ],
+            ], 404, [], JSON_PRETTY_PRINT);
+        }
+
+        $response = [
+            'metadata' => [
+                'message' => 'Data Transaksi Ditemukan',
+                'status' => 200,
+            ],
+            'data' => [
+                'transaksi_ro' => $data,
+                'petugas' => $petugas, // This will now be an object instead of an array
+            ],
+        ];
+
+        return response()->json($response, 200, [], JSON_PRETTY_PRINT);
+    }
+
     // public function addHasilRo(Request $request){
     //     $fotoPath = $request->file('foto')->store('public/foto');
 

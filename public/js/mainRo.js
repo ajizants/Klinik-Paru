@@ -88,12 +88,14 @@ async function simpan() {
     try {
         var notrans = document.getElementById("notrans").value;
         var norm = document.getElementById("norm").value;
+        var nama = document.getElementById("nama").value;
         var tglRo = document.getElementById("tglRo").value;
         var noreg = document.getElementById("noreg").value;
         var pasienRawat = document.querySelector(
             'input[name="pasienRawat"]:checked'
         ).value;
         var kdFoto = document.getElementById("kdFoto").value;
+        var kdFilm = document.getElementById("kdFilm").value;
         var ma = document.getElementById("ma").value;
         var kv = document.getElementById("kv").value;
         var s = document.getElementById("s").value;
@@ -118,9 +120,11 @@ async function simpan() {
         var formData = new FormData();
         formData.append("notrans", notrans);
         formData.append("norm", norm);
+        formData.append("nama", nama);
         formData.append("tglRo", tglRo);
         formData.append("noreg", noreg);
         formData.append("kdFoto", kdFoto);
+        formData.append("kdFilm", kdFilm);
         formData.append("pasienRawat", pasienRawat);
         formData.append("ma", ma);
         formData.append("kv", kv);
@@ -148,17 +152,173 @@ async function simpan() {
         const responseData = await response.json();
         console.log("Data berhasil disimpan:", responseData);
         // Lakukan sesuatu setelah data berhasil disimpan
+        //resert id="formtrans"
+        rstForm();
+
+        // antrian();
     } catch (error) {
         console.error("Terjadi kesalahan saat menyimpan data:", error);
         // Lakukan sesuatu jika terjadi kesalahan
     }
 }
-
-function cariPasien() {
+async function cariTsRo() {
+    // Format the norm input field
     formatNorm($("#norm"));
-    searchRMObat($("#norm").val());
+    var norm = $("#norm").val();
+    var tgl = $("#tglRo").val();
+    var requestData = { norm: norm, tgl: tgl };
+
+    Swal.fire({
+        icon: "success",
+        title: "Sedang mencarikan data pasien...!!!",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+    try {
+        const response = await fetch("/api/cariTsRO", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+        });
+
+        if (!response.ok) {
+            if (response.status == 404) {
+                // searchRMObat(norm);
+                cariKominfo(norm, tgl);
+            } else {
+                throw new Error("Network response was not ok");
+                Swal.fire({
+                    icon: "error",
+                    title: "Terjadi kesalahan saat mengambil data pasien...!!!",
+                });
+            }
+        } else {
+            const data = await response.json();
+
+            // Ensure data and the 'transaksi_ro' object exist before setting values
+            if (data && data.data && data.data.transaksi_ro) {
+                const transaksi = data.data.transaksi_ro;
+                const petugas = data.data.petugas;
+
+                var alamat = `${transaksi.pasien.kelurahan}, ${transaksi.pasien.rtrw}, ${transaksi.pasien.kecamatan}, ${transaksi.pasien.kabupaten}`;
+                $("#nama").val(transaksi.pasien.nama || "");
+                $("#alamat").val(alamat || "");
+                $("#notrans").val(transaksi.notrans || "");
+                $(
+                    "input[name=pasienRawat][value=" +
+                        transaksi.pasienRawat +
+                        "]"
+                ).prop("checked", true);
+                $("#noreg").val(transaksi.noreg || "");
+                $("#kdFoto")
+                    .val(transaksi.kdFoto || "")
+                    .trigger("change");
+                $("#kdFilm")
+                    .val(transaksi.kdFilm || "")
+                    .trigger("change");
+                $("#kv")
+                    .val(transaksi.kv || "")
+                    .trigger("change");
+                $("#ma")
+                    .val(transaksi.ma || "")
+                    .trigger("change");
+                $("#s")
+                    .val(transaksi.s || "")
+                    .trigger("change");
+                $("#kdMesin")
+                    .val(transaksi.kdMesin || "")
+                    .trigger("change");
+                $("#jmlExpose").val(transaksi.jmlExpose || "1");
+                $("#jmlFilmDipakai").val(transaksi.jmlFilmDipakai || "1");
+                $("#jmlFilmRusak").val(transaksi.jmlFilmRusak || "0");
+                $("#kdProyeksi")
+                    .val(transaksi.kdProyeksi || "")
+                    .trigger("change");
+                $("#catatan").val(transaksi.catatan || "");
+                $("#dokter")
+                    .val(petugas.p_dokter_poli || "")
+                    .trigger("change");
+                $("#p_rontgen")
+                    .val(petugas.p_rontgen || "")
+                    .trigger("change");
+                Swal.close();
+            } else {
+                console.error("No data received from API");
+                Swal.fire({
+                    icon: "error",
+                    title: "Terjadi kesalahan saat mengambil data pasien...!!!",
+                });
+            }
+        }
+    } catch (error) {
+        console.error("Terjadi kesalahan saat mencari data:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Terjadi kesalahan saat mencari data...!!! /n" + error,
+        });
+        // Optionally, handle the error by informing the user or retrying
+    }
 }
 
+async function cariPasien() {
+    // var norm = "000001";
+    // var tgl = "2022-01-01";
+    try {
+        const response = cariTsRo(norm, tgl);
+
+        if (response.length > 0) {
+            Swal.fire({
+                icon: "success",
+                title: "Data pasien ditemukan, lanjutkan transaksi...!!!",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+            });
+
+            // Extracting data from the JSON response
+            var noRM = response[0].norm;
+            var nama = response[0].nama;
+            var notrans = response[0].notrans;
+            var alamat = `${response[0].kelurahan}, ${response[0].rtrw}, ${response[0].kecamatan}, ${response[0].kabupaten}`;
+
+            // Updating HTML elements with the extracted data
+            $("#norm").val(noRM);
+            $("#nama").val(nama);
+            $("#alamat").val(alamat);
+            $("#notrans").val(notrans);
+            $("#layanan").val("UMUM");
+            $("#dokter").val("198907252019022004").trigger("change");
+            setTimeout(Swal.close, 1000);
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Data pasien tidak ditemukan...!!!",
+            });
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        // Handling error if the API request fails
+        Swal.fire({
+            icon: "error",
+            title: "Terjadi kesalahan saat mengambil data pasien...!!!",
+        });
+    }
+    // searchRMObat($("#norm").val());
+}
+
+function rstForm() {
+    document.getElementById("formtrans").reset();
+    document.getElementById("form_identitas").reset();
+    $("#formtrans select").trigger("change");
+    $("#form_identitas select").trigger("change");
+    scrollToTop();
+    setTglRo();
+    setTodayDate();
+}
 var gambarInput = document.getElementById("fileRo");
 
 gambarInput.addEventListener("change", function () {
@@ -249,7 +409,7 @@ function antrian() {
 window.addEventListener("load", function () {
     setTglRo();
     setTodayDate();
-    antrian();
+    // antrian();
     populateRadiograferOptions();
     populateDokterOptions();
     populateFoto();
@@ -263,7 +423,8 @@ window.addEventListener("load", function () {
     $("#norm").on("keyup", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();
-            cariKominfo();
+            // cariKominfo();
+            cariTsRo();
         }
     });
 });

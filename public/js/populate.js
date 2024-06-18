@@ -89,8 +89,9 @@ function antrianAll(ruang) {
 }
 
 //pasien Kominfo
-function cariKominfo(norm) {
+function cariKominfo(norm, tgl) {
     var normValue = norm ? norm : $("#norm").val();
+    var normValue = norm ? norm : $("#tglRO").val();
     // console.log(normValue)
     // Add leading zeros if the value has less than 6 digits
     while (normValue.length < 6) {
@@ -119,10 +120,11 @@ function cariKominfo(norm) {
 
         $.ajax({
             // url: "http://kkpm.local/api/pasienKominfo",
-            url: "/api/pasienKominfo",
+            url: "/api/antrianKominfo",
             method: "POST",
             data: {
                 no_rm: normValue,
+                tanggal: tgl,
             },
             dataType: "json",
             success: function (response) {
@@ -132,12 +134,7 @@ function cariKominfo(norm) {
                     response.metadata &&
                     response.metadata.code === 404
                 ) {
-                    // Data Pasien Tidak Ditemukan Pada Kunjungan Hari Ini
-                    console.log(
-                        "Data Pasien Tidak Ditemukan Pada Kunjungan Hari Ini"
-                    );
-
-                    // Lakukan sesuatu di sini, misalnya tampilkan pesan ke pengguna
+                    //tidak mendaftar
                     Swal.fire({
                         icon: "info",
                         title: response.metadata.message,
@@ -151,7 +148,7 @@ function cariKominfo(norm) {
                         allowOutsideClick: false,
                     });
                     console.log("🚀 ~ cariKominfo ~ data:", response);
-                    var data = response.response.data[0]; // Mengambil data pertama dari array data
+                    var data = response.response.data; // Mengambil data pertama dari array data
 
                     $("#norm").val(data.pasien_no_rm);
                     $("#layanan").val(data.penjamin_nama).trigger("change"); // Trigger change event jika diperlukan
@@ -175,6 +172,11 @@ async function searchRMObat(norm) {
     Swal.fire({
         icon: "success",
         title: "Sedang mencarikan data pasien...!!!",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
     });
     // var norm = "000001";
     try {
@@ -188,6 +190,8 @@ async function searchRMObat(norm) {
             Swal.fire({
                 icon: "success",
                 title: "Data pasien ditemukan, lanjutkan transaksi...!!!",
+                showConfirmButton: false,
+                allowOutsideClick: false,
             });
 
             // Extracting data from the JSON response
@@ -204,6 +208,7 @@ async function searchRMObat(norm) {
             $("#layanan").val("UMUM");
             $("#dokter").val("198907252019022004").trigger("change");
             $("#apoteker").val("197609262011012003").trigger("change");
+            setTimeout(Swal.close, 1000);
         } else {
             Swal.fire({
                 icon: "error",

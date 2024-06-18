@@ -16,20 +16,20 @@
                                     <!-- /.card-header -->
                                     <!-- form start -->
                                     @csrf
-                                    <form class="form-horizontal">
-                                        <div class="card-body" id="frm-identitas">
+                                    <form class="form-horizontal"id="form_identitas">
+                                        <div class="card-body">
                                             <div class="form-grup row">
                                                 <label for="norm"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
                                                     :</label>
                                                 <div class="col-sm-2 input-group">
-                                                    <input type="text" name="norm" id="norm"
+                                                    <input type="number" name="norm" id="norm"
                                                         class="form-control" placeholder="No RM" maxlength="6"
-                                                        pattern="[0-9]{6}" required />
+                                                        pattern="[0-9]{6}" onkeyup="" />
                                                     <div class="input-group-addon btn btn-danger">
-                                                        <span class="fa-solid fa-magnifying-glass"
-                                                            onclick="cariPasien();" data-toggle="tooltip"
-                                                            data-placement="top" title="Selain Pasien Hari ini"></span>
+                                                        <span class="fa-solid fa-magnifying-glass" onclick="cariTsRo();"
+                                                            data-toggle="tooltip" data-placement="top"
+                                                            title="Selain Pasien Hari ini"></span>
                                                     </div>
                                                 </div>
                                                 <label for="layanan"
@@ -81,8 +81,8 @@
                                 </div>
                             </div>
                             @csrf
-                            <form class="">
-                                <div class="container-fluid" id="formtrans">
+                            <form class="" id="formtrans">
+                                <div class="container-fluid">
                                     <div class="form-group">
                                         <div class="card card-success">
                                             <div class="card-header">
@@ -248,7 +248,7 @@
                                         </select>
                                     </div>
                                     <div class="col-auto">
-                                        <a class="btn btn-danger" id="tblBatal">Batal</a>
+                                        <a class="btn btn-danger" id="tblBatal" onclick="rstForm();">Batal</a>
                                     </div>
                                     <div class="col-auto">
                                         <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>

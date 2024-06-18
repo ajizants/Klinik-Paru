@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KominfoModel;
+use App\Models\TransaksiModel;
 use Illuminate\Http\Request;
 
 class PasienKominfoController extends Controller
@@ -384,6 +386,223 @@ class PasienKominfoController extends Controller
             ],
             'response' => $responseData,
         ];
+    }
+
+    public function newPendaftaran(Request $request)
+    {
+        if ($request->has('tanggal')) {
+            $tanggal = $request->input('tanggal');
+
+            $model = new KominfoModel();
+
+            // Panggil metode untuk melakukan request
+            $data = $model->pendaftaranRequest($tanggal);
+
+            if (isset($data['response']['data']) && is_array($data['response']['data'])) {
+                $filteredData = array_filter($data['response']['data'], function ($d) {
+                    return !empty($d['pasien_no_rm']);
+                });
+                $filteredData = array_values($filteredData);
+                $response = [
+                    'metadata' => [
+                        'message' => 'Data Pasien Ditemukan',
+                        'code' => 200,
+                    ],
+                    'response' => [
+                        'data' => $filteredData,
+                    ],
+                ];
+                //kembalikan respon dalam bentuk aray
+                return response()->json($response);
+            } else {
+                return response()->json(['error' => 'Invalid data format'], 500);
+            }
+
+        } else {
+            // Jika parameter 'tanggal' tidak disediakan, kembalikan respons error
+            return response()->json(['error' => 'Tanggal Belum Di Isi'], 400);
+        }
+    }
+    public function newPasien(Request $request)
+    {
+        if ($request->has('no_rm')) {
+            $no_rm = $request->input('no_rm');
+            $model = new KominfoModel();
+
+            // Panggil metode untuk melakukan request
+            $data = $model->pasienRequest($no_rm);
+
+            // Tampilkan data (atau lakukan apa pun yang diperlukan)
+            return response()->json($data);
+        } else {
+            // Jika parameter 'tanggal' tidak disediakan, kembalikan respons error
+            return response()->json(['error' => 'No RM Belum Di Isi'], 400);
+        }
+    }
+    public function dataPasien(Request $request)
+    {
+        if ($request->has('no_rm') && $request->has('tanggal')) {
+            $no_rm = $request->input('no_rm');
+            $tanggal = $request->input('tanggal');
+            $model = new KominfoModel();
+
+            // Panggil metode untuk melakukan request
+            $res_pasien = $model->pasienRequest($no_rm);
+            $pasien[] = [
+                "pasien_nik" => $res_pasien['response']['data']['pasien_nik'],
+                "pasien_no_kk" => $res_pasien['response']['data']['pasien_no_kk'],
+                "pasien_nama" => $res_pasien['response']['data']['pasien_nama'],
+                "pasien_no_rm" => $res_pasien['response']['data']['pasien_no_rm'],
+                "jenis_kelamin_id" => $res_pasien['response']['data']['jenis_kelamin_id'],
+                "jenis_kelamin_nama" => $res_pasien['response']['data']['jenis_kelamin_nama'],
+                "pasien_tempat_lahir" => $res_pasien['response']['data']['pasien_tempat_lahir'],
+                "pasien_tgl_lahir" => $res_pasien['response']['data']['pasien_tgl_lahir'],
+                "pasien_no_hp" => $res_pasien['response']['data']['pasien_no_hp'],
+                "pasien_domisili" => $res_pasien['response']['data']['pasien_alamat'],
+                "pasien_alamat" => $res_pasien['response']['data']['kelurahan_nama'] . ", " . $res_pasien['response']['data']['pasien_rt'] . "/" . $res_pasien['response']['data']['pasien_rw'] . ", " . $res_pasien['response']['data']['kecamatan_nama'] . ", " . $res_pasien['response']['data']['kabupaten_nama'] . ", " . $res_pasien['response']['data']['provinsi_nama'],
+                "provinsi_nama" => $res_pasien['response']['data']['provinsi_nama'],
+                "kabupaten_nama" => $res_pasien['response']['data']['kabupaten_nama'],
+                "kecamatan_nama" => $res_pasien['response']['data']['kecamatan_nama'],
+                "kelurahan_nama" => $res_pasien['response']['data']['kelurahan_nama'],
+                "pasien_rt" => $res_pasien['response']['data']['pasien_rt'],
+                "pasien_rw" => $res_pasien['response']['data']['pasien_rw'],
+                "penjamin_nama" => $res_pasien['response']['data']['penjamin_nama'],
+            ];
+            // dd($pasien);
+            // Panggil metode untuk melakukan request
+            $pendaftaran = $model->pendaftaranRequest($tanggal);
+            // dd($pendaftaran);
+            if (isset($pendaftaran['response']['data']) && is_array($pendaftaran['response']['data'])) {
+                $filteredData = array_filter($pendaftaran['response']['data'], function ($d) {
+                    // return !empty($d['pasien_no_rm']);
+                    //filter data yang memiliki pasien_no_rm sama dengan no_rm yang diberikan
+                    return $d['pasien_no_rm'] === $_REQUEST['no_rm'];
+                });
+                $filteredData = array_values($filteredData);
+            }
+            // dd($filteredData);
+            $response = [
+                'metadata' => [
+                    'message' => 'Data Pasien Ditemukan',
+                    'code' => 200,
+                ],
+                'response' => [
+                    'penddaftaran' => $filteredData,
+                    'pasien' => $pasien,
+                ],
+            ];
+            // Tampilkan data (atau lakukan apa pun yang diperlukan)
+            return response()->json($response);
+        }
+    }
+
+    public function newCpptRequest0(Request $request)
+    {
+        if ($request->has(['tanggal_awal', 'tanggal_akhir', 'no_rm'])) {
+            // Ambil parameter dari request
+            $params = $request->only(['tanggal_awal', 'tanggal_akhir', 'no_rm']);
+
+            $model = new KominfoModel();
+
+            // Panggil metode untuk melakukan request
+            $data = $model->cpptRequest($params);
+
+            // Filter jika data tindakan tidak ada maka skip
+            // if (isset($data['response']['data']) && is_array($data['response']['data'])) {
+            //     $filteredData = array_filter($data['response']['data'], function ($d) {
+            //         return !empty($d['tindakan']);
+            //     });
+
+            //     $response = [
+            //         'metadata' => [
+            //             'message' => 'Data Pasien Ditemukan',
+            //             'code' => 200,
+            //         ],
+            //         'response' => [
+            //             'data' => $filteredData,
+            //         ],
+            //     ];
+
+            //     // Tampilkan data (atau lakukan apa pun yang diperlukan)
+            //     return response()->json($response);
+            // } else {
+            //     return response()->json(['error' => 'Invalid data format'], 500);
+            // }
+
+            if (isset($data['response']['data']) && is_array($data['response']['data'])) {
+                $filteredData = array_filter($data['response']['data'], function ($d) {
+                    //return all
+                    return true;
+                });
+
+                $response = [
+                    'metadata' => [
+                        'message' => 'Data Pasien Ditemukan',
+                        'code' => 200,
+                    ],
+                    'response' => [
+                        'data' => $filteredData,
+                    ],
+                ];
+
+                // Tampilkan data (atau lakukan apa pun yang diperlukan)
+                return response()->json($response);
+            } else {
+                return response()->json(['error' => 'Invalid data format'], 500);
+            }
+
+        } else {
+            // Jika parameter tidak disediakan, kembalikan respons error
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+    }
+    public function newCpptRequest(Request $request)
+    {
+        if ($request->has(['tanggal_awal', 'tanggal_akhir', 'no_rm'])) {
+            // Ambil parameter dari request
+            $params = $request->only(['tanggal_awal', 'tanggal_akhir', 'no_rm']);
+
+            $model = new KominfoModel();
+
+            // Panggil metode untuk melakukan request
+            $data = $model->cpptRequest($params);
+
+            if (isset($data['response']['data']) && is_array($data['response']['data'])) {
+                // Lakukan pengecekan di TransaksiModel apakah notrans sudah ada
+                $filteredData = array_map(function ($d) {
+                    $igd = TransaksiModel::whereDate('created_at', $d['tanggal'])
+                        ->where('norm', $d['pasien_no_rm'])
+                        ->first();
+
+                    if ($igd) {
+                        $d['status'] = 'sudah';
+                    } else {
+                        $d['status'] = 'belum';
+                    }
+
+                    return $d;
+                }, $data['response']['data']);
+
+                $response = [
+                    'metadata' => [
+                        'message' => 'Data Pasien Ditemukan',
+                        'code' => 200,
+                    ],
+                    'response' => [
+                        'data' => $filteredData,
+                    ],
+                ];
+
+                // Tampilkan data (atau lakukan apa pun yang diperlukan)
+                return response()->json($response);
+            } else {
+                return response()->json(['error' => 'Invalid data format'], 500);
+            }
+
+        } else {
+            // Jika parameter tidak disediakan, kembalikan respons error
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
     }
 
 }

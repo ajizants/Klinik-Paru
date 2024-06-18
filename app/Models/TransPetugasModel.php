@@ -2,19 +2,23 @@
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Model;
 
 class TransPetugasModel extends Model
 {
-
-    protected $connection = 'mysql';
-
-    protected $table = 't_petugas';
-
+    protected $table = 't_petugas'; // Specify your table name
+    protected $primaryKey = 'notrans';
+    protected $keyType = 'string';
+    public $incrementing = false;
+    public $timestamps = false;
 
     public function pegawai()
     {
         return $this->hasOne(PegawaiModel::class, 'nip', 'p_dokter_poli');
+    }
+
+    public function transaksi()
+    {
+        return $this->belongsTo(ROTransaksiModel::class, 'notrans', 'notrans');
     }
 }
