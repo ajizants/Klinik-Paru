@@ -132,8 +132,9 @@ class HomeController extends Controller
     public function ro()
     {
         $title = 'Radiologi';
-
-        return view('RO.Trans.main')->with([
+        $appUrlRo = env('APP_URLRO');
+        // dd($appUrlRo);
+        return view('RO.Trans.main', compact('appUrlRo'))->with([
             'title' => $title,
 
         ]);

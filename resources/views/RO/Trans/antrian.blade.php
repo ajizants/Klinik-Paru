@@ -38,6 +38,7 @@
                                 <th width="15px">Aksi</th>
                                 <th width="15px">status</th>
                                 <th>No Antrean</th>
+                                <th>Jaminan</th>
                                 <th>No RM</th>
                                 <th>Nama Pasien</th>
                                 <th>Poli</th>

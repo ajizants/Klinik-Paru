@@ -144,14 +144,7 @@ Route::post('stokOpnameGudang', [GudangFarmasiController::class, 'stokOpnameGuda
 
 Route::post('addstokbmhp', [StokController::class, 'addstokbmhp']);
 
-//API Riwayat Untuk migrasi SIM RS
-Route::get('riwayatKunjungan', [RiwayatController::class, 'index']);
 
-Route::post('daftarKominfo', [PasienKominfoController::class, 'newPendaftaran']);
-Route::post('pasienKominfo', [PasienKominfoController::class, 'newPasien']);
-Route::post('antrianKominfo', [PasienKominfoController::class, 'dataPasien']);
-Route::post('noAntrianKominfo', [PasienKominfoController::class, 'newPendaftaran']);
-Route::post('cpptKominfo', [PasienKominfoController::class, 'newCpptRequest']);
 
 //No Antrian
 Route::get('noantrian', [NoAntrianController::class, 'index']);
@@ -186,4 +179,13 @@ Route::post('addTransaksiRo', [ROTransaksiController::class, 'addTransaksiRo']);
 Route::post('cariTsRO', [ROTransaksiController::class, 'cariTransaksiRo']);
 Route::post('dataTransaksiRo', [ROTransaksiController::class, 'dataTransaksiRo']);
 Route::post('hasilRo', [ROTransaksiController::class, 'hasilRo']);
+
+//API Riwayat Untuk migrasi SIM RS
+Route::get('riwayatKunjungan', [RiwayatController::class, 'index']);
+
+Route::post('daftarKominfo', [PasienKominfoController::class, 'newPendaftaran']);
+Route::post('pasienKominfo', [PasienKominfoController::class, 'newPasien']);
+Route::post('antrianKominfo', [PasienKominfoController::class, 'dataPasien']);
+Route::post('noAntrianKominfo', [PasienKominfoController::class, 'newPendaftaran']);
+Route::post('cpptKominfo', [PasienKominfoController::class, 'newCpptRequest']);
 // });

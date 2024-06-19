@@ -15,75 +15,6 @@ function setTglRo() {
     kdtgl = kdtglFormat.replace(/-/g, "");
 }
 
-function simpan1() {
-    var notras = document.getElementById("notrans").value;
-    var norm = document.getElementById("norm").value;
-    var tglRo = document.getElementById("tglRo").value;
-    var noreg = document.getElementById("noreg").value;
-    var kdFoto = document.getElementById("kdFoto").value;
-    var ma = document.getElementById("ma").value;
-    var kv = document.getElementById("kv").value;
-    var s = document.getElementById("s").value;
-    var jmlExpose = document.getElementById("jmlExpose").value;
-    var jmlFilmDipakai = document.getElementById("jmlFilmDipakai").value;
-    var jmlFilmRusak = document.getElementById("jmlFilmRusak").value;
-    var kdMesin = document.getElementById("kdMesin").value;
-    var kdProyeksi = document.getElementById("kdProyeksi").value;
-    var layanan = document.getElementById("layanan").value;
-    var p_rontgen = document.getElementById("p_rontgen").value;
-    var dokter = document.getElementById("dokter").value;
-
-    var file = document.getElementById("fileRo").files[0];
-    // Data yang akan dikirim
-    var data = {
-        notras: notras,
-        norm: norm,
-        tglRo: tglRo,
-        pasienRawat: pasienRawat,
-        noreg: noreg,
-        kdFoto: kdFoto,
-        ma: ma,
-        kv: kv,
-        s: s,
-        jmlExpose: jmlExpose,
-        jmlFilmDipakai: jmlFilmDipakai,
-        jmlFilmRusak: jmlFilmRusak,
-        kdMesin: kdMesin,
-        kdProyeksi: kdProyeksi,
-        layanan: layanan,
-        // file: file,
-        p_rontgen: p_rontgen,
-        dokter: dokter,
-    };
-
-    // Konversi objek data menjadi format JSON
-    var jsonData = JSON.stringify(data);
-    console.log("🚀 ~ simpan ~ jsonData:", jsonData);
-
-    // Kirim data menggunakan fetch API
-    fetch("/api/addTrnasaksiRo", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: jsonData,
-    })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.json();
-        })
-        .then((data) => {
-            console.log("Data berhasil disimpan:", data);
-            // Lakukan sesuatu setelah data berhasil disimpan
-        })
-        .catch((error) => {
-            console.error("Terjadi kesalahan saat menyimpan data:", error);
-            // Lakukan sesuatu jika terjadi kesalahan
-        });
-}
-
 async function simpan() {
     try {
         var notrans = document.getElementById("notrans").value;
@@ -161,15 +92,17 @@ async function simpan() {
         // Lakukan sesuatu jika terjadi kesalahan
     }
 }
-async function cariTsRo() {
+
+async function cariTsRo(norm, tgl) {
     // Format the norm input field
+    var appUrlRo = "http://172.16.10.88/ro/file/";
     formatNorm($("#norm"));
-    var norm = $("#norm").val();
-    var tgl = $("#tglRo").val();
+    var norm = norm ? norm : $("#norm").val();
+    var tgl = tgl ? tgl : $("#tglRO").val();
     var requestData = { norm: norm, tgl: tgl };
 
     Swal.fire({
-        icon: "success",
+        icon: "info",
         title: "Sedang mencarikan data pasien...!!!",
         showConfirmButton: false,
         allowOutsideClick: false,
@@ -204,8 +137,11 @@ async function cariTsRo() {
             if (data && data.data && data.data.transaksi_ro) {
                 const transaksi = data.data.transaksi_ro;
                 const petugas = data.data.petugas;
-
+                const foto = data.data.foto_thorax;
+                var idFoto = foto.id;
+                console.log("🚀 ~ cariTsRo ~ idFoto:", idFoto);
                 var alamat = `${transaksi.pasien.kelurahan}, ${transaksi.pasien.rtrw}, ${transaksi.pasien.kecamatan}, ${transaksi.pasien.kabupaten}`;
+                $("#norm").val(transaksi.pasien.norm || "");
                 $("#nama").val(transaksi.pasien.nama || "");
                 $("#alamat").val(alamat || "");
                 $("#notrans").val(transaksi.notrans || "");
@@ -215,6 +151,9 @@ async function cariTsRo() {
                         "]"
                 ).prop("checked", true);
                 $("#noreg").val(transaksi.noreg || "");
+                $("#layanan")
+                    .val(transaksi.layanan || "")
+                    .trigger("change");
                 $("#kdFoto")
                     .val(transaksi.kdFoto || "")
                     .trigger("change");
@@ -246,7 +185,24 @@ async function cariTsRo() {
                 $("#p_rontgen")
                     .val(petugas.p_rontgen || "")
                     .trigger("change");
+                $("#idFoto").text(
+                    "ID Foto " + foto.id + " - " + foto.nama || ""
+                );
+                if (foto && foto.foto) {
+                    $("#preview").show();
+                    $("#idFoto").text(
+                        "ID Foto " + foto.id + " - " + foto.nama || ""
+                    );
+                    $("#displayRo")
+                        .attr("src", appUrlRo + foto.foto)
+                        .css({ width: "110px", height: "110px" })
+                        .show();
+                } else {
+                    $("#displayRo").attr("src", "").hide();
+                }
+
                 Swal.close();
+                scrollToInputSection();
             } else {
                 console.error("No data received from API");
                 Swal.fire({
@@ -313,6 +269,7 @@ async function cariPasien() {
 function rstForm() {
     document.getElementById("formtrans").reset();
     document.getElementById("form_identitas").reset();
+    $("#preview").hide();
     $("#formtrans select").trigger("change");
     $("#form_identitas select").trigger("change");
     scrollToTop();
@@ -353,7 +310,7 @@ function initializeDataAntrian(response) {
                 var tgl = $("#tanggal").val();
                 item.tgl = tgl;
                 item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-                        onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}');"><i class="fas fa-pen-to-square"></i></a>`;
+                onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
             }
         });
 
@@ -364,15 +321,29 @@ function initializeDataAntrian(response) {
                 { data: "aksi", className: "text-center p-2 col-1" }, // Action column
                 // { data: "status", className: "text-center p-2 col-1" }, // Action column
                 {
-                    data: "status",
+                    data: "status", // Assuming 'status' is the key in your row data for the status
                     className: "text-center p-2 col-1",
                     render: function (data, type, row) {
-                        var backgroundColor =
-                            data === "belum" ? "danger" : "success";
+                        var backgroundColor = "";
+                        switch (data) {
+                            case "Belum Ada Transaksi":
+                                backgroundColor = "danger";
+                                break;
+                            case "Belum Upload Foto Thorax":
+                                backgroundColor = "warning";
+                                break;
+                            case "Sudah Selesai":
+                                backgroundColor = "success";
+                                break;
+                            default:
+                                backgroundColor = "secondary";
+                                break;
+                        }
                         return `<div class="badge badge-${backgroundColor}">${data}</div>`;
                     },
                 },
                 { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
+                { data: "penjamin_nama", className: "text-center p-2" }, // No Antrean column
                 { data: "pasien_no_rm", className: "text-center p-2" }, // Pasien No. RM column
                 { data: "pasien_nama", className: "p-2" }, // Pasien Nama column
                 { data: "poli_nama", className: "p-2" }, // Poli column
@@ -407,7 +378,7 @@ function antrian() {
                 var tgl = $("#tanggal").val();
                 item.tgl = tgl;
                 item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-                        onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}');"><i class="fas fa-pen-to-square"></i></a>`;
+                onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
             });
 
             // Clear existing data, add new data, and redraw table
@@ -422,7 +393,6 @@ function antrian() {
 window.addEventListener("load", function () {
     setTglRo();
     setTodayDate();
-    antrian();
     populateRadiograferOptions();
     populateDokterOptions();
     populateFoto();
@@ -432,6 +402,7 @@ window.addEventListener("load", function () {
     populateKv();
     populateMa();
     populateS();
+    antrian();
 
     $("#norm").on("keyup", function (event) {
         if (event.key === "Enter") {

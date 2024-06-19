@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KominfoModel;
+use App\Models\RoHasilModel;
 use App\Models\ROTransaksiModel;
 use App\Models\TransaksiModel;
 use Illuminate\Http\Request;
@@ -405,12 +406,46 @@ class PasienKominfoController extends Controller
                 });
                 $filteredData = array_values($filteredData);
 
-                // Iterate over filtered data and add status
+                // Map of dokter_nama to nip
+                $doctorNipMap = [
+                    'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
+                    'dr. AGIL DANANJAYA, Sp.P' => '9',
+                    'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
+                    'dr. SIGIT DWIYANTO' => '198903142022031005',
+                ];
+
+                // Iterate over filtered data and add status and nip
                 foreach ($filteredData as &$item) {
                     $notrans = $item['no_trans'];
+                    $norm = $item['pasien_no_rm'];
+                    $dokter_nama = $item['dokter_nama'];
+                    $tanggal = $request->input('tanggal'); // Assuming $tanggal is obtained from the request
 
+                    // Check if ROTransaksiModel exists for $notrans
                     $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
-                    $item['status'] = !empty($tsRo) ? 'sudah' : 'belum';
+
+                    // Check if RoHasilModel exists for $norm and $tanggal
+                    $foto = RoHasilModel::on('rontgen')->where('norm', $norm)
+                        ->whereDate('tanggal', $tanggal)->first();
+
+                    // Determine status based on conditions
+                    if (!$tsRo && !$foto) {
+                        $item['status'] = 'Belum Ada Transaksi';
+                    } elseif ($tsRo && !$foto) {
+                        $item['status'] = 'Belum Upload Foto Thorax';
+                        // } elseif ($tsRo && $foto) {
+                        //     $item['status'] = 'Sudah Selesai';
+                    } else {
+                        $item['status'] = 'Sudah Selesai';
+                    }
+
+                    // Add nip based on dokter_nama
+                    $dokter_nama = $item['dokter_nama'];
+                    if (isset($doctorNipMap[$dokter_nama])) {
+                        $item['nip_dokter'] = $doctorNipMap[$dokter_nama];
+                    } else {
+                        $item['nip_dokter'] = 'Unknown';
+                    }
                 }
 
                 $response = [
@@ -478,7 +513,6 @@ class PasienKominfoController extends Controller
                 "pasien_rw" => $res_pasien['response']['data']['pasien_rw'],
                 "penjamin_nama" => $res_pasien['response']['data']['penjamin_nama'],
             ];
-            // dd($pasien);
             // Panggil metode untuk melakukan request
             $pendaftaran = $model->pendaftaranRequest($tanggal);
             // dd($pendaftaran);
@@ -490,27 +524,46 @@ class PasienKominfoController extends Controller
                 });
                 $filteredData = array_values($filteredData);
                 $notrans = !empty($filteredData) ? $filteredData[0]['no_trans'] : null;
+                $doctorNipMap = [
+                    'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
+                    'dr. AGIL DANANJAYA, Sp.P' => '9',
+                    'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
+                    'dr. SIGIT DWIYANTO' => '198903142022031005',
+                ];
+
+                // Iterate over filtered data and add status and nip
+                foreach ($filteredData as &$item) {
+                    $notrans = $item['no_trans'];
+
+                    $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
+
+                    $item['status'] = !empty($tsRo) ? 'sudah' : 'belum';
+
+                    // Add nip based on dokter_nama
+                    $dokter_nama = $item['dokter_nama'];
+                    if (isset($doctorNipMap[$dokter_nama])) {
+                        $item['nip_dokter'] = $doctorNipMap[$dokter_nama];
+                    } else {
+                        $item['nip_dokter'] = 'Unknown';
+                    }
+                }
+                $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
+                //jika tsRo null maka status belum
+                $status = !empty($tsRo) ? 'sudah' : 'belum';
+                $response = [
+                    'metadata' => [
+                        'message' => 'Data Pasien Ditemukan',
+                        'code' => 200,
+                    ],
+                    'response' => [
+                        'pendaftaran' => $filteredData,
+                        'pasien' => $pasien,
+                        // 'status' => $status,
+                    ],
+                ];
+                // Tampilkan data (atau lakukan apa pun yang diperlukan)
+                return response()->json($response);
             }
-            // dd($filteredData);
-            // dd($notrans);
-            $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
-            //jika tsRo null maka status belum
-            $status = !empty($tsRo) ? 'sudah' : 'belum';
-            // dd($tsRo);
-            // dd($status);
-            $response = [
-                'metadata' => [
-                    'message' => 'Data Pasien Ditemukan',
-                    'code' => 200,
-                ],
-                'response' => [
-                    'pendaftaran' => $filteredData,
-                    'pasien' => $pasien,
-                    // 'status' => $status,
-                ],
-            ];
-            // Tampilkan data (atau lakukan apa pun yang diperlukan)
-            return response()->json($response);
         }
     }
 
