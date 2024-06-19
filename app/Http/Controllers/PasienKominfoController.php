@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KominfoModel;
+use App\Models\ROTransaksiModel;
 use App\Models\TransaksiModel;
 use Illuminate\Http\Request;
 
@@ -403,6 +404,15 @@ class PasienKominfoController extends Controller
                     return !empty($d['pasien_no_rm']);
                 });
                 $filteredData = array_values($filteredData);
+
+                // Iterate over filtered data and add status
+                foreach ($filteredData as &$item) {
+                    $notrans = $item['no_trans'];
+
+                    $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
+                    $item['status'] = !empty($tsRo) ? 'sudah' : 'belum';
+                }
+
                 $response = [
                     'metadata' => [
                         'message' => 'Data Pasien Ditemukan',
@@ -412,17 +422,17 @@ class PasienKominfoController extends Controller
                         'data' => $filteredData,
                     ],
                 ];
-                //kembalikan respon dalam bentuk aray
+                // Kembalikan respon dalam bentuk array
                 return response()->json($response);
             } else {
                 return response()->json(['error' => 'Invalid data format'], 500);
             }
-
         } else {
             // Jika parameter 'tanggal' tidak disediakan, kembalikan respons error
             return response()->json(['error' => 'Tanggal Belum Di Isi'], 400);
         }
     }
+
     public function newPasien(Request $request)
     {
         if ($request->has('no_rm')) {
@@ -479,16 +489,24 @@ class PasienKominfoController extends Controller
                     return $d['pasien_no_rm'] === $_REQUEST['no_rm'];
                 });
                 $filteredData = array_values($filteredData);
+                $notrans = !empty($filteredData) ? $filteredData[0]['no_trans'] : null;
             }
             // dd($filteredData);
+            // dd($notrans);
+            $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
+            //jika tsRo null maka status belum
+            $status = !empty($tsRo) ? 'sudah' : 'belum';
+            // dd($tsRo);
+            // dd($status);
             $response = [
                 'metadata' => [
                     'message' => 'Data Pasien Ditemukan',
                     'code' => 200,
                 ],
                 'response' => [
-                    'penddaftaran' => $filteredData,
+                    'pendaftaran' => $filteredData,
                     'pasien' => $pasien,
+                    // 'status' => $status,
                 ],
             ];
             // Tampilkan data (atau lakukan apa pun yang diperlukan)

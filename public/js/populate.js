@@ -91,7 +91,7 @@ function antrianAll(ruang) {
 //pasien Kominfo
 function cariKominfo(norm, tgl) {
     var normValue = norm ? norm : $("#norm").val();
-    var normValue = norm ? norm : $("#tglRO").val();
+    var tgl = tgl ? tgl : $("#tglRO").val();
     // console.log(normValue)
     // Add leading zeros if the value has less than 6 digits
     while (normValue.length < 6) {
@@ -148,15 +148,23 @@ function cariKominfo(norm, tgl) {
                         allowOutsideClick: false,
                     });
                     console.log("🚀 ~ cariKominfo ~ data:", response);
-                    var data = response.response.data; // Mengambil data pertama dari array data
+                    var pasien = response.response.pasien[0];
+                    console.log("🚀 ~ cariKominfo ~ pasien:", pasien);
 
-                    $("#norm").val(data.pasien_no_rm);
-                    $("#layanan").val(data.penjamin_nama).trigger("change"); // Trigger change event jika diperlukan
-                    $("#nama").val(data.pasien_nama);
-                    $("#alamat").val(data.pasien_alamat);
-                    $("#notrans").val(data.no_trans);
+                    var pendaftaran = response.response.pendaftaran[0];
+                    console.log("🚀 ~ cariKominfo ~ pendaftaran:", pendaftaran);
+
+                    // Mengatur nilai untuk form fields
+                    $("#layanan")
+                        .val(pendaftaran.penjamin_nama)
+                        .trigger("change"); // Trigger change event jika diperlukan
+                    $("#norm").val(pasien.pasien_no_rm);
+                    $("#nama").val(pasien.pasien_nama);
+                    $("#alamat").val(pasien.pasien_alamat);
+                    $("#notrans").val(pendaftaran.no_trans);
                     setTimeout(function () {
                         Swal.close();
+                        scrollToInputSection();
                     }, 1000);
                 }
             },

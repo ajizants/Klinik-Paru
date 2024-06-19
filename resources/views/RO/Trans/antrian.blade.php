@@ -25,7 +25,7 @@
                         value="{{ old('date') }}" required>
                     <div class="input-group-addon btn btn-danger">
                         <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top"
-                            title="Update Pasien Hari ini" id="cariantrian"></span>
+                            title="Update Pasien Hari ini" id="cariantrian" onclick="antrian();"></span>
                     </div>
                 </div>
             </ul>
@@ -36,6 +36,7 @@
                         <thead class="bg bg-teal">
                             <tr>
                                 <th width="15px">Aksi</th>
+                                <th width="15px">status</th>
                                 <th>No Antrean</th>
                                 <th>No RM</th>
                                 <th>Nama Pasien</th>

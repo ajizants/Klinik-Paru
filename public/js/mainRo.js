@@ -350,9 +350,10 @@ function initializeDataAntrian(response) {
         response.response.data.forEach(function (item) {
             // Check if pasien_no_rm is not empty
             if (item.pasien_no_rm) {
-                // Construct the action button HTML
-                item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-                        onclick="cariKominfo('${item.pasien_no_rm}')"><i class="fas fa-pen-to-square"></i></a>`;
+                var tgl = $("#tanggal").val();
+                item.tgl = tgl;
+                item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                        onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}');"><i class="fas fa-pen-to-square"></i></a>`;
             }
         });
 
@@ -361,6 +362,16 @@ function initializeDataAntrian(response) {
             data: response.response.data,
             columns: [
                 { data: "aksi", className: "text-center p-2 col-1" }, // Action column
+                // { data: "status", className: "text-center p-2 col-1" }, // Action column
+                {
+                    data: "status",
+                    className: "text-center p-2 col-1",
+                    render: function (data, type, row) {
+                        var backgroundColor =
+                            data === "belum" ? "danger" : "success";
+                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                    },
+                },
                 { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
                 { data: "pasien_no_rm", className: "text-center p-2" }, // Pasien No. RM column
                 { data: "pasien_nama", className: "p-2" }, // Pasien Nama column
@@ -393,8 +404,10 @@ function antrian() {
 
             // Modify response data to add action column
             response.response.data.forEach(function (item) {
-                item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-                        onclick="cariKominfo('${item.pasien_no_rm}')"><i class="fas fa-pen-to-square"></i></a>`;
+                var tgl = $("#tanggal").val();
+                item.tgl = tgl;
+                item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                        onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}');"><i class="fas fa-pen-to-square"></i></a>`;
             });
 
             // Clear existing data, add new data, and redraw table
@@ -409,7 +422,7 @@ function antrian() {
 window.addEventListener("load", function () {
     setTglRo();
     setTodayDate();
-    // antrian();
+    antrian();
     populateRadiograferOptions();
     populateDokterOptions();
     populateFoto();
