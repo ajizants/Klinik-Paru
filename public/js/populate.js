@@ -110,9 +110,9 @@ function cariKominfo(norm, tgl) {
     } else {
         Swal.fire({
             icon: "info",
-            title: "Sedang Mencari Data Pasien di Aplikasi KOMINFO",
-            showConfirmButton: false, // Menyembunyikan tombol OK
-            allowOutsideClick: false, // Mencegah interaksi di luar dialog
+            title: "Sedang Mencari Data Pasien di Aplikasi KOMINFO\n Mohon Ditunggu ...!!!",
+            // showConfirmButton: false, // Menyembunyikan tombol OK
+            // allowOutsideClick: false, // Mencegah interaksi di luar dialog
             didOpen: () => {
                 Swal.showLoading(); // Menampilkan loading spinner
             },
@@ -162,6 +162,7 @@ function cariKominfo(norm, tgl) {
                     $("#nama").val(pasien.pasien_nama);
                     $("#alamat").val(pasien.pasien_alamat);
                     $("#notrans").val(pendaftaran.no_trans);
+                    $("#dokter").val(pendaftaran.nip_dokter).trigger("change");
                     setTimeout(function () {
                         Swal.close();
                         scrollToInputSection();

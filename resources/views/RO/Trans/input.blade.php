@@ -210,20 +210,26 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group row">
+                                                    <div class="form-group row" style="margin-right: 100px;">
                                                         <label for="catatan" class="col-sm-1">Catatan</label>
-                                                        <div class="col-sm-10 pr-0">
+                                                        <div class="col-sm pr-0">
                                                             <textarea name="catatan" id="catatan" class="form-control textarea" rows="5"></textarea>
+                                                        </div>
+                                                        <div class="col-sm-3 ml-2" id="preview"
+                                                            style="display: none">
+                                                            <p id="idFoto" class="mb-0"></p>
+                                                            <img id="displayRo" src="" alt="Fetched Photo" />
                                                         </div>
                                                     </div>
                                                     <div class="form-group row">
                                                         <label for="fileRo" class="col-form-label">Upload
                                                             Foto</label>
-                                                        <div class="col-sm-5 ml-2">
+                                                        <div class="col-sm-4 ml-2">
                                                             <input type="file" name="foto" id="fileRo"
                                                                 class="form-control-sm" placeholder=" Pilih Foto"
-                                                                title="Foto Ro" />
+                                                                title="Foto Ro" /><span>
                                                         </div>
+
                                                     </div>
                                                 </div>
                                             </div>

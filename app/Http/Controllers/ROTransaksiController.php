@@ -197,16 +197,30 @@ class ROTransaksiController extends Controller
 
     public function hasilRo(Request $request)
     {
-        $tglAwal = $request->input('tglAwal');
-        $tglAkhir = $request->input('tglAkhir');
         $norm = $request->input('norm');
         $data = RoHasilModel::on('rontgen')
             ->when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
                 return $query->where('norm', $norm);
             })
-            ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
             ->get();
-        return response()->json(['data' => $data], 200, [], JSON_PRETTY_PRINT);
+        if ($data->isEmpty()) {
+            $res = [
+                'metadata' => [
+                    'message' => 'Data foto thorax tidak ditemukan, silahkan menghubungi radiologi',
+                    'status' => 404,
+                ],
+                'data' => [],
+            ];
+        } else {
+            $res = [
+                'metadata' => [
+                    'message' => 'Data foto thorax ditemukan',
+                    'status' => 200,
+                ],
+                'data' => $data,
+            ];
+        }
+        return response()->json($res, 200, [], JSON_PRETTY_PRINT);
     }
 
     public function cariTransaksiRo(Request $request)
@@ -234,16 +248,36 @@ class ROTransaksiController extends Controller
         $notrans = $data->notrans;
 
         // Query untuk mendapatkan data petugas berdasarkan nilai 'notrans'
-        $petugas = TransPetugasModel::where('notrans', $notrans)->first();
+        $data_petugas = TransPetugasModel::where('notrans', $notrans)->first();
 
-        if (!$petugas) {
-            return response()->json([
+        if (!$data_petugas) {
+            $petugas = [
                 'metadata' => [
                     'message' => 'Data petugas tidak ditemukan',
                     'status' => 404,
                 ],
-            ], 404, [], JSON_PRETTY_PRINT);
+            ];
+        } else {
+            $petugas = $data_petugas;
         }
+        // dd($petugas);
+        //Query untuk mendapatkan foto thorax
+        $data_foto = RoHasilModel::on('rontgen')
+            ->when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
+                return $query->where('norm', $norm);
+            })
+            ->whereDate('tanggal', $tgl)
+            ->first();
+        if (!$data_foto) {
+            $foto = [
+                'metadata' => [
+                    'message' => 'Data foto thorax tidak ditemukan',
+                    'status' => 404,
+                ]];
+        } else {
+            $foto = $data_foto;
+        }
+        // dd($foto);
 
         $response = [
             'metadata' => [
@@ -253,6 +287,7 @@ class ROTransaksiController extends Controller
             'data' => [
                 'transaksi_ro' => $data,
                 'petugas' => $petugas, // This will now be an object instead of an array
+                'foto_thorax' => $foto, // This will now be an object instead of an array
             ],
         ];
 
