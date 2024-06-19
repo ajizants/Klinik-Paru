@@ -629,7 +629,7 @@ class PasienKominfoController extends Controller
     }
     public function newCpptRequest(Request $request)
     {
-        if ($request->has(['tanggal_awal', 'tanggal_akhir', 'no_rm'])) {
+        if ($request->has(['tanggal_awal', 'tanggal_akhir'])) {
             // Ambil parameter dari request
             $params = $request->only(['tanggal_awal', 'tanggal_akhir', 'no_rm']);
 
@@ -640,32 +640,36 @@ class PasienKominfoController extends Controller
 
             if (isset($data['response']['data']) && is_array($data['response']['data'])) {
                 // Lakukan pengecekan di TransaksiModel apakah notrans sudah ada
-                $filteredData = array_map(function ($d) {
+                $filteredData = array_filter(array_map(function ($d) {
+                    // Skip jika tindakan kosong
+                    if (empty($d['tindakan'])) {
+                        return null;
+                    }
                     $igd = TransaksiModel::whereDate('created_at', $d['tanggal'])
                         ->where('norm', $d['pasien_no_rm'])
                         ->first();
 
-                    if ($igd) {
-                        $d['status'] = 'sudah';
-                    } else {
-                        $d['status'] = 'belum';
-                    }
+                    $d['status'] = $igd ? 'sudah' : 'belum';
 
                     return $d;
-                }, $data['response']['data']);
+                }, $data['response']['data']));
 
-                $response = [
-                    'metadata' => [
-                        'message' => 'Data Pasien Ditemukan',
-                        'code' => 200,
-                    ],
-                    'response' => [
-                        'data' => $filteredData,
-                    ],
-                ];
+                // Pastikan hasil filtering tidak null
+                if (!empty($filteredData)) {
+                    $response = [
+                        'metadata' => [
+                            'message' => 'Data Pasien Ditemukan',
+                            'code' => 200,
+                        ],
+                        'response' => [
+                            'data' => array_values($filteredData),
+                        ],
+                    ];
 
-                // Tampilkan data (atau lakukan apa pun yang diperlukan)
-                return response()->json($response);
+                    return response()->json($response);
+                } else {
+                    return response()->json(['error' => 'No valid data found'], 404);
+                }
             } else {
                 return response()->json(['error' => 'Invalid data format'], 500);
             }

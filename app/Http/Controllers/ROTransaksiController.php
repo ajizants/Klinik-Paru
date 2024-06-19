@@ -148,6 +148,7 @@ class ROTransaksiController extends Controller
                 // Upload gambar karena data belum ada
                 if ($request->hasFile('gambar')) {
                     $file = $request->file('gambar');
+                    dd($file);
                     $fileName = $file->getClientOriginalName();
                     $filePath = $file->getPathname();
 
@@ -177,6 +178,8 @@ class ROTransaksiController extends Controller
 
                     // Simpan foto dengan memanggil metode simpanFoto()
                     $upload->simpanFoto($param);
+                } else {
+//jangan upload foto
                 }
                 // Simpan entitas baru ke database
                 $upload->save();

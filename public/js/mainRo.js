@@ -43,8 +43,10 @@ async function simpan() {
 
         if (gambar) {
             console.log("Nama file:", gambar.name);
+            var foto = gambar;
         } else {
             console.log("File belum dipilih");
+            var foto = "";
         }
 
         // Membuat objek FormData untuk mengirim data dengan file
@@ -68,7 +70,7 @@ async function simpan() {
         formData.append("layanan", layanan);
         formData.append("p_rontgen", p_rontgen);
         formData.append("dokter", dokter);
-        formData.append("gambar", gambar);
+        formData.append("gambar", foto);
 
         // Kirim data menggunakan fetch API dengan async/await
         const response = await fetch("/api/addTransaksiRo", {

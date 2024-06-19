@@ -1114,7 +1114,7 @@ function populateProyeksi() {
         data.forEach(function (foto) {
             var option = new Option(
                 foto.proyeksi,
-                foto.idProyeksi,
+                foto.kdProyeksi,
                 false,
                 false
             );

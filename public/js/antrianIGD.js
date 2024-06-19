@@ -189,12 +189,12 @@ function antrian() {
     $("#loadingSpinner").show();
     var tanggal_awal = $("#tanggal").val(); // Ganti id input tanggal_awal
     var tanggal_akhir = $("#tanggal").val(); // Ganti id input tanggal_akhir
-    var no_rm = $("#norm").val(); // Ganti id input no_rm
+    // var no_rm = $("#norm").val(); // Ganti id input no_rm
 
     var param = {
         tanggal_awal: tanggal_awal,
         tanggal_akhir: tanggal_akhir,
-        no_rm: no_rm,
+        // no_rm: no_rm,
     };
 
     fetchDataAntrian(param, function (response) {
