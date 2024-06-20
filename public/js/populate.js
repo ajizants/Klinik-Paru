@@ -91,7 +91,9 @@ function antrianAll(ruang) {
 //pasien Kominfo
 function cariKominfo(norm, tgl) {
     var normValue = norm ? norm : $("#norm").val();
+    console.log("🚀 ~ cariKominfo ~ normValue:", normValue);
     var tgl = tgl ? tgl : $("#tglRO").val();
+    console.log("🚀 ~ cariKominfo ~ tgl:", tgl);
     // console.log(normValue)
     // Add leading zeros if the value has less than 6 digits
     while (normValue.length < 6) {
@@ -110,9 +112,8 @@ function cariKominfo(norm, tgl) {
     } else {
         Swal.fire({
             icon: "info",
-            title: "Sedang Mencari Data Pasien di Aplikasi KOMINFO\n Mohon Ditunggu ...!!!",
-            // showConfirmButton: false, // Menyembunyikan tombol OK
-            // allowOutsideClick: false, // Mencegah interaksi di luar dialog
+            title: "Belum ada transaksi, Sedang Mencari Data Pasien di Aplikasi KOMINFO\n Mohon Ditunggu ...!!!",
+            allowOutsideClick: false, // Mencegah interaksi di luar dialog
             didOpen: () => {
                 Swal.showLoading(); // Menampilkan loading spinner
             },
@@ -120,7 +121,7 @@ function cariKominfo(norm, tgl) {
 
         $.ajax({
             // url: "http://kkpm.local/api/pasienKominfo",
-            url: "/api/antrianKominfo",
+            url: "/api/dataPasien",
             method: "POST",
             data: {
                 no_rm: normValue,
@@ -130,43 +131,59 @@ function cariKominfo(norm, tgl) {
             success: function (response) {
                 if (response.error) {
                     console.error("Error: " + response.error);
-                } else if (
-                    response.metadata &&
-                    response.metadata.code === 404
-                ) {
-                    //tidak mendaftar
-                    Swal.fire({
-                        icon: "info",
-                        title: response.metadata.message,
-                    });
-                    // Swal.close();
-                } else {
-                    Swal.fire({
-                        icon: "info",
-                        title: response.metadata.message,
-                        showConfirmButton: false,
-                        allowOutsideClick: false,
-                    });
-                    console.log("🚀 ~ cariKominfo ~ data:", response);
-                    var pasien = response.response.pasien[0];
-                    console.log("🚀 ~ cariKominfo ~ pasien:", pasien);
+                } else if (response.metadata) {
+                    var code = response.metadata.code;
 
-                    var pendaftaran = response.response.pendaftaran[0];
-                    console.log("🚀 ~ cariKominfo ~ pendaftaran:", pendaftaran);
+                    if (code === 404) {
+                        Swal.fire({
+                            icon: "info",
+                            title: response.metadata.message,
+                        });
+                    } else if (code === 204) {
+                        Swal.fire({
+                            icon: "info",
+                            title: "Pasien tidak mendaftar pada hari ini",
+                        });
+                        rstForm();
+                    } else if (code === 200) {
+                        Swal.fire({
+                            icon: "info",
+                            title: response.metadata.message,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                        });
+                        console.log("🚀 ~ cariKominfo ~ data:", response);
+                        var pasien = response.response.pasien[0];
+                        console.log("🚀 ~ cariKominfo ~ pasien:", pasien);
 
-                    // Mengatur nilai untuk form fields
-                    $("#layanan")
-                        .val(pendaftaran.penjamin_nama)
-                        .trigger("change"); // Trigger change event jika diperlukan
-                    $("#norm").val(pasien.pasien_no_rm);
-                    $("#nama").val(pasien.pasien_nama);
-                    $("#alamat").val(pasien.pasien_alamat);
-                    $("#notrans").val(pendaftaran.no_trans);
-                    $("#dokter").val(pendaftaran.nip_dokter).trigger("change");
-                    setTimeout(function () {
-                        Swal.close();
-                        scrollToInputSection();
-                    }, 1000);
+                        var pendaftaran = response.response.pendaftaran[0];
+                        console.log(
+                            "🚀 ~ cariKominfo ~ pendaftaran:",
+                            pendaftaran
+                        );
+
+                        // Mengatur nilai untuk form fields
+                        $("#layanan")
+                            .val(pendaftaran.penjamin_nama)
+                            .trigger("change"); // Trigger change event jika diperlukan
+                        $("#norm").val(pasien.pasien_no_rm);
+                        $("#nama").val(pasien.pasien_nama);
+                        $("#alamat").val(pasien.pasien_alamat);
+                        $("#notrans").val(pendaftaran.no_trans);
+                        $("#dokter")
+                            .val(pendaftaran.nip_dokter)
+                            .trigger("change");
+                        setTimeout(function () {
+                            Swal.close();
+                            scrollToInputSection();
+                        }, 1000);
+                    } else {
+                        // Handle other potential status codes
+                        Swal.fire({
+                            icon: "error",
+                            title: "Unexpected metadata code: " + code,
+                        });
+                    }
                 }
             },
 

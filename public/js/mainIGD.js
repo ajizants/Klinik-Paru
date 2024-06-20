@@ -147,7 +147,7 @@ function addBmhp() {
 let tanggalFormat;
 let kdtgl;
 function setTglRo() {
-    var inputTanggal = document.getElementById("tgltind");
+    var inputTanggal = document.getElementById("tgltrans");
     var tanggalHariIni = new Date();
 
     var tahun = tanggalHariIni.getFullYear();
@@ -285,7 +285,6 @@ $(document).ready(function () {
         var petugas = $("#petugas").val();
         var dokter = $("#dokter").val();
         var tgltrans = $("#tgltrans").val();
-        var tgltind = $("#tgltind").val();
         // Memeriksa apakah ada nilai yang kosong
         if (!norm || !notrans || !kdTind || !petugas || !dokter || !tgltrans) {
             // Menampilkan notifikasi jika ada nilai yang kosong
@@ -341,7 +340,9 @@ $(document).ready(function () {
         if (event.key === "Enter") {
             event.preventDefault();
             // searchByRM($("#norm").val());
-            cariKominfo();
+            var tgl = $("#tgltrans").val();
+            var norm = $("#norm").val();
+            cariKominfo(norm, tgl);
         }
     });
     $("#qty").on("keyup", function (event) {

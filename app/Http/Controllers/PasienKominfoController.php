@@ -535,11 +535,11 @@ class PasienKominfoController extends Controller
 
                 // Iterate over filtered data and add status and nip
                 foreach ($filteredData as &$item) {
-                    $notrans = $item['no_trans'];
+                    // $notrans = $item['no_trans'];
 
-                    $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
+                    // $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
 
-                    $item['status'] = !empty($tsRo) ? 'sudah' : 'belum';
+                    // $item['status'] = !empty($tsRo) ? 'sudah' : 'belum';
 
                     // Add nip based on dokter_nama
                     $dokter_nama = $item['dokter_nama'];
@@ -549,22 +549,34 @@ class PasienKominfoController extends Controller
                         $item['nip_dokter'] = 'Unknown';
                     }
                 }
-                $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
+                // $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
                 //jika tsRo null maka status belum
-                $status = !empty($tsRo) ? 'sudah' : 'belum';
-                $response = [
-                    'metadata' => [
-                        'message' => 'Data Pasien Ditemukan',
-                        'code' => 200,
-                    ],
-                    'response' => [
-                        'pendaftaran' => $filteredData,
-                        'pasien' => $pasien,
-                        // 'status' => $status,
-                    ],
-                ];
-                // Tampilkan data (atau lakukan apa pun yang diperlukan)
-                return response()->json($response);
+                // $status = !empty($tsRo) ? 'sudah' : 'belum';
+
+                if (!empty($filteredData)) {
+                    $response = [
+                        'metadata' => [
+                            'message' => 'Data Pasien Ditemukan',
+                            'code' => 200,
+                        ],
+                        'response' => [
+                            'pendaftaran' => $filteredData,
+                            'pasien' => $pasien,
+                        ],
+                    ];
+                    // Mengembalikan respons dengan kode 200
+                    return response()->json($response, 200);
+                } else {
+                    $response = [
+                        'metadata' => [
+                            'message' => 'Pasien tidak mendaftar pada hari ini',
+                            'code' => 204,
+                        ],
+                    ];
+                    // Mengembalikan respons dengan kode 204
+                    return response()->json($response, 200);
+                }
+
             }
         }
     }

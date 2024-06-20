@@ -29,7 +29,8 @@
                                                     <div class="input-group-addon btn btn-danger">
                                                         <span class="fa-solid fa-magnifying-glass"
                                                             onclick="searchRMObat();" data-toggle="tooltip"
-                                                            data-placement="top" title="Selain Pasien Hari ini"></span>
+                                                            data-placement="top"
+                                                            title="Pasien a.n Bagus, untuk karyawan yang tidak mendaftar"></span>
                                                     </div>
                                                 </div>
                                                 <label for="layanan"
@@ -52,10 +53,8 @@
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                                     :</label>
                                                 <div class="col-sm-2">
-                                                    <input type="text" id="tgltind" class="form-control bg-white"
-                                                        placeholder="Tanggal" readonly />
-                                                    <input type="text" id="tgltrans" class="form-control bg-white"
-                                                        placeholder="tgltrans" readonly hidden />
+                                                    <input type="date" id="tgltrans" class="form-control bg-white"
+                                                        placeholder="tgltrans" />
                                                 </div>
                                                 <label for="notrans"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
@@ -165,12 +164,12 @@
                                                     <br>
                                                     <div class="input-group d-flex justify-content-center">
                                                         <a type="button" class="btn btn-danger"
-                                                            id="decreaseBtn" >-</a>
+                                                            id="decreaseBtn">-</a>
                                                         <input type="text"id="qty"
                                                             class="form-control col-5 border border-primary text-center"
                                                             placeholder="Jumlah">
                                                         <a type="button" class="btn btn-success"
-                                                            id="increaseBtn" >+</a>
+                                                            id="increaseBtn">+</a>
                                                     </div>
                                                     <br>
                                                     <div class="input-group d-flex justify-content-center">
@@ -186,7 +185,7 @@
                                                     </div>
                                                     <br>
                                                     <a id="addBMHP"
-                                                        class="btn btn-success d-flex justify-content-center mb-4" >Tambah
+                                                        class="btn btn-success d-flex justify-content-center mb-4">Tambah
                                                         BMHP</a>
                                                     <a id="addBMHPSelesai"
                                                         class="btn btn-primary d-flex justify-content-center mb-4">Input
