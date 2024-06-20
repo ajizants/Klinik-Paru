@@ -134,59 +134,63 @@ class ROTransaksiController extends Controller
             $petugas->p_rontgen = $request->input('p_rontgen');
             $petugas->save();
 
-            // Upload gambar
-            $upload = ROTransaksiHasilModel::where('norm', $request->input('norm'))
-                ->whereDate('tanggal', $request->input('tglRo'))
-                ->first();
+            //if gambar not "" or null
+            if ($request->input('gambar') == "" || $request->input('gambar') == null) {
+                $upload = ROTransaksiHasilModel::where('norm', $request->input('norm'))
+                    ->whereDate('tanggal', $request->input('tglRo'))
+                    ->first();
 
-            if (!$upload) {
-                // Jika tidak ada data, buat entitas baru
-                $upload = new ROTransaksiHasilModel();
-                $upload->norm = $request->input('norm');
-                $upload->tanggal = $request->input('tglRo');
+                if (!$upload) {
+                    // Jika tidak ada data, buat entitas baru
+                    $upload = new ROTransaksiHasilModel();
+                    $upload->norm = $request->input('norm');
+                    $upload->tanggal = $request->input('tglRo');
 
-                // Upload gambar karena data belum ada
-                if ($request->hasFile('gambar')) {
-                    $file = $request->file('gambar');
-                    dd($file);
-                    $fileName = $file->getClientOriginalName();
-                    $filePath = $file->getPathname();
+                    // Upload gambar karena data belum ada
+                    if ($request->hasFile('gambar')) {
+                        $file = $request->file('gambar');
+                        // dd($file);
+                        $fileName = $file->getClientOriginalName();
+                        $filePath = $file->getPathname();
 
-                    $param = [
-                        [
-                            'name' => 'norm',
-                            'contents' => $request->input('norm'),
-                        ],
-                        [
-                            'name' => 'notrans',
-                            'contents' => $request->input('notrans'),
-                        ],
-                        [
-                            'name' => 'tanggal',
-                            'contents' => $request->input('tglRo'),
-                        ],
-                        [
-                            'name' => 'nama',
-                            'contents' => $request->input('nama'),
-                        ],
-                        [
-                            'name' => 'foto',
-                            'contents' => fopen($filePath, 'r'),
-                            'filename' => $fileName,
-                        ],
-                    ];
+                        $param = [
+                            [
+                                'name' => 'norm',
+                                'contents' => $request->input('norm'),
+                            ],
+                            [
+                                'name' => 'notrans',
+                                'contents' => $request->input('notrans'),
+                            ],
+                            [
+                                'name' => 'tanggal',
+                                'contents' => $request->input('tglRo'),
+                            ],
+                            [
+                                'name' => 'nama',
+                                'contents' => $request->input('nama'),
+                            ],
+                            [
+                                'name' => 'foto',
+                                'contents' => fopen($filePath, 'r'),
+                                'filename' => $fileName,
+                            ],
+                        ];
 
-                    // Simpan foto dengan memanggil metode simpanFoto()
-                    $upload->simpanFoto($param);
+                        // Simpan foto dengan memanggil metode simpanFoto()
+                        $upload->simpanFoto($param);
+                    } else {
+                    }
+                    // Simpan entitas baru ke database
+                    $upload->save();
                 } else {
-//jangan upload foto
+                    // Jika data sudah ada, tidak perlu melakukan apapun
+                    // Anda bisa menambahkan pesan atau logika tambahan di sini jika diperlukan
                 }
-                // Simpan entitas baru ke database
-                $upload->save();
             } else {
-                // Jika data sudah ada, tidak perlu melakukan apapun
-                // Anda bisa menambahkan pesan atau logika tambahan di sini jika diperlukan
+                // dd("no gambar");
             }
+            // Upload gambar
 
             DB::commit(); // Commit transaksi jika semua berhasil
             return response()->json(['message' => 'Data berhasil disimpan'], 200);

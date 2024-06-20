@@ -56,6 +56,8 @@ document.addEventListener("DOMContentLoaded", function () {
         $("#dselesai").show();
         $("#dtunggu").hide();
     });
+
+    console.log("🚀 ~ appUrlRo:", appUrlRo);
 });
 function formatNorm(inputElement) {
     console.log("🚀 ~ formatNorm ~ inputElement:", inputElement);
