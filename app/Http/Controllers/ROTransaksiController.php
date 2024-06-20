@@ -135,7 +135,7 @@ class ROTransaksiController extends Controller
             $petugas->save();
 
             //if gambar not "" or null
-            if ($request->input('gambar') == "" || $request->input('gambar') == null) {
+            if ($request->input('gambar') != "" && $request->input('gambar') != null) {
                 $upload = ROTransaksiHasilModel::where('norm', $request->input('norm'))
                     ->whereDate('tanggal', $request->input('tglRo'))
                     ->first();

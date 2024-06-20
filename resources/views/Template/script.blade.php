@@ -46,6 +46,4 @@
     <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
 
     <!-- Costum -->
-    <script type="text/javascript">
-        var appUrlRo = @json($appUrlRo);
-    </script>
+

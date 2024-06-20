@@ -402,7 +402,9 @@ class PasienKominfoController extends Controller
 
             if (isset($data['response']['data']) && is_array($data['response']['data'])) {
                 $filteredData = array_filter($data['response']['data'], function ($d) {
-                    return !empty($d['pasien_no_rm']);
+                    // return !empty($d['pasien_no_rm']);
+                    //return yang memiliki isi keterangan = SELESAI DIPANGGIL LOKET PENDAFTARAN
+                    return $d['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
                 });
                 $filteredData = array_values($filteredData);
 

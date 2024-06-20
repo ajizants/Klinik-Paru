@@ -72,6 +72,8 @@ async function simpan() {
         formData.append("dokter", dokter);
         formData.append("gambar", foto);
 
+        // console.log("🚀 ~ simpan ~ formData:", kdProyeksi);
+
         // Kirim data menggunakan fetch API dengan async/await
         const response = await fetch("/api/addTransaksiRo", {
             method: "POST",
@@ -84,11 +86,9 @@ async function simpan() {
 
         const responseData = await response.json();
         console.log("Data berhasil disimpan:", responseData);
-        // Lakukan sesuatu setelah data berhasil disimpan
-        //resert id="formtrans"
-        rstForm();
 
-        // antrian();
+        rstForm();
+        antrian();
     } catch (error) {
         console.error("Terjadi kesalahan saat menyimpan data:", error);
         // Lakukan sesuatu jika terjadi kesalahan

@@ -6,7 +6,7 @@ use App\Models\FarmasiModel;
 use App\Models\GudangFarmasiInStokModel;
 use App\Models\GudangFarmasiModel;
 use App\Models\ObatModel;
-use App\Models\gudangObatInStokModel;
+use App\Models\GudangObatInStokModel;
 use App\Models\GudangObatModel;
 use App\Models\BMHPIGDInStokModel;
 use App\Models\BMHPModel;

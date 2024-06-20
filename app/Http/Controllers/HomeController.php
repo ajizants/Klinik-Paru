@@ -46,7 +46,7 @@ class HomeController extends Controller
     public function gudangFarmasi()
     {
         $title = 'Gudang Farmasi';
-        return view('Farmasi.gudangFarmasi.main')->with('title', $title);
+        return view('Farmasi.GudangFarmasi.main')->with('title', $title);
     }
     public function gudangIGD()
     {
