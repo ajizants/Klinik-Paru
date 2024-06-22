@@ -77,7 +77,7 @@ function cariRo(tglAwal, tglAkhir, norm) {
                             filename:
                                 "Log Book Radiologi Tanggal: " +
                                 tglA +
-                                "  s.d.  " +
+                                "  s.d. " +
                                 tglB,
                         },
                         "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
