@@ -1,10 +1,17 @@
 let tglAwal = "";
 let tglAkhir = "";
 
+function formatDate(date) {
+    let day = String(date.getDate()).padStart(2, "0");
+    let month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() returns month from 0-11
+    let year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+}
 function cariRo(tglAwal, tglAkhir, norm) {
     // var tglAwal = $("#tglAwal").val(); // tambahkan ini
     // var tglAkhir = $("#tglAkhir").val(); // tambahkan ini
-
+    var tglA = formatDate(new Date(tglAwal));
+    var tglB = formatDate(new Date(tglAkhir));
     if ($.fn.DataTable.isDataTable("#hasilRo")) {
         var tabletindakan = $("#hasilRo").DataTable();
         tabletindakan.destroy();
@@ -27,20 +34,58 @@ function cariRo(tglAwal, tglAkhir, norm) {
                 item.no = index + 1;
             });
 
-            $("#hasilRo").DataTable({
-                data: response.data,
-                columns: [
-                    { data: "id", className: "p-2" },
-                    { data: "tanggal", className: "p-2" },
-                    { data: "norm", className: "text-center col-2 p-2" },
-                    { data: "nama", className: "p-2" },
-                    {
-                        data: "actions",
-                        className: "text-center p-2",
-                    },
-                ],
-                order: [2, "asc"],
-            });
+            $("#hasilRo")
+                .DataTable({
+                    data: response.data,
+                    columns: [
+                        { data: "no" },
+                        { data: "noreg" },
+                        { data: "tgltrans" },
+                        { data: "norm" },
+                        { data: "nama" },
+                        { data: "layanan" },
+                        { data: "jkel" },
+                        { data: "kelurahan" },
+                        { data: "kecamatan" },
+                        { data: "kabupaten" },
+                        { data: "nmFoto" },
+                        { data: "ukuranFilm" },
+                        { data: "kondisiRo" },
+                        { data: "jmlFilmDipakai" },
+                        { data: "jmlExpose" },
+                        { data: "jmlFilmRusak" },
+                        { data: "proyeksi" },
+                        { data: "nmMesin" },
+                        { data: "catatan" },
+                        { data: "radiografer_nama" },
+                    ],
+                    order: [2, "asc"],
+                    autoWidth: false,
+                    buttons: [
+                        {
+                            extend: "copyHtml5",
+                            text: "Salin",
+                        },
+                        {
+                            extend: "excelHtml5",
+                            text: "Excel",
+                            title:
+                                "Log Book Radiologi Tanggal: " +
+                                tglA +
+                                " s.d. " +
+                                tglB,
+                            filename:
+                                "Log Book Radiologi Tanggal: " +
+                                tglA +
+                                "  s.d.  " +
+                                tglB,
+                        },
+                        "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+                    ],
+                })
+                .buttons()
+                .container()
+                .appendTo("#hasilRo_wrapper .col-md-6:eq(0)");
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);

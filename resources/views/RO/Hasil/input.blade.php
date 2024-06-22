@@ -54,13 +54,13 @@
                                                 <h3 class="card-title">Hasil Pemotretan</h3>
                                             </div>
                                             <!-- /.card-header -->
-                                            <div class="card-body ">
-                                                <table id="hasilRo"
-                                                    class="display table table-striped table-hover tabel-responsive"
+                                            <div class="card-body table-responsive">
+                                                <table id="hasilRo" class="display table table-striped table-hover"
                                                     style="width:100%">
                                                     <thead>
                                                         <tr>
-                                                            <th>Id</th>
+                                                            <th>No</th>
+                                                            <th>No Reg</th>
                                                             <th>Tanggal</th>
                                                             <th>No RM</th>
                                                             <th>Nama</th>
@@ -72,10 +72,9 @@
                                                             <th>Nama Foto</th>
                                                             <th>Ukuran Film</th>
                                                             <th>Kondisi</th>
-                                                            <th>Film</th>
-                                                            <th>Expose</th>
-                                                            <th>Rusak</th>
-                                                            <th>Proyeksi</th>
+                                                            <th>Jml Film</th>
+                                                            <th>Jml Expose</th>
+                                                            <th>Jml Rusak</th>
                                                             <th>Proyeksi</th>
                                                             <th>Mesin</th>
                                                             <th>Catatan</th>
