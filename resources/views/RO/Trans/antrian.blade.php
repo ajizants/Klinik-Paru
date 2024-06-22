@@ -18,20 +18,24 @@
                     <a type="button" class="nav-link active bg-blue" onclick="selesai();"><b>Selesai</b></a>
                 </li>
                 <li class="nav-item">
+                    <a type="button" class="nav-link" onclick="blmUpload();"><b>Belum Upoload</b></a>
+                </li>
+                <li class="nav-item">
                     <a type="button" class="nav-link " onclick="tunggu();"><b>Antrian
                             All</b></a>
                 </li>
-                <div class="input-group col d-flex justify-content-start ml-5">
+                <div class="input-group col d-flex justify-content-end mr-5">
                     <input type="date" class="form-control col-sm-2 bg bg-warning" id="tanggal"
                         value="{{ old('date') }}" required>
                     <div class="input-group-addon btn btn-danger">
                         <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top"
                             title="Update Pasien Hari ini" id="cariantrian"
-                            onclick="antrian();antrianSelesai();"></span>
+                            onclick="antrian();antrianSelesai();antrianBlmUpload();"></span>
                     </div>
                 </div>
             </ul>
             <div id="dAntrian" class="card-body card-body-hidden p-2" style="display: none;">
+                <h5 class="mb-0 text-center"><b>Data Antrian Semua</b></h5>
                 <div class="table-responsive pt-2 px-2">
                     <table id="dataAntrian" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
@@ -54,8 +58,32 @@
                 </div>
             </div>
             <div id="dSelesai" class="card-body card-body-hidden p-2">
+                <h5 class="mb-0 text-center"><b>Data Antrian Selesai Transaksi</b></h5>
                 <div class="table-responsive pt-2 px-2">
                     <table id="daftarSelesai" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
+                        cellspacing="0">
+                        <thead class="bg bg-teal">
+                            <tr>
+                                <th width="15px">Aksi</th>
+                                <th width="15px">status</th>
+                                <th>No Antrean</th>
+                                <th>Jaminan</th>
+                                <th>No RM</th>
+                                <th>Nama Pasien</th>
+                                <th>Poli</th>
+                                <th>Tanggal</th>
+                                <th class="col-3">Dokter</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="dUpload" class="card-body card-body-hidden p-2" style="display: none;">
+                <h5 class="mb-0 text-center"><b>Data Antrian Belum Upload Transaksi</b></h5>
+                <div class="table-responsive pt-2 px-2">
+                    <table id="daftarUpload" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
                         <thead class="bg bg-teal">
                             <tr>

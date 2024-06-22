@@ -477,15 +477,155 @@ function antrianSelesai() {
         }
     });
 }
+function initializeDataAntrianSelesai(response) {
+    // Filter data hanya untuk status "Selesai"
+    var filteredData = response.response.data.filter(function (item) {
+        return item.status === "Sudah Selesai";
+    });
+    console.log("🚀 ~ filteredData ~ filteredData:", filteredData);
+    filteredData.forEach(function (item) {
+        var tgl = $("#tanggal").val();
+        item.tgl = tgl;
+        item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+        onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
+    });
+    // Initialize DataTable dengan data yang sudah difilter
+    $("#daftarSelesai").DataTable({
+        data: filteredData,
+        columns: [
+            { data: "aksi", className: "text-center p-2 col-1" }, // Action column
+            {
+                data: "status",
+                className: "text-center p-2 col-1",
+                render: function (data, type, row) {
+                    var backgroundColor = "";
+                    switch (data) {
+                        case "Belum Ada Transaksi":
+                            backgroundColor = "danger";
+                            break;
+                        case "Belum Upload Foto Thorax":
+                            backgroundColor = "warning";
+                            break;
+                        case "Sudah Selesai":
+                            backgroundColor = "success";
+                            break;
+                        default:
+                            backgroundColor = "secondary";
+                            break;
+                    }
+                    return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                },
+            },
+            { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
+            { data: "penjamin_nama", className: "text-center p-2" }, // No Antrean column
+            { data: "pasien_no_rm", className: "text-center p-2" }, // Pasien No. RM column
+            { data: "pasien_nama", className: "p-2" }, // Pasien Nama column
+            { data: "poli_nama", className: "p-2" }, // Poli column
+            { data: "tanggal", className: "p-2" }, // Tanggal column
+            { data: "dokter_nama", className: "p-2" }, // Dokter column
+        ],
+        order: [[1, "asc"]], // Order by Antrean Nomor ascending
+    });
+}
+function initializeDataAntrianBlmUpload(response) {
+    // Filter data hanya untuk status "Selesai"
+    var filteredData = response.response.data.filter(function (item) {
+        return item.status === "Belum Upload Foto Thorax";
+    });
+    console.log("🚀 ~ filteredData ~ filteredData:", filteredData);
+    filteredData.forEach(function (item) {
+        var tgl = $("#tanggal").val();
+        item.tgl = tgl;
+        item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+        onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
+    });
+    // Initialize DataTable dengan data yang sudah difilter
+    $("#daftarUpload").DataTable({
+        data: filteredData,
+        columns: [
+            { data: "aksi", className: "text-center p-2 col-1" }, // Action column
+            {
+                data: "status",
+                className: "text-center p-2 col-1",
+                render: function (data, type, row) {
+                    var backgroundColor = "";
+                    switch (data) {
+                        case "Belum Ada Transaksi":
+                            backgroundColor = "danger";
+                            break;
+                        case "Belum Upload Foto Thorax":
+                            backgroundColor = "warning";
+                            break;
+                        case "Sudah Selesai":
+                            backgroundColor = "success";
+                            break;
+                        default:
+                            backgroundColor = "secondary";
+                            break;
+                    }
+                    return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                },
+            },
+            { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
+            { data: "penjamin_nama", className: "text-center p-2" }, // No Antrean column
+            { data: "pasien_no_rm", className: "text-center p-2" }, // Pasien No. RM column
+            { data: "pasien_nama", className: "p-2" }, // Pasien Nama column
+            { data: "poli_nama", className: "p-2" }, // Poli column
+            { data: "tanggal", className: "p-2" }, // Tanggal column
+            { data: "dokter_nama", className: "p-2" }, // Dokter column
+        ],
+        order: [[1, "asc"]], // Order by Antrean Nomor ascending
+    });
+}
+
+function antrianBlmUpload() {
+    $("#loadingSpinner").show();
+    var tanggal = $("#tanggal").val();
+
+    fetchDataAntrian(tanggal, function (response) {
+        $("#loadingSpinner").hide();
+
+        // Filter data hanya untuk status "Selesai"
+        var filteredData = response.response.data.filter(function (item) {
+            return item.status === "Belum Upload Foto Thorax";
+        });
+
+        filteredData.forEach(function (item) {
+            var tgl = $("#tanggal").val();
+            item.tgl = tgl;
+            item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+            onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
+        });
+        // Check if DataTable already initialized
+        if ($.fn.DataTable.isDataTable("#daftarUpload")) {
+            var table = $("#daftarUpload").DataTable();
+
+            // Clear existing data, add new filtered data, and redraw table
+            table.clear().rows.add(filteredData).draw();
+        } else {
+            // Initialize DataTable with the filtered data
+            initializeDataAntrianBlmUpload({
+                response: { data: filteredData },
+            });
+        }
+    });
+}
 
 function selesai() {
     $("#dAntrian").hide();
     $("#dSelesai").show();
+    $("#dUpload").hide();
 }
 
 function tunggu() {
     $("#dAntrian").show();
     $("#dSelesai").hide();
+    $("#dUpload").hide();
+}
+function blmUpload() {
+    $("#dAntrian").hide();
+    $("#dSelesai").hide();
+    $("#dUpload").show();
 }
 window.addEventListener("load", function () {
     setTglRo();
@@ -501,6 +641,7 @@ window.addEventListener("load", function () {
     populateS();
     antrian();
     antrianSelesai();
+    antrianBlmUpload();
 
     $("#norm").on("keyup", function (event) {
         if (event.key === "Enter") {
