@@ -21,4 +21,8 @@ class TransPetugasModel extends Model
     {
         return $this->belongsTo(ROTransaksiModel::class, 'notrans', 'notrans');
     }
+    public function radiografer()
+    {
+        return $this->hasOne(BiodataModel::class, 'nip', 'p_rontgen');
+    }
 }

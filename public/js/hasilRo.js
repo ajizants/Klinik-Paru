@@ -11,7 +11,7 @@ function cariRo(tglAwal, tglAkhir, norm) {
     }
 
     $.ajax({
-        url: "/api/hasilRo",
+        url: "/api/logBook",
         type: "post",
         data: { norm: norm, tglAkhir: tglAkhir, tglAwal: tglAwal },
         success: function (response) {

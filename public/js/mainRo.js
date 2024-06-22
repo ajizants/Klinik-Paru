@@ -35,6 +35,7 @@ async function simpan() {
         var jmlFilmRusak = document.getElementById("jmlFilmRusak").value;
         var kdMesin = document.getElementById("kdMesin").value;
         var kdProyeksi = document.getElementById("kdProyeksi").value;
+        var catatan = document.getElementById("catatan").value;
         var layanan = document.getElementById("layanan").value;
         var p_rontgen = document.getElementById("p_rontgen").value;
         var dokter = document.getElementById("dokter").value;
@@ -67,6 +68,7 @@ async function simpan() {
         formData.append("jmlFilmRusak", jmlFilmRusak);
         formData.append("kdMesin", kdMesin);
         formData.append("kdProyeksi", kdProyeksi);
+        formData.append("catatan", catatan);
         formData.append("layanan", layanan);
         formData.append("p_rontgen", p_rontgen);
         formData.append("dokter", dokter);
@@ -87,8 +89,8 @@ async function simpan() {
         const responseData = await response.json();
         console.log("Data berhasil disimpan:", responseData);
 
-        rstForm();
-        antrian();
+        // rstForm();
+        // antrian();
     } catch (error) {
         console.error("Terjadi kesalahan saat menyimpan data:", error);
         // Lakukan sesuatu jika terjadi kesalahan

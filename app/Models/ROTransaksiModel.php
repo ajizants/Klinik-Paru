@@ -32,14 +32,22 @@ class ROTransaksiModel extends Model
     {
         return $this->hasOne(ROJenisKondisi::class, 'kdKondisiRo', 'kv');
     }
+
     public function ma()
     {
         return $this->hasOne(ROJenisKondisi::class, 'kdKondisiRo', 'ma');
     }
+
     public function s()
     {
         return $this->hasOne(ROJenisKondisi::class, 'kdKondisiRo', 's');
     }
+
+    public function kondisiOld()
+    {
+        return $this->hasOne(ROJenisKondisiOld::class, 'kdKondisiRo', 'kdKondisiRo');
+    }
+
     public function hasil()
     {
         return $this->hasMany(ROTransaksiHasilModel::class, 'norm', 'norm');
@@ -47,13 +55,18 @@ class ROTransaksiModel extends Model
     public function pasien()
     {
         return $this->hasOne(PasienModel::class, 'norm', 'norm');
+        // return $this->hasOne(KominfoModel::class, 'norm', 'norm');
     }
     public function radiografer()
     {
-        return $this->hasOne(TransPetugasModel::class, 'norm', 'norm');
+        return $this->hasOne(TransPetugasModel::class, 'notrans', 'notrans');
     }
     public function dokter()
     {
         return $this->hasOne(TransPetugasModel::class, 'norm', 'norm');
+    }
+    public function kunjungan()
+    {
+        return $this->hasOne(KunjunganModel::class, 'notrans', 'notrans');
     }
 }

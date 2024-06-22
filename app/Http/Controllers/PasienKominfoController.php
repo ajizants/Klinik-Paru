@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\KominfoModel;
-use App\Models\RoHasilModel;
+use App\Models\ROTransaksiHasilModel;
 use App\Models\ROTransaksiModel;
 use App\Models\TransaksiModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PasienKominfoController extends Controller
 {
@@ -394,7 +395,6 @@ class PasienKominfoController extends Controller
     {
         if ($request->has('tanggal')) {
             $tanggal = $request->input('tanggal');
-
             $model = new KominfoModel();
 
             // Panggil metode untuk melakukan request
@@ -402,8 +402,6 @@ class PasienKominfoController extends Controller
 
             if (isset($data['response']['data']) && is_array($data['response']['data'])) {
                 $filteredData = array_filter($data['response']['data'], function ($d) {
-                    // return !empty($d['pasien_no_rm']);
-                    //return yang memiliki isi keterangan = SELESAI DIPANGGIL LOKET PENDAFTARAN
                     return $d['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
                 });
                 $filteredData = array_values($filteredData);
@@ -421,28 +419,31 @@ class PasienKominfoController extends Controller
                     $notrans = $item['no_trans'];
                     $norm = $item['pasien_no_rm'];
                     $dokter_nama = $item['dokter_nama'];
-                    $tanggal = $request->input('tanggal'); // Assuming $tanggal is obtained from the request
 
                     // Check if ROTransaksiModel exists for $notrans
                     $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
 
-                    // Check if RoHasilModel exists for $norm and $tanggal
-                    $foto = RoHasilModel::on('rontgen')->where('norm', $norm)
-                        ->whereDate('tanggal', $tanggal)->first();
-
-                    // Determine status based on conditions
-                    if (!$tsRo && !$foto) {
-                        $item['status'] = 'Belum Ada Transaksi';
-                    } elseif ($tsRo && !$foto) {
-                        $item['status'] = 'Belum Upload Foto Thorax';
-                        // } elseif ($tsRo && $foto) {
-                        //     $item['status'] = 'Sudah Selesai';
-                    } else {
-                        $item['status'] = 'Sudah Selesai';
+                    try {
+                        // Attempt to retrieve data from the 'rontgen' connection
+                        $foto = ROTransaksiHasilModel::where('norm', $norm)
+                            ->whereDate('tanggal', $tanggal)
+                            ->first();
+                        // dd($foto);
+                        // Determine status based on conditions
+                        if (!$tsRo && !$foto) {
+                            $item['status'] = 'Belum Ada Transaksi';
+                        } elseif ($tsRo && !$foto) {
+                            $item['status'] = 'Belum Upload Foto Thorax';
+                        } else {
+                            $item['status'] = 'Sudah Selesai';
+                        }
+                    } catch (\Exception $e) {
+                        // Handle the error: log it and continue processing
+                        Log::error('Database connection failed: ' . $e->getMessage());
+                        $item['status'] = 'Database connection error';
                     }
 
                     // Add nip based on dokter_nama
-                    $dokter_nama = $item['dokter_nama'];
                     if (isset($doctorNipMap[$dokter_nama])) {
                         $item['nip_dokter'] = $doctorNipMap[$dokter_nama];
                     } else {

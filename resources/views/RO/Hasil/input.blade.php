@@ -54,15 +54,32 @@
                                                 <h3 class="card-title">Hasil Pemotretan</h3>
                                             </div>
                                             <!-- /.card-header -->
-                                            <div class="card-body">
-                                                <table id="hasilRo" class="display" style="width:100%">
+                                            <div class="card-body ">
+                                                <table id="hasilRo"
+                                                    class="display table table-striped table-hover tabel-responsive"
+                                                    style="width:100%">
                                                     <thead>
                                                         <tr>
                                                             <th>Id</th>
                                                             <th>Tanggal</th>
                                                             <th>No RM</th>
                                                             <th>Nama</th>
-                                                            <th>Aksi</th>
+                                                            <th>Jaminan</th>
+                                                            <th>JK</th>
+                                                            <th>Desa</th>
+                                                            <th>Kecamatan</th>
+                                                            <th>Kabupaten</th>
+                                                            <th>Nama Foto</th>
+                                                            <th>Ukuran Film</th>
+                                                            <th>Kondisi</th>
+                                                            <th>Film</th>
+                                                            <th>Expose</th>
+                                                            <th>Rusak</th>
+                                                            <th>Proyeksi</th>
+                                                            <th>Proyeksi</th>
+                                                            <th>Mesin</th>
+                                                            <th>Catatan</th>
+                                                            <th>Petugas</th>
                                                             <!-- Tambahkan kolom sesuai dengan data yang diterima dari permintaan AJAX -->
                                                         </tr>
                                                     </thead>

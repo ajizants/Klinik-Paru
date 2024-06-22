@@ -89,7 +89,9 @@ class KominfoModel extends Model
     public function pasienRequest($no_rm)
     {
         // Inisialisasi klien GuzzleHTTP
-        $client = new Client();
+        $client = new Client([
+            'timeout' => 200, // timeout dalam detik
+        ]);
 
         // URL endpoint API yang ingin diakses
         $url = 'https://kkpm.banyumaskab.go.id/api_kkpm/v1/pasien/data_pasien';
@@ -106,6 +108,7 @@ class KominfoModel extends Model
         try {
             // Lakukan permintaan POST dengan otentikasi dasar
             $response = $client->request('POST', $url, [
+                'timeout' => 200,
                 'auth' => [$username, $password],
                 'form_params' => $data,
                 'headers' => [

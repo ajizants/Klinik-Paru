@@ -177,6 +177,7 @@ Route::post('addTransaksiRo', [ROTransaksiController::class, 'addTransaksiRo']);
 Route::post('cariTsRO', [ROTransaksiController::class, 'cariTransaksiRo']);
 Route::post('dataTransaksiRo', [ROTransaksiController::class, 'dataTransaksiRo']);
 Route::post('hasilRo', [ROTransaksiController::class, 'hasilRo']);
+Route::post('logBook', [ROTransaksiController::class, 'logBook']);
 
 //API Riwayat Untuk migrasi SIM RS
 Route::get('riwayatKunjungan', [RiwayatController::class, 'index']);
