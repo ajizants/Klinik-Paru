@@ -179,7 +179,6 @@ class ROTransaksiController extends Controller
 
                         // Simpan foto dengan memanggil metode simpanFoto()
                         $upload->simpanFoto($param);
-                    } else {
                     }
                     // Simpan entitas baru ke database
                     $upload->save();
