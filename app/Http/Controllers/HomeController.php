@@ -144,6 +144,6 @@ class HomeController extends Controller
     {
         $title = 'Riwayat Rontgen';
 
-        return view('RO.Hasil.main')->with('title', $title);
+        return view('RO.LogBook.main')->with('title', $title);
     }
 }

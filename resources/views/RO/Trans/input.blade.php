@@ -81,7 +81,7 @@
                                 </div>
                             </div>
                             @csrf
-                            <form class="" id="formtrans">
+                            <form class="" id="formtrans" enctype="multipart/form-data">
                                 <div class="container-fluid">
                                     <div class="form-group">
                                         <div class="card card-success">
@@ -225,7 +225,7 @@
                                                         <label for="fileRo" class="col-form-label">Upload
                                                             Foto</label>
                                                         <div class="col-sm-4 ml-2">
-                                                            <input type="file" name="foto" id="fileRo"
+                                                            <input type="file" name="gambar" id="fileRo"
                                                                 class="form-control-sm" placeholder=" Pilih Foto"
                                                                 title="Foto Ro" /><span>
                                                         </div>

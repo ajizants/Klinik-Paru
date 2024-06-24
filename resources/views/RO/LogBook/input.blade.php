@@ -66,9 +66,9 @@
                                                             <th>Nama</th>
                                                             <th>Jaminan</th>
                                                             <th>JK</th>
-                                                            <th>Desa</th>
-                                                            <th>Kecamatan</th>
-                                                            <th>Kabupaten</th>
+                                                            <th>Alamat</th>
+                                                            {{-- <th>Kecamatan</th>
+                                                            <th>Kabupaten</th> --}}
                                                             <th>Nama Foto</th>
                                                             <th>Ukuran Film</th>
                                                             <th>Kondisi</th>

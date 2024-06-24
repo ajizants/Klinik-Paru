@@ -42,13 +42,13 @@
                         <thead class="bg bg-warning">
                             <tr>
                                 <th width="15px">Aksi</th>
-                                <th>status</th>
-                                <th>No Antrean</th>
+                                <th width="15px">status</th>
+                                <th>Tanggal</th>
+                                <th>Urut</th>
                                 <th>Jaminan</th>
                                 <th>No RM</th>
-                                <th>Nama Pasien</th>
+                                <th class="col-3">Nama Pasien</th>
                                 <th>Poli</th>
-                                <th>Tanggal</th>
                                 <th class="col-3">Dokter</th>
                             </tr>
                         </thead>
@@ -66,12 +66,12 @@
                             <tr>
                                 <th width="15px">Aksi</th>
                                 <th width="15px">status</th>
-                                <th>No Antrean</th>
+                                <th>Tanggal</th>
+                                <th>Urut</th>
                                 <th>Jaminan</th>
                                 <th>No RM</th>
-                                <th>Nama Pasien</th>
+                                <th class="col-3">Nama Pasien</th>
                                 <th>Poli</th>
-                                <th>Tanggal</th>
                                 <th class="col-3">Dokter</th>
                             </tr>
                         </thead>
@@ -89,12 +89,12 @@
                             <tr>
                                 <th width="15px">Aksi</th>
                                 <th width="15px">status</th>
-                                <th>No Antrean</th>
+                                <th>Tanggal</th>
+                                <th>Urut</th>
                                 <th>Jaminan</th>
                                 <th>No RM</th>
-                                <th>Nama Pasien</th>
+                                <th class="col-3">Nama Pasien</th>
                                 <th>Poli</th>
-                                <th>Tanggal</th>
                                 <th class="col-3">Dokter</th>
                             </tr>
                         </thead>

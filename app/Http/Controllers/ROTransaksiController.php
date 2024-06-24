@@ -90,6 +90,9 @@ class ROTransaksiController extends Controller
     // }
     public function addTransaksiRo(Request $request)
     {
+
+        // $gambar = $request->file('gambar');
+        // dd($gambar);
         DB::beginTransaction(); // Mulai transaksi
 
         try {
@@ -125,7 +128,6 @@ class ROTransaksiController extends Controller
             Log::info('Data yang akan disimpan:', $transaksi->toArray());
 
             // Simpan data ke dalam database
-            $transaksi->save();
 
             // Simpan transaksi petugas, cari data berdasarkan notrans, jika ada update, jika tidak ada create
             $petugas = TransPetugasModel::where('notrans', $request->input('notrans'))->first();
@@ -136,19 +138,24 @@ class ROTransaksiController extends Controller
 
             $petugas->p_dokter_poli = $request->input('dokter');
             $petugas->p_rontgen = $request->input('p_rontgen');
-            $petugas->save();
 
             //if gambar not "" or null
-            if ($request->input('gambar') != "" && $request->input('gambar') != null) {
+            if ($request->hasFile('gambar')) {
+                // dd("ada gambar belum Upload");
                 $upload = ROTransaksiHasilModel::where('norm', $request->input('norm'))
                     ->whereDate('tanggal', $request->input('tglRo'))
                     ->first();
-                dd($upload);
+                // dd($upload);
                 if (!$upload) {
+                    // dd("tidak ada gambar belum Upload");
                     // Jika tidak ada data, buat entitas baru
                     $upload = new ROTransaksiHasilModel();
                     $upload->norm = $request->input('norm');
                     $upload->tanggal = $request->input('tglRo');
+
+                    $upload2 = new RoHasilModel(); //db pc RO
+                    $upload2->norm = $request->input('norm');
+                    $upload2->tanggal = $request->input('tglRo');
 
                     // Upload gambar karena data belum ada
                     if ($request->hasFile('gambar')) {
@@ -181,20 +188,23 @@ class ROTransaksiController extends Controller
                             ],
                         ];
 
-                        // Simpan foto dengan memanggil metode simpanFoto()
+                        // Simpan foto db rontgen dengan memanggil metode simpanFoto()
                         $upload->simpanFoto($param);
                     }
                     // Simpan entitas baru ke database
                     $upload->save();
                 } else {
+                    dd("sudah Upload");
                     // Jika data sudah ada, tidak perlu melakukan apapun
                     // Anda bisa menambahkan pesan atau logika tambahan di sini jika diperlukan
                 }
             } else {
-                // dd("no gambar");
+                dd("no gambar");
             }
             // Upload gambar
 
+            $transaksi->save();
+            $petugas->save();
             DB::commit(); // Commit transaksi jika semua berhasil
             return response()->json(['message' => 'Data berhasil disimpan'], 200);
 
@@ -292,7 +302,7 @@ class ROTransaksiController extends Controller
 
                 // Join the array elements into a string separated by commas
                 $proy = !empty($kdProy) ? implode(', ', $kdProy) : null;
-                // $d['proyeksi'] = $proy;
+                $kdProyeksi = $d['proyeksi']['kdProyeksi'] ?? null;
             } else {
                 $proy = $d['proyeksi']['proyeksi'] ?? null;
                 $kdProyeksi = $d['proyeksi']['kdProyeksi'] ?? null;
@@ -340,13 +350,14 @@ class ROTransaksiController extends Controller
                 "noktp" => $d['pasien']['noktp'] ?? null,
                 "nama" => $d['pasien']['nama'] ?? null,
                 "domisili" => $d['pasien']['alamat'] ?? null,
-                "rtrw" => $d['pasien']['rtrw'] ?? null,
                 "jeniskel" => $d['pasien']['jeniskel'] ?? null,
                 "jkel" => $d['pasien']['jkel'] ?? null,
                 "tmptlahir" => $d['pasien']['tmptlahir'] ?? null,
                 "tgllahir" => $d['pasien']['tgllahir'] ?? null,
                 "umur" => $d['pasien']['umur'] ?? null,
                 "nohp" => $d['pasien']['nohp'] ?? null,
+                "alamatDbOld" => ($d['pasien']['kelurahan'] ?? null) . ", " . ($d['pasien']['rtrw'] ?? null) . ", " . ($d['pasien']['kecamatan'] ?? null) . ", " . ($d['pasien']['kabupaten'] ?? null),
+                "rtrw" => $d['pasien']['rtrw'] ?? null,
                 "provinsi" => $d['pasien']['provinsi'] ?? null,
                 "kabupaten" => $d['pasien']['kabupaten'] ?? null,
                 "kecamatan" => $d['pasien']['kecamatan'] ?? null,
