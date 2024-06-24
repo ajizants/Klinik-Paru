@@ -274,7 +274,30 @@ class ROTransaksiController extends Controller
                 }
             }
 
-            // dd($pasien);
+            $kdProy = [];
+
+            if ($d['kdProyeksi'] === null) {
+                if ($d['pa'] === 1) {
+                    $kdProy[] = 'pa';
+                }
+                if ($d['ap'] === 1) {
+                    $kdProy[] = 'ap';
+                }
+                if ($d['lateral'] === 1) {
+                    $kdProy[] = 'lateral';
+                }
+                if ($d['obliq'] === 1) {
+                    $kdProy[] = 'obliq';
+                }
+
+                // Join the array elements into a string separated by commas
+                $proy = !empty($kdProy) ? implode(', ', $kdProy) : null;
+                // $d['proyeksi'] = $proy;
+            } else {
+                $proy = $d['proyeksi']['proyeksi'] ?? null;
+                $kdProyeksi = $d['proyeksi']['kdProyeksi'] ?? null;
+            }
+
             $res[] = [
                 "notrans" => $d['notrans'],
                 "norm" => $d['norm'],
@@ -361,8 +384,8 @@ class ROTransaksiController extends Controller
                 "kdFilm" => $d['film']['kdFilm'] ?? null,
                 "ukuranFilm" => $d['film']['ukuranFilm'] ?? null,
 
-                "kdProyeksi" => $d['proyeksi']['kdProyeksi'] ?? null,
-                "proyeksi" => $d['proyeksi']['proyeksi'] ?? null,
+                "kdProyeksi" => $kdProyeksi,
+                "proyeksi" => $proy,
                 "pa" => $d['pa'],
                 "ap" => $d['ap'],
                 "lateral" => $d['lateral'],
