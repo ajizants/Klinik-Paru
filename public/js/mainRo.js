@@ -1,5 +1,6 @@
 let tanggalFormat;
 let kdtgl;
+let jk = "";
 function setTglRo() {
     var inputTanggal = document.getElementById("tglRo");
     var tanggalHariIni = new Date();
@@ -20,6 +21,7 @@ async function simpan() {
         var notrans = document.getElementById("notrans").value;
         var norm = document.getElementById("norm").value;
         var nama = document.getElementById("nama").value;
+        var alamat = document.getElementById("alamat").value;
         var tglRo = document.getElementById("tglRo").value;
         var noreg = document.getElementById("noreg").value;
         var pasienRawat = document.querySelector(
@@ -55,6 +57,8 @@ async function simpan() {
         formData.append("notrans", notrans);
         formData.append("norm", norm);
         formData.append("nama", nama);
+        formData.append("alamat", alamat);
+        formData.append("jk", jk);
         formData.append("tglRo", tglRo);
         formData.append("noreg", noreg);
         formData.append("kdFoto", kdFoto);
@@ -86,9 +90,16 @@ async function simpan() {
 
         const responseData = await response.json();
         console.log("Data berhasil disimpan:", responseData);
+        Swal.fire({
+            icon: "success",
+            title:
+                "Data berhasil disimpan,\n Maturnuwun...!!!\n" + responseData,
+        });
 
-        // rstForm();
-        // antrian();
+        rstForm();
+        antrian();
+        antrianSelesai();
+        antrianBlmUpload();
     } catch (error) {
         console.error("Terjadi kesalahan saat menyimpan data:", error);
         // Lakukan sesuatu jika terjadi kesalahan
@@ -148,6 +159,8 @@ async function cariTsRo(norm, tgl) {
                 $("#norm").val(transaksi.pasien.norm || "");
                 $("#nama").val(transaksi.pasien.nama || "");
                 $("#alamat").val(alamat || "");
+                jk = transaksi.pasien.jkel || "";
+                console.log("🚀 ~ cariTsRo ~ jk:", jk);
                 $("#notrans").val(transaksi.notrans || "");
                 $(
                     "input[name=pasienRawat][value=" +

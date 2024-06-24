@@ -35,77 +35,28 @@ class ROTransaksiController extends Controller
         }
 
     }
-
-    // public function addTransaksiRo(Request $request)
-    // {
-    //     try {
-    //         // Buat instance baru dari model ROTransaksiModel
-    //         $transaksi = new ROTransaksiModel();
-
-    //         // Isi properti model dengan data dari permintaan
-    //         $transaksi->notrans = $request->input('notrans');
-    //         $transaksi->norm = $request->input('norm');
-    //         $transaksi->tgltrans = $request->input('tglRo');
-    //         $transaksi->noreg = $request->input('noreg');
-    //         $transaksi->kdFoto = $request->input('kdFoto');
-    //         $transaksi->ma = $request->input('ma');
-    //         $transaksi->kv = $request->input('kv');
-    //         $transaksi->s = $request->input('s');
-    //         $transaksi->jmlExpose = $request->input('jmlExpose');
-    //         $transaksi->jmlFilmDipakai = $request->input('jmlFilmDipakai');
-    //         $transaksi->jmlFilmRusak = $request->input('jmlFilmRusak');
-    //         $transaksi->kdMesin = $request->input('kdMesin');
-    //         $transaksi->kdProyeksi = $request->input('kdProyeksi');
-    //         $transaksi->layanan = $request->input('layanan');
-    //         // $transaksi->p_rontgen = $request->input('p_rontgen');
-    //         // $transaksi->dokter = $request->input('dokter');
-
-    //         // Simpan data ke dalam database
-    //         $transaksi->save();
-
-    //         // Jika ingin memberikan respons JSON, bisa seperti ini:
-
-    //         // Mengunggah file gambar
-    //         if ($request->hasFile('gambar')) {
-    //             // Mendapatkan file yang diunggah
-    //             $gambar = $request->file('gambar');
-
-    //             // Menyimpan file gambar ke dalam direktori yang ditentukan
-    //             // $gambarPath = $gambar->store('172.16.10.88/ro/file', 'public');
-    //             $gambarPath = $gambar->store('hasilRo', 'ro_storage');
-
-    //             $roTransaksiHasiFoto = new ROTransaksiHasilModel();
-    //             $roTransaksiHasiFoto->norm = $request->input('norm');
-    //             $roTransaksiHasiFoto->tanggal = $request->input('tglRo');
-    //             $roTransaksiHasiFoto->foto = $gambarPath; // Menyimpan path foto dalam database
-    //             $roTransaksiHasiFoto->save();
-    //         }
-
-    //         return response()->json(['message' => 'Data berhasil disimpan'], 200);
-
-    //     } catch (\Exception $e) {
-    //         // Tangani kesalahan
-    //         return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
-    //     }
-    // }
     public function addTransaksiRo(Request $request)
     {
 
-        // $gambar = $request->file('gambar');
-        // dd($gambar);
         DB::beginTransaction(); // Mulai transaksi
 
         try {
+            $massage = '';
+            $msgFile = '';
             // Cari data berdasarkan notrans
             $transaksi = ROTransaksiModel::where('notrans', $request->input('notrans'))->first();
             if (!$transaksi) {
                 // Jika tidak ada, buat entitas baru
                 $transaksi = new ROTransaksiModel();
+                $transaksi->notrans = $request->input('notrans');
+                $massage = 'Transaksi Baru';
             }
 
             // Isi properti model dengan data dari permintaan
-            $transaksi->notrans = $request->input('notrans');
             $transaksi->norm = $request->input('norm');
+            $transaksi->nama = $request->input('nama');
+            $transaksi->alamat = $request->input('alamat');
+            $transaksi->jk = $request->input('jk');
             $transaksi->tgltrans = $request->input('tglRo');
             $transaksi->noreg = $request->input('noreg');
             $transaksi->pasienRawat = $request->input('pasienRawat');
@@ -128,6 +79,7 @@ class ROTransaksiController extends Controller
             Log::info('Data yang akan disimpan:', $transaksi->toArray());
 
             // Simpan data ke dalam database
+            $transaksi->save();
 
             // Simpan transaksi petugas, cari data berdasarkan notrans, jika ada update, jika tidak ada create
             $petugas = TransPetugasModel::where('notrans', $request->input('notrans'))->first();
@@ -139,74 +91,72 @@ class ROTransaksiController extends Controller
             $petugas->p_dokter_poli = $request->input('dokter');
             $petugas->p_rontgen = $request->input('p_rontgen');
 
-            //if gambar not "" or null
+            // Simpan data petugas ke dalam database
+            $petugas->save();
+
+            // Upload gambar
             if ($request->hasFile('gambar')) {
-                // dd("ada gambar belum Upload");
+                // dd($request->file('gambar'));
                 $upload = ROTransaksiHasilModel::where('norm', $request->input('norm'))
                     ->whereDate('tanggal', $request->input('tglRo'))
                     ->first();
-                // dd($upload);
+
                 if (!$upload) {
-                    // dd("tidak ada gambar belum Upload");
                     // Jika tidak ada data, buat entitas baru
                     $upload = new ROTransaksiHasilModel();
                     $upload->norm = $request->input('norm');
                     $upload->tanggal = $request->input('tglRo');
-
-                    $upload2 = new RoHasilModel(); //db pc RO
-                    $upload2->norm = $request->input('norm');
-                    $upload2->tanggal = $request->input('tglRo');
+                    $upload->nama = $request->input('nama');
+                    $tanggalBersih = preg_replace("/[^0-9]/", "", $request->input('tglRo'));
+                    $namaFile = $tanggalBersih . '_' . $request->input('norm') . '.' . pathinfo($request->file('gambar')->getClientOriginalName(), PATHINFO_EXTENSION);
+                    $upload->foto = $namaFile;
 
                     // Upload gambar karena data belum ada
-                    if ($request->hasFile('gambar')) {
-                        $file = $request->file('gambar');
-                        // dd($file);
-                        $fileName = $file->getClientOriginalName();
-                        $filePath = $file->getPathname();
+                    $file = $request->file('gambar');
+                    $fileName = $file->getClientOriginalName();
+                    $filePath = $file->getPathname();
 
-                        $param = [
-                            [
-                                'name' => 'norm',
-                                'contents' => $request->input('norm'),
-                            ],
-                            [
-                                'name' => 'notrans',
-                                'contents' => $request->input('notrans'),
-                            ],
-                            [
-                                'name' => 'tanggal',
-                                'contents' => $request->input('tglRo'),
-                            ],
-                            [
-                                'name' => 'nama',
-                                'contents' => $request->input('nama'),
-                            ],
-                            [
-                                'name' => 'foto',
-                                'contents' => fopen($filePath, 'r'),
-                                'filename' => $fileName,
-                            ],
-                        ];
+                    $param = [
+                        [
+                            'name' => 'norm',
+                            'contents' => $request->input('norm'),
+                        ],
+                        [
+                            'name' => 'notrans',
+                            'contents' => $request->input('notrans'),
+                        ],
+                        [
+                            'name' => 'tanggal',
+                            'contents' => $request->input('tglRo'),
+                        ],
+                        [
+                            'name' => 'nama',
+                            'contents' => $request->input('nama'),
+                        ],
+                        [
+                            'name' => 'foto',
+                            'contents' => fopen($filePath, 'r'),
+                            'filename' => $fileName,
+                        ],
+                    ];
 
-                        // Simpan foto db rontgen dengan memanggil metode simpanFoto()
-                        $upload->simpanFoto($param);
-                    }
-                    // Simpan entitas baru ke database
+                    // Simpan foto db rontgen dengan memanggil metode simpanFoto()
+                    $upload->simpanFoto($param);
                     $upload->save();
+
+                    // $upload2->save();
+
+                    $msgFile = "Foto Thorax berhasil diupload";
                 } else {
-                    dd("sudah Upload");
+                    $msgFile = "Foto Thorax sudah ada";
                     // Jika data sudah ada, tidak perlu melakukan apapun
                     // Anda bisa menambahkan pesan atau logika tambahan di sini jika diperlukan
                 }
-            } else {
-                dd("no gambar");
             }
-            // Upload gambar
 
-            $transaksi->save();
-            $petugas->save();
+            // $mass
             DB::commit(); // Commit transaksi jika semua berhasil
-            return response()->json(['message' => 'Data berhasil disimpan'], 200);
+            return response()->json(['message' => $massage . '. Data berhasil disimpan. ' . $msgFile], 200);
 
         } catch (\Exception $e) {
             DB::rollback(); // Rollback transaksi jika terjadi kesalahan
@@ -258,7 +208,7 @@ class ROTransaksiController extends Controller
         $res = [];
         // $kominfoModel = new KominfoModel();
         foreach ($data as $d) {
-            // $pasien = $kominfoModel->pasienRequest($d['norm']);
+            // Cari Layanan
             if ($d['layanan'] === "" || $d['layanan'] === null) {
                 if ($d['kunjungan']['kkelompok'] == "1") {
                     $d['layanan'] = "UMUM";
@@ -269,6 +219,7 @@ class ROTransaksiController extends Controller
                 }
             }
 
+            //Cari Kondisi RO
             if ($d['ma'] === null && $d['s'] === null && $d['kv'] === null) {
                 $d['kondisiRo'] = $d['kondisiOld']['kondisiRo'] ?? null;
             } else {
@@ -284,8 +235,8 @@ class ROTransaksiController extends Controller
                 }
             }
 
+            //Cari Proyeksi
             $kdProy = [];
-
             if ($d['kdProyeksi'] === null) {
                 if ($d['pa'] === 1) {
                     $kdProy[] = 'pa';
@@ -307,6 +258,10 @@ class ROTransaksiController extends Controller
                 $proy = $d['proyeksi']['proyeksi'] ?? null;
                 $kdProyeksi = $d['proyeksi']['kdProyeksi'] ?? null;
             }
+
+            // Cari Alamat
+            // $alamatFix=[];
+            // if($[])
 
             $res[] = [
                 "notrans" => $d['notrans'],
@@ -490,17 +445,4 @@ class ROTransaksiController extends Controller
 
         return response()->json($response, 200, [], JSON_PRETTY_PRINT);
     }
-
-    // public function addHasilRo(Request $request){
-    //     $fotoPath = $request->file('foto')->store('public/foto');
-
-    //     // Buat entri baru dalam tabel ROTransaksiHasiFoto
-    //     $roTransaksiHasiFoto = new ROTransaksiHasiFoto();
-    //     $roTransaksiHasiFoto->norm = $validatedData['norm'];
-    //     $roTransaksiHasiFoto->tanggal = $validatedData['tanggal'];
-    //     $roTransaksiHasiFoto->foto = $fotoPath; // Menyimpan path foto dalam database
-    //     $roTransaksiHasiFoto->save();
-
-    //     return response()->json(['message' => 'Data berhasil disimpan'], 201);
-    // }
 }
