@@ -42,15 +42,32 @@ function validateAndSubmit() {
     var error = false;
 
     inputsToValidate.forEach(function (inputId) {
-        var inputValue = document.getElementById(inputId).value.trim();
+        var inputElement = document.getElementById(inputId);
+        var inputValue = inputElement.value.trim();
+
         if (inputValue === "") {
-            document.getElementById(inputId).classList.add("input-error");
+            if ($(inputElement).hasClass("select2-hidden-accessible")) {
+                // Select2 element
+                $(inputElement)
+                    .next(".select2-container")
+                    .addClass("input-error");
+            } else {
+                // Regular input element
+                inputElement.classList.add("input-error");
+            }
             error = true;
         } else {
-            document.getElementById(inputId).classList.remove("input-error");
+            if ($(inputElement).hasClass("select2-hidden-accessible")) {
+                // Select2 element
+                $(inputElement)
+                    .next(".select2-container")
+                    .removeClass("input-error");
+            } else {
+                // Regular input element
+                inputElement.classList.remove("input-error");
+            }
         }
     });
-
     if (error) {
         // Tampilkan pesan error menggunakan Swal jika ada input yang kosong
         Swal.fire({
@@ -139,16 +156,23 @@ async function simpan() {
 
         const responseData = await response.json();
         console.log("Data berhasil disimpan:", responseData);
+        $msgThorax = responseData.data.foto_thorax;
+        $msgTrans = responseData.data.transaksi;
+        console.log("🚀 ~ simpan ~ $msgThorax:", $msgThorax);
+
         Swal.fire({
             icon: "success",
             title:
-                "Data berhasil disimpan,\n Maturnuwun...!!!\n" + responseData,
+                "Data berhasil disimpan,\n \n" +
+                "Maturnuwun...!!" +
+                "\n\nKeterangan: " +
+                $msgTrans +
+                ", " +
+                $msgThorax,
         });
 
         rstForm();
-        antrian();
-        antrianSelesai();
-        antrianBlmUpload();
+        updateAntrian();
     } catch (error) {
         console.error("Terjadi kesalahan saat menyimpan data:", error.massage);
 
@@ -351,15 +375,6 @@ function rstForm() {
 }
 var gambarInput = document.getElementById("fileRo");
 
-// gambarInput.addEventListener("change", function () {
-//     var gambar = this.files[0];
-//     if (gambar) {
-//         console.log("Nama file:", gambar.name);
-//     } else {
-//         console.log("File belum dipilih");
-//     }
-// });
-
 function fetchDataAntrian(tanggal, callback) {
     $.ajax({
         url: "/api/noAntrianKominfo",
@@ -544,7 +559,37 @@ function antrianSelesai() {
         }
     });
 }
-// function initializeDataAntrianSelesai(response) {
+// function antrianTunggu() {
+//     $("#loadingSpinner").show();
+//     var tanggal = $("#tanggal").val();
+
+//     fetchDataAntrian(tanggal, function (response) {
+//         // $("#loadingSpinner").hide();
+
+//         // Filter data hanya untuk status "Selesai"
+//         var filteredData = response.response.data.filter(function (item) {
+//             return item.status === "Sudah Selesai";
+//         });
+
+//         filteredData.forEach(function (item) {
+//             var tgl = $("#tanggal").val();
+//             item.tgl = tgl;
+//             item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+//             onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
+//         });
+//         // Check if DataTable already initialized
+//         if ($.fn.DataTable.isDataTable("#daftarSelesai")) {
+//             var table = $("#daftarSelesai").DataTable();
+
+//             // Clear existing data, add new filtered data, and redraw table
+//             table.clear().rows.add(filteredData).draw();
+//         } else {
+//             // Initialize DataTable with the filtered data
+//             initializeDataAntrianSelesai({ response: { data: filteredData } });
+//         }
+//     });
+// }
+// function initializeDataAntrianTunggu(response) {
 //     // Filter data hanya untuk status "Selesai"
 //     var filteredData = response.response.data.filter(function (item) {
 //         return item.status === "Sudah Selesai";
@@ -682,17 +727,33 @@ function selesai() {
     $("#dAntrian").hide();
     $("#dSelesai").show();
     $("#dUpload").hide();
+    $("#dTunggu").hide();
 }
 
-function tunggu() {
+function allList() {
     $("#dAntrian").show();
     $("#dSelesai").hide();
     $("#dUpload").hide();
+    $("#dTunggu").hide();
 }
+
 function blmUpload() {
     $("#dAntrian").hide();
     $("#dSelesai").hide();
     $("#dUpload").show();
+    $("#dTunggu").hide();
+}
+
+function tunggu() {
+    $("#dAntrian").hide();
+    $("#dSelesai").hide();
+    $("#dUpload").hide();
+    $("#dTunggu").show();
+}
+function updateAntrian() {
+    antrian();
+    antrianSelesai();
+    antrianBlmUpload();
 }
 
 window.addEventListener("load", function () {
@@ -707,10 +768,7 @@ window.addEventListener("load", function () {
     populateKv();
     populateMa();
     populateS();
-    antrian();
-    antrianSelesai();
-    antrianBlmUpload();
-
+    updateAntrian();
     $("#norm").on("keyup", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();

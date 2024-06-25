@@ -15,13 +15,16 @@
             </div>
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a type="button" class="nav-link active bg-blue" onclick="selesai();"><b>Selesai</b></a>
+                    <a type="button" class="nav-link active bg-blue" onclick="tunggu();"><b>Tunggu</b></a>
                 </li>
                 <li class="nav-item">
                     <a type="button" class="nav-link" onclick="blmUpload();"><b>Belum Upoload</b></a>
                 </li>
                 <li class="nav-item">
-                    <a type="button" class="nav-link " onclick="tunggu();"><b>Antrian
+                    <a type="button" class="nav-link" onclick="selesai();"><b>Selesai</b></a>
+                </li>
+                <li class="nav-item">
+                    <a type="button" class="nav-link " onclick="allList();"><b>Antrian
                             All</b></a>
                 </li>
                 <div class="input-group col d-flex justify-content-end mr-5">
@@ -34,10 +37,10 @@
                     </div>
                 </div>
             </ul>
-            <div id="dAntrian" class="card-body card-body-hidden p-2" style="display: none;">
-                <h5 class="mb-0 text-center"><b>Data Antrian Semua</b></h5>
+            <div id="dTunggu" class="card-body card-body-hidden p-2">
+                <h5 class="mb-0 text-center"><b>Daftar Tunggu</b></h5>
                 <div class="table-responsive pt-2 px-2">
-                    <table id="dataAntrian" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
+                    <table id="daftarTunggu" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
                         <thead class="bg bg-warning">
                             <tr>
@@ -57,7 +60,30 @@
                     </table>
                 </div>
             </div>
-            <div id="dSelesai" class="card-body card-body-hidden p-2">
+            <div id="dAntrian" class="card-body card-body-hidden p-2" style="display: none;">
+                <h5 class="mb-0 text-center"><b>Data Antrian Semua</b></h5>
+                <div class="table-responsive pt-2 px-2">
+                    <table id="dataAntrian" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
+                        cellspacing="0">
+                        <thead class="bg bg-secondary">
+                            <tr>
+                                <th width="15px">Aksi</th>
+                                <th width="15px">status</th>
+                                <th>Tanggal</th>
+                                <th>Urut</th>
+                                <th>Jaminan</th>
+                                <th>No RM</th>
+                                <th class="col-3">Nama Pasien</th>
+                                <th>Poli</th>
+                                <th class="col-3">Dokter</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="dSelesai" class="card-body card-body-hidden p-2" style="display: none;">
                 <h5 class="mb-0 text-center"><b>Data Antrian Selesai Transaksi</b></h5>
                 <div class="table-responsive pt-2 px-2">
                     <table id="daftarSelesai" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"

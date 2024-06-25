@@ -15,8 +15,8 @@ class ROTransaksiHasilModel extends Model
     public function simpanFoto1($param)
     {
         $client = new Client();
-        $url = 'http://172.16.10.88/ro/upload.php';
-        // $url = 'http://127.0.0.1:8006/ro/upload.php';
+        // $url = 'http://172.16.10.88/ro/upload.php';
+        $url = 'http://127.0.0.1:8006/ro/upload.php';
         try {
             $response = $client->request('POST', $url, [
                 'multipart' => $param,
@@ -35,8 +35,7 @@ class ROTransaksiHasilModel extends Model
     public function simpanFoto($param)
     {
         $client = new Client();
-        $url = 'http://172.16.10.88/ro/upload.php';
-
+        $url = env('APP_URL_UPLOAD');
         try {
             $response = $client->request('POST', $url, [
                 'multipart' => $param,

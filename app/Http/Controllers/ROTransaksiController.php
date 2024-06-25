@@ -82,11 +82,10 @@ class ROTransaksiController extends Controller
                 // Jika tidak ada, buat entitas baru
                 $transaksi = new ROTransaksiModel();
                 $transaksi->notrans = $request->input('notrans');
-                $massage = 'Transaksi Baru';
+                $massage = 'Transaksi Baru...!!';
+            } else {
+                $massage = 'Transaksi Update...!!';
             }
-
-            $massage = 'Transaksi Update';
-            // dd($massage);
 
             // Isi properti model dengan data dari permintaan
             $transaksi->norm = $request->input('norm');
@@ -111,9 +110,6 @@ class ROTransaksiController extends Controller
             $transaksi->selesai = 1;
             $transaksi->kdKondisiRo = 55;
 
-            // Tambahkan informasi debug
-            Log::info('Data yang akan disimpan:', $transaksi->toArray());
-
             // Simpan data ke dalam database
             $transaksi->save();
 
@@ -130,87 +126,94 @@ class ROTransaksiController extends Controller
             // Simpan data petugas ke dalam database
             $petugas->save();
 
-            // Upload gambar
-            if ($request->hasFile('gambar')) {
-                // dd($request->file('gambar'));
-                $upload = ROTransaksiHasilModel::where('norm', $request->input('norm'))
-                    ->whereDate('tanggal', $request->input('tglRo'))
-                    ->first();
+            // Commit transaksi data utama
+            DB::commit();
 
-                if (!$upload) {
+            // Mulai transaksi untuk upload gambar
+            DB::beginTransaction();
+            try {
+                if ($request->hasFile('gambar')) {
+                    $upload = ROTransaksiHasilModel::where('norm', $request->input('norm'))
+                        ->whereDate('tanggal', $request->input('tglRo'))
+                        ->first();
 
-                    // Jika tidak ada data, buat entitas baru
-                    $upload = new ROTransaksiHasilModel();
-                    $upload->norm = $request->input('norm');
-                    $upload->tanggal = $request->input('tglRo');
-                    $upload->nama = $request->input('nama');
-                    $tanggalBersih = preg_replace("/[^0-9]/", "", $request->input('tglRo'));
-                    $namaFile = $tanggalBersih . '_' . $request->input('norm') . '.' . pathinfo($request->file('gambar')->getClientOriginalName(), PATHINFO_EXTENSION);
-                    $upload->foto = $namaFile;
+                    if (!$upload) {
+                        // Jika tidak ada data, buat entitas baru
+                        $upload = new ROTransaksiHasilModel();
+                        $upload->norm = $request->input('norm');
+                        $upload->tanggal = $request->input('tglRo');
+                        $upload->nama = $request->input('nama');
+                        $tanggalBersih = preg_replace("/[^0-9]/", "", $request->input('tglRo'));
+                        $namaFile = $tanggalBersih . '_' . $request->input('norm') . '.' . pathinfo($request->file('gambar')->getClientOriginalName(), PATHINFO_EXTENSION);
+                        $upload->foto = $namaFile;
 
-                    // Upload gambar karena data belum ada
-                    $file = $request->file('gambar');
-                    $fileName = $file->getClientOriginalName();
-                    $filePath = $file->getPathname();
+                        // Upload gambar karena data belum ada
+                        $file = $request->file('gambar');
+                        $fileName = $file->getClientOriginalName();
+                        $filePath = $file->getPathname();
 
-                    $param = [
-                        [
-                            'name' => 'norm',
-                            'contents' => $request->input('norm'),
-                        ],
-                        [
-                            'name' => 'notrans',
-                            'contents' => $request->input('notrans'),
-                        ],
-                        [
-                            'name' => 'tanggal',
-                            'contents' => $request->input('tglRo'),
-                        ],
-                        [
-                            'name' => 'nama',
-                            'contents' => $request->input('nama'),
-                        ],
-                        [
-                            'name' => 'foto',
-                            'contents' => fopen($filePath, 'r'),
-                            'filename' => $fileName,
-                        ],
-                    ];
+                        $param = [
+                            [
+                                'name' => 'norm',
+                                'contents' => $request->input('norm'),
+                            ],
+                            [
+                                'name' => 'notrans',
+                                'contents' => $request->input('notrans'),
+                            ],
+                            [
+                                'name' => 'tanggal',
+                                'contents' => $request->input('tglRo'),
+                            ],
+                            [
+                                'name' => 'nama',
+                                'contents' => $request->input('nama'),
+                            ],
+                            [
+                                'name' => 'foto',
+                                'contents' => fopen($filePath, 'r'),
+                                'filename' => $fileName,
+                            ],
+                        ];
 
-                    // Simpan foto db rontgen dengan memanggil metode simpanFoto()
-                    $ket_upload = $this->simpanFoto($param);
-                    $upload->save();
-
+                        // Simpan foto db rontgen dengan memanggil metode simpanFoto()
+                        $keterangan_upload = $upload->simpanFoto($param);
+                        //ambil message dari respon
+                        $ket_upload = $keterangan_upload['message'];
+                        $upload->save();
+                        DB::commit(); // Commit transaksi jika semua berhasil
+                    } else {
+                        $ket_upload = 'Sudah ada foto thorax yang diupload';
+                    }
                 } else {
-                    $ket_upload = 'Sudah ada foto thorax yang diupload';
-                }
-            } else {
-                $upload = ROTransaksiHasilModel::where('norm', $request->input('norm'))
-                    ->whereDate('tanggal', $request->input('tglRo'))
-                    ->first();
+                    $upload = ROTransaksiHasilModel::where('norm', $request->input('norm'))
+                        ->whereDate('tanggal', $request->input('tglRo'))
+                        ->first();
 
-                if (!$upload) {
-                    $ket_upload = 'Tidak ada foto thorax yang dipilih untuk di upload';
-                } else {
-                    $ket_upload = 'Sudah ada foto thorax yang diupload';
+                    if (!$upload) {
+                        $ket_upload = 'Tidak ada foto thorax yang dipilih untuk di upload';
+                    } else {
+                        $ket_upload = 'Sudah ada foto thorax yang diupload';
+                    }
                 }
+
+                $resMsg = [
+                    'metadata' => [
+                        'message' => 'Data berhasil disimpan',
+                        'status' => 200,
+                    ],
+                    'data' => [
+                        'transaksi' => $massage,
+                        'foto_thorax' => $ket_upload,
+                    ],
+                ];
+
+                return response()->json($resMsg, 200, [], JSON_PRETTY_PRINT);
+            } catch (\Exception $e) {
+                DB::rollback(); // Rollback transaksi jika terjadi kesalahan
+                Log::error('Terjadi kesalahan saat mengupload gambar: ' . $e->getMessage());
+                return response()->json(['message' => 'Terjadi kesalahan saat mengupload gambar: ' . $e->getMessage()], 500);
             }
-
-            $resMsg = [
-                'metadata' => [
-                    'message' => 'Data berhasil disimpan',
-                    'status' => 200,
-                ],
-                'Data' => [
-                    'Transaksi' => $massage,
-                    //respon dari upload gambar
-                    'Foto_Thorax' => $ket_upload,
-                ],
-            ];
-
-            DB::commit(); // Commit transaksi jika semua berhasil
-            return response()->json($resMsg, 200);
-
         } catch (\Exception $e) {
             DB::rollback(); // Rollback transaksi jika terjadi kesalahan
             Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
