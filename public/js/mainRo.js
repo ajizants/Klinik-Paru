@@ -240,6 +240,7 @@ async function cariTsRo(norm, tgl) {
                 $("#nama").val(transaksi.pasien.nama || "");
                 $("#alamat").val(alamat || "");
                 jk = transaksi.pasien.jkel || "";
+                $("#jk") = transaksi.pasien.jkel || "";
                 console.log("🚀 ~ cariTsRo ~ jk:", jk);
                 $("#notrans").val(transaksi.notrans || "");
                 $(

@@ -47,9 +47,13 @@
                                                 <label for="nama"
                                                     class="col-sm-1 col-form-label font-weight-bold  mb-0">Nama
                                                     :</label>
-                                                <div class="col-sm-5">
+                                                <div class="col-sm-4">
                                                     <input type="text" id="nama" class="form-control bg-white"
                                                         placeholder="Nama Pasien" readonly>
+                                                </div>
+                                                <div class="col-sm-1">
+                                                    <input type="text" id="jk" class="form-control bg-white"
+                                                        placeholder="JK Pasien" readonly>
                                                 </div>
                                             </div>
                                             <div class="form-grup row mt-2">
@@ -101,7 +105,8 @@
                                                         </label>
 
                                                         <label for="pasienRawat1">
-                                                            <input type="radio" name="pasienRawat" value="1"> IGD
+                                                            <input type="radio" name="pasienRawat" value="1">
+                                                            IGD
                                                             / IRNA
                                                         </label>
                                                     </div>

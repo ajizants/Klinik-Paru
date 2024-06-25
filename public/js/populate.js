@@ -173,6 +173,12 @@ function cariKominfo(norm, tgl) {
                         $("#dokter")
                             .val(pendaftaran.nip_dokter)
                             .trigger("change");
+                        //cari jika ada element jk maka isi jk
+                        if ($("#jk").length) {
+                            $("#jk").val(pasien.jenis_kelamin_nama);
+                        }
+                        jk = pasien.jenis_kelamin_nama;
+
                         setTimeout(function () {
                             Swal.close();
                             scrollToInputSection();
