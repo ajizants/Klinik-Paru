@@ -31,6 +31,11 @@ input::-webkit-input-placeholder {
     font: 1rem;
 }
 
+.input-error {
+    border: 1px solid red;
+    background-color: #fee;
+}
+
 .position-absolute {
     position: absolute;
     left: 50%;

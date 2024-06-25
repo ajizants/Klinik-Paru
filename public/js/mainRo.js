@@ -16,6 +16,54 @@ function setTglRo() {
     kdtgl = kdtglFormat.replace(/-/g, "");
 }
 
+function validateAndSubmit() {
+    var inputsToValidate = [
+        "notrans",
+        "norm",
+        "nama",
+        "alamat",
+        "tglRo",
+        "noreg",
+        "kdFoto",
+        "kdFilm",
+        "ma",
+        "kv",
+        "s",
+        "jmlExpose",
+        "jmlFilmDipakai",
+        "jmlFilmRusak",
+        "kdMesin",
+        "kdProyeksi",
+        "layanan",
+        "p_rontgen",
+        "dokter",
+    ];
+
+    var error = false;
+
+    inputsToValidate.forEach(function (inputId) {
+        var inputValue = document.getElementById(inputId).value.trim();
+        if (inputValue === "") {
+            document.getElementById(inputId).classList.add("input-error");
+            error = true;
+        } else {
+            document.getElementById(inputId).classList.remove("input-error");
+        }
+    });
+
+    if (error) {
+        // Tampilkan pesan error menggunakan Swal jika ada input yang kosong
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Ada data yang masih kosong! Mohon lengkapi semua data.",
+        });
+    } else {
+        // Lakukan pengiriman data atau proses selanjutnya jika semua data valid
+        simpan(); // Contoh: Panggil fungsi simpan() jika semua data valid
+    }
+}
+
 async function simpan() {
     try {
         var notrans = document.getElementById("notrans").value;
@@ -85,7 +133,8 @@ async function simpan() {
         });
 
         if (!response.ok) {
-            throw new Error("Network response was not ok");
+            const errorData = await response.json();
+            throw new Error(errorData.message || response.statusText);
         }
 
         const responseData = await response.json();
@@ -101,14 +150,21 @@ async function simpan() {
         antrianSelesai();
         antrianBlmUpload();
     } catch (error) {
-        console.error("Terjadi kesalahan saat menyimpan data:", error);
-        // Lakukan sesuatu jika terjadi kesalahan
+        console.error("Terjadi kesalahan saat menyimpan data:", error.massage);
+
+        // Display error message using SweetAlert
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Terjadi kesalahan saat menyimpan data: " + error.message,
+        });
     }
 }
 
 async function cariTsRo(norm, tgl) {
     // Format the norm input field
     // var appUrlRo = "http://172.16.10.88/ro/file/";
+    rstForm();
     formatNorm($("#norm"));
     var norm = norm ? norm : $("#norm").val();
     var tgl = tgl ? tgl : $("#tglRO").val();
@@ -463,7 +519,7 @@ function antrianSelesai() {
     var tanggal = $("#tanggal").val();
 
     fetchDataAntrian(tanggal, function (response) {
-        $("#loadingSpinner").hide();
+        // $("#loadingSpinner").hide();
 
         // Filter data hanya untuk status "Selesai"
         var filteredData = response.response.data.filter(function (item) {
@@ -594,7 +650,7 @@ function antrianBlmUpload() {
     var tanggal = $("#tanggal").val();
 
     fetchDataAntrian(tanggal, function (response) {
-        $("#loadingSpinner").hide();
+        // $("#loadingSpinner").hide();
 
         // Filter data hanya untuk status "Selesai"
         var filteredData = response.response.data.filter(function (item) {

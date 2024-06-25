@@ -257,7 +257,9 @@
                                         <a class="btn btn-danger" id="tblBatal" onclick="rstForm();">Batal</a>
                                     </div>
                                     <div class="col-auto">
-                                        <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>
+                                        {{-- <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a> --}}
+                                        <a class="btn btn-success" id="tblSimpan"
+                                            onclick="validateAndSubmit();">Simpan</a>
                                     </div>
                                 </div>
                             </form>
