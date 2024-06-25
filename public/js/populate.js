@@ -5,13 +5,12 @@ var Toast = Swal.mixin({
     timer: 3000,
 });
 
-function fetchAntrianAll(tanggal, ruang, callback) {
+function fetchDataAntrianAll(tanggal, callback) {
     $.ajax({
-        url: "/api/antrianAll",
-        type: "POST",
+        url: "/api/noAntrianKominfo",
+        type: "post",
         data: {
-            date: tanggal,
-            ruang: ruang,
+            tanggal: tanggal,
         },
         success: function (response) {
             callback(response);
@@ -19,75 +18,71 @@ function fetchAntrianAll(tanggal, ruang, callback) {
         error: function (xhr) {},
     });
 }
-function initializeAntrianAll(response) {
-    response.forEach(function (item) {
-        item.aksi = `<a href="#" class="aksi-button px-2 btn btn-sm btn-danger"
-        data-norm="${item.norm}"
-        data-nama="${item.namapasien}"
-        data-dokter="${item.dokterpoli}"
-        data-kddokter="${item.nip}"
-        data-alamat="${alamat}"
-        data-kelompok="${item.kelompok}"
-        data-notrans="${item.notrans}"
-        data-nik="${item.noktp}"
-        data-tgltrans="${item.tgltrans}"><i class="fas fa-pen-to-square"></i></a>`;
-    });
+function initializeDataAntrianAll(response) {
+    // Check if response has data array
+    if (response && response.response && response.response.data) {
+        // Iterate over each item in the data array
+        response.response.data.forEach(function (item) {
+            // Check if pasien_no_rm is not empty
+            if (item.pasien_no_rm) {
+                var tgl = $("#tanggal").val();
+                item.tgl = tgl;
+                item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}');"><i class="fas fa-pen-to-square"></i></a>`;
+            }
+        });
 
-    $("#antrianall").DataTable({
-        data: response,
-        columns: [
-            { data: "aksi", className: "text-center p-2" },
-            { data: "lokasi", className: "col-1 p-2" },
-            { data: "nourut", className: "text-center p-2" },
-            { data: "norm", className: "col-1 text-center p-2" },
-            { data: "layanan", className: "col-1 p-2" },
-            { data: "kunjungan", className: "col-1 p-2" },
-            { data: "namapasien", className: "p-2" },
-            { data: "dokterpoli", className: "p-2" },
-        ],
-        order: [2, "asc"],
-        paging: true,
-        lengthMenu: [
-            [5, 10, 25, 50, -1],
-            [5, 10, 25, 50, "All"],
-        ],
-        pageLength: 10,
-        responsive: true,
-        lengthChange: true,
-        autoWidth: false,
-        buttons: ["copyHtml5", "excelHtml5", "pdfHtml5", "colvis"],
-    });
-    // .buttons()
-    // .container()
-    // .appendTo("#antrianall_wrapper .col-md-6:eq(0)");
+        // Initialize DataTable with processed data
+        $("#antrianall").DataTable({
+            data: response.response.data,
+            columns: [
+                { data: "aksi", className: "text-center p-2 col-1" }, // Action column
+                { data: "tanggal", className: "p-2" }, // Tanggal column
+                { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
+                { data: "penjamin_nama", className: "text-center p-2" }, // No Antrean column
+                { data: "pasien_no_rm", className: "text-center p-2" }, // Pasien No. RM column
+                { data: "pasien_nama", className: "p-2 col-3" }, // Pasien Nama column
+                { data: "poli_nama", className: "p-2" }, // Poli column
+                { data: "dokter_nama", className: "p-2 col-3" }, // Dokter column
+            ],
+            order: [[1, "asc"]], // Order by Antrean Nomor ascending
+        });
+    } else {
+        console.error(
+            "Response format is incorrect or data array is missing:",
+            response
+        );
+        // Handle the case where the response format is incorrect or data array is missing
+    }
 }
-function antrianAll(ruang) {
+
+function antrianAll() {
     $("#loadingSpinner").show();
     var tanggal = $("#tanggal").val();
 
-    fetchAntrianAll(tanggal, ruang, function (response) {
+    fetchDataAntrianAll(tanggal, function (response) {
         $("#loadingSpinner").hide();
+
+        // Check if DataTable already initialized
         if ($.fn.DataTable.isDataTable("#antrianall")) {
             var table = $("#antrianall").DataTable();
-            response.forEach(function (item) {
-                item.aksi = `<a href="#" class="aksi-button px-2 btn btn-sm btn-danger"
-                data-norm="${item.norm}"
-                data-nama="${item.namapasien}"
-                data-dokter="${item.dokterpoli}"
-                data-kddokter="${item.nip}"
-                data-alamat="${alamat}"
-                data-kelompok="${item.kelompok}"
-                data-notrans="${item.notrans}"
-                data-nik="${item.noktp}"
-                data-tgltrans="${item.tgltrans}"><i class="fas fa-pen-to-square"></i></a>`;
+
+            // Modify response data to add action column
+            response.response.data.forEach(function (item) {
+                var tgl = $("#tanggal").val();
+                item.tgl = tgl;
+                item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}');"><i class="fas fa-pen-to-square"></i></a>`;
             });
-            table.clear().rows.add(response).draw();
+
+            // Clear existing data, add new data, and redraw table
+            table.clear().rows.add(response.response.data).draw();
         } else {
-            initializeAntrianAll(response);
+            // Initialize DataTable with the response data
+            initializeDataAntrianAll(response);
         }
     });
 }
-
 //pasien Kominfo
 function cariKominfo(norm, tgl) {
     var normValue = norm ? norm : $("#norm").val();

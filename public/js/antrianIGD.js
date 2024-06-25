@@ -136,7 +136,7 @@ function initializeDataAntrian(response) {
                 });
             }
             item.asktind = asktind;
-            item.index = dataArray.indexOf(item);
+            item.index = dataArray.indexOf(item) + 1;
 
             var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
             item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
@@ -144,7 +144,7 @@ function initializeDataAntrian(response) {
                             data-nama="${item.pasien_nama}"
                             data-dokter="${item.dokter_nama}"
                             data-asktind="${asktind}"
-                            data-kddokter="${item.dokter_username}"
+                            data-kddokter="${item.nip_dokter}"
                             data-alamat="${alamat}"
                             data-layanan="${item.penjamin_nama}"
                             data-notrans="${item.no_trans}"
@@ -167,9 +167,9 @@ function initializeDataAntrian(response) {
                 { data: "index", className: "text-center p-2" },
                 { data: "pasien_no_rm", className: "text-center p-2" },
                 { data: "penjamin_nama", className: "text-center p-2" },
-                { data: "pasien_nama", className: "p-2" },
-                { data: "asktind", className: "p-2" },
-                { data: "dokter_nama", className: "p-2" },
+                { data: "pasien_nama", className: "p-2 col-3" },
+                { data: "asktind", className: "p-2 col-3" },
+                { data: "dokter_nama", className: "p-2 col-3" },
             ],
             order: [
                 [1, "asc"],
@@ -214,7 +214,7 @@ function antrian() {
                         });
                     }
                     item.asktind = asktind;
-                    item.index = dataArray.indexOf(item);
+                    item.index = dataArray.indexOf(item) + 1;
 
                     var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
                     item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
@@ -222,7 +222,7 @@ function antrian() {
                                     data-nama="${item.pasien_nama}"
                                     data-dokter="${item.dokter_nama}"
                                     data-asktind="${asktind}"
-                                    data-kddokter="${item.dokter_username}"
+                                    data-kddokter="${item.nip_dokter}"
                                     data-alamat="${alamat}"
                                     data-layanan="${item.penjamin_nama}"
                                     data-notrans="${item.no_trans}"

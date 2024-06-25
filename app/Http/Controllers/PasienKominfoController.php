@@ -530,7 +530,7 @@ class PasienKominfoController extends Controller
                 $doctorNipMap = [
                     'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
                     'dr. AGIL DANANJAYA, Sp.P' => '9',
-                    'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
+                    'dr. FILLY ULFA KUSUMAWARDANI ' => '198907252019022004',
                     'dr. SIGIT DWIYANTO' => '198903142022031005',
                 ];
 
@@ -592,34 +592,28 @@ class PasienKominfoController extends Controller
 
             // Panggil metode untuk melakukan request
             $data = $model->cpptRequest($params);
-
-            // Filter jika data tindakan tidak ada maka skip
-            // if (isset($data['response']['data']) && is_array($data['response']['data'])) {
-            //     $filteredData = array_filter($data['response']['data'], function ($d) {
-            //         return !empty($d['tindakan']);
-            //     });
-
-            //     $response = [
-            //         'metadata' => [
-            //             'message' => 'Data Pasien Ditemukan',
-            //             'code' => 200,
-            //         ],
-            //         'response' => [
-            //             'data' => $filteredData,
-            //         ],
-            //     ];
-
-            //     // Tampilkan data (atau lakukan apa pun yang diperlukan)
-            //     return response()->json($response);
-            // } else {
-            //     return response()->json(['error' => 'Invalid data format'], 500);
-            // }
+            $doctorNipMap = [
+                'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
+                'dr. AGIL DANANJAYA, Sp.P' => '9',
+                'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
+                'dr. SIGIT DWIYANTO' => '198903142022031005',
+            ];
 
             if (isset($data['response']['data']) && is_array($data['response']['data'])) {
                 $filteredData = array_filter($data['response']['data'], function ($d) {
                     //return all
                     return true;
                 });
+
+                foreach ($filteredData as &$item) {
+                    // Add nip based on dokter_nama
+                    $dokter_nama = $item['dokter_nama'];
+                    if (isset($doctorNipMap[$dokter_nama])) {
+                        $item['nip_dokter'] = $doctorNipMap[$dokter_nama];
+                    } else {
+                        $item['nip_dokter'] = 'Unknown';
+                    }
+                }
 
                 $response = [
                     'metadata' => [
@@ -666,6 +660,20 @@ class PasienKominfoController extends Controller
 
                     $d['status'] = $igd ? 'sudah' : 'belum';
 
+                    $doctorNipMap = [
+                        'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
+                        'dr. AGIL DANANJAYA, Sp.P' => '9',
+                        'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
+                        'dr. SIGIT DWIYANTO' => '198903142022031005',
+                    ];
+
+                    $dokter_nama = $d['dokter_nama'];
+                    if (isset($doctorNipMap[$dokter_nama])) {
+                        $d['nip_dokter'] = $doctorNipMap[$dokter_nama];
+                    } else {
+                        $d['nip_dokter'] = 'Unknown';
+                    }
+
                     return $d;
                 }, $data['response']['data']));
 
@@ -682,6 +690,7 @@ class PasienKominfoController extends Controller
                     ];
 
                     return response()->json($response);
+                    //
                 } else {
                     return response()->json(['error' => 'No valid data found'], 404);
                 }

@@ -15,10 +15,10 @@
             </div>
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active" id="itunggu"><b>Tunggu</b></a>
+                    <a class="nav-link active bg-blue" id="itunggu"><b>Tunggu</b></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="iselesai"><b>Selesai</b></a>
+                    <a class="nav-link" id="iselesai"><b>Antrian All</b></a>
                 </li>
                 <div class="input-group col d-flex justify-content-start ml-5">
                     <input type="date" class="form-control col-sm-2 bg bg-warning" id="tanggal"
@@ -33,16 +33,16 @@
                 <div class="table-responsive pt-2 px-2">
                     <table id="antrianall" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
-                        <thead class="bg bg-teal">
+                        <thead class="bg bg-warning">
                             <tr>
                                 <th width="15px">Aksi</th>
-                                <th width="25px">Lokasi</th>
-                                <th width="15px">No</th>
-                                <th width="15px">NoRM</th>
-                                <th width="15px">Layanan</th>
-                                <th width="36px">Ket</th>
-                                <th width="">Nama</th>
-                                <th width="">Dokter</th>
+                                <th>Tanggal</th>
+                                <th>Urut</th>
+                                <th>Jaminan</th>
+                                <th>No RM</th>
+                                <th class="col-3">Nama Pasien</th>
+                                <th>Poli</th>
+                                <th class="col-3">Dokter</th>
                             </tr>
                         </thead>
                     </table>
