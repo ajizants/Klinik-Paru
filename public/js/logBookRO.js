@@ -17,11 +17,25 @@ function cariRo(tglAwal, tglAkhir, norm) {
         tabletindakan.destroy();
     }
 
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencarikan Log Book...!!!",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+
     $.ajax({
         url: "/api/logBook",
         type: "post",
         data: { norm: norm, tglAkhir: tglAkhir, tglAwal: tglAwal },
         success: function (response) {
+            Swal.fire({
+                icon: "success",
+                title: "Data Log Book Ditemukan...!!!",
+            });
             response.data.forEach(function (item, index) {
                 item.actions = `<a href="" class="edit"
                                     data-id="${item.id}"
@@ -95,6 +109,12 @@ function cariRo(tglAwal, tglAkhir, norm) {
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
+            Swal.fire({
+                icon: "error",
+                title:
+                    "Terjadi kesalahan saat mengambil data pasien...!!!\n" +
+                    error,
+            });
         },
     });
 }
