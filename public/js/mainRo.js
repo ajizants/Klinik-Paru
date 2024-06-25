@@ -158,7 +158,6 @@ async function simpan() {
         console.log("Data berhasil disimpan:", responseData);
         $msgThorax = responseData.data.foto_thorax;
         $msgTrans = responseData.data.transaksi;
-        console.log("🚀 ~ simpan ~ $msgThorax:", $msgThorax);
 
         Swal.fire({
             icon: "success",
@@ -193,8 +192,6 @@ async function cariTsRo(norm, tgl) {
     var norm = norm ? norm : $("#norm").val();
     var tgl = tgl ? tgl : $("#tglRO").val();
     var requestData = { norm: norm, tgl: tgl };
-    console.log("🚀 ~ cariTsRo ~ tgl:", tgl);
-    console.log("🚀 ~ cariTsRo ~ requestData:", requestData);
 
     Swal.fire({
         icon: "info",
@@ -219,11 +216,11 @@ async function cariTsRo(norm, tgl) {
                 // searchRMObat(norm);
                 cariKominfo(norm, tgl);
             } else {
-                throw new Error("Network response was not ok");
                 Swal.fire({
                     icon: "error",
                     title: "Terjadi kesalahan saat mengambil data pasien...!!!",
                 });
+                throw new Error("Network response was not ok");
             }
         } else {
             const data = await response.json();
@@ -231,17 +228,20 @@ async function cariTsRo(norm, tgl) {
             // Ensure data and the 'transaksi_ro' object exist before setting values
             if (data && data.data && data.data.transaksi_ro) {
                 const transaksi = data.data.transaksi_ro;
+                console.log("🚀 ~ cariTsRo ~ transaksi:", transaksi);
                 const petugas = data.data.petugas;
                 const foto = data.data.foto_thorax;
                 var idFoto = foto.id;
-                console.log("🚀 ~ cariTsRo ~ idFoto:", idFoto);
+
+                //ternary check transaksi.jk, if null get from transaksi.pasien.jkel
+                jk = transaksi.jk || transaksi.pasien.jkel;
+                console.log("🚀 ~ cariTsRo ~ jk:", jk);
                 var alamat = `${transaksi.pasien.kelurahan}, ${transaksi.pasien.rtrw}, ${transaksi.pasien.kecamatan}, ${transaksi.pasien.kabupaten}`;
                 $("#norm").val(transaksi.pasien.norm || "");
                 $("#nama").val(transaksi.pasien.nama || "");
                 $("#alamat").val(alamat || "");
-                jk = transaksi.pasien.jkel || "";
-                $("#jk") = transaksi.pasien.jkel || "";
-                console.log("🚀 ~ cariTsRo ~ jk:", jk);
+                // jk = transaksi.pasien.jkel || "";
+                $("#jk").val(transaksi.jk || transaksi.pasien.jkel);
                 $("#notrans").val(transaksi.notrans || "");
                 $(
                     "input[name=pasienRawat][value=" +
@@ -453,7 +453,6 @@ function initializeDataAntrian(response) {
 function antrian() {
     $("#loadingSpinner").show();
     var tanggal = $("#tanggal").val();
-    // console.log("🚀 ~ antrian ~ tanggal:", tanggal);
 
     fetchDataAntrian(tanggal, function (response) {
         $("#loadingSpinner").hide();
@@ -484,7 +483,6 @@ function initializeDataAntrianSelesai(response) {
     var filteredData = response.response.data.filter(function (item) {
         return item.status === "Sudah Selesai";
     });
-    console.log("🚀 ~ filteredData ~ filteredData:", filteredData);
     filteredData.forEach(function (item) {
         var tgl = $("#tanggal").val();
         item.tgl = tgl;
@@ -595,7 +593,6 @@ function antrianSelesai() {
 //     var filteredData = response.response.data.filter(function (item) {
 //         return item.status === "Sudah Selesai";
 //     });
-//     console.log("🚀 ~ filteredData ~ filteredData:", filteredData);
 //     filteredData.forEach(function (item) {
 //         var tgl = $("#tanggal").val();
 //         item.tgl = tgl;
@@ -645,7 +642,6 @@ function initializeDataAntrianBlmUpload(response) {
     var filteredData = response.response.data.filter(function (item) {
         return item.status === "Belum Upload Foto Thorax";
     });
-    console.log("🚀 ~ filteredData ~ filteredData:", filteredData);
     filteredData.forEach(function (item) {
         var tgl = $("#tanggal").val();
         item.tgl = tgl;

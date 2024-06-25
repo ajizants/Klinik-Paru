@@ -437,9 +437,12 @@ class ROTransaksiController extends Controller
                 return $query->where('norm', $norm);
             })
             ->whereBetween('tglTrans', [$tglAwal, $tglAkhir])
+            ->orderBy('tglTrans', 'asc') // Sort by tglTrans ascending
+            ->orderBy('noreg', 'asc') // Sort by noreg ascending
             ->get();
 
         $res = [];
+
         // $kominfoModel = new KominfoModel();
         foreach ($data as $d) {
             // Cari Layanan

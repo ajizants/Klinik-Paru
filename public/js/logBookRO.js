@@ -31,14 +31,19 @@ function cariRo(tglAwal, tglAkhir, norm) {
                                     data-id="${item.id}"
                                     data-norm="${item.norm}"
                                     data-nama="${item.nama}"><i class="fas fa-trash"></i></a>`;
-                item.no = index + 1;
             });
 
             $("#hasilRo")
                 .DataTable({
                     data: response.data,
                     columns: [
-                        { data: "no" },
+                        {
+                            data: null, // Data null akan diisi oleh render function
+                            render: function (data, type, row, meta) {
+                                return meta.row + 1; // Nomor urut mulai dari 1
+                            },
+                            title: "No", // Judul kolom
+                        },
                         { data: "noreg" },
                         { data: "tgltrans" },
                         { data: "norm" },
@@ -46,8 +51,6 @@ function cariRo(tglAwal, tglAkhir, norm) {
                         { data: "layanan" },
                         { data: "jkel" },
                         { data: "alamatDbOld" },
-                        // { data: "kecamatan" },
-                        // { data: "kabupaten" },
                         { data: "nmFoto" },
                         { data: "ukuranFilm" },
                         { data: "kondisiRo" },
@@ -59,7 +62,10 @@ function cariRo(tglAwal, tglAkhir, norm) {
                         { data: "catatan" },
                         { data: "radiografer_nama" },
                     ],
-                    order: [2, "asc"],
+                    // order: [
+                    //     [1, "asc"],
+                    //     [0, "asc"],
+                    // ],
                     autoWidth: false,
                     buttons: [
                         {
