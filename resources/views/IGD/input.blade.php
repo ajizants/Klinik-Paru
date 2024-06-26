@@ -111,7 +111,8 @@
                                                 </div>
                                                 <br>
                                                 <a id="addTindakan"
-                                                    class="btn btn-success d-flex justify-content-center mb-4">+
+                                                    class="btn btn-success d-flex justify-content-center mb-4"
+                                                    onclick="addTindakan();">+
                                                     Tindakan</a>
                                             </form>
                                         </div>
@@ -145,7 +146,7 @@
                                 </div>
                             </div>
 
-                            <div class="container-fluid" id="formbmhp">
+                            <div class="container-fluid" id="formbmhp" style="display:none;">
                                 <div class="form-group row">
                                     <div class="col-sm-4 p-0 card card-warning">
                                         <div class="card-header">
@@ -167,7 +168,8 @@
                                                             id="decreaseBtn">-</a>
                                                         <input type="text"id="qty"
                                                             class="form-control col-5 border border-primary text-center"
-                                                            placeholder="Jumlah">
+                                                            placeholder="Jumlah"
+                                                            oninput="hitungTotalHarga(this.value);">
                                                         <a type="button" class="btn btn-success"
                                                             id="increaseBtn">+</a>
                                                     </div>
@@ -256,10 +258,10 @@
                             </div>
                             <div class="form-row d-flex justify-content-end">
                                 <div class="col-auto">
-                                    <a class="btn btn-danger" id="tblBatal">Batal</a>
+                                    <a class="btn btn-danger" id="tblBatal" onclick="batal();">Batal</a>
                                 </div>
                                 <div class="col-auto">
-                                    <a class="btn btn-success" id="tblSimpan">Selesai</a>
+                                    <a class="btn btn-success" id="tblSimpan" onclick="selesai();">Selesai</a>
                                 </div>
                             </div>
                         </div>

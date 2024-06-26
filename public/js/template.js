@@ -72,9 +72,7 @@ function formatNorm(inputElement) {
         inputElement.val(inputValue.slice(0, 6));
     }
 }
-function scrollToAntrianSection() {
-    $("html, body").animate({ scrollTop: $("#topSection").offset().top }, 500);
-}
+
 function panggilPasien(text) {
     // let synth = window.speechSynthesis;
     let synth = speechSynthesis;
@@ -92,6 +90,7 @@ function setTodayDate() {
     $("#tanggal").val(today);
     $("#tglKunj").val(today);
     $("#tglRO").val(today);
+    $("#tgltrans").val(today);
 }
 
 function scrollToInputSection() {
@@ -102,4 +101,73 @@ function scrollToInputSection() {
 }
 function scrollToTop() {
     $("html, body").animate({ scrollTop: $("#top").offset().top }, 500);
+}
+
+var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+});
+
+function toggleSections(sectionToShow) {
+    var sections = ["#dAntrian", "#dSelesai", "#dBelum", "#dTunggu"];
+    sections.forEach(function (section) {
+        if (section === sectionToShow) {
+            $(section).show();
+        } else {
+            $(section).hide();
+        }
+    });
+}
+
+function selamatBertugas() {
+    let synth = speechSynthesis;
+
+    // Memeriksa dukungan Text-to-Speech API
+    if (synth === undefined) {
+        console.error("Text-to-Speech API is not supported");
+        return;
+    }
+
+    let utterance = new SpeechSynthesisUtterance(
+        "selamat bertugas teman teman, aja kelalen madang, lan aja kelalen gosip, haha haha wkwk wkwk"
+    );
+
+    // Set bahasa ke bahasa Indonesia (id-ID)
+    utterance.lang = "id-ID";
+
+    // Jalankan Text-to-Speech
+    try {
+        synth.speak(utterance);
+    } catch (error) {
+        console.error("Error while attempting to use Text-to-Speech:", error);
+    }
+
+    const jsConfetti = new JSConfetti();
+
+    jsConfetti
+        .addConfetti({})
+        .then(() => jsConfetti.addConfetti())
+        .then(() => {
+            // Create a new element for the greeting message
+            const greetingMessage = document.createElement("div");
+            greetingMessage.textContent = "Selamat Ngodey...!"; // Your greeting message here
+            greetingMessage.style.fontSize = "24px";
+            greetingMessage.style.fontWeight = "bold";
+            greetingMessage.style.color = "indigo";
+            greetingMessage.style.position = "absolute";
+            greetingMessage.style.top = "50%";
+            greetingMessage.style.left = "40%";
+            greetingMessage.style.transform = "translate(-50%, -50%)";
+            greetingMessage.style.animation = "zoomIn 3s"; // Add zoom-in animation
+
+            // Append the greeting message to the document body
+            document.body.appendChild(greetingMessage);
+
+            // Remove the greeting message after 3 seconds
+            setTimeout(() => {
+                document.body.removeChild(greetingMessage);
+            }, 3000);
+        });
 }

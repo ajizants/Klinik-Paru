@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\BMHPIGDInStokModel;
 use App\Models\BMHPModel;
-use App\Models\PetugasModel;
+use App\Models\IGDTransModel;
 use App\Models\TransaksiBMHPModel;
-use App\Models\TransaksiModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
 
 class IgdController extends Controller
 {
@@ -32,14 +30,13 @@ class IgdController extends Controller
             ->groupBy(DB::raw('MONTH(t_kunjungan_tindakan.created_at)'), 'm_kelompok.kelompok')
             ->get();
 
-
         return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
     }
 
     public function cariDataTindakan(Request $request)
     {
         $notrans = $request->input('notrans');
-        $dataTindakan = TransaksiModel::with(['tindakan', 'transbmhp.tindakan', 'transbmhp.bmhp',  'petugas.biodata', 'dokter.biodata'])
+        $dataTindakan = IGDTransModel::with(['tindakan', 'transbmhp.tindakan', 'transbmhp.bmhp', 'petugas.biodata', 'dokter.biodata'])
             ->where('notrans', 'LIKE', '%' . $notrans . '%')
             ->get();
 
@@ -59,7 +56,7 @@ class IgdController extends Controller
         // Pastikan $kdTind memiliki nilai yang valid sebelum menyimpan data
         if ($kdTind !== null) {
             // Membuat instance dari model KunjunganTindakan
-            $kunjunganTindakan = new TransaksiModel();
+            $kunjunganTindakan = new IGDTransModel();
             // Mengatur nilai-nilai kolom
             $kunjunganTindakan->kdTind = $kdTind;
             $kunjunganTindakan->norm = $norm;
@@ -88,7 +85,7 @@ class IgdController extends Controller
         $dokter = $request->input('dokter');
 
         // Cek apakah ID yang diterima adalah ID yang valid dalam database
-        $tindakan = TransaksiModel::find($id);
+        $tindakan = IGDTransModel::find($id);
 
         if (!$tindakan) {
             return response()->json(['message' => 'Data tindakan tidak ditemukan'], 404);
@@ -111,7 +108,7 @@ class IgdController extends Controller
         $id = $request->input('id');
         $idTind = $request->input('id');
         // Cek apakah ID yang diterima adalah ID yang valid dalam database
-        $tindakan = TransaksiModel::find($id);
+        $tindakan = IGDTransModel::find($id);
         $bmhp = TransaksiBMHPModel::find($idTind);
         if (!$tindakan) {
             return response()->json(['message' => 'Data tindakan tidak ditemukan'], 404);
@@ -235,7 +232,6 @@ class IgdController extends Controller
         }
     }
 
-
     private function calculateSisa($stokBaru, $masuk, $keluar)
     {
         // Calculate sisa based on the formula: sisa = stokBaru + masuk - keluar
@@ -245,7 +241,7 @@ class IgdController extends Controller
     {
         $idTind = $request->input('idTind');
         // dd($idTind);
-        $data = TransaksiBMHPModel::with(['bmhp', 'tindakan',])
+        $data = TransaksiBMHPModel::with(['bmhp', 'tindakan'])
             ->where('idTind', 'LIKE', '%' . $idTind . '%')
             ->get();
 

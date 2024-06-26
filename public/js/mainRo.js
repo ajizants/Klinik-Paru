@@ -376,381 +376,102 @@ function rstForm() {
 }
 var gambarInput = document.getElementById("fileRo");
 
-function fetchDataAntrian(tanggal, callback) {
+function updateAntrian() {
+    var tbBlmUpload = $("#daftarUpload");
+    var tbSelesai = $("#daftarSelesai");
+    // var tbTunggu =
+    $("#daftarTunggu").DataTable();
+    antrianAll("ro");
+    antrianTes("ro", "Belum Upload Foto Thorax", tbBlmUpload);
+    antrianTes("ro", "Sudah Selesai", tbSelesai);
+}
+
+function tbAntrianBelumUpload(tabel, antrian) {
+    tabel.DataTable({
+        data: antrian,
+        columns: [
+            { data: "aksi", className: "text-center p-2 col-1" },
+            {
+                data: "status",
+                className: "text-center p-2 col-1",
+                render: function (data, type, row) {
+                    var backgroundColor = "";
+                    switch (data) {
+                        case "Belum Ada Transaksi":
+                            backgroundColor = "danger";
+                            break;
+                        case "Belum Upload Foto Thorax":
+                            backgroundColor = "warning";
+                            break;
+                        case "Sudah Selesai":
+                            backgroundColor = "success";
+                            break;
+                        default:
+                            backgroundColor = "secondary";
+                            break;
+                    }
+                    return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                },
+            },
+            { data: "tanggal", className: "p-2" },
+            { data: "antrean_nomor", className: "text-center p-2" },
+            { data: "penjamin_nama", className: "text-center p-2" },
+            { data: "pasien_no_rm", className: "text-center p-2" },
+            { data: "pasien_nama", className: "p-2 col-3" },
+            { data: "poli_nama", className: "p-2" },
+            { data: "dokter_nama", className: "p-2 col-3" },
+        ],
+        order: [[3, "asc"]], // Order by No Antrean ascending
+    });
+}
+
+function fetchAntrian(tanggal, ruang, callback) {
     $.ajax({
-        url: "/api/noAntrianKominfo",
+        url: "/api/antrian/kominfo",
         type: "post",
         data: {
             tanggal: tanggal,
+            ruang: ruang,
         },
         success: function (response) {
             callback(response);
         },
-        error: function (xhr) {},
+        error: function (xhr) {
+            console.error("Error fetching antrian data:", xhr);
+        },
     });
 }
-function initializeDataAntrian(response) {
-    // Check if response has data array
-    if (response && response.response && response.response.data) {
-        // Iterate over each item in the data array
-        response.response.data.forEach(function (item) {
-            // Check if pasien_no_rm is not empty
-            if (item.pasien_no_rm) {
-                var tgl = $("#tanggal").val();
-                item.tgl = tgl;
-                item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-                onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
-            }
-        });
 
-        // Initialize DataTable with processed data
-        $("#dataAntrian").DataTable({
-            data: response.response.data,
-            columns: [
-                { data: "aksi", className: "text-center p-2 col-1" }, // Action column
-                // { data: "status", className: "text-center p-2 col-1" }, // Action column
-                {
-                    data: "status", // Assuming 'status' is the key in your row data for the status
-                    className: "text-center p-2 col-1",
-                    render: function (data, type, row) {
-                        var backgroundColor = "";
-                        switch (data) {
-                            case "Belum Ada Transaksi":
-                                backgroundColor = "danger";
-                                break;
-                            case "Belum Upload Foto Thorax":
-                                backgroundColor = "warning";
-                                break;
-                            case "Sudah Selesai":
-                                backgroundColor = "success";
-                                break;
-                            default:
-                                backgroundColor = "secondary";
-                                break;
-                        }
-                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-                    },
-                },
-                { data: "tanggal", className: "p-2" }, // Tanggal column
-                { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
-                { data: "penjamin_nama", className: "text-center p-2" }, // No Antrean column
-                { data: "pasien_no_rm", className: "text-center p-2" }, // Pasien No. RM column
-                { data: "pasien_nama", className: "p-2 col-3" }, // Pasien Nama column
-                { data: "poli_nama", className: "p-2" }, // Poli column
-                { data: "dokter_nama", className: "p-2 col-3" }, // Dokter column
-            ],
-            order: [[1, "asc"]], // Order by Antrean Nomor ascending
-        });
-    } else {
-        console.error(
-            "Response format is incorrect or data array is missing:",
-            response
-        );
-        // Handle the case where the response format is incorrect or data array is missing
-    }
+function initializeAntrian(tabel, antrian) {
+    antrian.forEach(function (item) {
+        item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+        onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
+    });
+    tbAntrianBelumUpload(tabel, antrian);
 }
 
-function antrian() {
+function antrianTes(ruang, filter, tabel) {
     $("#loadingSpinner").show();
     var tanggal = $("#tanggal").val();
 
-    fetchDataAntrian(tanggal, function (response) {
+    fetchAntrian(tanggal, ruang, function (response) {
         $("#loadingSpinner").hide();
 
-        // Check if DataTable already initialized
-        if ($.fn.DataTable.isDataTable("#dataAntrian")) {
-            var table = $("#dataAntrian").DataTable();
-
-            // Modify response data to add action column
-            response.response.data.forEach(function (item) {
-                var tgl = $("#tanggal").val();
-                item.tgl = tgl;
-                item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-                onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
-            });
-
-            // Clear existing data, add new data, and redraw table
-            table.clear().rows.add(response.response.data).draw();
-        } else {
-            // Initialize DataTable with the response data
-            initializeDataAntrian(response);
-        }
-    });
-}
-
-function initializeDataAntrianSelesai(response) {
-    // Filter data hanya untuk status "Selesai"
-    var filteredData = response.response.data.filter(function (item) {
-        return item.status === "Sudah Selesai";
-    });
-    filteredData.forEach(function (item) {
-        var tgl = $("#tanggal").val();
-        item.tgl = tgl;
-        item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-        onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
-    });
-    // Initialize DataTable dengan data yang sudah difilter
-    $("#daftarSelesai").DataTable({
-        data: filteredData,
-        columns: [
-            { data: "aksi", className: "text-center p-2 col-1" }, // Action column
-            {
-                data: "status",
-                className: "text-center p-2 col-1",
-                render: function (data, type, row) {
-                    var backgroundColor = "";
-                    switch (data) {
-                        case "Belum Ada Transaksi":
-                            backgroundColor = "danger";
-                            break;
-                        case "Belum Upload Foto Thorax":
-                            backgroundColor = "warning";
-                            break;
-                        case "Sudah Selesai":
-                            backgroundColor = "success";
-                            break;
-                        default:
-                            backgroundColor = "secondary";
-                            break;
-                    }
-                    return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-                },
-            },
-            { data: "tanggal", className: "p-2" }, // Tanggal column
-            { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
-            { data: "penjamin_nama", className: "text-center p-2" }, // No Antrean column
-            { data: "pasien_no_rm", className: "text-center p-2" }, // Pasien No. RM column
-            { data: "pasien_nama", className: "p-2 col-3" }, // Pasien Nama column
-            { data: "poli_nama", className: "p-2" }, // Poli column
-            { data: "dokter_nama", className: "p-2 col-3" }, // Dokter column
-        ],
-        order: [[1, "asc"]], // Order by Antrean Nomor ascending
-    });
-}
-
-function antrianSelesai() {
-    $("#loadingSpinner").show();
-    var tanggal = $("#tanggal").val();
-
-    fetchDataAntrian(tanggal, function (response) {
-        // $("#loadingSpinner").hide();
-
-        // Filter data hanya untuk status "Selesai"
         var filteredData = response.response.data.filter(function (item) {
-            return item.status === "Sudah Selesai";
+            return item.status === filter;
         });
 
         filteredData.forEach(function (item) {
-            var tgl = $("#tanggal").val();
-            item.tgl = tgl;
-            item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-            onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
+            item.tgl = tanggal;
         });
-        // Check if DataTable already initialized
-        if ($.fn.DataTable.isDataTable("#daftarSelesai")) {
-            var table = $("#daftarSelesai").DataTable();
 
-            // Clear existing data, add new filtered data, and redraw table
+        if ($.fn.DataTable.isDataTable(tabel)) {
+            var table = tabel.DataTable();
             table.clear().rows.add(filteredData).draw();
         } else {
-            // Initialize DataTable with the filtered data
-            initializeDataAntrianSelesai({ response: { data: filteredData } });
+            initializeAntrian(tabel, filteredData);
         }
     });
-}
-// function antrianTunggu() {
-//     $("#loadingSpinner").show();
-//     var tanggal = $("#tanggal").val();
-
-//     fetchDataAntrian(tanggal, function (response) {
-//         // $("#loadingSpinner").hide();
-
-//         // Filter data hanya untuk status "Selesai"
-//         var filteredData = response.response.data.filter(function (item) {
-//             return item.status === "Sudah Selesai";
-//         });
-
-//         filteredData.forEach(function (item) {
-//             var tgl = $("#tanggal").val();
-//             item.tgl = tgl;
-//             item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-//             onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
-//         });
-//         // Check if DataTable already initialized
-//         if ($.fn.DataTable.isDataTable("#daftarSelesai")) {
-//             var table = $("#daftarSelesai").DataTable();
-
-//             // Clear existing data, add new filtered data, and redraw table
-//             table.clear().rows.add(filteredData).draw();
-//         } else {
-//             // Initialize DataTable with the filtered data
-//             initializeDataAntrianSelesai({ response: { data: filteredData } });
-//         }
-//     });
-// }
-// function initializeDataAntrianTunggu(response) {
-//     // Filter data hanya untuk status "Selesai"
-//     var filteredData = response.response.data.filter(function (item) {
-//         return item.status === "Sudah Selesai";
-//     });
-//     filteredData.forEach(function (item) {
-//         var tgl = $("#tanggal").val();
-//         item.tgl = tgl;
-//         item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-//         onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
-//     });
-//     // Initialize DataTable dengan data yang sudah difilter
-//     $("#daftarSelesai").DataTable({
-//         data: filteredData,
-//         columns: [
-//             { data: "aksi", className: "text-center p-2 col-1" }, // Action column
-//             {
-//                 data: "status",
-//                 className: "text-center p-2 col-1",
-//                 render: function (data, type, row) {
-//                     var backgroundColor = "";
-//                     switch (data) {
-//                         case "Belum Ada Transaksi":
-//                             backgroundColor = "danger";
-//                             break;
-//                         case "Belum Upload Foto Thorax":
-//                             backgroundColor = "warning";
-//                             break;
-//                         case "Sudah Selesai":
-//                             backgroundColor = "success";
-//                             break;
-//                         default:
-//                             backgroundColor = "secondary";
-//                             break;
-//                     }
-//                     return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-//                 },
-//             },
-//             { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
-//             { data: "penjamin_nama", className: "text-center p-2" }, // No Antrean column
-//             { data: "pasien_no_rm", className: "text-center p-2" }, // Pasien No. RM column
-//             { data: "pasien_nama", className: "p-2" }, // Pasien Nama column
-//             { data: "poli_nama", className: "p-2" }, // Poli column
-//             { data: "tanggal", className: "p-2" }, // Tanggal column
-//             { data: "dokter_nama", className: "p-2" }, // Dokter column
-//         ],
-//         order: [[1, "asc"]], // Order by Antrean Nomor ascending
-//     });
-// }
-function initializeDataAntrianBlmUpload(response) {
-    // Filter data hanya untuk status "Selesai"
-    var filteredData = response.response.data.filter(function (item) {
-        return item.status === "Belum Upload Foto Thorax";
-    });
-    filteredData.forEach(function (item) {
-        var tgl = $("#tanggal").val();
-        item.tgl = tgl;
-        item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-        onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
-    });
-    // Initialize DataTable dengan data yang sudah difilter
-    $("#daftarUpload").DataTable({
-        data: filteredData,
-        columns: [
-            { data: "aksi", className: "text-center p-2 col-1" }, // Action column
-            {
-                data: "status",
-                className: "text-center p-2 col-1",
-                render: function (data, type, row) {
-                    var backgroundColor = "";
-                    switch (data) {
-                        case "Belum Ada Transaksi":
-                            backgroundColor = "danger";
-                            break;
-                        case "Belum Upload Foto Thorax":
-                            backgroundColor = "warning";
-                            break;
-                        case "Sudah Selesai":
-                            backgroundColor = "success";
-                            break;
-                        default:
-                            backgroundColor = "secondary";
-                            break;
-                    }
-                    return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-                },
-            },
-            { data: "tanggal", className: "p-2" }, // Tanggal column
-            { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
-            { data: "penjamin_nama", className: "text-center p-2" }, // No Antrean column
-            { data: "pasien_no_rm", className: "text-center p-2" }, // Pasien No. RM column
-            { data: "pasien_nama", className: "p-2 col-3" }, // Pasien Nama column
-            { data: "poli_nama", className: "p-2" }, // Poli column
-            { data: "dokter_nama", className: "p-2 col-3" }, // Dokter column
-        ],
-        order: [[1, "asc"]], // Order by Antrean Nomor ascending
-    });
-}
-
-function antrianBlmUpload() {
-    $("#loadingSpinner").show();
-    var tanggal = $("#tanggal").val();
-
-    fetchDataAntrian(tanggal, function (response) {
-        // $("#loadingSpinner").hide();
-
-        // Filter data hanya untuk status "Selesai"
-        var filteredData = response.response.data.filter(function (item) {
-            return item.status === "Belum Upload Foto Thorax";
-        });
-
-        filteredData.forEach(function (item) {
-            var tgl = $("#tanggal").val();
-            item.tgl = tgl;
-            item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-            onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
-        });
-        // Check if DataTable already initialized
-        if ($.fn.DataTable.isDataTable("#daftarUpload")) {
-            var table = $("#daftarUpload").DataTable();
-
-            // Clear existing data, add new filtered data, and redraw table
-            table.clear().rows.add(filteredData).draw();
-        } else {
-            // Initialize DataTable with the filtered data
-            initializeDataAntrianBlmUpload({
-                response: { data: filteredData },
-            });
-        }
-    });
-}
-
-function selesai() {
-    $("#dAntrian").hide();
-    $("#dSelesai").show();
-    $("#dUpload").hide();
-    $("#dTunggu").hide();
-}
-
-function allList() {
-    $("#dAntrian").show();
-    $("#dSelesai").hide();
-    $("#dUpload").hide();
-    $("#dTunggu").hide();
-}
-
-function blmUpload() {
-    $("#dAntrian").hide();
-    $("#dSelesai").hide();
-    $("#dUpload").show();
-    $("#dTunggu").hide();
-}
-
-function tunggu() {
-    $("#dAntrian").hide();
-    $("#dSelesai").hide();
-    $("#dUpload").hide();
-    $("#dTunggu").show();
-}
-function updateAntrian() {
-    antrian();
-    antrianSelesai();
-    antrianBlmUpload();
 }
 
 window.addEventListener("load", function () {

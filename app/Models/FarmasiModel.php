@@ -21,7 +21,7 @@ class FarmasiModel extends Model
 
     public function bmhp()
     {
-        return $this->hasMany(TransaksiModel::class, 'notrans', 'notrans');
+        return $this->hasMany(IGDTransModel::class, 'notrans', 'notrans');
     }
     public function petugasPegawai()
     {
@@ -33,7 +33,6 @@ class FarmasiModel extends Model
         return $this->belongsTo(PegawaiModel::class, 'dokter', 'nip');
     }
 
-
     protected $fillable = [
         'norm',
         'notrans',
@@ -41,6 +40,6 @@ class FarmasiModel extends Model
         'jumlah',
         'total',
         'petugas',
-        'dokter'
+        'dokter',
     ];
 }

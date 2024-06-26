@@ -14,7 +14,7 @@ class TransaksiBMHPModel extends Model
 
     public function tindakan()
     {
-        return $this->belongsTo(TransaksiModel::class, 'idTind', 'id');
+        return $this->belongsTo(IGDTransModel::class, 'idTind', 'id');
     }
 
     public function bmhp()

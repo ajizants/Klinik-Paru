@@ -15,16 +15,17 @@
             </div>
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a type="button" class="nav-link active bg-blue" onclick="tunggu();"><b>Tunggu</b></a>
+                    <a type="button" class="nav-link active bg-blue"
+                        onclick="toggleSections('#dTunggu');"><b>Tunggu</b></a>
                 </li>
                 <li class="nav-item">
-                    <a type="button" class="nav-link" onclick="blmUpload();"><b>Belum Upoload</b></a>
+                    <a type="button" class="nav-link" onclick="toggleSections('#dBelum');"><b>Belum Upoload</b></a>
                 </li>
                 <li class="nav-item">
-                    <a type="button" class="nav-link" onclick="selesai();"><b>Selesai</b></a>
+                    <a type="button" class="nav-link" onclick="toggleSections('#dSelesai');"><b>Selesai</b></a>
                 </li>
                 <li class="nav-item">
-                    <a type="button" class="nav-link " onclick="allList();"><b>Antrian
+                    <a type="button" class="nav-link " onclick="toggleSections('#dAntrian');"><b>Antrian
                             All</b></a>
                 </li>
                 <div class="input-group col d-flex justify-content-end mr-5">
@@ -63,7 +64,7 @@
             <div id="dAntrian" class="card-body card-body-hidden p-2" style="display: none;">
                 <h5 class="mb-0 text-center"><b>Data Antrian Semua</b></h5>
                 <div class="table-responsive pt-2 px-2">
-                    <table id="dataAntrian" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
+                    <table id="antrianall" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
                         <thead class="bg bg-secondary">
                             <tr>
@@ -106,7 +107,7 @@
                     </table>
                 </div>
             </div>
-            <div id="dUpload" class="card-body card-body-hidden p-2" style="display: none;">
+            <div id="dBelum" class="card-body card-body-hidden p-2" style="display: none;">
                 <h5 class="mb-0 text-center"><b>Data Antrian Belum Upload Transaksi</b></h5>
                 <div class="table-responsive pt-2 px-2">
                     <table id="daftarUpload" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"

@@ -161,27 +161,137 @@ function setTglRo() {
     kdtgl = kdtglFormat.replace(/-/g, "");
 }
 
+function batal() {
+    $(
+        "#norm, #nama, #alamat, #layanan,#tglTind,#tglTrans, #notrans, #dokter, #petugas, #tindakan, #asktind, #bmhp, #qty, #modalidTind, #modalkdTind, #modalnorm, #modaltindakan, #modaldokter, #modalpetugas"
+    ).val("");
+
+    $("#dokter, #petugas, #tindakan, #bmhp, #qty").trigger("change");
+
+    var tabletindakan = $("#dataTindakan").DataTable();
+    tabletindakan.clear().destroy();
+    var tablebmhp = $("#transaksiBMHP").DataTable();
+    tablebmhp.clear().destroy();
+    antrian();
+    quantity = 0;
+    scrollToTop();
+    $("#formbmhp").hide();
+    $("#formtind").show();
+}
+
+function selesai() {
+    var norm = $("#norm").val();
+    var notrans = $("#notrans").val();
+    // Memeriksa apakah ada nilai yang kosong
+    if (!norm || !notrans) {
+        // Menampilkan notifikasi jika ada nilai yang kosong
+        var dataKurang = [];
+        if (!norm || !notrans) dataKurang.push("Belum Ada Data Transaksi");
+
+        Toast.fire({
+            icon: "error",
+            title: "Data Tidak Lengkap...!!! " + dataKurang.join(", "),
+        });
+        scrollToTop();
+    } else {
+        $(
+            "#norm, #nama, #alamat, #layanan, #notrans, #dokter, #petugas, #tindakan, #asktind, #bmhp, #qty, #modalidTind, #modalkdTind, #modalnorm, #modaltindakan, #modaldokter, #modalpetugas"
+        ).val("");
+        $("#dokter, #petugas, #tindakan, #bmhp").trigger("change");
+
+        var tabletindakan = $("#dataTindakan").DataTable();
+        tabletindakan.clear().destroy();
+        var tablebmhp = $("#transaksiBMHP").DataTable();
+        tablebmhp.clear().destroy();
+        quantity = 0;
+        antrian();
+        scrollToTop();
+        $("#formbmhp").hide();
+        $("#formtind").show();
+        Toast.fire({
+            icon: "success",
+            title: "Transaksi Berhasil Disimpan, Maturnuwun...!!!",
+        });
+    }
+}
+
+function updateAntrian() {
+    antrian();
+    antrianAll("igd");
+}
+
+function addTindakan() {
+    var norm = $("#norm").val();
+    var notrans = $("#notrans").val();
+    var kdTind = $("#tindakan").val();
+    var petugas = $("#petugas").val();
+    var dokter = $("#dokter").val();
+    var tgltrans = $("#tgltrans").val();
+    // Memeriksa apakah ada nilai yang kosong
+    if (!norm || !notrans || !kdTind || !petugas || !dokter || !tgltrans) {
+        // Menampilkan notifikasi jika ada nilai yang kosong
+        var dataKurang = [];
+        if (!norm) dataKurang.push("Nomor Rekam Medis");
+        if (!notrans) dataKurang.push("Nomor Transaksi");
+        if (!kdTind) dataKurang.push("Tindakan");
+        if (!petugas) dataKurang.push("Petugas");
+        if (!dokter) dataKurang.push("Dokter");
+        if (!tgltrans) dataKurang.push("Tanggal Transaksi");
+
+        // Menampilkan notifikasi menggunakan Toast.fire
+        swal.fire({
+            icon: "error",
+            title:
+                "Data Tidak Lengkap...!!! " +
+                dataKurang.join(", ") +
+                " Belum Diisi, diisi disit mbok..!!!",
+        });
+    } else {
+        $.ajax({
+            url: "/api/simpanTindakan",
+            type: "POST",
+            data: {
+                notrans: notrans,
+                kdTind: kdTind,
+                petugas: petugas,
+                dokter: dokter,
+                norm: norm,
+                tgltrans: tgltrans,
+            },
+
+            success: function (response) {
+                Toast.fire({
+                    icon: "success",
+                    title: "Data Berhasil Disimpan, Maturnuwun...!!!",
+                });
+                dataTindakan();
+                $("#tindakan,#petugas").val("");
+                $("#tindakan,#petugas").trigger("change");
+            },
+            error: function (xhr) {
+                swal.fire({
+                    icon: "error",
+                    title: "Data Tidak Lengkap...!!!",
+                });
+            },
+        });
+    }
+}
 $(document).ready(function () {
     setTglRo();
-    $("#dselesai").hide();
-    $("#dtunggu").show();
-    scrollToAntrianSection();
-
     $(".select2bs4").select2({ theme: "bootstrap4" });
-
     $(".bmhp").select2({ theme: "bootstrap4" });
+    // $("#tanggal").on("change", function () {
+    //     antrian();
+    //     antrianAll();
+    // });
 
-    $("#tanggal").on("change", function () {
-        antrian();
-        antrianAll();
-    });
+    // $("#cariantrian").on("click", function () {
+    //     antrian();
+    //     antrianAll();
+    // });
 
-    $("#cariantrian").on("click", function () {
-        antrian();
-        antrianAll();
-    });
-
-    $("#formbmhp").hide();
+    // $("#formbmhp").hide();
 
     let quantity = 0;
     const qtyInput = document.getElementById("qty");
@@ -205,136 +315,15 @@ $(document).ready(function () {
         hitungTotalHarga();
     });
 
-    $("#qty").on("input", function (e) {
-        hitungTotalHarga();
-    });
-
     setTodayDate();
     populateTindakanOptions();
     populateDokterOptions();
     populatePetugasOptions();
     populateBmhpOptions();
-    antrian();
-    antrianAll();
+    updateAntrian();
     setInterval(function () {
-        antrianAll();
-        antrian();
+        updateAntrian();
     }, 150000);
-
-    $("#tblBatal").on("click", function (e) {
-        $(
-            "#norm, #nama, #alamat, #layanan,#tglTind,#tglTrans, #notrans, #dokter, #petugas, #tindakan, #asktind, #bmhp, #qty, #modalidTind, #modalkdTind, #modalnorm, #modaltindakan, #modaldokter, #modalpetugas"
-        ).val("");
-
-        $("#dokter, #petugas, #tindakan, #bmhp, #qty").trigger("change");
-
-        var tabletindakan = $("#dataTindakan").DataTable();
-        tabletindakan.clear().destroy();
-        var tablebmhp = $("#transaksiBMHP").DataTable();
-        tablebmhp.clear().destroy();
-        antrian();
-        quantity = 0;
-        scrollToAntrianSection();
-        $("#formbmhp").hide();
-        $("#formtind").show();
-    });
-
-    $("#tblSimpan").on("click", function (e) {
-        e.preventDefault();
-        var norm = $("#norm").val();
-        var notrans = $("#notrans").val();
-        // Memeriksa apakah ada nilai yang kosong
-        if (!norm || !notrans) {
-            // Menampilkan notifikasi jika ada nilai yang kosong
-            var dataKurang = [];
-            if (!norm || !notrans) dataKurang.push("Belum Ada Data Transaksi");
-
-            Toast.fire({
-                icon: "error",
-                title: "Data Tidak Lengkap...!!! " + dataKurang.join(", "),
-            });
-            scrollToAntrianSection();
-        } else {
-            $(
-                "#norm, #nama, #alamat, #layanan, #notrans, #dokter, #petugas, #tindakan, #asktind, #bmhp, #qty, #modalidTind, #modalkdTind, #modalnorm, #modaltindakan, #modaldokter, #modalpetugas"
-            ).val("");
-            $("#dokter, #petugas, #tindakan, #bmhp").trigger("change");
-
-            var tabletindakan = $("#dataTindakan").DataTable();
-            tabletindakan.clear().destroy();
-            var tablebmhp = $("#transaksiBMHP").DataTable();
-            tablebmhp.clear().destroy();
-            quantity = 0;
-            antrian();
-            scrollToAntrianSection();
-            $("#formbmhp").hide();
-            $("#formtind").show();
-            Toast.fire({
-                icon: "success",
-                title: "Transaksi Berhasil Disimpan, Maturnuwun...!!!",
-            });
-        }
-    });
-
-    $("#addTindakan").on("click", function (e) {
-        e.preventDefault();
-
-        var norm = $("#norm").val();
-        var notrans = $("#notrans").val();
-        var kdTind = $("#tindakan").val();
-        var petugas = $("#petugas").val();
-        var dokter = $("#dokter").val();
-        var tgltrans = $("#tgltrans").val();
-        // Memeriksa apakah ada nilai yang kosong
-        if (!norm || !notrans || !kdTind || !petugas || !dokter || !tgltrans) {
-            // Menampilkan notifikasi jika ada nilai yang kosong
-            var dataKurang = [];
-            if (!norm) dataKurang.push("Nomor Rekam Medis");
-            if (!notrans) dataKurang.push("Nomor Transaksi");
-            if (!kdTind) dataKurang.push("Tindakan");
-            if (!petugas) dataKurang.push("Petugas");
-            if (!dokter) dataKurang.push("Dokter");
-            if (!tgltrans) dataKurang.push("Tanggal Transaksi");
-
-            // Menampilkan notifikasi menggunakan Toast.fire
-            swal.fire({
-                icon: "error",
-                title:
-                    "Data Tidak Lengkap...!!! " +
-                    dataKurang.join(", ") +
-                    " Belum Diisi, diisi disit mbok..!!!",
-            });
-        } else {
-            $.ajax({
-                url: "/api/simpanTindakan",
-                type: "POST",
-                data: {
-                    notrans: notrans,
-                    kdTind: kdTind,
-                    petugas: petugas,
-                    dokter: dokter,
-                    norm: norm,
-                    tgltrans: tgltrans,
-                },
-
-                success: function (response) {
-                    Toast.fire({
-                        icon: "success",
-                        title: "Data Berhasil Disimpan, Maturnuwun...!!!",
-                    });
-                    dataTindakan();
-                    $("#tindakan,#petugas").val("");
-                    $("#tindakan,#petugas").trigger("change");
-                },
-                error: function (xhr) {
-                    swal.fire({
-                        icon: "error",
-                        title: "Data Tidak Lengkap...!!!",
-                    });
-                },
-            });
-        }
-    });
 
     $("#norm").on("keyup", function (event) {
         if (event.key === "Enter") {
@@ -540,58 +529,10 @@ $(document).ready(function () {
             });
         }
     });
+
+    selamatBertugas();
 });
 
 $(document).on("select2:open", () => {
     document.querySelector(".select2-search__field").focus();
-});
-document.addEventListener("DOMContentLoaded", function () {
-    let synth = speechSynthesis;
-
-    // Memeriksa dukungan Text-to-Speech API
-    if (synth === undefined) {
-        console.error("Text-to-Speech API is not supported");
-        return;
-    }
-
-    let utterance = new SpeechSynthesisUtterance(
-        "selamat bertugas teman teman, aja kelalen madang, lan aja kelalen gosip, haha haha wkwk wkwk"
-    );
-
-    // Set bahasa ke bahasa Indonesia (id-ID)
-    utterance.lang = "id-ID";
-
-    // Jalankan Text-to-Speech
-    try {
-        synth.speak(utterance);
-    } catch (error) {
-        console.error("Error while attempting to use Text-to-Speech:", error);
-    }
-
-    const jsConfetti = new JSConfetti();
-
-    jsConfetti
-        .addConfetti({})
-        .then(() => jsConfetti.addConfetti())
-        .then(() => {
-            // Create a new element for the greeting message
-            const greetingMessage = document.createElement("div");
-            greetingMessage.textContent = "Selamat Ngodey...!"; // Your greeting message here
-            greetingMessage.style.fontSize = "24px";
-            greetingMessage.style.fontWeight = "bold";
-            greetingMessage.style.color = "indigo";
-            greetingMessage.style.position = "absolute";
-            greetingMessage.style.top = "50%";
-            greetingMessage.style.left = "40%";
-            greetingMessage.style.transform = "translate(-50%, -50%)";
-            greetingMessage.style.animation = "zoomIn 3s"; // Add zoom-in animation
-
-            // Append the greeting message to the document body
-            document.body.appendChild(greetingMessage);
-
-            // Remove the greeting message after 3 seconds
-            setTimeout(() => {
-                document.body.removeChild(greetingMessage);
-            }, 3000);
-        });
 });

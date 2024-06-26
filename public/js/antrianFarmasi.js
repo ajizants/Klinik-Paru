@@ -187,19 +187,20 @@ async function searchRMObat() {
 }
 function dataFarmasi() {
     var notrans = $("#notrans").val();
+    //joka no transaksi tidak kosong
+    if (notrans !== "") {
+        if ($.fn.DataTable.isDataTable("#dataFarmasi")) {
+            var table = $("#dataFarmasi").DataTable();
+            table.destroy();
+        }
 
-    if ($.fn.DataTable.isDataTable("#dataFarmasi")) {
-        var table = $("#dataFarmasi").DataTable();
-        table.destroy();
-    }
-
-    $.ajax({
-        url: "/api/transaksiFarmasi",
-        type: "POST",
-        data: { notrans: notrans },
-        success: function (response) {
-            response.forEach(function (item, index) {
-                item.actions = `<a href="" class="edit"
+        $.ajax({
+            url: "/api/transaksiFarmasi",
+            type: "POST",
+            data: { notrans: notrans },
+            success: function (response) {
+                response.forEach(function (item, index) {
+                    item.actions = `<a href="" class="edit"
                                     data-id="${item.idAptk}"
                                     data-norm="${item.norm}"
                                     data-idObat="${item.idObat}"
@@ -212,44 +213,49 @@ function dataFarmasi() {
                                     data-idObat="${item.idObat}"
                                     data-obat="${item.nmObat}"
                                     data-qty="${item.qty}"><i class="fas fa-trash"></i></a>`;
-                item.no = index + 1;
-                item.total = `${item.total.toLocaleString()}`;
-            });
+                    item.no = index + 1;
+                    item.total = `${item.total.toLocaleString()}`;
+                });
 
-            $("#dataFarmasi").DataTable({
-                data: response,
-                columns: [
-                    { data: "actions", className: "px-0 col-1 text-center" },
-                    { data: "no", className: "col-1 text-center" },
-                    { data: "norm", className: "col-1 " },
-                    { data: "nmObat" },
-                    { data: "qty", className: "col-1" },
-                    { data: "total", className: "totalHarga" },
-                ],
-                order: [2, "asc"],
-            });
-            tagihan();
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-        },
-    });
+                $("#dataFarmasi").DataTable({
+                    data: response,
+                    columns: [
+                        {
+                            data: "actions",
+                            className: "px-0 col-1 text-center",
+                        },
+                        { data: "no", className: "col-1 text-center" },
+                        { data: "norm", className: "col-1 " },
+                        { data: "nmObat" },
+                        { data: "qty", className: "col-1" },
+                        { data: "total", className: "totalHarga" },
+                    ],
+                    order: [2, "asc"],
+                });
+                tagihan();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+            },
+        });
+    }
 }
 
 function dataBMHP() {
     var notrans = $("#notrans").val();
-    if ($.fn.DataTable.isDataTable("#dataIGD")) {
-        var tabletindakan = $("#dataIGD").DataTable();
-        tabletindakan.clear().destroy();
-    }
+    if (notrans !== "") {
+        if ($.fn.DataTable.isDataTable("#dataIGD")) {
+            var tabletindakan = $("#dataIGD").DataTable();
+            tabletindakan.clear().destroy();
+        }
 
-    $.ajax({
-        url: "/api/cariTotalBmhp",
-        type: "post",
-        data: { notrans: notrans },
-        success: function (response) {
-            response.forEach(function (item, index) {
-                item.actions = `<a href="" class="delete"
+        $.ajax({
+            url: "/api/cariTotalBmhp",
+            type: "post",
+            data: { notrans: notrans },
+            success: function (response) {
+                response.forEach(function (item, index) {
+                    item.actions = `<a href="" class="delete"
                                     data-id="${item.id}"
                                     data-idTind="${item.idTind}"
                                     data-kdtind="${item.kdTind}"
@@ -257,28 +263,29 @@ function dataBMHP() {
                                     data-kdBmhp="${item.kdBmhp}"
                                     data-jumlah="${item.jumlah}">
                                     <i class="fas fa-trash"></i></a>`;
-                item.no = index + 1;
-                item.biaya = `${item.biaya.toLocaleString()}`;
-            });
+                    item.no = index + 1;
+                    item.biaya = `${item.biaya.toLocaleString()}`;
+                });
 
-            $("#dataIGD").DataTable({
-                data: response,
-                columns: [
-                    { data: "actions", className: "text-center" },
-                    { data: "no" },
-                    { data: "tindakan.norm" },
-                    { data: "bmhp.nmObat" },
-                    { data: "jml" },
-                    { data: "biaya", className: "totalHarga" },
-                ],
-                order: [2, "asc"],
-                paging: true,
-                pageLength: 5,
-            });
-            tagihan();
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-        },
-    });
+                $("#dataIGD").DataTable({
+                    data: response,
+                    columns: [
+                        { data: "actions", className: "text-center" },
+                        { data: "no" },
+                        { data: "tindakan.norm" },
+                        { data: "bmhp.nmObat" },
+                        { data: "jml" },
+                        { data: "biaya", className: "totalHarga" },
+                    ],
+                    order: [2, "asc"],
+                    paging: true,
+                    pageLength: 5,
+                });
+                tagihan();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+            },
+        });
+    }
 }

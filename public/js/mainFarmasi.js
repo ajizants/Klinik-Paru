@@ -1,35 +1,3 @@
-document.addEventListener("DOMContentLoaded", function () {
-    var tgltindInput = document.getElementById("tgltrans");
-
-    function updateDateTime() {
-        var now = new Date();
-        var options = { timeZone: "Asia/Jakarta" };
-        var formattedDate = now.toLocaleString("id-ID", options);
-        tgltindInput.value = formattedDate;
-    }
-
-    setInterval(updateDateTime, 1000);
-});
-
-function scrollToAntrianSection() {
-    $("html, body").animate(
-        { scrollTop: $("#antrianSection").offset().top },
-        500
-    );
-}
-
-function setTodayDate() {
-    var today = new Date().toISOString().split("T")[0];
-    $("#tanggal").val(today);
-}
-
-function scrollToInputSection() {
-    $("html, body").animate(
-        { scrollTop: $("#inputSection").offset().top },
-        500
-    );
-}
-
 function tagihan() {
     var totalTagihan = 0;
     var totalTagihanFarmasi = 0;
@@ -54,11 +22,12 @@ function tagihan() {
     $("#tagihan").val(totalTagihan.toLocaleString());
 }
 
-function hitungTotalHarga() {
-    var hargaJual = parseFloat($("#jual").val()) || 0; // Mengambil harga jual, jika tidak valid, dianggap 0
-    var qty = parseFloat($("#qty").val()) || 0; // Mengambil qty, jika tidak valid, dianggap 0
+function hitungTotalHarga(jml) {
+    console.log("🚀 ~ hitungTotalHarga ~ jml:", jml);
+    var hargaJual = parseFloat($("#jual").val()) || 0;
+    var qty = parseFloat(jml) || 0;
     var totalharga = hargaJual * qty;
-    $("#total").val(totalharga); // Menampilkan total harga dengan pemisah ribuan
+    $("#total").val(totalharga);
 }
 
 function loadFarmasi() {
@@ -127,18 +96,7 @@ function loadFarmasi() {
     });
 }
 
-function simpanTransaksi(idAptk, prod_id) {
-    var idAptk = idAptk;
-    var prod_id = prod_id;
-    console.log(
-        "🚀 ~ file: mainFarmasi.js:132 ~ simpanTransaksi ~ idAptk:",
-        idAptk
-    );
-    console.log(
-        "🚀 ~ file: mainFarmasi.js:132 ~ simpanTransaksi ~ prod_id:",
-        prod_id
-    );
-
+function simpanTransaksi() {
     var notrans = $("#notrans").val();
     var tgltrans = $("#tgltrans").val();
     var norm = $("#norm").val();
@@ -292,12 +250,78 @@ async function showRiwayat() {
     }
 }
 
-var Toast = Swal.mixin({
-    toast: true,
-    position: "top-end",
-    showConfirmButton: false,
-    timer: 3000,
-});
+function rstForm() {
+    $(
+        "#norm, #nama, #alamat, #layanan, #notrans, #dokter, #apoteker, #obat, #qty,#tagihan,#productID"
+    ).val("");
+    $("#dokter, #apoteker, #obat").trigger("change");
+    $("#add").show();
+    $("#edit").hide();
+    var table = $("#dataFarmasi").DataTable();
+    var table2 = $("#dataIGD").DataTable();
+    table.clear().destroy();
+    table2.clear().destroy();
+    populateObatOptions();
+    antrian();
+    scrollToAntrianSection();
+    idAptk = undefined;
+    console.log(
+        "🚀 ~ file: mainFarmasi.js:230 ~ simpanTransaksi ~ idAptk:",
+        idAptk
+    );
+    prod_id = undefined;
+    console.log(
+        "🚀 ~ file: mainFarmasi.js:232 ~ simpanTransaksi ~ prod_id:",
+        prod_id
+    );
+}
+
+function selesai() {
+    $("#add").show();
+    $("#edit").hide();
+    var norm = $("#norm").val();
+    var notrans = $("#notrans").val();
+    // Memeriksa apakah ada nilai yang kosong
+    if (!norm || !notrans) {
+        // Menampilkan notifikasi jika ada nilai yang kosong
+        var dataKurang = [];
+        if (!norm || !notrans) dataKurang.push("Belum Ada Data Transaksi");
+
+        Toast.fire({
+            icon: "error",
+            title: "Data Tidak Lengkap...!!! " + dataKurang.join(", "),
+        });
+        scrollToAntrianSection();
+        idAptk = undefined;
+        console.log(
+            "🚀 ~ file: mainFarmasi.js:230 ~ simpanTransaksi ~ idAptk:",
+            idAptk
+        );
+        prod_id = undefined;
+        console.log(
+            "🚀 ~ file: mainFarmasi.js:232 ~ simpanTransaksi ~ prod_id:",
+            prod_id
+        );
+    } else {
+        $(
+            "#norm, #nama, #alamat, #layanan, #notrans, #dokter, #apoteker, #obat, #qty,#tagihan,#productID"
+        ).val("");
+        $("#dokter, #apoteker, #obat").trigger("change");
+
+        var table = $("#dataFarmasi, #dataIGD").DataTable();
+        var table2 = $("#dataIGD").DataTable();
+        table.clear().destroy();
+        table2.clear().destroy();
+        populateObatOptions();
+        antrian();
+        scrollToAntrianSection();
+        Toast.fire({
+            icon: "success",
+            title: "Transaksi Berhasil Disimpan, Maturnuwun...!!!",
+        });
+    }
+}
+
 $(document).ready(function () {
     scrollToAntrianSection();
     $("#norm").focus();
@@ -307,9 +331,7 @@ $(document).ready(function () {
 
     $(".bmhp").select2({ theme: "bootstrap4" });
 
-    $("#tanggal").on("change", antrian);
-
-    $("#cariantrian").on("click", antrian);
+    $("#dataFarmasi, #dataIGD").DataTable();
 
     $.ajaxSetup({
         headers: {
@@ -322,143 +344,16 @@ $(document).ready(function () {
     populateDokterOptions();
     populateApotekerOptions();
     populateObatOptions();
-    antrian();
+    antrianAll();
 
     setInterval(function () {
-        antrian();
+        antrianAll();
     }, 60000);
 
-    $("#qty").on("input", function (e) {
-        hitungTotalHarga();
-    });
     $("#jual").on("input", function (e) {
         hitungTotalHarga();
     });
     $("#modal-xl").modal("show");
-    $("#tblBatal").on("click", function (e) {
-        $(
-            "#norm, #nama, #alamat, #layanan, #notrans, #dokter, #apoteker, #obat, #qty,#tagihan,#productID"
-        ).val("");
-        $("#dokter, #apoteker, #obat").trigger("change");
-        $("#add").show();
-        $("#edit").hide();
-        var table = $("#dataFarmasi").DataTable();
-        var table2 = $("#dataIGD").DataTable();
-        table.clear().destroy();
-        table2.clear().destroy();
-        populateObatOptions();
-        antrian();
-        scrollToAntrianSection();
-        idAptk = undefined;
-        console.log(
-            "🚀 ~ file: mainFarmasi.js:230 ~ simpanTransaksi ~ idAptk:",
-            idAptk
-        );
-        prod_id = undefined;
-        console.log(
-            "🚀 ~ file: mainFarmasi.js:232 ~ simpanTransaksi ~ prod_id:",
-            prod_id
-        );
-    });
-
-    $("#tblSimpan").on("click", function (e) {
-        e.preventDefault();
-        $("#add").show();
-        $("#edit").hide();
-        var norm = $("#norm").val();
-        var notrans = $("#notrans").val();
-        // Memeriksa apakah ada nilai yang kosong
-        if (!norm || !notrans) {
-            // Menampilkan notifikasi jika ada nilai yang kosong
-            var dataKurang = [];
-            if (!norm || !notrans) dataKurang.push("Belum Ada Data Transaksi");
-
-            Toast.fire({
-                icon: "error",
-                title: "Data Tidak Lengkap...!!! " + dataKurang.join(", "),
-            });
-            scrollToAntrianSection();
-            idAptk = undefined;
-            console.log(
-                "🚀 ~ file: mainFarmasi.js:230 ~ simpanTransaksi ~ idAptk:",
-                idAptk
-            );
-            prod_id = undefined;
-            console.log(
-                "🚀 ~ file: mainFarmasi.js:232 ~ simpanTransaksi ~ prod_id:",
-                prod_id
-            );
-        } else {
-            $(
-                "#norm, #nama, #alamat, #layanan, #notrans, #dokter, #apoteker, #obat, #qty,#tagihan,#productID"
-            ).val("");
-            $("#dokter, #apoteker, #obat").trigger("change");
-
-            var table = $("#dataFarmasi, #dataIGD").DataTable();
-            var table2 = $("#dataIGD").DataTable();
-            table.clear().destroy();
-            table2.clear().destroy();
-            populateObatOptions();
-            antrian();
-            scrollToAntrianSection();
-            Toast.fire({
-                icon: "success",
-                title: "Transaksi Berhasil Disimpan, Maturnuwun...!!!",
-            });
-        }
-    });
-
-    $("#addFarmasi").on("click", function (e) {
-        e.preventDefault();
-        simpanTransaksi(idAptk, prod_id);
-    });
-
-    $("#qty").on("keyup", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            simpanTransaksi(idAptk, prod_id);
-        }
-    });
-    $("#jual").on("keyup", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            simpanTransaksi(idAptk, prod_id);
-        }
-    });
-
-    $("#norm").on("keyup", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            formatNorm($("#norm"));
-            searchByRM($("#norm").val());
-        }
-    });
-
-    $("#dataAntrian").on("click", ".aksi-button", function (e) {
-        e.preventDefault();
-        $("#add").show();
-        $("#edit").hide();
-        var norm = $(this).data("norm");
-        var nama = $(this).data("nama");
-        var dokter = $(this).data("kddokter");
-        var alamat = $(this).data("alamat");
-        var layanan = $(this).data("layanan");
-        var notrans = $(this).data("notrans");
-        var asktind = $(this).data("asktind");
-
-        $("#norm").val(norm);
-        $("#nama").val(nama);
-        $("#dokter").val(dokter).trigger("change");
-        $("#apoteker").val("197609262011012003").trigger("change");
-        $("#alamat").val(alamat);
-        $("#layanan").val(layanan);
-        $("#notrans").val(notrans);
-        $("#asktind").val(asktind);
-
-        scrollToInputSection();
-        dataFarmasi();
-        dataBMHP();
-    });
 
     $("#dataAntrian").on("click", ".panggil", function (e) {
         e.preventDefault();
@@ -531,6 +426,4 @@ $(document).ready(function () {
         $("#obat").readonly = true;
         hitungTotalHarga();
     });
-    // console.log("🚀 ~ file: mainFarmasi.js:490 ~ idAptk:", idAptk);
-    // console.log("🚀 ~ file: mainFarmasi.js:461 ~ prod_id:", prod_id);
 });

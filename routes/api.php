@@ -187,4 +187,5 @@ Route::post('pasienKominfo', [PasienKominfoController::class, 'newPasien']);
 Route::post('dataPasien', [PasienKominfoController::class, 'dataPasien']);
 Route::post('noAntrianKominfo', [PasienKominfoController::class, 'newPendaftaran']);
 Route::post('cpptKominfo', [PasienKominfoController::class, 'newCpptRequest']);
+Route::post('antrian/kominfo', [PasienKominfoController::class, 'antrianAll']);
 // });

@@ -15,27 +15,28 @@
             </div>
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active bg-blue" id="itunggu"><b>Tunggu</b></a>
+                    <a type="button" class="nav-link active bg-blue" id="itunggu"><b>Tunggu</b></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="iselesai"><b>Antrian All</b></a>
+                    <a type="button" class="nav-link" id="iselesai"><b>Antrian All</b></a>
                 </li>
                 <div class="input-group col d-flex justify-content-start ml-5">
                     <input type="date" class="form-control col-sm-2 bg bg-warning" id="tanggal"
-                        value="{{ old('date') }}" required>
+                        value="{{ old('date') }}" required onchange="updateAntrian();">
                     <div class="input-group-addon btn btn-danger">
                         <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top"
-                            title="Update Pasien Hari ini" id="cariantrian"></span>
+                            title="Update Pasien Hari ini" id="cariantrian" onclick="updateAntrian();"></span>
                     </div>
                 </div>
             </ul>
-            <div id="dselesai" class="card-body card-body-hidden p-2">
+            <div id="dselesai" class="card-body card-body-hidden p-2" style="display: none;">
                 <div class="table-responsive pt-2 px-2">
                     <table id="antrianall" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
                         <thead class="bg bg-warning">
                             <tr>
                                 <th width="15px">Aksi</th>
+                                <th width="25px">Status</th>
                                 <th>Tanggal</th>
                                 <th>Urut</th>
                                 <th>Jaminan</th>

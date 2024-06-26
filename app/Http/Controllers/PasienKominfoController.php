@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FarmasiModel;
+use App\Models\IGDTransModel;
 use App\Models\KominfoModel;
 use App\Models\ROTransaksiHasilModel;
 use App\Models\ROTransaksiModel;
-use App\Models\TransaksiModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -391,6 +392,126 @@ class PasienKominfoController extends Controller
         ];
     }
 
+    public function antrianAll(Request $request)
+    {
+        if ($request->has('tanggal')) {
+            $tanggal = $request->input('tanggal');
+            $ruang = $request->input('ruang');
+            $model = new KominfoModel();
+
+            // Panggil metode untuk melakukan request
+            $data = $model->pendaftaranRequest($tanggal);
+
+            if (isset($data['response']['data']) && is_array($data['response']['data'])) {
+                $filteredData = array_filter($data['response']['data'], function ($d) {
+                    return $d['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
+                });
+                $filteredData = array_values($filteredData);
+
+                // Map of dokter_nama to nip
+                $doctorNipMap = [
+                    'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
+                    'dr. AGIL DANANJAYA, Sp.P' => '9',
+                    'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
+                    'dr. SIGIT DWIYANTO' => '198903142022031005',
+                ];
+
+                // Iterate over filtered data and add status and nip
+                foreach ($filteredData as &$item) {
+                    $notrans = $item['no_trans'];
+                    $norm = $item['pasien_no_rm'];
+                    $dokter_nama = $item['dokter_nama'];
+
+                    // Check if ROTransaksiModel exists for $notrans
+                    if ($ruang == "ro") {
+                        try {
+                            $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
+                            // Attempt to retrieve data from the 'rontgen' connection
+                            $foto = ROTransaksiHasilModel::where('norm', $norm)
+                                ->whereDate('tanggal', $tanggal)
+                                ->first();
+                            // dd($foto);
+                            // Determine status based on conditions
+                            if (!$tsRo && !$foto) {
+                                $item['status'] = 'Belum Ada Ts RO';
+                            } elseif ($tsRo && !$foto) {
+                                $item['status'] = 'Belum Upload Foto Thorax';
+                            } else {
+                                $item['status'] = 'Sudah Selesai';
+                            }
+                        } catch (\Exception $e) {
+                            // Handle the error: log it and continue processing
+                            Log::error('Database connection failed: ' . $e->getMessage());
+                            $item['status'] = 'Database connection error';
+                        }
+                    } elseif ($ruang == "igd") {
+                        try {
+                            $ts = IGDTransModel::with('transbmhp')->where('norm', $norm)
+                                ->whereDate('created_at', $tanggal)
+                                ->first();
+                            // // dd($ts->id);
+                            // $tsBmhp = TransaksiBMHPModel::where('idTind', $ts->id)->first();
+                            // dd($tsBmhp);
+                            // Determine status based on conditions
+                            if (!$ts) {
+                                $item['status'] = 'Tidak Ada Permintaan';
+                                // } elseif ($ts && $tsBmhp == null) {
+                                //     $item['status'] = 'Belum Ada Transaksi BMHP';
+                            } elseif ($ts->transbmhp == null) {
+                                $item['status'] = 'Belum Ada Transaksi BMHP';
+                            } else {
+                                $item['status'] = 'Sudah Selesai';
+                            }
+                        } catch (\Exception $e) {
+                            // Handle the error: log it and continue processing
+                            Log::error('Database connection failed: ' . $e->getMessage());
+                            $item['status'] = 'Database connection error';
+                        }
+                    } elseif ($ruang == "farmasi") {
+                        try {
+                            $ts = FarmasiModel::where('norm', $norm)
+                                ->whereDate('created_at', $tanggal)
+                                ->first();
+                            // Determine status based on conditions
+                            if (!$ts) {
+                                $item['status'] = 'Belum Ada Transaksi';
+                            } else {
+                                $item['status'] = 'Sudah Selesai';
+                            }
+                        } catch (\Exception $e) {
+                            // Handle the error: log it and continue processing
+                            Log::error('Database connection failed: ' . $e->getMessage());
+                            $item['status'] = 'Database connection error';
+                        }
+                    }
+
+                    // Add nip based on dokter_nama
+                    if (isset($doctorNipMap[$dokter_nama])) {
+                        $item['nip_dokter'] = $doctorNipMap[$dokter_nama];
+                    } else {
+                        $item['nip_dokter'] = 'Unknown';
+                    }
+                }
+
+                $response = [
+                    'metadata' => [
+                        'message' => 'Data Pasien Ditemukan',
+                        'code' => 200,
+                    ],
+                    'response' => [
+                        'data' => $filteredData,
+                    ],
+                ];
+                // Kembalikan respon dalam bentuk array
+                return response()->json($response);
+            } else {
+                return response()->json(['error' => 'Invalid data format'], 500);
+            }
+        } else {
+            // Jika parameter 'tanggal' tidak disediakan, kembalikan respons error
+            return response()->json(['error' => 'Tanggal Belum Di Isi'], 400);
+        }
+    }
     public function newPendaftaran(Request $request)
     {
         if ($request->has('tanggal')) {
@@ -521,8 +642,6 @@ class PasienKominfoController extends Controller
             // dd($pendaftaran);
             if (isset($pendaftaran['response']['data']) && is_array($pendaftaran['response']['data'])) {
                 $filteredData = array_filter($pendaftaran['response']['data'], function ($d) {
-                    // return !empty($d['pasien_no_rm']);
-                    //filter data yang memiliki pasien_no_rm sama dengan no_rm yang diberikan
                     return $d['pasien_no_rm'] === $_REQUEST['no_rm'];
                 });
                 $filteredData = array_values($filteredData);
@@ -536,12 +655,6 @@ class PasienKominfoController extends Controller
 
                 // Iterate over filtered data and add status and nip
                 foreach ($filteredData as &$item) {
-                    // $notrans = $item['no_trans'];
-
-                    // $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
-
-                    // $item['status'] = !empty($tsRo) ? 'sudah' : 'belum';
-
                     // Add nip based on dokter_nama
                     $dokter_nama = $item['dokter_nama'];
                     if (isset($doctorNipMap[$dokter_nama])) {
@@ -550,9 +663,6 @@ class PasienKominfoController extends Controller
                         $item['nip_dokter'] = 'Unknown';
                     }
                 }
-                // $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
-                //jika tsRo null maka status belum
-                // $status = !empty($tsRo) ? 'sudah' : 'belum';
 
                 if (!empty($filteredData)) {
                     $response = [
@@ -648,13 +758,12 @@ class PasienKominfoController extends Controller
             $data = $model->cpptRequest($params);
 
             if (isset($data['response']['data']) && is_array($data['response']['data'])) {
-                // Lakukan pengecekan di TransaksiModel apakah notrans sudah ada
                 $filteredData = array_filter(array_map(function ($d) {
                     // Skip jika tindakan kosong
                     if (empty($d['tindakan'])) {
                         return null;
                     }
-                    $igd = TransaksiModel::whereDate('created_at', $d['tanggal'])
+                    $igd = IGDTransModel::whereDate('created_at', $d['tanggal'])
                         ->where('norm', $d['pasien_no_rm'])
                         ->first();
 

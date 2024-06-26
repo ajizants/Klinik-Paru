@@ -45,5 +45,6 @@
     <!-- AdminLTE App -->
     <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
 
-    <!-- Costum -->
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
 
+    <!-- Costum -->

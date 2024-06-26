@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TransaksiModel extends Model
+class IGDTransModel extends Model
 {
     use HasFactory;
     protected $connection = 'mysql';
@@ -32,14 +32,13 @@ class TransaksiModel extends Model
         return $this->belongsTo(PegawaiModel::class, 'dokter', 'nip');
     }
 
-
     protected $fillable = [
         'norm',
         'notrans',
         'kdtind',
         'petugas',
         'dokter',
-        'created_at'
+        'created_at',
         // 'updated_at'
     ];
 }

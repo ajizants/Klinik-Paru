@@ -5,12 +5,14 @@ var Toast = Swal.mixin({
     timer: 3000,
 });
 
-function fetchDataAntrianAll(tanggal, callback) {
+function fetchDataAntrianAll(tanggal, ruang, callback) {
     $.ajax({
-        url: "/api/noAntrianKominfo",
+        // url: "/api/noAntrianKominfo",
+        url: "/api/antrian/kominfo",
         type: "post",
         data: {
             tanggal: tanggal,
+            ruang: ruang,
         },
         success: function (response) {
             callback(response);
@@ -18,7 +20,7 @@ function fetchDataAntrianAll(tanggal, callback) {
         error: function (xhr) {},
     });
 }
-function initializeDataAntrianAll(response) {
+function initializeDataAntrianAll(ruang, response) {
     // Check if response has data array
     if (response && response.response && response.response.data) {
         // Iterate over each item in the data array
@@ -28,7 +30,7 @@ function initializeDataAntrianAll(response) {
                 var tgl = $("#tanggal").val();
                 item.tgl = tgl;
                 item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-                onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}');"><i class="fas fa-pen-to-square"></i></a>`;
+                onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
             }
         });
 
@@ -37,6 +39,31 @@ function initializeDataAntrianAll(response) {
             data: response.response.data,
             columns: [
                 { data: "aksi", className: "text-center p-2 col-1" }, // Action column
+                {
+                    data: "status",
+                    className: "text-center p-2 col-1",
+                    render: function (data, type, row) {
+                        var backgroundColor = "";
+                        switch (data) {
+                            case "Tidak Ada Permintaan":
+                                backgroundColor = "danger";
+                                break;
+                            case "Belum Ada Ts RO":
+                                backgroundColor = "danger";
+                                break;
+                            case "Belum Upload Foto Thorax":
+                                backgroundColor = "warning";
+                                break;
+                            case "Sudah Selesai":
+                                backgroundColor = "success";
+                                break;
+                            default:
+                                backgroundColor = "secondary";
+                                break;
+                        }
+                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                    },
+                },
                 { data: "tanggal", className: "p-2" }, // Tanggal column
                 { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
                 { data: "penjamin_nama", className: "text-center p-2" }, // No Antrean column
@@ -56,11 +83,11 @@ function initializeDataAntrianAll(response) {
     }
 }
 
-function antrianAll() {
+function antrianAll(ruang) {
     $("#loadingSpinner").show();
     var tanggal = $("#tanggal").val();
 
-    fetchDataAntrianAll(tanggal, function (response) {
+    fetchDataAntrianAll(tanggal, ruang, function (response) {
         $("#loadingSpinner").hide();
 
         // Check if DataTable already initialized
@@ -72,23 +99,21 @@ function antrianAll() {
                 var tgl = $("#tanggal").val();
                 item.tgl = tgl;
                 item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-                onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}');"><i class="fas fa-pen-to-square"></i></a>`;
+                onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
             });
 
             // Clear existing data, add new data, and redraw table
             table.clear().rows.add(response.response.data).draw();
         } else {
             // Initialize DataTable with the response data
-            initializeDataAntrianAll(response);
+            initializeDataAntrianAll(ruang, response);
         }
     });
 }
 //pasien Kominfo
-function cariKominfo(norm, tgl) {
+function cariKominfo(norm, tgl, ruang) {
     var normValue = norm ? norm : $("#norm").val();
-    console.log("🚀 ~ cariKominfo ~ normValue:", normValue);
     var tgl = tgl ? tgl : $("#tglRO").val();
-    console.log("🚀 ~ cariKominfo ~ tgl:", tgl);
     // console.log(normValue)
     // Add leading zeros if the value has less than 6 digits
     while (normValue.length < 6) {
@@ -107,7 +132,7 @@ function cariKominfo(norm, tgl) {
     } else {
         Swal.fire({
             icon: "info",
-            title: "Belum ada transaksi, Sedang Mencari Data Pasien di Aplikasi KOMINFO\n Mohon Ditunggu ...!!!",
+            title: "Sedang Mencari Data Pasien di Aplikasi KOMINFO\n Mohon Ditunggu ...!!!",
             allowOutsideClick: false, // Mencegah interaksi di luar dialog
             didOpen: () => {
                 Swal.showLoading(); // Menampilkan loading spinner
@@ -115,7 +140,6 @@ function cariKominfo(norm, tgl) {
         });
 
         $.ajax({
-            // url: "http://kkpm.local/api/pasienKominfo",
             url: "/api/dataPasien",
             method: "POST",
             data: {
@@ -147,15 +171,10 @@ function cariKominfo(norm, tgl) {
                             showConfirmButton: false,
                             allowOutsideClick: false,
                         });
-                        console.log("🚀 ~ cariKominfo ~ data:", response);
+
                         var pasien = response.response.pasien[0];
-                        console.log("🚀 ~ cariKominfo ~ pasien:", pasien);
 
                         var pendaftaran = response.response.pendaftaran[0];
-                        console.log(
-                            "🚀 ~ cariKominfo ~ pendaftaran:",
-                            pendaftaran
-                        );
 
                         // Mengatur nilai untuk form fields
                         $("#layanan")
@@ -173,6 +192,12 @@ function cariKominfo(norm, tgl) {
                             $("#jk").val(pasien.jenis_kelamin_nama);
                         }
                         jk = pasien.jenis_kelamin_nama;
+
+                        if (ruang == "igd") {
+                            dataTindakan();
+                        } else if (ruang == "farmasi") {
+                            dataFarmasi();
+                        }
 
                         setTimeout(function () {
                             Swal.close();

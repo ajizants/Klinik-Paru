@@ -10,8 +10,9 @@
                                     <label for="norm" class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
                                         :</label>
                                     <div class="col-sm-2 input-group" style="overflow: hidden;">
-                                        <input type="text" name="norm" id="norm" class="form-control"
-                                            placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required />
+                                        <input type="number" name="norm" id="norm" class="form-control"
+                                            placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required
+                                            onkeyup="if (event.key === 'Enter') {var tgl = $('#tgltrans').val(); var norm = $('#norm').val(); cariKominfo(norm, tgl);}" />
                                         <div class="input-group-addon btn btn-danger">
                                             <span class="fa-solid fa-magnifying-glass" onclick="searchRMObat();"
                                                 data-toggle="tooltip" data-placement="top"
@@ -38,13 +39,11 @@
                                     </div>
                                 </div>
                                 <div class="form-grup row mt-2">
-                                    <label for="tgltind" class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
+                                    <label for="tgltrans" class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                         :</label>
                                     <div class="col-sm-2">
-                                        <input type="text" id="tgltind" class="form-control bg-white"
-                                            placeholder="Tanggal" readonly hidden />
-                                        <input type="text" id="tgltrans" class="form-control bg-white"
-                                            placeholder="tgltrans" readonly />
+                                        <input type="date" id="tgltrans" class="form-control bg-white"
+                                            placeholder="tgltrans" />
                                     </div>
                                     <label for="notrans" class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
                                         :</label>
@@ -95,22 +94,19 @@
                         <form class="card-body form-horizontal px-1" id="form-obat">
                             <div class="container-fluid d-flex justify-content-center p-2">
                                 <div class="col-sm-6 ">
-                                    {{-- <label for="obat"class=" col-form-label"><b>Obat
-                                            :</b></label> --}}
                                     <select id="obat" class="form-control select2bs4 border border-primary">
                                         <option value="">--Pilih obat--</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-1 ">
-                                    {{-- <label for="productID" class="col-form-label"><b>ID Produk</b></label> --}}
                                     <input type="text"id="productID" class="form-control  border border-info"
                                         placeholder="ID Produk" readonly>
                                 </div>
                                 <div class="col-sm-1 ">
-                                    {{-- <label for="qty" class="col-form-label"><b>Jumlah
-                                            :</b></label> --}}
+                                    {{-- saat tekan enter panggil onclick="simpanFarmasi();" --}}
                                     <input type="number"id="qty" class="form-control  border border-info"
-                                        placeholder="Jumlah">
+                                        placeholder="Jumlah" oninput="hitungTotalHarga(this.value)"
+                                        onkeyup="if (event.key === 'Enter') {simpanFarmasi();}">
                                 </div>
                                 {{-- <div class="col-sm-1 ">
                                     <label for="qty" class="col-form-label"><b>Jumlah :</b></label>
@@ -130,26 +126,19 @@
                                     </div>
                                 </div> --}}
                                 <div class="col-sm-1 ">
-                                    {{-- <label for="jual" class="col-form-label"><b>Harga
-                                            Jual:</b></label> --}}
                                     <input type="text"id="jual" class="form-control  border border-info"
-                                        placeholder="Jual">
+                                        placeholder="Jual" onkeyup="if (event.key === 'Enter') {simpanFarmasi();}">
                                 </div>
                                 <div class="col-sm-1 " hidden>
-                                    {{-- <label for="beli" class="col-form-label"><b>Harga Beli
-                                            :</b></label> --}}
                                     <input type="text"id="beli" class="form-control  border border-info"
                                         placeholder="Beli" readonly>
                                 </div>
                                 <div class="col-sm-1 ">
-                                    {{-- <label for="total" class="col-form-label"><b>Total Harga
-                                            :</b></label> --}}
                                     <input type="text"id="total" class="form-control  border border-info"
                                         placeholder="Total" readonly>
                                 </div>
-                                {{-- <div class="col-sm-1 bg-success border border-danger rounded m-1" id="add"> --}}
-                                <button id="addFarmasi" class="btn btn-success">+ Obat</button>
-                                {{-- </div> --}}
+                                <button id="addFarmasi" class="btn btn-success" onclick="simpanFarmasi();">+
+                                    Obat</button>
                             </div>
                             <div class="container-fluid row mx-0">
                                 <div class="card card-warning col p-0 mr-1">
@@ -212,7 +201,7 @@
                                     placeholder="Total Tagihan" readonly>
                             </div>
                             <div class="col-auto">
-                                <a class="btn btn-danger" id="tblBatal">Batal</a>
+                                <a class="btn btn-danger" id="tblBatal" onclick="rstForm();">Batal</a>
                             </div>
                             <div class="col-auto">
                                 <a class="btn btn-success" id="tblSimpan">Selesai</a>

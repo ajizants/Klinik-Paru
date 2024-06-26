@@ -40,7 +40,7 @@ class KunjunganModel extends Model
 
     public function tindakan()
     {
-        return $this->hasMany(TransaksiModel::class, 'notrans', 'notrans');
+        return $this->hasMany(IGDTransModel::class, 'notrans', 'notrans');
     }
     public function lab()
     {
@@ -64,7 +64,7 @@ class KunjunganModel extends Model
     }
     public function riwayatTindakan()
     {
-        return $this->hasMany(TransaksiModel::class, 'notrans', 'notrans');
+        return $this->hasMany(IGDTransModel::class, 'notrans', 'notrans');
     }
     public function riwayatLab()
     {
