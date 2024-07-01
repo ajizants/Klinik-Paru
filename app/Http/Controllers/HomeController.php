@@ -21,7 +21,7 @@ class HomeController extends Controller
     public function igd()
     {
         $title = 'IGD';
-        return view('IGD.main')->with('title', $title);
+        return view('IGD.Trans.main')->with('title', $title);
     }
     public function askep()
     {
@@ -31,7 +31,7 @@ class HomeController extends Controller
     public function dots()
     {
         $title = 'Dots Center';
-        return view('DotsCenter.main')->with('title', $title);
+        return view('DotsCenter.Trans.main')->with('title', $title);
     }
     public function farmasi()
     {

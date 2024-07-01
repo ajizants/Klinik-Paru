@@ -111,11 +111,23 @@ var Toast = Swal.mixin({
 });
 
 function toggleSections(sectionToShow) {
-    var sections = ["#dAntrian", "#dSelesai", "#dBelum", "#dTunggu"];
+    console.log("🚀 ~ toggleSections ~ toggleSections:", sectionToShow);
+    var sections = [
+        "#dAntrian",
+        "#dSelesai",
+        "#dBelum",
+        "#dTunggu",
+        "#dKontrol",
+        "#dTelat",
+        "#dDo",
+        "#dTb",
+    ];
     sections.forEach(function (section) {
         if (section === sectionToShow) {
+            // console.log("🚀 ~ toggleSections ~ sama:", section);
             $(section).show();
         } else {
+            // console.log("🚀 ~ toggleSections ~ beda:", section);
             $(section).hide();
         }
     });

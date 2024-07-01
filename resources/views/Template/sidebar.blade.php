@@ -45,7 +45,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url('/report') }}">
                                         <i class="fa-solid fa-chart-column nav-icon"></i>
-                                        <p>Report Petugas IGD</p>
+                                        <p>Report Petugas</p>
                                     </a>
                                 </li>
                             @endif

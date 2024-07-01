@@ -25,38 +25,49 @@ function formatNorm(inputElement) {
     }
 }
 
-function searchByRM(norm, date) {
-    // Check if the patient ID exists in "/api/Ptb"
+// function searchByRM(norm, date) {
+function cariPasienTb(norm, date, pasien, pendaftaran) {
     $.ajax({
-        url: "/api/Ptb",
+        url: "/api/pasien/TB",
         type: "POST",
         data: {
             norm: norm,
         },
         success: function (response) {
-            if (response.exists) {
-                performCariRM(norm, date);
-            } else {
-                // If the patient ID does not exist, show an error toast
-                Swal.fire({
-                    icon: "question",
-                    title:
-                        "Data dengan norm " +
-                        norm +
-                        " belum terdaftar sebagai pasien TB",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "YA",
-                    cancelButtonText: "TIDAK",
-                }).then((result) => {
-                    // Display a confirmation dialog
-                    if (result.isConfirmed) {
-                        $("#modal-pasienTB").modal("show");
-                        performCariRMmodal(norm, date);
-                    } else {
-                    }
-                });
+            if (response.error) {
+                console.error("Error: " + response.error);
+            } else if (response.metadata) {
+                var code = response.metadata.code;
+                console.log("🚀 ~ cariPasienTb ~ code:", code);
+                if (code === 404) {
+                    Swal.fire({
+                        icon: "info",
+                        title: response.metadata.message,
+                    });
+                } else if (code === 204) {
+                    Swal.fire({
+                        icon: "question",
+                        title:
+                            "Data dengan norm " +
+                            norm +
+                            " belum terdaftar sebagai pasien TB",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "YA",
+                        cancelButtonText: "TIDAK",
+                    }).then((result) => {
+                        // Display a confirmation dialog
+                        if (result.isConfirmed) {
+                            $("#modal-pasienTB").modal("show");
+                            isiBiodataModal(norm, date, pasien, pendaftaran);
+                        } else {
+                        }
+                    });
+                } else if (code === 200) {
+                    isiIdentitas(pasien, pendaftaran);
+                    showRiwayatKunjungan(norm);
+                }
             }
         },
         error: function (xhr) {
@@ -66,87 +77,58 @@ function searchByRM(norm, date) {
 }
 
 // Separate function to perform the original AJAX request to "/api/cariRM"
-function performCariRM(norm, date) {
-    // The original AJAX request to "/api/cariRM"
-    $.ajax({
-        url: "/api/cariRM",
-        type: "POST",
-        data: {
-            norm: norm,
-            date: date,
-        },
-        success: function (response) {
-            if (response.length > 0) {
-                var noRM = response[0].norm;
-                var nama = response[0].biodata.nama;
-                var notrans = response[0].notrans;
-                var layanan = response[0].kelompok.kelompok;
-                var dokter = response[0].petugas.p_dokter_poli;
-                var alamat = `${response[0].biodata.kelurahan}, ${response[0].biodata.rtrw}, ${response[0].biodata.kecamatan}, ${response[0].biodata.kabupaten}`;
+function isiBiodata(pasien, pendaftaran) {
+    $("#norm").val(pasien.pasien_no_rm);
+    $("#nama").val(pasien.pasien_nama);
+    $("#alamat").val(pasien.pasien_alamat);
+    $("#notrans").val(pendaftaran.no_trans);
+    $("#layanan").val(pendaftaran.penjamin_nama);
+    $("#dokter").val(pendaftaran.nip_dokter).trigger("change");
 
-                $("#norm").val(noRM);
-                $("#nama").val(nama);
-                $("#alamat").val(alamat);
-                $("#notrans").val(notrans);
-                $("#layanan").val(layanan);
-                $("#dokter").val(dokter).trigger("change");
-                showKunjungan();
-                showRiwayatKunjungan(noRM);
-                scrollToInputSection();
-            } else {
-                Toast.fire({
-                    icon: "error",
-                    title: "Data tidak ditemukan pada kunjungan hari ini...!!!",
-                });
-            }
-        },
-        error: function (xhr) {
-            // Handle error
-        },
-    });
+    setTimeout(function () {
+        Swal.close();
+        scrollToInputSection();
+    }, 1000);
 }
-function performCariRMmodal(norm, date) {
-    // The original AJAX request to "/api/cariRM"
+function isiBiodataModal(norm, date, pasien, pendaftaran) {
+    $("#modal-pasienTB #modal-norm").val(norm);
+    $("#modal-pasienTB #modal-nama").val(pasien.pasien_nama);
+    $("#modal-pasienTB #modal-alamat").val(pasien.pasien_alamat);
+    $("#modal-pasienTB #modal-notrans").val(pendaftaran.no_trans);
+    $("#modal-pasienTB #modal-layanan").val(pendaftaran.penjamin_nama);
+    $("#modal-pasienTB #modal-nik").val(pendaftaran.pasien_nik);
+    $("#modal-pasienTB #modal-dokter")
+        .val(pendaftaran.nip_dokter)
+        .trigger("change");
+}
+function editPasienTB(button) {
+    var id = button.getAttribute("data-id");
+    var norm = button.getAttribute("data-norm");
+    var status = button.getAttribute("data-status");
+    var petugas = button.getAttribute("data-petugas");
+    var dokter = button.getAttribute("data-dokter");
+    var nama = button.getAttribute("data-nama");
+    var alamat = button.getAttribute("data-alamat");
+
+    document.getElementById("status-id").value = id;
+    document.getElementById("status-norm").value = norm;
+    document.getElementById("status-pengobatan").value = status;
+    document.getElementById("status-nama").value = nama;
+    document.getElementById("status-alamat").value = alamat;
+}
+
+function updateStatus(id) {
+    console.log("🚀 ~ id:", id);
+    var status = document.getElementById("modal-status").value;
     $.ajax({
-        url: "/api/cariRM",
+        url: "/api/update/status/pengobatan",
         type: "POST",
         data: {
-            norm: norm,
-            date: date,
+            id: id,
+            status: status,
         },
         success: function (response) {
-            if (response.length > 0) {
-                let dx1 = "";
-                var noRM = response[0].norm;
-                var nama = response[0].biodata.nama;
-                var notrans = response[0].notrans;
-                var layanan = response[0].kelompok.kelompok;
-                var nik = response[0].biodata.noktp;
-                var dokter = response[0].petugas.p_dokter_poli;
-                var alamat = `${response[0].biodata.kelurahan}, ${response[0].biodata.rtrw}, ${response[0].biodata.kecamatan}, ${response[0].biodata.kabupaten}`;
-                if (response.poli !== null) {
-                    dx1 = "";
-                    console.log("true");
-                } else {
-                    dx1 = response[0].poli.diagnosa1;
-                    console.log("else");
-                }
-                console.log("🚀 ~ performCariRMmodal ~ dx1:", dx1);
-                $("#modal-pasienTB #modal-norm").val(noRM);
-                $("#modal-pasienTB #modal-nama").val(nama);
-                $("#modal-pasienTB #modal-alamat").val(alamat);
-                $("#modal-pasienTB #modal-notrans").val(notrans);
-                $("#modal-pasienTB #modal-layanan").val(layanan);
-                $("#modal-pasienTB #modal-nik").val(nik);
-                $("#modal-pasienTB #modal-dokter").val(dokter);
-                $("#modal-pasienTB #modal-dokter").trigger("change");
-                $("#modal-pasienTB #modal-kdDx").val(dx1).trigger("change");
-            } else {
-                Toast.fire({
-                    icon: "error",
-                    title: "Data tidak ditemukan pada kunjungan hari ini...!!!",
-                });
-            }
+            console.log("🚀 ~ updateStatus ~ response:", response);
         },
         error: function (xhr) {
             // Handle error
@@ -162,7 +144,7 @@ function pasienKontrol() {
     }
 
     $.ajax({
-        url: "/api/kontrolDots",
+        url: "/api/pasien/TB/Kontrol",
         type: "GET",
         data: { date: tanggal },
         success: function (response) {
@@ -249,7 +231,7 @@ function pasienTelat() {
     }
 
     $.ajax({
-        url: "/api/telatDots",
+        url: "/api/pasien/TB/Telat",
         type: "GET",
         data: { date: tanggal },
         success: function (response) {
@@ -341,7 +323,7 @@ function pasienDo() {
     }
 
     $.ajax({
-        url: "/api/doDots",
+        url: "/api/pasien/TB/Do",
         type: "GET",
         data: { date: tanggal },
         success: function (response) {
@@ -431,28 +413,31 @@ function pasienTB() {
     }
 
     $.ajax({
-        url: "/api/Ptb",
+        url: "/api/pasien/TB",
         type: "POST",
         success: function (response) {
             $("#loadingSpinner").hide();
             var dataArray = response.data || [];
+            // console.log("🚀 ~ pasienTB ~ dataArray:", dataArray);
             dataArray.forEach(function (item, index) {
-                item.pasien = `${item.biodata.nama}`;
                 item.actions = `<button class="editTB bg-danger"
-                                data-id="${item.id}"
-                                data-norm="${item.norm}"
-                                data-petugas="${item.petugas}"
-                                data-dokter="${item.dokter}"
-                                ><i class="fas fa-pen-to-square"></i></button>
+                                    data-id="${item.ptb.id}"
+                                    data-norm="${item.ptb.norm}"
+                                    data-petugas="${item.ptb.petugas}"
+                                    data-dokter="${item.ptb.dokter}"
+                                    data-nama="${item.pasien.pasien_nama}"
+                                    data-alamat="${item.pasien.pasien_alamat}"
+                                    data-toggle="modal"
+                                    data-target="#modal-update"
+                                    onclick="editPasienTB(this);"><i class="fa-solid fa-file-pen"></i></button>
                                 <button class="riwayat bg-green"
-                                data-id="${item.id}"
-                                data-norm="${item.norm}"
-                                data-petugas="${item.petugas}"
-                                data-dokter="${item.dokter}"
-                                onclick="showRiwayatKunjungan();" data-toggle="modal" data-target="#modal-RiwayatKunjungan"><i class="fa-regular fa-folder-open"></i></button>`;
+                                    data-id="${item.ptb.id}"
+                                    data-norm="${item.ptb.norm}"
+                                    data-petugas="${item.ptb.petugas}"
+                                    data-dokter="${item.ptb.dokter}"
+                                    onclick="showRiwayatKunjungan();" data-toggle="modal" data-target="#modal-RiwayatKunjungan"><i class="fa-regular fa-folder-open"></i></button>`;
                 item.no = index + 1;
-                item.dokter = `${item.dokter.gelar_d} ${item.dokter.biodata.nama} ${item.dokter.gelar_b}`;
-                item.alamat = `${item.biodata.kelurahan} ${item.biodata.rtrw} ${item.biodata.kecamatan}${item.biodata.kabupaten}`;
+                item.dokter = `${item.ptb.dokter.gelar_d} ${item.ptb.dokter.biodata.nama} ${item.ptb.dokter.gelar_b}`;
             });
 
             $("#Ptb, #modal-Ptb")
@@ -460,13 +445,16 @@ function pasienTB() {
                     data: dataArray,
                     columns: [
                         { data: "actions", className: "col-1 text-center" },
-                        { data: "tglMulai", className: "col-1 text-center" },
+                        {
+                            data: "ptb.tglMulai",
+                            className: "col-1 text-center",
+                        },
                         { data: "no" },
-                        { data: "norm" },
-                        { data: "noHP" },
-                        { data: "hasilBerobat" },
-                        { data: "biodata.nama" },
-                        { data: "alamat" },
+                        { data: "ptb.norm" },
+                        { data: "ptb.noHP" },
+                        { data: "ptb.hasilBerobat" },
+                        { data: "pasien.pasien_nama" },
+                        { data: "pasien.pasien_alamat" },
                         { data: "dokter" },
                     ],
                     order: [2, "dsc"],
@@ -487,15 +475,6 @@ function pasienTB() {
 
             console.log("🚀 ~ table generate");
             // Menangani klik pada tombol edit
-            $(".editTB").on("click", function (e) {
-                e.preventDefault();
-                var norm = $(this).data("norm");
-                var date = $("#tanggal").val();
-                console.log("🚀 ~ date:", date);
-                console.log("🚀 ~ norm:", norm);
-                performCariRM(norm);
-                // searchPTB(norm);
-            });
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
@@ -504,6 +483,9 @@ function pasienTB() {
 }
 
 function showRiwayatKunjungan(norm) {
+    console.log("🚀 ~ showRiwayatKunjungan ~ norm:", norm);
+    if (norm == null) norm = $("#norm").val();
+    console.log("🚀 ~ showRiwayatKunjungan ~ element:", norm);
     $("#loadingSpinner").show();
     if ($.fn.DataTable.isDataTable("#kunjDots")) {
         var table = $("#kunjDots").DataTable();
@@ -511,16 +493,14 @@ function showRiwayatKunjungan(norm) {
     }
 
     $.ajax({
-        url: "/api/kunjunganDots",
+        url: "/api/kunjungan/Dots",
         type: "POST",
         data: {
             norm: norm,
         },
         success: function (response) {
             $("#loadingSpinner").hide();
-            var dataArray = response.data || [];
-            dataArray.forEach(function (item, index) {
-                item.pasien = `${item.biodata.nama}`;
+            response.forEach(function (item, index) {
                 item.actions = `<button class="editTB bg-danger"
                                 data-id="${item.id}"
                                 data-norm="${item.norm}"
@@ -528,22 +508,25 @@ function showRiwayatKunjungan(norm) {
                 item.no = index + 1;
                 item.dokter = `${item.dokter.gelar_d} ${item.dokter.biodata.nama} ${item.dokter.gelar_b}`;
                 item.petugas = `${item.petugas.gelar_d} ${item.petugas.biodata.nama} ${item.petugas.gelar_b}`;
-                item.alamat = `${item.biodata.kelurahan} ${item.biodata.rtrw} ${item.biodata.kecamatan}${item.biodata.kabupaten}`;
+                item.tgl = new Date(item.created_at).toLocaleDateString(
+                    "id-ID",
+                    { year: "numeric", month: "numeric", day: "numeric" }
+                );
             });
 
             $("#kunjDots")
                 .DataTable({
-                    data: dataArray,
+                    data: response,
                     columns: [
                         { data: "actions", className: "col-1 text-center" },
                         { data: "norm" },
-                        { data: "created_at", className: "col-1 text-center" },
+                        { data: "tgl" },
                         { data: "bb" },
                         { data: "blnKe" },
                         { data: "bta" },
                         { data: "obat.nmPengobatan" },
-                        { data: "petugas" },
-                        { data: "dokter" },
+                        { data: "petugas", className: "col-3" },
+                        { data: "dokter", className: "col-3" },
                     ],
                     order: [2, "dsc"],
                     paging: true,

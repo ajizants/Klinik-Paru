@@ -1,5 +1,7 @@
-function dataTindakan() {
-    var notrans = $("#notrans").val();
+function dataTindakan(notrans) {
+    console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
+    var notrans = notrans ? notrans : $("#notrans").val();
+    console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
 
     if ($.fn.DataTable.isDataTable("#dataTindakan")) {
         var tabletindakan = $("#dataTindakan").DataTable();
@@ -125,8 +127,11 @@ function fetchDataAntrian(params, callback) {
 function initializeDataAntrian(response) {
     // Pastikan response.data adalah objek yang berisi data pasien
     if (response && response.response && response.response.data) {
-        var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
-
+        // var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
+        var dataArray = response.response.data.filter(function (item) {
+            // s;
+            return item.status === "belum";
+        });
         dataArray.forEach(function (item) {
             var asktind = "";
             // Pastikan item.tindakan adalah array sebelum mengaksesnya
@@ -203,8 +208,11 @@ function antrian() {
         if ($.fn.DataTable.isDataTable("#dataAntrian")) {
             var table = $("#dataAntrian").DataTable();
             if (response && response.response && response.response.data) {
-                var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
-
+                // var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
+                var dataArray = response.response.data.filter(function (item) {
+                    // s;
+                    return item.status === "belum";
+                });
                 dataArray.forEach(function (item) {
                     var asktind = "";
                     // Pastikan item.tindakan adalah array sebelum mengaksesnya
@@ -235,7 +243,7 @@ function antrian() {
                 );
                 // Handle error or display appropriate message
             }
-            table.clear().rows.add(response.response.data).draw();
+            table.clear().rows.add(dataArray).draw();
         } else {
             initializeDataAntrian(response);
         }

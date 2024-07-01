@@ -12,7 +12,6 @@ class DotsModel extends Model
     protected $table = 'm_dots_pasien';
     protected $primaryKey = 'id';
 
-
     protected $fillable = [
         'norm',
         'noHP',
@@ -31,7 +30,7 @@ class DotsModel extends Model
 
     public function biodata()
     {
-        return $this->hasOne(PasienModel::class, 'norm', 'norm');
+        // return $this->hasOne(PasienModel::class, 'norm', 'norm');
     }
     public function layanan()
     {

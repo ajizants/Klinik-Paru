@@ -78,17 +78,18 @@ Route::get('chart', [IgdController::class, 'chart'])->name('chart.endpoint');
 Route::post('cariTransaksiBmhp', [IgdController::class, 'cariTransaksiBmhp']);
 
 // Dots Center
-Route::post('kunjunganDots', [DotsController::class, 'kunjunganDots']);
+Route::post('kunjungan/Dots', [DotsController::class, 'kunjunganDots']);
 Route::get('obatDots', [DotsController::class, 'obatDots']);
 Route::get('blnKeDots', [DotsController::class, 'blnKeDots']);
 //pasien dots
-Route::POST('Ptb', [DotsController::class, 'Ptb']);
-Route::get('kontrolDots', [DotsController::class, 'kontrol']);
-Route::get('telatDots', [DotsController::class, 'telat']);
-Route::get('doDots', [DotsController::class, 'do']);
+Route::POST('pasien/TB', [DotsController::class, 'Ptb']);
+Route::get('pasien/TB/Kontrol', [DotsController::class, 'kontrol']);
+Route::get('pasien/TB/Telat', [DotsController::class, 'telat']);
+Route::get('pasien/TB/Do', [DotsController::class, 'do']);
 //transaksi dots
-Route::post('addPTB', [DotsController::class, 'addPTB']);
-Route::post('simpanDots', [DotsController::class, 'simpanDots']);
+Route::post('tambah/pasien/TB', [DotsController::class, 'addPasienTb']);
+Route::post('update/status/pengobatan', [DotsController::class, 'updatePengobatanPasien']);
+Route::post('simpan/kunjungan/dots', [DotsController::class, 'simpanKunjungan']);
 Route::get('deletePTB', [DotsController::class, 'deletePTB']);
 Route::get('editPTB', [DotsController::class, 'editPTB']);
 
@@ -188,4 +189,7 @@ Route::post('dataPasien', [PasienKominfoController::class, 'dataPasien']);
 Route::post('noAntrianKominfo', [PasienKominfoController::class, 'newPendaftaran']);
 Route::post('cpptKominfo', [PasienKominfoController::class, 'newCpptRequest']);
 Route::post('antrian/kominfo', [PasienKominfoController::class, 'antrianAll']);
+Route::post('poin_kominfo', [PasienKominfoController::class, 'rekapPoin']);
+Route::post('kominfo/waktu_layanan', [PasienKominfoController::class, 'waktuLayanan']);
+Route::post('kominfo/rata_waktu_tunggu', [PasienKominfoController::class, 'avgWaktuTunggu']);
 // });

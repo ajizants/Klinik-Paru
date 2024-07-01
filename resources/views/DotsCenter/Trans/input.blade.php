@@ -167,10 +167,10 @@
                                                                 required></textarea>
                                                         </div>
                                                         <br>
-                                                        <a id="addDataKunj"
+                                                        <button type="button"
                                                             class="btn btn-success d-flex justify-content-center mb-4"
-                                                            onclick="addKunjunganDots();">Simpan
-                                                            Kunjungan</a>
+                                                            onclick="validasiKunjungan();">Simpan
+                                                            Kunjungan</button>
                                                     </form>
                                                 </div>
                                                 <!-- /.card-body-->
@@ -188,20 +188,20 @@
                                                             <i class="fa fa-spinner fa-spin"></i> Sedang Mencari
                                                             data...
                                                         </div>
-                                                        <table id="kunjDots" name="dataTindakan"
+                                                        <table id="kunjDots" name="kunjungan Dots Center"
                                                             class="table table-striped" style="width:100%"
                                                             cellspacing="0">
                                                             <thead>
                                                                 <tr>
                                                                     <th class="col-1">Aksi</th>
-                                                                    <th class="col-1">No RM</th>
-                                                                    <th class="col-1">Tanggal</th>
-                                                                    <th class="col-1">BB</th>
-                                                                    <th class="col-1">Bln Ke</th>
-                                                                    <th class="col-1">BTA</th>
-                                                                    <th class="col-2">Terapi</th>
-                                                                    <th class="col-2">Petugas</th>
-                                                                    <th class="col-2">Dokter</th>
+                                                                    <th>No RM</th>
+                                                                    <th>Tanggal</th>
+                                                                    <th>BB</th>
+                                                                    <th>Bln Ke</th>
+                                                                    <th>BTA</th>
+                                                                    <th>Terapi</th>
+                                                                    <th>Petugas</th>
+                                                                    <th>Dokter</th>
                                                                 </tr>
                                                             </thead>
                                                         </table>
@@ -219,11 +219,10 @@
                         <div class="container-fluid mb-4">
                             <div class="form-row d-flex justify-content-end">
                                 <div class="col-auto">
-                                    <a class="btn btn-danger" id="tblBatal" onclick="transaksiBatal();">Batal</a>
+                                    <a class="btn btn-danger" id="tblBatal" onclick="batal();">Batal</a>
                                 </div>
                                 <div class="col-auto">
-                                    <a class="btn btn-success" id="tblSimpan"
-                                        onclick="transaksiSelesai();">Selesai</a>
+                                    <a class="btn btn-success" id="tblSimpan" onclick="selesai();">Selesai</a>
                                 </div>
                             </div>
                         </div>

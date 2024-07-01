@@ -4,8 +4,8 @@
 @section('content')
     <canvas id="confetti"></canvas>
 
-    @include('IGD.antrian')
-    @include('IGD.input')
+    @include('IGD.Trans.antrian')
+    @include('IGD.Trans.input')
 
 
     </div>

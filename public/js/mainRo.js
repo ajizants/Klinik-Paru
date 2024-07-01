@@ -458,11 +458,14 @@ function antrianTes(ruang, filter, tabel) {
         $("#loadingSpinner").hide();
 
         var filteredData = response.response.data.filter(function (item) {
+            // s;
             return item.status === filter;
         });
 
         filteredData.forEach(function (item) {
             item.tgl = tanggal;
+            item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                        onclick="cariTsRo('${item.pasien_no_rm}','${item.tgl}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
         });
 
         if ($.fn.DataTable.isDataTable(tabel)) {

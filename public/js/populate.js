@@ -24,6 +24,11 @@ function initializeDataAntrianAll(ruang, response) {
     // Check if response has data array
     if (response && response.response && response.response.data) {
         // Iterate over each item in the data array
+
+        var filteredData = response.response.data.filter(function (item) {
+            // s;
+            return item.status === "Sudah Selesai";
+        });
         response.response.data.forEach(function (item) {
             // Check if pasien_no_rm is not empty
             if (item.pasien_no_rm) {
@@ -72,6 +77,45 @@ function initializeDataAntrianAll(ruang, response) {
                 { data: "poli_nama", className: "p-2" }, // Poli column
                 { data: "dokter_nama", className: "p-2 col-3" }, // Dokter column
             ],
+            order: [[1, "dsc"]], // Order by Antrean Nomor ascending
+        });
+        $("#dataSelesai").DataTable({
+            data: filteredData,
+            columns: [
+                { data: "aksi", className: "text-center p-2 col-1" }, // Action column
+                {
+                    data: "status",
+                    className: "text-center p-2 col-1",
+                    render: function (data, type, row) {
+                        var backgroundColor = "";
+                        switch (data) {
+                            case "Tidak Ada Permintaan":
+                                backgroundColor = "danger";
+                                break;
+                            case "Belum Ada Ts RO":
+                                backgroundColor = "danger";
+                                break;
+                            case "Belum Upload Foto Thorax":
+                                backgroundColor = "warning";
+                                break;
+                            case "Sudah Selesai":
+                                backgroundColor = "success";
+                                break;
+                            default:
+                                backgroundColor = "secondary";
+                                break;
+                        }
+                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                    },
+                },
+                { data: "tanggal", className: "p-2" }, // Tanggal column
+                { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
+                { data: "penjamin_nama", className: "text-center p-2" }, // No Antrean column
+                { data: "pasien_no_rm", className: "text-center p-2" }, // Pasien No. RM column
+                { data: "pasien_nama", className: "p-2 col-3" }, // Pasien Nama column
+                { data: "poli_nama", className: "p-2" }, // Poli column
+                { data: "dokter_nama", className: "p-2 col-3" }, // Dokter column
+            ],
             order: [[1, "asc"]], // Order by Antrean Nomor ascending
         });
     } else {
@@ -84,22 +128,33 @@ function initializeDataAntrianAll(ruang, response) {
 }
 
 function antrianAll(ruang) {
+    console.log("🚀 ~ antrianAll ~ antrianAll:", ruang);
     $("#loadingSpinner").show();
     var tanggal = $("#tanggal").val();
 
     fetchDataAntrianAll(tanggal, ruang, function (response) {
         $("#loadingSpinner").hide();
+        var filteredData = response.response.data.filter(function (item) {
+            // s;
+            return item.status === "Sudah Selesai";
+        });
+
+        console.log("🚀 ~ antrianAll ~ filteredData:", filteredData);
 
         // Check if DataTable already initialized
         if ($.fn.DataTable.isDataTable("#antrianall")) {
             var table = $("#antrianall").DataTable();
 
-            // Modify response data to add action column
             response.response.data.forEach(function (item) {
                 var tgl = $("#tanggal").val();
                 item.tgl = tgl;
-                item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-                onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+                if (ruang == "dots") {
+                    item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                                    onclick="cariPasienTb('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+                } else {
+                    item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                                    onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+                }
             });
 
             // Clear existing data, add new data, and redraw table
@@ -108,9 +163,50 @@ function antrianAll(ruang) {
             // Initialize DataTable with the response data
             initializeDataAntrianAll(ruang, response);
         }
+        if (ruang == "igd") {
+            if ($.fn.DataTable.isDataTable("#dataSelesai")) {
+                var table = $("#dataSelesai").DataTable();
+
+                filteredData.forEach(function (item) {
+                    var tgl = $("#tanggal").val();
+                    item.tgl = tgl;
+                    if (ruang == "dots") {
+                        item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                                    onclick="cariPasienTb('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+                    } else {
+                        item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                                    onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+                    }
+                });
+
+                // Clear existing data, add new data, and redraw table
+                table.clear().rows.add(filteredData).draw();
+            } else {
+                // Initialize DataTable with the response data
+                initializeDataAntrianAll(ruang, response);
+            }
+        }
     });
 }
 //pasien Kominfo
+function isiIdentitas(pasien, pendaftaran) {
+    $("#layanan").val(pendaftaran.penjamin_nama).trigger("change"); // Trigger change event jika diperlukan
+    $("#norm").val(pasien.pasien_no_rm);
+    $("#nama").val(pasien.pasien_nama);
+    $("#alamat").val(pasien.pasien_alamat);
+    $("#notrans").val(pendaftaran.no_trans);
+    $("#dokter").val(pendaftaran.nip_dokter).trigger("change");
+    //cari jika ada element jk maka isi jk
+    if ($("#jk").length) {
+        $("#jk").val(pasien.jenis_kelamin_nama);
+    }
+    jk = pasien.jenis_kelamin_nama;
+
+    setTimeout(function () {
+        Swal.close();
+        scrollToInputSection();
+    }, 1000);
+}
 function cariKominfo(norm, tgl, ruang) {
     var normValue = norm ? norm : $("#norm").val();
     var tgl = tgl ? tgl : $("#tglRO").val();
@@ -171,38 +267,23 @@ function cariKominfo(norm, tgl, ruang) {
                             showConfirmButton: false,
                             allowOutsideClick: false,
                         });
-
                         var pasien = response.response.pasien[0];
 
                         var pendaftaran = response.response.pendaftaran[0];
-
-                        // Mengatur nilai untuk form fields
-                        $("#layanan")
-                            .val(pendaftaran.penjamin_nama)
-                            .trigger("change"); // Trigger change event jika diperlukan
-                        $("#norm").val(pasien.pasien_no_rm);
-                        $("#nama").val(pasien.pasien_nama);
-                        $("#alamat").val(pasien.pasien_alamat);
-                        $("#notrans").val(pendaftaran.no_trans);
-                        $("#dokter")
-                            .val(pendaftaran.nip_dokter)
-                            .trigger("change");
-                        //cari jika ada element jk maka isi jk
-                        if ($("#jk").length) {
-                            $("#jk").val(pasien.jenis_kelamin_nama);
-                        }
-                        jk = pasien.jenis_kelamin_nama;
+                        var notrans = pendaftaran.no_trans;
 
                         if (ruang == "igd") {
-                            dataTindakan();
+                            isiIdentitas(pasien, pendaftaran);
+                            dataTindakan(notrans);
                         } else if (ruang == "farmasi") {
                             dataFarmasi();
+                            isiIdentitas(pasien, pendaftaran);
+                        } else if (ruang == "ro") {
+                            isiIdentitas(pasien, pendaftaran);
+                        } else if (ruang == "dots") {
+                            cariPasienTb(norm, tgl, pasien, pendaftaran);
+                            // searchByRM(norm, tgl);
                         }
-
-                        setTimeout(function () {
-                            Swal.close();
-                            scrollToInputSection();
-                        }, 1000);
                     } else {
                         // Handle other potential status codes
                         Swal.fire({
@@ -1122,11 +1203,11 @@ function populateObat() {
         });
 
         data.forEach(function (obat) {
-            var option = new Option(obat.nmPengobatan, obat.id, false, false);
+            var option = new Option(obat.nmPengobatan, obat.kd, false, false);
             obatDots.append(option).trigger("change");
         });
         data.forEach(function (obat) {
-            var option = new Option(obat.nmPengobatan, obat.id, false, false);
+            var option = new Option(obat.nmPengobatan, obat.kd, false, false);
             obatDotsModal.append(option).trigger("change");
         });
     });

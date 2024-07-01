@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PasienKominfoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,6 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::get('ro', [HomeController::class, 'ro'])->name('ro')->middleware('role:ro');
     Route::get('masterRo', [HomeController::class, 'masterRo'])->name('masterRo')->middleware('role:ro');
     Route::get('riwayatRo', [HomeController::class, 'riwayatRo'])->name('hasilRo')->middleware('role:ro');
+    Route::post('waktu_layanan', [PasienKominfoController::class, 'waktuLayanan']);
 });
 Route::get('dispenser', [HomeController::class, 'dispenser'])->name('dispenser');
 Route::get('displayAntrian', [HomeController::class, 'displayAntrian'])->name('displayAntrian');

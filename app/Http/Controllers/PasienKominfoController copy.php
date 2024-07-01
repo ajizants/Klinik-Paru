@@ -431,8 +431,7 @@ class PasienKominfoController extends Controller
                     // Check if ROTransaksiModel exists for $notrans
                     if ($ruang == "ro") {
                         try {
-                            $tsRo = ROTransaksiModel::where('norm', $norm)
-                                ->whereDate('tgltrans', $tanggal)->first();
+                            $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
                             // Attempt to retrieve data from the 'rontgen' connection
                             $foto = ROTransaksiHasilModel::where('norm', $norm)
                                 ->whereDate('tanggal', $tanggal)
@@ -638,7 +637,7 @@ class PasienKominfoController extends Controller
             $no_rm = $request->input('no_rm');
             $tanggal = $request->input('tanggal');
             $model = new KominfoModel();
-            $params = $request->only(['tanggal']);
+
             // Panggil metode untuk melakukan request
             $res_pasien = $model->pasienRequest($no_rm);
             $pasien[] = [
@@ -662,13 +661,10 @@ class PasienKominfoController extends Controller
                 "penjamin_nama" => $res_pasien['response']['data']['penjamin_nama'],
             ];
             // Panggil metode untuk melakukan request
-            $pendaftaran = $model->waktuLayananRequest($params);
-            // $pendaftaran = array_values($pendaftaran);
-            // return response()->json($pendaftaran, 200);
-            // if (isset($pendaftaran['response']['data']) && is_array($pendaftaran['response']['data'])) {
-            //     $filteredData = array_filter($pendaftaran['response']['data'], function ($d) {
-            if (isset($pendaftaran) && is_array($pendaftaran)) {
-                $filteredData = array_filter($pendaftaran, function ($d) {
+            $pendaftaran = $model->pendaftaranRequest($tanggal);
+            // dd($pendaftaran);
+            if (isset($pendaftaran['response']['data']) && is_array($pendaftaran['response']['data'])) {
+                $filteredData = array_filter($pendaftaran['response']['data'], function ($d) {
                     return $d['pasien_no_rm'] === $_REQUEST['no_rm'];
                 });
                 $filteredData = array_values($filteredData);
@@ -729,10 +725,13 @@ class PasienKominfoController extends Controller
 
             // Panggil metode untuk melakukan request
             $data = $model->cpptRequest($params);
-            // return response()->json($data);
+
             if (isset($data['response']['data']) && is_array($data['response']['data'])) {
                 $filteredData = array_filter(array_map(function ($d) {
-
+                    // Skip jika tindakan kosong
+                    if (empty($d['tindakan'])) {
+                        return null;
+                    }
                     $igd = IGDTransModel::whereDate('created_at', $d['tanggal'])
                         ->where('norm', $d['pasien_no_rm'])
                         ->first();
@@ -771,7 +770,7 @@ class PasienKominfoController extends Controller
                     return response()->json($response);
                     //
                 } else {
-                    return response()->json(['error' => 'Tidak ada data permintaan tindakan'], 404);
+                    return response()->json(['error' => 'No valid data found'], 404);
                 }
             } else {
                 return response()->json(['error' => 'Invalid data format'], 500);
@@ -806,22 +805,29 @@ class PasienKominfoController extends Controller
         $data = $model->waktuLayananRequest($params);
 
         return response()->json($data);
+        // if (isset($data['error'])) {
+        //     return view('waktu_layanan', ['error' => $data['error']]);
+        // } else {
+        //     return view('waktu_layanan', ['data' => $data]);
+        // }
     }
 
     public function avgWaktuTunggu(Request $request)
     {
         try {
             $params = $request->all();
+            // $params=[];
+            // dd($params);
             $model = new KominfoModel();
 
             // Ambil data dari model menggunakan metode waktuLayananRequest
             $data = $model->waktuLayananRequest($params);
-
-            // Hitung rata-rata dan waktu terlama
-            $results = $this->calculateAverages($data);
+            // dd($data);
+            // Hitung rata-rata waktu tunggu
+            $averages = $this->calculateAverages($data);
 
             // Kembalikan response dalam format JSON
-            return response()->json(['data' => $results]);
+            return response()->json(['data' => $averages]); // Ubah struktur respons di sini jika perlu
         } catch (\Exception $e) {
             // Tangani kesalahan
             return response()->json(['error' => $e->getMessage()], 500);
@@ -830,8 +836,10 @@ class PasienKominfoController extends Controller
 
     private function calculateAverages($data)
     {
+        // Menghitung jumlah data yang valid
         $total = count($data);
-
+        // dd($data);
+        // Inisialisasi variabel total dan rata-rata
         $total_tunggu_daftar = 0;
         $total_tunggu_lab = 0;
         $total_tunggu_poli = 0;
@@ -842,16 +850,7 @@ class PasienKominfoController extends Controller
         $total_tunggu_farmasi = 0;
         $total_tunggu_kasir = 0;
 
-        $max_tunggu_daftar = 0;
-        $max_tunggu_lab = 0;
-        $max_tunggu_poli = 0;
-        $max_durasi_poli = 0;
-        $max_tunggu_ro = 0;
-        $max_tunggu_tensi = 0;
-        $max_tunggu_igd = 0;
-        $max_tunggu_farmasi = 0;
-        $max_tunggu_kasir = 0;
-
+        // Iterasi data dan mengakumulasikan total waktu tunggu
         foreach ($data as $message) {
             $total_tunggu_daftar += $message['tunggu_daftar'];
             $total_tunggu_lab += $message['tunggu_lab'];
@@ -862,19 +861,9 @@ class PasienKominfoController extends Controller
             $total_tunggu_igd += $message['tunggu_igd'];
             $total_tunggu_farmasi += $message['tunggu_farmasi'];
             $total_tunggu_kasir += $message['tunggu_kasir'];
-
-            // Update max values
-            $max_tunggu_daftar = max($max_tunggu_daftar, $message['tunggu_daftar']);
-            $max_tunggu_lab = max($max_tunggu_lab, $message['tunggu_lab']);
-            $max_tunggu_poli = max($max_tunggu_poli, $message['tunggu_poli']);
-            $max_durasi_poli = max($max_durasi_poli, $message['durasi_poli']);
-            $max_tunggu_ro = max($max_tunggu_ro, $message['tunggu_ro']);
-            $max_tunggu_tensi = max($max_tunggu_tensi, $message['tunggu_tensi']);
-            $max_tunggu_igd = max($max_tunggu_igd, $message['tunggu_igd']);
-            $max_tunggu_farmasi = max($max_tunggu_farmasi, $message['tunggu_farmasi']);
-            $max_tunggu_kasir = max($max_tunggu_kasir, $message['tunggu_kasir']);
         }
 
+        // Menghitung rata-rata
         $avg_tunggu_daftar = round($total_tunggu_daftar / $total, 2);
         $avg_tunggu_lab = round($total_tunggu_lab / $total, 2);
         $avg_tunggu_poli = round($total_tunggu_poli / $total, 2);
@@ -885,7 +874,8 @@ class PasienKominfoController extends Controller
         $avg_tunggu_farmasi = round($total_tunggu_farmasi / $total, 2);
         $avg_tunggu_kasir = round($total_tunggu_kasir / $total, 2);
 
-        $results = [
+        // Menyimpan hasil dalam array untuk pengembalian
+        $averages = [
             'avg_tunggu_daftar' => $avg_tunggu_daftar,
             'avg_tunggu_lab' => $avg_tunggu_lab,
             'avg_tunggu_poli' => $avg_tunggu_poli,
@@ -895,18 +885,9 @@ class PasienKominfoController extends Controller
             'avg_tunggu_igd' => $avg_tunggu_igd,
             'avg_tunggu_farmasi' => $avg_tunggu_farmasi,
             'avg_tunggu_kasir' => $avg_tunggu_kasir,
-            'max_tunggu_daftar' => $max_tunggu_daftar,
-            'max_tunggu_lab' => $max_tunggu_lab,
-            'max_tunggu_poli' => $max_tunggu_poli,
-            'max_durasi_poli' => $max_durasi_poli,
-            'max_tunggu_ro' => $max_tunggu_ro,
-            'max_tunggu_tensi' => $max_tunggu_tensi,
-            'max_tunggu_igd' => $max_tunggu_igd,
-            'max_tunggu_farmasi' => $max_tunggu_farmasi,
-            'max_tunggu_kasir' => $max_tunggu_kasir,
         ];
 
-        return $results;
+        return $averages;
     }
 
 }

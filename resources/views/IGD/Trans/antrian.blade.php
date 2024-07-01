@@ -15,10 +15,15 @@
             </div>
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a type="button" class="nav-link active bg-blue" id="itunggu"><b>Tunggu</b></a>
+                    <a type="button" class="nav-link active bg-blue"
+                        onclick=" toggleSections('#dTunggu')"><b>Tunggu</b></a>
                 </li>
                 <li class="nav-item">
-                    <a type="button" class="nav-link" id="iselesai"><b>Antrian All</b></a>
+                    <a type="button" class="nav-link" onclick=" toggleSections('#dSelesai')"><b>Selesai</b></a>
+                </li>
+                <li class="nav-item">
+                    <a type="button" class="nav-link" onclick=" toggleSections('#dAntrian')"><b>Antrian
+                            All</b></a>
                 </li>
                 <div class="input-group col d-flex justify-content-start ml-5">
                     <input type="date" class="form-control col-sm-2 bg bg-warning" id="tanggal"
@@ -29,7 +34,7 @@
                     </div>
                 </div>
             </ul>
-            <div id="dselesai" class="card-body card-body-hidden p-2" style="display: none;">
+            <div id="dAntrian" class="card-body card-body-hidden p-2" style="display: none;">
                 <div class="table-responsive pt-2 px-2">
                     <table id="antrianall" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
@@ -49,7 +54,7 @@
                     </table>
                 </div>
             </div>
-            <div id="dtunggu" class="card-body card-body-hidden p-2">
+            <div id="dTunggu" class="card-body card-body-hidden p-2">
                 <div class="table-responsive pt-2 px-2">
                     <table id="dataAntrian" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
@@ -63,6 +68,26 @@
                                 <th width="12rem">Nama</th>
                                 <th width="20rem">Tindakan</th>
                                 <th width="20rem">Dokter</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div id="dSelesai" class="card-body card-body-hidden p-2" style="display: none;">
+                <div class="table-responsive pt-2 px-2">
+                    <table id="dataSelesai" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
+                        cellspacing="0">
+                        <thead class="bg bg-teal">
+                            <tr>
+                                <th width="15px">Aksi</th>
+                                <th width="25px">Status</th>
+                                <th>Tanggal</th>
+                                <th>Urut</th>
+                                <th>Jaminan</th>
+                                <th>No RM</th>
+                                <th class="col-3">Nama Pasien</th>
+                                <th>Poli</th>
+                                <th class="col-3">Dokter</th>
                             </tr>
                         </thead>
                     </table>

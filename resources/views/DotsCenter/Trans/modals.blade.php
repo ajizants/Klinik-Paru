@@ -48,14 +48,15 @@
                                                             HP</label>
                                                         <div class="col-sm-2">
                                                             <input type="text" id="modal-hp"
-                                                                class="form-control bg-white" />
+                                                                class="form-control bg-white" placeholder="No HP" />
                                                         </div>
 
                                                         <label for="modal-nik"
                                                             class="col-sm-1 col-form-label font-weight-bold mb-0">NIK</label>
                                                         <div class="col-sm-2">
                                                             <input type="text" id="modal-nik"
-                                                                class="form-control bg-white border border-white" />
+                                                                class="form-control bg-white border border-white"
+                                                                placeholder="NIK" />
                                                         </div>
 
                                                         <label for="modal-alamat"
@@ -249,6 +250,37 @@
                                         <div class="card card-black">
                                             <!-- form start -->
                                             @csrf
+                                            <form class="form-horizontal" id="identitasTBRiwayat">
+                                                <div class="card-body">
+                                                    <div class="form-group row">
+
+                                                        <label for="riwayat-norm"
+                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">No
+                                                            RM</label>
+                                                        <span id="riwayat-norm" class="col-sm-1">: NaN</span>
+
+                                                        <label for="riwayat-nama"
+                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">Nama</label>
+                                                        <span id="riwayat-nama " class="col-sm-3">: NaN</span>
+
+                                                        <label for="riwayat-hp "
+                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">No
+                                                            HP</label>
+                                                        <span id="riwayat-hp" class="col-sm-2">: NaN</span>
+
+                                                        <label for="riwayat-nik"
+                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">NIK</label>
+                                                        <span id="riwayat-nik" class="col-sm-2">: NaN</span>
+
+                                                        <label for="riwayat-alamat"
+                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat</label>
+                                                        <span id="riwayat-alamat" class="col-sm">: NaN</span>
+
+                                                    </div>
+                                                </div>
+                                                <!-- /.card-body -->
+                                            </form>
+                                            {{-- @csrf
                                             <form class="form-horizontal" id="formTBbaru">
                                                 <div class="card-body">
                                                     <div class="form-group row">
@@ -259,14 +291,6 @@
                                                             <input type="text" name="modal-norm" id="modal-norm"
                                                                 class="form-control" placeholder=" No RM"
                                                                 maxlength="6" pattern="[0-9]{6}" required />
-                                                        </div>
-
-                                                        <label for="modal-layanan"
-                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan</label>
-                                                        <div class="col-sm-2">
-                                                            <input type="text" id="modal-layanan"
-                                                                class="form-control bg-white border border-white"
-                                                                placeholder="Layanan" readonly />
                                                         </div>
 
                                                         <label for="modal-nama"
@@ -302,123 +326,9 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="form-group row">
-                                                        <label for="modal-dokter"
-                                                            class="col-sm-1 col-form-label font-weight-bold">Dokter</label>
-                                                        <div class="col-sm-3">
-                                                            <select id="modal-dokter"
-                                                                class="form-control select2bs4 mb-3 border border-primary">
-                                                                <option value="">--Pilih Dokter--</option>
-                                                            </select>
-                                                        </div>
-
-                                                        <label for="modal-petugas"
-                                                            class="col-sm-1 col-form-label font-weight-bold">Petugas</label>
-                                                        <div class="col-sm-3">
-                                                            <select id="modal-petugas"
-                                                                class="form-control select2bs4 border border-primary">
-                                                                <option value="">--Pilih Petugas--</option>
-                                                            </select>
-                                                        </div>
-
-                                                        <label for="modal-kdDx"
-                                                            class="col-sm-1 col-form-label font-weight-bold">DX
-                                                            Medis</label>
-                                                        <div class="col-sm-3">
-                                                            <select id="modal-kdDx"
-                                                                class="form-control select2bs4 mb-3 border border-primary">
-                                                                <option value="">--Pilih Diagnosa--</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group row">
-                                                        <label for="modal-tcm"
-                                                            class="col-sm-1 col-form-label font-weight-bold">Hasil
-                                                            TCM</label>
-                                                        <div class="col-sm-3">
-                                                            <select id="modal-tcm"
-                                                                class="form-control select2bs4 border border-info">
-                                                                <option value="">--Pilih Hasil--</option>
-                                                                <option value="Low RifSen">MTB Det Low RifSen</option>
-                                                                <option value="Low RifRes">MTB Det Low RifRes</option>
-                                                                <option value="Medium RifSen">MTB Det Medium RifSen
-                                                                </option>
-                                                                <option value="Medium RifRes">MTB Det Medium RifRes
-                                                                </option>
-                                                                <option value="Hight RifSen">MTB Det Hight RifSen
-                                                                </option>
-                                                                <option value="Hight RifRes">MTB Det Hight RifRes
-                                                                </option>
-                                                                <option value="Neg">Negative</option>
-                                                            </select>
-                                                        </div>
-
-                                                        <label for="modal-hiv"
-                                                            class="col-sm-1 col-form-label font-weight-bold">Status
-                                                            HIV</label>
-                                                        <div class="col-sm-3">
-                                                            <select id="modal-hiv"
-                                                                class="form-control select2bs4 border border-info">
-                                                                <option value="">--Pilih Status HIV--</option>
-                                                                <option value="Positif HIV">Positif</option>
-                                                                <option value="Negatif HIV">Negatif</option>
-                                                                <option value="Tidak Diketahui">Tidak Diketahui
-                                                                </option>
-                                                            </select>
-                                                        </div>
-
-                                                        <label for="modal-dm"
-                                                            class="col-sm-1 col-form-label font-weight-bold">Status
-                                                            DM</label>
-                                                        <div class="col-sm-3">
-                                                            <select id="modal-dm"
-                                                                class="form-control select2bs4 border border-info">
-                                                                <option value="">--Pilih Status DM--</option>
-                                                                <option value="Positif DM">Positif</option>
-                                                                <option value="Negatif DM">Negatif</option>
-                                                                <option value="Tidak Diketahui">Tidak Diketahui
-                                                                </option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group row mt-3">
-                                                        <label for="modal-bb"
-                                                            class="col-sm-1 col-form-label font-weight-bold">BB</label>
-                                                        <div class="col-sm-3">
-                                                            <input type="text" id="modal-bb"
-                                                                class="form-control border border-info"
-                                                                placeholder="Berat Badan" required />
-                                                        </div>
-
-                                                        <label for="modal-tglmulai"
-                                                            class="col-sm-1 col-form-label font-weight-bold">Tgl
-                                                            Mulai</label>
-                                                        <div class="col-sm-3">
-                                                            <input id="modal-tglmulai" type="date"
-                                                                class="form-control border border-primary" />
-                                                        </div>
-
-                                                        <label for="modal-obtDots"
-                                                            class="col-sm-1 col-form-label font-weight-bold">Obat</label>
-                                                        <div class="col-sm-3">
-                                                            <select id="modal-obtDots"
-                                                                class="form-control select2bs4 border border-info">
-                                                                <option value="">--Jenis Obat--</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group row mt-3">
-                                                        <div class="col-sm">
-                                                            <textarea type="text" id="modal-ket" class="form-control border border-info" placeholder="Keterangan Lain"
-                                                                style="height: 50px;" required></textarea>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                                 <!-- /.card-body -->
-                                            </form>
+                                            </form> --}}
                                         </div>
 
                                         <div class="card card-info">
@@ -454,6 +364,69 @@
                             </div>
                             <div class="modal-footer justify-content-end">
                                 <button type="button" class="btn btn-primary" data-dismiss="modal">Selesai</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <div class="modal fade" id="modal-update">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Update Status Pengobatan Pasien TBC</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="card-body p-2">
+                                    <div class="container-fluid">
+                                        <div class="card card-black">
+                                            <!-- form start -->
+                                            @csrf
+                                            <form class="form-horizontal" id="updatePengobatanTB">
+                                                <div class="card-body">
+                                                    <div class="form-group row">
+                                                        {{-- <label for="status-norm"
+                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">No
+                                                            RM</label> --}}
+                                                        <div class="col-sm-3 row">
+                                                            <input type="number" name="status-norm" id="status-norm"
+                                                                class="form-control col" placeholder=" No RM"
+                                                                maxlength="6" pattern="[0-9]{6}" readonly />
+                                                            <input type="number" name="status-id" id="status-id"
+                                                                class="form-control col" placeholder="ID"
+                                                                maxlength="6" pattern="[0-9]{6}" readonly />
+                                                        </div>
+                                                        {{-- <label for="status-nama"
+                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">Nama</label> --}}
+                                                        <div class="col-sm-4">
+                                                            <input type="text" id="status-nama"
+                                                                class="form-control bg-white border border-white"
+                                                                placeholder="Nama Pasien" readonly>
+                                                        </div>
+                                                        <div class="col-sm-5">
+                                                            <input id="status-alamat"
+                                                                class="form-control bg-white border border-white"
+                                                                placeholder="Alamat Pasien" readonly />
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group row">
+                                                        <textarea id="status-pengobatan" class="form-control bg-white border border-white" style="height: 69px;"
+                                                            placeholder="Status Pengobatan"></textarea>
+                                                    </div>
+                                                </div>
+                                                <!-- /.card-body -->
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer justify-content-end">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                    onclick="updateStatus();">Simpan</button>
                             </div>
                         </div>
                         <!-- /.modal-content -->

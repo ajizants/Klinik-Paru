@@ -2,8 +2,8 @@
 @extends('Template.lte')
 
 @section('content')
-    @include('DotsCenter.antrian')
-    @include('DotsCenter.input')
+    @include('DotsCenter.Trans.antrian')
+    @include('DotsCenter.Trans.input')
 
 
 
@@ -17,7 +17,7 @@
     @include('Template.footer')
 
     </div>
-    @include('DotsCenter.modals')
+    @include('DotsCenter.Trans.modals')
     @include('Template.script')
 
     <!-- my script -->
