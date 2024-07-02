@@ -37,16 +37,14 @@
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
                                                     :</label>
                                                 <div class="col-sm-2">
-                                                    <input type="text" id="layanan"
-                                                        class="form-control bg-white border border-danger "
+                                                    <input type="text" id="layanan" class="form-control bg-white"
                                                         placeholder="Layanan" readonly />
                                                 </div>
                                                 <label for="nama"
                                                     class="col-sm-1 col-form-label font-weight-bold  mb-0">Nama
                                                     :</label>
                                                 <div class="col-sm-5">
-                                                    <input type="text" id="nama"
-                                                        class="form-control bg-white border border-danger "
+                                                    <input type="text" id="nama" class="form-control bg-white"
                                                         placeholder="Nama Pasien" readonly>
                                                 </div>
                                             </div>
@@ -57,24 +55,21 @@
                                                 <div class="col-sm-2">
                                                     <input type="date" id="tglKunj"
                                                         class="form-control bg-white" />
-                                                    <input type="text" id="tgltind"
-                                                        class="form-control bg-white border border-danger "
+                                                    <input type="text" id="tgltind" class="form-control bg-white"
                                                         placeholder="tgltind" readonly hidden />
                                                 </div>
                                                 <label for="notrans"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
                                                     :</label>
                                                 <div class="col-sm-2">
-                                                    <input type="text" id="notrans"
-                                                        class="form-control bg-white border border-danger "
+                                                    <input type="text" id="notrans" class="form-control bg-white"
                                                         placeholder="Nomor Transaksi" readonly />
                                                 </div>
                                                 <label for="alamat"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat
                                                     :</label>
                                                 <div class="col-sm-5">
-                                                    <input id="alamat"
-                                                        class="form-control bg-white border border-danger"
+                                                    <input id="alamat" class="form-control bg-white"
                                                         placeholder="Alamat Pasien" readonly />
                                                 </div>
                                             </div>

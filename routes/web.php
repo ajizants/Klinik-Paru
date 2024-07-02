@@ -23,12 +23,12 @@ Route::post('actionlogin', [LoginController::class, 'actionlogin'])->name('actio
 Route::get('home', [HomeController::class, 'home'])->name('home')->middleware('auth');
 Route::get('actionlogout', [LoginController::class, 'actionlogout'])->name('actionlogout')->middleware('auth');
 
+Route::get('logFarmasi', [HomeController::class, 'logFarmasi'])->name('logFarmasi')->middleware('auth');
 //menu
 Route::middleware('auth')->group(function () {
     Route::get('report', [HomeController::class, 'report'])->name('report');
     //farmasi
     Route::get('farmasi', [HomeController::class, 'farmasi'])->name('farmasi')->middleware('role:farmasi');
-    Route::get('logFarmasi', [HomeController::class, 'logFarmasi'])->name('logFarmasi')->middleware('role:farmasi');
     Route::get('gudangFarmasi', [HomeController::class, 'gudangFarmasi'])->name('gudangFarmasi')->middleware('role:farmasi');
     //dots
     Route::get('dots', [HomeController::class, 'dots'])->name('dots')->middleware('role:dots');
