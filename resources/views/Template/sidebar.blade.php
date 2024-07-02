@@ -42,13 +42,15 @@
                                         <p>ASKEP</p>
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/report') }}">
-                                        <i class="fa-solid fa-chart-column nav-icon"></i>
-                                        <p>Report Petugas</p>
-                                    </a>
-                                </li>
                             @endif
+                            {{-- @if (auth()->user()->role === 'igd' || auth()->user()->role === 'admin' || auth()->user()->role === 'dots') --}}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/report') }}">
+                                    <i class="fa-solid fa-chart-column nav-icon"></i>
+                                    <p>Report Petugas</p>
+                                </a>
+                            </li>
+                            {{-- @endif --}}
                             <!-- Dots Section -->
                             @if (auth()->user()->role === 'admin' || auth()->user()->role === 'dots')
                                 <li class="nav-item">

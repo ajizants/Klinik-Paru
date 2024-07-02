@@ -210,19 +210,17 @@
                                                 <!-- /.card-body -->
                                             </div>
                                         </div>
+                                        <div class="form-row d-flex justify-content-end">
+                                            <div class="col-auto">
+                                                <a class="btn btn-danger" id="tblBatal" onclick="batal();">Batal</a>
+                                            </div>
+                                            <div class="col-auto">
+                                                <a class="btn btn-success" id="tblSimpan"
+                                                    onclick="selesai();">Selesai</a>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="container-fluid mb-4">
-                            <div class="form-row d-flex justify-content-end">
-                                <div class="col-auto">
-                                    <a class="btn btn-danger" id="tblBatal" onclick="batal();">Batal</a>
-                                </div>
-                                <div class="col-auto">
-                                    <a class="btn btn-success" id="tblSimpan" onclick="selesai();">Selesai</a>
                                 </div>
                             </div>
                         </div>

@@ -112,7 +112,7 @@
                         </div>
                         <!-- Card Body -->
                         <div class="card-body mb-2">
-                            <div class="row">
+                            {{-- <div class="row">
                                 <label class="col-form-label">Rentang Tanggal :</label>
                                 <div class="form-group col-7">
                                     <div class="input-group">
@@ -124,7 +124,7 @@
                                         <input type="text" class="form-control float-right" id="ratawaktulayanan">
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="terlamaTabel" width="100%" cellspacing="0">
                                     <thead class="bg bg-teal">

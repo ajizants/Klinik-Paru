@@ -33,4 +33,13 @@ class DotsTransModel extends Model
     {
         return $this->HasOne(DotsObatModel::class, 'id', 'terapi');
     }
+
+    public function ts()
+    {
+        return $this->HasMany(DotsTransModel::class, 'norm', 'norm');
+    }
+    public function bln()
+    {
+        return $this->hasOne(DotsBlnModel::class, 'id', 'blnKe');
+    }
 }

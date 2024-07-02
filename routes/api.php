@@ -85,7 +85,6 @@ Route::get('blnKeDots', [DotsController::class, 'blnKeDots']);
 Route::POST('pasien/TB', [DotsController::class, 'Ptb']);
 Route::get('pasien/TB/Kontrol', [DotsController::class, 'kontrol']);
 Route::get('pasien/TB/Telat', [DotsController::class, 'telat']);
-Route::get('pasien/TB/Do', [DotsController::class, 'do']);
 //transaksi dots
 Route::post('tambah/pasien/TB', [DotsController::class, 'addPasienTb']);
 Route::post('update/status/pengobatan', [DotsController::class, 'updatePengobatanPasien']);

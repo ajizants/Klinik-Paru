@@ -77,6 +77,7 @@
                                     <th width="15px"class="text-center">No</th>
                                     <th width="15px" class="text-center">NoRM</th>
                                     <th width="15px"class="text-center">No HP</th>
+                                    <th width="36px"class="text-center">Bln Ke</th>
                                     <th width="">Nama</th>
                                     <th width="">Alamat</th>
                                     <th width="">Dokter</th>
@@ -99,6 +100,7 @@
                                     <th width="15px"class="text-center">No HP</th>
                                     <th width="36px"class="text-center">Bln Ke</th>
                                     <th width="">Nama</th>
+                                    <th width="">Alamat</th>
                                     <th width="">Dokter</th>
                                 </tr>
                             </thead>

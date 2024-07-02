@@ -1,5 +1,6 @@
 async function addPasienTB() {
     var norm = $("#modal-norm").val();
+    var nik = $("#modal-nik").val();
     var nama = $("#modal-nama").val();
     var alamat = $("#modal-alamat").val();
     var hp = $("#modal-hp").val();
@@ -40,6 +41,7 @@ async function addPasienTB() {
             data: {
                 norm: norm,
                 nama: nama,
+                nik: nik,
                 alamat: alamat,
                 hp: hp,
                 tcm: tcm,
@@ -320,8 +322,6 @@ function selesai() {
 }
 
 function updateAntrian() {
-    pasienKontrol();
-    pasienDo();
     pasienTB();
     pasienTelat();
     antrianAll("dots");

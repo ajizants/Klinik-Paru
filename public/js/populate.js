@@ -31,11 +31,23 @@ function initializeDataAntrianAll(ruang, response) {
         });
         response.response.data.forEach(function (item) {
             // Check if pasien_no_rm is not empty
+            // if (item.pasien_no_rm) {
+            //     var tgl = $("#tanggal").val();
+            //     item.tgl = tgl;
+            //     item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+            //     onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+            // }
             if (item.pasien_no_rm) {
                 var tgl = $("#tanggal").val();
+                console.log("🚀 ~ antrianAll ~ fetch:", ruang);
                 item.tgl = tgl;
-                item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
-                onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+                if (ruang == "dots") {
+                    item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                                    onclick="cariPasienTb('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+                } else {
+                    item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                                    onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+                }
             }
         });
 
@@ -128,14 +140,12 @@ function initializeDataAntrianAll(ruang, response) {
 }
 
 function antrianAll(ruang) {
-    console.log("🚀 ~ antrianAll ~ antrianAll:", ruang);
     $("#loadingSpinner").show();
     var tanggal = $("#tanggal").val();
 
     fetchDataAntrianAll(tanggal, ruang, function (response) {
         $("#loadingSpinner").hide();
         var filteredData = response.response.data.filter(function (item) {
-            // s;
             return item.status === "Sudah Selesai";
         });
 
@@ -147,6 +157,7 @@ function antrianAll(ruang) {
 
             response.response.data.forEach(function (item) {
                 var tgl = $("#tanggal").val();
+                console.log("🚀 ~ antrianAll ~ fetch:", ruang);
                 item.tgl = tgl;
                 if (ruang == "dots") {
                     item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
@@ -190,7 +201,7 @@ function antrianAll(ruang) {
 }
 //pasien Kominfo
 function isiIdentitas(pasien, pendaftaran) {
-    $("#layanan").val(pendaftaran.penjamin_nama).trigger("change"); // Trigger change event jika diperlukan
+    $("#layanan").val(pendaftaran.penjamin_nama); // Trigger change event jika diperlukan
     $("#norm").val(pasien.pasien_no_rm);
     $("#nama").val(pasien.pasien_nama);
     $("#alamat").val(pasien.pasien_alamat);
@@ -281,7 +292,8 @@ function cariKominfo(norm, tgl, ruang) {
                         } else if (ruang == "ro") {
                             isiIdentitas(pasien, pendaftaran);
                         } else if (ruang == "dots") {
-                            cariPasienTb(norm, tgl, pasien, pendaftaran);
+                            // cariPasienTb(norm, tgl, pasien, pendaftaran);
+                            isiBiodataModal(norm, tgl, pasien, pendaftaran);
                             // searchByRM(norm, tgl);
                         }
                     } else {

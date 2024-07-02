@@ -291,12 +291,21 @@ class KominfoModel extends Model
 
             // Konversi response body ke array
             $mentah = json_decode($body, true);
+
             // dd($mentah);
-            $data = array_filter($mentah['message'], function ($message) {
-                return $message['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
-            });
+            if (!isset($params['no_rm']) || empty($params['no_rm'])) {
+                $data = array_filter($mentah['message'], function ($message) {
+                    return $message['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
+                });
+            } else {
+                $data = array_filter($mentah['message'], function ($message) use ($params) {
+                    return $message['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN' &&
+                        $message['pasien_no_rm'] === $params['no_rm'];
+                });
+            }
 
             $res = array_map(function ($message) {
+
                 if ($message["daftar_by"] == "JKN") {
                     $tunggu_daftar = 2;
                 } else {
