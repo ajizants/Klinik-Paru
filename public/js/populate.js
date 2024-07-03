@@ -39,7 +39,7 @@ function initializeDataAntrianAll(ruang, response) {
             // }
             if (item.pasien_no_rm) {
                 var tgl = $("#tanggal").val();
-                console.log("🚀 ~ antrianAll ~ fetch:", ruang);
+                // console.log("🚀 ~ antrianAll ~ fetch:", ruang);
                 item.tgl = tgl;
                 if (ruang == "dots") {
                     item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
@@ -149,7 +149,7 @@ function antrianAll(ruang) {
             return item.status === "Sudah Selesai";
         });
 
-        console.log("🚀 ~ antrianAll ~ filteredData:", filteredData);
+        // console.log("🚀 ~ antrianAll ~ filteredData:", filteredData);
 
         // Check if DataTable already initialized
         if ($.fn.DataTable.isDataTable("#antrianall")) {
@@ -157,7 +157,7 @@ function antrianAll(ruang) {
 
             response.response.data.forEach(function (item) {
                 var tgl = $("#tanggal").val();
-                console.log("🚀 ~ antrianAll ~ fetch:", ruang);
+                // console.log("🚀 ~ antrianAll ~ fetch:", ruang);
                 item.tgl = tgl;
                 if (ruang == "dots") {
                     item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
@@ -1084,18 +1084,34 @@ function populateSupplierOptions() {
 //DOTS CENTER
 function populateBlnKeOptions() {
     var blnKeSelectElement = $("#blnKe");
-    var tglKunjunganInput = $("#waktu");
+    var tglKunjunganInput = $("#tglKunj"); // format 2024-06-06
     var tglKontrolInput = $("#nxKontrol");
+
+    var modalUpdate = $("#modal-update #statusPengobatan");
+    var modalblnKeSelectElement = $("#modal-blnKe");
+    var modaltglKunjunganInput = $("#modal-tglmulai");
+    var modaltglKontrolInput = $("#modal-nxKontrol");
 
     $.ajax({
         url: "/api/blnKeDots",
         method: "GET",
         success: function (data) {
+            // Urutkan data berdasarkan id
+            data.sort(function (a, b) {
+                return a.id - b.id;
+            });
+
             blnKeSelectElement.empty();
+            modalblnKeSelectElement.empty();
+            modalUpdate.empty();
 
             data.forEach(function (blnKe) {
                 var option = new Option(blnKe.nmBlnKe, blnKe.id);
                 blnKeSelectElement.append(option);
+                var modalOption = new Option(blnKe.nmBlnKe, blnKe.id);
+                modalblnKeSelectElement.append(modalOption);
+                var modalUpdateOp = new Option(blnKe.nmBlnKe, blnKe.id);
+                modalUpdate.append(modalUpdateOp);
             });
 
             blnKeSelectElement.on("change", function () {
@@ -1107,26 +1123,59 @@ function populateBlnKeOptions() {
                 var selectedValue = selectedBln
                     ? parseFloat(selectedBln.nilai)
                     : 0;
-
                 if (isNaN(selectedValue)) {
                     selectedValue = 0;
                 }
 
-                // Get the current value of tglKunjunganInput and convert it to a Date object
-                var tglKunjunganValue = new Date();
+                var tglKunjunganValue = new Date(tglKunjunganInput.val());
+                if (isNaN(tglKunjunganValue.getTime())) {
+                    // console.error(
+                    //     "Invalid date value: ",
+                    //     tglKunjunganInput.val()
+                    // );
+                    return;
+                }
 
-                // Add the selectedValue to the date
                 tglKunjunganValue.setDate(
                     tglKunjunganValue.getDate() + selectedValue
                 );
-
-                // Format the date to "yyyy-MM-dd"
                 var formattedDate = tglKunjunganValue
                     .toISOString()
                     .split("T")[0];
 
-                // Set the value of tglKontrolInput
                 tglKontrolInput.val(formattedDate);
+            });
+
+            modalblnKeSelectElement.on("change", function () {
+                var selectedId = $(this).val();
+                var selectedBln = data.find(function (bulanKe) {
+                    return bulanKe.id == selectedId;
+                });
+
+                var selectedValue = selectedBln
+                    ? parseFloat(selectedBln.nilai)
+                    : 0;
+                if (isNaN(selectedValue)) {
+                    selectedValue = 0;
+                }
+
+                var tglKunjunganValue = new Date(modaltglKunjunganInput.val());
+                if (isNaN(tglKunjunganValue.getTime())) {
+                    // console.error(
+                    //     "Invalid date value: ",
+                    //     modaltglKunjunganInput.val()
+                    // );
+                    return;
+                }
+
+                tglKunjunganValue.setDate(
+                    tglKunjunganValue.getDate() + selectedValue
+                );
+                var formattedDate = tglKunjunganValue
+                    .toISOString()
+                    .split("T")[0];
+
+                modaltglKontrolInput.val(formattedDate);
             });
         },
         error: function (error) {
@@ -1134,6 +1183,7 @@ function populateBlnKeOptions() {
         },
     });
 }
+
 function populateDxMedis() {
     var dxDotsModal1 = $("#modal-pasienTB #modal-kdDx");
     var dxDotsModal = $("#modal-kdDx");

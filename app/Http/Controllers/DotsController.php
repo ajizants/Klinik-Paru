@@ -110,7 +110,7 @@ class DotsController extends Controller
             }
         } else {
             $Ptb = DotsModel::with('dokter.biodata')->get();
-
+            $pasienTB = [];
             foreach ($Ptb as $d) {
                 $kdDiag = $d['kdDx'];
                 $no_rm = $d['norm'];
@@ -123,34 +123,35 @@ class DotsController extends Controller
                     $status = DotsBlnModel::where('id', $d['hasilBerobat'])->first();
                     $d['statusPengobatan'] = $status['nmBlnKe'];
                 }
-                $pasien = $kominfo->pasienFilter($no_rm);
-                $tanggal = $request->input('tanggal_awal');
-                $params = [
-                    'tanggal' => $tanggal,
-                    'no_rm' => $no_rm,
-                ];
+                // $pasien = $kominfo->pasienFilter($no_rm);
+                // $tanggal = $request->input('tanggal_awal');
+                // $params = [
+                //     'tanggal' => $tanggal,
+                //     'no_rm' => $no_rm,
+                // ];
 
-                $pendaftaran = $kominfo->waktuLayananRequest($params);
+                // $pendaftaran = $kominfo->waktuLayananRequest($params);
 
-                $filteredData = array_map(function ($d) {
-                    $doctorNipMap = [
-                        'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
-                        'dr. AGIL DANANJAYA, Sp.P' => '9',
-                        'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
-                        'dr. SIGIT DWIYANTO' => '198903142022031005',
-                    ];
+                // $filteredData = array_map(function ($d) {
+                //     $doctorNipMap = [
+                //         'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
+                //         'dr. AGIL DANANJAYA, Sp.P' => '9',
+                //         'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
+                //         'dr. SIGIT DWIYANTO' => '198903142022031005',
+                //     ];
 
-                    $dokter_nama = $d['dokter_nama'];
-                    $d['nip_dokter'] = $doctorNipMap[$dokter_nama] ?? 'Unknown';
+                //     $dokter_nama = $d['dokter_nama'];
+                //     $d['nip_dokter'] = $doctorNipMap[$dokter_nama] ?? 'Unknown';
 
-                    return $d;
-                }, $pendaftaran);
+                //     return $d;
+                // }, $pendaftaran);
 
-                $ptbData[] = [
-                    'pasien' => $pasien,
-                    'ptb' => $d,
-                    'pendaftaran' => $filteredData,
-                ];
+                // $ptbData[] = [
+                //     'pasien' => $pasien,
+                //     'ptb' => $d,
+                //     // 'pendaftaran' => $filteredData,
+                // ];
+                $pasienTB[] = $d;
             }
 
             $res = [
@@ -159,7 +160,7 @@ class DotsController extends Controller
                     'code' => 200,
                     'message' => 'Data Semua Pasien Ditemukan...!!',
                 ],
-                'data' => $ptbData,
+                'data' => $pasienTB,
             ];
             return response()->json($res, 200, [], JSON_PRETTY_PRINT);
         }
@@ -174,7 +175,7 @@ class DotsController extends Controller
             // Cari transaksi yang paling baru untuk pasien ini
             $Pkontrol = DotsTransModel::with('bln')
                 ->where('norm', $d->norm)
-                ->latest('nxKontrol')
+                ->latest('created_at')
                 ->first();
 
             // Jika ada transaksi yang memenuhi kriteria
@@ -182,24 +183,23 @@ class DotsController extends Controller
                 $now = Carbon::now();
                 $nxKontrolDate = Carbon::parse($Pkontrol->nxKontrol);
                 $nxKontrol = $Pkontrol->nxKontrol;
+                $terakhir_kontrol = $Pkontrol->created_at;
+
                 $kdBlnke = $Pkontrol->bln->id;
                 $blnke = $Pkontrol->bln->nmBlnKe;
-                $selisihHari = $nxKontrolDate->diffInDays($now);
+                $selisihHari = $terakhir_kontrol->diffInDays($now);
 
                 if ($selisihHari > 30) {
-                    // Tambahkan status DO
                     $d->status = 'DO';
                 } elseif ($selisihHari > 7) {
-                    // Tambahkan status Telat
                     $d->status = 'Telat';
                 } else {
-                    // Tambahkan status Tepat Waktu
                     $d->status = 'Tepat Waktu';
                 }
 
-                // Tambahkan selisih hari
+                $d->terakhir = $terakhir_kontrol->format('d-m-Y');
                 $d->selisih = $selisihHari;
-                $d->nxKontrol = $nxKontrol;
+                $d->nxKontrol = $nxKontrolDate->format('d-m-Y');
                 $d->blnKe = $blnke;
                 $d->kdPengobatan = $kdBlnke;
 
@@ -227,7 +227,7 @@ class DotsController extends Controller
     public function kunjunganDots(Request $request)
     {
         $norm = $request->input('norm');
-        $data = DotsTransModel::with('petugas.biodata', 'dokter.biodata')
+        $data = DotsTransModel::with('pasien', 'petugas.biodata', 'dokter.biodata', 'bln')
             ->where('norm', $norm)
             ->get();
 
@@ -273,13 +273,13 @@ class DotsController extends Controller
             $addPTB->save();
 
             $msgUpdate = "";
-            // if ($blnKe == 99) {
             $update = DotsModel::where('norm', $norm)->first();
-            $update->hasilBerobat = $blnKe;
-            $update->save();
-            // Respon sukses atau redirect ke halaman lain
-            $msgUpdate = ' Status Pengobatan berhasil di Update';
-            // }
+            //jika ditemukan data $update, lakukan update, jika tidak, jangan lakukan
+            if ($update) {
+                $update->hasilBerobat = $blnKe;
+                $update->save();
+                $msgUpdate = ' Status Pengobatan berhasil di Update';
+            }
 
             $res = "Kunjungan pasien TBC Berhasil disimpan" . $msgUpdate;
             // Respon sukses atau redirect ke halaman lain
@@ -303,6 +303,7 @@ class DotsController extends Controller
         $mulai = $request->input('mulai');
         $bb = $request->input('bb');
         $terapi = $request->input('terapi');
+        $hasilBerobat = $request->input('hasilBerobat');
 
         $hiv = $request->input('hiv');
         $dm = $request->input('dm');
@@ -323,6 +324,7 @@ class DotsController extends Controller
             $addPTB->tcm = $tcm;
             $addPTB->kdDx = $dx;
             $addPTB->tglMulai = $mulai;
+            $addPTB->hasilBerobat = $hasilBerobat;
             $addPTB->bb = $bb;
             $addPTB->obat = $terapi;
             $addPTB->hiv = $hiv;

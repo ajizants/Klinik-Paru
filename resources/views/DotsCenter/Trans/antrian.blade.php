@@ -74,6 +74,7 @@
                                     <th width="15px">Aksi</th>
                                     <th width="35px">Telat</th>
                                     <th width="35px">Kontrol</th>
+                                    <th width="35px">Terakhir Kontrol</th>
                                     <th width="15px"class="text-center">No</th>
                                     <th width="15px" class="text-center">NoRM</th>
                                     <th width="15px"class="text-center">No HP</th>
@@ -88,13 +89,14 @@
                 </div>
                 <div id="dDo" class="card-body card-body-hidden p-2" style="display: none;">
                     <div class="table-responsive pt-2 px-2">
-                        <table id="Pdo" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
-                            cellspacing="0">
+                        <table id="Pdo" class="table table-striped table-hover pt-0 mt-0 fs-6"
+                            style="width:100%" cellspacing="0">
                             <thead class="bg bg-danger">
                                 <tr>
                                     <th width="15px">Aksi</th>
                                     <th width="35px">Telat</th>
                                     <th width="35px">Kontrol</th>
+                                    <th width="35px">Terakhir Kontrol</th>
                                     <th width="15px"class="text-center">No</th>
                                     <th width="15px" class="text-center">NoRM</th>
                                     <th width="15px"class="text-center">No HP</th>

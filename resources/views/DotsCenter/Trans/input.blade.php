@@ -120,10 +120,11 @@
                                                             <select id="bta"
                                                                 class="form-control select2bs4 border border-primary">
                                                                 <option value="">--Pilih Hasil--</option>
-                                                                <option value="1">Positif 1</option>
-                                                                <option value="2">Positif 2</option>
-                                                                <option value="3">Positif 3</option>
-                                                                <option value="1-9">Positif 1-9</option>
+                                                                <option value="negatif">Negatif</option>
+                                                                <option value="+1">Positif 1</option>
+                                                                <option value="+2">Positif 2</option>
+                                                                <option value="+3">Positif 3</option>
+                                                                <option value="+1-9">Positif 1-9</option>
                                                             </select>
                                                         </div>
                                                         <div class="form-group">
@@ -189,16 +190,17 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th class="col-1">Aksi</th>
-                                                                    <th>No RM</th>
-                                                                    <th>Tanggal</th>
-                                                                    <th>BB</th>
-                                                                    <th>Bln Ke</th>
+                                                                    <th class="col-1">No RM</th>
+                                                                    <th class="col-1">Tgl Kontrol</th>
+                                                                    <th class="col-1">Bln Ke</th>
                                                                     <th>BTA</th>
+                                                                    <th>BB</th>
                                                                     <th>Terapi</th>
-                                                                    <th>Petugas</th>
-                                                                    <th>Dokter</th>
+                                                                    <th class="col-3">Petugas</th>
+                                                                    <th class="col-3">Dokter</th>
                                                                 </tr>
                                                             </thead>
+                                                            <tbody></tbody>
                                                         </table>
                                                     </div>
                                                 </div>

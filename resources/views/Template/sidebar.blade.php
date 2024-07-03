@@ -87,7 +87,7 @@
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ url('/dots') }}">
                                             <i class="fa-solid fa-notes-medical nav-icon"></i>
-                                            <p>Dots Center</p>
+                                            <p>Transaksi Dots Center</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">

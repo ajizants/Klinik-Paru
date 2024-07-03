@@ -111,7 +111,6 @@ var Toast = Swal.mixin({
 });
 
 function toggleSections(sectionToShow) {
-    console.log("🚀 ~ toggleSections ~ toggleSections:", sectionToShow);
     var sections = [
         "#dAntrian",
         "#dSelesai",

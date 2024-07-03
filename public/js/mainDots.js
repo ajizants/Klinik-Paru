@@ -35,6 +35,7 @@ async function addPasienTB() {
             title: "Data Tidak Lengkap...!!! " + dataKurang.join(", "),
         });
     } else {
+        // console.log("siap tambah pasien tb");
         $.ajax({
             url: "/api/tambah/pasien/TB",
             type: "POST",
@@ -55,7 +56,6 @@ async function addPasienTB() {
                 petugas: petugas,
                 dokter: dokter,
             },
-
             success: function (response) {
                 Toast.fire({
                     icon: "success",
@@ -75,7 +75,7 @@ async function addPasienTB() {
 }
 
 function validasiKunjungan() {
-    console.log("Validasi kunjungan dimulai");
+    // console.log("Validasi kunjungan dimulai");
     var inputsToValidate = [
         "notrans",
         "tglKunj",
@@ -132,7 +132,6 @@ function validasiKunjungan() {
 }
 
 async function simpanKunjungan() {
-    console.log("Simpan kunjungan dimulai");
     try {
         var notrans = $("#notrans").val();
         var tgltrans = $("#tglKunj").val();
@@ -156,6 +155,7 @@ async function simpanKunjungan() {
         formData.append("terapi", terapi);
         formData.append("petugas", petugas);
         formData.append("dokter", dokter);
+        // console.log("🚀 ~ simpanKunjungan ~ formData:", formData);
 
         // Kirim data menggunakan fetch API dengan async/await
         const response = await fetch("/api/simpan/kunjungan/dots", {
@@ -189,92 +189,64 @@ async function simpanKunjungan() {
         });
     }
 }
+async function simpanKunjungan2() {
+    try {
+        var norm = $("#modal-pasienTB #modal-norm").val();
+        var notrans = $("#modal-pasienTB #modal-notrans").val();
+        var tgltrans = $("#modal-pasienTB #modal-tglmulai").val();
+        var nxKontrol = $("#modal-pasienTB #modal-nxKontrol").val();
+        var bta = $("#modal-pasienTB #modal-bta").val();
+        var bb = $("#modal-pasienTB #modal-bb").val();
+        var terapi = $("#modal-pasienTB #modal-obtDots").val();
+        var blnKe = $("#modal-pasienTB #modal-blnKe").val();
+        var petugas = $("#modal-pasienTB #modal-petugas").val();
+        var dokter = $("#modal-pasienTB #modal-dokter").val();
+        // Membuat objek FormData untuk mengirim data dengan file
+        var formData = new FormData();
+        formData.append("notrans", notrans);
+        formData.append("norm", norm);
+        formData.append("tgltrans", tgltrans);
+        formData.append("bta", bta);
+        formData.append("bb", bb);
+        formData.append("blnKe", blnKe);
+        formData.append("nxKontrol", nxKontrol);
+        formData.append("terapi", terapi);
+        formData.append("petugas", petugas);
+        formData.append("dokter", dokter);
+        // console.log("🚀 ~ simpanKunjungan2 ~ formData:", formData);
 
-// async function showKunjungan() {
-//     $("#loadingSpinner").show();
-//     if ($.fn.DataTable.isDataTable("#kunjDots")) {
-//         var table = $("#kunjDots").DataTable();
-//         table.destroy();
-//     }
+        // Kirim data menggunakan fetch API dengan async/await
+        const response = await fetch("/api/simpan/kunjungan/dots", {
+            method: "POST",
+            body: formData,
+        });
 
-//     $.ajax({
-//         url: "/api/kunjunganDots",
-//         type: "POST",
-//         data: {
-//             norm: norm,
-//         },
-//         success: function (response) {
-//             $("#loadingSpinner").hide();
-//             var dataArray = response.data || [];
-//             dataArray.forEach(function (item, index) {
-//                 item.pasien = `${item.biodata.nama}`;
-//                 item.actions = `<a class="editTB"
-//                                 data-id="${item.id}"
-//                                 data-norm="${item.norm}"
-//                                 ><i class="fas fa-pen-to-square pr-3"></i></a>`;
-//                 item.petugas = `${item.petugas.gelar_d} ${item.petugas.biodata.nama} ${item.petugas.gelar_b}`;
-//                 item.dokter = `${item.dokter.gelar_d} ${item.dokter.biodata.nama} ${item.dokter.gelar_b}`;
-//             });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || response.statusText);
+        }
 
-//             $("#kunjDots")
-//                 .DataTable({
-//                     data: dataArray,
-//                     columns: [
-//                         { data: "actions", className: "col-1 text-center" },
-//                         { data: "norm" },
-//                         {
-//                             data: "created_at",
-//                             render: function (data) {
-//                                 // Format the date using JavaScript
-//                                 const formattedDate = new Date(
-//                                     data
-//                                 ).toLocaleString("id-ID", {
-//                                     year: "numeric",
-//                                     month: "numeric",
-//                                     day: "numeric",
-//                                 });
-//                                 return formattedDate;
-//                             },
-//                         },
-//                         { data: "blnKe" },
-//                         { data: "bta" },
-//                         { data: "terapi" },
-//                         { data: "petugas" },
-//                         { data: "dokter" },
-//                     ],
-//                     order: [2, "dsc"],
-//                     paging: true,
-//                     lengthMenu: [
-//                         [5, 10, 25, 50, -1],
-//                         [5, 10, 25, 50, "All"],
-//                     ],
-//                     pageLength: 5,
-//                     responsive: true,
-//                     lengthChange: false,
-//                     autoWidth: false,
-//                     buttons: ["copyHtml5", "excelHtml5", "pdfHtml5", "colvis"],
-//                 })
-//                 .buttons()
-//                 .container()
-//                 .appendTo("#kunjDots_wrapper .col-md-6:eq(0)");
+        const responseData = await response.json();
+        console.log("Data berhasil disimpan:", responseData);
 
-//             console.log("🚀 ~ table generate");
-//             // Menangani klik pada tombol edit
-//             $(".editTB").on("click", function (e) {
-//                 e.preventDefault();
-//                 var norm = $(this).data("norm");
-//                 var date = $("#tanggal").val();
-//                 console.log("🚀 ~ date:", date);
-//                 console.log("🚀 ~ norm:", norm);
-//                 performCariRM(norm);
-//                 // searchPTB(norm);
-//             });
-//         },
-//         error: function (xhr, status, error) {
-//             console.error("Error:", error);
-//         },
-//     });
-// }
+        Swal.fire({
+            icon: "success",
+            title: "Data berhasil disimpan,\n \n" + "Maturnuwun...!!",
+        });
+
+        // resetFormTs();
+        // showRiwayatKunjungan(norm);
+    } catch (error) {
+        console.error("Terjadi kesalahan saat menyimpan data:", error.massage);
+
+        // Display error message using SweetAlert
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Terjadi kesalahan saat menyimpan data: " + error.message,
+        });
+    }
+}
 function resetForm() {
     document.getElementById("formIdentitas").reset();
     document.getElementById("formKunjungan").reset();
@@ -336,7 +308,7 @@ function populate() {
 }
 function handleKeyUp(event) {
     if (event.key === "Enter") {
-        cariPasien();
+        cariPasienTb();
     }
 }
 function cariPasien() {

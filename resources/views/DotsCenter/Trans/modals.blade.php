@@ -39,6 +39,9 @@
                                                             <input type="text" id="modal-nama"
                                                                 class="form-control bg-white border border-white"
                                                                 placeholder="Nama Pasien" readonly>
+                                                            <input type="text" id="modal-notrans"
+                                                                class="form-control bg-white border border-white"
+                                                                placeholder="notrans Pasien" readonly>
                                                         </div>
                                                     </div>
 
@@ -183,10 +186,44 @@
                                                     </div>
 
                                                     <div class="form-group row mt-3">
+                                                        <label for="modal-bta"
+                                                            class="col-sm-1 col-form-label font-weight-bold"> Hasil
+                                                            BTA</label>
+                                                        <div class="col-sm-3">
+                                                            <select id="modal-bta"
+                                                                class="form-control select2bs4 border border-primary">
+                                                                <option value="">--Pilih Hasil--</option>
+                                                                <option value="negatif">Negatif</option>
+                                                                <option value="+1">Positif 1</option>
+                                                                <option value="+2">Positif 2</option>
+                                                                <option value="+3">Positif 3</option>
+                                                                <option value="+1-9">Positif 1-9</option>
+                                                            </select>
+                                                        </div>
+                                                        <label for="modal-blnKe"
+                                                            class="col-sm-1 col-form-label font-weight-bold">
+                                                            Bulan Ke
+                                                        </label>
+                                                        <div class="col-sm-3">
+                                                            <select id="modal-blnKe"
+                                                                class="form-control select2bs4 border border-primary">
+                                                                <option value="">--Pilih Kemajuan--</option>
+                                                            </select>
+                                                        </div>
+                                                        <label for="modal-nxKontrol"
+                                                            class="col-sm-1 col-form-label font-weight-bold"> Kontrol
+                                                            :</label>
+                                                        <div class="col-sm-3">
+                                                            <input id="modal-nxKontrol" type="date"
+                                                                class="form-control-sm col border border-primary" />
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group row mt-3">
                                                         <div class="col-sm-12">
                                                             <a id="addPTB"
                                                                 class="btn btn-success d-flex justify-content-center"
-                                                                onclick="addPasienTB();">Simpan
+                                                                onclick="addPasienTB(); simpanKunjungan2();">Simpan
                                                                 Data Pasien</a>
                                                         </div>
                                                     </div>
@@ -249,111 +286,66 @@
                                     <div class="container-fluid">
                                         <div class="card card-black">
                                             <!-- form start -->
-                                            @csrf
-                                            <form class="form-horizontal" id="identitasTBRiwayat">
+                                            <div class="form-horizontal" id="identitasTBRiwayat">
                                                 <div class="card-body">
                                                     <div class="form-group row">
-
                                                         <label for="riwayat-norm"
-                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">No
+                                                            class="col-sm-1  font-weight-bold mb-0">No
                                                             RM</label>
                                                         <span id="riwayat-norm" class="col-sm-1">: NaN</span>
 
                                                         <label for="riwayat-nama"
-                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">Nama</label>
-                                                        <span id="riwayat-nama " class="col-sm-3">: NaN</span>
+                                                            class="col-sm-1  font-weight-bold mb-0">Nama</label>
+                                                        <span id="riwayat-nama" class="col-sm">: NaN</span>
 
                                                         <label for="riwayat-hp "
-                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">No
+                                                            class="col-sm-1  font-weight-bold mb-0">No
                                                             HP</label>
                                                         <span id="riwayat-hp" class="col-sm-2">: NaN</span>
-
-                                                        <label for="riwayat-nik"
-                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">NIK</label>
-                                                        <span id="riwayat-nik" class="col-sm-2">: NaN</span>
-
+                                                    </div>
+                                                    <div class="form-group row mb-0">
+                                                        <label for="none"
+                                                            class="col-sm-1  font-weight-bold mb-0"></label>
+                                                        <span id="none" class="col-sm-1"></span>
                                                         <label for="riwayat-alamat"
-                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat</label>
+                                                            class="col-sm-1  font-weight-bold mb-0">Alamat</label>
                                                         <span id="riwayat-alamat" class="col-sm">: NaN</span>
 
+                                                        <label for="riwayat-nik"
+                                                            class="col-sm-1  font-weight-bold mb-0">NIK</label>
+                                                        <span id="riwayat-nik" class="col-sm-2">: NaN</span>
+
                                                     </div>
                                                 </div>
                                                 <!-- /.card-body -->
-                                            </form>
-                                            {{-- @csrf
-                                            <form class="form-horizontal" id="formTBbaru">
-                                                <div class="card-body">
-                                                    <div class="form-group row">
-                                                        <label for="modal-norm"
-                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">No
-                                                            RM</label>
-                                                        <div class="col-sm-2">
-                                                            <input type="text" name="modal-norm" id="modal-norm"
-                                                                class="form-control" placeholder=" No RM"
-                                                                maxlength="6" pattern="[0-9]{6}" required />
-                                                        </div>
-
-                                                        <label for="modal-nama"
-                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">Nama</label>
-                                                        <div class="col-sm-5">
-                                                            <input type="text" id="modal-nama"
-                                                                class="form-control bg-white border border-white"
-                                                                placeholder="Nama Pasien" readonly>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group row mt-3">
-                                                        <label for="modal-hp"
-                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">No
-                                                            HP</label>
-                                                        <div class="col-sm-2">
-                                                            <input type="text" id="modal-hp"
-                                                                class="form-control bg-white" />
-                                                        </div>
-
-                                                        <label for="modal-nik"
-                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">NIK</label>
-                                                        <div class="col-sm-2">
-                                                            <input type="text" id="modal-nik"
-                                                                class="form-control bg-white border border-white" />
-                                                        </div>
-
-                                                        <label for="modal-alamat"
-                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat</label>
-                                                        <div class="col-sm-5">
-                                                            <textarea id="modal-alamat" class="form-control bg-white border border-white" style="height: 69px;"
-                                                                placeholder="Alamat Pasien" readonly></textarea>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <!-- /.card-body -->
-                                            </form> --}}
+                                            </div>
                                         </div>
 
                                         <div class="card card-info">
                                             <div class="card-header">
-                                                <h3 class="card-title">Data Pasien TBC Baru Hari Ini</h3>
+                                                <h3 class="card-title">Data Riwayat Kunjungan Pasien TBC</h3>
                                             </div>
                                             <!-- /.card-header -->
                                             <!-- form start -->
                                             <div class="card-body p-2">
                                                 <div class="table-responsive">
-                                                    <table id="modal-kunjDots" name="dataTindakan"
+                                                    <table id="modal-kunjDots" name="Riwayat Kunjungan Pasien TBC"
                                                         class="table table-striped" style="width:100%"
                                                         cellspacing="0">
                                                         <thead>
                                                             <tr>
                                                                 <th class="col-1">Aksi</th>
-                                                                <th class="col-1">No RM</th>
-                                                                <th class="col-1">Tanggal</th>
-                                                                <th class="col-1">Bln Ke</th>
-                                                                <th class="col-2">BTA</th>
-                                                                <th class="col-2">Terapi</th>
-                                                                <th class="col-2">Petugas</th>
-                                                                <th class="col-2">Dokter</th>
+                                                                <th >No RM</th>
+                                                                <th >Tgl Kontrol</th>
+                                                                <th >Bln Ke</th>
+                                                                <th >BTA</th>
+                                                                <th >BB</th>
+                                                                <th >Terapi</th>
+                                                                <th class="col-3">Petugas</th>
+                                                                <th class="col-3">Dokter</th>
                                                             </tr>
                                                         </thead>
+                                                        <tbody></tbody>
                                                     </table>
                                                 </div>
                                             </div>
@@ -414,8 +406,14 @@
                                                     </div>
 
                                                     <div class="form-group row">
-                                                        <textarea id="status-pengobatan" class="form-control bg-white border border-white" style="height: 69px;"
-                                                            placeholder="Status Pengobatan"></textarea>
+                                                        <div class="col">
+                                                            <select id="statusPengobatan"
+                                                                class="form-control select2bs4 border border-primary">
+                                                                <option value="">--Pilih Kemajuan--</option>
+                                                            </select>
+                                                        </div>
+                                                        {{-- <textarea id="status-pengobatan" class="form-control bg-white border border-white" style="height: 69px;"
+                                                            placeholder="Status Pengobatan"></textarea> --}}
                                                     </div>
                                                 </div>
                                                 <!-- /.card-body -->
