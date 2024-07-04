@@ -11,12 +11,13 @@
                                         :</label>
                                     <div class="col-sm-2 input-group" style="overflow: hidden;">
                                         <input type="text" name="norm" id="norm" class="form-control"
-                                            placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required />
-                                        <div class="input-group-addon btn btn-danger">
+                                            placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required
+                                            onkeyup="enterCariRM(event,'lab',this.value);" />
+                                        {{-- <div class="input-group-addon btn btn-danger">
                                             <span class="fa-solid fa-magnifying-glass" onclick="searchRMObat();"
                                                 data-toggle="tooltip" data-placement="top"
                                                 title="Selain Pasien Hari ini"></span>
-                                        </div>
+                                        </div> --}}
                                         <marquee id="ket" class="col-sm-12 text-danger font-weight-bold"
                                             direction="left" behavior="scroll" scrollamount="5">
                                             Klik Tombol Cari berwarna merah untuk menginputkan pemeriksaan bukan pasien
@@ -83,8 +84,8 @@
                                                         <th>NO</th>
                                                         <th>NO RM</th>
                                                         <th>Pemeriksaan</th>
-                                                        <th>Hasil</th>
                                                         <th>Petugas</th>
+                                                        <th>Hasil</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>

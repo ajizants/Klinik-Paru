@@ -30,11 +30,10 @@
                 </li>
                 <div class="input-group col d-flex justify-content-end mr-5">
                     <input type="date" class="form-control col-sm-2 bg bg-warning" id="tanggal"
-                        value="{{ old('date') }}" required>
+                        value="{{ old('date') }}" required onchange="updateAntrian();">
                     <div class="input-group-addon btn btn-danger">
                         <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top"
-                            title="Update Pasien Hari ini" id="cariantrian"
-                            onclick="antrian();antrianSelesai();antrianBlmUpload();"></span>
+                            title="Update Pasien Hari ini" id="cariantrian" onclick="updateAntrian();"></span>
                     </div>
                 </div>
             </ul>

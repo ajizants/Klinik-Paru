@@ -4,7 +4,7 @@
                             <h4 class="card-title">Identitas</h4>
                         </div>
                         @csrf
-                        <form class="form-horizontal" id="frmident">
+                        <form class="form-horizontal">
                             <div class="card-body" id="inputSection">
                                 <div class="form-grup row">
                                     <label for="norm" class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
@@ -36,11 +36,11 @@
                                     </div>
                                 </div>
                                 <div class="form-grup row mt-2">
-                                    <label for="nik" class="col-sm-1 col-form-label font-weight-bold mb-0">NIK
+                                    <label for="tgltind" class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                         :</label>
                                     <div class="col-sm-2">
-                                        <input type="text" id="nik" class="form-control bg-white"
-                                            placeholder="nik" readonly />
+                                        <input type="text" id="tgltind" class="form-control bg-white"
+                                            placeholder="Tanggal" readonly />
                                         <input type="text" id="tgltrans" class="form-control bg-white"
                                             placeholder="tgltrans" readonly hidden />
                                     </div>
@@ -57,7 +57,24 @@
                                             readonly />
                                     </div>
                                 </div>
-
+                                <div class="mt-2 form-grup row d-flex justify-content-center">
+                                    <label for="analis" class="col-sm-1 col-form-label font-weight-bold">Petugas
+                                        :</label>
+                                    <div class="col-sm-4">
+                                        <select id="analis" class="form-control select2bs4 border border-primary"
+                                            required>
+                                            <option value="">--Pilih Petugas--</option>
+                                        </select>
+                                    </div>
+                                    <label for="dokter" class="col-sm-1 col-form-label font-weight-bold">Dokter
+                                        :</label>
+                                    <div class="col-sm-4">
+                                        <select id="dokter"
+                                            class="form-control select2bs4 mb-3 border border-primary" required>
+                                            <option value="">--Pilih Dokter--</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="mt-3 form-grup d-flex justify-content-center">
                                     <button type="button" class="btn btn-primary col" data-toggle="modal"
                                         data-target="#riwayatModal" onclick="showRiwayat()">Lihat
@@ -68,6 +85,78 @@
                         </form>
                     </div>
                 </div>
+                {{-- <div class="container-fluid">
+                    <div class="card card-secondary">
+                        <div class="card-header">
+                            <h4 class="card-title">Input Pemeriksaan Laboratorium</h4>
+                        </div>
+                        @csrf
+                        <div class="card-body form-horizontal px-1">
+                            <div class="container-fluid d-flex justify-content-center p-2">
+                            </div>
+                            <div class="container-fluid row mx-0">
+                                <div class=" col p-0 ml-1">
+                                    <div class="card card-danger">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Hematologi Darah</h4>
+                                        </div>
+                                        <div class="card-body py-1">
+                                            <table id="tabelPemeriksaan" class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th><input type="checkbox" id="pilih-semua"></th>
+                                                        <th>Item Pemeriksaan</th>
+                                                        <th>Hasil</th>
+                                                        <th>Harga</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" col p-0 ml-1">
+                                    <div class="card card-danger">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Hematologi Darah</h4>
+                                        </div>
+                                        <div class="card-body py-1">
+                                            <table id="tabelPemeriksaan" class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th><input type="checkbox" id="pilih-semua"></th>
+                                                        <th>Item Pemeriksaan</th>
+                                                        <th>Hasil</th>
+                                                        <th>Harga</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer form-row d-flex justify-content-end">
+                                <div class="col-md-2 d-flex justify-content-end d-flex align-items-center">
+                                    <label for="tagihan" class="form-label mb-0"><b>Total
+                                            Tagihan :</b></label>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="text"id="tagihan" class="form-control border border-info"
+                                        placeholder="Total Tagihan" readonly>
+                                </div>
+                                <div class="col-auto">
+                                    <a class="btn btn-danger" id="tblBatal">Batal</a>
+                                </div>
+                                <div class="col-auto">
+                                    <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> --}}
                 <div class="container-fluid">
                     <div class="card card-secondary">
                         <div class="card-header">
@@ -75,105 +164,10 @@
                         </div>
                         @csrf
                         <div class="card-body form-horizontal px-1">
-                            <div class="container-fluid row mx-0 d-flex justify-content-center">
-                                <div class="LayLab mr-2">
-                                    <div class="card card-danger">
-                                        <div class="card-header">
-                                            <h4 class="card-title">Pilih Pemeriksaan Bakteriologi</h4>
-                                        </div>
-                                        <div class="card-body py-1">
-                                            <table id="bakteriologi" class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th><input type="checkbox" id="pilih-bakteriologi"></th>
-                                                        <th>Item Pemeriksaan</th>
-                                                        <th>Keterangan</th>
-                                                        <th>Harga</th>
-                                                        {{-- <th><input type="checkbox" id="pilih-tag-bakteriologi"></th>
-                                                        <th>Tagihan</th> --}}
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="LayLab">
-                                    <div class="card card-danger">
-                                        <div class="card-header">
-                                            <h4 class="card-title">Pilih Pemeriksaan Hematologi</h4>
-                                        </div>
-                                        <div class="card-body py-1">
-                                            <table id="hematologi" class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th><input type="checkbox" id="pilih-hematologi"></th>
-                                                        <th>Item Pemeriksaan</th>
-                                                        <th>Keterangan</th>
-                                                        <th>Harga</th>
-                                                        {{-- <th><input type="checkbox" id="pilih-tag-hematologi"></th>
-                                                        <th>Tagihan</th> --}}
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="container-fluid d-flex justify-content-center p-2">
-                                    <div class="LayLab mr-2">
-                                        <div class="card card-danger">
-                                            <div class="card-header">
-                                                <h4 class="card-title">Pilih Pemeriksaan Kimia Darah</h4>
-                                            </div>
-                                            <div class="card-body py-1">
-                                                <table id="kimia" class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th><input type="checkbox" id="pilih-kimia"></th>
-                                                            <th>Item Pemeriksaan</th>
-                                                            <th>Keterangan</th>
-                                                            <th>Harga</th>
-                                                            {{-- <th><input type="checkbox" id="pilih-tag-kimia"></th>
-                                                            <th>Tagihan</th> --}}
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="LayLab">
-                                        <div class="card card-danger">
-                                            <div class="card-header">
-                                                <h4 class="card-title">Pilih Pemeriksaan Imuno Serologi</h4>
-                                            </div>
-                                            <div class="card-body py-1">
-                                                <table id="imuno" class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th><input type="checkbox" id="pilih-imuno"></th>
-                                                            <th>Item Pemeriksaan</th>
-                                                            <th>Keterangan</th>
-                                                            <th>Harga</th>
-                                                            {{-- <th><input type="checkbox" id="pilih-tag-imuno"></th>
-                                                            <th>Tagihan</th> --}}
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="container-fluid d-flex justify-content-center p-2">
                             </div>
-
                             <div class="container-fluid row mx-0 d-flex justify-content-center">
-                                <div class="col p-0">
+                                <div class="col-6 p-0 mr-1">
                                     <div class="card card-success">
                                         <div class="card-header">
                                             <h4 class="card-title">Pemeriksaan yang dilakukan</h4>
@@ -195,56 +189,45 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <form id="frmPetugas">
-                                <div class="mx-2 form-grup row">
-                                    <label for="dokter" class="col-sm-1 col-form-label font-weight-bold">Dokter
-                                        :</label>
-                                        <div class="col-sm-3">
-                                            <select id="dokter"
-                                            class="form-control select2bs4 mb-3 border border-primary" required>
-                                            <option value="">--Pilih Dokter--</option>
-                                        </select>
-                                    </div>
-                                    <label for="analis" class="col-sm-1 col-form-label font-weight-bold">Admin
-                                        :</label>
-                                    <div class="col-sm-3">
-                                        <select id="analis" class="form-control select2bs4 border border-primary"
-                                            required>
-                                            <option value="">--Pilih Petugas--</option>
-                                        </select>
-                                    </div>
-                                    <label for="tujuan" class="col-sm-1 col-form-label font-weight-bold">Tujuan
-                                        :</label>
-                                    <div class="col-sm-2">
-                                        <select id="tujuan" class="form-control select2bs4 border border-primary"
-                                            required>
-                                            <option value="">--Pilih Tujuan--</option>
-                                        </select>
+                                <div class="col-5 p-0 ml-4">
+                                    <div class="card card-danger">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Pilih Pemeriksaan</h4>
+                                        </div>
+                                        <div class="card-body py-1">
+                                            <table id="tabelPemeriksaan" class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th><input type="checkbox" id="pilih-semua"></th>
+                                                        <th>Item Pemeriksaan</th>
+                                                        <th>Keterangan</th>
+                                                        <th>Harga</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
-                            </form>
-                            <div class="card-footer form-row d-flex justify-content-end  d-flex align-items-center">
-                                <div class="col-md-2 d-flex justify-content-end">
+                            </div>
+                            <div class="card-footer form-row d-flex justify-content-end">
+                                <div class="col-md-2 d-flex justify-content-end d-flex align-items-center">
                                     <label for="tagihan" class="form-label mb-0"><b>Total
                                             Tagihan :</b></label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text"id="tagihan" class="form-control-sm border border-info"
+                                    <input type="text"id="tagihan" class="form-control border border-info"
                                         placeholder="Total Tagihan" readonly>
                                 </div>
-
+                                <div class="col-auto">
+                                    <a class="btn btn-danger" id="tblBatal">Batal</a>
+                                </div>
                                 <div class="col-auto">
                                     <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>
                                 </div>
                                 <div class="col-auto">
-                                    <a class="btn btn-danger" id="tblBatal"
-                                        onclick="resetForm('dibatalkan');">Batal</a>
-                                </div>
-
-                                <div class="col-auto">
-                                    <a class="btn btn-primary" id="tblSelesai"
-                                        onclick="resetForm('selesai');">Selesai</a>
+                                    <a class="btn btn-primary" id="tblSelesai">Selesai</a>
                                 </div>
                             </div>
                         </div>

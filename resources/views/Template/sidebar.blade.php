@@ -30,21 +30,21 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview" style="display: none;">
-                                    <li class="nav-item">
+                                    <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/igd') }}" id="masukIGD">
                                             <i class="nav-icon fas fa-edit"></i>
                                             <p>IGD</p>
                                         </a>
                                     </li>
 
-                                    <li class="nav-item">
+                                    <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/gudangIGD') }}">
                                             <i class="fa-solid fa-database nav-icon"></i>
                                             <p>Master IGD</p>
                                         </a>
                                     </li>
 
-                                    <li class="nav-item">
+                                    <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/askep') }}">
                                             <i class="fa-solid fa-file-pen nav-icon"></i>
                                             <p>ASKEP</p>
@@ -84,15 +84,15 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview" style="display: none;">
-                                    <li class="nav-item">
+                                    <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/dots') }}">
-                                            <i class="fa-solid fa-notes-medical nav-icon"></i>
+                                            <i class="nav-icon fas fa-edit"></i>
                                             <p>Transaksi Dots Center</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/dots_master') }}">
-                                            <i class="fa-solid fa-notes-medical nav-icon"></i>
+                                            <i class="fa-solid fa-database nav-icon"></i>
                                             <p>Master Dots Center</p>
                                         </a>
                                     </li>
@@ -117,13 +117,13 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview" style="display: none;">
-                                    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Farmasi">
+                                    <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/farmasi') }}">
                                             <i class="nav-icon fas fa-edit"></i>
-                                            <p>Farmasi</p>
+                                            <p>Transaksi Farmasi</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/gudangFarmasi') }}">
                                             <i class="fa-solid fa-database nav-icon"></i>
                                             <p>Master Farmasi</p>
@@ -155,20 +155,20 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview" style="display: none;">
-                                    <li class="nav-item">
+                                    <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/lab') }}">
                                             <i class="fa-regular fa-id-card nav-icon"></i>
                                             <p>Pendaftaran Laboratorium</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/hasilLab') }}">
                                             <i class="nav-icon fas fa-edit"></i>
                                             <p>Input Hasil Laboratorium</p>
                                         </a>
                                     </li>
 
-                                    <li class="nav-item">
+                                    <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/masterLab') }}">
                                             <i class="fa-solid fa-database nav-icon"></i>
                                             <p>Master Laboratorium</p>
@@ -207,14 +207,14 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview" style="display: none;">
-                                    <li class="nav-item">
+                                    <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/ro') }}">
                                             {{-- <i class="fa-regular fa-id-card nav-icon"></i> --}}
                                             <i class="fa-regular nav-icon fas fa-edit"></i>
                                             <p>Input Radiologi</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/masterRo') }}">
                                             <i class="fa-solid fa-database nav-icon"></i>
                                             <p>Master Radiologi</p>

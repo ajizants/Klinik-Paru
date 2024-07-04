@@ -335,12 +335,12 @@
                                                         <thead>
                                                             <tr>
                                                                 <th class="col-1">Aksi</th>
-                                                                <th >No RM</th>
-                                                                <th >Tgl Kontrol</th>
-                                                                <th >Bln Ke</th>
-                                                                <th >BTA</th>
-                                                                <th >BB</th>
-                                                                <th >Terapi</th>
+                                                                <th>No RM</th>
+                                                                <th>Tgl Kontrol</th>
+                                                                <th>Bln Ke</th>
+                                                                <th>BTA</th>
+                                                                <th>BB</th>
+                                                                <th>Terapi</th>
                                                                 <th class="col-3">Petugas</th>
                                                                 <th class="col-3">Dokter</th>
                                                             </tr>
@@ -380,9 +380,6 @@
                                             <form class="form-horizontal" id="updatePengobatanTB">
                                                 <div class="card-body">
                                                     <div class="form-group row">
-                                                        {{-- <label for="status-norm"
-                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">No
-                                                            RM</label> --}}
                                                         <div class="col-sm-3 row">
                                                             <input type="number" name="status-norm" id="status-norm"
                                                                 class="form-control col" placeholder=" No RM"
@@ -391,8 +388,6 @@
                                                                 class="form-control col" placeholder="ID"
                                                                 maxlength="6" pattern="[0-9]{6}" readonly />
                                                         </div>
-                                                        {{-- <label for="status-nama"
-                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">Nama</label> --}}
                                                         <div class="col-sm-4">
                                                             <input type="text" id="status-nama"
                                                                 class="form-control bg-white border border-white"

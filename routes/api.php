@@ -98,15 +98,17 @@ Route::get('layanan', [KasirController::class, 'Layanan']);
 //laboratorium
 Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);
 Route::post('layananlab', [LaboratoriumController::class, 'layananlab']);
-Route::post('cariLaboratorium', [LaboratoriumController::class, 'transaksi']);
+Route::post('cariTsLab', [LaboratoriumController::class, 'cariTsLab']);
 Route::post('addTransaksiLab', [LaboratoriumController::class, 'addTransaksi']);
-Route::post('addHasilLab', [LaboratoriumController::class, 'addHasil']);
 Route::post('deleteLab', [LaboratoriumController::class, 'deleteLab']);
+
+Route::post('rekap/Kunjungan_Lab', [LaboratoriumController::class, 'rekapKunjungan']);
+
+Route::post('addHasilLab', [LaboratoriumController::class, 'addHasil']);
 Route::post('cariRiwayatLab', [LaboratoriumController::class, 'riwayat']);
 Route::post('rekapBpjsUmum', [LaboratoriumController::class, 'rekapBpjsUmum']);
 Route::post('rekapReagenHari', [LaboratoriumController::class, 'rekapReagen']);
 Route::post('rekapReagenBln', [LaboratoriumController::class, 'rekapReagenBln']);
-Route::post('rekapKunjunganLab', [LaboratoriumController::class, 'rekapKunjungan']);
 Route::post('poinLab', [LaboratoriumController::class, 'poinPetugas']);
 
 //farmasi

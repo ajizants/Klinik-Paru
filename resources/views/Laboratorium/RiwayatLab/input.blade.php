@@ -82,17 +82,11 @@
                                             <th>NIK</th>
                                             <th>Jaminan</th>
                                             <th>Pasien</th>
-                                            <th>JK</th>
                                             <th>Alamat</th>
                                             <th>Dokter</th>
                                             <th>Pemeriksaan</th>
+                                            <th>Petugas</th>
                                         </tr>
-                                        {{-- <tr>
-                                            @foreach ($col as $col)
-                                                <th id="{{ $col['idLayanan'] }}">{{ $col['nmLayanan'] }}</th>
-                                                <th>Jumlah</th>
-                                            @endforeach
-                                        </tr> --}}
                                     </thead>
                                     <tbody>
 

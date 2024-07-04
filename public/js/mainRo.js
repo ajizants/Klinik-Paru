@@ -365,8 +365,8 @@ async function cariPasien() {
 }
 
 function rstForm() {
-    document.getElementById("formtrans").reset();
     document.getElementById("form_identitas").reset();
+    document.getElementById("formtrans").reset();
     $("#preview").hide();
     $("#formtrans select").trigger("change");
     $("#form_identitas select").trigger("change");

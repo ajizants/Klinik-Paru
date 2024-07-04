@@ -120,6 +120,7 @@
                                     <th width="15px"class="text-center">No</th>
                                     <th width="15px" class="text-center">NoRM</th>
                                     <th width="15px"class="text-center">No HP</th>
+                                    <th width="20px"class="text-center">NIK</th>
                                     <th width="36px"class="text-center">Status</th>
                                     <th width="">Nama</th>
                                     <th width="">Alamat</th>

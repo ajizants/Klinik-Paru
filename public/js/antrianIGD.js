@@ -210,7 +210,6 @@ function antrian() {
             if (response && response.response && response.response.data) {
                 // var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
                 var dataArray = response.response.data.filter(function (item) {
-                    // s;
                     return item.status === "belum";
                 });
                 dataArray.forEach(function (item) {

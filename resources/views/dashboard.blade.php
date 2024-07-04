@@ -5,10 +5,10 @@
     <div class="container-fluid">
 
         <!-- Area Chart -->
-        <div class="row card shadow mb-4 col">
+        <div class="card shadow mb-4 col">
             <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
-                <h6 class="m-0 font-weight-bold text-primary">Data Kunjungan Pasien IGD Tahun:</h6>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start bg-teal">
+                <h6 class="m-0 font-weight-bold">Data Kunjungan Pasien IGD Tahun:</h6>
                 <div class="col-md-1 ">
                     <select id="year-selector" class="form-control-sm ">
                         @php
@@ -30,24 +30,27 @@
             </div>
         </div>
         {{-- Tabel rata rata dan terlama --}}
-        <div class="row card shadow">
-            <div class="card-header">
-                <label class="col-form-label mr-2 col-3" for="tanggal">Rata-Rata Waktu Layanan, Tanggal :</label>
-                <div class="form-group mb-0 col row">
-                    <div class="input-group col-7">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="far fa-calendar-alt"></i>
-                            </span>
+        <div class="card shadow">
+            <div class="card-header bg-teal">
+                <div class="row">
+                    <h6 class="m-0 font-weight-bold">Rata-Rata Waktu Layanan, Tanggal :</h6>
+                    {{-- <label class="col-form-label" for="tanggal">Rata-Rata Waktu Layanan, Tanggal :</label> --}}
+                    <div class="form-group ml-2 mb-0 row">
+                        <div class="input-group col-7">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="far fa-calendar-alt"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control float-right" id="ratawaktulayanan">
                         </div>
-                        <input type="text" class="form-control float-right" id="ratawaktulayanan">
-                    </div>
-                    <div class="input-group col-5">
-                        <input type="date" class="form-control col-sm-9" id="tanggal" value="{{ old('date') }}"
-                            required onchange="updtWaktuLayanan();">
-                        <div class="input-group-addon btn btn-success">
-                            <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top"
-                                title="Update Pasien Hari ini" id="cariantrian" onclick="updtWaktuLayanan();"></span>
+                        <div class="input-group col-5">
+                            <input type="date" class="form-control col-sm-9" id="tanggal" value="{{ old('date') }}"
+                                required onchange="updtWaktuLayanan();">
+                            <div class="input-group-addon btn btn-success">
+                                <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top"
+                                    title="Update Pasien Hari ini" id="cariantrian" onclick="updtWaktuLayanan();"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -112,19 +115,6 @@
                         </div>
                         <!-- Card Body -->
                         <div class="card-body mb-2">
-                            {{-- <div class="row">
-                                <label class="col-form-label">Rentang Tanggal :</label>
-                                <div class="form-group col-7">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="far fa-calendar-alt"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control float-right" id="ratawaktulayanan">
-                                    </div>
-                                </div>
-                            </div> --}}
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="terlamaTabel" width="100%" cellspacing="0">
                                     <thead class="bg bg-teal">

@@ -11,7 +11,7 @@ use App\Models\ROTransaksiModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class PasienKominfoController extends Controller
+class PasienKominfoController2 extends Controller
 {
 
     public function pasienKominfo(Request $request)

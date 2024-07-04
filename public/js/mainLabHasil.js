@@ -5,6 +5,68 @@ var Toast = Swal.mixin({
     timer: 3000,
 });
 
+async function cariTsLab(norm, tgl) {
+    formatNorm($("#norm"));
+    norm = norm || $("#norm").val();
+    tgl = tgl || $("#tanggal").val();
+    var requestData = { norm: norm, tgl: tgl };
+
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencarikan data pasien...!!!",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+
+    try {
+        const response = await fetch("/api/cariTsLab", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+        });
+
+        if (!response.ok) {
+            if (response.status == 404) {
+                // searchRMObat(norm);
+                cariKominfo(norm, tgl);
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Terjadi kesalahan saat mengambil data pasien...!!!",
+                });
+                throw new Error("Network response was not ok");
+            }
+        } else {
+            const data = await response.json();
+            $("#norm").val(data.norm);
+            $("#nama").val(data.nama);
+            $("#nik").val(data.nik);
+            $("#alamat").val(data.alamat);
+            $("#notrans").val(data.notrans);
+            $("#layanan").val(data.layanan);
+            $("#dokter").val(data.dokter).trigger("change");
+            $("#analis").val(data.petugas).trigger("change");
+
+            const notrans = data.notrans;
+            console.log("🚀 ~ cariTsLab ~ notrans:", notrans);
+            // setTimeout(function () {
+            dataLab(notrans); // Panggil dataLab dengan notrans yang benar
+            // }, 3000);
+            Swal.close();
+        }
+    } catch (error) {
+        console.error("Terjadi kesalahan saat mencari data:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Terjadi kesalahan saat mencari data...!!! /n" + error,
+        });
+    }
+}
 async function dataLab(notrans) {
     if ($.fn.DataTable.isDataTable("#inputHasil")) {
         var table = $("#inputHasil").DataTable();
@@ -12,7 +74,7 @@ async function dataLab(notrans) {
     }
 
     try {
-        const response = await fetch("/api/cariLaboratorium", {
+        const response = await fetch("/api/cariTsLab", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -55,17 +117,11 @@ async function dataLab(notrans) {
                     data: "no",
                 },
 
-                { data: "NORM" },
+                { data: "norm" },
                 {
-                    data: "NamaPemeriksaan",
+                    data: "pemeriksaan.nmLayanan",
                     render: function (data, type, row) {
                         return `<p type="text" class="form-control-sm col-6 hasil" id="layanan${row.IdLayanan}" value="${row.IdLayanan}" readonly>${data}</p>`;
-                    },
-                },
-                {
-                    data: null,
-                    render: function (data, type, row) {
-                        return `<input type="text" class="form-control-sm col-6 hasil" id="hasil${row.IdLab}">`;
                     },
                 },
                 {
@@ -79,6 +135,12 @@ async function dataLab(notrans) {
                         });
                         inputField += "</select>";
                         return inputField;
+                    },
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return `<input type="text" class="form-control-sm col-6 hasil" id="hasil${row.IdLab}">`;
                     },
                 },
             ],
@@ -190,115 +252,9 @@ function resetForm(message) {
     scrollToTop();
 }
 
-function searchByRM(norm) {
-    $.ajax({
-        url: "/api/cariRM",
-        type: "post",
-        data: {
-            norm: norm,
-        },
-        success: function (response) {
-            if (response && response.length > 0) {
-                Swal.fire({
-                    icon: "success",
-                    title: "Data pasien ditemukan, lanjutkan transaksi...!!!",
-                });
-                // Mendapatkan data dari respons JSON
-                var noRM = response[0].norm; // Menggunakan indeks 0 karena respons adalah array
-                var nama = response[0].biodata.nama;
-                var nik = response[0].biodata.noktp;
-                var notrans = response[0].notrans;
-                var tgltrans = response[0].tgltrans;
-                var layanan = response[0].kelompok.kelompok;
-                var dokter = response[0].petugas.p_dokter_poli;
-                var alamat = `${response[0].biodata.kelurahan}, ${response[0].biodata.rtrw}, ${response[0].biodata.kecamatan}, ${response[0].biodata.kabupaten}`;
-                // Dapatkan data lainnya dari respons JSON sesuai kebutuhan
-
-                // Mengisikan data ke dalam elemen-elemen HTML
-                $("#norm").val(noRM);
-                $("#nama").val(nama);
-                $("#nik").val(nik);
-                $("#alamat").val(alamat);
-                $("#notrans").val(notrans);
-                $("#tgltrans").val(tgltrans);
-                $("#layanan").val(layanan);
-                $("#dokter").val(dokter);
-                $("#dokter").trigger("change");
-                // Mengisi elemen-elemen lainnya sesuai kebutuhan
-                dataLab(notrans);
-            } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Data pasien tidak ditemukan pada kunjungan hari ini...!!!",
-                });
-            }
-        },
-        error: function (xhr) {
-            // Handle error
-        },
-    });
-}
-async function searchRMObat() {
-    Swal.fire({
-        icon: "success",
-        title: "Sedang mencarikan data pasien...!!!",
-    });
-    var norm = "000001";
-    try {
-        const response = await $.ajax({
-            url: "/api/cariRMObat",
-            type: "post",
-            data: { norm: norm },
-        });
-
-        if (response.length > 0) {
-            Swal.fire({
-                icon: "success",
-                title: "Data pasien ditemukan, lanjutkan transaksi...!!!",
-            });
-
-            // Extracting data from the JSON response
-            var noRM = response[0].norm;
-            var nama = response[0].nama;
-            var nik = response[0].noktp;
-            var notrans = response[0].notrans;
-            var alamat = `${response[0].kelurahan}, ${response[0].rtrw}, ${response[0].kecamatan}, ${response[0].kabupaten}`;
-
-            // Updating HTML elements with the extracted data
-            $("#norm").val(noRM);
-            $("#nama").val(nama);
-            $("#nik").val(nik);
-            $("#alamat").val(alamat);
-            $("#notrans").val(notrans);
-            $("#layanan").val("UMUM");
-            $("#dokter").val("198907252019022004").trigger("change");
-            $("#apoteker").val("197609262011012003").trigger("change");
-
-            dataLab();
-        } else {
-            Swal.fire({
-                icon: "error",
-                title: "Data pasien tidak ditemukan...!!!",
-            });
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        // Handling error if the API request fails
-        Swal.fire({
-            icon: "error",
-            title: "Terjadi kesalahan saat mengambil data pasien...!!!",
-        });
-    }
-}
 $(document).ready(function () {
     setTodayDate();
-    $("#norm").on("keyup", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            formatNorm($("#norm"));
-            searchByRM($("#norm").val());
-        }
-    });
+
     $("#tabelData,#dataTrans").DataTable({
         scrollY: "200px",
     });

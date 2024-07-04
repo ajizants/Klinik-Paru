@@ -149,7 +149,8 @@ function editPasienTB(button) {
 
 function updateStatus(id) {
     console.log("🚀 ~ id:", id);
-    var status = document.getElementById("modal-status").value;
+    var id = document.getElementById("status-id").value;
+    var status = document.getElementById("statusPengobatan").value;
     $.ajax({
         url: "/api/update/status/pengobatan",
         type: "POST",
@@ -335,7 +336,19 @@ function tabelTelat(pasienTelat) {
             responsive: true,
             lengthChange: false,
             autoWidth: false,
-            buttons: ["copyHtml5", "excelHtml5", "pdfHtml5", "colvis"],
+            buttons: [
+                {
+                    extend: "copyHtml5",
+                    text: "Salin",
+                },
+                {
+                    extend: "excelHtml5",
+                    text: "Excel",
+                    title: "Data Pasien TBC Telat Kontrol di KKPM",
+                    filename: "Data Pasien TBC Telat Kontrol di KKPM",
+                },
+                "colvis",
+            ],
         })
         .buttons()
         .container()
@@ -387,7 +400,20 @@ function tabelDo(pasienDo) {
             responsive: true,
             lengthChange: false,
             autoWidth: false,
-            buttons: ["copyHtml5", "excelHtml5", "pdfHtml5", "colvis"],
+            buttons: [
+                {
+                    extend: "copyHtml5",
+                    text: "Salin",
+                },
+                {
+                    extend: "excelHtml5",
+                    text: "Excel",
+                    title: "Data Pasien TBC Telat Lebih dari 30 hari di KKPM",
+                    filename:
+                        "Data Pasien TBC Telat Lebih dari 30 hari di KKPM",
+                },
+                "colvis",
+            ],
         })
         .buttons()
         .container()
@@ -439,6 +465,7 @@ function pasienTB() {
                         { data: "no" },
                         { data: "norm" },
                         { data: "noHP" },
+                        { data: "nik" },
                         { data: "statusPengobatan" },
                         { data: "nama" },
                         { data: "alamat" },
@@ -454,7 +481,19 @@ function pasienTB() {
                     responsive: true,
                     lengthChange: false,
                     autoWidth: false,
-                    buttons: ["copyHtml5", "excelHtml5", "pdfHtml5", "colvis"],
+                    buttons: [
+                        {
+                            extend: "copyHtml5",
+                            text: "Salin",
+                        },
+                        {
+                            extend: "excelHtml5",
+                            text: "Excel",
+                            title: "Data Pasien TBC di KKPM",
+                            filename: "Data Pasien TBC di KKPM",
+                        },
+                        "colvis",
+                    ],
                 })
                 .buttons()
                 .container()

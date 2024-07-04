@@ -1,4 +1,3 @@
-{{-- @extends('layouts.layout') --}}
 @extends('Template.lte')
 
 @section('content')

@@ -6,6 +6,7 @@ use App\Models\DotsTransModel;
 use App\Models\FarmasiModel;
 use App\Models\IGDTransModel;
 use App\Models\KominfoModel;
+use App\Models\LaboratoriumKunjunganModel;
 use App\Models\ROTransaksiHasilModel;
 use App\Models\ROTransaksiModel;
 use Illuminate\Http\Request;
@@ -413,7 +414,7 @@ class PasienKominfoController extends Controller
                     return true;
                 });
                 $filteredData = array_values($filteredData);
-
+// dd($filteredData);
                 // Map of dokter_nama to nip
                 $doctorNipMap = [
                     'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
@@ -424,7 +425,7 @@ class PasienKominfoController extends Controller
 
                 // Iterate over filtered data and add status and nip
                 foreach ($filteredData as &$item) {
-                    $notrans = $item['no_trans'];
+                    // $notrans = $item['no_trans'];
                     $norm = $item['pasien_no_rm'];
                     $dokter_nama = $item['dokter_nama'];
 
@@ -493,6 +494,23 @@ class PasienKominfoController extends Controller
                     } elseif ($ruang == "dots") {
                         try {
                             $ts = DotsTransModel::where('norm', $norm)
+                                ->whereDate('created_at', $tanggal)
+                                ->first();
+                            // Determine status based on conditions
+                            if (!$ts) {
+                                $item['status'] = 'Tidak Ada Transaksi';
+                            } else {
+                                $item['status'] = 'Sudah Selesai';
+                            }
+                        } catch (\Exception $e) {
+                            // Handle the error: log it and continue processing
+                            Log::error('Database connection failed: ' . $e->getMessage());
+                            $item['status'] = 'Database connection error';
+                        }
+
+                    } elseif ($ruang == "lab") {
+                        try {
+                            $ts = LaboratoriumKunjunganModel::where('norm', $norm)
                                 ->whereDate('created_at', $tanggal)
                                 ->first();
                             // Determine status based on conditions
@@ -719,6 +737,70 @@ class PasienKominfoController extends Controller
         }
     }
 
+    // public function newCpptRequest(Request $request)
+    // {
+    //     // if ($request->has(['tanggal_awal', 'tanggal_akhir'])) {
+    //     // Ambil parameter dari request
+    //     $params = $request->only(['tanggal_awal', 'tanggal_akhir', 'no_rm']);
+
+    //     $model = new KominfoModel();
+
+    //     // Panggil metode untuk melakukan request
+    //     $data = $model->cpptRequest($params);
+    //     return response()->json($data);
+    //     if (isset($data['response']['data']) && is_array($data['response']['data'])) {
+    //         $filteredData = array_filter(array_map(function ($d) {
+
+    //             $igd = IGDTransModel::whereDate('created_at', $d['tanggal'])
+    //                 ->where('norm', $d['pasien_no_rm'])
+    //                 ->first();
+
+    //             $d['status'] = $igd ? 'sudah' : 'belum';
+
+    //             $doctorNipMap = [
+    //                 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
+    //                 'dr. AGIL DANANJAYA, Sp.P' => '9',
+    //                 'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
+    //                 'dr. SIGIT DWIYANTO' => '198903142022031005',
+    //             ];
+
+    //             $dokter_nama = $d['dokter_nama'];
+    //             if (isset($doctorNipMap[$dokter_nama])) {
+    //                 $d['nip_dokter'] = $doctorNipMap[$dokter_nama];
+    //             } else {
+    //                 $d['nip_dokter'] = 'Unknown';
+    //             }
+
+    //             return $d;
+    //         }, $data['response']['data']));
+
+    //         // Pastikan hasil filtering tidak null
+    //         if (!empty($filteredData)) {
+    //             $response = [
+    //                 'metadata' => [
+    //                     'message' => 'Data Pasien Ditemukan',
+    //                     'code' => 200,
+    //                 ],
+    //                 'response' => [
+    //                     'data' => array_values($filteredData),
+    //                 ],
+    //             ];
+
+    //             return response()->json($response);
+    //             //
+    //         } else {
+    //             return response()->json(['error' => 'Tidak ada data permintaan tindakan'], 404);
+    //         }
+    //     } else {
+    //         return response()->json(['error' => 'Invalid data format'], 500);
+    //     }
+
+    //     // } else {
+    //     //     // Jika parameter tidak disediakan, kembalikan respons error
+    //     //     return response()->json(['error' => 'Missing required parameters'], 400);
+    //     // }
+    // }
+
     public function newCpptRequest(Request $request)
     {
         if ($request->has(['tanggal_awal', 'tanggal_akhir'])) {
@@ -804,6 +886,7 @@ class PasienKominfoController extends Controller
         $model = new KominfoModel();
 
         $data = $model->waktuLayananRequest($params);
+
 
         return response()->json($data);
     }

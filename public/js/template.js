@@ -132,6 +132,18 @@ function toggleSections(sectionToShow) {
     });
 }
 
+function enterCariRM(event, ruang, norm) {
+    var tgl = $("#tanggal").val();
+    if (event.key === "Enter") {
+        if (ruang == "lab") {
+            cariTsLab(norm, tgl, ruang);
+        } else {
+            console.log("🚀 ~ enterCariRM ~ bukan lab:", ruang);
+            // cariPasienTb(norm, tgl, ruang);
+        }
+    }
+}
+
 function selamatBertugas() {
     let synth = speechSynthesis;
 

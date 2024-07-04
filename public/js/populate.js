@@ -57,21 +57,15 @@ function initializeDataAntrianAll(ruang, response) {
             columns: [
                 { data: "aksi", className: "text-center p-2 col-1" }, // Action column
                 {
-                    data: "status",
+                    data: "status_pulang",
                     className: "text-center p-2 col-1",
                     render: function (data, type, row) {
                         var backgroundColor = "";
                         switch (data) {
-                            case "Tidak Ada Permintaan":
+                            case "Belum Pulang":
                                 backgroundColor = "danger";
                                 break;
-                            case "Belum Ada Ts RO":
-                                backgroundColor = "danger";
-                                break;
-                            case "Belum Upload Foto Thorax":
-                                backgroundColor = "warning";
-                                break;
-                            case "Sudah Selesai":
+                            case "Sudah Pulang":
                                 backgroundColor = "success";
                                 break;
                             default:
@@ -81,6 +75,31 @@ function initializeDataAntrianAll(ruang, response) {
                         return `<div class="badge badge-${backgroundColor}">${data}</div>`;
                     },
                 },
+                // {
+                //     data: "status",
+                //     className: "text-center p-2 col-1",
+                //     render: function (data, type, row) {
+                //         var backgroundColor = "";
+                //         switch (data) {
+                //             case "Tidak Ada Permintaan":
+                //                 backgroundColor = "danger";
+                //                 break;
+                //             case "Belum Ada Ts RO":
+                //                 backgroundColor = "danger";
+                //                 break;
+                //             case "Belum Upload Foto Thorax":
+                //                 backgroundColor = "warning";
+                //                 break;
+                //             case "Sudah Selesai":
+                //                 backgroundColor = "success";
+                //                 break;
+                //             default:
+                //                 backgroundColor = "secondary";
+                //                 break;
+                //         }
+                //         return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                //     },
+                // },
                 { data: "tanggal", className: "p-2" }, // Tanggal column
                 { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
                 { data: "penjamin_nama", className: "text-center p-2" }, // No Antrean column
@@ -89,7 +108,7 @@ function initializeDataAntrianAll(ruang, response) {
                 { data: "poli_nama", className: "p-2" }, // Poli column
                 { data: "dokter_nama", className: "p-2 col-3" }, // Dokter column
             ],
-            order: [[1, "dsc"]], // Order by Antrean Nomor ascending
+            order: [1, "asc"], // Order by Antrean Nomor ascending
         });
         $("#dataSelesai").DataTable({
             data: filteredData,
@@ -128,7 +147,7 @@ function initializeDataAntrianAll(ruang, response) {
                 { data: "poli_nama", className: "p-2" }, // Poli column
                 { data: "dokter_nama", className: "p-2 col-3" }, // Dokter column
             ],
-            order: [[1, "asc"]], // Order by Antrean Nomor ascending
+            order: [1, "asc"], // Order by Antrean Nomor ascending
         });
     } else {
         console.error(
@@ -200,27 +219,14 @@ function antrianAll(ruang) {
     });
 }
 //pasien Kominfo
-function isiIdentitas(pasien, pendaftaran) {
-    $("#layanan").val(pendaftaran.penjamin_nama); // Trigger change event jika diperlukan
-    $("#norm").val(pasien.pasien_no_rm);
-    $("#nama").val(pasien.pasien_nama);
-    $("#alamat").val(pasien.pasien_alamat);
-    $("#notrans").val(pendaftaran.no_trans);
-    $("#dokter").val(pendaftaran.nip_dokter).trigger("change");
-    //cari jika ada element jk maka isi jk
-    if ($("#jk").length) {
-        $("#jk").val(pasien.jenis_kelamin_nama);
-    }
-    jk = pasien.jenis_kelamin_nama;
 
-    setTimeout(function () {
-        Swal.close();
-        scrollToInputSection();
-    }, 1000);
-}
 function cariKominfo(norm, tgl, ruang) {
     var normValue = norm ? norm : $("#norm").val();
-    var tgl = tgl ? tgl : $("#tglRO").val();
+    if (ruang == "ro") {
+        var tgl = tgl ? tgl : $("#tglRO").val();
+    } else {
+        var tgl = tgl ? tgl : $("#tanggal").val();
+    }
     // console.log(normValue)
     // Add leading zeros if the value has less than 6 digits
     while (normValue.length < 6) {
@@ -292,9 +298,9 @@ function cariKominfo(norm, tgl, ruang) {
                         } else if (ruang == "ro") {
                             isiIdentitas(pasien, pendaftaran);
                         } else if (ruang == "dots") {
-                            // cariPasienTb(norm, tgl, pasien, pendaftaran);
                             isiBiodataModal(norm, tgl, pasien, pendaftaran);
-                            // searchByRM(norm, tgl);
+                        } else if (ruang == "lab") {
+                            isiIdentitas(pasien, pendaftaran);
                         }
                     } else {
                         // Handle other potential status codes
@@ -311,6 +317,24 @@ function cariKominfo(norm, tgl, ruang) {
             },
         });
     }
+}
+function isiIdentitas(pasien, pendaftaran) {
+    $("#layanan").val(pendaftaran.penjamin_nama); // Trigger change event jika diperlukan
+    $("#norm").val(pasien.pasien_no_rm);
+    $("#nama").val(pasien.pasien_nama);
+    $("#alamat").val(pasien.pasien_alamat);
+    $("#notrans").val(pendaftaran.no_trans);
+    $("#dokter").val(pendaftaran.nip_dokter).trigger("change");
+    //cari jika ada element jk maka isi jk
+    if ($("#jk").length) {
+        $("#jk").val(pasien.jenis_kelamin_nama);
+    }
+    jk = pasien.jenis_kelamin_nama;
+
+    setTimeout(function () {
+        Swal.close();
+        scrollToInputSection();
+    }, 1000);
 }
 
 async function searchRMObat(norm) {

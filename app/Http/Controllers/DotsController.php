@@ -350,7 +350,7 @@ class DotsController extends Controller
         $id = $request->input('id');
         $status = $request->input('status');
         $pasien = DotsModel::where('id', $id)->first();
-        $pasien->status = $status;
+        $pasien->hasilBerobat = $status;
         $pasien->save();
         return response()->json(['message' => 'Data berhasil diupdate']);
     }
