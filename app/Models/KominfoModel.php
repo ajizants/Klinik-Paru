@@ -43,9 +43,45 @@ class KominfoModel extends Model
 
             // Konversi response body ke array
             $data = json_decode($body, true);
+            // $d = $data['response']['response']['data'];
+            $res = array_map(function ($d) {
 
-            // Kembalikan data
-            return $data;
+                return [
+                    "no_reg" => $d["no_reg"] ?? 0,
+                    "id" => $d["id"] ?? 0,
+                    "no_trans" => $d["no_trans"] ?? 0,
+                    "antrean_nomor" => $d["antrean_nomor"] ?? 0,
+                    "tanggal" => $d["tanggal"] ?? 0,
+                    "penjamin_nama" => $d["penjamin_nama"] ?? 0,
+                    "penjamin_nomor" => $d["penjamin_nomor"] ?? 0,
+                    "jenis_kunjungan_nama" => $d["jenis_kunjungan_nama"] ?? 0,
+                    "nomor_referensi" => $d["nomor_referensi"] ?? 0,
+                    "pasien_nik" => $d["pasien_nik"] ?? 0,
+                    "pasien_nama" => $d["pasien_nama"] ?? 0,
+                    "pasien_no_rm" => $d["pasien_no_rm"] ?? 0,
+                    "pasien_tgl_lahir" => $d["pasien_tgl_lahir"] ?? 0,
+                    "jenis_kelamin_nama" => $d["jenis_kelamin_nama"] ?? 0,
+                    "pasien_lama_baru" => $d["pasien_lama_baru"] ?? 0,
+                    "rs_paru_pasien_lama_baru" => $d["rs_paru_pasien_lama_baru"] ?? 0,
+                    "poli_nama" => $d["poli_nama"] ?? 0,
+                    "poli_sub_nama" => $d["poli_sub_nama"] ?? 0,
+                    "dokter_nama" => $d["dokter_nama"] ?? 0,
+                    "daftar_by" => $d["daftar_by"] ?? 0,
+                    "waktu_daftar" => $d["waktu_daftar"] ?? 0,
+                    "waktu_verifikasi" => $d["waktu_verifikasi"] ?? 0,
+                    "admin_pendaftaran" => $d["admin_pendaftaran"] ?? 0,
+                    "log_id" => $d["log_id"] ?? 0,
+                    "keterangan" => $d["keterangan"] ?? 0,
+                    "keterangan_urutan" => $d["keterangan_urutan"] ?? 0,
+                    "pasien_umur" => $d["pasien_umur"] ?? 0,
+                    "pasien_umur_tahun" => $d["pasien_umur_tahun"] ?? 0,
+                    "pasien_umur_bulan" => $d["pasien_umur_bulan"] ?? 0,
+                    "pasien_umur_hari" => $d["pasien_umur_hari"] ?? 0,
+                ];
+            }, $data['response']['data']);
+            $res = array_values($res);
+            return $res;
+            // return $data;
 
         } catch (\Exception $e) {
             // Tangani kesalahan

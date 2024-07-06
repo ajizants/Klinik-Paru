@@ -34,12 +34,6 @@ function layanan(kelas, grupLayanan, pilihSemuaId) {
                 },
             },
             {
-                data: null,
-                render: function (data, type, row) {
-                    return `<input type="text" class="form-control-sm col-6" id="hasil${row.idLayanan}">`;
-                },
-            },
-            {
                 data: "tarif",
                 render: function (data, type, row) {
                     var formattedTarif = parseInt(data).toLocaleString(
@@ -53,21 +47,9 @@ function layanan(kelas, grupLayanan, pilihSemuaId) {
                     return `<label type="text" class="form-check-label mt-1" for="${row.idLayanan}" style="font-size: medium;">${formattedTarif}</label>`;
                 },
             },
-            // {
-            //     data: null,
-            //     render: function (data, type, row) {
-            //         return `<input type="checkbox" class="select-checkbox mt-2 data-checkbox ${grupLayanan}" id="biaya${row.idLayanan}">`;
-            //     },
-            // },
-            // {
-            //     data: null,
-            //     render: function (data, type, row) {
-            //         return `<input type="text" class="form-control-sm col-6" id="tagihan${row.idLayanan}">`;
-            //     },
-            // },
         ],
         order: [1, "asc"],
-        scrollY: "200px",
+        scrollY: "400px",
         scrollCollapse: false,
         paging: false,
         // responsive: true,
@@ -130,8 +112,6 @@ function simpan() {
                         norm: norm,
                         notrans: notrans,
                         hasil: hasil,
-                        // petugas: petugas,
-                        // dokter: dokter,
                     };
                 })
                 .get();
@@ -155,7 +135,6 @@ function simpan() {
                 alamat: alamat,
                 jaminan: jaminan,
                 tujuan: tujuan,
-                // hasil: hasil,
                 petugas: petugas,
                 dokter: dokter,
                 dataTerpilih: dataTerpilih,
@@ -179,10 +158,9 @@ function simpan() {
                     var table = $("#dataTrans").DataTable();
                     table.destroy();
                 }
-                dataLab(notrans);
+                // dataLab(notrans);
                 updateAntrian();
-
-                // toggleInputReadonly(false);
+                resetForm("selesai");
             })
             .catch((error) => {
                 console.error(
@@ -233,10 +211,10 @@ function deletLab(idLab, layanan) {
         }
     });
 }
-async function cariTsLab(norm, tgl) {
+async function cariTsLab(norm, tgl, ruang) {
     resetForm();
-    formatNorm($("#norm"));
-    norm = norm || $("#norm").val();
+
+    norm = norm || formatNorm($("#norm").val);
     tgl = tgl || $("#tanggal").val();
     var requestData = { norm: norm, tgl: tgl };
 
@@ -261,8 +239,7 @@ async function cariTsLab(norm, tgl) {
 
         if (!response.ok) {
             if (response.status == 404) {
-                // searchRMObat(norm);
-                cariKominfo(norm, tgl);
+                cariKominfo(norm, tgl, ruang);
             } else {
                 Swal.fire({
                     icon: "error",
@@ -284,7 +261,7 @@ async function cariTsLab(norm, tgl) {
             const notrans = data.notrans;
             console.log("🚀 ~ cariTsLab ~ notrans:", notrans);
             // setTimeout(function () {
-            ckelisPemeriksaan(data);
+            // ckelisPemeriksaan(data);
             dataLab(notrans); // Panggil dataLab dengan notrans yang benar
             // }, 3000);
             Swal.close();
@@ -357,10 +334,9 @@ async function dataLab(notrans) {
                 { data: "no" },
                 { data: "norm" },
                 { data: "pemeriksaan.nmLayanan" },
-                { data: "hasil" },
             ],
             order: [1, "asc"],
-            scrollY: "320px",
+            scrollY: "400px",
             scrollCollapse: true,
             paging: false,
         });
@@ -395,9 +371,9 @@ function updateAntrian() {
 
 $(document).ready(function () {
     setTodayDate();
-    handlePilihSemuaClick("pilih-hematologi", "hematologi");
-    handlePilihSemuaClick("pilih-kimia", "kimia");
-    handlePilihSemuaClick("pilih-imuno", "imuno");
+    // handlePilihSemuaClick("pilih-hematologi", "hematologi");
+    // handlePilihSemuaClick("pilih-kimia", "kimia");
+    // handlePilihSemuaClick("pilih-imuno", "imuno");
     handlePilihSemuaClick("pilih-bakteriologi", "bakteriologi");
     // $("#norm").on("keyup", function (event) {
     //     if (event.key === "Enter") {
@@ -416,10 +392,10 @@ $(document).ready(function () {
     setInterval(function () {
         updateAntrian();
     }, 150000);
-    layanan(91, "hematologi", "pilih-hematologi");
-    layanan(92, "kimia", "pilih-kimia");
-    layanan(93, "imuno", "pilih-imuno");
-    layanan(94, "bakteriologi", "pilih-bakteriologi");
+    // layanan(91, "hematologi", "pilih-hematologi");
+    // layanan(92, "kimia", "pilih-kimia");
+    // layanan(93, "imuno", "pilih-imuno");
+    layanan(9, "bakteriologi", "pilih-bakteriologi");
 
     // $("#dataAntrian").on("click", ".aksi-button", function (e) {
     //     e.preventDefault();

@@ -155,8 +155,8 @@ Route::post('ambilNo', [NoAntrianController::class, 'store']);
 Route::get('fotoRo', [RoMasterController::class, 'fotoRo']);
 Route::get('filmRo', [RoMasterController::class, 'filmRo']);
 Route::get('mesinRo', [RoMasterController::class, 'mesinRo']);
-Route::post('kondisiRo', [RoMasterController::class, 'kondisiRo']);
 Route::get('proyeksiRo', [RoMasterController::class, 'proyeksiRo']);
+Route::post('kondisiRo', [RoMasterController::class, 'kondisiRo']);
 
 Route::post('simpanFotoRo', [RoMasterController::class, 'simpanFotoRo']);
 Route::post('simpanFilmRo', [RoMasterController::class, 'simpanFilmRo']);
@@ -193,4 +193,5 @@ Route::post('antrian/kominfo', [PasienKominfoController::class, 'antrianAll']);
 Route::post('poin_kominfo', [PasienKominfoController::class, 'rekapPoin']);
 Route::post('kominfo/waktu_layanan', [PasienKominfoController::class, 'waktuLayanan']);
 Route::post('kominfo/rata_waktu_tunggu', [PasienKominfoController::class, 'avgWaktuTunggu']);
+Route::post('kominfo/pendaftaran', [PasienKominfoController::class, 'pendaftaranFilter']);
 // });

@@ -51,4 +51,5 @@ Route::middleware('auth')->group(function () {
     Route::post('waktu_layanan', [PasienKominfoController::class, 'waktuLayanan']);
 });
 Route::get('dispenser', [HomeController::class, 'dispenser'])->name('dispenser');
+Route::get('verif', [HomeController::class, 'verif'])->name('verif');
 Route::get('displayAntrian', [HomeController::class, 'displayAntrian'])->name('displayAntrian');

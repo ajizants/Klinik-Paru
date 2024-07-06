@@ -108,6 +108,7 @@
                                                             <select id="modal-tcm"
                                                                 class="form-control select2bs4 border border-info">
                                                                 <option value="">--Pilih Hasil--</option>
+                                                                <option value="Neg">Negatif</option>
                                                                 <option value="Low RifSen">MTB Det Low RifSen</option>
                                                                 <option value="Low RifRes">MTB Det Low RifRes</option>
                                                                 <option value="Medium RifSen">MTB Det Medium RifSen
@@ -118,7 +119,10 @@
                                                                 </option>
                                                                 <option value="Hight RifRes">MTB Det Hight RifRes
                                                                 </option>
-                                                                <option value="Neg">Negative</option>
+                                                                <option value="Trace RifSen">MTB Trace Det RifSen
+                                                                </option>
+                                                                <option value="Trace Neg">MTB Trace Negatif
+                                                                </option>
                                                             </select>
                                                         </div>
 

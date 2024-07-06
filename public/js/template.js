@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 function formatNorm(inputElement) {
+    console.log("🚀 ~ formatNorm ~ inputElement:", inputElement);
     // Pastikan inputElement adalah objek jQuery yang valid
     if (inputElement && inputElement.val) {
         // Hapus karakter selain digit
@@ -120,6 +121,7 @@ function toggleSections(sectionToShow) {
         "#dTelat",
         "#dDo",
         "#dTb",
+        "#key_pad",
     ];
     sections.forEach(function (section) {
         if (section === sectionToShow) {
@@ -132,9 +134,19 @@ function toggleSections(sectionToShow) {
     });
 }
 
-function enterCariRM(event, ruang, norm) {
-    var tgl = $("#tanggal").val();
+function enterCariRM(event, ruang) {
     if (event.key === "Enter") {
+        var tgl = $("#tanggal").val();
+        var formatNorm = $("#norm").val().replace(/\D/g, "");
+
+        while (formatNorm.length < 6) {
+            formatNorm = "0" + formatNorm;
+        }
+
+        console.log("🚀 ~ enterCariRM ~ norm:", formatNorm);
+        $("#norm").val(formatNorm.slice(0, 6));
+        var norm = formatNorm.slice(0, 6);
+
         if (ruang == "lab") {
             cariTsLab(norm, tgl, ruang);
         } else {

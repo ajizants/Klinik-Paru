@@ -17,23 +17,35 @@ class LaboratoriumController extends Controller
      */
     public function cariTsLab(Request $request)
     {
-        if ($request->input('notrans') == null) {
-            $norm = $request->input('norm');
-            $tgl = $request->input('tgl');
-            // dd($tglAkhir);
-            $data = LaboratoriumKunjunganModel::with('pemeriksaan')
-                ->where('norm', 'like', '%' . $norm . '%')
-                ->whereDate('created_at', 'like', '%' . $tgl . '%')
-                ->first();
+        try {
+            if ($request->input('notrans') == null) {
+                $norm = $request->input('norm');
+                $tgl = $request->input('tgl');
+                $data = LaboratoriumKunjunganModel::with('pemeriksaan')
+                    ->where('norm', 'like', '%' . $norm . '%')
+                    ->whereDate('created_at', 'like', '%' . $tgl . '%')
+                    ->first();
 
-            $lab = json_decode($data, true);
+                $lab = json_decode($data, true);
+                // dd($lab);
+                if ($data == null) {
+                    $res = [
+                        'message' => 'Belum ada Transaksi Lab',
+                        'code' => 404,
+                    ];
+                    return response()->json($res, 404, [], JSON_PRETTY_PRINT);
+                }
 
-            return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
-        } else {
-            $notrans = $request->input('notrans');
-            $data = LaboratoriumHasilModel::with('pemeriksaan')
-                ->where('notrans', 'like', '%' . $notrans . '%')->get();
-            return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+                return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
+            } else {
+                $notrans = $request->input('notrans');
+                $data = LaboratoriumHasilModel::with('pemeriksaan')
+                    ->where('notrans', 'like', '%' . $notrans . '%')->get();
+                return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+            }
+        } catch (\Exception $e) {
+            Log::error('Terjadi kesalahan saat mencari data: ' . $e->getMessage());
+            return response()->json(['message' => 'Terjadi kesalahan saat mencari data: ' . $e->getMessage()], 500);
         }
     }
 
@@ -108,7 +120,6 @@ class LaboratoriumController extends Controller
         $jaminan = $request->input('jaminan');
         $dokter = $request->input('dokter');
         $petugas = $request->input('petugas');
-        $tujuan = $request->input('tujuan');
 
         try {
             // Memulai transaksi database
@@ -125,11 +136,8 @@ class LaboratoriumController extends Controller
                         'notrans' => $data['notrans'],
                         'norm' => $data['norm'],
                         'idLayanan' => $data['idLayanan'],
-                        // 'petugas' => $data['petugas'],
-                        // 'dokter' => $data['dokter'],
                         'petugas' => $petugas,
                         'dokter' => $dokter,
-                        'hasil' => $data['hasil'],
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
@@ -147,38 +155,26 @@ class LaboratoriumController extends Controller
             // Extract notrans and tujuan from the request
 
             if ($notrans !== null) {
-                //add t_kunjungan
-                $kunjunganLab = new LaboratoriumKunjunganModel();
+                $dataKunjungan = LaboratoriumKunjunganModel::where('notrans', $notrans)->first();
 
-                $kunjunganLab->notrans = $notrans;
-                $kunjunganLab->norm = $norm;
-                $kunjunganLab->nama = $nama;
-                $kunjunganLab->nik = $nik;
-                $kunjunganLab->alamat = $alamat;
-                $kunjunganLab->layanan = $jaminan;
-                $kunjunganLab->petugas = $petugas;
-                $kunjunganLab->dokter = $dokter;
-                $kunjunganLab->save();
+                if ($dataKunjungan == null) {
+                    $kunjunganLab = new LaboratoriumKunjunganModel();
 
-                // Respon sukses atau redirect ke halaman lain
-                return response()->json(['message' => 'Data berhasil disimpan']);
+                    $kunjunganLab->notrans = $notrans;
+                    $kunjunganLab->norm = $norm;
+                    $kunjunganLab->nama = $nama;
+                    $kunjunganLab->nik = $nik;
+                    $kunjunganLab->alamat = $alamat;
+                    $kunjunganLab->layanan = $jaminan;
+                    $kunjunganLab->petugas = $petugas;
+                    $kunjunganLab->dokter = $dokter;
+                    $kunjunganLab->save();
+                    return response()->json(['message' => 'Data berhasil disimpan']);
+                }
+
             } else {
-                // Handle case when $kdTind is null, misalnya kirim respon error
                 return response()->json(['message' => 'kdTind tidak valid'], 400);
             }
-            // Update the KunjunganModel
-            // $affectedRows = KunjunganModel::where('notrans', $notrans)
-            //     ->update(['ktujuan' => $tujuan]);
-
-            // if ($affectedRows > 0) {
-            //     return response()->json([
-            //         'message' => 'Data berhasil disimpan dan diupdate',
-            //     ], 201);
-            // } else {
-            //     return response()->json([
-            //         'message' => 'Tujuan berikutnya sama dengan tujuan sebelumnya',
-            //     ], 200);
-            // }
         } catch (\Exception $e) {
             // Rollback transaksi database jika terjadi kesalahan
             DB::rollback(); // Rollback transaksi jika terjadi kesalahan

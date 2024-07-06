@@ -9,6 +9,7 @@ use App\Models\KominfoModel;
 use App\Models\LaboratoriumKunjunganModel;
 use App\Models\ROTransaksiHasilModel;
 use App\Models\ROTransaksiModel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -801,6 +802,31 @@ class PasienKominfoController extends Controller
     //     // }
     // }
 
+    public function pendaftaranFilter(Request $request)
+    {
+        $norm = $request->input('norm');
+        // Jika tgl tidak ada maka gunakan tgl saat ini
+        $tanggal = $request->input('tanggal', Carbon::now()->format('Y-m-d'));
+        $model = new KominfoModel();
+        $data = $model->pendaftaranRequest($tanggal);
+
+        // Filter hasil yang normnya sama dengan $norm
+        $filteredData = array_filter($data, function ($message) use ($norm) {
+            return $message['pasien_no_rm'] === $norm;
+        });
+
+        // Ambil elemen pertama dari hasil yang difilter
+        $result = reset($filteredData);
+
+        // Jika tidak ada hasil yang sesuai, berikan respons yang sesuai
+        if ($result === false) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
+        // Kembalikan hasil sebagai JSON
+        return response()->json($result);
+    }
+
     public function newCpptRequest(Request $request)
     {
         if ($request->has(['tanggal_awal', 'tanggal_akhir'])) {
@@ -886,7 +912,6 @@ class PasienKominfoController extends Controller
         $model = new KominfoModel();
 
         $data = $model->waktuLayananRequest($params);
-
 
         return response()->json($data);
     }

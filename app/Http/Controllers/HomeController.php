@@ -116,6 +116,12 @@ class HomeController extends Controller
 
         return view('Dispenser.main')->with('title', $title);
     }
+    public function verif()
+    {
+        $title = 'Anjungan Mandiri';
+
+        return view('Dispenser.input')->with('title', $title);
+    }
     public function displayAntrian()
     {
         $title = 'Daftar Tunggu';

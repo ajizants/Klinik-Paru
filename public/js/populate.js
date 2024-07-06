@@ -245,7 +245,7 @@ function cariKominfo(norm, tgl, ruang) {
     } else {
         Swal.fire({
             icon: "info",
-            title: "Sedang Mencari Data Pasien di Aplikasi KOMINFO\n Mohon Ditunggu ...!!!",
+            title: "Beluam ada Transaksi\nSedang Mencari Data Pasien di Aplikasi KOMINFO\n Mohon Ditunggu ...!!!",
             allowOutsideClick: false, // Mencegah interaksi di luar dialog
             didOpen: () => {
                 Swal.showLoading(); // Menampilkan loading spinner
@@ -276,7 +276,9 @@ function cariKominfo(norm, tgl, ruang) {
                             icon: "info",
                             title: "Pasien tidak mendaftar pada hari ini",
                         });
-                        rstForm();
+                        if (ruang != "lab") {
+                            rstForm();
+                        }
                     } else if (code === 200) {
                         Swal.fire({
                             icon: "info",

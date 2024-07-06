@@ -461,33 +461,11 @@ class AntrianController extends Controller
     {
         $norm = $request->input('norm');
         $date = $request->input('date', now()->toDateString());
-        $kode = str_replace('-', '', $date);
 
-        $data = PasienModel::on('mysql')
-            ->where('norm', 'LIKE', '%' . $norm . '%')
-            ->get();
-        $res = [];
-        foreach ($data as $item) {
-            $item["notrans"] = $kode . $item["norm"];
-            $res[] = [
-                "norm" => $item->norm,
-                "noktp" => $item->noktp,
-                "nama" => $item->nama,
-                "tglLahir" => $item->tglLahir,
-                "umur" => $item->umur,
-                "gender" => $item->gender,
-                "alamat" => $item->alamat,
-                "provinsi" => $item->provinsi,
-                "kabupaten" => $item->kabupaten,
-                "kecamatan" => $item->kecamatan,
-                "kelurahan" => $item->kelurahan,
-                "rtrw" => $item->rtrw,
-                "agama" => $item->agama,
-                "pendidikan" => $item->pendidikan,
-                "pekerjaan" => $item->pekerjaan,
-                "notrans" => $item->notrans,
-            ];
-        }
+        $data = PasienModel::where('norm', 'LIKE', '%' . $norm . '%')
+            ->first();
+
+        // $res = array_values($data);
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
         // return response()->json($res, 200, [], JSON_PRETTY_PRINT);
     }
