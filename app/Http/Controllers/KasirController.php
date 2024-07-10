@@ -69,13 +69,9 @@ class KasirController extends Controller
     //     return response()->json(['message' => 'Data tindakan berhasil dihapus']);
     // }
 
-    // public function edit()
-    // {
+    public function updateLayanan()
+    {
 
-    //     $bmhp = BMHPModel::on('mysql')->get();
-    //     // $bmhp = BMHPModel::on('mysql')->get();
-    //     return response()->json($bmhp, 200, [], JSON_PRETTY_PRINT);
-    //     // return response()->json($bmhp);
-    // }
+    }
 
 }

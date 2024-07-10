@@ -25,4 +25,8 @@ class LayananModel extends Model
     {
         return $this->hasOne(LayananKelasModel::class, 'kelas', 'kelas');
     }
+    public static function edit(string $id)
+    {
+        return static::where('idLayanan', $id)->save();
+    }
 }

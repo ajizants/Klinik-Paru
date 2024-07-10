@@ -121,3 +121,10 @@ div[style*="animation: zoomIn"] {
     /* Set margin menjadi 0 */
     margin: 0;
 }
+
+/* CSS untuk mempersempit jarak antar baris di DataTable */
+.table-tight tbody tr td,
+.table-tight thead tr th {
+    padding: 4px 8px; /* Atur padding sesuai kebutuhan */
+    margin: 0;
+}

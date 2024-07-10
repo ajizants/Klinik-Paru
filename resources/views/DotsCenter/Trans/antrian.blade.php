@@ -48,8 +48,8 @@
                 </ul>
                 <div id="dKontrol" class="card-body card-body-hidden p-2">
                     <div class="table-responsive pt-2 px-2">
-                        <table id="Pkontrol" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
-                            cellspacing="0">
+                        <table id="dataAntrian" class="table table-striped table-hover pt-0 mt-0 fs-6"
+                            style="width:100%" cellspacing="0">
                             <thead class="bg bg-primary">
                                 <tr>
                                     <th width="15px">Aksi</th>

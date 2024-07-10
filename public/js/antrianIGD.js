@@ -53,7 +53,7 @@ function dataTindakan(notrans) {
                         },
                         className: "p-2",
                     },
-                    { data: "norm", className: "text-center col-2 p-2" },
+                    { data: "norm", className: "p-2" },
                     { data: "tindakan.nmTindakan", className: "p-2" },
                     { data: "petugas.biodata.nama", className: "p-2" },
                     { data: "dokter.biodata.nama", className: "p-2" },
@@ -144,7 +144,7 @@ function initializeDataAntrian(response) {
             item.index = dataArray.indexOf(item) + 1;
 
             var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-            item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+            item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
                             data-norm="${item.pasien_no_rm}"
                             data-nama="${item.pasien_nama}"
                             data-dokter="${item.dokter_nama}"
@@ -172,8 +172,8 @@ function initializeDataAntrian(response) {
                 { data: "index", className: "text-center p-2" },
                 { data: "pasien_no_rm", className: "text-center p-2" },
                 { data: "penjamin_nama", className: "text-center p-2" },
-                { data: "pasien_nama", className: "p-2 col-3" },
-                { data: "asktind", className: "p-2 col-3" },
+                { data: "pasien_nama", className: "p-2 col-2" },
+                { data: "asktind", className: "p-2 col-4" },
                 { data: "dokter_nama", className: "p-2 col-3" },
             ],
             order: [
@@ -199,7 +199,7 @@ function antrian() {
     var param = {
         tanggal_awal: tanggal_awal,
         tanggal_akhir: tanggal_akhir,
-        // no_rm: no_rm,
+        ruang: "igd",
     };
 
     fetchDataAntrian(param, function (response) {
@@ -224,7 +224,7 @@ function antrian() {
                     item.index = dataArray.indexOf(item) + 1;
 
                     var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-                    item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                    item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
                                     data-norm="${item.pasien_no_rm}"
                                     data-nama="${item.pasien_nama}"
                                     data-dokter="${item.dokter_nama}"

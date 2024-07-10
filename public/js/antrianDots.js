@@ -123,6 +123,9 @@ function isiBiodataModal(norm, date, pasien, pendaftaran) {
     $("#modal-pasienTB #modal-dokter")
         .val(pendaftaran.nip_dokter)
         .trigger("change");
+    $("#modal-pasienTB #modal-kdDx")
+        .val(pendaftaran.diagnosa[0].kode_diagnosa)
+        .trigger("change");
 
     // setTimeout(function () {
     Swal.close();
@@ -618,4 +621,108 @@ function fillIdentitasTBRiwayat(data) {
     riwayatHp.text(": " + riwayat.pasien.noHP);
     riwayatNik.text(": " + riwayat.pasien.nik);
     riwayatAlamat.text(": " + riwayat.pasien.alamat);
+}
+
+function fetchDataAntrian(params, callback) {
+    console.log("🚀 ~ fetchDataAntrian ~ params:", params);
+    $.ajax({
+        url: "/api/cpptKominfo",
+        type: "post",
+        data: params, // Mengirimkan array params sebagai data
+        success: function (response) {
+            callback(response);
+        },
+        error: function (xhr) {
+            // Tangani kesalahan jika diperlukan
+        },
+    });
+}
+
+function initializeDataAntrian(response) {
+    // Pastikan response.data adalah objek yang berisi data pasien
+    if (response && response.response && response.response.data) {
+        var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
+        // var dataArray = response.response.data;
+
+        dataArray.forEach(function (item) {
+            item.index = dataArray.indexOf(item) + 1;
+            item.nmDiagnosa = item.diagnosa[0].nama_diagnosa;
+            var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
+            item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+                                    onclick="cariPasienTb('${item.pasien_no_rm}','${item.tgl}');"><i class="fas fa-pen-to-square"></i></a>`;
+        });
+
+        $("#dataAntrian").DataTable({
+            data: dataArray,
+            columns: [
+                { data: "aksi", className: "text-center p-2" },
+                {
+                    data: "status",
+                    className: "text-center p-2",
+                    render: function (data, type, row) {
+                        var backgroundColor =
+                            data === "belum" ? "danger" : "success";
+                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                    },
+                },
+                { data: "index", className: "text-center p-2" },
+                { data: "pasien_no_rm", className: "text-center p-2" },
+                { data: "penjamin_nama", className: "text-center p-2" },
+                { data: "pasien_nama", className: "p-2 col-2" },
+                { data: "dokter_nama", className: "p-2 col-3" },
+                { data: "nmDiagnosa", className: "p-2 col-4" },
+            ],
+            order: [
+                [1, "asc"],
+                [2, "asc"],
+            ],
+        });
+    } else {
+        console.error(
+            "Invalid response or response.response.data is not available:",
+            response
+        );
+        // Handle error or display appropriate message
+    }
+}
+
+function antrian() {
+    $("#loadingSpinner").show();
+    var tanggal_awal = $("#tanggal").val(); // Ganti id input tanggal_awal
+    var tanggal_akhir = $("#tanggal").val(); // Ganti id input tanggal_akhir
+    // var no_rm = $("#norm").val(); // Ganti id input no_rm
+
+    var param = {
+        tanggal_awal: tanggal_awal,
+        tanggal_akhir: tanggal_akhir,
+        ruang: "dots",
+    };
+
+    fetchDataAntrian(param, function (response) {
+        $("#loadingSpinner").hide();
+
+        if ($.fn.DataTable.isDataTable("#dataAntrian")) {
+            var table = $("#dataAntrian").DataTable();
+            if (response && response.response && response.response.data) {
+                var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
+
+                dataArray.forEach(function (item) {
+                    item.index = dataArray.indexOf(item) + 1;
+                    item.nmDiagnosa = item.diagnosa[0].nama_diagnosa;
+                    var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
+                    item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+                                            onclick="cariPasienTb('${item.pasien_no_rm}','${item.tgl}');"><i class="fas fa-pen-to-square"></i></a>`;
+                });
+            } else {
+                console.error(
+                    "Invalid response or response.response.data is not available:",
+                    response
+                );
+                // Handle error or display appropriate message
+            }
+            table.clear().rows.add(dataArray).draw();
+        } else {
+            initializeDataAntrian(response);
+        }
+    });
 }

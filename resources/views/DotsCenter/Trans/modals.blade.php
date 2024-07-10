@@ -1,12 +1,12 @@
                 <div class="modal fade" id="modal-pasienTB">
-                    <div class="modal-dialog modal-xl">
+                    <div class="modal-dialog modal-dialog modal-dialog-scrollable modal-xl">
                         <div class="modal-content">
-                            <div class="modal-header">
+                            {{-- <div class="modal-header pb-0">
                                 <h4 class="modal-title">Form Tambah Pasien TBC Baru</h4>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
-                            </div>
+                            </div> --}}
                             <div class="modal-body">
                                 <div class="card-body p-2">
                                     <div class="container-fluid">
@@ -15,6 +15,10 @@
                                             @csrf
                                             <form class="form-horizontal" id="formTBbaru">
                                                 <div class="card-body">
+                                                    <div
+                                                        class="h5 pb-2 mb-4 text-danger border-bottom border-danger text-center">
+                                                        <b>Input Data Dasar Pasien TBC</b>
+                                                    </div>
                                                     <div class="form-group row">
                                                         <label for="modal-norm"
                                                             class="col-sm-1 col-form-label font-weight-bold mb-0">No
@@ -41,7 +45,7 @@
                                                                 placeholder="Nama Pasien" readonly>
                                                             <input type="text" id="modal-notrans"
                                                                 class="form-control bg-white border border-white"
-                                                                placeholder="notrans Pasien" readonly>
+                                                                placeholder="notrans Pasien" readonly hidden>
                                                         </div>
                                                     </div>
 
@@ -65,8 +69,11 @@
                                                         <label for="modal-alamat"
                                                             class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat</label>
                                                         <div class="col-sm-5">
-                                                            <textarea id="modal-alamat" class="form-control bg-white border border-white" style="height: 69px;"
-                                                                placeholder="Alamat Pasien" readonly></textarea>
+                                                            {{-- <textarea id="modal-alamat" class="form-control bg-white border border-white" style="height: 69px;"
+                                                                placeholder="Alamat Pasien" readonly></textarea> --}}
+                                                            <input id="modal-alamat"
+                                                                class="form-control bg-white border border-white"
+                                                                placeholder="Alamat Pasien" readonly />
                                                         </div>
                                                     </div>
 
@@ -189,6 +196,10 @@
                                                         </div>
                                                     </div>
 
+                                                    <div
+                                                        class="h5 pb-2 mb-4 text-black border-bottom border-danger text-center">
+                                                        <b>Input Data Transaksi / Kunjungan Hari ini</b>
+                                                    </div>
                                                     <div class="form-group row mt-3">
                                                         <label for="modal-bta"
                                                             class="col-sm-1 col-form-label font-weight-bold"> Hasil

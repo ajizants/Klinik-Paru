@@ -10,8 +10,7 @@ class KominfoModel extends Model
 {
     protected $table = 'm_pasien_kominfo';
 
-    // Fungsi untuk melakukan request dengan basic auth
-    public function pendaftaranRequest($tanggal)
+    public function pendaftaranRequest(array $params)
     {
         // Inisialisasi klien GuzzleHTTP
         $client = new Client();
@@ -24,15 +23,15 @@ class KominfoModel extends Model
         $password = '~@j1s@nt0sO#';
 
         // Data POST
-        $data = [
-            'tanggal' => $tanggal,
-        ];
+        // $data = [
+        //     'tanggal' => $tanggal,
+        // ];
 
         try {
             // Lakukan permintaan POST dengan otentikasi dasar
             $response = $client->request('POST', $url, [
                 'auth' => [$username, $password],
-                'form_params' => $data,
+                'form_params' => $params,
                 'headers' => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
@@ -46,7 +45,14 @@ class KominfoModel extends Model
             // $d = $data['response']['response']['data'];
             $res = array_map(function ($d) {
 
+                if (!is_null($d["ruang_poli_selesai_waktu"])) {
+                    $statusPulang = "Sudah Pulang";
+                } else {
+                    $statusPulang = "Belum Pulang";
+                }
+
                 return [
+                    "status_pulang" => $statusPulang,
                     "no_reg" => $d["no_reg"] ?? 0,
                     "id" => $d["id"] ?? 0,
                     "no_trans" => $d["no_trans"] ?? 0,
@@ -118,7 +124,8 @@ class KominfoModel extends Model
             if (isset($data['response']['data']) && is_array($data['response']['data'])) {
                 // Filter data, jika tindakan kosong maka skip
                 $filteredData = array_filter($data['response']['data'], function ($item) {
-                    return !empty($item['tindakan']);
+                    // return !empty($item['tindakan']);
+                    return true;
                 });
 
                 // Update the 'data' key with the filtered data
@@ -344,32 +351,193 @@ class KominfoModel extends Model
 
             $res = array_map(function ($message) {
 
+                // Menentukan waktu tunggu daftar
+                $tunggu_daftar = ($message["daftar_by"] == "JKN") ? 2 : max(0, round((strtotime($message["loket_pendaftaran_panggil_waktu"]) - strtotime($message["loket_pendaftaran_skip_waktu"] ?? $message["loket_pendaftaran_menunggu_waktu"])) / 60, 2));
+
+                // Menentukan waktu tunggu tensi
+                $tunggu_tensi = max(0, round((strtotime($message["ruang_tensi_panggil_waktu"]) - strtotime($message["ruang_tensi_skip_waktu"] ?? $message["loket_pendaftaran_selesai_waktu"])) / 60, 2));
+
+                // Menentukan durasi poli
+                $durasi_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["loket_pendaftaran_selesai_waktu"])) / 60, 2));
+
+                // Inisialisasi waktu tunggu lainnya
+                $tunggu_igd = $tunggu_farmasi = $tunggu_kasir = 0;
+                $statusPulang = !is_null($message["ruang_poli_selesai_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
+
+                // Menentukan waktu tunggu lab dan rontgen
+                $pangLab = !is_null($message["ruang_laboratorium_panggil_waktu"]);
+                $pangRo = !is_null($message["ruang_rontgen_panggil_waktu"]);
+
+                if ($pangLab && $pangRo) {
+                    $oke = "ada semua";
+                    if (strtotime($message["ruang_laboratorium_panggil_waktu"]) < strtotime($message["ruang_rontgen_panggil_waktu"])) {
+                        $tunggu_lab = max(0, round((strtotime($message["ruang_laboratorium_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
+                        $tunggu_ro = max(0, round((strtotime($message["ruang_rontgen_panggil_waktu"]) - strtotime($message["ruang_laboratorium_selesai_waktu"])) / 60, 2));
+                    } else {
+                        $tunggu_ro = max(0, round((strtotime($message["ruang_rontgen_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
+                        $tunggu_lab = max(0, round((strtotime($message["ruang_laboratorium_panggil_waktu"]) - strtotime($message["ruang_rontgen_selesai_waktu"])) / 60, 2));
+                    }
+                    $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_rontgen_panggil_waktu"])) / 60, 2));
+                } elseif ($pangLab) {
+                    $oke = "ada lab";
+                    $tunggu_lab = max(0, round((strtotime($message["ruang_laboratorium_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
+                    $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_laboratorium_panggil_waktu"])) / 60, 2));
+                    $tunggu_ro = 0;
+                } elseif ($pangRo) {
+                    $oke = "ada ro";
+                    $tunggu_ro = max(0, round((strtotime($message["ruang_rontgen_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
+                    $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_rontgen_panggil_waktu"])) / 60, 2));
+                    $tunggu_lab = 0;
+                } else {
+                    $oke = "kosong";
+                    $tunggu_lab = $tunggu_ro = 0;
+                    $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_poli_skip_waktu"] ?? $message["ruang_tensi_selesai_waktu"])) / 60, 2));
+                }
+
+                // data local
+                // $roData = ROTransaksiModel::where('notrans', $message['no_trans'])->first();
+                $roData = ROTransaksiModel::where('norm', $message['pasien_no_rm'])
+                    ->whereDate('tgltrans', $message['tanggal'])->first();
+                $Rdata = $roData ? true : false;
+                if (is_null($roData)) {
+                    $selesaiRo = 0;
+                } elseif (is_null($roData->created_at)) {
+                    $selesaiRo = 0;
+                } else {
+                    $selesaiRo = date('Y-m-d H:i:s', strtotime($roData->created_at));
+                }
+
+                return [
+                    "ro" => $pangRo,
+                    "lab" => $pangLab,
+                    "oke" => $oke,
+                    "rodata" => $Rdata,
+                    "no_reg" => $message["no_reg"] ?? 0,
+                    "no_trans" => $message["no_trans"] ?? 0,
+                    "daftar_by" => $message["daftar_by"] ?? 0,
+                    "antrean_nomor" => $message["antrean_nomor"] ?? 0,
+                    "tanggal" => $message["tanggal"] ?? 0,
+                    "penjamin_nama" => $message["penjamin_nama"] ?? 0,
+                    "pasien_no_rm" => $message["pasien_no_rm"] ?? 0,
+                    "pasien_nama" => $message["pasien_nama"] ?? 0,
+                    "poli_nama" => $message["poli_nama"] ?? 0,
+                    "dokter_nama" => $message["dokter_nama"] ?? 0,
+                    "pendaftaran_menunggu" => $message["loket_pendaftaran_menunggu_waktu"] ?? 0,
+                    "status_pulang" => $statusPulang,
+
+                    "tunggu_daftar" => $tunggu_daftar ?? 0,
+                    "pendaftaran_panggil" => $message["loket_pendaftaran_panggil_waktu"] ?? 0,
+                    "pendaftaran_skip" => $message["loket_pendaftaran_skip_waktu"] ?? 0,
+                    "pendaftaran_selesai" => $message["loket_pendaftaran_selesai_waktu"] ?? 0,
+
+                    "tunggu_tensi" => $tunggu_tensi ?? 0,
+                    // "tensi_menunggu" => $message["ruang_tensi_menunggu_waktu"]??0,
+                    "tensi_panggil" => $message["ruang_tensi_panggil_waktu"] ?? 0,
+                    "tensi_skip" => $message["ruang_tensi_skip_waktu"] ?? 0,
+                    "tensi_selesai" => $message["ruang_tensi_selesai_waktu"] ?? 0,
+
+                    "durasi_poli" => $durasi_poli ?? 0,
+                    "tunggu_poli" => $tunggu_poli ?? 0,
+                    // "poli_menunggu" => $message["ruang_poli_menunggu_waktu"]??0,
+                    "poli_panggil" => $message["ruang_poli_panggil_waktu"] ?? 0,
+                    "poli_skip" => $message["ruang_poli_skip_waktu"] ?? 0,
+                    "poli_selesai" => $message["ruang_poli_selesai_waktu"] ?? 0,
+
+                    "tunggu_lab" => $tunggu_lab ?? 0,
+                    // "laboratorium_menunggu" => $message["ruang_laboratorium_menunggu_waktu"]??0,
+                    "laboratorium_panggil" => $message["ruang_laboratorium_panggil_waktu"] ?? 0,
+                    "laboratorium_skip" => $message["ruang_laboratorium_skip_waktu"] ?? 0,
+                    "laboratorium_selesai" => $message["ruang_laboratorium_selesai_waktu"] ?? 0,
+
+                    // // "rontgen_menunggu" => $message["ruang_rontgen_menunggu_waktu"],
+                    "tunggu_ro" => $tunggu_ro ?? 0,
+                    "rontgen_panggil" => $message["ruang_rontgen_panggil_waktu"] ?? 0,
+                    "rontgen_skip" => $message["ruang_rontgen_skip_waktu"] ?? 0,
+                    "rontgen_selesai" => $message["ruang_rontgen_selesai_waktu"] ?? 0,
+                    "selesai_ro" => $selesaiRo,
+                    // // "igd_menunggu" => $message["ruang_igd_menunggu_waktu"]??0,
+                    "tunggu_igd" => $tunggu_igd ?? 0,
+                    "igd_panggil" => $message["ruang_igd_panggil_waktu"] ?? 0,
+                    "igd_skip" => $message["ruang_igd_skip_waktu"] ?? 0,
+                    "igd_selesai" => $message["ruang_igd_selesai_waktu"] ?? 0,
+                    // // "kasir_menunggu" => $message["loket_kasir_menunggu_waktu"]??0,
+                    "tunggu_kasir" => $tunggu_kasir ?? 0,
+                    "kasir_panggil" => $message["loket_kasir_panggil_waktu"] ?? 0,
+                    "kasir_skip" => $message["loket_kasir_skip_waktu"] ?? 0,
+                    "kasir_selesai" => $message["loket_kasir_selesai_waktu"] ?? 0,
+
+                    // // "farmasi_menunggu" => $message["loket_farmasi_menunggu_waktu"]??0,
+                    "tunggu_farmasi" => $tunggu_farmasi ?? 0,
+                    "farmasi_panggil" => $message["loket_farmasi_panggil_waktu"] ?? 0,
+                    "farmasi_skip" => $message["loket_farmasi_skip_waktu"] ?? 0,
+                    "farmasi_selesai" => $message["loket_farmasi_selesai_waktu"] ?? 0,
+                ];
+            }, $data);
+            $res = array_values($res);
+            return $res;
+            // return $data;
+
+        } catch (\Exception $e) {
+            // Tangani kesalahan
+            return ['error' => $e->getMessage()];
+        }
+    }
+    public function waktuLayananRequestold(array $params)
+    {
+        $client = new Client();
+        $url = 'https://kkpm.banyumaskab.go.id/api_kkpm/v1/pendaftaran/data_pendaftaran';
+        $username = '3301010509940003';
+        $password = '~@j1s@nt0sO#';
+        // dd($params);
+
+        try {
+            // Lakukan permintaan POST dengan otentikasi dasar
+            $response = $client->request('POST', $url, [
+                'auth' => [$username, $password],
+                'form_params' => $params,
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                ],
+            ]);
+
+            // Ambil body response
+            $body = $response->getBody();
+
+            // Konversi response body ke array
+            $mentah = json_decode($body, true);
+            $responseData = $mentah['response']['data'];
+
+            // dd($mentah);
+            // Filter data sesuai dengan kondisi
+            if (!isset($params['no_rm']) || empty($params['no_rm'])) {
+                $data = array_filter($responseData, function ($message) {
+                    return $message['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
+                });
+            } else {
+                $data = array_filter($responseData, function ($message) use ($params) {
+                    return $message['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN' &&
+                        $message['pasien_no_rm'] === $params['no_rm'];
+                });
+            }
+
+            $res = array_map(function ($message) {
+
                 if ($message["daftar_by"] == "JKN") {
                     $tunggu_daftar = 2;
                 } else {
-                    $tunggu_daftar = max(0, round((strtotime($message["loket_pendaftaran_panggil_waktu"]) - strtotime($message["loket_pendaftaran_menunggu_waktu"])) / 60, 2));
-
+                    if (!is_null($message["loket_pendaftaran_skip_waktu"])) {
+                        $tunggu_daftar = max(0, round((strtotime($message["loket_pendaftaran_panggil_waktu"]) - strtotime($message["loket_pendaftaran_skip_waktu"])) / 60, 2));
+                    } else {
+                        $tunggu_daftar = max(0, round((strtotime($message["loket_pendaftaran_panggil_waktu"]) - strtotime($message["loket_pendaftaran_menunggu_waktu"])) / 60, 2));
+                    }
                 }
-                // if (!is_null($message["ruang_laboratorium_panggil_waktu"]) && !is_null($message["ruang_rontgen_panggil_waktu"])) {
-                //     if ($message["ruang_laboratorium_panggil_waktu"] > $message["ruang_rontgen_panggil_waktu"]) {
-                //         $tunggu_lab = max(0, round((strtotime($message["ruang_laboratorium_panggil_waktu"]) - strtotime($message["ruang_poli_selesai_waktu"])) / 60, 2));
 
-                //         $tunggu_ro = max(0, round((strtotime($message["ruang_rontgen_panggil_waktu"]) - strtotime($message["ruang_laboratorium_selesai_waktu"])) / 60, 2));
+                if (!is_null($message["ruang_tensi_skip_waktu"])) {
+                    $tunggu_tensi = max(0, round((strtotime($message["ruang_tensi_panggil_waktu"]) - strtotime($message["ruang_tensi_skip_waktu"])) / 60, 2));
+                } else {
+                    $tunggu_tensi = max(0, round((strtotime($message["ruang_tensi_panggil_waktu"]) - strtotime($message["loket_pendaftaran_selesai_waktu"])) / 60, 2));
+                }
 
-                //     } else {
-                //         $tunggu_lab = max(0, round((strtotime($message["ruang_laboratorium_panggil_waktu"]) - strtotime($message["ruang_rontgen_selesai_waktu"])) / 60, 2));
-
-                //         $tunggu_ro = max(0, round((strtotime($message["ruang_rontgen_panggil_waktu"]) - strtotime($message["ruang_poli_selesai_waktu"])) / 60, 2));
-
-                //     }
-                // } else {
-                //     $tunggu_lab = 0;
-                //     $tunggu_ro = 0;
-                // }
-
-                $tunggu_tensi = max(0, round((strtotime($message["ruang_tensi_panggil_waktu"]) - strtotime($message["loket_pendaftaran_selesai_waktu"])) / 60, 2));
-
-                // $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
                 $durasi_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["loket_pendaftaran_selesai_waktu"])) / 60, 2));
 
                 $tunggu_igd = 0;
@@ -394,17 +562,14 @@ class KominfoModel extends Model
                 if ($pangLab && $pangRo) {
                     $oke = "ada semua";
                     if ($timeLab < $timeRo) {
-                        // echo "Panggilan Lab lebih dulu.\n";
                         $tunggu_lab = max(0, round((strtotime($message["ruang_laboratorium_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
                         $tunggu_ro = max(0, round((strtotime($message["ruang_rontgen_panggil_waktu"]) - strtotime($message["ruang_laboratorium_selesai_waktu"])) / 60, 2));
                         $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_rontgen_panggil_waktu"])) / 60, 2));
                     } elseif ($timeLab > $timeRo) {
-                        // echo "Panggilan Rontgen lebih dulu.\n";
                         $tunggu_ro = max(0, round((strtotime($message["ruang_rontgen_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
                         $tunggu_lab = max(0, round((strtotime($message["ruang_laboratorium_panggil_waktu"]) - strtotime($message["ruang_rontgen_selesai_waktu"])) / 60, 2));
                         $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_laboratorium_panggil_waktu"])) / 60, 2));
                     } else {
-                        // echo "Panggilan Lab dan Rontgen terjadi pada waktu yang sama.\n";
                         $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_rontgen_panggil_waktu"])) / 60, 2));
                         $tunggu_lab = max(0, round((strtotime($message["ruang_laboratorium_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
                         $tunggu_ro = max(0, round((strtotime($message["ruang_rontgen_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
@@ -423,27 +588,31 @@ class KominfoModel extends Model
                     $oke = "kosong";
                     $tunggu_lab = 0;
                     $tunggu_ro = 0;
-                    $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
+                    if (!is_null($message["ruang_poli_skip_waktu"])) {
+                        $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_poli_skip_waktu"])) / 60, 2));
+                    } else {
+                        $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
+                    }
                 }
 
                 // data local
-                $roData = ROTransaksiModel::where('notrans', $message['no_trans'])->first();
+                // $roData = ROTransaksiModel::where('notrans', $message['no_trans'])->first();
+                $roData = ROTransaksiModel::where('norm', $message['pasien_no_rm'])
+                    ->whereDate('tgltrans', $message['tanggal'])->first();
+                $Rdata = $roData ? true : false;
                 if (is_null($roData)) {
                     $selesaiRo = 0;
                 } elseif (is_null($roData->created_at)) {
                     $selesaiRo = 0;
                 } else {
                     $selesaiRo = date('Y-m-d H:i:s', strtotime($roData->created_at));
-                    //jika $massage ruang_poli_selesai_waktu null
-                    if (is_null($message["ruang_poli_selesai_waktu"])) {
-                        $durasi_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["loket_pendaftaran_selesai_waktu"])) / 60, 2));
-                    }
                 }
 
                 return [
                     "ro" => $pangRo,
                     "lab" => $pangLab,
                     "oke" => $oke,
+                    "rodata" => $Rdata,
                     "no_reg" => $message["no_reg"] ?? 0,
                     "no_trans" => $message["no_trans"] ?? 0,
                     "daftar_by" => $message["daftar_by"] ?? 0,

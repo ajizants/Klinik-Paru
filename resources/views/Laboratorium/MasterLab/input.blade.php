@@ -3,15 +3,9 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="iperiksa" onclick="showPeriksa();"><b>Jenis Pemeriksaan</b></a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link" id="ireagen" onclick="showReagen();"><b>Laporan Reagen</b></a>
-                        </li>
-                        <li class="nav-item">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#staticBackdrop">
-                                Launch static backdrop modal
-                            </button>
-                        </li>
+                        </li> --}}
                     </ul>
                 </div>
                 <div class="container-fluid mt-1" id="periksa">

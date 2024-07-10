@@ -53,7 +53,7 @@
                                                 </div>
                                                 <div class="col-sm-1">
                                                     <input type="text" id="jk" class="form-control bg-white"
-                                                        placeholder="JK Pasien" readonly>
+                                                        placeholder="JK Pasien">
                                                 </div>
                                             </div>
                                             <div class="form-grup row mt-2">
@@ -98,7 +98,7 @@
                                                 <div class="form-grup row">
                                                     <label class="col-sm-1 py-3 col-form-label" for="pasienRawat">Pasien
                                                         Rawat</label>
-                                                    <div class="col-sm-10 py-3">
+                                                    <div class="col-sm-3 py-3 mr-5">
                                                         <label for="pasienRawat0" class="mr-4">
                                                             <input type="radio" name="pasienRawat" value="0"
                                                                 checked=""> IRJA
@@ -110,6 +110,15 @@
                                                             / IRNA
                                                         </label>
                                                     </div>
+                                                    {{-- <input type="text" name="Permintaan RO" id="Permintaan_RO"
+                                                            class="form-control form-control p-4"
+                                                            placeholder="Permintaan RO"> --}}
+                                                    <div class="col-md-6 border border-3 border-dark"
+                                                        style="height: 47px;"">
+                                                        <p id="asktindContent"
+                                                        class="fw-bold fs-3">Permintaan RO:</p>
+                                                    </div>
+
                                                 </div>
                                                 <div class="pl-5">
                                                     <div class="form-group row">

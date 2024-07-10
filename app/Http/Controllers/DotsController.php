@@ -24,12 +24,15 @@ class DotsController extends Controller
 
             if (!$Ptb) {
                 $pasien = $kominfo->pasienFilter($norm);
-                $tanggal = $request->input('tanggal_awal');
+                $tanggal_awal = $request->input('tanggal_awal', Carbon::now()->toDateString());
+                $tanggal_akhir = $request->input('tanggal_akhir', Carbon::now()->toDateString());
                 $params = [
-                    'tanggal' => $tanggal,
+                    'tanggal_awal' => $tanggal_awal,
+                    'tanggal_akhir' => $tanggal_akhir,
                     'no_rm' => $norm,
                 ];
-                $pendaftaran = $kominfo->waktuLayananRequest($params);
+                // $pendaftaran = $kominfo->waktuLayananRequest($params);
+                $pendaftaran = $kominfo->cpptRequest($params);
 
                 $filteredData = array_map(function ($d) {
                     $doctorNipMap = [
@@ -43,7 +46,7 @@ class DotsController extends Controller
                     $d['nip_dokter'] = $doctorNipMap[$dokter_nama] ?? 'Unknown';
 
                     return $d;
-                }, $pendaftaran);
+                }, $pendaftaran['response']['data']);
 
                 $ptbData[] = [
                     'pendaftaran' => $filteredData,

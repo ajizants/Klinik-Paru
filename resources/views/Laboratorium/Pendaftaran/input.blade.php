@@ -37,11 +37,11 @@
                                     </div>
                                 </div>
                                 <div class="form-grup row mt-2">
-                                    <label for="nik" class="col-sm-1 col-form-label font-weight-bold mb-0">NIK
+                                    <label for="tgltrans" class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                         :</label>
                                     <div class="col-sm-2">
-                                        <input type="text" id="nik" class="form-control bg-white"
-                                            placeholder="nik" />
+                                        <input type="date" id="tgltrans" class="form-control bg-white"
+                                            placeholder="Tanggal Transaksi" />
                                     </div>
                                     <label for="notrans" class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
                                         :</label>
@@ -69,19 +69,19 @@
                 </div>
                 <div class="container-fluid">
                     <div class="card card-secondary">
-                        <div class="card-header">
+                        {{-- <div class="card-header">
                             <h4 class="card-title">Input Pemeriksaan Laboratorium</h4>
-                        </div>
+                        </div> --}}
                         @csrf
                         <div class="card-body p-2">
                             <div class="row px-2">
-                                <div class="LayLab col-4 mr-2">
+                                <div class="LayLab col-5 mr-2">
                                     <div class="card card-danger">
                                         <div class="card-header">
-                                            <h4 class="card-title">Pilih Pemeriksaan Bakteriologi</h4>
+                                            <h4 class="card-title">Pilih Pemeriksaan</h4>
                                         </div>
-                                        <div class="card-body py-1 card-body table-responsive">
-                                            <table id="bakteriologi" class="table">
+                                        <div class="card-body p-1 card-body table-responsive">
+                                            <table id="bakteriologi" class="table table-tight table-hover">
                                                 <thead>
                                                     <tr>
                                                         <th><input type="checkbox" id="pilih-bakteriologi"></th>
@@ -101,7 +101,7 @@
                                             <h4 class="card-title">Pemeriksaan yang dilakukan</h4>
                                         </div>
                                         <div class="card-body py-1">
-                                            <table id="dataTrans" class="table">
+                                            <table id="dataTrans" class="table table table-tight table-hover">
                                                 <thead>
                                                     <tr>
                                                         <th class="no-total" width="35px">Aksi</th>
@@ -173,8 +173,11 @@
                                             <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>
                                         </div>
                                         <div class="col-auto">
-                                            <a class="btn btn-danger" id="tblBatal"
-                                                onclick="resetForm('dibatalkan');">Batal</a>
+                                            <a class="btn btn-warning" id="tblBatal" onclick="batal();">Batal</a>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a class="btn btn-danger" id="delete_ts" onclick="delete_ts();"
+                                                style="display: none;">Hapus</a>
                                         </div>
                                         {{--
                                 <div class="col-auto">

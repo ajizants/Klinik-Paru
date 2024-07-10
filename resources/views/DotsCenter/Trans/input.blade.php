@@ -191,7 +191,7 @@
                                                                 <tr>
                                                                     <th class="col-1">Aksi</th>
                                                                     <th class="col-1">No RM</th>
-                                                                    <th class="col-1">Tgl Kontrol</th>
+                                                                    <th class="col-1">Tgl Kunjungan</th>
                                                                     <th class="col-1">Bln Ke</th>
                                                                     <th>BTA</th>
                                                                     <th>BB</th>

@@ -94,12 +94,14 @@ Route::get('editPTB', [DotsController::class, 'editPTB']);
 
 //Kasir
 Route::get('layanan', [KasirController::class, 'Layanan']);
+Route::get('layanan/update', [KasirController::class, 'updateLayanan']);
 
 //laboratorium
 Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);
 Route::post('layananlab', [LaboratoriumController::class, 'layananlab']);
 Route::post('cariTsLab', [LaboratoriumController::class, 'cariTsLab']);
 Route::post('addTransaksiLab', [LaboratoriumController::class, 'addTransaksi']);
+Route::post('/lab/deleteTs', [LaboratoriumController::class, 'deleteTs']);
 Route::post('deleteLab', [LaboratoriumController::class, 'deleteLab']);
 
 Route::post('rekap/Kunjungan_Lab', [LaboratoriumController::class, 'rekapKunjungan']);

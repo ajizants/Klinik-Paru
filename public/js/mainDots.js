@@ -193,7 +193,9 @@ async function simpanKunjungan2() {
     try {
         var norm = $("#modal-pasienTB #modal-norm").val();
         var notrans = $("#modal-pasienTB #modal-notrans").val();
-        var tgltrans = $("#modal-pasienTB #modal-tglmulai").val();
+        // var tgltrans = $("#modal-pasienTB #modal-tglmulai").val();
+        // var tgltrans = $("#modal-pasienTB #modal-tglKunj").val();
+        var tgltrans = $("#tglKunj").val();
         var nxKontrol = $("#modal-pasienTB #modal-nxKontrol").val();
         var bta = $("#modal-pasienTB #modal-bta").val();
         var bb = $("#modal-pasienTB #modal-bb").val();
@@ -297,6 +299,7 @@ function updateAntrian() {
     pasienTB();
     pasienTelat();
     antrianAll("dots");
+    antrian();
 }
 
 function populate() {

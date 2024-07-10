@@ -135,7 +135,7 @@ function initializeDataAntrian(response) {
         var trim = `${item.tgltrans}`;
         var tgl = new Date(trim).toISOString().split("T")[0];
         var alamat = `${item.kelurahan}, ${item.rtrw}, ${item.kecamatan}, ${item.kabupaten}`;
-        item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+        item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
                 data-norm="${item.norm}"
                 data-nama="${item.namapasien}"
                 data-dokter="${item.dokterpoli}"
@@ -201,7 +201,7 @@ function antrian() {
                 var trim = `${item.tgltrans}`;
                 var tgl = new Date(trim).toISOString().split("T")[0];
                 var alamat = `${item.kelurahan}, ${item.rtrw}, ${item.kecamatan}, ${item.kabupaten}`;
-                item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary px-2 icon-link icon-link-hover"
+                item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
                 data-norm="${item.norm}"
                 data-nama="${item.namapasien}"
                 data-dokter="${item.dokterpoli}"

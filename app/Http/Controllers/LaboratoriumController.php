@@ -21,7 +21,7 @@ class LaboratoriumController extends Controller
             if ($request->input('notrans') == null) {
                 $norm = $request->input('norm');
                 $tgl = $request->input('tgl');
-                $data = LaboratoriumKunjunganModel::with('pemeriksaan')
+                $data = LaboratoriumKunjunganModel::with('pemeriksaan.pemeriksaan')
                     ->where('norm', 'like', '%' . $norm . '%')
                     ->whereDate('created_at', 'like', '%' . $tgl . '%')
                     ->first();
@@ -169,17 +169,38 @@ class LaboratoriumController extends Controller
                     $kunjunganLab->petugas = $petugas;
                     $kunjunganLab->dokter = $dokter;
                     $kunjunganLab->save();
-                    return response()->json(['message' => 'Data berhasil disimpan']);
+                    return response()->json(['message' => 'Transaksi berhasil disimpan...!!'], 200);
                 }
 
+                return response()->json(['message' => 'Transaksi berhasil di update...!!'], 200);
+
             } else {
-                return response()->json(['message' => 'kdTind tidak valid'], 400);
+                return response()->json(['message' => 'No Transaksi tidak valid'], 400);
             }
         } catch (\Exception $e) {
             // Rollback transaksi database jika terjadi kesalahan
             DB::rollback(); // Rollback transaksi jika terjadi kesalahan
             Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
             return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function deleteTs(Request $request)
+    {
+        $notrans = $request->input('notrans');
+        if ($notrans !== null) {
+            $dataKunjungan = LaboratoriumKunjunganModel::where('notrans', $notrans)->first();
+            if ($dataKunjungan !== null) {
+                $dataKunjungan->delete();
+
+                LaboratoriumHasilModel::desroyAll($notrans);
+                return response()->json(['message' => 'Data berhasil di hapus']);
+            } else {
+                return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            }
+
+        } else {
+            return response()->json(['message' => 'notrans tidak valid'], 400);
         }
     }
     public function addHasil(Request $request)
@@ -244,9 +265,6 @@ class LaboratoriumController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function deleteLab(Request $request)
     {
         $id = $request->input("idLab");

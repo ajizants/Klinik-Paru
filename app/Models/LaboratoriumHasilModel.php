@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use PhpParser\Node\Expr\FuncCall;
 
 class LaboratoriumHasilModel extends Model
 {
@@ -27,6 +28,16 @@ class LaboratoriumHasilModel extends Model
     public function dokter()
     {
         return $this->belongsTo(PegawaiModel::class, 'dokter', 'nip');
+    }
+    public static function destroyLab(string $id)
+    {
+        // Menemukan dan menghapus data berdasarkan ID
+        return static::where('idLab', $id)->delete();
+    }
+
+    public static Function desroyAll(string $notrans)
+    {
+        return static::where('notrans', $notrans)->delete();
     }
 
 }

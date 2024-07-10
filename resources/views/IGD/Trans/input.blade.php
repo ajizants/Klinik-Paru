@@ -127,12 +127,13 @@
                                         <div class="card-body p-2">
                                             <div class="table-responsive">
                                                 <table id="dataTindakan" name="dataTindakan"
-                                                    class="table table-striped" style="width:100%" cellspacing="0">
+                                                    class="table table-striped table-tight" style="width:100%"
+                                                    cellspacing="0">
                                                     <thead>
                                                         <tr>
                                                             <th class="col-1">Aksi</th>
                                                             <th class="col-1">Status</th>
-                                                            <th class="col-2">No RM</th>
+                                                            <th class="col-1">No RM</th>
                                                             <th class="col-3">Tindakan</th>
                                                             <th class="col-2">Petugas</th>
                                                             <th class="col-2">Dokter</th>

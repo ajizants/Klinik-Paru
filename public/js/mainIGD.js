@@ -395,33 +395,42 @@ $(document).ready(function () {
 
         var id = $(this).data("id");
         var tindakan = $(this).data("tindakan");
-        if (
-            confirm(
-                "Apakah Anda yakin ingin menghapus tindakan " + tindakan + " ?"
-            )
-        ) {
-            $.ajax({
-                url: "/api/deleteTindakan",
-                type: "POST",
-                data: { id: id },
-                success: function (response) {
-                    Toast.fire({
-                        icon: "success",
-                        title: "Data tindakan berhasil dihapus, Maturnuwun...!!!",
-                    });
+        Swal.fire({
+            icon: "question",
+            title:
+                "Apakah Anda yakin ingin menghapus tindakan " + tindakan + " ?",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "YA",
+            cancelButtonText: "TIDAK",
+        }).then((result) => {
+            // Display a confirmation dialog
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/api/deleteTindakan",
+                    type: "POST",
+                    data: { id: id },
+                    success: function (response) {
+                        Toast.fire({
+                            icon: "success",
+                            title: "Data tindakan berhasil dihapus, Maturnuwun...!!!",
+                        });
 
-                    dataTindakan();
-                    dataBMHP();
-                },
-                error: function (xhr, status, error) {
-                    Toast.fire({
-                        icon: "success",
-                        title: error + ", Maturnuwun...!!!",
-                    });
-                    console.error("Error:", error);
-                },
-            });
-        }
+                        dataTindakan();
+                        dataBMHP();
+                    },
+                    error: function (xhr, status, error) {
+                        Toast.fire({
+                            icon: "success",
+                            title: error + ", Maturnuwun...!!!",
+                        });
+                        console.error("Error:", error);
+                    },
+                });
+            } else {
+            }
+        });
     });
 
     $("#addBMHP").on("click", function () {
@@ -505,29 +514,39 @@ $(document).ready(function () {
 
         var id = $(this).data("id");
         var bmhp = $(this).data("bmhp");
-        console.log(id);
-        console.log(bmhp);
-        if (confirm("Apakah Anda yakin ingin menghapus " + bmhp + " ?")) {
-            $.ajax({
-                url: "/api/deleteTransaksiBmhp",
-                type: "POST",
-                data: { id: id },
-                success: function (response) {
-                    Toast.fire({
-                        icon: "success",
-                        title: "Data BMHP berhasil dihapus, Maturnuwun...!!!",
-                    });
-                    dataBMHP();
-                },
-                error: function (xhr, status, error) {
-                    swal.fire({
-                        icon: "error",
-                        title: error + "...!!!",
-                    });
-                    console.error("Error:", error);
-                },
-            });
-        }
+        Swal.fire({
+            icon: "question",
+            title: "Apakah Anda yakin ingin menghapus " + bmhp + " ?",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "YA",
+            cancelButtonText: "TIDAK",
+        }).then((result) => {
+            // Display a confirmation dialog
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/api/deleteTransaksiBmhp",
+                    type: "POST",
+                    data: { id: id },
+                    success: function (response) {
+                        Toast.fire({
+                            icon: "success",
+                            title: "Data BMHP berhasil dihapus, Maturnuwun...!!!",
+                        });
+                        dataBMHP();
+                    },
+                    error: function (xhr, status, error) {
+                        swal.fire({
+                            icon: "error",
+                            title: error + "...!!!",
+                        });
+                        console.error("Error:", error);
+                    },
+                });
+            } else {
+            }
+        });
     });
 
     selamatBertugas();

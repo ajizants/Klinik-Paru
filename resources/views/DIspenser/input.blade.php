@@ -74,6 +74,8 @@
             display: none;
         }
     </style>
+
+    {{-- @vite(['resources/js/scanner.js']) --}}
 </head>
 
 <body class="bg">
@@ -93,12 +95,13 @@
                                                 <div class="form-group col mb-2 d-flex justify-content-center">
                                                     <input type="text" id="norm"
                                                         class="form-control-lg col-md-7 text-center"
-                                                        placeholder="Masukan No RM" readonly />
+                                                        placeholder="Masukan No RM" />
                                                 </div>
                                                 <div class="form-group col-md-1 mb-2 d-flex justify-content-end">
                                                     <button type="button"
                                                         class="close col btn btn-secondary text-light"
-                                                        data-dismiss="modal" aria-label="Close">
+                                                        data-dismiss="modal" aria-label="Close"
+                                                        onclick="document.getElementById('norm').focus();">
                                                         <p class="text-light" aria-hidden="true">&times;</p>
                                                     </button>
                                                 </div>
@@ -149,15 +152,43 @@
                 </div>
             </div>
         </div>
-        <div class="content">
+        <div class="content ml-2">
             <h1>Selamat Datang di Anjungan Pendaftaran Mandiri</h1>
             <h3>Klinik Utama Kesehatan Paru Masyarakat Kelas A</h3>
             <p>Untuk memulai pendaftaran, silakan klik tombol di bawah ini.</p>
-            <button class="btn-custom" type="button" data-toggle="modal" data-target="#keyPad">Mulai
-                Pendaftaran</button>
+            <div class="row d-flex justify-content-center">
+                <button class="btn btn-success btn-lg col-5 py-3" type="button" data-toggle="modal"
+                    data-target="#keyPad" id="mulai_pendaftaran">
+                    <h3>Mulai
+                        Pendaftaran</h3>
+                </button>
+            </div>
+            <p hidden>Untuk scan barcode, silakan klik tombol di bawah ini.</p>
+            <div class="row d-flex justify-content-center " hidden>
+                <button class="btn btn-warning btn-lg col-4"id="start-scan" data-toggle="modal" data-target="#modalScan"
+                    hidden>Mulai
+                    Scan</button>
+            </div>
         </div>
+
+
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="modalScan" tabindex="-1" aria-labelledby="modalScanLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id="scanner-container" style="width: 100%;height: 100%;max-height: 400px;overflow: hidden;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                        id="close-scan">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
@@ -172,7 +203,16 @@
 
     <!-- AdminLTE App -->
     <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
+    {{-- <script src="{{ asset('public/js/anjunganMandiri.js') }}"></script> --}}
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Menambahkan event listener pada tombol
+            document.getElementById("mulai_pendaftaran").addEventListener("click", function() {
+                // Memindahkan fokus ke elemen dengan ID norm
+                document.getElementById("norm").focus();
+            });
+        });
+
         function keypadPress(value) {
             const inputField = document.getElementById("norm");
             var p = inputField.value
@@ -273,50 +313,6 @@
             }
         }
 
-        // function cetakNoAntrian(data) {
-        //     var noAntri = "001";
-        //     var jenis = data.kelompok;
-        //     var no_rm = data.norm;
-        //     var date = new Date();
-
-        //     let options = {
-        //         weekday: "long",
-        //         year: "numeric",
-        //         month: "long",
-        //         day: "numeric",
-        //     };
-        //     let options2 = {
-        //         hour: "2-digit",
-        //         minute: "numeric",
-        //         second: "numeric",
-        //         timeZoneName: "short",
-        //         timeZone: "Asia/Jakarta",
-        //     };
-
-        //     let tgl = date.toLocaleString("id-ID", options);
-        //     let jam = date.toLocaleString("id-ID", options2);
-
-        //     let printWindow = window.open("", "_blank");
-        //     printWindow.document.write(
-        //         `<html><head><title>Cetak No Antrian</title>` +
-        //         `<style>body{text-align:center;}h1{font-size:60px;font-family:sans-serif;font-weight:bold;margin-top:6px;margin-bottom:6px;}` +
-        //         `.judul{font-size:20px;font-family:sans-serif;font-weight:bold;margin-top:0px;margin-bottom:0px;}` +
-        //         `h3{margin-top: 0px; margin-bottom: 0px;}` +
-        //         `.jenis{font-size:20px;font-family:sans-serif;font-weight:bold; margin-top: 0px; margin-bottom: 0px;}.time{font-size:12px;font-family:sans-serif;margin-top:0px;margin-bottom:0px;}</style></head><body>`
-        //     );
-
-        //     printWindow.document.write(`<p class='judul'>Klinik Utama Kesehatan</p>`);
-        //     printWindow.document.write(`<p class='judul'>Paru Masyarakat</p>`);
-        //     printWindow.document.write(`<h1>${noAntri}</h1>`);
-        //     printWindow.document.write(`<h3>No RM: ${no_rm}</h3>`);
-        //     printWindow.document.write(`<p class='jenis'>${jenis}</p>`);
-        //     printWindow.document.write(`<p class='time'>${tgl}</p>`);
-        //     printWindow.document.write(`<p class='time'>${jam}</p>`);
-        //     printWindow.document.write(`</body></html>`);
-
-        //     printWindow.print();
-        //     printWindow.document.close();
-        // }
         function cetakNoAntrian(data) {
             var noAntri = data.antrean_nomor;
             var jenis = data.penjamin_nama;

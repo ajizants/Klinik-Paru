@@ -49,7 +49,7 @@ function layanan(kelas, grupLayanan, pilihSemuaId) {
             },
         ],
         order: [1, "asc"],
-        scrollY: "400px",
+        scrollY: "220px",
         scrollCollapse: false,
         paging: false,
         // responsive: true,
@@ -150,17 +150,10 @@ function simpan() {
             })
             .then((data) => {
                 console.log(data);
-                Swal.fire({
-                    icon: "success",
-                    title: "Data berhasil tersimpan...!!!",
-                });
-                if ($.fn.DataTable.isDataTable("#dataTrans")) {
-                    var table = $("#dataTrans").DataTable();
-                    table.destroy();
-                }
-                // dataLab(notrans);
+                var massage = data.message;
                 updateAntrian();
-                resetForm("selesai");
+                resetForm(massage);
+                scrollToTop();
             })
             .catch((error) => {
                 console.error(
@@ -176,10 +169,52 @@ function simpan() {
             });
     }
 }
+function delete_ts() {
+    var notrans = $("#notrans").val();
+    if (notrans) {
+        Swal.fire({
+            title: "Konfirmasi",
+            text: "Apakah Anda yakin ingin menghapus transaksi ?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, Hapus!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/api/lab/deleteTs",
+                    type: "POST",
+                    data: { notrans: notrans },
+                    success: function (response) {
+                        Toast.fire({
+                            icon: "success",
+                            title: "Data transaksi obat berhasil dihapus...!!!",
+                        });
+                        resetForm("selesai");
+                        var btndelete = document.getElementById("delete_ts");
+                        btndelete.style.display = "block";
+                    },
+                    error: function (xhr, status, error) {
+                        Toast.fire({
+                            icon: "error",
+                            title: error + "...!!!",
+                        });
+                    },
+                });
+            }
+        });
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "Data tidak ditemukan...!!!",
+        });
+    }
+}
 function deletLab(idLab, layanan) {
     Swal.fire({
         title: "Konfirmasi",
-        text: "Apakah Anda yakin ingin menghapus transaksi" + layanan + " ?",
+        text: "Apakah Anda yakin ingin menghapus transaksi: " + layanan + " ?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -196,11 +231,25 @@ function deletLab(idLab, layanan) {
                         icon: "success",
                         title: "Data transaksi obat berhasil dihapus...!!!",
                     });
-                    dataLab();
+                    // Ambil referensi ke tabel
+                    var table = $("#dataTrans").DataTable(); // Ganti dengan selector yang sesuai
+
+                    // Cari dan hapus baris dengan idLab yang dihapus dari tabel
+                    var rowIndex = table.row("#row_" + idLab).index();
+                    table.row(rowIndex).remove().draw(false); // Menghapus baris dan menggambar ulang tabel
+
+                    // Update ulang nomor urutan (no) pada semua baris yang tersisa
+                    table.rows().every(function (rowIdx, tableLoop, rowLoop) {
+                        var data = this.data();
+                        data.no = rowLoop + 1; // Nomor urutan dimulai dari 1
+
+                        // Update data pada baris
+                        this.data(data).draw(false);
+                    });
                 },
                 error: function (xhr, status, error) {
                     Toast.fire({
-                        icon: "success",
+                        icon: "error",
                         title: error + "...!!!",
                     });
                 },
@@ -260,11 +309,11 @@ async function cariTsLab(norm, tgl, ruang) {
 
             const notrans = data.notrans;
             console.log("🚀 ~ cariTsLab ~ notrans:", notrans);
-            // setTimeout(function () {
-            // ckelisPemeriksaan(data);
-            dataLab(notrans); // Panggil dataLab dengan notrans yang benar
-            // }, 3000);
+            dataLab(data);
             Swal.close();
+            var btndelete = document.getElementById("delete_ts");
+            btndelete.style.display = "block";
+            scrollToInputSection();
         }
     } catch (error) {
         console.error("Terjadi kesalahan saat mencari data:", error);
@@ -273,6 +322,36 @@ async function cariTsLab(norm, tgl, ruang) {
             title: "Terjadi kesalahan saat mencari data...!!! /n" + error,
         });
     }
+}
+function dataLab(data) {
+    if ($.fn.DataTable.isDataTable("#dataTrans")) {
+        var table = $("#dataTrans").DataTable();
+        table.destroy();
+    }
+
+    data = data.pemeriksaan;
+    console.log("🚀 ~ dataLab ~ data:", data);
+    data.forEach((item, index) => {
+        item.actions = `<a class="delete"
+                                data-id="${item.idLab}"
+                                data-layanan="${item.pemeriksaan.nmLayanan}"
+                                onclick="deletLab();"><i class="fas fa-trash"></i></a>`;
+        item.no = index + 1;
+    });
+
+    $("#dataTrans").DataTable({
+        data: data,
+        columns: [
+            { data: "actions", className: "px-0 col-1 text-center" },
+            { data: "no" },
+            { data: "norm" },
+            { data: "pemeriksaan.nmLayanan" },
+        ],
+        order: [1, "asc"],
+        scrollY: "220px",
+        scrollCollapse: true,
+        paging: false,
+    });
 }
 
 function ckelisPemeriksaan(data) {
@@ -285,63 +364,6 @@ function ckelisPemeriksaan(data) {
         });
     } else {
         console.error("Data pemeriksaan tidak ditemukan atau bukan array.");
-    }
-}
-
-async function dataLab(notrans) {
-    console.log("🚀 ~ dataLab ~ notrans:", notrans);
-    notrans = notrans || document.getElementById("notrans").value;
-    console.log("🚀 ~ dataLab ~ notrans (setelah assignment):", notrans);
-
-    // Tambahkan logika fetch atau AJAX untuk mendapatkan data lab berdasarkan notrans di sini
-    if (!notrans) {
-        console.error("Nilai notrans kosong!");
-        return;
-    }
-
-    if ($.fn.DataTable.isDataTable("#dataTrans")) {
-        var table = $("#dataTrans").DataTable();
-        table.destroy();
-    }
-
-    try {
-        const response = await fetch("/api/cariTsLab", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ notrans: notrans }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        data.forEach((item, index) => {
-            item.actions = `<a class="delete"
-                                data-id="${item.idLab}"
-                                data-layanan="${item.pemeriksaan.nmLayanan}"
-                                onclick="deletLab();"><i class="fas fa-trash"></i></a>`;
-            item.no = index + 1;
-        });
-
-        $("#dataTrans").DataTable({
-            data: data,
-            columns: [
-                { data: "actions", className: "px-0 col-1 text-center" },
-                { data: "no" },
-                { data: "norm" },
-                { data: "pemeriksaan.nmLayanan" },
-            ],
-            order: [1, "asc"],
-            scrollY: "400px",
-            scrollCollapse: true,
-            paging: false,
-        });
-    } catch (error) {
-        console.error("Error:", error.message);
     }
 }
 
@@ -358,9 +380,18 @@ function resetForm(message) {
     }
     Swal.fire({
         icon: "info",
-        title: "Transaksi Selesai maturnuwun...!!!",
+        title: message + "\n Maturnuwun...!!!",
     });
-    scrollToTop();
+
+    document.getElementById("tgltrans").value = new Date()
+        .toISOString()
+        .split("T")[0];
+}
+function batal() {
+    resetForm("Transaksi Lab dibatalkan...!!!");
+    var btndelete = document.getElementById("delete_ts");
+    btndelete.style.display =
+        btndelete.style.display === "none" ? "block" : "none";
 }
 
 function updateAntrian() {

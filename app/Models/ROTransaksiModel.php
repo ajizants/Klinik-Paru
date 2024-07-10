@@ -10,7 +10,6 @@ class ROTransaksiModel extends Model
     protected $primaryKey = 'notrans';
     public $incrementing = false;
     protected $keyType = 'string';
-    // public $timestamps = false;
 
     public function film()
     {
