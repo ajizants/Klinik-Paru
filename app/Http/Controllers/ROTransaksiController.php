@@ -671,21 +671,37 @@ class ROTransaksiController extends Controller
         }
         // dd($petugas);
         //Query untuk mendapatkan foto thorax
-        $data_foto = RoHasilModel::on('rontgen')
-            ->when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
-                return $query->where('norm', $norm);
-            })
-            ->whereDate('tanggal', $tgl)
-            ->first();
-        if (!$data_foto) {
+        try {
+            $data_foto = RoHasilModel::on('rontgen')
+                ->when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
+                    return $query->where('norm', $norm);
+                })
+                ->whereDate('tanggal', $tgl)
+                ->first();
+
+            if (!$data_foto) {
+                $foto = [
+                    'metadata' => [
+                        'message' => 'Data foto thorax tidak ditemukan',
+                        'status' => 404,
+                    ]
+                ];
+            } else {
+                $foto = $data_foto;
+            }
+        } catch (\Exception $e) {
             $foto = [
                 'metadata' => [
-                    'message' => 'Data foto thorax tidak ditemukan',
-                    'status' => 404,
-                ]];
-        } else {
-            $foto = $data_foto;
+                    'message' => 'Terjadi kesalahan pada koneksi database',
+                    'status' => 500,
+                    'error' => $e->getMessage(),
+                ]
+            ];
         }
+
+        // Return atau gunakan $foto sesuai kebutuhan
+        return response()->json($foto);
+
         // dd($foto);
 
         $response = [
