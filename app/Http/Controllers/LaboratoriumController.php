@@ -219,51 +219,41 @@ class LaboratoriumController extends Controller
             // Memulai transaksi database
             DB::beginTransaction();
 
-            // Membuat array untuk menyimpan data yang akan disimpan
-            $dataToInsert = [];
-            // dd($dataToInsert);
-
             // Looping untuk mengolah dataTerpilih
             foreach ($dataTerpilih as $data) {
                 // Validasi data yang diperlukan pada setiap elemen dataTerpilih
-                if (isset($data['idLayanan']) && isset($data['notrans'])) {
-                    $dataToInsert[] = [
-                        'idLab' => $data['idLab'],
-                        'notrans' => $data['notrans'],
-                        'norm' => $data['norm'],
-                        'idLayanan' => $data['idLayanan'],
-                        'hasil' => $data['hasil'],
-                        'petugas' => $data['petugas'],
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                    // dd($dataTerpilih);
+                if (isset($data['idLab']) && isset($data['notrans'])) {
+                    // Update data pada tabel LaboratoriumHasilModel berdasarkan notrans
+                    LaboratoriumHasilModel::where('notrans', $data['notrans'])
+                        ->where('idLab', $data['idLab'])
+                        ->update([
+                            'norm' => $data['norm'],
+                            'idLayanan' => $data['idLayanan'],
+                            'hasil' => $data['hasil'],
+                            'petugas' => $data['petugas'],
+                            // 'updated_at' => now(), // Jika ada kolom updated_at dan ingin diperbarui
+                        ]);
                 } else {
                     return response()->json([
                         'message' => 'Data tidak lengkap',
-                    ], 500);
+                    ], 400);
                 }
             }
-
-            // Simpan data ke database
-            LaboratoriumHasilModel::insert($dataToInsert);
 
             // Commit transaksi database
             DB::commit();
 
             return response()->json([
-                'message' => 'Data Berhasil Disimpan',
-            ], 201);
+                'message' => 'Data Berhasil Diperbarui',
+            ], 200);
 
         } catch (\Exception $e) {
-            // Rollback transaksi database jika terjadi kesalahan
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat menyimpan data',
-                'error' => $e->getMessage(), // tambahkan ini untuk mendapatkan pesan kesalahan
-            ], 500);
+            DB::rollback(); // Rollback transaksi jika terjadi kesalahan
+            Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
+            return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
         }
     }
+
 
     public function deleteLab(Request $request)
     {

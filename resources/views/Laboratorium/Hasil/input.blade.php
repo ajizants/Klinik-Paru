@@ -4,7 +4,7 @@
                             <h4 class="card-title">Identitas</h4>
                         </div>
                         @csrf
-                        <form class="form-horizontal" id="frmident">
+                        <form class="form-horizontal" id="form_identitas">
                             <div class="card-body" id="inputSection">
                                 <div class="form-grup row">
                                     <label for="norm" class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
@@ -13,15 +13,6 @@
                                         <input type="text" name="norm" id="norm" class="form-control"
                                             placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required
                                             onkeyup="enterCariRM(event,'lab',this.value);" />
-                                        {{-- <div class="input-group-addon btn btn-danger">
-                                            <span class="fa-solid fa-magnifying-glass" onclick="searchRMObat();"
-                                                data-toggle="tooltip" data-placement="top"
-                                                title="Selain Pasien Hari ini"></span>
-                                        </div> --}}
-                                        <marquee id="ket" class="col-sm-12 text-danger font-weight-bold"
-                                            direction="left" behavior="scroll" scrollamount="5">
-                                            Klik Tombol Cari berwarna merah untuk menginputkan pemeriksaan bukan pasien
-                                        </marquee>
                                     </div>
                                     <label for="layanan" class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
                                         :</label>
@@ -37,13 +28,11 @@
                                     </div>
                                 </div>
                                 <div class="form-grup row mt-2">
-                                    <label for="nik" class="col-sm-1 col-form-label font-weight-bold mb-0">NIK
+                                    <label for="tgltrans" class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                         :</label>
                                     <div class="col-sm-2">
-                                        <input type="text" id="nik" class="form-control bg-white"
-                                            placeholder="nik" readonly />
-                                        <input type="text" id="tgltrans" class="form-control bg-white"
-                                            placeholder="tgltrans" readonly hidden />
+                                        <input type="date" id="tgltrans" class="form-control bg-white"
+                                            placeholder="Tanggal Transaksi" />
                                     </div>
                                     <label for="notrans" class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
                                         :</label>
@@ -64,38 +53,41 @@
                     </div>
                 </div>
                 <div class="container-fluid">
-                    <div class="card card-secondary">
-                        <div class="card-header">
-                            <h4 class="card-title">Input Hasil Pemeriksaan Laboratorium</h4>
-                        </div>
-                        @csrf
-                        <div class="card-body form-horizontal px-1">
-                            <div class="container-fluid row mx-0 d-flex justify-content-center">
-                                <div class="col p-0">
-                                    <div class="card card-success">
-                                        <div class="card-header">
-                                            <h4 class="card-title">Pemeriksaan yang dilakukan</h4>
-                                        </div>
-                                        <div class="card-body py-1">
-                                            <table id="inputHasil" class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Aksi</th>
-                                                        <th>NO</th>
-                                                        <th>NO RM</th>
-                                                        <th>Pemeriksaan</th>
-                                                        <th>Petugas</th>
-                                                        <th>Hasil</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                    @csrf
+                    <div class="col p-0">
+                        <div class="card card-success">
+                            <div class="card-header">
+                                <h4 class="card-title">Input Hasil Pemeriksaan Laboratorium</h4>
+                            </div>
+                            <div class="card-body py-1">
+                                <table id="inputHasil" class="table table-tight">
+                                    <thead>
+                                        <tr>
+                                            {{-- <th>Aksi</th> --}}
+                                            <th>NO</th>
+                                            <th>NO RM</th>
+                                            <th>Pemeriksaan</th>
+                                            <th>Petugas</th>
+                                            <th>Hasil</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="card-footer form-row d-flex justify-content-end">
+                                <div class="col-auto">
+                                    <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>
+                                </div>
+                                <div class="col-auto">
+                                    <a class="btn btn-danger" id="tblBatal"
+                                        onclick="resetForm('dibatalkan');">Batal</a>
                                 </div>
                             </div>
-                            {{-- <form id="frmPetugas">
+                        </div>
+                    </div>
+                    {{-- </div> --}}
+                    {{-- <form id="frmPetugas">
                                 <div class="mx-2 form-grup row">
                                     <label for="sampling" class="col-sm-1 col-form-label font-weight-bold">Sampling
                                         :</label>
@@ -140,20 +132,7 @@
                                     </div>
                                 </div>
                             </form> --}}
-                            <div class="card-footer form-row d-flex justify-content-end">
-                                <div class="col-auto">
-                                    <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>
-                                </div>
-                                <div class="col-auto">
-                                    <a class="btn btn-danger" id="tblBatal"
-                                        onclick="resetForm('dibatalkan');">Batal</a>
-                                </div>
 
-                                <div class="col-auto">
-                                    <a class="btn btn-primary" id="tblSelesai"
-                                        onclick="resetForm('selesai');">Selesai</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {{-- </div> --}}
+                    {{-- </div> --}}
                 </div>

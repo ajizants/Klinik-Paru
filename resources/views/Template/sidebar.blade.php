@@ -33,14 +33,14 @@
                                     <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/igd') }}" id="masukIGD">
                                             <i class="nav-icon fas fa-edit"></i>
-                                            <p>IGD</p>
+                                            <p>Input Tindakan</p>
                                         </a>
                                     </li>
 
                                     <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/gudangIGD') }}">
                                             <i class="fa-solid fa-database nav-icon"></i>
-                                            <p>Master IGD</p>
+                                            <p>Master Tindakan</p>
                                         </a>
                                     </li>
 
@@ -53,28 +53,6 @@
                                 </ul>
                             </li>
 
-                            {{-- @if (auth()->user()->role === 'igd' || auth()->user()->role === 'admin' || auth()->user()->role === 'dots')
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/igd') }}" id="masukIGD">
-                                        <i class="fa-solid fa-truck-medical nav-icon"></i>
-                                        <p>IGD</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/gudangIGD') }}">
-                                        <i class="fa-solid fa-database nav-icon"></i>
-                                        <p>Master IGD</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/askep') }}">
-                                        <i class="fa-solid fa-file-pen nav-icon"></i>
-                                        <p>ASKEP</p>
-                                    </a>
-                                </li>
-                            @endif --}}
                             <li class="nav-item">
                                 <a href="" class="nav-link">
                                     <i class="nav-icon fa-solid fa-hand-holding-medical"></i>
@@ -87,7 +65,7 @@
                                     <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/dots') }}">
                                             <i class="nav-icon fas fa-edit"></i>
-                                            <p>Transaksi Dots Center</p>
+                                            <p>Input Dots Center</p>
                                         </a>
                                     </li>
                                     <li class="nav-item ml-4">
@@ -98,15 +76,6 @@
                                     </li>
                                 </ul>
                             </li>
-                            {{-- @if (auth()->user()->role === 'admin' || auth()->user()->role === 'dots')
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/dots') }}">
-                                        <i class="fa-solid fa-notes-medical nav-icon"></i>
-                                        <p>Dots Center</p>
-                                    </a>
-                                </li>
-                            @endif --}}
-
                             <!-- Farmasi Section -->
                             <li class="nav-item">
                                 <a href="" class="nav-link">
@@ -120,7 +89,7 @@
                                     <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/farmasi') }}">
                                             <i class="nav-icon fas fa-edit"></i>
-                                            <p>Transaksi Farmasi</p>
+                                            <p>Input Farmasi</p>
                                         </a>
                                     </li>
                                     <li class="nav-item ml-4">
@@ -131,20 +100,6 @@
                                     </li>
                                 </ul>
                             </li>
-                            {{-- @if (auth()->user()->role === 'farmasi' || auth()->user()->role === 'admin')
-                                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Farmasi">
-                                    <a class="nav-link" href="{{ url('/farmasi') }}">
-                                        <i class="nav-icon fas fa-edit"></i>
-                                        <p>Farmasi</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/gudangFarmasi') }}">
-                                        <i class="fa-solid fa-database nav-icon"></i>
-                                        <p>Master Farmasi</p>
-                                    </a>
-                                </li>
-                            @endif --}}
                             <!-- lab Section -->
                             <li class="nav-item">
                                 <a href="" class="nav-link">
@@ -157,50 +112,30 @@
                                 <ul class="nav nav-treeview" style="display: none;">
                                     <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/lab') }}">
-                                            <i class="fa-regular fa-id-card nav-icon"></i>
-                                            <p>Pendaftaran Laboratorium</p>
+                                            {{-- <i class="fa-regular fa-address-card nav-icon"></i> --}}
+                                            <i class="fa-solid fa-user-pen nav-icon"></i>
+                                            <p>Pendaftaran Lab</p>
                                         </a>
                                     </li>
                                     <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/hasilLab') }}">
                                             <i class="nav-icon fas fa-edit"></i>
-                                            <p>Input Hasil Laboratorium</p>
+                                            <p>Input Hasil Lab</p>
                                         </a>
                                     </li>
 
                                     <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/masterLab') }}">
                                             <i class="fa-solid fa-database nav-icon"></i>
-                                            <p>Master Laboratorium</p>
+                                            <p>Master Lab</p>
                                         </a>
                                     </li>
                                 </ul>
                             </li>
-                            {{-- @if (auth()->user()->role === 'lab' || auth()->user()->role === 'admin')
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/lab') }}">
-                                        <i class="fa-regular fa-id-card nav-icon"></i>
-                                        <p>Pendaftaran Laboratorium</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/hasilLab') }}">
-                                        <i class="nav-icon fas fa-edit"></i>
-                                        <p>Input Hasil Laboratorium</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/masterLab') }}">
-                                        <i class="fa-solid fa-database nav-icon"></i>
-                                        <p>Master Laboratorium</p>
-                                    </a>
-                                </li>
-                            @endif --}}
                             <!-- RO Section -->
                             <li class="nav-item">
                                 <a href="" class="nav-link">
-                                    <i class="nav-icon fa-solid fa-x-ray"></i>
+                                    <i class="nav-icon fa-solid fa-circle-radiation"></i>
                                     <p>
                                         Radiologi
                                         <i class="right fas fa-angle-left"></i>
@@ -222,31 +157,15 @@
                                     </li>
                                 </ul>
                             </li>
-                            {{-- @if (auth()->user()->role === 'ro' || auth()->user()->role === 'admin')
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/ro') }}">
-                                        <i class="fa-regular fa-id-card nav-icon"></i>
-                                        <i class="fa-regular nav-icon fas fa-edit"></i>
-                                        <p>Input Radiologi</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/masterRo') }}">
-                                        <i class="fa-solid fa-database nav-icon"></i>
-                                        <p>Master Radiologi</p>
-                                    </a>
-                                </li>
-                            @endif --}}
                             <!-- Kasir Section -->
-                            @if (auth()->user()->role === 'kasir' || auth()->user()->role === 'admin')
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('/kasir') }}">
-                                        <i class="fa-solid fa-cash-register nav-icon"></i>
-                                        <p>Kasir</p>
-                                    </a>
-                                </li>
-                            @endif
+                            {{-- @if (auth()->user()->role === 'kasir' || auth()->user()->role === 'admin') --}}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/kasir') }}">
+                                    <i class="fa-solid fa-cash-register nav-icon"></i>
+                                    <p>Kasir</p>
+                                </a>
+                            </li>
+                            {{-- @endif --}}
 
                             {{-- LAPORAN --}}
                             <li class="nav-header">LAPORAN</li>

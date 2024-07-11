@@ -252,10 +252,18 @@ function processResponse(response, ruang, statusFilter) {
 
     data.forEach((item) => {
         item.tgl = tanggal;
-        item.aksi =
-            ruang === "dots"
-                ? `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariPasienTb('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`
-                : `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariKominfo('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+        let link;
+        if (ruang === "dots") {
+            link = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariPasienTb('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+        } else if (ruang === "lab") {
+            link = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariTsLab('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+        } else if (ruang === "igd") {
+            link = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariKominfo('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+        } else {
+            link = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariKominfo('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+        }
+
+        item.aksi = link;
     });
 
     return { data, filteredData };

@@ -41,6 +41,7 @@ function cariPasienTb(norm, date, ruang) {
         type: "POST",
         data: {
             norm: norm,
+            tanggal: date,
         },
         success: function (response) {
             if (response.error) {
@@ -71,12 +72,19 @@ function cariPasienTb(norm, date, ruang) {
                             var pasien = response.data[0].pasien;
                             // console.log("🚀 ~ cariPasienTb ~ pasien:", pasien);
                             var pendaftaran = response.data[0].pendaftaran[0];
+                            var dx = response.data[0].diagnosa;
                             // console.log(
                             //     "🚀 ~ cariPasienTb ~ pendaftaran:",
                             //     pendaftaran
                             // );
                             // cariKominfo(norm, date, ruang);
-                            isiBiodataModal(norm, date, pasien, pendaftaran);
+                            isiBiodataModal(
+                                norm,
+                                date,
+                                pasien,
+                                pendaftaran,
+                                dx
+                            );
                             $("#modal-pasienTB").modal("show");
                         } else {
                         }
@@ -111,7 +119,7 @@ function isiBiodata(pasien, pendaftaran) {
         scrollToInputSection();
     }, 1000);
 }
-function isiBiodataModal(norm, date, pasien, pendaftaran) {
+function isiBiodataModal(norm, date, pasien, pendaftaran, dx) {
     $("#modal-pasienTB #modal-norm").val(norm);
     $("#modal-pasienTB #modal-notrans").val(pendaftaran.no_trans);
     $("#modal-pasienTB #modal-hp").val(pasien.pasien_no_hp);
@@ -123,9 +131,7 @@ function isiBiodataModal(norm, date, pasien, pendaftaran) {
     $("#modal-pasienTB #modal-dokter")
         .val(pendaftaran.nip_dokter)
         .trigger("change");
-    $("#modal-pasienTB #modal-kdDx")
-        .val(pendaftaran.diagnosa[0].kode_diagnosa)
-        .trigger("change");
+    $("#modal-pasienTB #modal-kdDx").val(dx[0]).trigger("change");
 
     // setTimeout(function () {
     Swal.close();

@@ -51,12 +51,13 @@ async function cariTsLab(norm, tgl) {
             $("#layanan").val(data.layanan);
             $("#dokter").val(data.dokter).trigger("change");
             $("#analis").val(data.petugas).trigger("change");
+            //masukan nilai cretaed_at (timestamp) ke dalam element #tgltrans
+            // $("#tgltrans").val(data.created_at); //kenapa kosong, type element date
 
             const notrans = data.notrans;
             console.log("🚀 ~ cariTsLab ~ notrans:", notrans);
-            // setTimeout(function () {
-            dataLab(notrans); // Panggil dataLab dengan notrans yang benar
-            // }, 3000);
+            var pemeriksaan = data.pemeriksaan;
+            dataLab(pemeriksaan); // Panggil dataLab dengan notrans yang benar
             Swal.close();
         }
     } catch (error) {
@@ -67,27 +68,15 @@ async function cariTsLab(norm, tgl) {
         });
     }
 }
-async function dataLab(notrans) {
+async function dataLab(pemeriksaan, notrans) {
     if ($.fn.DataTable.isDataTable("#inputHasil")) {
         var table = $("#inputHasil").DataTable();
         table.destroy();
     }
 
     try {
-        const response = await fetch("/api/cariTsLab", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ notrans: notrans }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
+        var data = pemeriksaan;
+        console.log("🚀 ~ dataLab ~ data:", data);
         const analisResponse = await fetch("/api/analis", {
             method: "GET",
             headers: {
@@ -102,45 +91,60 @@ async function dataLab(notrans) {
         const analisData = await analisResponse.json();
 
         data.forEach((item, index) => {
-            item.actions = `<a class="delete"
-                                data-id="${item.IdLab}"
-                                data-layanan="${item.NamaPemeriksaan}"
-                                onclick="deletLab();"><i class="fas fa-trash"></i></a>`;
             item.no = index + 1;
+            //jika hasil null maka kembalikan ""
+            item.hasiLab = item.hasil == null ? "" : item.hasil;
+            item.actions = `<a class="delete"
+                                data-id="${item.idLab}"
+                                data-layanan="${item.pemeriksaan.nmLayanan}"
+                                data-analis="${item.petugas}"
+                                data-hasil="${item.hasil}"
+                                onclick="deletLab();"><i class="fas fa-trash"></i></a>`;
         });
 
         $("#inputHasil").DataTable({
             data: data,
             columns: [
-                { data: "actions", className: "px-0 col-1 text-center" },
+                // { data: "actions", className: "px-0 col-1 text-center" },
                 {
                     data: "no",
+                    render: function (data, type, row) {
+                        return `<p type="text" class="form-control-sm col hasil" >${data}</p>`;
+                    },
                 },
 
-                { data: "norm" },
                 {
-                    data: "pemeriksaan.nmLayanan",
+                    data: "norm",
                     render: function (data, type, row) {
-                        return `<p type="text" class="form-control-sm col-6 hasil" id="layanan${row.IdLayanan}" value="${row.IdLayanan}" readonly>${data}</p>`;
+                        return `<p type="text" class="form-control-sm col hasil" >${data}</p>`;
                     },
                 },
                 {
-                    data: null,
+                    data: "pemeriksaan.nmLayanan",
                     render: function (data, type, row) {
-                        var inputId = "analis" + row.IdLab;
-                        var inputField = `<select id="${inputId}" class="form-control-sm col-6 analis">`;
+                        return `<p type="text" class="form-control-sm col hasil" id="layanan${row.idLayanan}" value="${row.idLayanan}" readonly>${data}</p>`;
+                    },
+                },
+                {
+                    data: "petugas",
+                    render: function (data, type, row) {
+                        var inputId = "analis" + row.idLab;
+                        var inputField = `<select id="${inputId}" class="form-control-sm col analis">`;
                         inputField += `<option value="">--- Pilih Petugas ---</option>`;
                         analisData.forEach(function (petugas) {
-                            inputField += `<option value="${petugas.nip}">${petugas.gelar_d} ${petugas.nama} ${petugas.gelar_b}</option>`;
+                            var selected =
+                                data === petugas.nip ? "selected" : "";
+                            inputField += `<option value="${petugas.nip}" ${selected}>${petugas.gelar_d} ${petugas.nama} ${petugas.gelar_b}</option>`;
                         });
                         inputField += "</select>";
                         return inputField;
                     },
                 },
+
                 {
-                    data: null,
+                    data: "hasiLab",
                     render: function (data, type, row) {
-                        return `<input type="text" class="form-control-sm col-6 hasil" id="hasil${row.IdLab}">`;
+                        return `<input type="text" class="form-control-sm col hasil" id="hasil${row.idLab}" value="${data}">`;
                     },
                 },
             ],
@@ -155,112 +159,85 @@ async function dataLab(notrans) {
 }
 
 function simpan() {
-    var dataTerpilih = [];
-    var norm = $("#norm").val();
-    var notrans = $("#notrans").val();
+    const norm = $("#norm").val();
+    const notrans = $("#notrans").val();
 
     if (!norm || !notrans) {
-        var dataKurang = [];
-        if (!norm) dataKurang.push("No RM ");
-        if (!notrans) dataKurang.push("Nomor Transaksi ");
+        const dataKurang = [];
+        if (!norm) dataKurang.push("No RM");
+        if (!notrans) dataKurang.push("Nomor Transaksi");
 
         Swal.fire({
             icon: "error",
-            title:
-                "Data Tidak Lengkap...!!! " +
-                dataKurang.join(", ") +
-                "Belum Diisi",
+            title: `Data Tidak Lengkap...!!! ${dataKurang.join(
+                ", "
+            )} Belum Diisi`,
         });
-    } else {
-        var table = $("#inputHasil").DataTable();
-        var dataRows = table.rows().data();
-
-        dataRows.each(function (row, index) {
-            var idLab = row.IdLab;
-            var idLayanan = row.IdLayanan;
-            var hasil = $("#hasil" + idLab).val();
-            var petugas = $("#analis" + idLab).val();
-
-            var rowData = {
-                idLab: idLab,
-                idLayanan: idLayanan,
-                norm: norm,
-                notrans: notrans,
-                hasil: hasil,
-                petugas: petugas,
-            };
-
-            dataTerpilih.push(rowData);
-        });
-
-        console.log(dataTerpilih);
-
-        fetch("/api/addHasilLab", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ dataTerpilih: dataTerpilih }),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-                Swal.fire({
-                    icon: "success",
-                    title: "Data berhasil tersimpan...!!!",
-                });
-                dataLab();
-                antrian();
-
-                // toggleInputReadonly(false);
-            })
-            .catch((error) => {
-                console.error(
-                    "There has been a problem with your fetch operation:",
-                    error
-                );
-                Swal.fire({
-                    icon: "error",
-                    title:
-                        "There has been a problem with your fetch operation:" +
-                        error,
-                });
-            });
+        return;
     }
+
+    const table = $("#inputHasil").DataTable();
+    const dataRows = table.rows().data();
+
+    const dataTerpilih = dataRows
+        .map((row) => ({
+            idLab: row.idLab,
+            idLayanan: row.idLayanan,
+            norm: norm,
+            notrans: notrans,
+            hasil: $("#hasil" + row.idLab).val(),
+            petugas: $("#analis" + row.idLab).val(),
+        }))
+        .toArray();
+
+    fetch("/api/addHasilLab", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ dataTerpilih: dataTerpilih }),
+    })
+        .then((response) => {
+            if (!response.ok) throw new Error("Network response was not ok");
+            return response.json();
+        })
+        .then((data) => {
+            Swal.fire({
+                icon: "success",
+                title: "Data berhasil tersimpan...!!!",
+            });
+        })
+        .catch((error) => {
+            console.error(
+                "There has been a problem with your fetch operation:",
+                error
+            );
+            Swal.fire({
+                icon: "error",
+                title: `There has been a problem with your fetch operation: ${error}`,
+            });
+        });
 }
 
 function resetForm(message) {
-    $('table thead input[type="checkbox"]').prop("checked", false);
-    $('table tbody input[type="checkbox"]').prop("checked", false);
-    document.getElementById("frmident").reset();
-    document.getElementById("frmPetugas").reset();
-    $("#analis,#dokter,#tujuan").trigger("change");
+    document.getElementById("form_identitas").reset();
 
-    if ($.fn.DataTable.isDataTable("#dataTrans")) {
-        let tableTrans = $("#dataTrans").DataTable();
+    if ($.fn.DataTable.isDataTable("#inputHasil")) {
+        let tableTrans = $("#inputHasil").DataTable();
         tableTrans.clear().destroy();
     }
     Swal.fire({
         icon: "info",
-        title: "Transaksi " + message + " maturnuwun...!!!",
+        title: message + "\n Maturnuwun...!!!",
     });
-    scrollToTop();
+
+    document.getElementById("tgltrans").value = new Date()
+        .toISOString()
+        .split("T")[0];
 }
 
 $(document).ready(function () {
     setTodayDate();
-
-    $("#tabelData,#dataTrans").DataTable({
-        scrollY: "200px",
-    });
-    populateDokterOptions();
-    populateAnalisHasil();
-
     $("#dataAntrian").on("click", ".aksi-button", function (e) {
         e.preventDefault();
         $("#add").show();

@@ -22,11 +22,6 @@ class KominfoModel extends Model
         $username = '3301010509940003';
         $password = '~@j1s@nt0sO#';
 
-        // Data POST
-        // $data = [
-        //     'tanggal' => $tanggal,
-        // ];
-
         try {
             // Lakukan permintaan POST dengan otentikasi dasar
             $response = $client->request('POST', $url, [
@@ -42,14 +37,14 @@ class KominfoModel extends Model
 
             // Konversi response body ke array
             $data = json_decode($body, true);
-            // $d = $data['response']['response']['data'];
-            $res = array_map(function ($d) {
 
-                if (!is_null($d["ruang_poli_selesai_waktu"])) {
-                    $statusPulang = "Sudah Pulang";
-                } else {
-                    $statusPulang = "Belum Pulang";
-                }
+            // Periksa apakah data berhasil di-decode menjadi array
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception('Error decoding JSON response: ' . json_last_error_msg());
+            }
+
+            $res = array_map(function ($d) {
+                $statusPulang = !is_null($d["ruang_poli_selesai_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
 
                 return [
                     "status_pulang" => $statusPulang,
@@ -85,14 +80,24 @@ class KominfoModel extends Model
                     "pasien_umur_hari" => $d["pasien_umur_hari"] ?? 0,
                 ];
             }, $data['response']['data']);
-            $res = array_values($res);
-            return $res;
-            // return $data;
 
+            $no_rm = $params['no_rm'];
+            if (!empty($no_rm)) {
+                // Filter data berdasarkan no_rm
+                $res = array_filter($res, function ($d) use ($no_rm) {
+                    return $d['pasien_no_rm'] === $no_rm;
+                });
+            }
+
+            $res = array_values($res); // Re-index the array
+
+            // dd($res);
+            return $res;
         } catch (\Exception $e) {
             // Tangani kesalahan
             return ['error' => $e->getMessage()];
         }
+
     }
     public function cpptRequest(array $params)
     {
@@ -177,7 +182,7 @@ class KominfoModel extends Model
             return ['error' => $e->getMessage()];
         }
     }
-    public function pasienRequest($no_rm)
+    public function pasienRequestfull($no_rm)
     {
         // Inisialisasi klien GuzzleHTTP
         $client = new Client([
@@ -222,7 +227,7 @@ class KominfoModel extends Model
         }
     }
 
-    public function pasienFilter($no_rm)
+    public function pasienRequest($no_rm)
     {
         // Inisialisasi klien GuzzleHTTP
         $client = new Client([

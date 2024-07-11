@@ -49,8 +49,6 @@ $(document).ready(function () {
         populateLayananOptions(kelas); // Memanggil fungsi populateLayananOptions() dengan nilai kelas terpilih
     });
 
-    $("#cariantrian").on("click", antrian);
-
     $("#jual").on("input", function () {
         // Mengambil nilai dari input
         var inputText = $(this).val();
@@ -76,10 +74,6 @@ $(document).ready(function () {
     setTodayDate();
     populateDokterOptions();
     populateLayananOptions();
-    antrian();
-    // setInterval(function () {
-    //     antrian();
-    // }, 60000);
 
     $("#qty").on("input", function (e) {
         hitungTotalHarga();
@@ -137,119 +131,10 @@ $(document).ready(function () {
         }
     });
 
-    $("#addFarmasi").on("click", function (e) {
-        e.preventDefault();
-
-        var norm = $("#norm").val();
-        var notrans = $("#notrans").val();
-        var kdTind = $("#tindakan").val();
-        var petugas = $("#petugas").val();
-        var dokter = $("#dokter").val();
-        // Memeriksa apakah ada nilai yang kosong
-        if (!norm || !notrans || !kdTind || !petugas || !dokter) {
-            // Menampilkan notifikasi jika ada nilai yang kosong
-            var dataKurang = [];
-            if (!norm) dataKurang.push("Nomor Rekam Medis Belum Diisi");
-            if (!notrans) dataKurang.push("Nomor Transaksi Belum Diisi");
-            if (!kdTind) dataKurang.push("Tindakan Belum Diisi");
-            if (!petugas) dataKurang.push("Petugas Belum Diisi");
-            if (!dokter) dataKurang.push("Dokter Belum Diisi");
-
-            // Menampilkan notifikasi menggunakan Toast.fire
-            Toast.fire({
-                icon: "error",
-                title: "Data Tidak Lengkap...!!! " + dataKurang.join(", "),
-            });
-        } else {
-            $.ajax({
-                url: "/api/simpanTindakan",
-                type: "POST",
-                data: {
-                    notrans: notrans,
-                    kdTind: kdTind,
-                    petugas: petugas,
-                    dokter: dokter,
-                    norm: norm,
-                },
-
-                success: function (response) {
-                    Toast.fire({
-                        icon: "success",
-                        title: "Data Berhasil Disimpan, Maturnuwun...!!!",
-                    });
-                    dataTindakan();
-                    $("#tindakan").val("");
-                    $("#tindakan").trigger("change");
-                },
-                error: function (xhr) {
-                    Toast.fire({
-                        icon: "error",
-                        title: "Data Tidak Lengkap...!!!",
-                    });
-                },
-            });
-        }
-    });
-
     $("#norm").on("keyup", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();
             searchByRM($("#norm").val());
-        }
-    });
-
-    $("#dataAntrian").on("click", ".aksi-button", function (e) {
-        e.preventDefault();
-
-        var norm = $(this).data("norm");
-        var nama = $(this).data("nama");
-        var dokter = $(this).data("kddokter");
-        var alamat = $(this).data("alamat");
-        var layanan = $(this).data("layanan");
-        var notrans = $(this).data("notrans");
-        var asktind = $(this).data("asktind");
-
-        $("#norm").val(norm);
-        $("#nama").val(nama);
-        $("#dokter").val(dokter);
-        $("#dokter").trigger("change");
-        $("#alamat").val(alamat);
-        $("#layanan").val(layanan);
-        $("#notrans").val(notrans);
-        $("#asktind").val(asktind);
-
-        scrollToInputSection();
-        dataFarmasi();
-    });
-
-    $("#dataFarmasi").on("click", ".delete", function (e) {
-        e.preventDefault();
-
-        var id = $(this).data("id");
-        var obat = $(this).data("obat");
-        if (
-            confirm("Apakah Anda yakin ingin menghapus tindakan " + obat + " ?")
-        ) {
-            $.ajax({
-                url: "/api/deleteObat",
-                type: "POST",
-                data: { id: id },
-                success: function (response) {
-                    Toast.fire({
-                        icon: "success",
-                        title: "Data transaksi obat berhasil dihapus...!!!",
-                    });
-
-                    dataFarmasi();
-                },
-                error: function (xhr, status, error) {
-                    Toast.fire({
-                        icon: "success",
-                        title: error + "...!!!",
-                    });
-                    console.error("Error:", error);
-                },
-            });
         }
     });
 });

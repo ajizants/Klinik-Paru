@@ -562,9 +562,11 @@ class PasienKominfoController extends Controller
         $params = [
             'tanggal_awal' => $tanggal,
             'tanggal_akhir' => $tanggal,
+            'no_rm' => '',
         ];
         $model = new KominfoModel();
         $data = $model->pendaftaranRequest($params);
+        // dd($data);
 
         if (!isset($data) || !is_array($data)) {
             return response()->json(['error' => 'Invalid data format'], 500);
@@ -758,26 +760,26 @@ class PasienKominfoController extends Controller
             //     return response()->json(['message' => 'Data pasien tidak ditemukan'], 404);
             // }
 
-            $pasienData = $res_pasien['response']['data'];
+            // $pasienData = $res_pasien;
             $pasien = [
-                "pasien_nik" => $pasienData['pasien_nik'],
-                "pasien_no_kk" => $pasienData['pasien_no_kk'],
-                "pasien_nama" => $pasienData['pasien_nama'],
-                "pasien_no_rm" => $pasienData['pasien_no_rm'],
-                "jenis_kelamin_id" => $pasienData['jenis_kelamin_id'],
-                "jenis_kelamin_nama" => $pasienData['jenis_kelamin_nama'],
-                "pasien_tempat_lahir" => $pasienData['pasien_tempat_lahir'],
-                "pasien_tgl_lahir" => $pasienData['pasien_tgl_lahir'],
-                "pasien_no_hp" => $pasienData['pasien_no_hp'],
-                "pasien_domisili" => $pasienData['pasien_alamat'],
-                "pasien_alamat" => $pasienData['kelurahan_nama'] . ", " . $pasienData['pasien_rt'] . "/" . $pasienData['pasien_rw'] . ", " . $pasienData['kecamatan_nama'] . ", " . $pasienData['kabupaten_nama'] . ", " . $pasienData['provinsi_nama'],
-                "provinsi_nama" => $pasienData['provinsi_nama'],
-                "kabupaten_nama" => $pasienData['kabupaten_nama'],
-                "kecamatan_nama" => $pasienData['kecamatan_nama'],
-                "kelurahan_nama" => $pasienData['kelurahan_nama'],
-                "pasien_rt" => $pasienData['pasien_rt'],
-                "pasien_rw" => $pasienData['pasien_rw'],
-                "penjamin_nama" => $pasienData['penjamin_nama'],
+                "pasien_nik" => $res_pasien['pasien_nik'],
+                "pasien_no_kk" => $res_pasien['pasien_no_kk'],
+                "pasien_nama" => $res_pasien['pasien_nama'],
+                "pasien_no_rm" => $res_pasien['pasien_no_rm'],
+                "jenis_kelamin_id" => $res_pasien['jenis_kelamin_id'],
+                "jenis_kelamin_nama" => $res_pasien['jenis_kelamin_nama'],
+                "pasien_tempat_lahir" => $res_pasien['pasien_tempat_lahir'],
+                "pasien_tgl_lahir" => $res_pasien['pasien_tgl_lahir'],
+                "pasien_no_hp" => $res_pasien['pasien_no_hp'],
+                "pasien_domisili" => $res_pasien['pasien_alamat'],
+                "pasien_alamat" => $res_pasien['kelurahan_nama'] . ", " . $res_pasien['pasien_rt'] . "/" . $res_pasien['pasien_rw'] . ", " . $res_pasien['kecamatan_nama'] . ", " . $res_pasien['kabupaten_nama'] . ", " . $res_pasien['provinsi_nama'],
+                "provinsi_nama" => $res_pasien['provinsi_nama'],
+                "kabupaten_nama" => $res_pasien['kabupaten_nama'],
+                "kecamatan_nama" => $res_pasien['kecamatan_nama'],
+                "kelurahan_nama" => $res_pasien['kelurahan_nama'],
+                "pasien_rt" => $res_pasien['pasien_rt'],
+                "pasien_rw" => $res_pasien['pasien_rw'],
+                "penjamin_nama" => $res_pasien['penjamin_nama'],
             ];
 
             // Panggil metode untuk melakukan request pendaftaran
@@ -800,7 +802,7 @@ class PasienKominfoController extends Controller
                 $doctorNipMap = [
                     'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
                     'dr. AGIL DANANJAYA, Sp.P' => '9',
-                    'dr. FILLY ULFA KUSUMAWARDANI ' => '198907252019022004',
+                    'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
                     'dr. SIGIT DWIYANTO' => '198903142022031005',
                 ];
 
@@ -1068,9 +1070,16 @@ class PasienKominfoController extends Controller
 
                 return response()->json(['error' => $errorMessages[$ruang] ?? 'Tidak ada data ditemukan'], 404);
             }
+        } else {
+            return response()->json([
+                'metadata' => [
+                    'message' => 'Data Tidak Ditemukan',
+                    'code' => 404,
+                ],
+            ], 404);
         }
 
-        return response()->json(['error' => 'Invalid data format'], 500);
+        return response()->json(['error' => 'Internal Server Error'], 500);
     }
 
     public function rekapPoin(Request $request)

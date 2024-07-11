@@ -392,6 +392,7 @@ function batal() {
     var btndelete = document.getElementById("delete_ts");
     btndelete.style.display =
         btndelete.style.display === "none" ? "block" : "none";
+    scrollToTop();
 }
 
 function updateAntrian() {

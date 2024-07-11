@@ -331,7 +331,7 @@ $(document).ready(function () {
             // searchByRM($("#norm").val());
             var tgl = $("#tgltrans").val();
             var norm = $("#norm").val();
-            cariKominfo(norm, tgl);
+            cariKominfo(norm, tgl, "igd");
         }
     });
     $("#qty").on("keyup", function (event) {

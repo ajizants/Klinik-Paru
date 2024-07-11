@@ -23,16 +23,31 @@ class DotsController extends Controller
             $Ptb = DotsModel::with('dokter.biodata')->where('norm', $norm)->first();
 
             if (!$Ptb) {
-                $pasien = $kominfo->pasienFilter($norm);
-                $tanggal_awal = $request->input('tanggal_awal', Carbon::now()->toDateString());
-                $tanggal_akhir = $request->input('tanggal_akhir', Carbon::now()->toDateString());
+                $pasien = $kominfo->pasienRequest($norm);
+                $tanggal = $request->input('tanggal', Carbon::now()->toDateString());
                 $params = [
-                    'tanggal_awal' => $tanggal_awal,
-                    'tanggal_akhir' => $tanggal_akhir,
+                    'tanggal_awal' => $tanggal,
+                    'tanggal_akhir' => $tanggal,
                     'no_rm' => $norm,
                 ];
-                // $pendaftaran = $kominfo->waktuLayananRequest($params);
-                $pendaftaran = $kominfo->cpptRequest($params);
+                $cppt = $kominfo->cpptRequest($params);
+
+                if (!empty($cppt) && isset($cppt['response']['data'])) {
+                    // Mengambil data diagnostik dari semua entri dalam data
+                    $diagnoses = array_column($cppt['response']['data'], 'diagnosa');
+
+                    // Menggabungkan semua diagnosa menjadi satu array (jika ada beberapa entri)
+                    $allDiagnoses = array_merge(...$diagnoses);
+
+                    // Mengambil kode diagnosa jika ada
+                    $kode_diagnosa = array_column($allDiagnoses, 'kode_diagnosa');
+                } else {
+                    $kode_diagnosa = '';
+                }
+
+                // dd($kode_diagnosa);
+
+                $pendaftaran = $kominfo->pendaftaranRequest($params);
 
                 $filteredData = array_map(function ($d) {
                     $doctorNipMap = [
@@ -46,11 +61,12 @@ class DotsController extends Controller
                     $d['nip_dokter'] = $doctorNipMap[$dokter_nama] ?? 'Unknown';
 
                     return $d;
-                }, $pendaftaran['response']['data']);
+                }, $pendaftaran);
 
                 $ptbData[] = [
                     'pendaftaran' => $filteredData,
                     'pasien' => $pasien,
+                    'diagnosa' => $kode_diagnosa,
                 ];
 
                 $res = [
