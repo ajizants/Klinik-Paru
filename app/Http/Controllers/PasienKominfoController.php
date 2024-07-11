@@ -782,8 +782,11 @@ class PasienKominfoController extends Controller
 
             // Panggil metode untuk melakukan request pendaftaran
             $cpptRes = $model->cpptRequest($params);
-            $cppt = $cpptRes['response']['data'];
-            // return response()->json($cpptRes);
+            if (!isset($cpptRes['response']['data'])) {
+                $cppt = null;
+            } else {
+                $cppt = $cpptRes['response']['data'];
+            }
 
             $pendaftaran = $model->pendaftaranRequest($params);
             // return response()->json($pendaftaran);
