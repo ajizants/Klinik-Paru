@@ -339,6 +339,13 @@ function cariKominfo(norm, tgl, ruang) {
             success: function (response) {
                 if (response.error) {
                     console.error("Error: " + response.error);
+                    Swal.fire({
+                        icon: "error",
+                        title:
+                            "Unexpected metadata code: " +
+                            code +
+                            "\n Silahkan Coba Lagi",
+                    });
                 } else if (response.metadata) {
                     var code = response.metadata.code;
 
