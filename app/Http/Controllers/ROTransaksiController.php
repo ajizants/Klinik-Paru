@@ -684,7 +684,7 @@ class ROTransaksiController extends Controller
                     'metadata' => [
                         'message' => 'Data foto thorax tidak ditemukan',
                         'status' => 404,
-                    ]
+                    ],
                 ];
             } else {
                 $foto = $data_foto;
@@ -695,12 +695,9 @@ class ROTransaksiController extends Controller
                     'message' => 'Terjadi kesalahan pada koneksi database',
                     'status' => 500,
                     'error' => $e->getMessage(),
-                ]
+                ],
             ];
         }
-
-        // Return atau gunakan $foto sesuai kebutuhan
-        return response()->json($foto);
 
         // dd($foto);
 

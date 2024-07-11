@@ -507,7 +507,7 @@ function fetchDataAntrian(params, callback) {
 function initializeDataAntrian(response) {
     if (response && response.response && response.response.data) {
         var dataArray = response.response.data.filter(function (item) {
-            return item.status === "sudah";
+            return item.status === "belum";
         });
 
         dataArray.forEach(function (item) {

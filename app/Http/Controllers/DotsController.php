@@ -83,7 +83,7 @@ class DotsController extends Controller
                 $no_rm = $Ptb['norm'];
 
                 $dx = DiagnosaModel::where('kdDiag', $kdDiag)->get();
-                $pasien = $kominfo->pasienFilter($no_rm);
+                $pasien = $kominfo->pasienRequest($no_rm);
                 $tanggal = $request->input('tanggal_awal');
                 $params = [
                     'tanggal' => $tanggal,

@@ -29,6 +29,11 @@
                                 Kontrol</b></a>
                     </li>
                     <li class="nav-item">
+                        <a type="button" class="nav-link" id="iall"
+                            onclick="toggleSections('#dSelesai');"><b>Antrian All</b></a>
+                    </li>
+                    <li class="col"></li>
+                    <li class="nav-item">
                         <a type="button" class="nav-link" id="itelat" onclick="toggleSections('#dTelat');"><b>Pasien
                                 Telat</b></a>
                     </li>
@@ -40,11 +45,7 @@
                         <a type="button" class="nav-link" id="itb" onclick="toggleSections('#dTb');"><b>Pasien
                                 TB</b></a>
                     </li>
-                    <li class="nav-item">
-                        <a type="button" class="nav-link" id="iall"
-                            onclick="toggleSections('#dSelesai');"><b>Paien Hari
-                                Ini</b></a>
-                    </li>
+
                 </ul>
                 <div id="dKontrol" class="card-body card-body-hidden p-2">
                     <div class="table-responsive pt-2 px-2">
