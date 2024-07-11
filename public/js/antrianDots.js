@@ -655,7 +655,7 @@ function initializeDataAntrian(response) {
             item.nmDiagnosa = item.diagnosa[0].nama_diagnosa;
             var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
             item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-                                    onclick="cariPasienTb('${item.pasien_no_rm}','${item.tgl}');"><i class="fas fa-pen-to-square"></i></a>`;
+                                    onclick="cariPasienTb('${item.pasien_no_rm}','${item.tanggal}');"><i class="fas fa-pen-to-square"></i></a>`;
         });
 
         $("#dataAntrian").DataTable({
@@ -717,7 +717,7 @@ function antrian() {
                     item.nmDiagnosa = item.diagnosa[0].nama_diagnosa;
                     var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
                     item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-                                            onclick="cariPasienTb('${item.pasien_no_rm}','${item.tgl}');"><i class="fas fa-pen-to-square"></i></a>`;
+                                            onclick="cariPasienTb('${item.pasien_no_rm}','${item.tanggal}');"><i class="fas fa-pen-to-square"></i></a>`;
                 });
             } else {
                 console.error(
