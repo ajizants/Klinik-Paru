@@ -300,7 +300,7 @@ function updateAntrian() {
     pasienTB();
     pasienTelat();
     antrianAll("dots");
-    antrian();
+    antrian("dots");
 }
 
 function populate() {
