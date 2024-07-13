@@ -44,7 +44,7 @@ class KunjunganModel extends Model
     }
     public function lab()
     {
-        return $this->hasMany(LaboratoriumModel::class, 'notrans', 'notrans');
+        return $this->hasMany(LaboratoriumKunjunganModel::class, 'notrans', 'notrans');
     }
     public function farmasi()
     {
@@ -68,7 +68,7 @@ class KunjunganModel extends Model
     }
     public function riwayatLab()
     {
-        return $this->hasMany(LaboratoriumModel::class, 'notrans', 'notrans');
+        return $this->hasMany(LaboratoriumHasilModel::class, 'notrans', 'notrans');
     }
 
 }

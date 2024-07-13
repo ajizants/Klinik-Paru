@@ -12,7 +12,7 @@ async function addPasienTB() {
     var hiv = $("#modal-hiv").val();
     var dm = $("#modal-dm").val();
     var ket = $("#modal-ket").val();
-    // var status = $("#modal-").val();
+    var blnKe = $("#modal-pasienTB #modal-blnKe").val();
     var petugas = $("#modal-petugas").val();
     var dokter = $("#modal-dokter").val();
     if (
@@ -55,6 +55,7 @@ async function addPasienTB() {
                 ket: ket,
                 petugas: petugas,
                 dokter: dokter,
+                hasilBerobat: blnKe,
             },
             success: function (response) {
                 Toast.fire({
@@ -331,13 +332,13 @@ $(document).ready(function () {
     $(".select2bs4").select2();
     $("#modal-pasienTB .select2bs4").select2();
 
-    $("#modal-Ftb").on("click", function (e) {
-        populateBlnKeOptions();
-        populateDokterOptions();
-        populateObat();
-        populatePetugasOptions();
-        populateDxMedis();
-    });
+    // $("#modal-Ftb").on("click", function (e) {
+    //     populateBlnKeOptions();
+    //     populateDokterOptions();
+    //     populateObat();
+    //     populatePetugasOptions();
+    //     populateDxMedis();
+    // });
 
     $("#modal-pasienTB #modal-norm").on("keyup", function (event) {
         if (event.key === "Enter") {

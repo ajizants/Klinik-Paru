@@ -44,4 +44,9 @@ class DotsModel extends Model
     {
         return $this->hasOne(PegawaiModel::class, 'nip', 'dokter');
     }
+    public function pengobatan()
+    {
+        return $this->hasOne(DotsBlnModel::class, 'notrans', 'hasilBerobat');
+    }
+
 }

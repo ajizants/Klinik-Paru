@@ -1076,7 +1076,7 @@ class PasienKominfoController extends Controller
                     'message' => 'Data Tidak Ditemukan',
                     'code' => 404,
                 ],
-            ], 404);
+            ], 200);
         }
 
         return response()->json(['error' => 'Internal Server Error'], 500);

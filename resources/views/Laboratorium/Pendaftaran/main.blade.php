@@ -25,7 +25,6 @@
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
-    <script src="{{ asset('js/antrianLab.js') }}"></script>
     <script src="{{ asset('js/mainLab.js') }}"></script>
 
 

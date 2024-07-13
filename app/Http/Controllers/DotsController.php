@@ -336,22 +336,21 @@ class DotsController extends Controller
             $addPTB = new DotsModel();
             // Mengatur nilai-nilai kolom
             $addPTB->norm = $norm;
-            $addPTB->noHp = $hp;
-            $addPTB->nik = $nik;
             $addPTB->nama = $nama;
+            $addPTB->nik = $nik;
             $addPTB->alamat = $alamat;
+            $addPTB->noHp = $hp;
             $addPTB->tcm = $tcm;
             $addPTB->kdDx = $dx;
             $addPTB->tglMulai = $mulai;
-            $addPTB->hasilBerobat = $hasilBerobat;
             $addPTB->bb = $bb;
             $addPTB->obat = $terapi;
             $addPTB->hiv = $hiv;
             $addPTB->dm = $dm;
             $addPTB->ket = $ket;
-            $addPTB->hasilBerobat = $status;
             $addPTB->petugas = $petugas;
             $addPTB->dokter = $dokter;
+            $addPTB->hasilBerobat = $hasilBerobat;
 
             // Simpan data ke dalam tabel
             $addPTB->save();

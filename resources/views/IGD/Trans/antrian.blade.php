@@ -60,14 +60,15 @@
                         cellspacing="0">
                         <thead class="bg bg-teal">
                             <tr>
-                                <th width="20px">Aksi</th>
-                                <th width="25px">Status</th>
-                                <th width="20px"class="text-center">No</th>
-                                <th width="25px" class="text-center">NoRM</th>
-                                <th width="36px"class="text-center">Layanan</th>
-                                <th width="12rem">Nama</th>
-                                <th width="20rem">Tindakan</th>
-                                <th width="20rem">Dokter</th>
+                                <th width="15px">Aksi</th>
+                                <th>status</th>
+                                <th>Tanggal</th>
+                                <th>Urut</th>
+                                <th>Jaminan</th>
+                                <th>No RM</th>
+                                <th class="col-1">Nama Pasien</th>
+                                <th class="col-3">Permintaan</th>
+                                <th class="col-3">Dokter</th>
                             </tr>
                         </thead>
                     </table>

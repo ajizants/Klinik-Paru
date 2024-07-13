@@ -216,7 +216,7 @@ function selesai() {
 }
 
 function updateAntrian() {
-    antrian();
+    antrian("igd");
     antrianAll("igd");
 }
 
@@ -281,17 +281,6 @@ $(document).ready(function () {
     setTglRo();
     $(".select2bs4").select2({ theme: "bootstrap4" });
     $(".bmhp").select2({ theme: "bootstrap4" });
-    // $("#tanggal").on("change", function () {
-    //     antrian();
-    //     antrianAll();
-    // });
-
-    // $("#cariantrian").on("click", function () {
-    //     antrian();
-    //     antrianAll();
-    // });
-
-    // $("#formbmhp").hide();
 
     let quantity = 0;
     const qtyInput = document.getElementById("qty");

@@ -50,7 +50,6 @@ function layanan(kelas, grupLayanan, pilihSemuaId) {
         ],
         order: [1, "asc"],
         scrollY: "220px",
-        scrollCollapse: false,
         paging: false,
         // responsive: true,
     });
@@ -187,28 +186,18 @@ function delete_ts() {
                     type: "POST",
                     data: { notrans: notrans },
                     success: function (response) {
-                        Toast.fire({
-                            icon: "success",
-                            title: "Data transaksi obat berhasil dihapus...!!!",
-                        });
-                        resetForm("selesai");
-                        var btndelete = document.getElementById("delete_ts");
-                        btndelete.style.display = "block";
+                        resetForm("Data transaksi obat berhasil dihapus...!!!");
                     },
                     error: function (xhr, status, error) {
-                        Toast.fire({
+                        Swal.fire({
                             icon: "error",
-                            title: error + "...!!!",
+                            title: "Data tidak ditemukan...!!!",
                         });
                     },
                 });
             }
         });
     } else {
-        Swal.fire({
-            icon: "error",
-            title: "Data tidak ditemukan...!!!",
-        });
     }
 }
 function deletLab(idLab, layanan) {
@@ -349,7 +338,6 @@ function dataLab(data) {
         ],
         order: [1, "asc"],
         scrollY: "220px",
-        scrollCollapse: true,
         paging: false,
     });
 }
@@ -373,6 +361,9 @@ function resetForm(message) {
     document.getElementById("form_identitas").reset();
     document.getElementById("form_Petugas").reset();
     $("#analis,#dokter,#tujuan").trigger("change");
+    var btndelete = document.getElementById("delete_ts");
+    btndelete.style.display =
+        btndelete.style.display === "none" ? "block" : "none";
 
     if ($.fn.DataTable.isDataTable("#dataTrans")) {
         let tableTrans = $("#dataTrans").DataTable();
@@ -389,15 +380,175 @@ function resetForm(message) {
 }
 function batal() {
     resetForm("Transaksi Lab dibatalkan...!!!");
-    var btndelete = document.getElementById("delete_ts");
-    btndelete.style.display =
-        btndelete.style.display === "none" ? "block" : "none";
     scrollToTop();
 }
 
-function updateAntrian() {
-    // antrian();
+function processAntrianData(data, filter, tabel) {
+    $("#loadingSpinner").show();
+    var filteredData = data.filter(function (item) {
+        return item.status === filter;
+    });
 
+    filteredData.forEach(function (item) {
+        item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+                      onclick="cariTsRo('${item.pasien_no_rm}','${$(
+            "#tanggal"
+        ).val()}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
+    });
+
+    if ($.fn.DataTable.isDataTable(tabel)) {
+        var table = tabel.DataTable();
+        table.clear().rows.add(filteredData).draw();
+    } else {
+        initializeAntrian(tabel, filteredData);
+    }
+    $("#loadingSpinner").hide();
+}
+
+// function fetchDataAntrian(params, callback) {
+//     console.log("🚀 ~ fetchDataAntrian ~ params:", params);
+//     $.ajax({
+//         url: "/api/cpptKominfo",
+//         type: "post",
+//         data: params,
+//         success: function (response) {
+//             callback(response);
+//         },
+//         error: function (xhr) {
+//             // Tangani kesalahan jika diperlukan
+//         },
+//     });
+// }
+
+// // Fungsi untuk inisialisasi tabel data antrian
+// function initializeDataAntrian(response) {
+//     if (response && response.response && response.response.data) {
+//         var dataArray = response.response.data.filter(function (item) {
+//             return item.status === "belum";
+//         });
+
+//         dataArray.forEach(function (item) {
+//             var asktind = "";
+//             if (item.radiologi && Array.isArray(item.radiologi)) {
+//                 item.radiologi.forEach(function (radiologi) {
+//                     asktind += `${radiologi.layanan} (${radiologi.keterangan}), `;
+//                 });
+//             }
+//             item.asktind = asktind;
+//             item.index = dataArray.indexOf(item) + 1;
+
+//             var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
+//             item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+//                             data-norm="${item.pasien_no_rm}"
+//                             data-nama="${item.pasien_nama}"
+//                             data-dokter="${item.dokter_nama}"
+//                             data-asktind="${asktind}"
+//                             data-kddokter="${item.nip_dokter}"
+//                             data-alamat="${alamat}"
+//                             data-layanan="${item.penjamin_nama}"
+//                             data-notrans="${item.no_trans}"
+//                             data-tgltrans="${item.tanggal}"
+//                             onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
+//         });
+
+//         $("#dataAntrian").DataTable({
+//             data: dataArray,
+//             columns: [
+//                 { data: "aksi", className: "text-center p-2" },
+//                 {
+//                     data: "status",
+//                     className: "text-center p-2",
+//                     render: function (data) {
+//                         var backgroundColor =
+//                             data === "belum" ? "danger" : "success";
+//                         return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+//                     },
+//                 },
+//                 { data: "antrean_nomor", className: "text-center p-2" },
+//                 { data: "tanggal", className: "text-center p-2 col-1" },
+//                 { data: "penjamin_nama", className: "text-center p-2" },
+//                 { data: "pasien_no_rm", className: "text-center p-2" },
+//                 { data: "pasien_nama", className: "p-2 col-2" },
+//                 { data: "asktind", className: "p-2 col-4" },
+//                 { data: "dokter_nama", className: "p-2 col-2" },
+//             ],
+//             order: [
+//                 [1, "asc"],
+//                 [2, "asc"],
+//             ],
+//         });
+//     } else {
+//         console.error(
+//             "Invalid response or response.response.data is not available:",
+//             response
+//         );
+//         // Tangani error atau tampilkan pesan yang sesuai
+//     }
+// }
+
+// // Fungsi untuk mengambil dan menampilkan data antrian
+// function antrian() {
+//     $("#loadingSpinner").show();
+//     var tanggal_awal = $("#tanggal").val();
+//     var tanggal_akhir = $("#tanggal").val();
+
+//     var param = {
+//         tanggal_awal: tanggal_awal,
+//         tanggal_akhir: tanggal_akhir,
+//         ruang: "lab",
+//     };
+
+//     fetchDataAntrian(param, function (response) {
+//         $("#loadingSpinner").hide();
+
+//         if ($.fn.DataTable.isDataTable("#dataAntrian")) {
+//             var table = $("#dataAntrian").DataTable();
+//             if (response && response.response && response.response.data) {
+//                 var dataArray = response.response.data.filter(function (item) {
+//                     return item.status === "belum";
+//                 });
+
+//                 // Proses ulang data untuk memperbarui kolom 'aksi' dan lainnya jika diperlukan
+//                 dataArray.forEach(function (item) {
+//                     var asktind = "";
+//                     if (item.radiologi && Array.isArray(item.radiologi)) {
+//                         item.radiologi.forEach(function (radiologi) {
+//                             asktind += `${radiologi.layanan} ket: ${radiologi.layanan}, `;
+//                         });
+//                     }
+//                     item.asktind = asktind;
+//                     item.index = dataArray.indexOf(item) + 1;
+
+//                     var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
+//                     item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+//                                     data-norm="${item.pasien_no_rm}"
+//                                     data-nama="${item.pasien_nama}"
+//                                     data-dokter="${item.dokter_nama}"
+//                                     data-asktind="${asktind}"
+//                                     data-kddokter="${item.nip_dokter}"
+//                                     data-alamat="${alamat}"
+//                                     data-layanan="${item.penjamin_nama}"
+//                                     data-notrans="${item.no_trans}"
+//                                     data-tgltrans="${item.tanggal}"
+//                                     onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
+//                 });
+
+//                 // Hapus data yang ada, tambahkan data baru, dan gambar ulang tabel
+//                 table.clear().rows.add(dataArray).draw();
+//             } else {
+//                 console.error(
+//                     "Invalid response or response.response.data is not available:",
+//                     response
+//                 );
+//             }
+//         } else {
+//             initializeDataAntrian(response);
+//         }
+//     });
+// }
+
+function updateAntrian() {
+    antrian("lab");
     antrianAll("lab");
 }
 
@@ -407,13 +558,6 @@ $(document).ready(function () {
     // handlePilihSemuaClick("pilih-kimia", "kimia");
     // handlePilihSemuaClick("pilih-imuno", "imuno");
     handlePilihSemuaClick("pilih-bakteriologi", "bakteriologi");
-    // $("#norm").on("keyup", function (event) {
-    //     if (event.key === "Enter") {
-    //         event.preventDefault();
-    //         formatNorm($("#norm"));
-    //         searchByRM($("#norm").val());
-    //     }
-    // });
     $("#tabelData,#dataTrans").DataTable({
         scrollY: "200px",
     });
@@ -429,33 +573,6 @@ $(document).ready(function () {
     // layanan(93, "imuno", "pilih-imuno");
     layanan(9, "bakteriologi", "pilih-bakteriologi");
 
-    // $("#dataAntrian").on("click", ".aksi-button", function (e) {
-    //     e.preventDefault();
-    //     $("#add").show();
-    //     $("#edit").hide();
-    //     var norm = $(this).data("norm");
-    //     var nama = $(this).data("nama");
-    //     var nik = $(this).data("nik");
-    //     var dokter = $(this).data("kddokter");
-    //     var alamat = $(this).data("alamat");
-    //     var layanan = $(this).data("layanan");
-    //     var notrans = $(this).data("notrans");
-    //     var tgltrans = $(this).data("tgltrans");
-
-    //     $("#norm").val(norm);
-    //     $("#nik").val(nik);
-    //     $("#nama").val(nama);
-    //     $("#dokter").val(dokter).trigger("change");
-    //     $("#apoteker").val("197609262011012003").trigger("change");
-    //     $("#alamat").val(alamat);
-    //     $("#layanan").val(layanan);
-    //     $("#notrans").val(notrans);
-    //     $("#tgltrans").val(tgltrans);
-
-    //     scrollToInputSection();
-    //     dataLab();
-    // });
-
     // $("#dataAntrian").on("click", ".panggil", function (e) {
     //     e.preventDefault();
 
@@ -468,33 +585,6 @@ $(document).ready(function () {
     //     panggilPasien(panggilData);
     // });
 
-    // $("#antrianall").on("click", ".aksi-button", function (e) {
-    //     e.preventDefault();
-    //     $("#add").show();
-    //     $("#edit").hide();
-    //     var norm = $(this).data("norm");
-    //     console.log("🚀 ~ inputData ~ norm:", norm);
-    //     var nama = $(this).data("nama");
-    //     var nik = $(this).data("nik");
-    //     var dokter = $(this).data("kddokter");
-    //     var alamat = $(this).data("alamat");
-    //     var layanan = $(this).data("layanan");
-    //     var notrans = $(this).data("notrans");
-    //     var tgltrans = $(this).data("tgltrans");
-
-    //     $("#norm").val(norm);
-    //     $("#nik").val(nik);
-    //     $("#nama").val(nama);
-    //     $("#dokter").val(dokter).trigger("change");
-    //     $("#apoteker").val("197609262011012003").trigger("change");
-    //     $("#alamat").val(alamat);
-    //     $("#layanan").val(layanan);
-    //     $("#notrans").val(notrans);
-    //     $("#tgltrans").val(tgltrans);
-
-    //     scrollToInputSection();
-    //     dataLab();
-    // });
     $("#dataTrans").on("click", ".delete", function (e) {
         e.preventDefault();
         let idLab = $(this).data("id");

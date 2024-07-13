@@ -4,189 +4,291 @@ var Toast = Swal.mixin({
     showConfirmButton: false,
     timer: 3000,
 });
+function fetchDataAntrian(params, callback) {
+    console.log("🚀 ~ fetchDataAntrian ~ params:", params);
+    $.ajax({
+        url: "/api/cpptKominfo",
+        type: "post",
+        data: params, // Mengirimkan array params sebagai data
+        success: function (response) {
+            callback(response);
+        },
+        error: function (xhr) {
+            // Tangani kesalahan jika diperlukan
+        },
+    });
+}
 
-// function fetchDataAntrianAll(tanggal, ruang, callback) {
-//     $.ajax({
-//         // url: "/api/noAntrianKominfo",
-//         url: "/api/antrian/kominfo",
-//         type: "post",
-//         data: {
-//             tanggal: tanggal,
-//             ruang: ruang,
-//         },
-//         success: function (response) {
-//             callback(response);
-//         },
-//         error: function (xhr) {},
-//     });
-// }
-// function initializeDataAntrianAll(ruang, response) {
-//     // Check if response has data array
-//     if (response && response.response && response.response.data) {
-//         // Iterate over each item in the data array
+function initializeDataAntrian(response, ruang) {
+    console.log("🚀 ~ initializeDataAntrian ~ ruang:", ruang);
+    // Pastikan response.data adalah objek yang berisi data pasien
+    if (response && response.response && response.response.data) {
+        var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
+        processDataArray(dataArray, ruang);
+        drawDataTable(dataArray, ruang);
+    } else {
+        var noDataMsg = [
+            {
+                aksi: "",
+                status: "",
+                tanggal: "",
+                antrean_nomor: "",
+                pasien_no_rm: "",
+                penjamin_nama: "",
+                pasien_nama: "Belum ada data masuk",
+                dokter_nama: "",
+                nmDiagnosa: "",
+                asktind: "",
+            },
+        ];
+        drawDataTable(noDataMsg, ruang);
+    }
+}
 
-//         var filteredData = response.response.data.filter(function (item) {
-//             return item.status === "Sudah Selesai";
-//         });
-//         response.response.data.forEach(function (item) {
-//             if (item.pasien_no_rm) {
-//                 var tgl = $("#tanggal").val();
-//                 // console.log("🚀 ~ antrianAll ~ fetch:", ruang);
-//                 item.tgl = tgl;
-//                 if (ruang == "dots") {
-//                     item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-//                                     onclick="cariPasienTb('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
-//                 } else {
-//                     item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-//                                     onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
-//                 }
-//             }
-//         });
+function antrian(ruang) {
+    console.log("🚀 ~ antrian ~ ruang:", ruang);
+    $("#loadingSpinner").show();
+    var tanggal_awal = $("#tanggal").val(); // Ganti id input tanggal_awal
+    var tanggal_akhir = $("#tanggal").val(); // Ganti id input tanggal_akhir
+    // var no_rm = $("#norm").val(); // Ganti id input no_rm
 
-//         // Initialize DataTable with processed data
-//         $("#antrianall").DataTable({
-//             data: response.response.data,
-//             columns: [
-//                 { data: "aksi", className: "text-center p-2 col-1" }, // Action column
-//                 {
-//                     data: "status_pulang",
-//                     className: "text-center p-2 col-1",
-//                     render: function (data, type, row) {
-//                         var backgroundColor = "";
-//                         switch (data) {
-//                             case "Belum Pulang":
-//                                 backgroundColor = "danger";
-//                                 break;
-//                             case "Sudah Pulang":
-//                                 backgroundColor = "success";
-//                                 break;
-//                             default:
-//                                 backgroundColor = "secondary";
-//                                 break;
-//                         }
-//                         return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-//                     },
-//                 },
-//                 { data: "tanggal", className: "p-2" }, // Tanggal column
-//                 { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
-//                 { data: "penjamin_nama", className: "text-center p-2" }, // No Antrean column
-//                 { data: "pasien_no_rm", className: "text-center p-2" }, // Pasien No. RM column
-//                 { data: "pasien_nama", className: "p-2 col-3" }, // Pasien Nama column
-//                 { data: "poli_nama", className: "p-2" }, // Poli column
-//                 { data: "dokter_nama", className: "p-2 col-3" }, // Dokter column
-//             ],
-//             order: [1, "asc"], // Order by Antrean Nomor ascending
-//         });
-//         $("#dataSelesai").DataTable({
-//             data: filteredData,
-//             columns: [
-//                 { data: "aksi", className: "text-center p-2 col-1" }, // Action column
-//                 {
-//                     data: "status",
-//                     className: "text-center p-2 col-1",
-//                     render: function (data, type, row) {
-//                         var backgroundColor = "";
-//                         switch (data) {
-//                             case "Tidak Ada Permintaan":
-//                                 backgroundColor = "danger";
-//                                 break;
-//                             case "Belum Ada Ts RO":
-//                                 backgroundColor = "danger";
-//                                 break;
-//                             case "Belum Upload Foto Thorax":
-//                                 backgroundColor = "warning";
-//                                 break;
-//                             case "Sudah Selesai":
-//                                 backgroundColor = "success";
-//                                 break;
-//                             default:
-//                                 backgroundColor = "secondary";
-//                                 break;
-//                         }
-//                         return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-//                     },
-//                 },
-//                 { data: "tanggal", className: "p-2" }, // Tanggal column
-//                 { data: "antrean_nomor", className: "text-center p-2" }, // No Antrean column
-//                 { data: "penjamin_nama", className: "text-center p-2" }, // No Antrean column
-//                 { data: "pasien_no_rm", className: "text-center p-2" }, // Pasien No. RM column
-//                 { data: "pasien_nama", className: "p-2 col-3" }, // Pasien Nama column
-//                 { data: "poli_nama", className: "p-2" }, // Poli column
-//                 { data: "dokter_nama", className: "p-2 col-3" }, // Dokter column
-//             ],
-//             order: [1, "asc"], // Order by Antrean Nomor ascending
-//         });
-//     } else {
-//         console.error(
-//             "Response format is incorrect or data array is missing:",
-//             response
-//         );
-//         // Handle the case where the response format is incorrect or data array is missing
-//     }
-// }
-// function antrianAll(ruang) {
-//     $("#loadingSpinner").show();
-//     var tanggal = $("#tanggal").val();
+    var param = {
+        tanggal_awal: tanggal_awal,
+        tanggal_akhir: tanggal_akhir,
+        ruang: ruang,
+    };
 
-//     fetchDataAntrianAll(tanggal, ruang, function (response) {
-//         $("#loadingSpinner").hide();
-//         var filteredData = response.response.data.filter(function (item) {
-//             return item.status === "Sudah Selesai";
-//         });
+    fetchDataAntrian(param, function (response) {
+        console.log("🚀 ~ response:", response);
+        $("#loadingSpinner").hide();
+        // var ruang = ruang;
+        console.log("🚀 ~ antrian - fetchDataAntrian~ ruang:", ruang);
+        if ($.fn.DataTable.isDataTable("#dataAntrian")) {
+            var table = $("#dataAntrian").DataTable();
 
-//         // console.log("🚀 ~ antrianAll ~ filteredData:", filteredData);
+            if (response && response.response && response.response.data) {
+                var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
+                processDataArray(dataArray, ruang);
+            } else {
+                var noDataMsg = [
+                    {
+                        aksi: "",
+                        status: "",
+                        tanggal: "",
+                        antrean_nomor: "",
+                        pasien_no_rm: "",
+                        penjamin_nama: "",
+                        pasien_nama: "Belum ada data masuk",
+                        dokter_nama: "",
+                        nmDiagnosa: "",
+                        asktind: "",
+                    },
+                ];
+                dataArray = noDataMsg;
+            }
+            table.clear().rows.add(dataArray).draw();
+        } else {
+            initializeDataAntrian(response, ruang);
+        }
+    });
+}
 
-//         // Check if DataTable already initialized
-//         if ($.fn.DataTable.isDataTable("#antrianall")) {
-//             console.log("Table already initialized");
-//             var table = $("#antrianall").DataTable();
+function processDataArray(dataArray, ruang) {
+    console.log("🚀 ~ processDataArray ~ ruang:", ruang);
+    if (ruang === "dots") {
+        dataArray.forEach(function (item) {
+            item.index = dataArray.indexOf(item) + 1;
+            item.nmDiagnosa = item.diagnosa[0].nama_diagnosa;
+            var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
+            item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+                                    onclick="cariPasienTb('${item.pasien_no_rm}','${item.tanggal}');"><i class="fas fa-pen-to-square"></i></a>`;
+        });
+    } else if (ruang === "ro") {
+        dataArray.forEach(function (item) {
+            var asktind = "";
+            if (item.radiologi && Array.isArray(item.radiologi)) {
+                item.radiologi.forEach(function (radiologi) {
+                    asktind += `${radiologi.layanan} ( ${radiologi.keterangan} ), `;
+                });
+            }
+            item.asktind = asktind;
+            item.index = dataArray.indexOf(item) + 1;
 
-//             response.response.data.forEach(function (item) {
-//                 var tgl = $("#tanggal").val();
-//                 // console.log("🚀 ~ antrianAll ~ fetch:", ruang);
-//                 item.tgl = tgl;
-//                 if (ruang == "dots") {
-//                     item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-//                                     onclick="cariPasienTb('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
-//                 } else {
-//                     item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-//                                     onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
-//                 }
-//             });
+            var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
+            item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+                                                data-norm="${item.pasien_no_rm}"
+                                                data-nama="${item.pasien_nama}"
+                                                data-dokter="${item.dokter_nama}"
+                                                data-asktind="${asktind}"
+                                                data-kddokter="${item.nip_dokter}"
+                                                data-alamat="${alamat}"
+                                                data-layanan="${item.penjamin_nama}"
+                                                data-notrans="${item.no_trans}"
+                                                data-tgltrans="${item.tanggal}"
+                                                onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
+        });
+    } else if (ruang === "igd") {
+        dataArray.forEach(function (item) {
+            var asktind = "";
+            // Pastikan item.tindakan adalah array sebelum mengaksesnya
+            if (item.tindakan && Array.isArray(item.tindakan)) {
+                item.tindakan.forEach(function (tindakan) {
+                    asktind += `${tindakan.nama_tindakan} : ${tindakan.nama_obat},\n`;
+                });
+            }
+            item.asktind = asktind;
+            item.index = dataArray.indexOf(item) + 1;
 
-//             // Clear existing data, add new data, and redraw table
-//             table.clear().rows.add(response.response.data).draw();
-//         } else {
-//             // Initialize DataTable with the response data
-//             initializeDataAntrianAll(ruang, response);
-//         }
-//         if (ruang == "igd" || ruang == "lab") {
-//             console.log(ruang);
-//             if ($.fn.DataTable.isDataTable("#dataSelesai")) {
-//                 var table = $("#dataSelesai").DataTable();
+            var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
+            item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+                                        data-norm="${item.pasien_no_rm}"
+                                        data-nama="${item.pasien_nama}"
+                                        data-dokter="${item.dokter_nama}"
+                                        data-asktind="${asktind}"
+                                        data-kddokter="${item.nip_dokter}"
+                                        data-alamat="${alamat}"
+                                        data-layanan="${item.penjamin_nama}"
+                                        data-notrans="${item.no_trans}"
+                                        data-tgltrans="${item.tanggal}"><i class="fas fa-pen-to-square"></i></a>`;
+        });
+    } else if (ruang === "lab") {
+        dataArray.forEach(function (item) {
+            var asktind = "";
+            if (item.radiologi && Array.isArray(item.radiologi)) {
+                item.radiologi.forEach(function (radiologi) {
+                    asktind += `${radiologi.layanan} ket: ${radiologi.layanan}, `;
+                });
+            }
+            item.asktind = asktind;
+            item.index = dataArray.indexOf(item) + 1;
 
-//                 filteredData.forEach(function (item) {
-//                     var tgl = $("#tanggal").val();
-//                     item.tgl = tgl;
-//                     if (ruang == "dots") {
-//                         item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-//                                     onclick="cariPasienTb('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
-//                     } else {
-//                         item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-//                                     onclick="cariKominfo('${item.pasien_no_rm}','${item.tgl}','${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
-//                     }
-//                 });
+            var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
+            item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+                            data-norm="${item.pasien_no_rm}"
+                            data-nama="${item.pasien_nama}"
+                            data-dokter="${item.dokter_nama}"
+                            data-asktind="${asktind}"
+                            data-kddokter="${item.nip_dokter}"
+                            data-alamat="${alamat}"
+                            data-layanan="${item.penjamin_nama}"
+                            data-notrans="${item.no_trans}"
+                            data-tgltrans="${item.tanggal}"
+                            onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
+        });
+    }
+}
 
-//                 // Clear existing data, add new data, and redraw table
-//                 table.clear().rows.add(filteredData).draw();
-//             } else {
-//                 // Initialize DataTable with the response data
-//                 initializeDataAntrianAll(ruang, response);
-//             }
-//         }
-//     });
-// }
-//pasien Kominfo
+function drawDataTable(dataArray, ruang) {
+    if (ruang === "dots") {
+        $("#dataAntrian").DataTable({
+            data: dataArray,
+            columns: [
+                { data: "aksi", className: "text-center p-2" },
+                {
+                    data: "status",
+                    className: "text-center p-2",
+                    render: function (data, type, row) {
+                        var backgroundColor =
+                            data === "belum" ? "danger" : "success";
+                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                    },
+                },
+                { data: "tanggal", className: "text-center p-2 col-1" },
+                { data: "antrean_nomor", className: "text-center p-2" },
+                { data: "pasien_no_rm", className: "text-center p-2" },
+                { data: "penjamin_nama", className: "text-center p-2" },
+                { data: "pasien_nama", className: "p-2 col-2" },
+                { data: "dokter_nama", className: "p-2 col-3" },
+                { data: "nmDiagnosa", className: "p-2 col-4" },
+            ],
+            order: [
+                [1, "asc"],
+                [2, "asc"],
+            ],
+        });
+    } else if (ruang === "ro") {
+        $("#dataAntrian").DataTable({
+            data: dataArray,
+            columns: [
+                { data: "aksi", className: "text-center p-2" },
+                {
+                    data: "status",
+                    className: "text-center p-2",
+                    render: function (data) {
+                        var backgroundColor =
+                            data === "belum" ? "danger" : "success";
+                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                    },
+                },
+                { data: "tanggal", className: "text-center p-2 col-1" },
+                { data: "antrean_nomor", className: "text-center p-2" },
+                { data: "penjamin_nama", className: "text-center p-2" },
+                { data: "pasien_no_rm", className: "text-center p-2" },
+                { data: "pasien_nama", className: "p-2 col-2" },
+                { data: "asktind", className: "p-2 col-4" },
+                { data: "dokter_nama", className: "p-2 col-2" },
+            ],
+            order: [
+                [1, "asc"],
+                [2, "asc"],
+            ],
+        });
+    } else if (ruang === "igd") {
+        $("#dataAntrian").DataTable({
+            data: dataArray,
+            columns: [
+                { data: "aksi", className: "text-center p-2" },
+                {
+                    data: "status",
+                    className: "text-center p-2",
+                    render: function (data, type, row) {
+                        var backgroundColor =
+                            data === "belum" ? "danger" : "success";
+                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                    },
+                },
+                { data: "antrean_nomor", className: "text-center p-2" },
+                { data: "tanggal", className: "text-center p-2 col-1" },
+                { data: "pasien_no_rm", className: "text-center p-2" },
+                { data: "penjamin_nama", className: "text-center p-2" },
+                { data: "pasien_nama", className: "p-2 col-2" },
+                { data: "asktind", className: "p-2 col-4" },
+                { data: "dokter_nama", className: "p-2 col-3" },
+            ],
+            order: [
+                [1, "asc"],
+                [2, "asc"],
+            ],
+        });
+    } else if (ruang == "lab") {
+        $("#dataAntrian").DataTable({
+            data: dataArray,
+            columns: [
+                { data: "aksi", className: "text-center p-2" },
+                {
+                    data: "status",
+                    className: "text-center p-2",
+                    render: function (data) {
+                        var backgroundColor =
+                            data === "belum" ? "danger" : "success";
+                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                    },
+                },
+                { data: "antrean_nomor", className: "text-center p-2" },
+                { data: "tanggal", className: "text-center p-2 col-1" },
+                { data: "penjamin_nama", className: "text-center p-2" },
+                { data: "pasien_no_rm", className: "text-center p-2" },
+                { data: "pasien_nama", className: "p-2 col-2" },
+                { data: "asktind", className: "p-2 col-4" },
+                { data: "dokter_nama", className: "p-2 col-2" },
+            ],
+            order: [
+                [1, "asc"],
+                [2, "asc"],
+            ],
+        });
+    }
+}
 
 function fetchDataAntrianAll(tanggal, ruang, callback) {
     $.ajax({
@@ -196,6 +298,7 @@ function fetchDataAntrianAll(tanggal, ruang, callback) {
         success: callback,
         error: function (xhr) {
             console.error("Error fetching data:", xhr);
+            fetchDataAntrianAll(tanggal, ruang, callback);
         },
     });
 }

@@ -46,6 +46,12 @@ function cariPasienTb(norm, date, ruang) {
         success: function (response) {
             if (response.error) {
                 console.error("Error: " + response.error);
+                Swal.fire({
+                    icon: "error",
+                    title:
+                        "Koneksi Kominfo, Silahkan Coba Lagi\n Error: " +
+                        response.error,
+                });
             } else if (response.metadata) {
                 var code = response.metadata.code;
                 // console.log("🚀 ~ cariPasienTb ~ code:", code);
@@ -169,6 +175,12 @@ function updateStatus(id) {
         },
         success: function (response) {
             console.log("🚀 ~ updateStatus ~ response:", response);
+            Swal.fire({
+                icon: "success",
+                title: "Berhasil Diupdate, Maturnuwun...!!!",
+            });
+            pasienTB();
+            pasienTelat();
         },
         error: function (xhr) {
             // Handle error
@@ -442,7 +454,6 @@ function pasienTB() {
         success: function (response) {
             $("#loadingSpinner").hide();
             var dataArray = response.data || [];
-            // console.log("🚀 ~ pasienTB ~ dataArray:", dataArray);
             dataArray.forEach(function (item, index) {
                 item.actions = `<button class="editTB bg-danger"
                                    data-id="${item.id}"
@@ -648,47 +659,26 @@ function initializeDataAntrian(response) {
     // Pastikan response.data adalah objek yang berisi data pasien
     if (response && response.response && response.response.data) {
         var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
-        // var dataArray = response.response.data;
-
-        dataArray.forEach(function (item) {
-            item.index = dataArray.indexOf(item) + 1;
-            item.nmDiagnosa = item.diagnosa[0].nama_diagnosa;
-            var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-            item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-                                    onclick="cariPasienTb('${item.pasien_no_rm}','${item.tanggal}');"><i class="fas fa-pen-to-square"></i></a>`;
-        });
-
-        $("#dataAntrian").DataTable({
-            data: dataArray,
-            columns: [
-                { data: "aksi", className: "text-center p-2" },
-                {
-                    data: "status",
-                    className: "text-center p-2",
-                    render: function (data, type, row) {
-                        var backgroundColor =
-                            data === "belum" ? "danger" : "success";
-                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-                    },
-                },
-                { data: "index", className: "text-center p-2" },
-                { data: "pasien_no_rm", className: "text-center p-2" },
-                { data: "penjamin_nama", className: "text-center p-2" },
-                { data: "pasien_nama", className: "p-2 col-2" },
-                { data: "dokter_nama", className: "p-2 col-3" },
-                { data: "nmDiagnosa", className: "p-2 col-4" },
-            ],
-            order: [
-                [1, "asc"],
-                [2, "asc"],
-            ],
-        });
+        processDataArray(dataArray);
+        drawDataTable(dataArray);
     } else {
-        console.error(
-            "Invalid response or response.response.data is not available:",
-            response
-        );
-        // Handle error or display appropriate message
+        // console.error(
+        //     "Invalid response or response.response.data is not available:",
+        //     response
+        // );
+        var noDataMsg = [
+            {
+                aksi: "",
+                status: "",
+                index: "",
+                pasien_no_rm: "",
+                penjamin_nama: "",
+                pasien_nama: "Belum ada data masuk",
+                dokter_nama: "",
+                nmDiagnosa: "",
+            },
+        ];
+        drawDataTable(noDataMsg);
     }
 }
 
@@ -711,24 +701,67 @@ function antrian() {
             var table = $("#dataAntrian").DataTable();
             if (response && response.response && response.response.data) {
                 var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
-
-                dataArray.forEach(function (item) {
-                    item.index = dataArray.indexOf(item) + 1;
-                    item.nmDiagnosa = item.diagnosa[0].nama_diagnosa;
-                    var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-                    item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-                                            onclick="cariPasienTb('${item.pasien_no_rm}','${item.tanggal}');"><i class="fas fa-pen-to-square"></i></a>`;
-                });
+                processDataArray(dataArray);
             } else {
-                console.error(
-                    "Invalid response or response.response.data is not available:",
-                    response
-                );
-                // Handle error or display appropriate message
+                // console.error(
+                //     "Invalid response or response.response.data is not available:",
+                //     response
+                // );
+                var noDataMsg = [
+                    {
+                        aksi: "",
+                        status: "",
+                        index: "",
+                        pasien_no_rm: "",
+                        penjamin_nama: "",
+                        pasien_nama: "Belum ada data masuk",
+                        dokter_nama: "",
+                        nmDiagnosa: "",
+                    },
+                ];
+                dataArray = noDataMsg;
             }
             table.clear().rows.add(dataArray).draw();
         } else {
             initializeDataAntrian(response);
         }
+    });
+}
+
+function processDataArray(dataArray) {
+    dataArray.forEach(function (item) {
+        item.index = dataArray.indexOf(item) + 1;
+        item.nmDiagnosa = item.diagnosa[0].nama_diagnosa;
+        var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
+        item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+                                onclick="cariPasienTb('${item.pasien_no_rm}','${item.tanggal}');"><i class="fas fa-pen-to-square"></i></a>`;
+    });
+}
+
+function drawDataTable(dataArray) {
+    $("#dataAntrian").DataTable({
+        data: dataArray,
+        columns: [
+            { data: "aksi", className: "text-center p-2" },
+            {
+                data: "status",
+                className: "text-center p-2",
+                render: function (data, type, row) {
+                    var backgroundColor =
+                        data === "belum" ? "danger" : "success";
+                    return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                },
+            },
+            { data: "index", className: "text-center p-2" },
+            { data: "pasien_no_rm", className: "text-center p-2" },
+            { data: "penjamin_nama", className: "text-center p-2" },
+            { data: "pasien_nama", className: "p-2 col-2" },
+            { data: "dokter_nama", className: "p-2 col-3" },
+            { data: "nmDiagnosa", className: "p-2 col-4" },
+        ],
+        order: [
+            [1, "asc"],
+            [2, "asc"],
+        ],
     });
 }
