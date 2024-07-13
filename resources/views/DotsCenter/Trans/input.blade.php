@@ -119,7 +119,7 @@
                                                                 BTA</label>
                                                             <select id="bta"
                                                                 class="form-control select2bs4 border border-primary">
-                                                                <option value="">--Pilih Hasil--</option>
+                                                                <option value="Tidak Cek BTA">--Pilih Hasil--</option>
                                                                 <option value="negatif">Negatif</option>
                                                                 <option value="+1">Positif 1</option>
                                                                 <option value="+2">Positif 2</option>
