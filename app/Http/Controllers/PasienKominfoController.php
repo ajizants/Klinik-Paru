@@ -786,64 +786,64 @@ class PasienKominfoController extends Controller
                     "pasien_rw" => $res_pasien['pasien_rw'] ?? null,
                     "penjamin_nama" => $res_pasien['penjamin_nama'] ?? null,
                 ];
-            }
 
-            // Panggil metode untuk melakukan request pendaftaran
-            $cpptRes = $model->cpptRequest($params);
-            if (!isset($cpptRes['response']['data'])) {
-                $cppt = null;
-            } else {
-                $cppt = $cpptRes['response']['data'];
-            }
-
-            $pendaftaran = $model->pendaftaranRequest($params);
-            // return response()->json($pendaftaran);
-
-            if (isset($pendaftaran) && is_array($pendaftaran)) {
-                $filteredData = array_filter($pendaftaran, function ($d) use ($no_rm) {
-                    return $d['pasien_no_rm'] === $no_rm;
-                });
-                $filteredData = array_values($filteredData);
-
-                $doctorNipMap = [
-                    'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
-                    'dr. AGIL DANANJAYA, Sp.P' => '9',
-                    'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
-                    'dr. SIGIT DWIYANTO' => '198903142022031005',
-                ];
-
-                // Iterate over filtered data and add nip
-                foreach ($filteredData as &$item) {
-                    $dokter_nama = $item['dokter_nama'];
-                    $item['nip_dokter'] = $doctorNipMap[$dokter_nama] ?? 'Unknown';
-                }
-
-                if (!empty($filteredData)) {
-                    $response = [
-                        'metadata' => [
-                            'message' => 'Data Pasien Ditemukan',
-                            'code' => 200,
-                        ],
-                        'response' => [
-                            'pendaftaran' => $filteredData,
-                            'pasien' => $pasien,
-                            'cppt' => $cppt,
-                        ],
-                    ];
-                    // Mengembalikan respons dengan kode 200
-                    return response()->json($response, 200);
+                // Panggil metode untuk melakukan request pendaftaran
+                $cpptRes = $model->cpptRequest($params);
+                if (!isset($cpptRes['response']['data'])) {
+                    $cppt = null;
                 } else {
-                    $response = [
-                        'metadata' => [
-                            'message' => 'Pasien tidak mendaftar pada hari ini',
-                            'code' => 204,
-                        ],
-                    ];
-                    // Mengembalikan respons dengan kode 200
-                    return response()->json($response, 200);
+                    $cppt = $cpptRes['response']['data'];
                 }
-            } else {
-                return response()->json(['message' => 'Data pendaftaran tidak ditemukan'], 404);
+
+                $pendaftaran = $model->pendaftaranRequest($params);
+                // return response()->json($pendaftaran);
+
+                if (isset($pendaftaran) && is_array($pendaftaran)) {
+                    $filteredData = array_filter($pendaftaran, function ($d) use ($no_rm) {
+                        return $d['pasien_no_rm'] === $no_rm;
+                    });
+                    $filteredData = array_values($filteredData);
+
+                    $doctorNipMap = [
+                        'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
+                        'dr. AGIL DANANJAYA, Sp.P' => '9',
+                        'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
+                        'dr. SIGIT DWIYANTO' => '198903142022031005',
+                    ];
+
+                    // Iterate over filtered data and add nip
+                    foreach ($filteredData as &$item) {
+                        $dokter_nama = $item['dokter_nama'];
+                        $item['nip_dokter'] = $doctorNipMap[$dokter_nama] ?? 'Unknown';
+                    }
+
+                    if (!empty($filteredData)) {
+                        $response = [
+                            'metadata' => [
+                                'message' => 'Data Pasien Ditemukan',
+                                'code' => 200,
+                            ],
+                            'response' => [
+                                'pendaftaran' => $filteredData,
+                                'pasien' => $pasien,
+                                'cppt' => $cppt,
+                            ],
+                        ];
+                        // Mengembalikan respons dengan kode 200
+                        return response()->json($response, 200);
+                    } else {
+                        $response = [
+                            'metadata' => [
+                                'message' => 'Pasien tidak mendaftar pada hari ini',
+                                'code' => 204,
+                            ],
+                        ];
+                        // Mengembalikan respons dengan kode 200
+                        return response()->json($response, 200);
+                    }
+                } else {
+                    return response()->json(['message' => 'Data pendaftaran tidak ditemukan'], 404);
+                }
             }
         } else {
             return response()->json(['message' => 'Parameter tidak valid'], 404);
@@ -1039,7 +1039,7 @@ class PasienKominfoController extends Controller
                 } elseif ($ruang === 'lab') {
                     $lab = LaboratoriumKunjunganModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
                     $d['status'] = $lab ? 'sudah' : 'belum';
-                    if (empty($d['lab'])) {
+                    if (empty($d['laboratorium'])) {
                         return null;
                     }
 

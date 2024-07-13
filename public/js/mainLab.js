@@ -66,6 +66,30 @@ function handlePilihSemuaClick(pilihSemuaId, checkboxClass) {
     });
 }
 
+function askLab(button) {
+    var norm = $(button).data("norm");
+    var nama = $(button).data("nama");
+    var dokter = $(button).data("kddokter");
+    var alamat = $(button).data("alamat");
+    var layanan = $(button).data("layanan");
+    var notrans = $(button).data("notrans");
+    var tgltrans = $(button).data("tgltrans");
+    var asktind = $(button).data("asktind");
+
+    $("#norm").val(norm);
+    $("#nama").val(nama);
+    $("#dokter").val(dokter);
+    $("#dokter").trigger("change");
+    $("#alamat").val(alamat);
+    $("#layanan").val(layanan).trigger("change");
+    $("#notrans").val(notrans);
+    $("#tgltrans").val(tgltrans);
+
+    // Memperbarui konten asktindContent
+    $("#permintaan").html(`<b>${asktind}</b>`);
+
+    scrollToInputSection();
+}
 function simpan() {
     var dataTerpilih = [];
     var norm = $("#norm").val();

@@ -115,7 +115,7 @@ function processDataArray(dataArray, ruang) {
             item.index = dataArray.indexOf(item) + 1;
 
             var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-            item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+            item.aksi = `<a href="" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
                                                 data-norm="${item.pasien_no_rm}"
                                                 data-nama="${item.pasien_nama}"
                                                 data-dokter="${item.dokter_nama}"
@@ -140,7 +140,7 @@ function processDataArray(dataArray, ruang) {
             item.index = dataArray.indexOf(item) + 1;
 
             var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-            item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+            item.aksi = `<a href="" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
                                         data-norm="${item.pasien_no_rm}"
                                         data-nama="${item.pasien_nama}"
                                         data-dokter="${item.dokter_nama}"
@@ -153,16 +153,30 @@ function processDataArray(dataArray, ruang) {
         });
     } else if (ruang === "lab") {
         dataArray.forEach(function (item) {
-            var asktind = "";
-            if (item.radiologi && Array.isArray(item.radiologi)) {
-                item.radiologi.forEach(function (radiologi) {
-                    asktind += `${radiologi.layanan} ket: ${radiologi.layanan}, `;
+            let asktind = "";
+            if (item.laboratorium && Array.isArray(item.laboratorium)) {
+                item.laboratorium.forEach(function (lab, index) {
+                    // Add data in pairs
+                    asktind += `${lab.layanan} (${lab.keterangan})`;
+                    // Add comma if it's an odd index, otherwise add a new line
+                    if ((index + 1) % 2 === 0) {
+                        asktind += ",<br>";
+                    } else {
+                        asktind += ",  ";
+                    }
                 });
+
+                // Remove the last comma and space or newline for a clean ending
+                if (asktind.endsWith(", ")) {
+                    asktind = asktind.slice(0, -2);
+                } else if (asktind.endsWith(",<br>")) {
+                    asktind = asktind.slice(0, -1);
+                }
             }
             item.asktind = asktind;
             item.index = dataArray.indexOf(item) + 1;
 
-            var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
+            const alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
             item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
                             data-norm="${item.pasien_no_rm}"
                             data-nama="${item.pasien_nama}"
@@ -173,7 +187,7 @@ function processDataArray(dataArray, ruang) {
                             data-layanan="${item.penjamin_nama}"
                             data-notrans="${item.no_trans}"
                             data-tgltrans="${item.tanggal}"
-                            onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
+                            onclick="askLab(this);"><i class="fas fa-pen-to-square"></i></a>`;
         });
     }
 }
@@ -280,12 +294,13 @@ function drawDataTable(dataArray, ruang) {
                 { data: "pasien_no_rm", className: "text-center p-2" },
                 { data: "pasien_nama", className: "p-2 col-2" },
                 { data: "asktind", className: "p-2 col-4" },
-                { data: "dokter_nama", className: "p-2 col-2" },
+                { data: "dokter_nama", className: "p-2 col-3" },
             ],
             order: [
                 [1, "asc"],
                 [2, "asc"],
             ],
+            pageLength: 5,
         });
     }
 }
@@ -460,7 +475,7 @@ function cariKominfo(norm, tgl, ruang) {
                     } else if (code === 204) {
                         Swal.fire({
                             icon: "info",
-                            title: "Pasien tidak mendaftar pada hari ini",
+                            title: response.metadata.message,
                         });
                         if (ruang != "lab") {
                             rstForm();

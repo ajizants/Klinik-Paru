@@ -75,6 +75,16 @@
                         @csrf
                         <div class="card-body p-2">
                             <div class="row px-2">
+                                <div class="LayLab col-2 mr-2">
+                                    <div class="card card-warning">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Permintaan Pemeriksaan</h4>
+                                        </div>
+                                        <div class="card-body p-1 card-body table-responsive" id="permintaan"
+                                            style="height: 330px">
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="LayLab col-5 mr-2">
                                     <div class="card card-danger">
                                         <div class="card-header">
