@@ -82,7 +82,7 @@ function validasiKunjungan() {
         "tglKunj",
         "nxKontrol",
         "norm",
-        "bta",
+        // "bta",
         "bb",
         "obatDots",
         "blnKe",

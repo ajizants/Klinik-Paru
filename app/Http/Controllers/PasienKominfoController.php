@@ -755,32 +755,38 @@ class PasienKominfoController extends Controller
 
             // Panggil metode untuk melakukan request pasien
             $res_pasien = $model->pasienRequest($no_rm);
-
-            // if (!isset($res_pasien['response']['data'])) {
-            //     return response()->json(['message' => 'Data pasien tidak ditemukan'], 404);
-            // }
-
-            // $pasienData = $res_pasien;
-            $pasien = [
-                "pasien_nik" => $res_pasien['pasien_nik'],
-                "pasien_no_kk" => $res_pasien['pasien_no_kk'],
-                "pasien_nama" => $res_pasien['pasien_nama'],
-                "pasien_no_rm" => $res_pasien['pasien_no_rm'],
-                "jenis_kelamin_id" => $res_pasien['jenis_kelamin_id'],
-                "jenis_kelamin_nama" => $res_pasien['jenis_kelamin_nama'],
-                "pasien_tempat_lahir" => $res_pasien['pasien_tempat_lahir'],
-                "pasien_tgl_lahir" => $res_pasien['pasien_tgl_lahir'],
-                "pasien_no_hp" => $res_pasien['pasien_no_hp'],
-                "pasien_domisili" => $res_pasien['pasien_alamat'],
-                "pasien_alamat" => $res_pasien['kelurahan_nama'] . ", " . $res_pasien['pasien_rt'] . "/" . $res_pasien['pasien_rw'] . ", " . $res_pasien['kecamatan_nama'] . ", " . $res_pasien['kabupaten_nama'] . ", " . $res_pasien['provinsi_nama'],
-                "provinsi_nama" => $res_pasien['provinsi_nama'],
-                "kabupaten_nama" => $res_pasien['kabupaten_nama'],
-                "kecamatan_nama" => $res_pasien['kecamatan_nama'],
-                "kelurahan_nama" => $res_pasien['kelurahan_nama'],
-                "pasien_rt" => $res_pasien['pasien_rt'],
-                "pasien_rw" => $res_pasien['pasien_rw'],
-                "penjamin_nama" => $res_pasien['penjamin_nama'],
-            ];
+            // dd($res_pasien);
+            if ($res_pasien == "Data tidak ditemukan!") {
+                $response = [
+                    'metadata' => [
+                        'message' => 'Pasien dengan No. RM ' . $no_rm . ' tidak ditemukan',
+                        'code' => 204,
+                    ],
+                ];
+                return response()->json($response);
+            } else {
+                // $pasienData = $res_pasien;
+                $pasien = [
+                    "pasien_nik" => $res_pasien['pasien_nik'] ?? null,
+                    "pasien_no_kk" => $res_pasien['pasien_no_kk'] ?? null,
+                    "pasien_nama" => $res_pasien['pasien_nama'] ?? null,
+                    "pasien_no_rm" => $res_pasien['pasien_no_rm'] ?? null,
+                    "jenis_kelamin_id" => $res_pasien['jenis_kelamin_id'] ?? null,
+                    "jenis_kelamin_nama" => $res_pasien['jenis_kelamin_nama'] ?? null,
+                    "pasien_tempat_lahir" => $res_pasien['pasien_tempat_lahir'] ?? null,
+                    "pasien_tgl_lahir" => $res_pasien['pasien_tgl_lahir'] ?? null,
+                    "pasien_no_hp" => $res_pasien['pasien_no_hp'] ?? null,
+                    "pasien_domisili" => $res_pasien['pasien_alamat'] ?? null,
+                    "pasien_alamat" => $res_pasien['kelurahan_nama'] ?? null . ", " . $res_pasien['pasien_rt'] ?? null . "/" . $res_pasien['pasien_rw'] ?? null . ", " . $res_pasien['kecamatan_nama'] ?? null . ", " . $res_pasien['kabupaten_nama'] ?? null . ", " . $res_pasien['provinsi_nama'] ?? null,
+                    "provinsi_nama" => $res_pasien['provinsi_nama'] ?? null,
+                    "kabupaten_nama" => $res_pasien['kabupaten_nama'] ?? null,
+                    "kecamatan_nama" => $res_pasien['kecamatan_nama'] ?? null,
+                    "kelurahan_nama" => $res_pasien['kelurahan_nama'] ?? null,
+                    "pasien_rt" => $res_pasien['pasien_rt'] ?? null,
+                    "pasien_rw" => $res_pasien['pasien_rw'] ?? null,
+                    "penjamin_nama" => $res_pasien['penjamin_nama'] ?? null,
+                ];
+            }
 
             // Panggil metode untuk melakukan request pendaftaran
             $cpptRes = $model->cpptRequest($params);
