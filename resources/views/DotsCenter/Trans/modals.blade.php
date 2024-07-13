@@ -238,8 +238,12 @@
                                                         <div class="col-sm-12">
                                                             <a id="addPTB"
                                                                 class="btn btn-success d-flex justify-content-center"
-                                                                onclick="addPasienTB(); simpanKunjungan2();">Simpan
+                                                                onclick="validasiDaftar();">Simpan
                                                                 Data Pasien</a>
+                                                            {{-- <a id="addPTB"
+                                                                class="btn btn-success d-flex justify-content-center"
+                                                                onclick="addPasienTB(); simpanKunjungan2();">Simpan
+                                                                Data Pasien</a> --}}
                                                         </div>
                                                     </div>
                                                 </div>
