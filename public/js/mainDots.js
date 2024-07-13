@@ -131,6 +131,71 @@ function validasiKunjungan() {
         simpanKunjungan(); // Contoh: Panggil fungsi simpan() jika semua data valid
     }
 }
+function validasiDaftar() {
+    // console.log("Validasi kunjungan dimulai");
+    var inputsToValidate = [
+        "modal-norm",
+        "modal-layanan",
+        "modal-nama",
+        "modal-notrans",
+        "modal-hp",
+        "modal-nik",
+        "modal-alamat",
+        "modal-dokter",
+        "modal-petugas",
+        "modal-kdDx",
+        "modal-tcm",
+        "modal-hiv",
+        "modal-dm",
+        "modal-bb",
+        "modal-tglmulai",
+        "modal-obtDots",
+        "modal-blnKe",
+        "modal-nxKontrol",
+    ];
+
+    var error = false;
+
+    inputsToValidate.forEach(function (inputId) {
+        var inputElement = document.getElementById(inputId);
+        var inputValue = inputElement.value.trim();
+
+        if (inputValue === "") {
+            if ($(inputElement).hasClass("select2-hidden-accessible")) {
+                // Select2 element
+                $(inputElement)
+                    .next(".select2-container")
+                    .addClass("input-error");
+            } else {
+                // Regular input element
+                inputElement.classList.add("input-error");
+            }
+            error = true;
+        } else {
+            if ($(inputElement).hasClass("select2-hidden-accessible")) {
+                // Select2 element
+                $(inputElement)
+                    .next(".select2-container")
+                    .removeClass("input-error");
+            } else {
+                // Regular input element
+                inputElement.classList.remove("input-error");
+            }
+        }
+    });
+    if (error) {
+        // Tampilkan pesan error menggunakan Swal jika ada input yang kosong
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Ada data yang masih kosong! Mohon lengkapi semua data.",
+        });
+    } else {
+        // Lakukan pengiriman data atau proses selanjutnya jika semua data valid
+        addPasienTB();
+        simpanKunjungan2(); // Contoh: Panggil fungsi simpan() jika semua data valid
+    }
+}
 
 async function simpanKunjungan() {
     try {
