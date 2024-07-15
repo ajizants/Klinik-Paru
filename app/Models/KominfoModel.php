@@ -267,6 +267,12 @@ class KominfoModel extends Model
             if ($data['metadata']['message'] == "Data tidak ditemukan!") {
                 $res = "Data tidak ditemukan!";
             } else {
+                $alamat = $data['response']['data']['kelurahan_nama'] . ', ' .
+                    $data['response']['data']['pasien_rt'] . '/' .
+                    $data['response']['data']['pasien_rw'] . ', ' .
+                    $data['response']['data']['kecamatan_nama'] . ', ' .
+                    $data['response']['data']['kabupaten_nama'] . ', ' .
+                    $data['response']['data']['provinsi_nama'];
                 $res = [
                     "pasien_nik" => $data['response']['data']['pasien_nik'],
                     "pasien_no_kk" => $data['response']['data']['pasien_no_kk'],
@@ -278,7 +284,8 @@ class KominfoModel extends Model
                     "pasien_tgl_lahir" => $data['response']['data']['pasien_tgl_lahir'],
                     "pasien_no_hp" => $data['response']['data']['pasien_no_hp'],
                     "pasien_domisili" => $data['response']['data']['pasien_alamat'],
-                    "pasien_alamat" => ($data['response']['data']['kelurahan_nama']) . ', ' . ($data['response']['data']['pasien_rt']) . '/' . ($data['response']['data']['pasien_rw']) . ', ' . ($data['response']['data']['kecamatan_nama']) . ', ' . ($data['response']['data']['kabupaten_nama']) . ', ' . ($data['response']['data']['provinsi_nama']),
+                    // "pasien_alamat" => ($data['response']['data']['kelurahan_nama']) . ', ' . ($data['response']['data']['pasien_rt']) . '/' . ($data['response']['data']['pasien_rw']) . ', ' . ($data['response']['data']['kecamatan_nama']) . ', ' . ($data['response']['data']['kabupaten_nama']) . ', ' . ($data['response']['data']['provinsi_nama']),
+                    "pasien_alamat" => $alamat,
                     "pasien_kode_pos" => $data['response']['data']['pasien_kode_pos'],
                     "provinsi_id" => $data['response']['data']['provinsi_id'],
                     "provinsi_nama" => $data['response']['data']['provinsi_nama'],

@@ -489,7 +489,15 @@ function cariKominfo(norm, tgl, ruang) {
                             allowOutsideClick: false,
                         });
                         var pasien = response.response.pasien;
-                        var cppt = response.response.cppt[0];
+                        // var cppt = response.response.cppt;
+                        // if (cppt == null) {
+                        //     cppt = [];
+                        // } else {
+                        //     cppt = response.response.cppt[0];
+                        // }
+                        var cppt = response.response.cppt
+                            ? response.response.cppt[0]
+                            : [];
 
                         var pendaftaran = response.response.pendaftaran[0];
                         var notrans = pendaftaran.no_trans;
@@ -533,7 +541,7 @@ function cariKominfo(norm, tgl, ruang) {
                                 "🚀 ~ cariKominfo ~ permintaan:",
                                 permintaan
                             );
-                            isiIdentitas(pasien, pendaftaran);
+                            isiIdentitas(pasien, pendaftaran, permintaan);
                         } else if (ruang == "dots") {
                             isiBiodataModal(norm, tgl, pasien, pendaftaran);
                         } else if (ruang == "lab") {

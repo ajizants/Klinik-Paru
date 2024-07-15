@@ -777,7 +777,7 @@ class PasienKominfoController extends Controller
                     "pasien_tgl_lahir" => $res_pasien['pasien_tgl_lahir'] ?? null,
                     "pasien_no_hp" => $res_pasien['pasien_no_hp'] ?? null,
                     "pasien_domisili" => $res_pasien['pasien_alamat'] ?? null,
-                    "pasien_alamat" => $res_pasien['kelurahan_nama'] ?? null . ", " . $res_pasien['pasien_rt'] ?? null . "/" . $res_pasien['pasien_rw'] ?? null . ", " . $res_pasien['kecamatan_nama'] ?? null . ", " . $res_pasien['kabupaten_nama'] ?? null . ", " . $res_pasien['provinsi_nama'] ?? null,
+                    "pasien_alamat" => $res_pasien['pasien_alamat'] ?? null,
                     "provinsi_nama" => $res_pasien['provinsi_nama'] ?? null,
                     "kabupaten_nama" => $res_pasien['kabupaten_nama'] ?? null,
                     "kecamatan_nama" => $res_pasien['kecamatan_nama'] ?? null,

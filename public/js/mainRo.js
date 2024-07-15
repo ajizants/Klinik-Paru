@@ -215,7 +215,7 @@ async function cariTsRo(norm, tgl) {
         if (!response.ok) {
             if (response.status == 404) {
                 // searchRMObat(norm);
-                cariKominfo(norm, tgl);
+                cariKominfo(norm, tgl, "ro");
             } else {
                 Swal.fire({
                     icon: "error",
@@ -397,7 +397,7 @@ function askRo(button) {
     $("#tgltrans").val(tgltrans);
 
     // Memperbarui konten asktindContent
-    $("#asktindContent").html(`<b>${asktind}</b>`);
+    $("#permintaan").html(`<b>${asktind}</b>`);
 
     scrollToInputSection();
 }

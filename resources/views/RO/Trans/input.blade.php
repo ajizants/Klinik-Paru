@@ -115,7 +115,7 @@
                                                             placeholder="Permintaan RO"> --}}
                                                     <div class="col-md-6 border border-3 border-dark"
                                                         style="height: 47px;"">
-                                                        <p id="asktindContent"
+                                                        <p id="permintaan"
                                                         class="fw-bold fs-3">Permintaan RO:</p>
                                                     </div>
 
