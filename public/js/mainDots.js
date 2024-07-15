@@ -355,11 +355,12 @@ function populate() {
     populatePetugasOptions();
     populateDxMedis();
 }
-function handleKeyUp(event) {
-    if (event.key === "Enter") {
-        cariPasienTb();
-    }
-}
+// function handleKeyUp(event) {
+//     if (event.key === "Enter") {
+
+//         cariPasienTb();
+//     }
+// }
 function cariPasien() {
     // Corrected the usage of getElementById and value()
     let norm = document.getElementById("norm").value;

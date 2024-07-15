@@ -415,36 +415,206 @@ function antrianAll(ruang) {
     });
 }
 
+// function cariKominfo(norm, tgl, ruang) {
+//     var normValue = norm ? norm : $("#norm").val();
+//     if (ruang == "ro") {
+//         var tgl = tgl ? tgl : $("#tglRO").val();
+//     } else {
+//         var tgl = tgl ? tgl : $("#tanggal").val();
+//     }
+//     // console.log(normValue)
+//     // Add leading zeros if the value has less than 6 digits
+//     while (normValue.length < 6) {
+//         normValue = "0" + normValue;
+//     }
+//     if (
+//         isNaN(normValue) ||
+//         normValue === null ||
+//         normValue === undefined ||
+//         normValue == 0
+//     ) {
+//         Swal.fire({
+//             icon: "error",
+//             title: "No Rm Tidak Valid...!!! ",
+//         });
+//     } else {
+//         Swal.fire({
+//             icon: "info",
+//             title: "Sedang Mencari Data Pasien di Aplikasi KOMINFO\n Mohon Ditunggu ...!!!",
+//             // allowOutsideClick: false, // Mencegah interaksi di luar dialog
+//             didOpen: () => {
+//                 Swal.showLoading(); // Menampilkan loading spinner
+//             },
+//         });
+
+//         $.ajax({
+//             url: "/api/dataPasien",
+//             method: "POST",
+//             data: {
+//                 no_rm: normValue,
+//                 tanggal: tgl,
+//             },
+//             dataType: "json",
+//             success: function (response) {
+//                 if (response.error) {
+//                     console.error("Error: " + response.error);
+//                     Swal.fire({
+//                         icon: "error",
+//                         title:
+//                             "Unexpected metadata code: " +
+//                             code +
+//                             "\n Silahkan Coba Lagi",
+//                     });
+//                 } else if (response.metadata) {
+//                     var code = response.metadata.code;
+
+//                     if (code === 404) {
+//                         Swal.fire({
+//                             icon: "info",
+//                             title: response.metadata.message,
+//                         });
+//                     } else if (code === 204) {
+//                         Swal.fire({
+//                             icon: "info",
+//                             title: response.metadata.message,
+//                         });
+//                         if (ruang != "lab") {
+//                             rstForm();
+//                         }
+//                     } else if (code === 200) {
+//                         Swal.fire({
+//                             icon: "info",
+//                             title: response.metadata.message,
+//                             showConfirmButton: false,
+//                             allowOutsideClick: false,
+//                         });
+//                         var pasien = response.response.pasien;
+//                         // var cppt = response.response.cppt;
+//                         // if (cppt == null) {
+//                         //     cppt = [];
+//                         // } else {
+//                         //     cppt = response.response.cppt[0];
+//                         // }
+//                         var cppt = response.response.cppt
+//                             ? response.response.cppt[0]
+//                             : [];
+
+//                         var pendaftaran = response.response.pendaftaran[0];
+//                         var notrans = pendaftaran.no_trans;
+
+//                         if (ruang == "igd") {
+//                             let permintaan = "";
+//                             var item = cppt; // Ambil data tindakan dari cppt
+
+//                             if (item.tindakan && Array.isArray(item.tindakan)) {
+//                                 item.tindakan.forEach(function (tindakan) {
+//                                     // Add data in pairs
+//                                     permintaan += `${tindakan.nama_tindakan} : ${tindakan.nama_obat},<br>`;
+//                                 });
+//                             }
+//                             item.permintaan = permintaan;
+//                             console.log(
+//                                 "🚀 ~ cariKominfo ~ permintaan:",
+//                                 permintaan
+//                             );
+//                             isiIdentitas(pasien, pendaftaran, permintaan);
+//                             // isiIdentitas(pasien, pendaftaran, cppt);
+//                             dataTindakan(notrans);
+//                         } else if (ruang == "farmasi") {
+//                             dataFarmasi();
+//                             isiIdentitas(pasien, pendaftaran);
+//                         } else if (ruang == "ro") {
+//                             let permintaan = "";
+//                             var item = cppt; // Ambil data tindakan dari cppt
+
+//                             if (
+//                                 item.radiologi &&
+//                                 Array.isArray(item.radiologi)
+//                             ) {
+//                                 item.radiologi.forEach(function (radiologi) {
+//                                     // Add data in pairs
+//                                     permintaan += `${radiologi.layanan} (${radiologi.keterangan}),<br>`;
+//                                 });
+//                             }
+//                             item.permintaan = permintaan;
+//                             console.log(
+//                                 "🚀 ~ cariKominfo ~ permintaan:",
+//                                 permintaan
+//                             );
+//                             isiIdentitas(pasien, pendaftaran, permintaan);
+//                         } else if (ruang == "dots") {
+//                             isiBiodataModal(norm, tgl, pasien, pendaftaran);
+//                         } else if (ruang == "lab") {
+//                             let permintaan = "";
+//                             var item = cppt; // Ambil data laboratorium dari cppt
+
+//                             if (
+//                                 item.laboratorium &&
+//                                 Array.isArray(item.laboratorium)
+//                             ) {
+//                                 item.laboratorium.forEach(function (
+//                                     lab,
+//                                     index
+//                                 ) {
+//                                     // Add data in pairs
+//                                     permintaan += `${lab.layanan} (${lab.keterangan})`;
+//                                     // Add comma if it's an odd index, otherwise add a new line
+//                                     if ((index + 1) % 2 === 0) {
+//                                         permintaan += ",<br>";
+//                                     } else {
+//                                         permintaan += ", ";
+//                                     }
+//                                 });
+
+//                                 // Remove the last comma and space or <br> for a clean ending
+//                                 if (permintaan.endsWith(", ")) {
+//                                     permintaan = permintaan.slice(0, -2);
+//                                 } else if (permintaan.endsWith(",<br>")) {
+//                                     permintaan = permintaan.slice(0, -5);
+//                                 }
+//                             }
+//                             item.permintaan = permintaan;
+//                             console.log(
+//                                 "🚀 ~ cariKominfo ~ permintaan:",
+//                                 permintaan
+//                             );
+//                             isiIdentitas(pasien, pendaftaran, permintaan);
+//                         }
+//                     } else {
+//                         // Handle other potential status codes
+//                         Swal.fire({
+//                             icon: "error",
+//                             title: "Unexpected metadata code: " + code,
+//                         });
+//                     }
+//                 }
+//             },
+
+//             error: function (error) {
+//                 console.error("Error fetching data:", error);
+//             },
+//         });
+//     }
+// }
+
 function cariKominfo(norm, tgl, ruang) {
-    var normValue = norm ? norm : $("#norm").val();
-    if (ruang == "ro") {
-        var tgl = tgl ? tgl : $("#tglRO").val();
-    } else {
-        var tgl = tgl ? tgl : $("#tanggal").val();
-    }
-    // console.log(normValue)
-    // Add leading zeros if the value has less than 6 digits
-    while (normValue.length < 6) {
-        normValue = "0" + normValue;
-    }
-    if (
-        isNaN(normValue) ||
-        normValue === null ||
-        normValue === undefined ||
-        normValue == 0
-    ) {
+    var normValue = norm || $("#norm").val();
+    tgl =
+        ruang === "ro" ? tgl || $("#tglRO").val() : tgl || $("#tanggal").val();
+
+    // Tambahkan nol di depan jika panjang nilai kurang dari 6 digit
+    normValue = normValue.padStart(6, "0");
+
+    if (isNaN(normValue) || !normValue) {
         Swal.fire({
             icon: "error",
-            title: "No Rm Tidak Valid...!!! ",
+            title: "No Rm Tidak Valid...!!!",
         });
     } else {
         Swal.fire({
             icon: "info",
             title: "Sedang Mencari Data Pasien di Aplikasi KOMINFO\n Mohon Ditunggu ...!!!",
-            // allowOutsideClick: false, // Mencegah interaksi di luar dialog
-            didOpen: () => {
-                Swal.showLoading(); // Menampilkan loading spinner
-            },
+            didOpen: () => Swal.showLoading(),
         });
 
         $.ajax({
@@ -462,140 +632,108 @@ function cariKominfo(norm, tgl, ruang) {
                         icon: "error",
                         title:
                             "Unexpected metadata code: " +
-                            code +
+                            response.error +
                             "\n Silahkan Coba Lagi",
                     });
                 } else if (response.metadata) {
-                    var code = response.metadata.code;
-
-                    if (code === 404) {
-                        Swal.fire({
-                            icon: "info",
-                            title: response.metadata.message,
-                        });
-                    } else if (code === 204) {
-                        Swal.fire({
-                            icon: "info",
-                            title: response.metadata.message,
-                        });
-                        if (ruang != "lab") {
-                            rstForm();
-                        }
-                    } else if (code === 200) {
-                        Swal.fire({
-                            icon: "info",
-                            title: response.metadata.message,
-                            showConfirmButton: false,
-                            allowOutsideClick: false,
-                        });
-                        var pasien = response.response.pasien;
-                        // var cppt = response.response.cppt;
-                        // if (cppt == null) {
-                        //     cppt = [];
-                        // } else {
-                        //     cppt = response.response.cppt[0];
-                        // }
-                        var cppt = response.response.cppt
-                            ? response.response.cppt[0]
-                            : [];
-
-                        var pendaftaran = response.response.pendaftaran[0];
-                        var notrans = pendaftaran.no_trans;
-
-                        if (ruang == "igd") {
-                            let permintaan = "";
-                            var item = cppt; // Ambil data tindakan dari cppt
-
-                            if (item.tindakan && Array.isArray(item.tindakan)) {
-                                item.tindakan.forEach(function (tindakan) {
-                                    // Add data in pairs
-                                    permintaan += `${tindakan.nama_tindakan} : ${tindakan.nama_obat},<br>`;
-                                });
-                            }
-                            item.permintaan = permintaan;
-                            console.log(
-                                "🚀 ~ cariKominfo ~ permintaan:",
-                                permintaan
-                            );
-                            isiIdentitas(pasien, pendaftaran, permintaan);
-                            // isiIdentitas(pasien, pendaftaran, cppt);
-                            dataTindakan(notrans);
-                        } else if (ruang == "farmasi") {
-                            dataFarmasi();
-                            isiIdentitas(pasien, pendaftaran);
-                        } else if (ruang == "ro") {
-                            let permintaan = "";
-                            var item = cppt; // Ambil data tindakan dari cppt
-
-                            if (
-                                item.radiologi &&
-                                Array.isArray(item.radiologi)
-                            ) {
-                                item.radiologi.forEach(function (radiologi) {
-                                    // Add data in pairs
-                                    permintaan += `${radiologi.layanan} (${radiologi.keterangan}),<br>`;
-                                });
-                            }
-                            item.permintaan = permintaan;
-                            console.log(
-                                "🚀 ~ cariKominfo ~ permintaan:",
-                                permintaan
-                            );
-                            isiIdentitas(pasien, pendaftaran, permintaan);
-                        } else if (ruang == "dots") {
-                            isiBiodataModal(norm, tgl, pasien, pendaftaran);
-                        } else if (ruang == "lab") {
-                            let permintaan = "";
-                            var item = cppt; // Ambil data laboratorium dari cppt
-
-                            if (
-                                item.laboratorium &&
-                                Array.isArray(item.laboratorium)
-                            ) {
-                                item.laboratorium.forEach(function (
-                                    lab,
-                                    index
-                                ) {
-                                    // Add data in pairs
-                                    permintaan += `${lab.layanan} (${lab.keterangan})`;
-                                    // Add comma if it's an odd index, otherwise add a new line
-                                    if ((index + 1) % 2 === 0) {
-                                        permintaan += ",<br>";
-                                    } else {
-                                        permintaan += ", ";
-                                    }
-                                });
-
-                                // Remove the last comma and space or <br> for a clean ending
-                                if (permintaan.endsWith(", ")) {
-                                    permintaan = permintaan.slice(0, -2);
-                                } else if (permintaan.endsWith(",<br>")) {
-                                    permintaan = permintaan.slice(0, -5);
-                                }
-                            }
-                            item.permintaan = permintaan;
-                            console.log(
-                                "🚀 ~ cariKominfo ~ permintaan:",
-                                permintaan
-                            );
-                            isiIdentitas(pasien, pendaftaran, permintaan);
-                        }
-                    } else {
-                        // Handle other potential status codes
-                        Swal.fire({
-                            icon: "error",
-                            title: "Unexpected metadata code: " + code,
-                        });
-                    }
+                    handleMetadata(response, ruang);
                 }
             },
-
             error: function (error) {
                 console.error("Error fetching data:", error);
             },
         });
     }
 }
+
+function handleMetadata(response, ruang) {
+    var code = response.metadata.code;
+    var message = response.metadata.message;
+
+    if (code === 404 || code === 204) {
+        Swal.fire({
+            icon: "info",
+            title: message,
+        });
+        if (code === 204 && ruang !== "lab") {
+            rstForm();
+        }
+    } else if (code === 200) {
+        Swal.fire({
+            icon: "info",
+            title: message,
+            showConfirmButton: false,
+            allowOutsideClick: false,
+        });
+        var pasien = response.response.pasien;
+        var cppt = response.response.cppt ? response.response.cppt[0] : [];
+        var pendaftaran = response.response.pendaftaran[0];
+        var notrans = pendaftaran.no_trans;
+
+        switch (ruang) {
+            case "igd":
+                handleIgd(cppt, pasien, pendaftaran);
+                dataTindakan(notrans);
+                break;
+            case "farmasi":
+                dataFarmasi();
+                isiIdentitas(pasien, pendaftaran);
+                break;
+            case "ro":
+                handleRo(cppt, pasien, pendaftaran);
+                break;
+            case "dots":
+                isiBiodataModal(norm, tgl, pasien, pendaftaran);
+                break;
+            case "lab":
+                handleLab(cppt, pasien, pendaftaran);
+                break;
+            default:
+                Swal.fire({
+                    icon: "error",
+                    title: "Unexpected ruang: " + ruang,
+                });
+        }
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "Unexpected metadata code: " + code,
+        });
+    }
+}
+
+function handleIgd(cppt, pasien, pendaftaran) {
+    let permintaan = "";
+    if (cppt.tindakan && Array.isArray(cppt.tindakan)) {
+        cppt.tindakan.forEach(function (tindakan) {
+            permintaan += `${tindakan.nama_tindakan} : ${tindakan.nama_obat},<br>`;
+        });
+    }
+    isiIdentitas(pasien, pendaftaran, permintaan);
+}
+
+function handleRo(cppt, pasien, pendaftaran) {
+    let permintaan = "";
+    if (cppt.radiologi && Array.isArray(cppt.radiologi)) {
+        cppt.radiologi.forEach(function (radiologi) {
+            permintaan += `${radiologi.layanan} (${radiologi.keterangan}),<br>`;
+        });
+    }
+    isiIdentitas(pasien, pendaftaran, permintaan);
+}
+
+function handleLab(cppt, pasien, pendaftaran) {
+    let permintaan = "";
+    if (cppt.laboratorium && Array.isArray(cppt.laboratorium)) {
+        cppt.laboratorium.forEach(function (lab, index) {
+            permintaan += `${lab.layanan} (${lab.keterangan})`;
+            permintaan += (index + 1) % 2 === 0 ? ",<br>" : ", ";
+        });
+        permintaan = permintaan.replace(/, $|,<br>$/, "");
+    }
+    isiIdentitas(pasien, pendaftaran, permintaan);
+}
+
 function isiIdentitas(pasien, pendaftaran, permintaan) {
     console.log("🚀 ~ isiIdentitas ~ pendaftaran:", pendaftaran);
     console.log("🚀 ~ isiIdentitas ~ pasien:", pasien);

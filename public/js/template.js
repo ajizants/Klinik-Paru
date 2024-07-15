@@ -149,9 +149,8 @@ function enterCariRM(event, ruang) {
 
         if (ruang == "lab") {
             cariTsLab(norm, tgl, ruang);
-        } else {
-            console.log("🚀 ~ enterCariRM ~ bukan lab:", ruang);
-            // cariPasienTb(norm, tgl, ruang);
+        } else if (ruang == "dots") {
+            cariPasienTb(norm, tgl, ruang);
         }
     }
 }

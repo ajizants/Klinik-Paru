@@ -31,7 +31,8 @@
                                                 <div class="col-sm-2">
                                                     <input type="text" name="norm" id="norm"
                                                         class="form-control" placeholder="No RM" maxlength="6"
-                                                        pattern="[0-9]{6}" required onkeyup="handleKeyUp(event)" />
+                                                        pattern="[0-9]{6}" required
+                                                        onkeyup="enterCariRM(event,'dots');" />
                                                 </div>
                                                 <label for="layanan"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan

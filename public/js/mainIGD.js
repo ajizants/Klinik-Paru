@@ -172,7 +172,7 @@ function batal() {
     tabletindakan.clear().destroy();
     var tablebmhp = $("#transaksiBMHP").DataTable();
     tablebmhp.clear().destroy();
-    antrian();
+    updateAntrian();
     quantity = 0;
     scrollToTop();
     $("#formbmhp").hide();
@@ -204,7 +204,7 @@ function selesai() {
         var tablebmhp = $("#transaksiBMHP").DataTable();
         tablebmhp.clear().destroy();
         quantity = 0;
-        antrian();
+        updateAntrian();
         scrollToTop();
         $("#formbmhp").hide();
         $("#formtind").show();
