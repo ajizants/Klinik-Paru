@@ -318,6 +318,7 @@ class DotsController extends Controller
         $nama = $request->input('nama');
         $alamat = $request->input('alamat');
         $tcm = $request->input('tcm');
+        $sample = $request->input('sample');
         $dx = $request->input('dx');
         $mulai = $request->input('mulai');
         $bb = $request->input('bb');
@@ -341,6 +342,7 @@ class DotsController extends Controller
             $addPTB->alamat = $alamat;
             $addPTB->noHp = $hp;
             $addPTB->tcm = $tcm;
+            $addPTB->sample = $sample;
             $addPTB->kdDx = $dx;
             $addPTB->tglMulai = $mulai;
             $addPTB->bb = $bb;
@@ -367,8 +369,10 @@ class DotsController extends Controller
     {
         $id = $request->input('id');
         $status = $request->input('status');
+        $sample = $request->input('sample');
         $pasien = DotsModel::where('id', $id)->first();
         $pasien->hasilBerobat = $status;
+        $pasien->sample = $sample;
         $pasien->save();
         return response()->json(['message' => 'Data berhasil diupdate']);
     }

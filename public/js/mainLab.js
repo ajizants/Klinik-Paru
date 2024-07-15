@@ -384,6 +384,7 @@ function resetForm(message) {
     $('table tbody input[type="checkbox"]').prop("checked", false);
     document.getElementById("form_identitas").reset();
     document.getElementById("form_Petugas").reset();
+    $("#permintaan").html("");
     $("#analis,#dokter,#tujuan").trigger("change");
     var btndelete = document.getElementById("delete_ts");
     btndelete.style.display =
@@ -407,27 +408,27 @@ function batal() {
     scrollToTop();
 }
 
-function processAntrianData(data, filter, tabel) {
-    $("#loadingSpinner").show();
-    var filteredData = data.filter(function (item) {
-        return item.status === filter;
-    });
+// function processAntrianData(data, filter, tabel) {
+//     $("#loadingSpinner").show();
+//     var filteredData = data.filter(function (item) {
+//         return item.status === filter;
+//     });
 
-    filteredData.forEach(function (item) {
-        item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-                      onclick="cariTsRo('${item.pasien_no_rm}','${$(
-            "#tanggal"
-        ).val()}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
-    });
+//     filteredData.forEach(function (item) {
+//         item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+//                       onclick="cariTsRo('${item.pasien_no_rm}','${$(
+//             "#tanggal"
+//         ).val()}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
+//     });
 
-    if ($.fn.DataTable.isDataTable(tabel)) {
-        var table = tabel.DataTable();
-        table.clear().rows.add(filteredData).draw();
-    } else {
-        initializeAntrian(tabel, filteredData);
-    }
-    $("#loadingSpinner").hide();
-}
+//     if ($.fn.DataTable.isDataTable(tabel)) {
+//         var table = tabel.DataTable();
+//         table.clear().rows.add(filteredData).draw();
+//     } else {
+//         initializeAntrian(tabel, filteredData);
+//     }
+//     $("#loadingSpinner").hide();
+// }
 
 // function fetchDataAntrian(params, callback) {
 //     console.log("🚀 ~ fetchDataAntrian ~ params:", params);

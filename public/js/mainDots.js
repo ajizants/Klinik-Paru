@@ -5,6 +5,7 @@ async function addPasienTB() {
     var alamat = $("#modal-alamat").val();
     var hp = $("#modal-hp").val();
     var tcm = $("#modal-tcm").val();
+    var sample = $("#modal-sample").val();
     var dx = $("#modal-kdDx").val();
     var mulai = $("#modal-tglmulai").val();
     var bb = $("#modal-bb").val();
@@ -15,64 +16,44 @@ async function addPasienTB() {
     var blnKe = $("#modal-pasienTB #modal-blnKe").val();
     var petugas = $("#modal-petugas").val();
     var dokter = $("#modal-dokter").val();
-    if (
-        !norm ||
-        !hp ||
-        !tcm ||
-        !dx ||
-        !mulai ||
-        !bb ||
-        !terapi ||
-        !petugas ||
-        !dokter
-    ) {
-        var dataKurang = [];
-        if (!hp) dataKurang.push("No HP Belum Diisi");
-        if (!petugas) dataKurang.push("No petugas Belum Diisi");
 
-        Swal.fire({
-            icon: "error",
-            title: "Data Tidak Lengkap...!!! " + dataKurang.join(", "),
-        });
-    } else {
-        // console.log("siap tambah pasien tb");
-        $.ajax({
-            url: "/api/tambah/pasien/TB",
-            type: "POST",
-            data: {
-                norm: norm,
-                nama: nama,
-                nik: nik,
-                alamat: alamat,
-                hp: hp,
-                tcm: tcm,
-                dx: dx,
-                mulai: mulai,
-                bb: bb,
-                terapi: terapi,
-                hiv: hiv,
-                dm: dm,
-                ket: ket,
-                petugas: petugas,
-                dokter: dokter,
-                hasilBerobat: blnKe,
-            },
-            success: function (response) {
-                Toast.fire({
-                    icon: "success",
-                    title: "Data Berhasil Disimpan, Maturnuwun...!!!",
-                });
-                pasienTB();
-                resetForm();
-            },
-            error: function (xhr) {
-                Toast.fire({
-                    icon: "error",
-                    title: "Data Tidak Lengkap...!!!",
-                });
-            },
-        });
-    }
+    $.ajax({
+        url: "/api/tambah/pasien/TB",
+        type: "POST",
+        data: {
+            norm: norm,
+            nama: nama,
+            nik: nik,
+            alamat: alamat,
+            hp: hp,
+            tcm: tcm,
+            sample: sample,
+            dx: dx,
+            mulai: mulai,
+            bb: bb,
+            terapi: terapi,
+            hiv: hiv,
+            dm: dm,
+            ket: ket,
+            petugas: petugas,
+            dokter: dokter,
+            hasilBerobat: blnKe,
+        },
+        success: function (response) {
+            Toast.fire({
+                icon: "success",
+                title: "Data Berhasil Disimpan, Maturnuwun...!!!",
+            });
+            pasienTB();
+            resetForm();
+        },
+        error: function (xhr) {
+            Toast.fire({
+                icon: "error",
+                title: "Data Tidak Lengkap...!!!",
+            });
+        },
+    });
 }
 
 function validasiKunjungan() {
@@ -144,7 +125,6 @@ function validasiDaftar() {
         "modal-dokter",
         "modal-petugas",
         "modal-kdDx",
-        "modal-tcm",
         "modal-hiv",
         "modal-dm",
         "modal-bb",

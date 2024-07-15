@@ -81,7 +81,7 @@
                                             <h4 class="card-title">Permintaan Pemeriksaan</h4>
                                         </div>
                                         <div class="card-body p-1 card-body table-responsive" id="permintaan"
-                                            style="height: 330px">
+                                            style="height: 340px">
                                         </div>
                                     </div>
                                 </div>
@@ -110,7 +110,7 @@
                                         <div class="card-header">
                                             <h4 class="card-title">Pemeriksaan yang dilakukan</h4>
                                         </div>
-                                        <div class="card-body py-1">
+                                        <div class="card-body py-1" style="height: 340px">
                                             <table id="dataTrans" class="table table table-tight table-hover">
                                                 <thead>
                                                     <tr>

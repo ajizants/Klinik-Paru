@@ -353,6 +353,7 @@ $(document).ready(function () {
         $("#tgltrans").val(tgltrans);
         $("#tgltind").val(tgl);
         $("#asktind").val(asktind);
+        $("#permintaan").html(`<b>${asktind}</b>`);
 
         scrollToInputSection();
         dataTindakan();

@@ -78,8 +78,8 @@
                                                     </div>
 
                                                     <div class="form-group row">
-                                                        <label for="modal-dokter"
-                                                            class="col-sm-1 col-form-label font-weight-bold">Dokter</label>
+                                                        {{-- <label for="modal-dokter"
+                                                            class="col-sm-1 col-form-label font-weight-bold">Dokter</label> --}}
                                                         <div class="col-sm-3">
                                                             <select id="modal-dokter"
                                                                 class="form-control select2bs4 mb-3 border border-primary">
@@ -87,8 +87,8 @@
                                                             </select>
                                                         </div>
 
-                                                        <label for="modal-petugas"
-                                                            class="col-sm-1 col-form-label font-weight-bold">Petugas</label>
+                                                        {{-- <label for="modal-petugas"
+                                                            class="col-sm-1 col-form-label font-weight-bold">Petugas</label> --}}
                                                         <div class="col-sm-3">
                                                             <select id="modal-petugas"
                                                                 class="form-control select2bs4 border border-primary">
@@ -96,46 +96,81 @@
                                                             </select>
                                                         </div>
 
-                                                        <label for="modal-kdDx"
+                                                        {{-- <label for="modal-kdDx"
                                                             class="col-sm-1 col-form-label font-weight-bold">DX
-                                                            Medis</label>
+                                                            Medis</label> --}}
                                                         <div class="col-sm-3">
                                                             <select id="modal-kdDx"
                                                                 class="form-control select2bs4 mb-3 border border-primary">
                                                                 <option value="">--Pilih Diagnosa--</option>
                                                             </select>
                                                         </div>
+
+                                                        {{-- <label for="modal-obtDots"
+                                                            class="col-sm-1 col-form-label font-weight-bold">Obat</label> --}}
+                                                        <div class="col-sm-3">
+                                                            <select id="modal-obtDots"
+                                                                class="form-control select2bs4 border border-info">
+                                                                <option value="">--Jenis Obat--</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
 
                                                     <div class="form-group row">
-                                                        <label for="modal-tcm"
+                                                        {{-- <label for="modal-bb"
+                                                            class="col-sm-1 col-form-label font-weight-bold">BB</label> --}}
+                                                        <div class="col-sm-1">
+                                                            <input type="text" id="modal-bb"
+                                                                class="form-control form-control-sm border border-info"
+                                                                placeholder="BB" required />
+                                                        </div>
+                                                        <div class="col-sm-2">
+                                                            {{-- <input type="text" id="modal-sample"
+                                                                class="form-control form-control-sm border border-info"
+                                                                placeholder="Sample" required /> --}}
+                                                            <select name="Modal sample" id="modal-sample"
+                                                                class="form-control select2bs4 border border-info">
+                                                                <option value="">--Sample TCM--</option>
+                                                                <option value="Sputum">Sputum</option>
+                                                                <option value="Cairan Pleura">Cairan Pleura</option>
+                                                                <option value="Jaringan Biopsi">Jaringan Biopsi</option>
+                                                                <option value="Cairan Lambung">Cairan Lambung</option>
+                                                                <option value="Lainnya">Lainnya, Tulis di keterangan
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        {{-- <label for="modal-tcm"
                                                             class="col-sm-1 col-form-label font-weight-bold">Hasil
-                                                            TCM</label>
+                                                            TCM</label> --}}
                                                         <div class="col-sm-3">
                                                             <select id="modal-tcm"
                                                                 class="form-control select2bs4 border border-info">
-                                                                <option value="">--Pilih Hasil--</option>
+                                                                <option value="">--Pilih Hasil TCM--</option>
+                                                                <option value="Tidak Periksa">Tidak Periksa</option>
                                                                 <option value="Neg">Negatif</option>
-                                                                <option value="Low RifSen">MTB Det Low RifSen</option>
-                                                                <option value="Low RifRes">MTB Det Low RifRes</option>
-                                                                <option value="Medium RifSen">MTB Det Medium RifSen
+                                                                <option value="Low RifSen">MTB Det Low - RifSen
                                                                 </option>
-                                                                <option value="Medium RifRes">MTB Det Medium RifRes
+                                                                <option value="Low RifRes">MTB Det Low - RifRes
                                                                 </option>
-                                                                <option value="Hight RifSen">MTB Det Hight RifSen
+                                                                <option value="Medium RifSen">MTB Det Medium - RifSen
                                                                 </option>
-                                                                <option value="Hight RifRes">MTB Det Hight RifRes
+                                                                <option value="Medium RifRes">MTB Det Medium - RifRes
                                                                 </option>
-                                                                <option value="Trace RifSen">MTB Trace Det RifSen
+                                                                <option value="Hight RifSen">MTB Det Hight - RifSen
+                                                                </option>
+                                                                <option value="Hight RifRes">MTB Det Hight - RifRes
+                                                                </option>
+                                                                <option value="Trace RifSen">MTB Trace Det - RifSen
                                                                 </option>
                                                                 <option value="Trace Neg">MTB Trace Negatif
                                                                 </option>
                                                             </select>
                                                         </div>
 
-                                                        <label for="modal-hiv"
+
+                                                        {{-- <label for="modal-hiv"
                                                             class="col-sm-1 col-form-label font-weight-bold">Status
-                                                            HIV</label>
+                                                            HIV</label> --}}
                                                         <div class="col-sm-3">
                                                             <select id="modal-hiv"
                                                                 class="form-control select2bs4 border border-info">
@@ -147,9 +182,9 @@
                                                             </select>
                                                         </div>
 
-                                                        <label for="modal-dm"
+                                                        {{-- <label for="modal-dm"
                                                             class="col-sm-1 col-form-label font-weight-bold">Status
-                                                            DM</label>
+                                                            DM</label> --}}
                                                         <div class="col-sm-3">
                                                             <select id="modal-dm"
                                                                 class="form-control select2bs4 border border-info">
@@ -163,13 +198,6 @@
                                                     </div>
 
                                                     <div class="form-group row mt-3">
-                                                        <label for="modal-bb"
-                                                            class="col-sm-1 col-form-label font-weight-bold">BB</label>
-                                                        <div class="col-sm-3">
-                                                            <input type="text" id="modal-bb"
-                                                                class="form-control border border-info"
-                                                                placeholder="Berat Badan" required />
-                                                        </div>
 
                                                         <label for="modal-tglmulai"
                                                             class="col-sm-1 col-form-label font-weight-bold">Tgl
@@ -178,22 +206,12 @@
                                                             <input id="modal-tglmulai" type="date"
                                                                 class="form-control border border-primary" />
                                                         </div>
-
-                                                        <label for="modal-obtDots"
-                                                            class="col-sm-1 col-form-label font-weight-bold">Obat</label>
-                                                        <div class="col-sm-3">
-                                                            <select id="modal-obtDots"
-                                                                class="form-control select2bs4 border border-info">
-                                                                <option value="">--Jenis Obat--</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group row mt-3">
                                                         <div class="col-sm">
-                                                            <textarea type="text" id="modal-ket" class="form-control border border-info" placeholder="Keterangan Lain"
-                                                                style="height: 50px;" required></textarea>
+                                                            <input type="text" id="modal-ket"
+                                                                class="form-control border border-info"
+                                                                placeholder="Keterangan Lain" />
                                                         </div>
+
                                                     </div>
 
                                                     <div
@@ -207,7 +225,7 @@
                                                         <div class="col-sm-3">
                                                             <select id="modal-bta"
                                                                 class="form-control select2bs4 border border-primary">
-                                                                <option value="">--Pilih Hasil--</option>
+                                                                <option value="">--Pilih Hasil BTA--</option>
                                                                 <option value="negatif">Negatif</option>
                                                                 <option value="+1">Positif 1</option>
                                                                 <option value="+2">Positif 2</option>
@@ -240,10 +258,6 @@
                                                                 class="btn btn-success d-flex justify-content-center"
                                                                 onclick="validasiDaftar();">Simpan
                                                                 Data Pasien</a>
-                                                            {{-- <a id="addPTB"
-                                                                class="btn btn-success d-flex justify-content-center"
-                                                                onclick="addPasienTB(); simpanKunjungan2();">Simpan
-                                                                Data Pasien</a> --}}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -399,35 +413,84 @@
                                             <form class="form-horizontal" id="updatePengobatanTB">
                                                 <div class="card-body">
                                                     <div class="form-group row">
-                                                        <div class="col-sm-3 row">
+                                                        <div class="col-sm-1 row">
                                                             <input type="number" name="status-norm" id="status-norm"
-                                                                class="form-control col" placeholder=" No RM"
-                                                                maxlength="6" pattern="[0-9]{6}" readonly />
+                                                                class="form-control col p-0 text-center"
+                                                                placeholder=" No RM" maxlength="6"
+                                                                pattern="[0-9]{6}" readonly />
                                                             <input type="number" name="status-id" id="status-id"
                                                                 class="form-control col" placeholder="ID"
-                                                                maxlength="6" pattern="[0-9]{6}" readonly />
+                                                                maxlength="6" pattern="[0-9]{6}" readonly
+                                                                style="display: none;" />
                                                         </div>
                                                         <div class="col-sm-4">
                                                             <input type="text" id="status-nama"
-                                                                class="form-control bg-white border border-white"
+                                                                class="form-control border border-white"
                                                                 placeholder="Nama Pasien" readonly>
                                                         </div>
-                                                        <div class="col-sm-5">
+                                                        <div class="col-sm">
                                                             <input id="status-alamat"
-                                                                class="form-control bg-white border border-white"
+                                                                class="form-control border border-white"
                                                                 placeholder="Alamat Pasien" readonly />
                                                         </div>
                                                     </div>
 
                                                     <div class="form-group row">
-                                                        <div class="col">
+                                                        <div class="col-sm-3">
+                                                            <label for="statusPengobatan"
+                                                                class="col-form-label font-weight-bold">Hasil
+                                                                Berobat</label>
                                                             <select id="statusPengobatan"
                                                                 class="form-control select2bs4 border border-primary">
                                                                 <option value="">--Pilih Kemajuan--</option>
                                                             </select>
                                                         </div>
-                                                        {{-- <textarea id="status-pengobatan" class="form-control bg-white border border-white" style="height: 69px;"
-                                                            placeholder="Status Pengobatan"></textarea> --}}
+                                                        <div class="col-sm-3">
+                                                            <label for="modal-tcm-update"
+                                                                class="col-form-label font-weight-bold">Hasil
+                                                                TCM</label>
+                                                            <select id="modal-tcm-update"
+                                                                class="form-control select2bs4 border border-info">
+                                                                <option value="">--Pilih Hasil--</option>
+                                                                <option value="Tidak Periksa">Tidak Periksa</option>
+                                                                <option value="Neg">Negatif</option>
+                                                                <option value="Low RifSen">MTB Det Low - RifSen
+                                                                </option>
+                                                                <option value="Low RifRes">MTB Det Low - RifRes
+                                                                </option>
+                                                                <option value="Medium RifSen">MTB Det Medium - RifSen
+                                                                </option>
+                                                                <option value="Medium RifRes">MTB Det Medium - RifRes
+                                                                </option>
+                                                                <option value="Hight RifSen">MTB Det Hight - RifSen
+                                                                </option>
+                                                                <option value="Hight RifRes">MTB Det Hight - RifRes
+                                                                </option>
+                                                                <option value="Trace RifSen">MTB Trace Det - RifSen
+                                                                </option>
+                                                                <option value="Trace Neg">MTB Trace Negatif
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            <label for="modal-sample-update"
+                                                                class="col-form-label font-weight-bold">Sample
+                                                                TCM</label>
+                                                            {{-- <input type="text" id="modal-sample"
+                                                                    class="form-control form-control-sm border border-info"
+                                                                    placeholder="Sample" required /> --}}
+                                                            <select name="Modal sample" id="modal-sample-update"
+                                                                class="form-control select2bs4 border border-info">
+                                                                <option value="">--Sample TCM--</option>
+                                                                <option value="Sputum">Sputum</option>
+                                                                <option value="Cairan Pleura">Cairan Pleura</option>
+                                                                <option value="Jaringan Biopsi">Jaringan Biopsi
+                                                                </option>
+                                                                <option value="Cairan Lambung">Cairan Lambung</option>
+                                                                <option value="Lainnya">Lainnya, Tulis di keterangan
+                                                                </option>
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <!-- /.card-body -->

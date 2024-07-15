@@ -5,7 +5,7 @@ var Toast = Swal.mixin({
     timer: 3000,
 });
 function fetchDataAntrian(params, callback) {
-    console.log("🚀 ~ fetchDataAntrian ~ params:", params);
+    // console.log("🚀 ~ fetchDataAntrian ~ params:", params);
     $.ajax({
         url: "/api/cpptKominfo",
         type: "post",
@@ -20,7 +20,7 @@ function fetchDataAntrian(params, callback) {
 }
 
 function initializeDataAntrian(response, ruang) {
-    console.log("🚀 ~ initializeDataAntrian ~ ruang:", ruang);
+    // console.log("🚀 ~ initializeDataAntrian ~ ruang:", ruang);
     // Pastikan response.data adalah objek yang berisi data pasien
     if (response && response.response && response.response.data) {
         var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
@@ -46,7 +46,7 @@ function initializeDataAntrian(response, ruang) {
 }
 
 function antrian(ruang) {
-    console.log("🚀 ~ antrian ~ ruang:", ruang);
+    // console.log("🚀 ~ antrian ~ ruang:", ruang);
     $("#loadingSpinner").show();
     var tanggal_awal = $("#tanggal").val(); // Ganti id input tanggal_awal
     var tanggal_akhir = $("#tanggal").val(); // Ganti id input tanggal_akhir
@@ -59,10 +59,10 @@ function antrian(ruang) {
     };
 
     fetchDataAntrian(param, function (response) {
-        console.log("🚀 ~ response:", response);
+        // console.log("🚀 ~ response:", response);
         $("#loadingSpinner").hide();
         // var ruang = ruang;
-        console.log("🚀 ~ antrian - fetchDataAntrian~ ruang:", ruang);
+        // console.log("🚀 ~ antrian - fetchDataAntrian~ ruang:", ruang);
         if ($.fn.DataTable.isDataTable("#dataAntrian")) {
             var table = $("#dataAntrian").DataTable();
 
@@ -94,7 +94,7 @@ function antrian(ruang) {
 }
 
 function processDataArray(dataArray, ruang) {
-    console.log("🚀 ~ processDataArray ~ ruang:", ruang);
+    // console.log("🚀 ~ processDataArray ~ ruang:", ruang);
     if (ruang === "dots") {
         dataArray.forEach(function (item) {
             item.index = dataArray.indexOf(item) + 1;
@@ -115,7 +115,7 @@ function processDataArray(dataArray, ruang) {
             item.index = dataArray.indexOf(item) + 1;
 
             var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-            item.aksi = `<a href="" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+            item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
                                                 data-norm="${item.pasien_no_rm}"
                                                 data-nama="${item.pasien_nama}"
                                                 data-dokter="${item.dokter_nama}"
@@ -128,12 +128,13 @@ function processDataArray(dataArray, ruang) {
                                                 onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
         });
     } else if (ruang === "igd") {
+        console.log("🚀 ~ dataArray igd:", dataArray);
         dataArray.forEach(function (item) {
             var asktind = "";
             // Pastikan item.tindakan adalah array sebelum mengaksesnya
             if (item.tindakan && Array.isArray(item.tindakan)) {
                 item.tindakan.forEach(function (tindakan) {
-                    asktind += `${tindakan.nama_tindakan} : ${tindakan.nama_obat},\n`;
+                    asktind += `${tindakan.nama_tindakan} : ${tindakan.nama_obat},<br>`;
                 });
             }
             item.asktind = asktind;
@@ -239,8 +240,8 @@ function drawDataTable(dataArray, ruang) {
                 { data: "penjamin_nama", className: "text-center p-2" },
                 { data: "pasien_no_rm", className: "text-center p-2" },
                 { data: "pasien_nama", className: "p-2 col-2" },
-                { data: "asktind", className: "p-2 col-4" },
-                { data: "dokter_nama", className: "p-2 col-2" },
+                { data: "asktind", className: "p-2 col-3" },
+                { data: "dokter_nama", className: "p-2 col-3" },
             ],
             order: [
                 [1, "asc"],
@@ -261,8 +262,8 @@ function drawDataTable(dataArray, ruang) {
                         return `<div class="badge badge-${backgroundColor}">${data}</div>`;
                     },
                 },
-                { data: "antrean_nomor", className: "text-center p-2" },
                 { data: "tanggal", className: "text-center p-2 col-1" },
+                { data: "antrean_nomor", className: "text-center p-2" },
                 { data: "pasien_no_rm", className: "text-center p-2" },
                 { data: "penjamin_nama", className: "text-center p-2" },
                 { data: "pasien_nama", className: "p-2 col-2" },
@@ -488,23 +489,88 @@ function cariKominfo(norm, tgl, ruang) {
                             allowOutsideClick: false,
                         });
                         var pasien = response.response.pasien;
-                        var cppt = response.response.cppt;
+                        var cppt = response.response.cppt[0];
 
                         var pendaftaran = response.response.pendaftaran[0];
                         var notrans = pendaftaran.no_trans;
 
                         if (ruang == "igd") {
-                            isiIdentitas(pasien, pendaftaran, cppt);
+                            let permintaan = "";
+                            var item = cppt; // Ambil data tindakan dari cppt
+
+                            if (item.tindakan && Array.isArray(item.tindakan)) {
+                                item.tindakan.forEach(function (tindakan) {
+                                    // Add data in pairs
+                                    permintaan += `${tindakan.nama_tindakan} : ${tindakan.nama_obat},<br>`;
+                                });
+                            }
+                            item.permintaan = permintaan;
+                            console.log(
+                                "🚀 ~ cariKominfo ~ permintaan:",
+                                permintaan
+                            );
+                            isiIdentitas(pasien, pendaftaran, permintaan);
+                            // isiIdentitas(pasien, pendaftaran, cppt);
                             dataTindakan(notrans);
                         } else if (ruang == "farmasi") {
                             dataFarmasi();
                             isiIdentitas(pasien, pendaftaran);
                         } else if (ruang == "ro") {
+                            let permintaan = "";
+                            var item = cppt; // Ambil data tindakan dari cppt
+
+                            if (
+                                item.radiologi &&
+                                Array.isArray(item.radiologi)
+                            ) {
+                                item.radiologi.forEach(function (radiologi) {
+                                    // Add data in pairs
+                                    permintaan += `${radiologi.layanan} (${radiologi.keterangan}),<br>`;
+                                });
+                            }
+                            item.permintaan = permintaan;
+                            console.log(
+                                "🚀 ~ cariKominfo ~ permintaan:",
+                                permintaan
+                            );
                             isiIdentitas(pasien, pendaftaran);
                         } else if (ruang == "dots") {
                             isiBiodataModal(norm, tgl, pasien, pendaftaran);
                         } else if (ruang == "lab") {
-                            isiIdentitas(pasien, pendaftaran);
+                            let permintaan = "";
+                            var item = cppt; // Ambil data laboratorium dari cppt
+
+                            if (
+                                item.laboratorium &&
+                                Array.isArray(item.laboratorium)
+                            ) {
+                                item.laboratorium.forEach(function (
+                                    lab,
+                                    index
+                                ) {
+                                    // Add data in pairs
+                                    permintaan += `${lab.layanan} (${lab.keterangan})`;
+                                    // Add comma if it's an odd index, otherwise add a new line
+                                    if ((index + 1) % 2 === 0) {
+                                        permintaan += ",<br>";
+                                    } else {
+                                        permintaan += ", ";
+                                    }
+                                });
+
+                                // Remove the last comma and space or <br> for a clean ending
+                                if (permintaan.endsWith(", ")) {
+                                    permintaan = permintaan.slice(0, -2);
+                                } else if (permintaan.endsWith(",<br>")) {
+                                    permintaan = permintaan.slice(0, -5);
+                                }
+                            }
+                            item.permintaan = permintaan;
+                            console.log(
+                                "🚀 ~ cariKominfo ~ permintaan:",
+                                permintaan
+                            );
+                            isiIdentitas(pasien, pendaftaran, permintaan);
                         }
                     } else {
                         // Handle other potential status codes
@@ -522,7 +588,7 @@ function cariKominfo(norm, tgl, ruang) {
         });
     }
 }
-function isiIdentitas(pasien, pendaftaran, cppt) {
+function isiIdentitas(pasien, pendaftaran, permintaan) {
     console.log("🚀 ~ isiIdentitas ~ pendaftaran:", pendaftaran);
     console.log("🚀 ~ isiIdentitas ~ pasien:", pasien);
     $("#layanan").val(pendaftaran.penjamin_nama); // Trigger change event jika diperlukan
@@ -539,6 +605,10 @@ function isiIdentitas(pasien, pendaftaran, cppt) {
     var tanggalHariIni = new Date().toLocaleDateString("en-CA");
 
     var tglDaftar = pendaftaran.tanggal.split("-").reverse().join("-");
+
+    // Memperbarui konten asktindContent
+    $("#permintaan").html(`<b>${permintaan}</b>`);
+
     if (pendaftaran.tanggal !== tanggalHariIni) {
         Swal.fire({
             icon: "warning",
@@ -717,7 +787,7 @@ function populateLayananOptions(kelas) {
     var LayananSelectElement = $("#jenislayanan");
     LayananSelectElement.empty();
     $.get("/api/layanan", { kelas: kelas }, function (data) {
-        console.log(data);
+        // console.log(data);
         data.sort(function (a, b) {
             var namaA = a.nmLayanan.toUpperCase();
             var namaB = b.nmLayanan.toUpperCase();
@@ -737,10 +807,10 @@ function populateLayananOptions(kelas) {
                 false
             );
             LayananSelectElement.append(option).trigger("change");
-            console.log(
-                "Options added to select element:",
-                LayananSelectElement.html()
-            );
+            // console.log(
+            //     "Options added to select element:",
+            //     LayananSelectElement.html()
+            // );
         });
     });
 }
@@ -1451,47 +1521,6 @@ function populateDxMedis() {
         });
     });
 }
-// function populateObatDotsOptions() {
-//     var obatDots = $("#obatD #obatDots");
-//     var obatDotsModal = $("#modal-pasienTB #modal-obtDots");
-//     // console.log("🚀 ~ populateObatDotsOptions ~ obatDotsModal:", obatDotsModal);
-//     // console.log($("#obatDots"));
-
-//     if (!obatDots.length || !obatDotsModal.length) {
-//         console.error(
-//             "One or both of the elements (obatDots, obatDotsModal) not found."
-//         );
-//         return;
-//     }
-
-//     $.get("/api/obatDots", function (data) {
-//         if (!Array.isArray(data)) {
-//             console.error("Invalid data format received from server.");
-//             return;
-//         }
-
-//         data.sort((a, b) =>
-//             a.nmPengobatan.localeCompare(b.nmPengobatan, undefined, {
-//                 sensitivity: "base",
-//             })
-//         );
-
-//         data.forEach((obtDot) => {
-//             var option = new Option(obtDot.nmPengobatan, obtDot.id);
-
-//             if (!obatDots.find(`option[value="${obtDot.id}"]`).length) {
-//                 obatDots.append(option).trigger("change");
-//             }
-//         });
-//         data.forEach((obtDot) => {
-//             if (!obatDotsModal.find(`option[value="${obtDot.id}"]`).length) {
-//             }
-//         });
-//     }).fail((xhr, status, error) => {
-//         console.error("Error fetching data:", error);
-//         // Tindakan yang sesuai untuk menangani kesalahan
-//     });
-// }
 
 function populateObat() {
     var obatDots = $("#obatD #obatDots");

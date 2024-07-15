@@ -147,31 +147,35 @@ function isiBiodataModal(norm, date, pasien, pendaftaran, dx) {
 function editPasienTB(button) {
     var id = button.getAttribute("data-id");
     var norm = button.getAttribute("data-norm");
-    var status = button.getAttribute("data-status");
-    var petugas = button.getAttribute("data-petugas");
-    var dokter = button.getAttribute("data-dokter");
     var nama = button.getAttribute("data-nama");
     var alamat = button.getAttribute("data-alamat");
     var statusPengobatan = button.getAttribute("data-hasilBerobat");
+    var tcm = button.getAttribute("data-tcm");
+    var sample = button.getAttribute("data-sample");
 
     document.getElementById("status-id").value = id;
     document.getElementById("status-norm").value = norm;
-    // document.getElementById("status-pengobatan").value = status;
     document.getElementById("status-nama").value = nama;
     document.getElementById("status-alamat").value = alamat;
     $("#statusPengobatan").val(statusPengobatan).trigger("change");
+    $("#modal-tcm-update").val(tcm).trigger("change");
+    $("#modal-sample-update").val(sample).trigger("change");
 }
 
 function updateStatus(id) {
     console.log("🚀 ~ id:", id);
     var id = document.getElementById("status-id").value;
     var status = document.getElementById("statusPengobatan").value;
+    var tcm = document.getElementById("modal-tcm-update").value;
+    var sample = document.getElementById("modal-sample-update").value;
     $.ajax({
         url: "/api/update/status/pengobatan",
         type: "POST",
         data: {
             id: id,
             status: status,
+            tcm: tcm,
+            sample: sample,
         },
         success: function (response) {
             console.log("🚀 ~ updateStatus ~ response:", response);
@@ -326,6 +330,8 @@ function tabelTelat(pasienTelat) {
                                     data-nama="${item.nama}"
                                     data-alamat="${item.alamat}"
                                     data-hasilBerobat="${item.hasilBerobat}"
+                                    data-tcm="${item.tcm}"
+                                    data-sample="${item.sample}"
                                     data-toggle="modal"
                                     data-target="#modal-update"
                                     onclick="editPasienTB(this);"><i class="fa-solid fa-file-pen"></i></button>`;
@@ -390,9 +396,11 @@ function tabelDo(pasienDo) {
                                     data-nama="${item.nama}"
                                     data-alamat="${item.alamat}"
                                     data-hasilBerobat="${item.hasilBerobat}"
+                                    data-tcm="${item.tcm}"
+                                    data-sample="${item.sample}"
                                     data-toggle="modal"
                                     data-target="#modal-update"
-                                    onclick="editPasienTB(this);"><i class="fa-solid fa-file-pen"></i></button>`;
+                                    onclick="editPasienTB(this);" placeholder="Update Hasil Pengobatan dan TCM"><i class="fa-solid fa-file-pen"></i></button>`;
     });
     $("#Pdo")
         .DataTable({
@@ -463,6 +471,8 @@ function pasienTB() {
                                     data-nama="${item.nama}"
                                     data-alamat="${item.alamat}"
                                     data-hasilBerobat="${item.hasilBerobat}"
+                                    data-tcm="${item.tcm}"
+                                    data-sputum="${item.sputum}"
                                     data-toggle="modal"
                                     data-target="#modal-update"
                                     onclick="editPasienTB(this);"><i class="fa-solid fa-file-pen"></i></button>

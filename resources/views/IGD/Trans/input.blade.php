@@ -86,8 +86,11 @@
                                         <div class="card-body p-2">
                                             @csrf
                                             <form class="form-grup col">
-                                                <textarea id="asktind" class="form-control-plaintext border border-primary px-2 fs-6" style="height: 8rem"
-                                                    placeholder="Permintaan Tindakan" readonly></textarea>
+                                                <div class="card-body p-1 card-body table-responsive" id="permintaan"
+                                                    style="height: 8rem">
+                                                </div>
+                                                {{-- <textarea id="asktind" class="form-control-plaintext border border-primary px-2 fs-6" style="height: 8rem"
+                                                    placeholder="Permintaan Tindakan" readonly></textarea> --}}
                                                 <div class="form-group">
                                                     <label for="tindakan"> Tindakan :</label>
                                                     <select id="tindakan"
