@@ -81,7 +81,7 @@
                                 </div>
                                 <div class="col-auto">
                                     <a class="btn btn-danger" id="tblBatal"
-                                        onclick="resetForm('dibatalkan');">Batal</a>
+                                        onclick="resetForm('Transaksi dibatalkan');">Batal</a>
                                 </div>
                             </div>
                         </div>

@@ -206,6 +206,7 @@ function simpan() {
                 icon: "success",
                 title: "Data berhasil tersimpan...!!!",
             });
+            resetForm("Data berhasil tersimpan...!!!");
         })
         .catch((error) => {
             console.error(
