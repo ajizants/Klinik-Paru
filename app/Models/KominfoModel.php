@@ -444,7 +444,7 @@ class KominfoModel extends Model
                     $lama_lab = 0;
                 } else {
                     $selesaiLab = date('Y-m-d H:i:s', strtotime($labData->updated_at));
-                    if ($message["ruang_laboratorium_panggil_waktu"] == 0) {
+                    if ($message["ruang_laboratorium_panggil_waktu"] == null) {
                         if (strtotime($message["ruang_poli_selesai_waktu"]) > strtotime($message["ruang_tensi_selesai_waktu"])) {
                             $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_poli_selesai_waktu"])) / 60, 2));
                         } else {
@@ -471,7 +471,7 @@ class KominfoModel extends Model
                 } else {
                     $panggilIgd = date('Y-m-d H:i:s', strtotime($message["ruang_poli_selesai_waktu"]));
                     $selesaiIgd = date('Y-m-d H:i:s', strtotime($igdData->updated_at));
-                    $panggilFarmasi=$selesaiIgd;
+                    $panggilFarmasi = $selesaiIgd;
                     if ($message["ruang_poli_skip_waktu"] == 0) {
                         $lama_igd = max(0, round((strtotime($igdData->updated_at) - strtotime($message["ruang_poli_selesai_waktu"])) / 60, 2));
                     } else {

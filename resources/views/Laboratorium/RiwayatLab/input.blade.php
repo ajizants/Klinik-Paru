@@ -1,8 +1,13 @@
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link active" id="ikunjungan" onclick="showKunjungan();"><b>Laporan Kunjungan</b></a>
+                        <a class="nav-link active" type="button" id="ikunjungan" onclick="showKunjungan();"><b>Laporan
+                                Kunjungan</b></a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" type="button" id="ipoin" onclick="showPoin();"><b>Laporan Poin
+                                Petugas</b></a>
+                    </li>
+                    {{-- <li class="nav-item">
                         <a class="nav-link" id="ipenjamin" onclick="showPenjamin();"><b>Laporan Penjamin</b></a>
                     </li>
                     <li class="nav-item">
@@ -10,10 +15,8 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="ihasil" onclick="showHasil();"><b>Laporan Hasil Pemeriksaan</b></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="ipoin" onclick="showPoin();"><b>Laporan Poin Petugas</b></a>
-                    </li>
+                    </li> --}}
+
                 </ul>
                 <div class="container-fluid mt-1" id="parameter">
                     <div class="card card-lime pb-0">
@@ -40,6 +43,10 @@
                                         <a class="btn btn-success d-flex justify-content-center mx-2"
                                             onclick="reportKunjungan();">Cari</a>
                                     </div>
+                                    <div id="cariPoin">
+                                        <a class="btn btn-success d-flex justify-content-center mx-2"
+                                            onclick="reportPoin();">Cari</a>
+                                        {{-- </div>
                                     <div id="cariPenjamin">
                                         <a class="btn btn-success d-flex justify-content-center mx-2"
                                             onclick="reportPenjamin();">Cari</a>
@@ -55,13 +62,10 @@
                                     <div id="cariHasil">
                                         <a class="btn btn-success d-flex justify-content-center mx-2"
                                             onclick="reportHasil();">Cari</a>
-                                    </div>
-                                    <div id="cariPoin">
-                                        <a class="btn btn-success d-flex justify-content-center mx-2"
-                                            onclick="reportPoin();">Cari</a>
+                                    </div> --}}
+
                                     </div>
                                 </div>
-                            </div>
                         </form>
                     </div>
                 </div>
@@ -97,7 +101,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="container-fluid" id="penjamin">
+                {{-- <div class="container-fluid" id="penjamin">
                     <div class="card card-info">
                         <div class="card-header">
                             <h4 class="card-title">Laporan Kunjungan Berdasarkan Penjamin</h4>
@@ -123,8 +127,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="container-fluid" id="reagen">
+                </div> --}}
+                {{-- <div class="container-fluid" id="reagen">
                     <div class="card card-warning">
                         <div class="card-header">
                             <h4 class="card-title">Laporan Jumlah total pemeriksaan (penggunaan reagen)</h4>
@@ -147,8 +151,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="container-fluid" id="hasil">
+                </div> --}}
+                {{-- <div class="container-fluid" id="hasil">
                     <div class="card card-success">
                         <div class="card-header">
                             <h4 class="card-title">Laporan Hasil Pemeriksaan</h4>
@@ -171,7 +175,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <div class="container-fluid" id="poin">
                     <div class="card card-orange">
                         <div class="card-header">

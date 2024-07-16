@@ -8,25 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class LayananModel extends Model
 {
     use HasFactory;
-    //layanan pemeriksaan yang tersedia di kkpm
-    protected $connection = ('mysql');
-
-    protected $table = ('kasir_m_layanan');
-    // protected $primaryKey = ('idLayanan');
-
-    protected $filable = [
-        'kelas',
-        'nmLayanan',
-        'tarif',
-        'status',
+    protected $table = 'kasir_m_layanan';
+    protected $primaryKey = 'idLayanan';
+    protected $fillable = [
+        'nmLayanan', 'tarif', 'kelas', 'status',
     ];
 
     public function kelas()
     {
-        return $this->hasOne(LayananKelasModel::class, 'kelas', 'kelas');
-    }
-    public static function edit(string $id)
-    {
-        return static::where('idLayanan', $id)->save();
+        return $this->belongsTo(LayananKelasModel::class, 'idKelas', 'id');
     }
 }

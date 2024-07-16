@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\LayananModel;
-use App\Models\KunjunganModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class KasirController extends Controller
 {
@@ -26,52 +25,51 @@ class KasirController extends Controller
         return response()->json($layanan, 200, [], JSON_PRETTY_PRINT);
     }
 
-    // public function add(Request $request)
-    // {
-    //     // Mengambil nilai dari input pengguna
-    //     $nmTindakan = $request->input('nmTindakan');
-    //     $harga = $request->input('harga');
-
-    //     // Pastikan $kdTind memiliki nilai yang valid sebelum menyimpan data
-    //     if ($nmTindakan !== null) {
-    //         // Membuat instance dari model KunjunganTindakan
-    //         $JenisTindakan = new TindakanModel();
-    //         // Mengatur nilai-nilai kolom
-    //         $JenisTindakan->nmTindakan = $nmTindakan;
-    //         $JenisTindakan->harga = $harga;
-
-    //         // Simpan data ke dalam tabel
-    //         $JenisTindakan->save();
-
-    //         // Respon sukses atau redirect ke halaman lain
-    //         return response()->json(['message' => 'Data berhasil disimpan']);
-    //     } else {
-    //         // Handle case when $kdTind is null, misalnya kirim respon error
-    //         return response()->json(['message' => 'Jenis Tindakan tidak valid'], 400);
-    //     }
-    // }
-
-    // public function delete(Request $request)
-    // {
-    //     $kdTindakan = $request->input('kdTindakan');
-
-    //     // Cek apakah ID yang diterima adalah ID yang valid dalam database
-    //     $tindakan = TindakanModel::find($kdTindakan);
-
-    //     if (!$tindakan) {
-    //         return response()->json(['message' => 'Data tindakan tidak ditemukan'], 404);
-    //     }
-
-    //     // Hapus data tindakan dari database
-    //     $tindakan->delete();
-
-    //     // Respon sukses
-    //     return response()->json(['message' => 'Data tindakan berhasil dihapus']);
-    // }
-
-    public function updateLayanan()
+    public function add(Request $request)
     {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'nmLayanan' => 'required|string|max:255',
+            'tarif' => 'required|string|max:255',
+            'kelas' => 'required|string|max:255',
+            'status' => 'required',
+        ]);
 
+        try {
+            // Create a new instance of LayananModel with the validated data
+            $layanan = LayananModel::create($validatedData);
+
+            // Return a JSON response indicating success
+            return response()->json(['message' => 'Data layanan berhasil ditambahkan', 'data' => $layanan], 201);
+        } catch (\Exception $e) {
+            // Return a JSON response indicating failure
+            return response()->json(['message' => 'Data layanan gagal ditambahkan', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function delete(Request $request)
+    {
+        try {
+            LayananModel::where('idLayanan', $request->input('id'))->delete();
+            return response()->json(['message' => 'Data layanan berhasil dihapus']);
+        } catch (\Exception $e) {
+            Log::error('Terjadi kesalahan saat menghapus data: ' . $e->getMessage());
+            return response()->json(['message' => 'Data layanan gagal dihapus']);
+        }
+    }
+
+    public function updateLayanan(Request $request)
+    {
+        try {
+            $data = LayananModel::where('idLayanan', $request->input('id'))->firstOrFail();
+
+            $data->update($request->only(['nmLayanan', 'tarif', 'kelas', 'status']));
+
+            return response()->json(['message' => 'Data layanan berhasil diperbarui']);
+        } catch (\Exception $e) {
+            Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
+            return response()->json(['message' => 'Data layanan gagal diperbarui']);
+        }
     }
 
 }

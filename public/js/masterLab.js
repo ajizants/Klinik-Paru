@@ -28,7 +28,7 @@ function updateLayanan() {
     var kelas = document.getElementById("status-kelas").value;
     var status = document.getElementById("status-layanan").value;
     $.ajax({
-        url: "/api/update/layanan",
+        url: "/api/layanan/update",
         type: "POST",
         data: {
             id: id,
@@ -39,6 +39,38 @@ function updateLayanan() {
         },
         success: function (response) {
             console.log("🚀 ~ updateLayanan ~ response:", response);
+            Swal.fire({
+                icon: "success",
+                title: response.message,
+            });
+            layananLab();
+        },
+        error: function (xhr) {
+            // Handle error
+        },
+    });
+}
+function addLayanan() {
+    var nmLayanan = document.getElementById("nmLayanan").value;
+    var tarif = document.getElementById("tarif").value;
+    var kelas = document.getElementById("kelas").value;
+    var status = document.getElementById("layanan").value;
+    $.ajax({
+        url: "/api/layanan/add",
+        type: "POST",
+        data: {
+            nmLayanan: nmLayanan,
+            tarif: tarif,
+            kelas: kelas,
+            status: status,
+        },
+        success: function (response) {
+            console.log("🚀 ~ updateLayanan ~ response:", response);
+            Swal.fire({
+                icon: "success",
+                title: response.message,
+            });
+            layananLab();
         },
         error: function (xhr) {
             // Handle error
@@ -65,7 +97,13 @@ function layananLab() {
                                     data-status="${item.status}"
                                     data-toggle="modal"
                                     data-target="#modal-update"
-                                    onclick="editLayanan(this);"><i class="fas fa-pen-to-square pr-3"></i></a>`;
+                                    onclick="editLayanan(this);"><i class="fas fa-pen-to-square pr-3"></i></a>
+                                <a href="" class="delete"
+                                    data-id="${item.idLayanan}"
+                                    onclick="deleteLayanan(${item.idLayanan}, '${item.nmLayanan}'); return false;">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                                `;
 
                 if (item.status == 1) {
                     item.status = "Tersedia";
@@ -84,7 +122,7 @@ function layananLab() {
                     { data: "status" },
                     { data: "kelas" },
                 ],
-                order: [1, "asc"],
+                order: [1, "dsc"],
                 paging: true,
                 lengthMenu: [
                     [5, 10, 25, 50, -1],
@@ -96,6 +134,39 @@ function layananLab() {
         error: function (xhr, status, error) {
             console.error("Error:", error);
         },
+    });
+}
+
+function deleteLayanan(id, nmLayanan) {
+    Swal.fire({
+        title: "Apakah anda yakin ingin menghapus layanan " + nmLayanan + "?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "YA",
+        cancelButtonText: "TIDAK",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "/api/layanan/delete",
+                type: "POST",
+                data: {
+                    id: id,
+                },
+                success: function (response) {
+                    console.log("🚀 ~ deleteLayanan ~ response:", response);
+                    Swal.fire({
+                        icon: "success",
+                        title: response.message,
+                    });
+                    layananLab();
+                },
+                error: function (xhr) {
+                    // Handle error
+                },
+            });
+        }
     });
 }
 
