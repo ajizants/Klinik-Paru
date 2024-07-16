@@ -51,7 +51,7 @@ class IgdController extends Controller
         $kdTind = $request->input('kdTind');
         $petugas = $request->input('petugas');
         $dokter = $request->input('dokter');
-        $created_at = $request->input('tgltrans');
+        // $created_at = $request->input('tgltrans');
         // $updated_at = $request->input('tgltind');
         // Pastikan $kdTind memiliki nilai yang valid sebelum menyimpan data
         if ($kdTind !== null) {
@@ -63,7 +63,7 @@ class IgdController extends Controller
             $kunjunganTindakan->notrans = $notrans;
             $kunjunganTindakan->petugas = $petugas;
             $kunjunganTindakan->dokter = $dokter;
-            $kunjunganTindakan->created_at = $created_at;
+            // $kunjunganTindakan->created_at = $created_at;
             // $kunjunganTindakan->updated_at = $updated_at;
 
             // Simpan data ke dalam tabel

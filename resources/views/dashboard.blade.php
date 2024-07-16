@@ -185,10 +185,12 @@
                                 <th class="col-2">Skip Lab</th>
                                 <th class="col-2">Panggil Lab</th>
                                 <th class="col-2">Selesai Lab</th>
+                                <th class="col-2">Lama Hasil Lab (menit)</th>
                                 <th class="col-2">Lama Tunggu RO (menit)</th>
                                 <th class="col-2">Skip RO</th>
                                 <th class="col-2">Panggil RO</th>
                                 <th class="col-2">Selesai RO</th>
+                                <th class="col-2">Lama Hasil RO (menit)</th>
                                 <th class="col-2">Lama Tunggu IGD (menit)</th>
                                 <th class="col-2">Panggil IGD</th>
                                 <th class="col-2">Selesai IGD</th>

@@ -187,19 +187,21 @@ function waktuLayanan(tglAwal, tglAkhir, tanggal) {
                         { data: "laboratorium_skip", className: "col-2" },
                         { data: "laboratorium_panggil", className: "col-2" },
                         { data: "laboratorium_selesai", className: "col-2" },
+                        { data: "tunggu_hasil_lab", className: "col-2" },
                         { data: "tunggu_ro", className: "col-2" },
                         { data: "rontgen_skip", className: "col-2" },
                         { data: "rontgen_panggil", className: "col-2" },
                         { data: "rontgen_selesai", className: "col-2" },
+                        { data: "tunggu_hasil_ro", className: "col-2" },
                         { data: "tunggu_igd", className: "col-2" },
                         { data: "igd_panggil", className: "col-2" },
                         { data: "igd_selesai", className: "col-2" },
-                        { data: "tunggu_kasir", className: "col-2" },
-                        { data: "kasir_panggil", className: "col-2" },
-                        { data: "kasir_selesai", className: "col-2" },
                         { data: "tunggu_farmasi", className: "col-2" },
                         { data: "farmasi_panggil", className: "col-2" },
                         { data: "farmasi_selesai", className: "col-2" },
+                        { data: "tunggu_kasir", className: "col-2" },
+                        { data: "kasir_panggil", className: "col-2" },
+                        { data: "kasir_selesai", className: "col-2" },
                     ],
                     autoWidth: false,
                     buttons: [
@@ -217,7 +219,11 @@ function waktuLayanan(tglAwal, tglAkhir, tanggal) {
                                 "  s.d. " +
                                 tglB,
                         },
-                        "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+                        {
+                            extend: "colvis",
+                            text: "Tampilkan Kolom",
+                        },
+                        // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
                     ],
                 })
                 .buttons()
@@ -280,10 +286,24 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                 data.avg_tunggu_lab > 60 ? "red" : "green",
                         },
                         {
+                            kategori: "Tunggu Hasil Lab",
+                            rata_waktu: data.avg_tunggu_hasil_lab.toFixed(2),
+                            background:
+                                data.avg_tunggu_hasil_lab > 60
+                                    ? "red"
+                                    : "green",
+                        },
+                        {
                             kategori: "Tunggu RO",
                             rata_waktu: data.avg_tunggu_ro.toFixed(2),
                             background:
                                 data.avg_tunggu_ro > 60 ? "red" : "green",
+                        },
+                        {
+                            kategori: "Tunggu Hasil RO",
+                            rata_waktu: data.avg_tunggu_hasil_ro.toFixed(2),
+                            background:
+                                data.avg_tunggu_hasil_ro > 60 ? "red" : "green",
                         },
                         {
                             kategori: "Tunggu IGD",
@@ -348,7 +368,7 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                 "  s.d. " +
                                 tglB,
                         },
-                        "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+                        // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
                     ],
                 })
                 .buttons()
@@ -383,10 +403,18 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                 data.max_tunggu_lab > 60 ? "red" : "green",
                         },
                         {
-                            kategori: "Tunggu Terlama di RO",
-                            waktu_terlama: data.max_tunggu_ro.toFixed(2),
+                            kategori: "Tunggu Terlama Hasil Lab",
+                            waktu_terlama: data.max_tunggu_hasil_lab.toFixed(2),
                             background:
-                                data.max_tunggu_ro > 60 ? "red" : "green",
+                                data.max_tunggu_hasil_lab > 60
+                                    ? "red"
+                                    : "green",
+                        },
+                        {
+                            kategori: "Tunggu Terlama Hasil RO",
+                            waktu_terlama: data.max_tunggu_hasil_ro.toFixed(2),
+                            background:
+                                data.max_tunggu_hasil_ro > 60 ? "red" : "green",
                         },
                         {
                             kategori: "Tunggu Terlama di IGD",
@@ -451,7 +479,7 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                 "  s.d. " +
                                 tglB,
                         },
-                        "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+                        // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
                     ],
                 })
                 .buttons()
@@ -468,7 +496,9 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                         "Tunggu Tensi",
                         "Tunggu Poli",
                         "Tunggu Lab",
+                        "Tunggu Hasil Lab",
                         "Tunggu RO",
+                        "Tunggu Hasil RO",
                         "Tunggu IGD",
                         "Tunggu Farmasi",
                         "Tunggu Kasir",
@@ -488,7 +518,9 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                 data.avg_tunggu_tensi,
                                 data.avg_tunggu_poli,
                                 data.avg_tunggu_lab,
+                                data.avg_tunggu_hasil_lab,
                                 data.avg_tunggu_ro,
+                                data.avg_tunggu_hasil_ro,
                                 data.avg_tunggu_igd,
                                 data.avg_tunggu_farmasi,
                                 data.avg_tunggu_kasir,
@@ -508,6 +540,12 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                     ? "rgba(255, 99, 132, 0.2)"
                                     : "rgba(54, 162, 235, 0.2)",
                                 data.avg_tunggu_ro > 60
+                                    ? "rgba(255, 99, 132, 0.2)"
+                                    : "rgba(54, 162, 235, 0.2)",
+                                data.avg_tunggu_hasil_lab > 60
+                                    ? "rgba(255, 99, 132, 0.2)"
+                                    : "rgba(54, 162, 235, 0.2)",
+                                data.avg_tunggu_hasil_ro > 60
                                     ? "rgba(255, 99, 132, 0.2)"
                                     : "rgba(54, 162, 235, 0.2)",
 
@@ -538,6 +576,12 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                     ? "rgba(255, 99, 132, 1)"
                                     : "rgba(54, 162, 235, 1)",
                                 data.avg_tunggu_ro > 60
+                                    ? "rgba(255, 99, 132, 1)"
+                                    : "rgba(54, 162, 235, 1)",
+                                data.avg_tunggu_hasil_lab > 60
+                                    ? "rgba(255, 99, 132, 1)"
+                                    : "rgba(54, 162, 235, 1)",
+                                data.avg_tunggu_hasil_ro > 60
                                     ? "rgba(255, 99, 132, 1)"
                                     : "rgba(54, 162, 235, 1)",
                                 data.avg_tunggu_igd > 60
@@ -575,6 +619,8 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                         "Tunggu Poli",
                         "Tunggu Lab",
                         "Tunggu RO",
+                        "Tunggu Hasil Lab",
+                        "Tunggu Hasil RO",
                         "Tunggu IGD",
                         "Tunggu Farmasi",
                         "Tunggu Kasir",
@@ -595,6 +641,8 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                 data.max_tunggu_poli,
                                 data.max_tunggu_lab,
                                 data.max_tunggu_ro,
+                                data.max_tunggu_hasil_lab,
+                                data.max_tunggu_hasil_ro,
                                 data.max_tunggu_igd,
                                 data.max_tunggu_farmasi,
                                 data.max_tunggu_kasir,
@@ -614,6 +662,12 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                     ? "rgba(255, 99, 132, 0.2)"
                                     : "rgba(54, 162, 235, 0.2)",
                                 data.max_tunggu_ro > 60
+                                    ? "rgba(255, 99, 132, 0.2)"
+                                    : "rgba(54, 162, 235, 0.2)",
+                                data.max_tunggu_hasil_lab > 60
+                                    ? "rgba(255, 99, 132, 0.2)"
+                                    : "rgba(54, 162, 235, 0.2)",
+                                data.max_tunggu_hasil_ro > 60
                                     ? "rgba(255, 99, 132, 0.2)"
                                     : "rgba(54, 162, 235, 0.2)",
 
@@ -644,6 +698,12 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                     ? "rgba(255, 99, 132, 1)"
                                     : "rgba(54, 162, 235, 1)",
                                 data.max_tunggu_ro > 60
+                                    ? "rgba(255, 99, 132, 1)"
+                                    : "rgba(54, 162, 235, 1)",
+                                data.max_tunggu_hasil_lab > 60
+                                    ? "rgba(255, 99, 132, 1)"
+                                    : "rgba(54, 162, 235, 1)",
+                                data.max_tunggu_hasil_ro > 60
                                     ? "rgba(255, 99, 132, 1)"
                                     : "rgba(54, 162, 235, 1)",
                                 data.max_tunggu_igd > 60

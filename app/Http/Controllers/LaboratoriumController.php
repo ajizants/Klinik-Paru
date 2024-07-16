@@ -138,8 +138,8 @@ class LaboratoriumController extends Controller
                         'idLayanan' => $data['idLayanan'],
                         'petugas' => $petugas,
                         'dokter' => $dokter,
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        // 'created_at' => now(),
+                        // 'updated_at' => now(),
                     ];
                 } else {
                     return response()->json([

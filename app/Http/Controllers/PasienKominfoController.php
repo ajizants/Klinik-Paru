@@ -1139,9 +1139,11 @@ class PasienKominfoController extends Controller
 
         $total_tunggu_daftar = 0;
         $total_tunggu_lab = 0;
+        $total_tunggu_hasil_lab = 0;
+        $total_tunggu_ro = 0;
+        $total_tunggu_hasil_ro = 0;
         $total_tunggu_poli = 0;
         $total_durasi_poli = 0;
-        $total_tunggu_ro = 0;
         $total_tunggu_tensi = 0;
         $total_tunggu_igd = 0;
         $total_tunggu_farmasi = 0;
@@ -1149,9 +1151,11 @@ class PasienKominfoController extends Controller
 
         $max_tunggu_daftar = 0;
         $max_tunggu_lab = 0;
+        $max_tunggu_hasil_lab = 0;
+        $max_tunggu_hasil_ro = 0;
+        $max_tunggu_ro = 0;
         $max_tunggu_poli = 0;
         $max_durasi_poli = 0;
-        $max_tunggu_ro = 0;
         $max_tunggu_tensi = 0;
         $max_tunggu_igd = 0;
         $max_tunggu_farmasi = 0;
@@ -1160,9 +1164,11 @@ class PasienKominfoController extends Controller
         foreach ($data as $message) {
             $total_tunggu_daftar += $message['tunggu_daftar'];
             $total_tunggu_lab += $message['tunggu_lab'];
+            $total_tunggu_hasil_lab += $message['tunggu_hasil_lab'];
+            $total_tunggu_hasil_ro += $message['tunggu_hasil_ro'];
+            $total_tunggu_ro += $message['tunggu_ro'];
             $total_tunggu_poli += $message['tunggu_poli'];
             $total_durasi_poli += $message['durasi_poli'];
-            $total_tunggu_ro += $message['tunggu_ro'];
             $total_tunggu_tensi += $message['tunggu_tensi'];
             $total_tunggu_igd += $message['tunggu_igd'];
             $total_tunggu_farmasi += $message['tunggu_farmasi'];
@@ -1171,9 +1177,11 @@ class PasienKominfoController extends Controller
             // Update max values
             $max_tunggu_daftar = max($max_tunggu_daftar, $message['tunggu_daftar']);
             $max_tunggu_lab = max($max_tunggu_lab, $message['tunggu_lab']);
+            $max_tunggu_hasil_lab = max($max_tunggu_hasil_lab, $message['tunggu_hasil_lab']);
+            $max_tunggu_hasil_ro = max($max_tunggu_hasil_ro, $message['tunggu_hasil_ro']);
+            $max_tunggu_ro = max($max_tunggu_ro, $message['tunggu_ro']);
             $max_tunggu_poli = max($max_tunggu_poli, $message['tunggu_poli']);
             $max_durasi_poli = max($max_durasi_poli, $message['durasi_poli']);
-            $max_tunggu_ro = max($max_tunggu_ro, $message['tunggu_ro']);
             $max_tunggu_tensi = max($max_tunggu_tensi, $message['tunggu_tensi']);
             $max_tunggu_igd = max($max_tunggu_igd, $message['tunggu_igd']);
             $max_tunggu_farmasi = max($max_tunggu_farmasi, $message['tunggu_farmasi']);
@@ -1182,9 +1190,11 @@ class PasienKominfoController extends Controller
 
         $avg_tunggu_daftar = round($total_tunggu_daftar / $total, 2);
         $avg_tunggu_lab = round($total_tunggu_lab / $total, 2);
+        $avg_tunggu_hasil_lab = round($total_tunggu_hasil_lab / $total, 2);
+        $avg_tunggu_hasil_ro = round($total_tunggu_hasil_ro / $total, 2);
+        $avg_tunggu_ro = round($total_tunggu_ro / $total, 2);
         $avg_tunggu_poli = round($total_tunggu_poli / $total, 2);
         $avg_durasi_poli = round($total_durasi_poli / $total, 2);
-        $avg_tunggu_ro = round($total_tunggu_ro / $total, 2);
         $avg_tunggu_tensi = round($total_tunggu_tensi / $total, 2);
         $avg_tunggu_igd = round($total_tunggu_igd / $total, 2);
         $avg_tunggu_farmasi = round($total_tunggu_farmasi / $total, 2);
@@ -1193,18 +1203,23 @@ class PasienKominfoController extends Controller
         $results = [
             'avg_tunggu_daftar' => $avg_tunggu_daftar,
             'avg_tunggu_lab' => $avg_tunggu_lab,
+            'avg_tunggu_hasil_lab' => $avg_tunggu_hasil_lab,
+            'avg_tunggu_hasil_ro' => $avg_tunggu_hasil_ro,
+            'avg_tunggu_ro' => $avg_tunggu_ro,
             'avg_tunggu_poli' => $avg_tunggu_poli,
             'avg_durasi_poli' => $avg_durasi_poli,
-            'avg_tunggu_ro' => $avg_tunggu_ro,
             'avg_tunggu_tensi' => $avg_tunggu_tensi,
             'avg_tunggu_igd' => $avg_tunggu_igd,
             'avg_tunggu_farmasi' => $avg_tunggu_farmasi,
             'avg_tunggu_kasir' => $avg_tunggu_kasir,
+
             'max_tunggu_daftar' => $max_tunggu_daftar,
             'max_tunggu_lab' => $max_tunggu_lab,
+            'max_tunggu_hasil_lab' => $max_tunggu_hasil_lab,
+            'max_tunggu_hasil_ro' => $max_tunggu_hasil_ro,
+            'max_tunggu_ro' => $max_tunggu_ro,
             'max_tunggu_poli' => $max_tunggu_poli,
             'max_durasi_poli' => $max_durasi_poli,
-            'max_tunggu_ro' => $max_tunggu_ro,
             'max_tunggu_tensi' => $max_tunggu_tensi,
             'max_tunggu_igd' => $max_tunggu_igd,
             'max_tunggu_farmasi' => $max_tunggu_farmasi,
