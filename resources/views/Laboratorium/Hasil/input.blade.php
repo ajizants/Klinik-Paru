@@ -5,7 +5,7 @@
                         </div>
                         @csrf
                         <form class="form-horizontal" id="form_identitas">
-                            <div class="card-body" id="inputSection">
+                            <div class="card-body">
                                 <div class="form-grup row">
                                     <label for="norm" class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
                                         :</label>
@@ -52,7 +52,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="container-fluid">
+                <div class="container-fluid" id="inputSection">
                     @csrf
                     <div class="col p-0">
                         <div class="card card-success">

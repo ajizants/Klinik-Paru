@@ -57,7 +57,7 @@ async function cariTsLab(norm, tgl) {
             const notrans = data.notrans;
             console.log("🚀 ~ cariTsLab ~ notrans:", notrans);
             var pemeriksaan = data.pemeriksaan;
-            dataLab(pemeriksaan); // Panggil dataLab dengan notrans yang benar
+            dataLab(pemeriksaan);
             Swal.close();
         }
     } catch (error) {
@@ -153,6 +153,7 @@ async function dataLab(pemeriksaan, notrans) {
             scrollCollapse: true,
             paging: false,
         });
+        scrollToInputSection();
     } catch (error) {
         console.error("Error:", error.message);
     }
@@ -237,46 +238,136 @@ function resetForm(message) {
         .split("T")[0];
 }
 
+function antrian() {
+    $("#loadingSpinner").show();
+    var tgl = $("#tanggal").val();
+
+    if ($.fn.DataTable.isDataTable("#antrianBelum, #antrianSudah")) {
+        $("#antrianBelum, #antrianSudah").DataTable().destroy();
+    }
+
+    $.ajax({
+        url: "/api/hasil/antrian",
+        type: "POST",
+        data: { tgl: tgl },
+        success: function (response) {
+            $("#loadingSpinner").hide();
+            var data = response;
+
+            if (Array.isArray(data)) {
+                var belumTransaksi = data.filter(function (item) {
+                    return (
+                        item.status === "Input Hasil Belum Lengkap" ||
+                        item.status === "Belum Input Hasil"
+                    );
+                });
+
+                var sudahTransakasi = data.filter(function (item) {
+                    return item.status === "Input Hasil Lengkap";
+                });
+
+                antrianBelum(belumTransaksi, tgl);
+                antrianSudah(sudahTransakasi, tgl);
+            } else {
+                console.error("Invalid data format:", data);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        },
+    });
+}
+
+function antrianBelum(belumTransaksi, tgl) {
+    belumTransaksi.forEach(function (item, index) {
+        item.no = index + 1;
+        item.tgl = tgl;
+        item.tanggal = moment(item.created_at).format("DD-MM-YYYY");
+        item.alamat = item.alamat.replace(/, [^,]*$/, "");
+        item.aksi = `<button class="editTB bg-danger"
+                            data-norm="${item.norm}"
+                            data-nama="${item.nama}"
+                            data-alamat="${item.alamat}"
+                            onclick="cariTsLab('${item.norm}', '${item.tgl}');"><i class="fa-solid fa-file-pen"></i></button>`;
+    });
+
+    $("#antrianBelum").DataTable({
+        data: belumTransaksi,
+        columns: [
+            { data: "aksi" },
+            {
+                data: "status",
+                className: "text-center",
+                render: function (data) {
+                    var backgroundColor =
+                        data === "Input Hasil Belum Lengkap"
+                            ? "warning"
+                            : "danger";
+                    return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                },
+            },
+            { data: "tanggal" },
+            { data: "layanan" },
+            { data: "norm", className: "col-1" },
+            { data: "nama", className: "col-2" },
+            { data: "alamat", className: "col-4" },
+            { data: "nama_dokter", className: "col-3" },
+        ],
+        paging: true,
+        lengthMenu: [
+            [5, 10, 25, 50, -1],
+            [5, 10, 25, 50, "All"],
+        ],
+        pageLength: 5,
+        responsive: true,
+    });
+}
+
+function antrianSudah(sudahTransakasi, tgl) {
+    sudahTransakasi.forEach(function (item, index) {
+        item.no = index + 1;
+        item.tgl = tgl;
+        item.tanggal = moment(item.created_at).format("DD-MM-YYYY");
+        item.alamat = item.alamat.replace(/, [^,]*$/, "");
+        item.aksi = `<button class="editTB bg-danger"
+                            data-norm="${item.norm}"
+                            data-nama="${item.nama}"
+                            data-alamat="${item.alamat}"
+                            onclick="cariTsLab('${item.norm}', '${item.tgl}');"><i class="fa-solid fa-file-pen"></i></button>`;
+    });
+
+    $("#antrianSudah").DataTable({
+        data: sudahTransakasi,
+        columns: [
+            { data: "aksi" },
+            {
+                data: "status",
+                className: "text-center",
+                render: function (data) {
+                    var backgroundColor = "success";
+                    return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                },
+            },
+            { data: "tanggal" },
+            { data: "layanan" },
+            { data: "norm", className: "col-1" },
+            { data: "nama", className: "col-2" },
+            { data: "alamat", className: "col-3" },
+            { data: "nama_dokter", className: "col-3" },
+        ],
+        paging: true,
+        lengthMenu: [
+            [5, 10, 25, 50, -1],
+            [5, 10, 25, 50, "All"],
+        ],
+        pageLength: 5,
+        responsive: true,
+    });
+}
+
 $(document).ready(function () {
     setTodayDate();
-    $("#dataAntrian").on("click", ".aksi-button", function (e) {
-        e.preventDefault();
-        $("#add").show();
-        $("#edit").hide();
-        var norm = $(this).data("norm");
-        var nama = $(this).data("nama");
-        var nik = $(this).data("nik");
-        var dokter = $(this).data("kddokter");
-        var alamat = $(this).data("alamat");
-        var layanan = $(this).data("layanan");
-        var notrans = $(this).data("notrans");
-        var tgltrans = $(this).data("tgltrans");
-
-        $("#norm").val(norm);
-        $("#nik").val(nik);
-        $("#nama").val(nama);
-        $("#dokter").val(dokter).trigger("change");
-        $("#apoteker").val("197609262011012003").trigger("change");
-        $("#alamat").val(alamat);
-        $("#layanan").val(layanan);
-        $("#notrans").val(notrans);
-        $("#tgltrans").val(tgltrans);
-
-        scrollToInputSection();
-        dataLab();
-    });
-
-    $("#dataAntrian").on("click", ".panggil", function (e) {
-        e.preventDefault();
-
-        let panggilData = $(this).data("panggil");
-        console.log(
-            "🚀 ~ file: mainFarmasi.js:478 ~ panggilData:",
-            panggilData
-        );
-
-        panggilPasien(panggilData);
-    });
+    antrian();
     $("#dataTrans").on("click", ".delete", function (e) {
         e.preventDefault();
         let idLab = $(this).data("id");

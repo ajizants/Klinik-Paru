@@ -12,9 +12,55 @@ use Illuminate\Support\Facades\Log;
 
 class LaboratoriumController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function antrianHasil(Request $request)
+    {
+        $tgl = $request->input('tgl', now()->toDateString());
+        try {
+            $data = LaboratoriumKunjunganModel::with('pemeriksaan.pemeriksaan')
+                ->whereDate('created_at', 'like', '%' . $tgl . '%')->get();
+
+            foreach ($data as $item) {
+                $pemeriksaan = $item->pemeriksaan;
+                $nonNullHasilCount = 0;
+
+                foreach ($pemeriksaan as $periksa) {
+                    if (!is_null($periksa->hasil)) {
+                        $nonNullHasilCount++;
+                    }
+                }
+
+                $item->jmlh = $pemeriksaan->count();
+
+                if ($nonNullHasilCount == 0) {
+                    $item->status = 'Belum Input Hasil';
+                } else if ($nonNullHasilCount < $item->jmlh) {
+                    $item->status = 'Input Hasil Belum Lengkap';
+                } else {
+                    $item->status = 'Input Hasil Lengkap';
+                }
+
+                $doctorNipMap = [
+                    '198311142011012002' => 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.',
+                    '9' => 'dr. AGIL DANANJAYA, Sp.P',
+                    '198907252019022004' => 'dr. FILLY ULFA KUSUMAWARDANI',
+                    '198903142022031005' => 'dr. SIGIT DWIYANTO',
+                ];
+                $item->nama_dokter = $doctorNipMap[$item['dokter']] ?? 'Unknown';
+            }
+
+            $lab = $data->toArray(); // Convert the collection to an array
+            return response()->json(array_values($lab), 200, [], JSON_PRETTY_PRINT);
+
+        } catch (\Exception $e) {
+            $res = [
+                'message' => $e->getMessage(),
+                'code' => 400,
+            ];
+            return response()->json($res, 400, [], JSON_PRETTY_PRINT);
+        }
+    }
+
+
     public function cariTsLab(Request $request)
     {
         try {
@@ -253,7 +299,6 @@ class LaboratoriumController extends Controller
             return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
         }
     }
-
 
     public function deleteLab(Request $request)
     {

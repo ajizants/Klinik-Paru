@@ -108,6 +108,7 @@ Route::post('deleteLab', [LaboratoriumController::class, 'deleteLab']);
 
 Route::post('rekap/Kunjungan_Lab', [LaboratoriumController::class, 'rekapKunjungan']);
 
+Route::post('hasil/antrian', [LaboratoriumController::class, 'antrianHasil']);
 Route::post('addHasilLab', [LaboratoriumController::class, 'addHasil']);
 Route::post('cariRiwayatLab', [LaboratoriumController::class, 'riwayat']);
 Route::post('rekapBpjsUmum', [LaboratoriumController::class, 'rekapBpjsUmum']);

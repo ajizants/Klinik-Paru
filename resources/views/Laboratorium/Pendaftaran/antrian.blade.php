@@ -5,7 +5,7 @@
         <h4 class="m-0 font-weight-bold text-dark text-center">Antrian</h4>
     </a>
     <!-- Card Content - Collapse -->
-    <div class="collapse card-body p-0" id="collapseCardAntrian">
+    <div class="collapse show card-body p-0" id="collapseCardAntrian">
         <div class="col-6 d-flex justify-content-center z-3 position-absolute">
         </div>
         <div class="mt-3">

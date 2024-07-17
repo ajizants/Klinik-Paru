@@ -2,6 +2,7 @@
 @extends('Template.lte')
 
 @section('content')
+    @include('Laboratorium.Hasil.antrian')
     @include('Laboratorium.Hasil.input')
 
 
