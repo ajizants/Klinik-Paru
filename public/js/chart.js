@@ -12,13 +12,15 @@ function getChartData() {
         success: function (response) {
             var data = response;
 
-            // Menggambar grafik dengan data yang diterima
-            drawChart(data);
+            var selectedYear = $("#year-selector").val();
+            console.log("🚀 ~ getChartData ~ selectedYear:", selectedYear);
+            drawChart(data, selectedYear);
+            tabelIgd(data, selectedYear);
         },
     });
 }
 
-function drawChart(data) {
+function drawChart(data, tahun) {
     // Data untuk dataset 'umum' dan 'bpjs'
     var umumData = Array(12).fill(0); // Inisialisasi array dengan 12 elemen nol
     var bpjsData = Array(12).fill(0);
@@ -37,28 +39,13 @@ function drawChart(data) {
         "Desember",
     ];
 
-    // Menginisialisasi data bulan dengan nilai nol
-    var bulanData = {
-        Januari: 0,
-        Februari: 0,
-        Maret: 0,
-        April: 0,
-        Mei: 0,
-        Juni: 0,
-        Juli: 0,
-        Agustus: 0,
-        September: 0,
-        Oktober: 0,
-        November: 0,
-        Desember: 0,
-    };
-
     var canvas = document.getElementById("myAreaChart");
     var cardBody = document.querySelector(".card-body");
 
     // Mengatur lebar dan tinggi canvas sesuai dengan lebar dan tinggi card-body
     canvas.width = cardBody.offsetWidth;
     canvas.height = cardBody.offsetHeight;
+
     // Mengisi data bulan dengan nilai dari respons JSON
     data.forEach(function (item) {
         var bulanIndex = item.bulan - 1; // Mengonversi nilai bulan ke indeks array (dikurangi 1 karena indeks dimulai dari 0)
@@ -70,16 +57,10 @@ function drawChart(data) {
         }
     });
 
-    // Memisahkan data ke dalam umumData dan bpjsData
-    for (var bulan in bulanData) {
-        if (bulanData.hasOwnProperty(bulan)) {
-            umumData.push(bulanData[bulan]);
-            bpjsData.push(bulanData[bulan]);
-        }
-    }
-
     // Pengaturan Grafik
     var options = {
+        responsive: true,
+        maintainAspectRatio: false, // Ini akan membuat chart menyesuaikan dengan ukuran canvas
         scales: {
             y: {
                 beginAtZero: true,
@@ -88,7 +69,7 @@ function drawChart(data) {
     };
 
     // Menggambar Grafik menggunakan Chart.js
-    var ctx = document.getElementById("myAreaChart").getContext("2d");
+    var ctx = canvas.getContext("2d");
     var myChart = new Chart(ctx, {
         type: "bar",
         data: {
@@ -112,6 +93,71 @@ function drawChart(data) {
         },
         options: options,
     });
+
+    // Menyesuaikan tinggi canvas agar sesuai dengan ukuran card-body
+    window.addEventListener("resize", function () {
+        canvas.width = cardBody.offsetWidth;
+        canvas.height = cardBody.offsetHeight;
+        myChart.resize();
+    });
+}
+
+function tabelIgd(data, tahun) {
+    // Array untuk nama-nama bulan
+    var namaBulan = [
+        "Januari - " + tahun,
+        "Februari - " + tahun,
+        "Maret - " + tahun,
+        "April - " + tahun,
+        "Mei - " + tahun,
+        "Juni - " + tahun,
+        "Juli - " + tahun,
+        "Agustus - " + tahun,
+        "September - " + tahun,
+        "Oktober - " + tahun,
+        "November - " + tahun,
+        "Desember - " + tahun,
+    ];
+
+    // Menginisialisasi DataTable dengan data yang diberikan
+    $("#tabelIgd")
+        .DataTable({
+            destroy: true, // Menghapus tabel yang sudah ada sebelumnya
+            data: data,
+            columns: [
+                { data: "bulan" },
+                {
+                    data: "bulan",
+                    render: function (data) {
+                        // Mengembalikan nama bulan berdasarkan indeks bulan (0 sampai 11)
+                        return namaBulan[data - 1]; // Mengurangi 1 karena indeks dimulai dari 0
+                    },
+                },
+                { data: "kelompok" },
+                { data: "jumlah" },
+            ],
+            order: [[0, "asc"]], // Urutan berdasarkan kolom pertama (bulan) secara ascending
+            paging: true,
+            searching: false,
+            info: true,
+            pageLength: 5,
+            lengthMenu: [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"],
+            ],
+            buttons: [
+                {
+                    extend: "excelHtml5",
+                    text: "Excel",
+                    title: "Data Kunjungan IGD Tahun: " + tahun,
+                    filename: "Data Kunjungan IGD Tahun: " + tahun,
+                },
+                // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+            ],
+        })
+        .buttons()
+        .container()
+        .appendTo("#tabelIgd_wrapper .col-md-6:eq(0)");
 }
 
 $("#year-selector").on("change", function () {
@@ -349,6 +395,7 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                     searching: false,
                     info: true,
                     responsive: true,
+                    pageLength: 7,
                     lengthMenu: [
                         [10, 25, 50, -1],
                         [10, 25, 50, "All"],
@@ -460,6 +507,7 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                     searching: false,
                     info: true,
                     responsive: true,
+                    pageLength: 7,
                     lengthMenu: [
                         [10, 25, 50, -1],
                         [10, 25, 50, "All"],
