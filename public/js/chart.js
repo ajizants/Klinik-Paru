@@ -19,6 +19,7 @@ function getChartData() {
         },
     });
 }
+var myChart;
 
 function drawChart(data, tahun) {
     // Data untuk dataset 'umum' dan 'bpjs'
@@ -70,7 +71,10 @@ function drawChart(data, tahun) {
 
     // Menggambar Grafik menggunakan Chart.js
     var ctx = canvas.getContext("2d");
-    var myChart = new Chart(ctx, {
+    if (myChart) {
+        myChart.destroy();
+    }
+    myChart = new Chart(ctx, {
         type: "bar",
         data: {
             labels: bulanLabels,
