@@ -312,7 +312,8 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                     destroy: true, // Hapus tabel yang sudah ada sebelumnya
                     data: [
                         {
-                            kategori: "Tunggu Daftar",
+                            kategori:
+                                "Tunggu Daftar, Mulai di panggil sampai selesai di daftar",
                             rata_waktu: data.avg_tunggu_daftar.toFixed(2),
                             background:
                                 data.avg_tunggu_daftar > 60 ? "red" : "green",
@@ -430,7 +431,8 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                     destroy: true, // Hapus tabel yang sudah ada sebelumnya
                     data: [
                         {
-                            kategori: "Tunggu Terlama di Pendaftaran",
+                            kategori:
+                                "Tunggu Terlama di Pendaftaran, Mulai di panggil sampai selesai di daftar",
                             waktu_terlama: data.max_tunggu_daftar.toFixed(2),
                             background:
                                 data.max_tunggu_daftar > 60 ? "red" : "green",

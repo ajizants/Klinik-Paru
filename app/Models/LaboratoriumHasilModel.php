@@ -12,6 +12,10 @@ class LaboratoriumHasilModel extends Model
     public $timestamps = true;
     protected $table = "t_kunjungan_lab_hasil";
 
+    protected $fillable = [
+        'idLab','notrans','created_at','updated_at',
+    ];
+
     public function pasien()
     {
         return $this->belongsTo(PasienModel::class, 'notrans', 'notrans');

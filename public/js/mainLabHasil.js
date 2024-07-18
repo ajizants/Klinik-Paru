@@ -236,6 +236,7 @@ function resetForm(message) {
     document.getElementById("tgltrans").value = new Date()
         .toISOString()
         .split("T")[0];
+    antrian();
 }
 
 function antrian() {

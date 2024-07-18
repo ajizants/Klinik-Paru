@@ -369,7 +369,8 @@ class KominfoModel extends Model
             $res = array_map(function ($message) {
 
                 // Menentukan waktu tunggu daftar
-                $tunggu_daftar = ($message["daftar_by"] == "JKN") ? 2 : max(0, round((strtotime($message["loket_pendaftaran_panggil_waktu"]) - strtotime($message["loket_pendaftaran_skip_waktu"] ?? $message["loket_pendaftaran_menunggu_waktu"])) / 60, 2));
+                // $tunggu_daftar = ($message["daftar_by"] == "JKN") ? 2 : max(0, round((strtotime($message["loket_pendaftaran_panggil_waktu"]) - strtotime($message["loket_pendaftaran_skip_waktu"] ?? $message["loket_pendaftaran_menunggu_waktu"])) / 60, 2));
+                $tunggu_daftar = ($message["daftar_by"] == "JKN") ? 2 : max(0, round((strtotime($message["loket_pendaftaran_selesai_waktu"]) - strtotime($message["loket_pendaftaran_skip_waktu"] ?? $message["loket_pendaftaran_panggil_waktu"])) / 60, 2));
 
                 // Menentukan waktu tunggu tensi
                 $tunggu_tensi = max(0, round((strtotime($message["ruang_tensi_panggil_waktu"]) - strtotime($message["ruang_tensi_skip_waktu"] ?? $message["loket_pendaftaran_selesai_waktu"])) / 60, 2));
@@ -447,11 +448,13 @@ class KominfoModel extends Model
                     if ($message["ruang_laboratorium_panggil_waktu"] == null) {
                         if (strtotime($message["ruang_poli_selesai_waktu"]) > strtotime($message["ruang_tensi_selesai_waktu"])) {
                             $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_poli_selesai_waktu"])) / 60, 2));
+                            // $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_poli_selesai_waktu"])) / 60, 2));
                         } else {
-                            $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
+                            $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($labData->created_at)) / 60, 2));
                         }
+                        $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
                     } else {
-                        $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_laboratorium_selesai_waktu"])) / 60, 2));
+                        $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_laboratorium_panggil_waktu"])) / 60, 2));
                     }
                 }
 

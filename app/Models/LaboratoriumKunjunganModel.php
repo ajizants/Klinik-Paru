@@ -11,6 +11,10 @@ class LaboratoriumKunjunganModel extends Model
     public $timestamps = true;
     protected $table = "t_kunjungan_lab";
 
+    protected $fillable = [
+        'notrans', 'norm', 'nik', 'petugas', 'dokter', 'alamat', 'created_at', 'updated_at', 'nama', 'layanan', 'ket',
+    ];
+
     public function pemeriksaan()
     {
         return $this->hasMany(LaboratoriumHasilModel::class, 'notrans', 'notrans');
@@ -25,6 +29,5 @@ class LaboratoriumKunjunganModel extends Model
     {
         return $this->belongsTo(PegawaiModel::class, 'dokter', 'nip');
     }
-
 
 }

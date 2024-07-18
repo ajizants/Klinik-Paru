@@ -184,7 +184,7 @@ class LaboratoriumController extends Controller
                         'idLayanan' => $data['idLayanan'],
                         'petugas' => $petugas,
                         'dokter' => $dokter,
-                        // 'created_at' => now(),
+                        'created_at' => now(),
                         // 'updated_at' => now(),
                     ];
                 } else {
@@ -196,7 +196,10 @@ class LaboratoriumController extends Controller
             // dd($dataToInsert);
             // Simpan data permintaan laborat ke database
             LaboratoriumHasilModel::insert($dataToInsert);
+            //tambahkan log data yang di simpan ke db
+
             DB::commit();
+            Log::info('Transaksi berhasil disimpan: ' . json_encode($dataToInsert));
 
             // Extract notrans and tujuan from the request
 
@@ -285,6 +288,10 @@ class LaboratoriumController extends Controller
                     ], 400);
                 }
             }
+            $kunjungan=LaboratoriumKunjunganModel::where('notrans',$data['notrans'])->first();
+            $kunjungan->update([
+                'updated_at' => now(), // Jika ada kolom updated_at dan ingin diperbarui
+            ]);
 
             // Commit transaksi database
             DB::commit();
