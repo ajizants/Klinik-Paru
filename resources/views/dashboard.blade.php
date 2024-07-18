@@ -204,8 +204,10 @@
                                 <th class="col-2">Tanggal</th>
                                 <th class="col-1">Penjamin</th>
                                 <th class="col-1">Daftar Lewat</th>
+                                <th class="col-1">Pendaftaran</th>
                                 <th class="col-1">No. Rekam Medis</th>
                                 <th class="col-3">Nama Pasien</th>
+                                <th class="col-3">JK</th>
                                 <th class="col-1">Poli</th>
                                 <th class="col-3">Dokter</th>
                                 <th class="col-2">Ambil No Antrian</th>
@@ -222,12 +224,12 @@
                                 <th class="col-2">Panggil Poli</th>
                                 <th class="col-2">Selesai Poli</th>
                                 <th class="col-2">Lama Tunggu Lab (menit)</th>
-                                <th class="col-2">Skip Lab</th>
+                                {{-- <th class="col-2">Skip Lab</th> --}}
                                 <th class="col-2">Panggil Lab</th>
                                 <th class="col-2">Selesai Lab</th>
                                 <th class="col-2">Lama Hasil Lab (menit)</th>
                                 <th class="col-2">Lama Tunggu RO (menit)</th>
-                                <th class="col-2">Skip RO</th>
+                                {{-- <th class="col-2">Skip RO</th> --}}
                                 <th class="col-2">Panggil RO</th>
                                 <th class="col-2">Selesai RO</th>
                                 <th class="col-2">Lama Hasil RO (menit)</th>
