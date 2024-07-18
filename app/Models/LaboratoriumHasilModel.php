@@ -13,7 +13,7 @@ class LaboratoriumHasilModel extends Model
     protected $table = "t_kunjungan_lab_hasil";
 
     protected $fillable = [
-        'idLab','notrans','created_at','updated_at',
+        'idLab','notrans','norm','idLayanan','hasil','jumlah','total','petugas','dokter','nik','nama','created_at','updated_at',
     ];
 
     public function pasien()

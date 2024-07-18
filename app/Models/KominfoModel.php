@@ -445,17 +445,17 @@ class KominfoModel extends Model
                     $lama_lab = 0;
                 } else {
                     $selesaiLab = date('Y-m-d H:i:s', strtotime($labData->updated_at));
-                    if ($message["ruang_laboratorium_panggil_waktu"] == null) {
-                        if (strtotime($message["ruang_poli_selesai_waktu"]) > strtotime($message["ruang_tensi_selesai_waktu"])) {
-                            $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_poli_selesai_waktu"])) / 60, 2));
+                    // if ($message["ruang_laboratorium_panggil_waktu"] == null) {
+                    //     if (strtotime($message["ruang_poli_selesai_waktu"]) > strtotime($message["ruang_tensi_selesai_waktu"])) {
+                            $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($labData->updated_at)) / 60, 2));
                             // $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_poli_selesai_waktu"])) / 60, 2));
-                        } else {
-                            $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($labData->created_at)) / 60, 2));
-                        }
-                        $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
-                    } else {
-                        $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_laboratorium_panggil_waktu"])) / 60, 2));
-                    }
+                    //     } else {
+                    //         $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($labData->created_at)) / 60, 2));
+                    //     }
+                    //     $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
+                    // } else {
+                    //     $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_laboratorium_panggil_waktu"])) / 60, 2));
+                    // }
                 }
 
                 $igdData = IGDTransModel::where('norm', $message['pasien_no_rm'])->whereDate('created_at', $message['tanggal'])->first();

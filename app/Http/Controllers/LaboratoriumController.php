@@ -185,7 +185,7 @@ class LaboratoriumController extends Controller
                         'petugas' => $petugas,
                         'dokter' => $dokter,
                         'created_at' => now(),
-                        // 'updated_at' => now(),
+                        'updated_at' => now(),
                     ];
                 } else {
                     return response()->json([
