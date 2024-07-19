@@ -123,128 +123,190 @@ class PasienKominfoController extends Controller
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
     }
-    public function antrianKominfoFullData(Request $request)
+    public function pendaftaran(Request $request)
     {
-        if ($request->has('tanggal')) {
-            // Default username and password, can be overridden by request input
-            $uname = $request->input('username', '3301010509940003');
-            $pass = $request->input('password', 'banyumas');
-            $tanggal = $request->input('tanggal');
-            $limit = 10; // Set the limit to 5
+        // $limit = 10; // Set the limit to 5
+        $params = $request->all();
+        $tglAwal = $request->input('tanggal_awal');
+        $tglAkhir = $request->input('tanggal_akhir');
 
-            // Fetch data pendaftaran from API
-            $dataPendaftaranResponse = $this->fetchDataFromApi(
-                'https://kkpm.banyumaskab.go.id/api/pendaftaran/data_pendaftaran',
-                [
-                    'username' => $uname,
-                    'password' => $pass,
-                    'tanggal' => $tanggal,
-                    'limit' => $limit,
-                ]
-            );
+        $kominfo = new KominfoModel();
+        $dataPendaftaranResponse = $kominfo->pendaftaranRequest($params);
 
-            // Check if response is successful
-            if ($dataPendaftaranResponse['metadata']['code'] !== 200) {
-                return response()->json($dataPendaftaranResponse['metadata'], $dataPendaftaranResponse['metadata']['code']);
+        // Process data pendaftaran
+        $cppt = [];
+        // $counter = 0;
+        foreach ($dataPendaftaranResponse as $data) {
+            // Skip if pasien_no_rm is not set or is empty
+            if (empty($data['pasien_no_rm'])) {
+                continue;
             }
+            // Break the loop if limit is reached
+            // if ($counter >= $limit) {
+            //     break;
+            // }
+            $norm = $data['pasien_no_rm'];
 
-            // Process data pendaftaran
-            $antrian = [];
-            $counter = 0;
-            foreach ($dataPendaftaranResponse['response']['response']['data'] as $data) {
-                // Skip if pasien_no_rm is not set or is empty
-                if (empty($data['pasien_no_rm'])) {
-                    continue;
-                }
-                // Break the loop if limit is reached
-                if ($counter >= $limit) {
-                    break;
-                }
-
-                // Fetch data pasien based on no_rm
-                $dataPasienResponse = $this->fetchDataFromApi(
-                    'https://kkpm.banyumaskab.go.id/api/pasien/data_pasien',
-                    [
-                        'username' => $uname,
-                        'password' => $pass,
-                        'no_rm' => $data['pasien_no_rm'],
-                    ]
-                );
-
-                // Check if response is successful and contains the necessary data
-                if ($dataPasienResponse['metadata']['code'] === 200 && isset($dataPasienResponse['response']['response']['data'])) {
-                    $pasienData = $dataPasienResponse['response']['response']['data'];
-
-                    // Combine pendaftaran data and pasien data
-                    $antrian[] = [
-                        'id' => $data['id'],
-                        'no_reg' => $data['no_reg'],
-                        'no_trans' => $data['no_trans'],
-                        'antrean_nomor' => $data['antrean_nomor'],
-                        'tanggal' => $data['tanggal'],
-                        'penjamin_nama' => $data['penjamin_nama'],
-                        'jenis_kunjungan_nama' => $data['jenis_kunjungan_nama'],
-                        'pasien_no_rm' => $data['pasien_no_rm'],
-                        'pasien_lama_baru' => $data['pasien_lama_baru'],
-                        'rs_paru_pasien_lama_baru' => $data['rs_paru_pasien_lama_baru'],
-                        'poli_nama' => $data['poli_nama'],
-                        'poli_sub_nama' => $data['poli_sub_nama'],
-                        'dokter_nama' => $data['dokter_nama'],
-                        'waktu_daftar' => $data['waktu_daftar'],
-                        'waktu_verifikasi' => $data['waktu_verifikasi'],
-                        'admin_pendaftaran' => $data['admin_pendaftaran'],
-                        'log_id' => $data['log_id'],
-                        'keterangan_urutan' => $data['keterangan_urutan'],
-                        'pasien_umur' => $data['pasien_umur_tahun'] . ' Tahun ' . $data['pasien_umur_bulan'] . ' Bulan ' . $data['pasien_umur_hari'] . ' Hari',
-
-                        // Data pasien tambahan dari API kedua
-                        'pasien_nik' => $pasienData['pasien_nik'] ?? null,
-                        'pasien_nama' => $pasienData['pasien_nama'] ?? null,
-                        'jenis_kelamin_nama' => $pasienData['jenis_kelamin_nama'] ?? null,
-                        'pasien_tempat_lahir' => $pasienData['pasien_tempat_lahir'] ?? null,
-                        'pasien_tgl_lahir' => $pasienData['pasien_tgl_lahir'] ?? null,
-                        'pasien_no_hp' => $pasienData['pasien_no_hp'] ?? null,
-                        'pasien_domisili' => $pasienData['pasien_alamat'] ?? null,
-                        'pasien_alamat' => 'DS. ' . ($pasienData['kelurahan_nama'] ?? '') . ', ' . ($pasienData['pasien_rt'] ?? '') . '/' . ($pasienData['pasien_rw'] ?? '') . ', KEC.' . ($pasienData['kecamatan_nama'] ?? '') . ', KAB.' . ($pasienData['kabupaten_nama'] ?? ''),
-                        'provinsi_id' => $pasienData['provinsi_id'] ?? null,
-                        'kabupaten_id' => $pasienData['kabupaten_id'] ?? null,
-                        'kecamatan_id' => $pasienData['kecamatan_id'] ?? null,
-                        'kelurahan_id' => $pasienData['kelurahan_id'] ?? null,
-                        'pasien_rt' => $pasienData['pasien_rt'] ?? null,
-                        'pasien_rw' => $pasienData['pasien_rw'] ?? null,
-                    ];
-
-                    $counter++;
-                }
-            }
-
-            if (empty($antrian)) {
-                return response()->json([
-                    'metadata' => [
-                        'message' => 'Data Pasien Tidak Ditemukan Pada Kunjungan Hari Ini',
-                        'code' => 404,
-                    ],
-                    'response' => null,
-                ]);
-            }
-
-            // Build response
-            $response = [
-                'metadata' => [
-                    'message' => 'Data Pasien Ditemukan',
-                    'code' => 200,
-                ],
-                'response' => [
-                    'data' => $antrian,
-                ],
+            $param = [
+                'pasien_no_rm' => $norm,
+                'tanggal_awal' => $tglAwal,
+                'tanggal_akhir' => $tglAkhir,
             ];
 
-            return response()->json($response);
+            $dataPasienResponse = $kominfo->cpptRequestAll($param);
 
-        } else {
-            // If required parameters are not provided, return an error response
-            return response()->json(['error' => 'Missing required parameters'], 400);
+            // Check if response is successful and contains the necessary data
+            $cppt = $dataPasienResponse['response']['data'];
+            dd($cppt);
+
+            // Combine pendaftaran data and pasien data
+            // $antrian[] = [
+            //     'id' => $data['id'] ?? null,
+            //     'no_reg' => $data['no_reg'] ?? null,
+            //     'no_trans' => $data['no_trans'] ?? null,
+            //     'antrean_nomor' => $data['antrean_nomor'] ?? null,
+            //     'tanggal' => $data['tanggal'] ?? null,
+            //     'penjamin_nama' => $data['penjamin_nama'] ?? null,
+            //     'jenis_kunjungan_nama' => $data['jenis_kunjungan_nama'] ?? null,
+            //     'pasien_nik' => $data['pasien_nik'] ?? null,
+
+            //     "penjamin_nomor" => $data['penjamin_nomor'] ?? null,
+            //     "jenis_kunjungan_nama" => $data['jenis_kunjungan_nama'] ?? null,
+            //     "nomor_referensi" => $data['nomor_referensi'] ?? null,
+            //     'pasien_no_rm' => $data['pasien_no_rm'] ?? null,
+            //     'pasien_lama_baru' => $data['pasien_lama_baru'] ?? null,
+            //     'rs_paru_pasien_lama_baru' => $data['rs_paru_pasien_lama_baru'] ?? null,
+            //     'poli_nama' => $data['poli_nama'] ?? null,
+            //     'poli_sub_nama' => $data['poli_sub_nama'] ?? null,
+            //     'dokter_nama' => $data['dokter_nama'] ?? null,
+            //     'waktu_daftar' => $data['waktu_daftar'] ?? null,
+            //     'waktu_verifikasi' => $data['waktu_verifikasi'] ?? null,
+            //     'admin_pendaftaran' => $data['admin_pendaftaran'] ?? null,
+            //     'log_id' => $data['log_id'] ?? null,
+            //     'pasien_umur' => $data['pasien_umur_tahun'] . ' Thn ' . $data['pasien_umur_bulan'] . ' Bln ',
+            //     'keterangan' => $data['keterangan'] ?? null,
+
+            //     // Data pasien tambahan dari API kedua
+            //     'pasien_nama' => $data['pasien_nama'] ?? null,
+            //     'jenis_kelamin_nama' => $pasienData['jenis_kelamin_nama'] ?? null,
+            //     'pasien_tempat_lahir' => $pasienData['pasien_tempat_lahir'] ?? null,
+            //     'pasien_tgl_lahir' => $pasienData['pasien_tgl_lahir'] ?? null,
+            //     // 'pasien_alamat' => $pasienData['kelurahan_nama'] ?? null . ' ' . $pasienData['pasien_rt'] ?? null . '/' . $pasienData['pasien_rw'] ?? null . ' ' . $pasienData['kecamatan_nama'] ?? null . ' ' . $pasienData['kota_kabupaten_nama'] ?? null,
+            // ];
+
+            // $counter++;
+            // }
         }
+        // Build response
+        $res = [
+            'metadata' => [
+                'message' => 'Data Pendaftaran Ditemukan',
+                'code' => 200,
+            ],
+            'response' => [
+                'pendaftaran' => $dataPendaftaranResponse,
+                'cppt' => $cppt
+            ],
+        ];
+
+        return response()->json($res);
+
+    }
+    public function pendaftaran2(Request $request)
+    {
+        $limit = 10; // Set the limit to 5
+        $params = $request->all();
+
+        $kominfo = new KominfoModel();
+        $dataPendaftaranResponse = $kominfo->pendaftaranRequest($params);
+
+        // Process data pendaftaran
+        $antrian = [];
+        $counter = 0;
+        foreach ($dataPendaftaranResponse as $data) {
+            // Skip if pasien_no_rm is not set or is empty
+            if (empty($data['pasien_no_rm'])) {
+                continue;
+            }
+            // Break the loop if limit is reached
+            if ($counter >= $limit) {
+                break;
+            }
+            $norm = $data['pasien_no_rm'];
+
+            $dataPasienResponse = $kominfo->pasienRequest($norm);
+
+            // Check if response is successful and contains the necessary data
+            $pasienData = $dataPasienResponse;
+
+            // Combine pendaftaran data and pasien data
+            $antrian[] = [
+                'id' => $data['id'],
+                'no_reg' => $data['no_reg'],
+                'no_trans' => $data['no_trans'],
+                'antrean_nomor' => $data['antrean_nomor'],
+                'tanggal' => $data['tanggal'],
+                'penjamin_nama' => $data['penjamin_nama'],
+                'jenis_kunjungan_nama' => $data['jenis_kunjungan_nama'],
+                "penjamin_nomor" => $data['penjamin_nomor'],
+                "jenis_kunjungan_nama" => $data['jenis_kunjungan_nama'],
+                "nomor_referensi" => $data['nomor_referensi'],
+                'pasien_no_rm' => $data['pasien_no_rm'],
+                'pasien_lama_baru' => $data['pasien_lama_baru'],
+                'rs_paru_pasien_lama_baru' => $data['rs_paru_pasien_lama_baru'],
+                'poli_nama' => $data['poli_nama'],
+                'poli_sub_nama' => $data['poli_sub_nama'],
+                'dokter_nama' => $data['dokter_nama'],
+                'waktu_daftar' => $data['waktu_daftar'],
+                'waktu_verifikasi' => $data['waktu_verifikasi'],
+                'admin_pendaftaran' => $data['admin_pendaftaran'],
+                'log_id' => $data['log_id'],
+                'keterangan_urutan' => $data['keterangan_urutan'],
+                'pasien_umur' => $data['pasien_umur_tahun'] . ' Thn ' . $data['pasien_umur_bulan'] . ' Bln ',
+
+                // Data pasien tambahan dari API kedua
+                'pasien_nik' => $pasienData['pasien_nik'] ?? null,
+                'pasien_nama' => $pasienData['pasien_nama'] ?? null,
+                'jenis_kelamin_nama' => $pasienData['jenis_kelamin_nama'] ?? null,
+                'pasien_tempat_lahir' => $pasienData['pasien_tempat_lahir'] ?? null,
+                'pasien_tgl_lahir' => $pasienData['pasien_tgl_lahir'] ?? null,
+                'pasien_no_hp' => $pasienData['pasien_no_hp'] ?? null,
+                'pasien_alamat' => $pasienData['pasien_alamat'] ?? null,
+                'provinsi_id' => $pasienData['provinsi_id'] ?? null,
+                'kabupaten_id' => $pasienData['kabupaten_id'] ?? null,
+                'kecamatan_id' => $pasienData['kecamatan_id'] ?? null,
+                'kelurahan_id' => $pasienData['kelurahan_id'] ?? null,
+                'pasien_rt' => $pasienData['pasien_rt'] ?? null,
+                'pasien_rw' => $pasienData['pasien_rw'] ?? null,
+            ];
+
+            $counter++;
+            // }
+        }
+
+        if (empty($antrian)) {
+            return response()->json([
+                'metadata' => [
+                    'message' => 'Data Pasien Tidak Ditemukan Pada Kunjungan Hari Ini',
+                    'code' => 404,
+                ],
+                'response' => null,
+            ]);
+        }
+
+        // Build response
+        $res = [
+            'metadata' => [
+                'message' => 'Data Pendaftaran Ditemukan',
+                'code' => 200,
+            ],
+            'response' => [
+                'data' => $antrian,
+            ],
+        ];
+
+        return response()->json($res);
+
     }
     public function noAntrianKominfo(Request $request)
     {
@@ -643,86 +705,6 @@ class PasienKominfoController extends Controller
                 'data' => $filteredData,
             ],
         ]);
-    }
-
-    public function newPendaftaran(Request $request)
-    {
-        if ($request->has('tanggal')) {
-            $tanggal = $request->input('tanggal');
-            $model = new KominfoModel();
-
-            // Panggil metode untuk melakukan request
-            $data = $model->pendaftaranRequest($tanggal);
-
-            if (isset($data['response']['data']) && is_array($data['response']['data'])) {
-                $filteredData = array_filter($data['response']['data'], function ($d) {
-                    return $d['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
-                });
-                $filteredData = array_values($filteredData);
-
-                // Map of dokter_nama to nip
-                $doctorNipMap = [
-                    'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
-                    'dr. AGIL DANANJAYA, Sp.P' => '9',
-                    'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
-                    'dr. SIGIT DWIYANTO' => '198903142022031005',
-                ];
-
-                // Iterate over filtered data and add status and nip
-                foreach ($filteredData as &$item) {
-                    $notrans = $item['no_trans'];
-                    $norm = $item['pasien_no_rm'];
-                    $dokter_nama = $item['dokter_nama'];
-
-                    // Check if ROTransaksiModel exists for $notrans
-                    $tsRo = ROTransaksiModel::where('notrans', $notrans)->first();
-
-                    try {
-                        // Attempt to retrieve data from the 'rontgen' connection
-                        $foto = ROTransaksiHasilModel::where('norm', $norm)
-                            ->whereDate('tanggal', $tanggal)
-                            ->first();
-                        // dd($foto);
-                        // Determine status based on conditions
-                        if (!$tsRo && !$foto) {
-                            $item['status'] = 'Belum Ada Transaksi';
-                        } elseif ($tsRo && !$foto) {
-                            $item['status'] = 'Belum Upload Foto Thorax';
-                        } else {
-                            $item['status'] = 'Sudah Selesai';
-                        }
-                    } catch (\Exception $e) {
-                        // Handle the error: log it and continue processing
-                        Log::error('Database connection failed: ' . $e->getMessage());
-                        $item['status'] = 'Database connection error';
-                    }
-
-                    // Add nip based on dokter_nama
-                    if (isset($doctorNipMap[$dokter_nama])) {
-                        $item['nip_dokter'] = $doctorNipMap[$dokter_nama];
-                    } else {
-                        $item['nip_dokter'] = 'Unknown';
-                    }
-                }
-
-                $response = [
-                    'metadata' => [
-                        'message' => 'Data Pasien Ditemukan',
-                        'code' => 200,
-                    ],
-                    'response' => [
-                        'data' => $filteredData,
-                    ],
-                ];
-                // Kembalikan respon dalam bentuk array
-                return response()->json($response);
-            } else {
-                return response()->json(['error' => 'Invalid data format'], 500);
-            }
-        } else {
-            // Jika parameter 'tanggal' tidak disediakan, kembalikan respons error
-            return response()->json(['error' => 'Tanggal Belum Di Isi'], 400);
-        }
     }
 
     public function newPasien(Request $request)

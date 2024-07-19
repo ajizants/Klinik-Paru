@@ -328,35 +328,67 @@ function initializeDataTable(selector, data, columns, order = [1, "asc"]) {
     });
 }
 
-function getColumnDefinitions(statusType = "status_pulang") {
-    return [
-        { data: "aksi", className: "text-center p-2 col-1" },
-        {
-            data: statusType,
-            className: "text-center p-2 col-1",
-            render: function (data) {
-                const statusClasses = {
-                    "Belum Pulang": "danger",
-                    "Sudah Pulang": "success",
-                    "Tidak Ada Permintaan": "danger",
-                    "Belum Ada Ts RO": "danger",
-                    "Belum Upload Foto Thorax": "warning",
-                    "Sudah Selesai": "success",
-                    default: "secondary",
-                };
-                return `<div class="badge badge-${
-                    statusClasses[data] || statusClasses.default
-                }">${data}</div>`;
+function getColumnDefinitions(statusType = "status_pulang", ruang) {
+    if (ruang == "lab") {
+        return [
+            { data: "aksi", className: "text-center p-2" },
+            {
+                data: statusType,
+                className: "text-center p-2 col-1",
+                render: function (data) {
+                    const statusClasses = {
+                        "Belum Pulang": "danger",
+                        "Sudah Pulang": "success",
+                        "Tidak Ada Permintaan": "danger",
+                        "Belum Ada Ts RO": "danger",
+                        "Belum Upload Foto Thorax": "warning",
+                        "Sudah Selesai": "success",
+                        default: "secondary",
+                    };
+                    return `<div class="badge badge-${
+                        statusClasses[data] || statusClasses.default
+                    }">${data}</div>`;
+                },
             },
-        },
-        { data: "tanggal", className: "p-2" },
-        { data: "antrean_nomor", className: "text-center p-2" },
-        { data: "penjamin_nama", className: "text-center p-2" },
-        { data: "pasien_no_rm", className: "text-center p-2" },
-        { data: "pasien_nama", className: "p-2 col-3" },
-        { data: "poli_nama", className: "p-2" },
-        { data: "dokter_nama", className: "p-2 col-3" },
-    ];
+            { data: "tanggal", className: "p-2" },
+            { data: "antrean_nomor", className: "text-center p-2" },
+            { data: "penjamin_nama", className: "text-center p-2" },
+            { data: "pasien_no_rm", className: "text-center p-2" },
+            { data: "pasien_nik", className: "p-2 col-1" },
+            { data: "pasien_nama", className: "p-2 col-2" },
+            { data: "poli_nama", className: "p-2" },
+            { data: "dokter_nama", className: "p-2 col-3" },
+        ];
+    } else {
+        return [
+            { data: "aksi", className: "text-center p-2 col-1" },
+            {
+                data: statusType,
+                className: "text-center p-2",
+                render: function (data) {
+                    const statusClasses = {
+                        "Belum Pulang": "danger",
+                        "Sudah Pulang": "success",
+                        "Tidak Ada Permintaan": "danger",
+                        "Belum Ada Ts RO": "danger",
+                        "Belum Upload Foto Thorax": "warning",
+                        "Sudah Selesai": "success",
+                        default: "secondary",
+                    };
+                    return `<div class="badge badge-${
+                        statusClasses[data] || statusClasses.default
+                    }">${data}</div>`;
+                },
+            },
+            { data: "tanggal", className: "p-2" },
+            { data: "antrean_nomor", className: "text-center p-2" },
+            { data: "penjamin_nama", className: "text-center p-2" },
+            { data: "pasien_no_rm", className: "text-center p-2" },
+            { data: "pasien_nama", className: "p-2 col-3" },
+            { data: "poli_nama", className: "p-2" },
+            { data: "dokter_nama", className: "p-2 col-3" },
+        ];
+    }
 }
 
 function processResponse(response, ruang, statusFilter) {
@@ -403,7 +435,7 @@ function antrianAll(ruang) {
         initializeDataTable(
             "#antrianall",
             data,
-            getColumnDefinitions("status_pulang")
+            getColumnDefinitions("status_pulang", ruang)
         );
         if (ruang === "igd" || ruang === "lab") {
             initializeDataTable(

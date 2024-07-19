@@ -220,6 +220,7 @@ function waktuLayanan(tglAwal, tglAkhir, tanggal) {
                         { data: "pasien_no_rm" },
                         { data: "pasien_nama", className: "col-3" },
                         { data: "jenis_kelamin" },
+                        { data: "pasien_umur" },
                         { data: "poli_nama" },
                         { data: "dokter_nama", className: "col-3" },
                         { data: "pendaftaran_menunggu", className: "col-2" },

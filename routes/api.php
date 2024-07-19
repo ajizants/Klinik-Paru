@@ -189,14 +189,14 @@ Route::post('logBook', [ROTransaksiController::class, 'logBook']);
 //API Riwayat Untuk migrasi SIM RS
 Route::get('riwayatKunjungan', [RiwayatController::class, 'index']);
 
-Route::post('daftarKominfo', [PasienKominfoController::class, 'newPendaftaran']);
+Route::post('noAntrianKominfo', [PasienKominfoController::class, 'newPendaftaran']);
 Route::post('pasienKominfo', [PasienKominfoController::class, 'newPasien']);
 Route::post('dataPasien', [PasienKominfoController::class, 'dataPasien']);
-Route::post('noAntrianKominfo', [PasienKominfoController::class, 'newPendaftaran']);
 Route::post('cpptKominfo', [PasienKominfoController::class, 'newCpptRequest']);
 Route::post('antrian/kominfo', [PasienKominfoController::class, 'antrianAll']);
 Route::post('poin_kominfo', [PasienKominfoController::class, 'rekapPoin']);
 Route::post('kominfo/waktu_layanan', [PasienKominfoController::class, 'waktuLayanan']);
 Route::post('kominfo/rata_waktu_tunggu', [PasienKominfoController::class, 'avgWaktuTunggu']);
-Route::post('kominfo/pendaftaran', [PasienKominfoController::class, 'pendaftaranFilter']);
+Route::post('kominfo/pendaftaran', [PasienKominfoController::class, 'pendaftaranFilter']); //cari No RM
+Route::post('kominfo/pendaftaran/report', [PasienKominfoController::class, 'pendaftaran']);
 // });

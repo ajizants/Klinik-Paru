@@ -110,6 +110,12 @@ class HomeController extends Controller
 
         return view('IGD.report')->with('title', $title);
     }
+    public function laporanPendaftaran()
+    {
+        $title = 'Laporan Pendaftaran';
+
+        return view('Laporan.pendaftaran')->with('title', $title);
+    }
     public function dispenser()
     {
         $title = 'Ambil Antrian';

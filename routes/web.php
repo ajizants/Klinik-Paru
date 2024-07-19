@@ -27,6 +27,7 @@ Route::get('logFarmasi', [HomeController::class, 'logFarmasi'])->name('logFarmas
 //menu
 Route::middleware('auth')->group(function () {
     Route::get('report', [HomeController::class, 'report'])->name('report');
+    Route::get('Laporan/Pendaftaran', [HomeController::class, 'laporanPendaftaran'])->name('laporanPendaftaran');
     //farmasi
     Route::get('farmasi', [HomeController::class, 'farmasi'])->name('farmasi')->middleware('role:farmasi');
     Route::get('gudangFarmasi', [HomeController::class, 'gudangFarmasi'])->name('gudangFarmasi')->middleware('role:farmasi');

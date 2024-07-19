@@ -99,6 +99,39 @@ class KominfoModel extends Model
         }
 
     }
+    public function cpptRequestAll(array $params)
+    {
+        // Inisialisasi klien GuzzleHTTP
+        $client = new Client();
+
+        // URL endpoint API yang ingin diakses
+        $url = 'https://kkpm.banyumaskab.go.id/api_kkpm/v1/cppt/data_cppt';
+
+        // Username dan password untuk basic auth
+        $username = env('API_USERNAME', '');
+        $password = env('API_PASSWORD', '');
+
+        try {
+            // Lakukan permintaan POST dengan otentikasi dasar
+            $response = $client->request('POST', $url, [
+                'auth' => [$username, $password],
+                'form_params' => $params,
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                ],
+            ]);
+
+            // Ambil body response
+            $body = $response->getBody();
+
+            // Konversi response body ke array
+            $data = json_decode($body, true);
+            return $data;
+        } catch (\Exception $e) {
+            // Tangani kesalahan
+            return ['error' => $e->getMessage()];
+        }
+    }
     public function cpptRequest(array $params)
     {
         // Inisialisasi klien GuzzleHTTP
@@ -507,6 +540,7 @@ class KominfoModel extends Model
                     "status_pasien" => $message["pasien_lama_baru"] ?? 0,
                     "pasien_no_rm" => $message["pasien_no_rm"] ?? 0,
                     "pasien_nama" => $message["pasien_nama"] ?? 0,
+                    'pasien_umur' => ($message["pasien_umur_tahun"] ?? 0) . " Thn " . ($message["pasien_umur_bulan"] ?? 0 ). " Bln ",
                     "jenis_kelamin" => $message["jenis_kelamin_nama"] ?? 0,
                     "poli_nama" => $message["poli_nama"] ?? 0,
                     "dokter_nama" => $message["dokter_nama"] ?? 0,
@@ -701,7 +735,6 @@ class KominfoModel extends Model
                 } else {
                     $selesaiRo = date('Y-m-d H:i:s', strtotime($roData->created_at));
                 }
-
                 return [
                     "ro" => $pangRo,
                     "lab" => $pangLab,
