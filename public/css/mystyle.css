@@ -128,3 +128,27 @@ div[style*="animation: zoomIn"] {
     padding: 4px 8px; /* Atur padding sesuai kebutuhan */
     margin: 0;
 }
+
+/* Class khusus untuk garis tabel */
+.table-bordered-custom {
+    border-collapse: collapse; /* Gabungkan garis tabel menjadi satu */
+    width: 100%;
+}
+
+.table-bordered-custom thead th {
+    border: 1px solid #dee2e6; /* Garis tipis abu-abu untuk header tabel */
+    background-color: #f8f9fa; /* Warna latar belakang header tabel */
+    padding: 8px;
+    text-align: left;
+}
+
+.table-bordered-custom tbody td {
+    border: 1px solid #dee2e6; /* Garis tipis abu-abu untuk sel tabel */
+    padding: 8px;
+}
+
+.table-bordered-custom table,
+.table-bordered-custom th,
+.table-bordered-custom td {
+    border: 1px solid #dee2e6; /* Garis tipis abu-abu untuk seluruh tabel */
+}

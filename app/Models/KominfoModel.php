@@ -74,7 +74,7 @@ class KominfoModel extends Model
                     "log_id" => $d["log_id"] ?? 0,
                     "keterangan" => $d["keterangan"] ?? 0,
                     "keterangan_urutan" => $d["keterangan_urutan"] ?? 0,
-                    "pasien_umur" => ($d["pasien_umur_tahun"] ?? 0) . " Tahun " . ($d["pasien_umur_bulan"] ?? 0) . " Bulan ",
+                    "pasien_umur" => ($d["pasien_umur_tahun"] ?? 0) . " Thn " . ($d["pasien_umur_bulan"] ?? 0) . " Bln ",
                     "pasien_umur_tahun" => $d["pasien_umur_tahun"] ?? 0,
                     "pasien_umur_bulan" => $d["pasien_umur_bulan"] ?? 0,
                     "pasien_umur_hari" => $d["pasien_umur_hari"] ?? 0,

@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div class="col-1">
-                    <button type="button" class="btn btn-success" onclick="cariJumlah();">
+                    <button type="button" class="btn btn-success" onclick="segarkan();">
                         Segarkan
                         <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top" title="Update Data"
                             id="cariantrian"></span>
@@ -31,7 +31,25 @@
 
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered" id="total" width="100%" cellspacing="0">
+                <table class="table table-bordered table-hover dataTable dtr-inline" id="total" width="100%"
+                    cellspacing="0">
+                    <thead class="bg bg-teal table-bordered border-warning">
+                        <tr>
+                            <th class="text-center">Jumlah Pasien</th>
+                            <th class="text-center">Pasien Batal</th>
+                            <th class="text-center">Pasien Skip</th>
+                            <th class="text-center">Pasien BPJS</th>
+                            <th class="text-center">Pasien UMUM</th>
+                            <th class="text-center">Pasien LAMA</th>
+                            <th class="text-center">Pasien BARU</th>
+                            <th class="text-center">Pasien JKN</th>
+                            <th class="text-center">Pasien OTS</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-bordered border-warning">
+                    </tbody>
+                </table>
+                {{-- <table class="table table-bordered" id="total" width="100%" cellspacing="0">
                     <thead class="bg bg-teal">
                         <tr>
                             <th class="col-1">No</th>
@@ -41,7 +59,7 @@
                     </thead>
                     <tbody>
                     </tbody>
-                </table>
+                </table> --}}
             </div>
         </div>
         <div class="card-body mb-2">
@@ -67,23 +85,24 @@
 
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered" id="report" width="100%" cellspacing="0">
-                    <thead class="bg bg-teal">
+                <table class="table table-bordered table-hover dataTable dtr-inline" id="report" width="120%"
+                    cellspacing="0">
+                    <thead class="bg bg-teal table-bordered border-warning">
                         <tr>
-                            <th class="col-1">No Antrian</th>
-                            <th class="col-1">Tanggal</th>
-                            <th class="col-1">Penjamin</th>
-                            <th class="col-1">Daftar Lewat</th>
-                            <th class="col-1">Pendaftaran</th>
-                            <th class="col-1">No. RM</th>
-                            <th class="col-3">Nama Pasien</th>
+                            <th>Urut</th>
+                            <th>Tanggal</th>
+                            <th>Penjamin</th>
+                            <th>Daftar By</th>
+                            <th>Ket</th>
+                            <th>No. RM</th>
+                            <th class="col-2">Nama Pasien</th>
                             <th>JK</th>
-                            <th class="col-2">Umur</th>
-                            <th class="col-1">Poli</th>
+                            <th>Umur</th>
+                            <th>Poli</th>
                             <th class="col-3">Dokter</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="table-bordered border-warning">
                     </tbody>
                 </table>
             </div>

@@ -2,6 +2,134 @@ function reportPendaftaran(tglAwal, tglAkhir) {
     var tglA = formatDate(new Date(tglAwal));
     var tglB = formatDate(new Date(tglAkhir));
 
+    if ($.fn.DataTable.isDataTable("#report, #total")) {
+        var tabletindakan = $("#report, #total").DataTable();
+        tabletindakan.destroy();
+    }
+
+    $.ajax({
+        url: "/api/kominfo/pendaftaran/report",
+        type: "post",
+        data: {
+            tanggal_awal: tglAwal,
+            tanggal_akhir: tglAkhir,
+            no_rm: "",
+        },
+        success: function (response) {
+            var pendaftaran = response["data"];
+            var total = response["total"];
+            console.log("🚀 ~ reportPendaftaran ~ total:", total);
+            console.log("🚀 ~ reportPendaftaran ~ $data:", pendaftaran);
+            $("#report")
+                .DataTable({
+                    data: pendaftaran,
+                    columns: [
+                        { data: "antrean_nomor" },
+                        { data: "tanggal" },
+                        { data: "penjamin_nama" },
+                        { data: "daftar_by" },
+                        { data: "pasien_lama_baru" },
+                        { data: "pasien_no_rm" },
+                        { data: "pasien_nama", className: "col-2" },
+                        { data: "jenis_kelamin_nama" },
+                        { data: "pasien_umur" },
+                        { data: "poli_nama" },
+                        { data: "dokter_nama", className: "col-3" },
+                        // { data: "alamat", className: "col-3" },
+                    ],
+                    autoWidth: false,
+                    buttons: [
+                        {
+                            extend: "excelHtml5",
+                            text: "Excel",
+                            title:
+                                "Laporan Pendaftaran Tanggal: " +
+                                tglA +
+                                " s.d. " +
+                                tglB,
+                            filename:
+                                "Laporan Pendaftaran Tanggal: " +
+                                tglA +
+                                "  s.d. " +
+                                tglB,
+                        },
+                        {
+                            extend: "colvis",
+                            text: "Tampilkan Kolom",
+                        },
+                        // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+                    ],
+                })
+                .buttons()
+                .container()
+                .appendTo("#report_wrapper .col-md-6:eq(0)");
+            $("#total")
+                .DataTable({
+                    data: [total],
+                    columns: [
+                        { data: "jumlah_pasien", className: "text-center" },
+                        {
+                            data: "jumlah_pasien_batal",
+                            className: "text-center",
+                        },
+                        { data: "jumlah_nomor_skip", className: "text-center" },
+                        { data: "jumlah_BPJS", className: "text-center" },
+                        { data: "jumlah_UMUM", className: "text-center" },
+                        {
+                            data: "jumlah_pasien_LAMA",
+                            className: "text-center",
+                        },
+                        {
+                            data: "jumlah_pasien_BARU",
+                            className: "text-center",
+                        },
+                        { data: "jumlah_daftar_OTS", className: "text-center" },
+                        { data: "jumlah_daftar_JKN", className: "text-center" },
+                    ],
+                    autoWidth: false,
+                    buttons: [
+                        {
+                            extend: "excelHtml5",
+                            text: "Excel",
+                            title:
+                                "Laporan Pendaftaran Tanggal: " +
+                                tglA +
+                                " s.d. " +
+                                tglB,
+                            filename:
+                                "Laporan Pendaftaran Tanggal: " +
+                                tglA +
+                                "  s.d. " +
+                                tglB,
+                        },
+                        {
+                            extend: "colvis",
+                            text: "Tampilkan Kolom",
+                        },
+                        // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+                    ],
+                })
+                .buttons()
+                .container()
+                .appendTo("#total_wrapper .col-md-6:eq(0)");
+            Swal.close();
+        },
+
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            Swal.fire({
+                icon: "error",
+                title:
+                    "Terjadi kesalahan saat mengambil data pasien...!!!\n" +
+                    error,
+            });
+        },
+    });
+}
+function reportPendaftaranold(tglAwal, tglAkhir) {
+    var tglA = formatDate(new Date(tglAwal));
+    var tglB = formatDate(new Date(tglAkhir));
+
     if ($.fn.DataTable.isDataTable("#report")) {
         var tabletindakan = $("#report").DataTable();
         tabletindakan.destroy();
@@ -18,6 +146,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
         success: function (response) {
             var pendaftaran = response["data"];
             var total = response["total"];
+            console.log("🚀 ~ reportPendaftaran ~ total:", total);
             console.log("🚀 ~ reportPendaftaran ~ $data:", pendaftaran);
             $("#report")
                 .DataTable({
@@ -64,55 +193,17 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                 .appendTo("#report_wrapper .col-md-6:eq(0)");
             $("#total")
                 .DataTable({
-                    destroy: true, // Hapus tabel yang sudah ada sebelumnya
-                    data: [
-                        {
-                            kategori: "Jumlah Pasien",
-                            jumlah: total.jumlah_pasien.toFixed(0),
-                        },
-                        {
-                            kategori: "Jumlah Pasien Batal",
-                            jumlah: total.jumlah_pasien_batal.toFixed(0),
-                        },
-                        {
-                            kategori: "Jumlah nomor di Lewati",
-                            jumlah: total.jumlah_nomor_skip.toFixed(0),
-                        },
-                        {
-                            kategori: "Jumlah Pasien BPJS",
-                            jumlah: total.jumlah_BPJS.toFixed(0),
-                        },
-                        {
-                            kategori: "Jumlah Pasien UMUM",
-                            jumlah: total.jumlah_UMUM.toFixed(0),
-                        },
-                        {
-                            kategori: "Jumlah Pasien LAMA",
-                            jumlah: total.jumlah_pasien_LAMA.toFixed(0),
-                        },
-                        {
-                            kategori: "Jumlah Pasien BARU",
-                            jumlah: total.jumlah_pasien_BARU.toFixed(0),
-                        },
-                        {
-                            kategori: "Jumlah Daftar Lewat JKN",
-                            jumlah: total.jumlah_daftar_JKN.toFixed(0),
-                        },
-                        {
-                            kategori: "Jumlah Daftar OTS",
-                            jumlah: total.jumlah_daftar_OTS.toFixed(0),
-                        },
-                    ],
+                    data: total,
                     columns: [
-                        {
-                            data: null,
-                            render: function (data, type, row, meta) {
-                                return meta.row + 1; // Menambahkan nomor urut
-                            },
-                            title: "No",
-                        },
-                        { data: "kategori" },
-                        { data: "jumlah" },
+                        { data: "jumlah_pasien" },
+                        { data: "jumlah_pasien_batal" },
+                        { data: "jumlah_nomor_skip" },
+                        { data: "jumlah_BPJS" },
+                        { data: "jumlah_UMUM" },
+                        { data: "jumlah_pasien_LAMA" },
+                        { data: "jumlah_pasien_BARU" },
+                        { data: "jumlah_daftar_OTS" },
+                        { data: "jumlah_daftar_JKN" },
                     ],
                     autoWidth: false,
                     buttons: [
@@ -120,12 +211,12 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                             extend: "excelHtml5",
                             text: "Excel",
                             title:
-                                "Laporan Jumlah Pendaftaran Tanggal: " +
+                                "Laporan Pendaftaran Tanggal: " +
                                 tglA +
                                 " s.d. " +
                                 tglB,
                             filename:
-                                "Laporan Jumlah Pendaftaran Tanggal: " +
+                                "Laporan Pendaftaran Tanggal: " +
                                 tglA +
                                 "  s.d. " +
                                 tglB,
@@ -140,6 +231,84 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                 .buttons()
                 .container()
                 .appendTo("#total_wrapper .col-md-6:eq(0)");
+            // $("#total")
+            //     .DataTable({
+            //         destroy: true, // Hapus tabel yang sudah ada sebelumnya
+            //         data: [
+            //             {
+            //                 kategori: "Jumlah Pasien",
+            //                 jumlah: total.jumlah_pasien.toFixed(0),
+            //             },
+            //             {
+            //                 kategori: "Jumlah Pasien Batal",
+            //                 jumlah: total.jumlah_pasien_batal.toFixed(0),
+            //             },
+            //             {
+            //                 kategori: "Jumlah nomor di Lewati",
+            //                 jumlah: total.jumlah_nomor_skip.toFixed(0),
+            //             },
+            //             {
+            //                 kategori: "Jumlah Pasien BPJS",
+            //                 jumlah: total.jumlah_BPJS.toFixed(0),
+            //             },
+            //             {
+            //                 kategori: "Jumlah Pasien UMUM",
+            //                 jumlah: total.jumlah_UMUM.toFixed(0),
+            //             },
+            //             {
+            //                 kategori: "Jumlah Pasien LAMA",
+            //                 jumlah: total.jumlah_pasien_LAMA.toFixed(0),
+            //             },
+            //             {
+            //                 kategori: "Jumlah Pasien BARU",
+            //                 jumlah: total.jumlah_pasien_BARU.toFixed(0),
+            //             },
+            //             {
+            //                 kategori: "Jumlah Daftar Lewat JKN",
+            //                 jumlah: total.jumlah_daftar_JKN.toFixed(0),
+            //             },
+            //             {
+            //                 kategori: "Jumlah Daftar OTS",
+            //                 jumlah: total.jumlah_daftar_OTS.toFixed(0),
+            //             },
+            //         ],
+            //         columns: [
+            //             {
+            //                 data: null,
+            //                 render: function (data, type, row, meta) {
+            //                     return meta.row + 1; // Menambahkan nomor urut
+            //                 },
+            //                 title: "No",
+            //             },
+            //             { data: "kategori" },
+            //             { data: "jumlah" },
+            //         ],
+            //         autoWidth: false,
+            //         buttons: [
+            //             {
+            //                 extend: "excelHtml5",
+            //                 text: "Excel",
+            //                 title:
+            //                     "Laporan Jumlah Pendaftaran Tanggal: " +
+            //                     tglA +
+            //                     " s.d. " +
+            //                     tglB,
+            //                 filename:
+            //                     "Laporan Jumlah Pendaftaran Tanggal: " +
+            //                     tglA +
+            //                     "  s.d. " +
+            //                     tglB,
+            //             },
+            //             {
+            //                 extend: "colvis",
+            //                 text: "Tampilkan Kolom",
+            //             },
+            //             // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+            //         ],
+            //     })
+            //     .buttons()
+            //     .container()
+            //     .appendTo("#total_wrapper .col-md-6:eq(0)");
             Swal.close();
         },
 
@@ -181,14 +350,15 @@ window.addEventListener("load", function () {
     $("#tanggal").val(today);
 
     // Inisialisasi tglAwal dan tglAkhir sebagai objek Moment.js
-    tglAwal = moment().subtract(30, "days").format("YYYY-MM-DD");
-    tglAkhir = moment().subtract(1, "days").format("YYYY-MM-DD");
+    // tglAwal = moment().subtract(30, "days").format("YYYY-MM-DD");
+    tglAwal = moment().subtract(0, "days").format("YYYY-MM-DD");
+    tglAkhir = moment().subtract(0, "days").format("YYYY-MM-DD");
 
     // Menetapkan nilai ke input tanggal
     $("#reservation, #tglJumlah").val(tglAwal + " to " + tglAkhir);
 
     // Date range picker
-    $("#reservation").daterangepicker({
+    $("#reservation, #tglJumlah").daterangepicker({
         startDate: tglAwal,
         endDate: tglAkhir,
         autoApply: true,
@@ -219,6 +389,15 @@ window.addEventListener("load", function () {
             reportPendaftaran(tglAwal, tglAkhir);
         }
     );
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencarikan data...!!!",
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+    reportPendaftaran(tglAwal, tglAkhir);
 });
 
 function segarkan() {
