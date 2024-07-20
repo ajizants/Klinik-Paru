@@ -21,6 +21,7 @@ class KominfoModel extends Model
         // Username dan password untuk basic auth
         $username = '3301010509940003';
         $password = '~@j1s@nt0sO#';
+        // dd($params);
 
         try {
             // Lakukan permintaan POST dengan otentikasi dasar
@@ -34,10 +35,9 @@ class KominfoModel extends Model
 
             // Ambil body response
             $body = $response->getBody();
-
             // Konversi response body ke array
             $data = json_decode($body, true);
-
+            // dd($data);
             // Periksa apakah data berhasil di-decode menjadi array
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new \Exception('Error decoding JSON response: ' . json_last_error_msg());
@@ -540,7 +540,7 @@ class KominfoModel extends Model
                     "status_pasien" => $message["pasien_lama_baru"] ?? 0,
                     "pasien_no_rm" => $message["pasien_no_rm"] ?? 0,
                     "pasien_nama" => $message["pasien_nama"] ?? 0,
-                    'pasien_umur' => ($message["pasien_umur_tahun"] ?? 0) . " Thn " . ($message["pasien_umur_bulan"] ?? 0 ). " Bln ",
+                    'pasien_umur' => ($message["pasien_umur_tahun"] ?? 0) . " Thn " . ($message["pasien_umur_bulan"] ?? 0) . " Bln ",
                     "jenis_kelamin" => $message["jenis_kelamin_nama"] ?? 0,
                     "poli_nama" => $message["poli_nama"] ?? 0,
                     "dokter_nama" => $message["dokter_nama"] ?? 0,

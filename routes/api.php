@@ -198,5 +198,5 @@ Route::post('poin_kominfo', [PasienKominfoController::class, 'rekapPoin']);
 Route::post('kominfo/waktu_layanan', [PasienKominfoController::class, 'waktuLayanan']);
 Route::post('kominfo/rata_waktu_tunggu', [PasienKominfoController::class, 'avgWaktuTunggu']);
 Route::post('kominfo/pendaftaran', [PasienKominfoController::class, 'pendaftaranFilter']); //cari No RM
-Route::post('kominfo/pendaftaran/report', [PasienKominfoController::class, 'pendaftaran']);
+Route::post('kominfo/pendaftaran/report', [PasienKominfoController::class, 'reportPendaftaran']);
 // });

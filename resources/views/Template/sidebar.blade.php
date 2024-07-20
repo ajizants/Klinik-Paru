@@ -172,7 +172,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url('/report') }}">
                                     <i class="fa-solid fa-chart-column nav-icon"></i>
-                                    <p>Report Petugas</p>
+                                    <p>Laporan Petugas</p>
                                 </a>
                             </li>
                             <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Farmasi">
@@ -191,6 +191,12 @@
                                 <a class="nav-link" href="{{ url('/riwayatLab') }}">
                                     <i class="fa-solid fa-chart-column nav-icon"></i>
                                     <p>Laporan Laboratorium</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/Laporan/Pendaftaran') }}">
+                                    <i class="fa-solid fa-chart-column nav-icon"></i>
+                                    <p>Laporan Pendaftaran</p>
                                 </a>
                             </li>
                         </ul>

@@ -123,7 +123,7 @@ class PasienKominfoController extends Controller
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
     }
-    public function pendaftaran(Request $request)
+    public function reportPendaftaran1(Request $request)
     {
         // $limit = 10; // Set the limit to 5
         $params = $request->all();
@@ -133,85 +133,121 @@ class PasienKominfoController extends Controller
         $kominfo = new KominfoModel();
         $dataPendaftaranResponse = $kominfo->pendaftaranRequest($params);
 
-        // Process data pendaftaran
-        $cppt = [];
-        // $counter = 0;
-        foreach ($dataPendaftaranResponse as $data) {
-            // Skip if pasien_no_rm is not set or is empty
-            if (empty($data['pasien_no_rm'])) {
-                continue;
-            }
-            // Break the loop if limit is reached
-            // if ($counter >= $limit) {
-            //     break;
-            // }
-            $norm = $data['pasien_no_rm'];
-
-            $param = [
-                'pasien_no_rm' => $norm,
-                'tanggal_awal' => $tglAwal,
-                'tanggal_akhir' => $tglAkhir,
-            ];
-
-            $dataPasienResponse = $kominfo->cpptRequestAll($param);
-
-            // Check if response is successful and contains the necessary data
-            $cppt = $dataPasienResponse['response']['data'];
-            dd($cppt);
-
-            // Combine pendaftaran data and pasien data
-            // $antrian[] = [
-            //     'id' => $data['id'] ?? null,
-            //     'no_reg' => $data['no_reg'] ?? null,
-            //     'no_trans' => $data['no_trans'] ?? null,
-            //     'antrean_nomor' => $data['antrean_nomor'] ?? null,
-            //     'tanggal' => $data['tanggal'] ?? null,
-            //     'penjamin_nama' => $data['penjamin_nama'] ?? null,
-            //     'jenis_kunjungan_nama' => $data['jenis_kunjungan_nama'] ?? null,
-            //     'pasien_nik' => $data['pasien_nik'] ?? null,
-
-            //     "penjamin_nomor" => $data['penjamin_nomor'] ?? null,
-            //     "jenis_kunjungan_nama" => $data['jenis_kunjungan_nama'] ?? null,
-            //     "nomor_referensi" => $data['nomor_referensi'] ?? null,
-            //     'pasien_no_rm' => $data['pasien_no_rm'] ?? null,
-            //     'pasien_lama_baru' => $data['pasien_lama_baru'] ?? null,
-            //     'rs_paru_pasien_lama_baru' => $data['rs_paru_pasien_lama_baru'] ?? null,
-            //     'poli_nama' => $data['poli_nama'] ?? null,
-            //     'poli_sub_nama' => $data['poli_sub_nama'] ?? null,
-            //     'dokter_nama' => $data['dokter_nama'] ?? null,
-            //     'waktu_daftar' => $data['waktu_daftar'] ?? null,
-            //     'waktu_verifikasi' => $data['waktu_verifikasi'] ?? null,
-            //     'admin_pendaftaran' => $data['admin_pendaftaran'] ?? null,
-            //     'log_id' => $data['log_id'] ?? null,
-            //     'pasien_umur' => $data['pasien_umur_tahun'] . ' Thn ' . $data['pasien_umur_bulan'] . ' Bln ',
-            //     'keterangan' => $data['keterangan'] ?? null,
-
-            //     // Data pasien tambahan dari API kedua
-            //     'pasien_nama' => $data['pasien_nama'] ?? null,
-            //     'jenis_kelamin_nama' => $pasienData['jenis_kelamin_nama'] ?? null,
-            //     'pasien_tempat_lahir' => $pasienData['pasien_tempat_lahir'] ?? null,
-            //     'pasien_tgl_lahir' => $pasienData['pasien_tgl_lahir'] ?? null,
-            //     // 'pasien_alamat' => $pasienData['kelurahan_nama'] ?? null . ' ' . $pasienData['pasien_rt'] ?? null . '/' . $pasienData['pasien_rw'] ?? null . ' ' . $pasienData['kecamatan_nama'] ?? null . ' ' . $pasienData['kota_kabupaten_nama'] ?? null,
-            // ];
-
-            // $counter++;
-            // }
-        }
         // Build response
-        $res = [
-            'metadata' => [
-                'message' => 'Data Pendaftaran Ditemukan',
-                'code' => 200,
-            ],
-            'response' => [
-                'pendaftaran' => $dataPendaftaranResponse,
-                'cppt' => $cppt
-            ],
-        ];
+        $res = $dataPendaftaranResponse;
 
+        $res = [
+            "status_pulang" => "Belum Pulang",
+            "no_reg" => "2024072000001",
+            "id" => "105052",
+            "no_trans" => 0,
+            "antrean_nomor" => "001",
+            "tanggal" => "2024-07-20",
+            "penjamin_nama" => "BPJS",
+            "penjamin_nomor" => "0002056884254",
+            "jenis_kunjungan_nama" => "Kontrol",
+            "nomor_referensi" => "1111R0020624K000343",
+            "pasien_nik" => "3302155506160001",
+            "pasien_nama" => "ALMIRA KHALIQA RAMADHANI",
+            "pasien_no_rm" => "024797",
+            "pasien_tgl_lahir" => "2016-06-15",
+            "jenis_kelamin_nama" => "P",
+            "pasien_lama_baru" => "LAMA",
+            "rs_paru_pasien_lama_baru" => "L",
+            "poli_nama" => "PARU",
+            "poli_sub_nama" => "PARU",
+            "dokter_nama" => "dr. AGIL DANANJAYA, Sp.P",
+            "daftar_by" => "JKN",
+            "waktu_daftar" => "2024-06-23 14=>12=>23",
+            "waktu_verifikasi" => "2024-07-20 07=>44=>24",
+            "admin_pendaftaran" => "MUTMAINAH,A.Md.Kes",
+            "log_id" => "204706",
+            "keterangan" => "SKIP LOKET PENDAFTARAN",
+            "keterangan_urutan" => "3",
+            "pasien_umur" => "8 Tahun 1 Bulan ",
+            "pasien_umur_tahun" => "8",
+            "pasien_umur_bulan" => "1",
+            "pasien_umur_hari" => "5",
+        ];
         return response()->json($res);
 
     }
+    public function reportPendaftaran(Request $request)
+    {
+        // ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
+        // ini_set('memory_limit', '512M');
+        $params = $request->all();
+        // dd($params);
+        $tglAwal = $request->input('tanggal_awal');
+        $tglAkhir = $request->input('tanggal_akhir');
+
+        $kominfo = new KominfoModel();
+        $dataPendaftaranResponse = $kominfo->pendaftaranRequest($params);
+
+        // Debugging: print the data received
+        // dd($dataPendaftaranResponse);
+
+        // Filter data dengan keterangan "SELESAI DOPANGGIL PENDAFTARAN"
+        $filteredData = array_filter($dataPendaftaranResponse, function ($item) {
+            return isset($item['keterangan']) && $item['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
+        });
+
+        // Debugging: print the filtered data
+        // dd($filteredData);
+
+        // Hitung jumlah berdasarkan penjamin_nama
+        $jumlahBPJS = count(array_filter($filteredData, function ($item) {
+            return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
+        }));
+        $jumlahUMUM = count(array_filter($filteredData, function ($item) {
+            return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
+        }));
+
+        // Hitung jumlah berdasarkan pasien_lama_baru
+        $jumlahLama = count(array_filter($filteredData, function ($item) {
+            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'LAMA';
+        }));
+        $jumlahBaru = count(array_filter($filteredData, function ($item) {
+            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'BARU';
+        }));
+
+        // Hitung jumlah berdasarkan daftar_by
+        $jumlahOTS = count(array_filter($filteredData, function ($item) {
+            return isset($item['daftar_by']) && $item['daftar_by'] === 'OTS';
+        }));
+        $jumlahJKN = count(array_filter($filteredData, function ($item) {
+            return isset($item['daftar_by']) && $item['daftar_by'] === 'JKN';
+        }));
+        $jumlahBatal = count(array_filter($dataPendaftaranResponse, function ($item) {
+            return isset($item['keterangan']) && strpos($item['keterangan'], 'DIBATALKAN PADA') !== false;
+        }));
+        $jumlahSkip = count(array_filter($dataPendaftaranResponse, function ($item) {
+            return isset($item['keterangan']) && strpos($item['keterangan'], 'SKIP LOKET PENDAFTARAN') !== false;
+        }));
+
+        // Build response
+        $jumlah = [
+            'jumlah_pasien' => count($filteredData),
+            'jumlah_pasien_batal' => $jumlahBatal,
+            'jumlah_nomor_skip' => $jumlahSkip,
+            'jumlah_BPJS' => $jumlahBPJS,
+            'jumlah_UMUM' => $jumlahUMUM,
+            'jumlah_pasien_LAMA' => $jumlahLama,
+            'jumlah_pasien_BARU' => $jumlahBaru,
+            'jumlah_daftar_OTS' => $jumlahOTS,
+            'jumlah_daftar_JKN' => $jumlahJKN,
+        ];
+
+        $data = array_values($filteredData);
+
+        $res = [
+            "total" => $jumlah,
+            "data" => $data,
+        ];
+
+        return response()->json($res);
+    }
+
     public function pendaftaran2(Request $request)
     {
         $limit = 10; // Set the limit to 5
