@@ -68,39 +68,39 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                     data: [
                         {
                             kategori: "Jumlah Pasien",
-                            jumlah: total.jumlah_pasien.toFixed(2),
+                            jumlah: total.jumlah_pasien.toFixed(0),
                         },
                         {
                             kategori: "Jumlah Pasien Batal",
-                            jumlah: total.jumlah_pasien_batal.toFixed(2),
+                            jumlah: total.jumlah_pasien_batal.toFixed(0),
                         },
                         {
                             kategori: "Jumlah nomor di Lewati",
-                            jumlah: total.jumlah_nomor_skip.toFixed(2),
+                            jumlah: total.jumlah_nomor_skip.toFixed(0),
                         },
                         {
                             kategori: "Jumlah Pasien BPJS",
-                            jumlah: total.jumlah_BPJS.toFixed(2),
+                            jumlah: total.jumlah_BPJS.toFixed(0),
                         },
                         {
                             kategori: "Jumlah Pasien UMUM",
-                            jumlah: total.jumlah_UMUM.toFixed(2),
+                            jumlah: total.jumlah_UMUM.toFixed(0),
                         },
                         {
                             kategori: "Jumlah Pasien LAMA",
-                            jumlah: total.jumlah_pasien_LAMA.toFixed(2),
+                            jumlah: total.jumlah_pasien_LAMA.toFixed(0),
                         },
                         {
                             kategori: "Jumlah Pasien BARU",
-                            jumlah: total.jumlah_pasien_BARU.toFixed(2),
+                            jumlah: total.jumlah_pasien_BARU.toFixed(0),
                         },
                         {
                             kategori: "Jumlah Daftar Lewat JKN",
-                            jumlah: total.jumlah_daftar_JKN.toFixed(2),
+                            jumlah: total.jumlah_daftar_JKN.toFixed(0),
                         },
                         {
                             kategori: "Jumlah Daftar OTS",
-                            jumlah: total.jumlah_daftar_OTS.toFixed(2),
+                            jumlah: total.jumlah_daftar_OTS.toFixed(0),
                         },
                     ],
                     columns: [
@@ -224,8 +224,9 @@ window.addEventListener("load", function () {
 function segarkan() {
     Swal.fire({
         icon: "info",
-        title: "Sedang mencarikan data...!!!",
-        showConfirmButton: false,
+        title: "Sedang mencarikan data...!!!\n Proses lama jika mencari lebih dari 10 hari",
+        showConfirmButton: true,
+        allowOutsideClick: false,
         didOpen: () => {
             Swal.showLoading();
         },
@@ -235,8 +236,9 @@ function segarkan() {
 function cariJumlah() {
     Swal.fire({
         icon: "info",
-        title: "Sedang mencarikan data...!!!",
-        showConfirmButton: false,
+        title: "Sedang mencarikan data...!!!\n Proses lama jika mencari lebih dari 10 hari",
+        showConfirmButton: true,
+        allowOutsideClick: false,
         didOpen: () => {
             Swal.showLoading();
         },

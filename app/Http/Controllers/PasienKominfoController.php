@@ -227,16 +227,17 @@ class PasienKominfoController extends Controller
 
         // Build response
         $jumlah = [
-            'jumlah_pasien' => count($filteredData),
-            'jumlah_pasien_batal' => $jumlahBatal,
-            'jumlah_nomor_skip' => $jumlahSkip,
-            'jumlah_BPJS' => $jumlahBPJS,
-            'jumlah_UMUM' => $jumlahUMUM,
-            'jumlah_pasien_LAMA' => $jumlahLama,
-            'jumlah_pasien_BARU' => $jumlahBaru,
-            'jumlah_daftar_OTS' => $jumlahOTS,
-            'jumlah_daftar_JKN' => $jumlahJKN,
+            'jumlah_pasien' => (int) count($filteredData),
+            'jumlah_pasien_batal' => (int) $jumlahBatal,
+            'jumlah_nomor_skip' => (int) $jumlahSkip,
+            'jumlah_BPJS' => (int) $jumlahBPJS,
+            'jumlah_UMUM' => (int) $jumlahUMUM,
+            'jumlah_pasien_LAMA' => (int) $jumlahLama,
+            'jumlah_pasien_BARU' => (int) $jumlahBaru,
+            'jumlah_daftar_OTS' => (int) $jumlahOTS,
+            'jumlah_daftar_JKN' => (int) $jumlahJKN,
         ];
+
 
         $data = array_values($filteredData);
 
