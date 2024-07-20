@@ -31,7 +31,7 @@
 
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered" id="report" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="total" width="100%" cellspacing="0">
                     <thead class="bg bg-teal">
                         <tr>
                             <th class="col-1">No</th>
