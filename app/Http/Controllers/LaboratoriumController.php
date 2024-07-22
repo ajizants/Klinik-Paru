@@ -372,30 +372,6 @@ class LaboratoriumController extends Controller
         // return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
         return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
     }
-    public function rekapBpjsUmum(Request $request)
-    {
-        $tglAwal = $request->input('tglAwal', now()->toDateString());
-        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
-
-        // dd($tglAkhir);
-        $riwayatLab = DB::table('t_kunjungan_laboratorium')
-            ->join('kasir_m_layanan', 't_kunjungan_laboratorium.idLayanan', '=', 'kasir_m_layanan.idLayanan')
-            ->join('t_kunjungan', 't_kunjungan_laboratorium.notrans', '=', 't_kunjungan.notrans')
-            ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
-            ->select(
-                'm_kelompok.kelompok',
-                'kasir_m_layanan.nmLayanan',
-                't_kunjungan_laboratorium.created_at',
-                DB::raw('COUNT(0) AS Jumlah')
-            )
-            ->groupBy('m_kelompok.kelompok', 'kasir_m_layanan.nmLayanan', 't_kunjungan_laboratorium.created_at')
-            ->whereBetween(DB::raw('DATE(t_kunjungan_laboratorium.created_at)'), [$tglAwal, $tglAkhir])
-            ->get();
-
-        // return view('riwayat_lab.index', compact('riwayatLab'));
-        return response()->json($riwayatLab, 200, [], JSON_PRETTY_PRINT);
-    }
-
     public function rekapKunjungan2(Request $request)
     {
         $norm = $request->input('norm');
