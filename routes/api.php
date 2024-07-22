@@ -119,7 +119,7 @@ Route::post('rekapReagenHari', [LaboratoriumController::class, 'rekapReagen']);
 Route::post('rekapReagenBln', [LaboratoriumController::class, 'rekapReagenBln']);
 
 //farmasi
-//sumberdaya apotik
+
 Route::get('stokbmhp', [StokController::class, 'stokbmhp']);
 Route::get('obat', [GudangFarmasiController::class, 'gudangFarmasiIn']);
 
