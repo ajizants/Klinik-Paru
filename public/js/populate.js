@@ -329,7 +329,7 @@ function initializeDataTable(selector, data, columns, order = [1, "asc"]) {
 }
 
 function getColumnDefinitions(statusType = "status_pulang", ruang) {
-    if (ruang == "lab") {
+    if (ruang == "lab" || ruang == "dots") {
         return [
             { data: "aksi", className: "text-center p-2" },
             {
@@ -350,7 +350,7 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
                     }">${data}</div>`;
                 },
             },
-            { data: "tanggal", className: "p-2" },
+            { data: "tanggal" },
             { data: "antrean_nomor", className: "text-center p-2" },
             { data: "penjamin_nama", className: "text-center p-2" },
             { data: "pasien_no_rm", className: "text-center p-2" },

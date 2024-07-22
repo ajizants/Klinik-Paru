@@ -144,6 +144,7 @@
                                     <th>Urut</th>
                                     <th>Jaminan</th>
                                     <th>No RM</th>
+                                    <th>NIK</th>
                                     <th class="col-3">Nama Pasien</th>
                                     <th>Poli</th>
                                     <th class="col-3">Dokter</th>
