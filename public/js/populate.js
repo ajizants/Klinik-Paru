@@ -313,8 +313,8 @@ function fetchDataAntrianAll(tanggal, ruang, callback) {
         data: { tanggal: tanggal, ruang: ruang },
         success: callback,
         error: function (xhr) {
-            console.error("Error fetching data:", xhr);
-            fetchDataAntrianAll(tanggal, ruang, callback);
+            // console.error("Error fetching data:", xhr);
+            // fetchDataAntrianAll(tanggal, ruang, callback);
         },
     });
 }
