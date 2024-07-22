@@ -6,6 +6,7 @@ use App\Models\KunjunganModel;
 use App\Models\LaboratoriumHasilModel;
 use App\Models\LaboratoriumKunjunganModel;
 use App\Models\LayananModel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -59,7 +60,6 @@ class LaboratoriumController extends Controller
             return response()->json($res, 400, [], JSON_PRETTY_PRINT);
         }
     }
-
 
     public function cariTsLab(Request $request)
     {
@@ -288,7 +288,7 @@ class LaboratoriumController extends Controller
                     ], 400);
                 }
             }
-            $kunjungan=LaboratoriumKunjunganModel::where('notrans',$data['notrans'])->first();
+            $kunjungan = LaboratoriumKunjunganModel::where('notrans', $data['notrans'])->first();
             $kunjungan->update([
                 'updated_at' => now(), // Jika ada kolom updated_at dan ingin diperbarui
             ]);
@@ -395,118 +395,8 @@ class LaboratoriumController extends Controller
         // return view('riwayat_lab.index', compact('riwayatLab'));
         return response()->json($riwayatLab, 200, [], JSON_PRETTY_PRINT);
     }
-    public function rekapReagen(Request $request)
-    {
-        $tglAwal = $request->input('tglAwal', now()->toDateString());
-        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
-
-        // dd($tglAkhir);
-        $riwayatLab = DB::table('t_kunjungan_laboratorium')
-            ->join('kasir_m_layanan', 't_kunjungan_laboratorium.idLayanan', '=', 'kasir_m_layanan.idLayanan')
-            ->join('t_kunjungan', 't_kunjungan_laboratorium.notrans', '=', 't_kunjungan.notrans')
-            ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
-            ->select(
-
-                'kasir_m_layanan.nmLayanan',
-                't_kunjungan_laboratorium.created_at',
-                DB::raw('COUNT(0) AS Jumlah')
-            )
-            ->groupBy('kasir_m_layanan.nmLayanan', 't_kunjungan_laboratorium.created_at')
-            ->whereBetween(DB::raw('DATE(t_kunjungan_laboratorium.created_at)'), [$tglAwal, $tglAkhir])
-            ->get();
-
-        // return view('riwayat_lab.index', compact('riwayatLab'));
-        return response()->json($riwayatLab, 200, [], JSON_PRETTY_PRINT);
-    }
-    public function rekapReagenBln(Request $request)
-    {
-        $tglAwal = $request->input('tglAwal', now()->toDateString());
-        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
-
-        $riwayatLab = DB::table('t_kunjungan_laboratorium')
-            ->join('kasir_m_layanan', 't_kunjungan_laboratorium.idLayanan', '=', 'kasir_m_layanan.idLayanan')
-            ->join('t_kunjungan', 't_kunjungan_laboratorium.notrans', '=', 't_kunjungan.notrans')
-            ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
-            ->select(
-                'kasir_m_layanan.nmLayanan',
-                DB::raw('CONCAT(MONTH(t_kunjungan_laboratorium.created_at), "-", YEAR(t_kunjungan_laboratorium.created_at)) as created_at'),
-                DB::raw('COUNT(0) AS Jumlah')
-            )
-            ->groupBy('kasir_m_layanan.nmLayanan', 'created_at')
-            ->whereBetween(DB::raw('DATE(t_kunjungan_laboratorium.created_at)'), [$tglAwal, $tglAkhir])
-            ->get();
-
-        return response()->json($riwayatLab, 200, [], JSON_PRETTY_PRINT);
-    }
 
     public function rekapKunjungan2(Request $request)
-    {
-        $notrans = $request->input('notrans');
-        $tglAwal = $request->input('tglAwal', now()->toDateString());
-        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
-        // dd($tglAkhir);
-        $data = LaboratoriumHasilModel::with('kunjungan.biodata', 'layanan.kelas', 'petugas.biodata', 'dokter.biodata')
-            ->where('notrans', 'like', '%' . $notrans . '%')
-            ->whereBetween('created_at', [
-                \Carbon\Carbon::parse($tglAwal)->startOfDay(), // Menambahkan waktu mulai hari
-                \Carbon\Carbon::parse($tglAkhir)->endOfDay(), // Menambahkan waktu akhir hari
-            ])
-            ->get();
-
-        $lab = json_decode($data, true);
-        // dd($lab);
-        $formattedData = [];
-        foreach ($lab as $transaksi) {
-
-            $formattedData[] = [
-                "IdLab" => $transaksi["idLab"] ?? null,
-                "NoTrans" => $transaksi["notrans"] ?? null,
-                "NORM" => $transaksi["norm"] ?? null,
-                "IdLayanan" => $transaksi["idLayanan"] ?? null,
-                "Jumlah" => $transaksi["jumlah"] ?? null,
-                "Tagihan" => $transaksi["total"] ?? null,
-
-                "NipPetugas" => $transaksi["petugas"]["nip"] ?? null,
-                "NamaPetugas" => ($transaksi["petugas"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["gelar_b"] ?? null),
-                "NipDokter" => $transaksi["dokter"]["nip"] ?? null,
-                "NamaDokter" => ($transaksi["dokter"]["gelar_d"] ?? null) . ' ' . ($transaksi["dokter"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["dokter"]["gelar_b"] ?? null),
-
-                "Ket" => $transaksi["ket"] ?? null,
-                "TglTrans" => $transaksi["created_at"]?\Carbon\Carbon::parse($transaksi["created_at"])->toDateTimeString() : null,
-
-                // "kunjungan" => [
-                "NoUrut" => $transaksi["kunjungan"]["nourut"] ?? null,
-                "JenisKunjungan" => $transaksi["kunjungan"]["kunj"] ?? null,
-                "JenisKelaminPasien" => $transaksi["kunjungan"]["jeniskel"] ?? null,
-                "UmutPasien" => $transaksi["kunjungan"]["umurthn"] ?? null,
-                "NIKPasien" => $transaksi["kunjungan"]["biodata"]["noktp"] ?? null,
-                "NamaPasien" => $transaksi["kunjungan"]["biodata"]["nama"] ?? null,
-                "Domisili" => $transaksi["kunjungan"]["biodata"]["alamat"] ?? null,
-                "rtrw" => $transaksi["kunjungan"]["biodata"]["rtrw"] ?? null,
-                "jeniskel" => $transaksi["kunjungan"]["biodata"]["jeniskel"] ?? null,
-                "jkel" => $transaksi["kunjungan"]["biodata"]["jkel"] ?? null,
-                "NoHP" => $transaksi["kunjungan"]["biodata"]["nohp"] ?? null,
-                "Perkawinan" => $transaksi["kunjungan"]["biodata"]["statKawin"] ?? null,
-                "Pekerjaan" => $transaksi["kunjungan"]["biodata"]["pekerjaan"] ?? null,
-                "Jaminan" => $transaksi["kunjungan"]["biodata"]["kelompok"] ?? null,
-                "provinsi" => $transaksi["kunjungan"]["biodata"]["provinsi"] ?? null,
-                "kabupaten" => $transaksi["kunjungan"]["biodata"]["kabupaten"] ?? null,
-                "kecamatan" => $transaksi["kunjungan"]["biodata"]["kecamatan"] ?? null,
-                "kelurahan" => $transaksi["kunjungan"]["biodata"]["kelurahan"] ?? null,
-                "AlamatLengkap" => ($transaksi["kunjungan"]["biodata"]["kelurahan"] ?? null) . ' ' . ($transaksi["kunjungan"]["biodata"]["rtrw"] ?? null) . ', ' . ($transaksi["kunjungan"]["biodata"]["kecamatan"] ?? null) . ', ' . ($transaksi["kunjungan"]["biodata"]["kabupaten"] ?? null),
-
-                // ],
-                // "layanan" => [
-                "NamaPemeriksaan" => $transaksi["layanan"]["nmLayanan"] ?? null,
-                "Tarif" => $transaksi["layanan"]["tarif"] ?? null,
-                // ],
-            ];
-        }
-        // dd($formattedData);
-        return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
-        // return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
-    }
-    public function rekapKunjungan(Request $request)
     {
         $norm = $request->input('norm');
         $tglAwal = $request->input('tglAwal', now()->toDateString());
@@ -524,22 +414,66 @@ class LaboratoriumController extends Controller
 
         return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
     }
+    public function rekapKunjungan(Request $request)
+    {
+        $norm = $request->input('norm');
+        $tglAwal = $request->input('tglAwal', now()->toDateString());
+        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
+        // dd($tglAkhir);
+        $data = LaboratoriumHasilModel::with('pasien', 'pemeriksaan', 'petugas.biodata', 'dokter.biodata')
+            ->where('norm', 'like', '%' . $norm . '%')
+            ->whereBetween('created_at', [
+                \Carbon\Carbon::parse($tglAwal)->startOfDay(), // Menambahkan waktu mulai hari
+                \Carbon\Carbon::parse($tglAkhir)->endOfDay(), // Menambahkan waktu akhir hari
+            ])
+            ->get();
+
+        $lab = json_decode($data, true);
+
+        $res = [];
+
+        foreach ($lab as $d) {
+            $tanggal = Carbon::parse($d['updated_at'])->format('d-m-Y');
+            $dokter = ($d['dokter']['gelar_d'] ?? null) . " " . ($d['dokter']['biodata']['nama'] ?? null) . " " . ($d['dokter']['gelar_b'] ?? null);
+            $petugas = ($d['petugas']['gelar_d'] ?? null) . " " . ($d['petugas']['biodata']['nama'] ?? null) . " " . ($d['petugas']['gelar_b'] ?? null);
+            $res[] = [
+                'id' => $d['idLab'],
+                'notrans' => $d['notrans'],
+                'tgl' => $tanggal,
+                'norm' => $d['norm'],
+                'jaminan' => $d['pasien']['layanan'],
+                'nama' => $d['pasien']['nama'],
+                'alamat' => $d['pasien']['alamat'],
+                'pemeriksaan' => $d['pemeriksaan']['nmLayanan'],
+                'tarif' => $d['pemeriksaan']['tarif'],
+                'hasil' => $d['hasil'],
+                'petugas' => $d['petugas']['biodata']['nama'],
+                'dokter_nip' => $d['dokter']['nip'],
+                'dokter_nama' => $dokter,
+                'petugas_nip' => $d['petugas']['nip'],
+                'petugas_nama' => $petugas,
+            ];
+        }
+
+        // return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
+        return response()->json($res, 200, [], JSON_PRETTY_PRINT);
+    }
 
     public function poinPetugas(Request $request)
     {
         $mulaiTgl = $request->input('tglAwal', now()->toDateString());
         $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
 
-        $labHasilPemeriksaan = DB::table('lab_hasil_pemeriksaan')
+        $labHasilPemeriksaan = DB::table('t_kunjungan_lab_hasil')
             ->select(
-                DB::raw('COUNT(lab_hasil_pemeriksaan.id) AS jml'),
+                DB::raw('COUNT(t_kunjungan_lab_hasil.idLab) AS jml'),
                 'peg_m_biodata.nip',
                 'peg_m_biodata.nama',
                 'kasir_m_layanan.nmLayanan AS tindakan'
             )
-            ->join('peg_m_biodata', 'lab_hasil_pemeriksaan.petugas', '=', 'peg_m_biodata.nip')
-            ->join('kasir_m_layanan', 'lab_hasil_pemeriksaan.idLayanan', '=', 'kasir_m_layanan.idLayanan')
-            ->whereBetween(DB::raw('DATE_FORMAT(lab_hasil_pemeriksaan.created_at, "%Y-%m-%d")'), [$mulaiTgl, $selesaiTgl])
+            ->join('peg_m_biodata', 't_kunjungan_lab_hasil.petugas', '=', 'peg_m_biodata.nip')
+            ->join('kasir_m_layanan', 't_kunjungan_lab_hasil.idLayanan', '=', 'kasir_m_layanan.idLayanan')
+            ->whereBetween(DB::raw('DATE_FORMAT(t_kunjungan_lab_hasil.created_at, "%Y-%m-%d")'), [$mulaiTgl, $selesaiTgl])
             ->groupBy('peg_m_biodata.nip', 'peg_m_biodata.nama', 'kasir_m_layanan.idLayanan', 'kasir_m_layanan.nmLayanan');
 
         $tKunjunganLab = DB::table('t_kunjungan_lab')
@@ -547,7 +481,7 @@ class LaboratoriumController extends Controller
                 DB::raw('COUNT(t_kunjungan_lab.id) AS jml'),
                 'peg_m_biodata.nip',
                 'peg_m_biodata.nama',
-                DB::raw('"Sampling" AS tindakan')
+                DB::raw('"Sampling/Admin Loket" AS tindakan')
             )
             ->join('peg_m_biodata', 't_kunjungan_lab.petugas', '=', 'peg_m_biodata.nip')
             ->whereBetween(DB::raw('DATE_FORMAT(t_kunjungan_lab.created_at, "%Y-%m-%d")'), [$mulaiTgl, $selesaiTgl])
@@ -556,6 +490,45 @@ class LaboratoriumController extends Controller
         $query = $labHasilPemeriksaan->union($tKunjunganLab)->get();
 
         return response()->json($query, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function jumlah_pemeriksaan(Request $request)
+    {
+        $mulaiTgl = $request->input('tglAwal', now()->toDateString());
+        $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
+
+        $labHasilPemeriksaan = DB::table('t_kunjungan_lab_hasil')
+            ->select(
+                DB::raw('COUNT(t_kunjungan_lab_hasil.idLab) AS jumlah'),
+                'kasir_m_layanan.nmLayanan AS nama_layanan',
+                'kasir_m_layanan.idLayanan AS kode_layanan',
+                DB::raw('DATE(t_kunjungan_lab_hasil.created_at) AS tanggal')
+            )
+            ->join('kasir_m_layanan', 't_kunjungan_lab_hasil.idLayanan', '=', 'kasir_m_layanan.idLayanan')
+            ->whereBetween(DB::raw('DATE(t_kunjungan_lab_hasil.created_at)'), [$mulaiTgl, $selesaiTgl])
+            ->groupBy('tanggal', 'kasir_m_layanan.idLayanan', 'kasir_m_layanan.nmLayanan')
+            ->get();
+
+        return response()->json($labHasilPemeriksaan, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function jumlah_pemeriksaan2(Request $request)
+    {
+        $mulaiTgl = $request->input('tglAwal', now()->toDateString());
+        $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
+
+        $labHasilPemeriksaan = DB::table('t_kunjungan_lab_hasil')
+            ->select(
+                DB::raw('COUNT(t_kunjungan_lab_hasil.idLab) AS jumlah'),
+                'kasir_m_layanan.nmLayanan AS nama_layanan',
+                'kasir_m_layanan.idLayanan AS kode_layanan'
+            )
+            ->join('kasir_m_layanan', 't_kunjungan_lab_hasil.idLayanan', '=', 'kasir_m_layanan.idLayanan')
+            ->whereBetween(DB::raw('DATE_FORMAT(t_kunjungan_lab_hasil.created_at, "%Y-%m-%d")'), [$mulaiTgl, $selesaiTgl])
+            ->groupBy('kasir_m_layanan.idLayanan', 'kasir_m_layanan.nmLayanan')
+            ->get();
+
+        return response()->json($labHasilPemeriksaan, 200, [], JSON_PRETTY_PRINT);
     }
 
 }

@@ -2,7 +2,7 @@ const Awal = document.getElementById("tglAwal");
 const Akhir = document.getElementById("tglAkhir");
 const jaminan = document.getElementById("jaminan");
 
-async function reportKunjungan() {
+async function reportKunjungan2() {
     // Swal.fire({
     //     icon: "info",
     //     title: "Sedang mencari data...!!!",
@@ -140,87 +140,45 @@ async function reportKunjungan() {
     }
 }
 
-function reportKunjungan2() {
+function reportKunjungan() {
     if ($.fn.DataTable.isDataTable("#reportKunjungan")) {
-        var tabletindakan = $("#reportKunjungan").DataTable();
-        tabletindakan.clear().destroy();
+        var tabel = $("#reportKunjungan").DataTable();
+        tabel.clear().destroy();
     }
-    let tglAwalValue = tglAwal.value;
-    let tglAkhirValue = tglAkhir.value;
-    let formattedAwal = tglAwalValue.split("-").reverse().join("-");
-    let formattedAkhir = tglAkhirValue.split("-").reverse().join("-");
-    // let jaminanValue = jaminan.value;
+    var tglAwal = document.getElementById("tglAwal").value;
+    var tglAkhir = document.getElementById("tglAkhir").value;
+
     $.ajax({
-        url: "/api/rekapKunjungan",
+        url: "/api/rekap/Kunjungan_Lab",
         type: "post",
         data: {
-            tglAwal: tglAwalValue,
-            tglAkhir: tglAkhirValue,
+            tglAwal: tglAwal,
+            tglAkhir: tglAkhir,
         },
         success: function (response) {
             response.forEach(function (item, index) {
                 item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
             });
-            console.log("🚀 ~ reportKunjungan ~ response:", response);
+            // console.log("🚀 ~ reportKunjungan ~ response:", response);
             $("#reportKunjungan")
                 .DataTable({
-                    data: dataKunjungan,
+                    data: response,
                     columns: [
                         { data: "no" },
+                        { data: "tgl" },
+                        { data: "norm" },
+                        { data: "jaminan" },
                         {
-                            data: "TglTrans",
-                            render: function (data) {
-                                // Format the date using JavaScript
-                                const formattedDate = new Date(
-                                    data
-                                ).toLocaleString("id-ID", {
-                                    year: "numeric",
-                                    month: "numeric",
-                                    day: "numeric",
-                                });
-                                return formattedDate;
+                            data: "nama",
+                            render: function (data, type, row) {
+                                return data.toUpperCase();
                             },
                         },
-                        { data: "Norm" },
-                        { data: "NamaPasien" },
-                        { data: "NIKPasien" },
-                        { data: "AlamatLengkap" },
-                        { data: "JenisKelamin" },
-                        { data: "Jaminan" },
-                        {
-                            data: "RiwayatLab",
-                            render: function (data) {
-                                // Customize the content for display
-                                return (
-                                    '<div class="riwayatContainer" >' +
-                                    '<table class="childTable">' +
-                                    "<tbody>" +
-                                    data
-                                        .map(function (riwayat) {
-                                            return (
-                                                "<tr>" +
-                                                "<td>" +
-                                                riwayat.NoTrans +
-                                                "</td>" +
-                                                "<td>" +
-                                                riwayat.Norm +
-                                                "</td>" +
-                                                "<td>" +
-                                                riwayat.NmLayanan +
-                                                "</td>" +
-                                                "<td>" +
-                                                riwayat.Tarif +
-                                                "</td>" +
-                                                "</tr>"
-                                            );
-                                        })
-                                        .join("") +
-                                    "</tbody>" +
-                                    "</table>" +
-                                    "</div>"
-                                );
-                            },
-                        },
+                        { data: "alamat" },
+                        { data: "dokter_nama" },
+                        { data: "petugas_nama" },
+                        { data: "pemeriksaan" },
+                        { data: "hasil" },
                     ],
                     order: [0, "asc"],
                     lengthChange: false,
@@ -234,7 +192,7 @@ function reportKunjungan2() {
                             extend: "excel",
                             text: "Export to Excel",
                             title:
-                                "Daftar Penjamin Laboratorium  " +
+                                "Laporan Hasil Pemeriksaan Lab  " +
                                 tglAwal +
                                 " s.d. " +
                                 tglAkhir,
@@ -243,21 +201,6 @@ function reportKunjungan2() {
                                 tglAwal +
                                 " s.d. " +
                                 tglAkhir,
-                            customize: function (xlsx) {
-                                var sheet = xlsx.xl.worksheets["sheet1.xml"];
-
-                                // Iterate over the rows to find child rows and include them in the Excel sheet
-                                $('row c[r^="B"]', sheet).each(function () {
-                                    var childRow = $(this)
-                                        .closest("row")
-                                        .next("row");
-                                    if (childRow.length) {
-                                        childRow.find("c").each(function () {
-                                            $(this).attr("s", "37");
-                                        });
-                                    }
-                                });
-                            },
                         },
                         "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
                     ],
@@ -541,6 +484,14 @@ function reportReagenBln() {
         },
     });
 }
+
+function reportHasil() {
+    console.log("🚀 ~ reportHasil ~ reportHasil:", reportHasil);
+    // Use the .value property to get the values
+    let tglAwalValue = tglAwal.value;
+    let tglAkhirValue = tglAkhir.value;
+}
+
 function reportPoin() {
     if ($.fn.DataTable.isDataTable("#reportPoin")) {
         var tabletindakan = $("#reportPoin").DataTable();
@@ -552,7 +503,7 @@ function reportPoin() {
     let formattedAkhir = tglAkhirValue.split("-").reverse().join("-");
     // let jaminanValue = jaminan.value;
     $.ajax({
-        url: "/api/poinLab",
+        url: "/api/rekap/lab/poin",
         type: "post",
         data: {
             tglAwal: tglAwalValue,
@@ -617,77 +568,220 @@ function reportPoin() {
         },
     });
 }
-function reportHasil() {
-    console.log("🚀 ~ reportHasil ~ reportHasil:", reportHasil);
-    // Use the .value property to get the values
-    let tglAwalValue = tglAwal.value;
-    let tglAkhirValue = tglAkhir.value;
-}
 
-function showKunjungan() {
-    $("#kunjungan").show();
-    $("#cariKunjungan").show();
-    $("#penjamin").hide();
-    $("#cariPenjamin").hide();
-    $("#hasil").hide();
-    $("#cariHasil").hide();
-    $("#reagen").hide();
-    $("#cariReagen").hide();
-    $("#cariReagenBln").hide();
-    $("#poin").hide();
-    $("#cariPoin").hide();
-}
-function showPenjamin() {
-    $("#penjamin").show();
-    $("#cariPenjamin").show();
-    $("#kunjungan").hide();
-    $("#cariKunjungan").hide();
-    $("#hasil").hide();
-    $("#cariHasil").hide();
-    $("#reagen").hide();
-    $("#cariReagen").hide();
-    $("#cariReagenBln").hide();
-    $("#poin").hide();
-    $("#cariPoin").hide();
-}
+// function reportJumlahPemeriksaan() {
+//     var tglAwal = document.getElementById("tglAwal").value;
+//     var tglAkhir = document.getElementById("tglAkhir").value;
 
-function showReagen() {
-    $("#kunjungan").hide();
-    $("#cariKunjungan").hide();
-    $("#penjamin").hide();
-    $("#cariPenjamin").hide();
-    $("#hasil").hide();
-    $("#cariHasil").hide();
-    $("#reagen").show();
-    $("#cariReagen").show();
-    $("#cariReagenBln").show();
-    $("#poin").hide();
-    $("#cariPoin").hide();
-}
-function showHasil() {
-    $("#kunjungan").hide();
-    $("#cariKunjungan").hide();
-    $("#penjamin").hide();
-    $("#cariPenjamin").hide();
-    $("#reagen").hide();
-    $("#cariReagen").hide();
-    $("#cariReagenBln").hide();
-    $("#hasil").show();
-    $("#cariHasil").show();
-    $("#poin").hide();
-    $("#cariPoin").hide();
-}
-function showPoin() {
-    $("#kunjungan").hide();
-    $("#cariKunjungan").hide();
-    $("#penjamin").hide();
-    $("#cariPenjamin").hide();
-    $("#reagen").hide();
-    $("#cariReagen").hide();
-    $("#hasil").hide();
-    $("#cariHasil").hide();
-    $("#poin").show();
-    $("#cariPoin").show();
+//     $.ajax({
+//         url: "/api/rekap/lab/jumlah_pemeriksaan",
+//         type: "post",
+//         data: {
+//             tglAwal: tglAwal,
+//             tglAkhir: tglAkhir,
+//         },
+//         success: function (response) {
+//             if ($.fn.DataTable.isDataTable("#tabelJumlahPeriksa")) {
+//                 $("#tabelJumlahPeriksa").DataTable().destroy();
+//             }
+
+//             // Prepare data structure for DataTable
+//             var data = [];
+//             var dates = {}; // To store unique dates dynamically
+
+//             // Process each item in the response
+//             response.forEach(function (item) {
+//                 if (!dates[item.tanggal]) {
+//                     dates[item.tanggal] = true; // Use an object to track unique dates
+//                 }
+
+//                 // Check if data array has an entry for this kode_layanan
+//                 var existingEntry = data.find(function (entry) {
+//                     return entry.kode_layanan === item.kode_layanan;
+//                 });
+
+//                 if (existingEntry) {
+//                     // Update existing entry for this kode_layanan
+//                     existingEntry[item.tanggal] = item.jumlah;
+//                 } else {
+//                     // Create new entry for this kode_layanan
+//                     var newRow = {
+//                         kode_layanan: item.kode_layanan,
+//                         nama_layanan: item.nama_layanan,
+//                         [item.tanggal]: item.jumlah,
+//                     };
+//                     data.push(newRow);
+//                 }
+//             });
+
+//             // Create headers for DataTable
+//             var columns = [
+//                 { data: "kode_layanan", title: "Kode Pemeriksaan" },
+//                 { data: "nama_layanan", title: "Nama Pemeriksaan" },
+//             ];
+
+//             // Add headers for each unique date
+//             Object.keys(dates).forEach(function (date) {
+//                 columns.push({ data: date, title: date });
+//             });
+
+//             // Initialize DataTable
+//             var table = $("#tabelJumlahPeriksa").DataTable({
+//                 data: data,
+//                 columns: columns,
+//                 order: [[0, "asc"]],
+//                 lengthChange: false,
+//                 autoWidth: true,
+//                 buttons: [
+//                     {
+//                         extend: "copyHtml5",
+//                         text: "Salin",
+//                     },
+//                     {
+//                         extend: "excel",
+//                         text: "Export to Excel",
+//                         title:
+//                             "Laporan Hasil Pemeriksaan Lab " +
+//                             tglAwal +
+//                             " s.d. " +
+//                             tglAkhir,
+//                         filename:
+//                             "Daftar Penjamin Laboratorium " +
+//                             tglAwal +
+//                             " s.d. " +
+//                             tglAkhir,
+//                     },
+//                     "colvis", // Button to show/hide columns
+//                 ],
+//             });
+
+//             // Append buttons to the DataTable
+//             table
+//                 .buttons()
+//                 .container()
+//                 .appendTo("#tabelJumlahPeriksa_wrapper .col-md-6:eq(0)");
+//         },
+//         error: function (xhr, status, error) {
+//             console.error("Error:", error);
+//         },
+//     });
+// }
+
+function reportJumlahPemeriksaan() {
+    var tglAwal = document.getElementById("tglAwal").value;
+    var tglAkhir = document.getElementById("tglAkhir").value;
+    // Clear existing DataTable, if initialized
+    if ($.fn.DataTable.isDataTable("#tabelJumlahPeriksa")) {
+        var table = $("#tabelJumlahPeriksa").DataTable();
+        table.clear().destroy();
+
+        // Remove thead and tbody
+        $("#tabelJumlahPeriksa thead").remove();
+        $("#tabelJumlahPeriksa tbody").remove();
+    }
+
+    $.ajax({
+        url: "/api/rekap/lab/jumlah_pemeriksaan",
+        type: "post",
+        data: {
+            tglAwal: tglAwal,
+            tglAkhir: tglAkhir,
+        },
+        success: function (response) {
+            if ($.fn.DataTable.isDataTable("#tabelJumlahPeriksa")) {
+                $("#tabelJumlahPeriksa").DataTable().destroy();
+            }
+
+            // Prepare data structure for DataTable
+            var data = [];
+            var dates = {}; // To store unique dates dynamically
+
+            // Process each item in the response
+            response.forEach(function (item) {
+                if (!dates[item.tanggal]) {
+                    dates[item.tanggal] = true; // Use an object to track unique dates
+                }
+
+                // Check if data array has an entry for this kode_layanan
+                var existingEntry = data.find(function (entry) {
+                    return entry.kode_layanan === item.kode_layanan;
+                });
+
+                if (existingEntry) {
+                    // Update existing entry for this kode_layanan
+                    existingEntry[item.tanggal] = item.jumlah;
+                } else {
+                    // Create new entry for this kode_layanan
+                    var newRow = {
+                        kode_layanan: item.kode_layanan,
+                        nama_layanan: item.nama_layanan,
+                    };
+                    newRow[item.tanggal] = item.jumlah; // Set jumlah for the specific date
+
+                    data.push(newRow);
+                }
+            });
+
+            // Create headers for DataTable
+            var columns = [
+                {
+                    data: null,
+                    title: "No",
+                    render: function (data, type, row, meta) {
+                        // 'meta.row' gives the index of the row DataTable is working with
+                        // 'meta.settings._iDisplayStart' gives the starting point in the current data set
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+                },
+                { data: "kode_layanan", title: "Kode Pemeriksaan" },
+                { data: "nama_layanan", title: "Nama Pemeriksaan" },
+            ];
+
+            // Add headers for each unique date
+            Object.keys(dates).forEach(function (date) {
+                columns.push({ data: date, title: date, defaultContent: "-" }); // Ensure default content for each column
+            });
+
+            // Initialize DataTable
+            var table = $("#tabelJumlahPeriksa").DataTable({
+                data: data,
+                columns: columns,
+                order: [[0, "asc"]],
+                lengthChange: false,
+                autoWidth: true,
+                buttons: [
+                    {
+                        extend: "copyHtml5",
+                        text: "Salin",
+                    },
+                    {
+                        extend: "excel",
+                        text: "Export to Excel",
+                        title:
+                            "Laporan Hasil Pemeriksaan Lab " +
+                            tglAwal +
+                            " s.d. " +
+                            tglAkhir,
+                        filename:
+                            "Daftar Penjamin Laboratorium " +
+                            tglAwal +
+                            " s.d. " +
+                            tglAkhir,
+                    },
+                    "colvis", // Button to show/hide columns
+                ],
+            });
+
+            // Append buttons to the DataTable
+            table
+                .buttons()
+                .container()
+                .appendTo("#tabelJumlahPeriksa_wrapper .col-md-6:eq(0)");
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        },
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -699,6 +793,4 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.error("Error: One or both elements not found.");
     }
-    populateJaminan();
-    showKunjungan();
 });

@@ -18,7 +18,7 @@ class LaboratoriumHasilModel extends Model
 
     public function pasien()
     {
-        return $this->belongsTo(PasienModel::class, 'notrans', 'notrans');
+        return $this->belongsTo(LaboratoriumKunjunganModel::class, 'notrans', 'notrans');
     }
     public function pemeriksaan()
     {

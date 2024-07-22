@@ -122,6 +122,10 @@ function toggleSections(sectionToShow) {
         "#dDo",
         "#dTb",
         "#key_pad",
+
+        "#hasilPemeriksaan",
+        "#poin",
+        "#jmlhPeriksa",
     ];
     sections.forEach(function (section) {
         if (section === sectionToShow) {
