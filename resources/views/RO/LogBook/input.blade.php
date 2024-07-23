@@ -85,6 +85,7 @@
                                                     <tbody>
                                                         <!-- Data akan dimasukkan di sini setelah permintaan AJAX berhasil -->
                                                     </tbody>
+                                                    <tfoot></tfoot>
                                                 </table>
                                             </div>
                                         </div>

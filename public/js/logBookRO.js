@@ -80,6 +80,7 @@ function cariRo(tglAwal, tglAkhir, norm) {
                     //     [1, "asc"],
                     //     [0, "asc"],
                     // ],
+
                     autoWidth: false,
                     buttons: [
                         {

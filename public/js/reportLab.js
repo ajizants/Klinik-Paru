@@ -144,6 +144,8 @@ function reportKunjungan() {
     if ($.fn.DataTable.isDataTable("#reportKunjungan")) {
         var tabel = $("#reportKunjungan").DataTable();
         tabel.clear().destroy();
+        $("#reportKunjungan thead").remove();
+        $("#reportKunjungan tbody").remove();
     }
     var tglAwal = document.getElementById("tglAwal").value;
     var tglAkhir = document.getElementById("tglAkhir").value;
@@ -156,32 +158,83 @@ function reportKunjungan() {
             tglAkhir: tglAkhir,
         },
         success: function (response) {
-            response.forEach(function (item, index) {
-                item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
+            // Map response data to a structure suitable for DataTable
+            var dataTableData = response.map(function (item, index) {
+                // Clone the item to avoid modifying the original object
+                var clonedItem = Object.assign({}, item);
+
+                // Transform pemeriksaan into an object with key-value pairs
+                var pemeriksaanObj = {};
+                if (clonedItem.pemeriksaan) {
+                    clonedItem.pemeriksaan
+                        .split(",")
+                        .forEach(function (pemeriksaan) {
+                            // Trim spaces and assign empty string for hasil if not available
+                            pemeriksaanObj[pemeriksaan.trim()] =
+                                clonedItem.hasil || "";
+                        });
+                }
+
+                // Add the transformed pemeriksaan object to clonedItem
+                clonedItem.pemeriksaan = pemeriksaanObj;
+
+                return clonedItem;
             });
-            // console.log("🚀 ~ reportKunjungan ~ response:", response);
+
+            // Extract all unique pemeriksaan types from the response
+            var uniquePemeriksaan = new Set();
+            response.forEach(function (item) {
+                if (item.pemeriksaan) {
+                    item.pemeriksaan.split(",").forEach(function (pemeriksaan) {
+                        uniquePemeriksaan.add(pemeriksaan.trim());
+                    });
+                }
+            });
+
+            // Create DataTable columns dynamically
+            var columns = [
+                {
+                    data: null,
+                    title: "No",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+                },
+                { data: "tgl", title: "Tanggal" },
+                { data: "norm", title: "Nomor Rekam Medis" },
+                { data: "jaminan", title: "Jaminan" },
+                {
+                    data: "nama",
+                    title: "Nama",
+                    className: "col-2", // Set custom class for width
+                    render: function (data, type, row) {
+                        return data.toUpperCase();
+                    },
+                },
+                { data: "alamat", title: "Alamat", className: "col-3" }, // Set custom class for width
+                {
+                    data: "dokter_nama",
+                    title: "Nama Dokter",
+                    className: "col-3", // Set custom class for width
+                },
+            ];
+
+            // Add each pemeriksaan as a column with its name as title
+            uniquePemeriksaan.forEach(function (pemeriksaan) {
+                columns.push({
+                    data: "pemeriksaan." + pemeriksaan,
+                    title: pemeriksaan, // Use pemeriksaan name as column title
+                    defaultContent: "-",
+                });
+            });
+
+            // Initialize DataTable with dynamic columns
             $("#reportKunjungan")
                 .DataTable({
-                    data: response,
-                    columns: [
-                        { data: "no" },
-                        { data: "tgl" },
-                        { data: "norm" },
-                        { data: "jaminan" },
-                        {
-                            data: "nama",
-                            render: function (data, type, row) {
-                                return data.toUpperCase();
-                            },
-                        },
-                        { data: "alamat" },
-                        { data: "dokter_nama" },
-                        { data: "petugas_nama" },
-                        { data: "pemeriksaan" },
-                        { data: "hasil" },
-                    ],
+                    data: dataTableData,
+                    columns: columns,
                     order: [0, "asc"],
-                    lengthChange: false,
+                    lengthChange: true,
                     autoWidth: true,
                     buttons: [
                         {
@@ -192,28 +245,112 @@ function reportKunjungan() {
                             extend: "excel",
                             text: "Export to Excel",
                             title:
-                                "Laporan Hasil Pemeriksaan Lab  " +
+                                "Laporan Hasil Pemeriksaan Lab " +
                                 tglAwal +
                                 " s.d. " +
                                 tglAkhir,
                             filename:
-                                "Daftar Penjamin Laboratorium  " +
+                                "Daftar Penjamin Laboratorium " +
                                 tglAwal +
                                 " s.d. " +
                                 tglAkhir,
                         },
-                        "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+                        "colvis", // Show/Hide Columns button
                     ],
+                    // Add border style to DataTable
+                    initComplete: function () {
+                        this.api()
+                            .table()
+                            .node()
+                            .classList.add("table", "table-bordered-custom");
+                    },
                 })
                 .buttons()
                 .container()
                 .appendTo("#reportKunjungan_wrapper .col-md-6:eq(0)");
         },
+
         error: function (xhr, status, error) {
             console.error("Error:", error);
         },
     });
 }
+
+// function reportKunjungan() {
+//     if ($.fn.DataTable.isDataTable("#reportKunjungan")) {
+//         var tabel = $("#reportKunjungan").DataTable();
+//         tabel.clear().destroy();
+//     }
+//     var tglAwal = document.getElementById("tglAwal").value;
+//     var tglAkhir = document.getElementById("tglAkhir").value;
+
+//     $.ajax({
+//         url: "/api/rekap/Kunjungan_Lab",
+//         type: "post",
+//         data: {
+//             tglAwal: tglAwal,
+//             tglAkhir: tglAkhir,
+//         },
+//         success: function (response) {
+//             response.forEach(function (item, index) {
+//                 item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
+//             });
+//             // console.log("🚀 ~ reportKunjungan ~ response:", response);
+//             $("#reportKunjungan")
+//                 .DataTable({
+//                     data: response,
+//                     columns: [
+//                         { data: "no" },
+//                         { data: "tgl" },
+//                         { data: "norm" },
+//                         { data: "jaminan" },
+//                         {
+//                             data: "nama",
+//                             render: function (data, type, row) {
+//                                 return data.toUpperCase();
+//                             },
+//                         },
+//                         { data: "alamat" },
+//                         { data: "dokter_nama" },
+//                         { data: "petugas_nama" },
+//                         { data: "pemeriksaan" },
+//                         { data: "hasil" },
+//                     ],
+//                     order: [0, "asc"],
+//                     lengthChange: false,
+//                     autoWidth: true,
+//                     buttons: [
+//                         {
+//                             extend: "copyHtml5",
+//                             text: "Salin",
+//                         },
+//                         {
+//                             extend: "excel",
+//                             text: "Export to Excel",
+//                             title:
+//                                 "Laporan Hasil Pemeriksaan Lab  " +
+//                                 tglAwal +
+//                                 " s.d. " +
+//                                 tglAkhir,
+//                             filename:
+//                                 "Daftar Penjamin Laboratorium  " +
+//                                 tglAwal +
+//                                 " s.d. " +
+//                                 tglAkhir,
+//                         },
+//                         "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+//                     ],
+//                 })
+//                 .buttons()
+//                 .container()
+//                 .appendTo("#reportKunjungan_wrapper .col-md-6:eq(0)");
+//         },
+//         error: function (xhr, status, error) {
+//             console.error("Error:", error);
+//         },
+//     });
+// }
+
 function reportPenjamin() {
     Swal.fire({
         icon: "info",
@@ -572,6 +709,15 @@ function reportPoin() {
 // function reportJumlahPemeriksaan() {
 //     var tglAwal = document.getElementById("tglAwal").value;
 //     var tglAkhir = document.getElementById("tglAkhir").value;
+//     // Clear existing DataTable, if initialized
+//     if ($.fn.DataTable.isDataTable("#tabelJumlahPeriksa")) {
+//         var table = $("#tabelJumlahPeriksa").DataTable();
+//         table.clear().destroy();
+
+//         // Remove thead and tbody
+//         $("#tabelJumlahPeriksa thead").remove();
+//         $("#tabelJumlahPeriksa tbody").remove();
+//     }
 
 //     $.ajax({
 //         url: "/api/rekap/lab/jumlah_pemeriksaan",
@@ -608,21 +754,31 @@ function reportPoin() {
 //                     var newRow = {
 //                         kode_layanan: item.kode_layanan,
 //                         nama_layanan: item.nama_layanan,
-//                         [item.tanggal]: item.jumlah,
 //                     };
+//                     newRow[item.tanggal] = item.jumlah; // Set jumlah for the specific date
+
 //                     data.push(newRow);
 //                 }
 //             });
 
 //             // Create headers for DataTable
 //             var columns = [
+//                 {
+//                     data: null,
+//                     title: "No",
+//                     render: function (data, type, row, meta) {
+//                         // 'meta.row' gives the index of the row DataTable is working with
+//                         // 'meta.settings._iDisplayStart' gives the starting point in the current data set
+//                         return meta.row + meta.settings._iDisplayStart + 1;
+//                     },
+//                 },
 //                 { data: "kode_layanan", title: "Kode Pemeriksaan" },
 //                 { data: "nama_layanan", title: "Nama Pemeriksaan" },
 //             ];
 
 //             // Add headers for each unique date
 //             Object.keys(dates).forEach(function (date) {
-//                 columns.push({ data: date, title: date });
+//                 columns.push({ data: date, title: date, defaultContent: "-" }); // Ensure default content for each column
 //             });
 
 //             // Initialize DataTable
@@ -670,6 +826,7 @@ function reportPoin() {
 function reportJumlahPemeriksaan() {
     var tglAwal = document.getElementById("tglAwal").value;
     var tglAkhir = document.getElementById("tglAkhir").value;
+
     // Clear existing DataTable, if initialized
     if ($.fn.DataTable.isDataTable("#tabelJumlahPeriksa")) {
         var table = $("#tabelJumlahPeriksa").DataTable();
@@ -698,27 +855,26 @@ function reportJumlahPemeriksaan() {
 
             // Process each item in the response
             response.forEach(function (item) {
-                if (!dates[item.tanggal]) {
-                    dates[item.tanggal] = true; // Use an object to track unique dates
-                }
-
                 // Check if data array has an entry for this kode_layanan
                 var existingEntry = data.find(function (entry) {
                     return entry.kode_layanan === item.kode_layanan;
                 });
 
-                if (existingEntry) {
-                    // Update existing entry for this kode_layanan
-                    existingEntry[item.tanggal] = item.jumlah;
-                } else {
-                    // Create new entry for this kode_layanan
-                    var newRow = {
+                if (!existingEntry) {
+                    existingEntry = {
                         kode_layanan: item.kode_layanan,
                         nama_layanan: item.nama_layanan,
                     };
-                    newRow[item.tanggal] = item.jumlah; // Set jumlah for the specific date
+                    data.push(existingEntry);
+                }
 
-                    data.push(newRow);
+                // Set jumlah for the specific date and jaminan
+                var columnKey = item.tanggal + " (" + item.jaminan + ")";
+                existingEntry[columnKey] = item.jumlah;
+
+                // Track unique dates dynamically
+                if (!dates[columnKey]) {
+                    dates[columnKey] = true;
                 }
             });
 
@@ -728,8 +884,6 @@ function reportJumlahPemeriksaan() {
                     data: null,
                     title: "No",
                     render: function (data, type, row, meta) {
-                        // 'meta.row' gives the index of the row DataTable is working with
-                        // 'meta.settings._iDisplayStart' gives the starting point in the current data set
                         return meta.row + meta.settings._iDisplayStart + 1;
                     },
                 },
@@ -737,7 +891,7 @@ function reportJumlahPemeriksaan() {
                 { data: "nama_layanan", title: "Nama Pemeriksaan" },
             ];
 
-            // Add headers for each unique date
+            // Add headers for each unique date and jaminan
             Object.keys(dates).forEach(function (date) {
                 columns.push({ data: date, title: date, defaultContent: "-" }); // Ensure default content for each column
             });

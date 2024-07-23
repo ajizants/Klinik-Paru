@@ -511,6 +511,11 @@ class ROTransaksiController extends Controller
                 $jkPasien = $d['jk'];
             }
 
+            $jmlhPA = count(array_filter($d, function ($item) {
+                return isset($item['proyeksi']) && $item['proyeksi'] === 'PA';
+            }));
+            dd($jmlhPA);
+
             $res[] = [
                 "notrans" => $d['notrans'],
                 "norm" => $d['norm'],

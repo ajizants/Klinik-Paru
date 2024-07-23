@@ -478,11 +478,13 @@ class LaboratoriumController extends Controller
                 DB::raw('COUNT(t_kunjungan_lab_hasil.idLab) AS jumlah'),
                 'kasir_m_layanan.nmLayanan AS nama_layanan',
                 'kasir_m_layanan.idLayanan AS kode_layanan',
+                't_kunjungan_lab.layanan AS jaminan',
                 DB::raw('DATE(t_kunjungan_lab_hasil.created_at) AS tanggal')
             )
             ->join('kasir_m_layanan', 't_kunjungan_lab_hasil.idLayanan', '=', 'kasir_m_layanan.idLayanan')
+            ->join('t_kunjungan_lab', 't_kunjungan_lab_hasil.notrans', '=', 't_kunjungan_lab.notrans')
             ->whereBetween(DB::raw('DATE(t_kunjungan_lab_hasil.created_at)'), [$mulaiTgl, $selesaiTgl])
-            ->groupBy('tanggal', 'kasir_m_layanan.idLayanan', 'kasir_m_layanan.nmLayanan')
+            ->groupBy('tanggal', 'kasir_m_layanan.idLayanan', 'kasir_m_layanan.nmLayanan', 't_kunjungan_lab.layanan')
             ->get();
 
         return response()->json($labHasilPemeriksaan, 200, [], JSON_PRETTY_PRINT);

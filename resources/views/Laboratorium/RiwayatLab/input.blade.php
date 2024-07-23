@@ -41,7 +41,7 @@
                                     <div class="table-responsive pt-2 px-2">
                                         <table id="reportKunjungan"class="table table-striped pt-0 mt-0 fs-6"
                                             style="width:100%" cellspacing="0">
-                                            <thead class="bg-secondary">
+                                            {{-- <thead class="bg-secondary">
                                                 <tr>
                                                     <th>No</th>
                                                     <th>Tanggal</th>
@@ -56,7 +56,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                            </tbody>
+                                            </tbody> --}}
                                         </table>
                                     </div>
                                 </div>
