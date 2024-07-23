@@ -33,7 +33,14 @@ async function cariTsLab(norm, tgl) {
         if (!response.ok) {
             if (response.status == 404) {
                 // searchRMObat(norm);
-                cariKominfo(norm, tgl);
+                // cariKominfo(norm, tgl);
+                Swal.fire({
+                    icon: "error",
+                    title:
+                        "Pasien dengan NO RM : " +
+                        norm +
+                        " tidak ditemukan di pendaftaran laboratorium...!!!",
+                });
             } else {
                 Swal.fire({
                     icon: "error",
@@ -184,6 +191,28 @@ async function dataLab(pemeriksaan, notrans) {
                             hasilLabHtml += `<option value="Positif" ${
                                 data === "Positif" ? "selected" : ""
                             }>Positif</option>`;
+
+                            hasilLabHtml += `</select>`;
+                        } else if (kelas === "RDT") {
+                            hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
+
+                            hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
+
+                            hasilLabHtml += `<option value="IGG NR, IGM NR" ${
+                                data === "IGG NR, IGM NR" ? "selected" : ""
+                            }>IGG dan IGM NR</option>`;
+
+                            hasilLabHtml += `<option value="IGG R, IGM R" ${
+                                data === "IGG R, IGM R" ? "selected" : ""
+                            }>IGG dan IGM R</option>`;
+
+                            hasilLabHtml += `<option value="IGG NR, IGM R" ${
+                                data === "IGG NR, IGM R" ? "selected" : ""
+                            }>IGG NR dan IGM R</option>`;
+
+                            hasilLabHtml += `<option value="IGG R, IGM NR" ${
+                                data === "IGG R, IGM NR" ? "selected" : ""
+                            }>IGG R dan IGM NR</option>`;
 
                             hasilLabHtml += `</select>`;
                         } else {
