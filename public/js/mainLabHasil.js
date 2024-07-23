@@ -171,6 +171,12 @@ async function dataLab(pemeriksaan, notrans) {
                             hasilLabHtml += `<option value="Reaktif" ${
                                 data === "Reaktif" ? "selected" : ""
                             }>Reaktif</option>`;
+                            hasilLabHtml += `<option value="Negatif" ${
+                                data === "Negatif" ? "selected" : ""
+                            }>Negatif</option>`;
+                            hasilLabHtml += `<option value="Positif" ${
+                                data === "Positif" ? "selected" : ""
+                            }>Positif</option>`;
                             hasilLabHtml += `</select>`;
                         } else {
                             hasilLabHtml = `<input type="text" class="form-control-sm col hasil" id="hasil${row.idLab}" value="${data}">`;
