@@ -514,7 +514,7 @@ class ROTransaksiController extends Controller
             $jmlhPA = count(array_filter($d, function ($item) {
                 return isset($item['proyeksi']) && $item['proyeksi'] === 'PA';
             }));
-            dd($jmlhPA);
+            // dd($jmlhPA);
 
             $res[] = [
                 "notrans" => $d['notrans'],

@@ -164,19 +164,27 @@ async function dataLab(pemeriksaan, notrans) {
                             hasilLabHtml += `</select>`;
                         } else if (kelas === "93") {
                             hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
+
                             hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
+
                             hasilLabHtml += `<option value="NR" ${
                                 data === "NR" ? "selected" : ""
                             }>NR</option>`;
+
                             hasilLabHtml += `<option value="Reaktif" ${
                                 data === "Reaktif" ? "selected" : ""
                             }>Reaktif</option>`;
+
                             hasilLabHtml += `<option value="Negatif" ${
-                                data === "Negatif" ? "selected" : ""
+                                data === "Negatif" || data === "NEGATIF"
+                                    ? "selected"
+                                    : ""
                             }>Negatif</option>`;
+
                             hasilLabHtml += `<option value="Positif" ${
                                 data === "Positif" ? "selected" : ""
                             }>Positif</option>`;
+
                             hasilLabHtml += `</select>`;
                         } else {
                             hasilLabHtml = `<input type="text" class="form-control-sm col hasil" id="hasil${row.idLab}" value="${data}">`;

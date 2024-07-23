@@ -238,7 +238,6 @@ class PasienKominfoController extends Controller
             'jumlah_daftar_JKN' => (int) $jumlahJKN,
         ];
 
-
         $data = array_values($filteredData);
 
         $res = [

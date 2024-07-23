@@ -23,7 +23,10 @@ function initializeDataAntrian(response, ruang) {
     // console.log("🚀 ~ initializeDataAntrian ~ ruang:", ruang);
     // Pastikan response.data adalah objek yang berisi data pasien
     if (response && response.response && response.response.data) {
-        var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
+        // var dataArray = Object.values(response.response.data);
+        var dataArray = response.response.data.filter(function (item) {
+            return item.status === "belum";
+        });
         processDataArray(dataArray, ruang);
         drawDataTable(dataArray, ruang);
     } else {
@@ -67,7 +70,10 @@ function antrian(ruang) {
             var table = $("#dataAntrian").DataTable();
 
             if (response && response.response && response.response.data) {
-                var dataArray = Object.values(response.response.data); // Mengubah objek ke dalam array nilai-nilai
+                // var dataArray = Object.values(response.response.data);
+                var dataArray = response.response.data.filter(function (item) {
+                    return item.status === "belum";
+                });
                 processDataArray(dataArray, ruang);
             } else {
                 var noDataMsg = [
