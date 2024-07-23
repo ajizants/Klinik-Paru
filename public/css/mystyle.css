@@ -151,4 +151,5 @@ div[style*="animation: zoomIn"] {
 .table-bordered-custom th,
 .table-bordered-custom td {
     border: 0.2px solid #000000; /* Garis tipis abu-abu untuk seluruh tabel */
+    border-collapse: collapse;
 }

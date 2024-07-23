@@ -76,7 +76,7 @@ async function dataLab(pemeriksaan, notrans) {
 
     try {
         var data = pemeriksaan;
-        console.log("🚀 ~ dataLab ~ data:", data);
+        // console.log("🚀 ~ dataLab ~ data:", data);
         const analisResponse = await fetch("/api/analis", {
             method: "GET",
             headers: {
@@ -92,27 +92,21 @@ async function dataLab(pemeriksaan, notrans) {
 
         data.forEach((item, index) => {
             item.no = index + 1;
-            //jika hasil null maka kembalikan ""
+            // Jika hasil null maka kembalikan ""
             item.hasiLab = item.hasil == null ? "" : item.hasil;
-            item.actions = `<a class="delete"
-                                data-id="${item.idLab}"
-                                data-layanan="${item.pemeriksaan.nmLayanan}"
-                                data-analis="${item.petugas}"
-                                data-hasil="${item.hasil}"
-                                onclick="deletLab();"><i class="fas fa-trash"></i></a>`;
+            var kelas = item.pemeriksaan.kelas;
+            // console.log("🚀 ~ data.forEach ~ kelas:", kelas);
         });
 
         $("#inputHasil").DataTable({
             data: data,
             columns: [
-                // { data: "actions", className: "px-0 col-1 text-center" },
                 {
                     data: "no",
                     render: function (data, type, row) {
                         return `<p type="text" class="form-control-sm col hasil" >${data}</p>`;
                     },
                 },
-
                 {
                     data: "norm",
                     render: function (data, type, row) {
@@ -140,11 +134,49 @@ async function dataLab(pemeriksaan, notrans) {
                         return inputField;
                     },
                 },
-
                 {
                     data: "hasiLab",
                     render: function (data, type, row) {
-                        return `<input type="text" class="form-control-sm col hasil" id="hasil${row.idLab}" value="${data}">`;
+                        var kelas = row.pemeriksaan.kelas;
+                        var hasilLabHtml = "";
+
+                        if (kelas === "94") {
+                            hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
+                            hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
+                            hasilLabHtml += `<option value="Hasil di SITB" ${
+                                data === "Hasil di SITB" ? "selected" : ""
+                            }>Hasil di SITB (TCM)</option>`;
+                            hasilLabHtml += `<option value="Negatif" ${
+                                data === "Negatif" ? "selected" : ""
+                            }>Negatif (BTA/TCM)</option>`;
+                            hasilLabHtml += `<option value="+1" ${
+                                data === "+1" ? "selected" : ""
+                            }>+ 1 (BTA)</option>`;
+                            hasilLabHtml += `<option value="+2" ${
+                                data === "+2" ? "selected" : ""
+                            }>+ 2 (BTA)</option>`;
+                            hasilLabHtml += `<option value="+3" ${
+                                data === "+3" ? "selected" : ""
+                            }>+ 3 (BTA)</option>`;
+                            hasilLabHtml += `<option value="+1-9" ${
+                                data === "+1-9" ? "selected" : ""
+                            }>+ 1-9 (BTA)</option>`;
+                            hasilLabHtml += `</select>`;
+                        } else if (kelas === "93") {
+                            hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
+                            hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
+                            hasilLabHtml += `<option value="NR" ${
+                                data === "NR" ? "selected" : ""
+                            }>NR</option>`;
+                            hasilLabHtml += `<option value="Reaktif" ${
+                                data === "Reaktif" ? "selected" : ""
+                            }>Reaktif</option>`;
+                            hasilLabHtml += `</select>`;
+                        } else {
+                            hasilLabHtml = `<input type="text" class="form-control-sm col hasil" id="hasil${row.idLab}" value="${data}">`;
+                        }
+
+                        return hasilLabHtml;
                     },
                 },
             ],
