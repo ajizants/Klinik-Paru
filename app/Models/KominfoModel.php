@@ -45,6 +45,11 @@ class KominfoModel extends Model
 
             $res = array_map(function ($d) {
                 $statusPulang = !is_null($d["ruang_poli_selesai_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
+                $alamat = $d['kelurahan_nama'] . ', ' .
+                    $d['pasien_rt'] . '/' .
+                    $d['pasien_rw'] . ', ' .
+                    $d['kecamatan_nama'] . ', ' .
+                    $d['kabupaten_nama'];
 
                 return [
                     "status_pulang" => $statusPulang,
@@ -78,6 +83,7 @@ class KominfoModel extends Model
                     "pasien_umur_tahun" => $d["pasien_umur_tahun"] ?? 0,
                     "pasien_umur_bulan" => $d["pasien_umur_bulan"] ?? 0,
                     "pasien_umur_hari" => $d["pasien_umur_hari"] ?? 0,
+                    "pasien_alamat" => $alamat ?? 0,
                 ];
             }, $data['response']['data']);
 

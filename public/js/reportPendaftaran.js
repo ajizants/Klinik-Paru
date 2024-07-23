@@ -33,9 +33,9 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                         { data: "pasien_nama", className: "col-2" },
                         { data: "jenis_kelamin_nama" },
                         { data: "pasien_umur" },
+                        { data: "pasien_alamat", className: "col-3" },
                         { data: "poli_nama" },
                         { data: "dokter_nama", className: "col-3" },
-                        // { data: "alamat", className: "col-3" },
                     ],
                     autoWidth: false,
                     buttons: [

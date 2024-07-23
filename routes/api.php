@@ -110,7 +110,7 @@ Route::post('rekap/Kunjungan_Lab', [LaboratoriumController::class, 'rekapKunjung
 Route::post('hasil/antrian', [LaboratoriumController::class, 'antrianHasil']);
 Route::post('rekap/lab/poin', [LaboratoriumController::class, 'poinPetugas']);
 Route::post('rekap/lab/jumlah_pemeriksaan', [LaboratoriumController::class, 'jumlah_pemeriksaan']);
-
+Route::get('tes', [LaboratoriumController::class, 'tes']);
 
 Route::post('addHasilLab', [LaboratoriumController::class, 'addHasil']);
 Route::post('cariRiwayatLab', [LaboratoriumController::class, 'riwayat']);

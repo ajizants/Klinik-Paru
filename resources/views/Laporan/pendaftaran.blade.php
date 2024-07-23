@@ -98,6 +98,7 @@
                             <th class="col-2">Nama Pasien</th>
                             <th>JK</th>
                             <th>Umur</th>
+                            <th class="col-3">Alamat</th>
                             <th>Poli</th>
                             <th class="col-3">Dokter</th>
                         </tr>
