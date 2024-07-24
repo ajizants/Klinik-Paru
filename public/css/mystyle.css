@@ -111,17 +111,6 @@ div[style*="animation: zoomIn"] {
     transform-origin: center center;
 }
 
-.LayLab {
-    /* Set lebar kolom menjadi 50% */
-    width: 48%;
-
-    /* Set padding menjadi 0 */
-    padding: 0;
-
-    /* Set margin menjadi 0 */
-    margin: 0;
-}
-
 /* CSS untuk mempersempit jarak antar baris di DataTable */
 .table-tight tbody tr td,
 .table-tight thead tr th {

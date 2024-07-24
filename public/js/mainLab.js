@@ -102,12 +102,12 @@ function simpan() {
     var dokter = $("#dokter").val();
     var tujuan = $("#tujuan").val();
 
-    if (!norm || !notrans || !dokter) {
+    if (!norm || !notrans || !dokter || !petugas) {
         var dataKurang = [];
         if (!norm) dataKurang.push("No RM ");
         if (!notrans) dataKurang.push("Nomor Transaksi ");
         if (!dokter) dataKurang.push("Dokter ");
-        if (!tujuan) dataKurang.push("Tujuan ");
+        if (!petugas) dataKurang.push("Petugas ");
 
         Swal.fire({
             icon: "error",
@@ -174,9 +174,10 @@ function simpan() {
             .then((data) => {
                 console.log(data);
                 var massage = data.message;
-                updateAntrian();
-                resetForm(massage);
-                scrollToTop();
+                var notrans = $("#notrans").val();
+                tampilkanOrder(notrans);
+                $('table thead input[type="checkbox"]').prop("checked", false);
+                $('table tbody input[type="checkbox"]').prop("checked", false);
             })
             .catch((error) => {
                 console.error(
@@ -191,6 +192,53 @@ function simpan() {
                 });
             });
     }
+}
+
+function tampilkanOrder(notrans) {
+    console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
+    var notrans = notrans ? notrans : $("#notrans").val();
+    console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
+    $.ajax({
+        url: "/api/cariTsLab",
+        type: "post",
+        data: { notrans: notrans },
+        success: function (response) {
+            if ($.fn.DataTable.isDataTable("#dataTrans")) {
+                var table = $("#dataTrans").DataTable();
+                table.destroy();
+            }
+
+            data = response;
+            console.log("🚀 ~ dataLab ~ data:", data);
+            data.forEach((item, index) => {
+                item.actions = `<a class="delete"
+                                        data-id="${item.idLab}"
+                                        data-layanan="${item.pemeriksaan.nmLayanan}"
+                                        onclick="deletLab();"><i class="fas fa-trash"></i></a>`;
+                item.no = index + 1;
+            });
+
+            $("#dataTrans").DataTable({
+                data: data,
+                columns: [
+                    { data: "actions", className: "px-0 col-1 text-center" },
+                    { data: "no" },
+                    { data: "norm", className: "col-2" },
+                    { data: "pemeriksaan.nmLayanan" },
+                ],
+                order: [1, "asc"],
+                scrollY: "220px",
+                paging: false,
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Data tidak ditemukan...!!!",
+            });
+        },
+    });
 }
 function delete_ts() {
     var notrans = $("#notrans").val();
@@ -311,6 +359,7 @@ async function cariTsLab(norm, tgl, ruang) {
             }
         } else {
             const data = await response.json();
+            console.log("🚀 ~ cariTsLab ~ data:", data);
             $("#norm").val(data.norm);
             $("#nama").val(data.nama);
             $("#nik").val(data.nik);
@@ -320,8 +369,6 @@ async function cariTsLab(norm, tgl, ruang) {
             $("#dokter").val(data.dokter).trigger("change");
             $("#analis").val(data.petugas).trigger("change");
 
-            const notrans = data.notrans;
-            console.log("🚀 ~ cariTsLab ~ notrans:", notrans);
             dataLab(data);
             Swal.close();
             var btndelete = document.getElementById("delete_ts");

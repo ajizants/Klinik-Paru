@@ -75,17 +75,17 @@
                         @csrf
                         <div class="card-body p-2">
                             <div class="row px-2">
-                                <div class="LayLab col-2 mr-2">
+                                <div class="LayLab col-2">
                                     <div class="card card-warning">
                                         <div class="card-header">
                                             <h4 class="card-title">Permintaan Pemeriksaan</h4>
                                         </div>
                                         <div class="card-body p-1 card-body table-responsive" id="permintaan"
-                                            style="height: 340px">
+                                            style="height: 390px">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="LayLab col-5 mr-2">
+                                <div class="LayLab col-5">
                                     <div class="card card-danger">
                                         <div class="card-header">
                                             <h4 class="card-title">Pilih Pemeriksaan</h4>
@@ -102,15 +102,19 @@
                                                 <tbody>
                                                 </tbody>
                                             </table>
+                                            <div class="d-flex justify-content-center mt-3">
+                                                <a class="btn btn-success col" id="tblSimpan" onclick="simpan();">Simpan
+                                                    Pemeriksaan</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="LayLab col">
+                                <div class="LayLab col-5">
                                     <div class="card card-success">
                                         <div class="card-header">
                                             <h4 class="card-title">Pemeriksaan yang dilakukan</h4>
                                         </div>
-                                        <div class="card-body py-1" style="height: 340px">
+                                        <div class="card-body p-1" style="height: 390px">
                                             <table id="dataTrans" class="table table table-tight table-hover">
                                                 <thead>
                                                     <tr>
@@ -154,13 +158,7 @@
                             </div> --}}
                             <div class="card-footer p-0">
                                 <form id="form_Petugas">
-                                    <div class="mx-2 py-2 form-grup row">
-                                        <div class="col">
-                                            <textarea type="text"id="keterangan" class="form-control-sm col border border-info" placeholder="Keterangan Tambahan"
-                                                readonly style="height: 50px;"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="mx-2 form-grup row">
+                                    <div class="form-grup row d-flex justify-content-end">
                                         <label for="dokter" class="col-sm-1 col-form-label font-weight-bold">Dokter
                                             :</label>
                                         <div class="col-sm-3">
@@ -180,7 +178,8 @@
 
 
                                         <div class="col-auto">
-                                            <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>
+                                            <a class="btn btn-primary" id="tombol_selesai"
+                                                onclick="resetForm('Transaksi Selesai...!!!');">Selesai</a>
                                         </div>
                                         <div class="col-auto">
                                             <a class="btn btn-warning" id="tblBatal" onclick="batal();">Batal</a>
@@ -189,12 +188,6 @@
                                             <a class="btn btn-danger" id="delete_ts" onclick="delete_ts();"
                                                 style="display: none;">Hapus</a>
                                         </div>
-                                        {{--
-                                <div class="col-auto">
-                                    <a class="btn btn-primary" id="tblSelesai"
-                                        onclick="resetForm('selesai');">Selesai</a>
-                                </div> --}}
-
                                     </div>
                                 </form>
                             </div>
