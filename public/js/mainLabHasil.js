@@ -145,6 +145,7 @@ async function dataLab(pemeriksaan, notrans) {
                     data: "hasiLab",
                     render: function (data, type, row) {
                         var kelas = row.pemeriksaan.kelas;
+                        var idLayanan = row.pemeriksaan.idLayanan;
                         var hasilLabHtml = "";
 
                         if (kelas === "94") {
@@ -193,6 +194,28 @@ async function dataLab(pemeriksaan, notrans) {
                             }>Positif</option>`;
 
                             hasilLabHtml += `</select>`;
+                        } else if (kelas === "GD") {
+                            hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
+
+                            hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
+
+                            hasilLabHtml += `<option value="A" ${
+                                data === "A" ? "selected" : ""
+                            }>A</option>`;
+
+                            hasilLabHtml += `<option value="B" ${
+                                data === "B" ? "selected" : ""
+                            }>B</option>`;
+
+                            hasilLabHtml += `<option value="AB" ${
+                                data === "AB" ? "selected" : ""
+                            }>AB</option>`;
+
+                            hasilLabHtml += `<option value="O" ${
+                                data === "O" ? "selected" : ""
+                            }>O</option>`;
+
+                            hasilLabHtml += `</select>`;
                         } else if (kelas === "RDT") {
                             hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
 
@@ -215,6 +238,8 @@ async function dataLab(pemeriksaan, notrans) {
                             }>IGG R dan IGM NR</option>`;
 
                             hasilLabHtml += `</select>`;
+                        } else if (kelas === "HA") {
+                            hasilLabHtml = `<input type="text" class="form-control-sm col hasil" id="hasil${row.idLab}" value="Terlampir">`;
                         } else {
                             hasilLabHtml = `<input type="text" class="form-control-sm col hasil" id="hasil${row.idLab}" value="${data}">`;
                         }
@@ -223,7 +248,7 @@ async function dataLab(pemeriksaan, notrans) {
                     },
                 },
             ],
-            order: [1, "asc"],
+            order: [2, "dsc"],
             scrollY: "320px",
             scrollCollapse: true,
             paging: false,
