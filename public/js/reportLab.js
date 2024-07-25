@@ -2,144 +2,6 @@ const Awal = document.getElementById("tglAwal");
 const Akhir = document.getElementById("tglAkhir");
 const jaminan = document.getElementById("jaminan");
 
-async function reportKunjungan2() {
-    // Swal.fire({
-    //     icon: "info",
-    //     title: "Sedang mencari data...!!!",
-    //     allowOutsideClick: false,
-    //     showConfirmButton: false,
-    // });
-    if ($.fn.DataTable.isDataTable("#reportKunjungan")) {
-        var tabletindakan = $("#reportKunjungan").DataTable();
-        tabletindakan.clear().destroy();
-    }
-    const url = "/api/rekap/Kunjungan_Lab";
-    var tglAwal = document.getElementById("tglAwal").value;
-    var tglAkhir = document.getElementById("tglAkhir").value;
-
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                tglAwal: tglAwal,
-                tglAkhir: tglAkhir,
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const dataKunjungan = await response.json();
-
-        // Process data kunjungan
-        let processedData = [];
-        dataKunjungan.forEach(function (item) {
-            const patientDetails = {
-                no: item.idLab,
-                created_at: new Date(item.created_at).toLocaleString("id-ID", {
-                    year: "numeric",
-                    month: "numeric",
-                    day: "numeric",
-                }),
-                norm: item.norm,
-                nik: item.nik,
-                layanan: item.layanan,
-                nama: item.nama,
-                alamat: item.alamat,
-                dokter:
-                    item.dokter.gelar_d +
-                    " " +
-                    item.dokter.biodata.nama +
-                    " " +
-                    item.dokter.gelar_b,
-                petugas:
-                    item.petugas.gelar_d +
-                    " " +
-                    item.petugas.biodata.nama +
-                    " " +
-                    item.petugas.gelar_b,
-            };
-
-            item.pemeriksaan.forEach(function (pemeriksaan, pemeriksaanIndex) {
-                const examDetails = {
-                    pemeriksaan: `<b>Pemeriksaan:</b> ${pemeriksaan.pemeriksaan.nmLayanan}`,
-                    petugasLab: `<b>Petugas:</b> ${pemeriksaan.petugas.biodata.nama}`,
-                };
-
-                // Add patient details only for the first examination row
-                if (pemeriksaanIndex === 0) {
-                    processedData.push({
-                        ...patientDetails,
-                        ...examDetails,
-                        totalPemeriksaan: item.pemeriksaan.length,
-                    });
-                } else {
-                    processedData.push({
-                        ...examDetails,
-                        isFirst: false, // Flag to distinguish the first examination row
-                    });
-                }
-            });
-        });
-
-        // Initialize DataTables with the processed data
-        $("#reportKunjungan").DataTable({
-            data: processedData,
-            columns: [
-                { data: "idLab", width: "15px", visible: false }, // Hide the number column
-                { data: "created_at" },
-                { data: "norm" },
-                { data: "nik" },
-                { data: "layanan" },
-                { data: "nama" },
-                { data: "alamat" },
-                { data: "dokter" },
-                { data: "pemeriksaan" },
-                { data: "petugasLab" },
-            ],
-            rowCallback: function (row, data, index) {
-                // Set rowspan for patient details columns
-                if (data.isFirst || data.totalPemeriksaan === 1) {
-                    $("td:eq(0)", row).attr("rowspan", data.totalPemeriksaan);
-                    $("td:eq(1)", row).attr("rowspan", data.totalPemeriksaan);
-                    $("td:eq(2)", row).attr("rowspan", data.totalPemeriksaan);
-                    $("td:eq(3)", row).attr("rowspan", data.totalPemeriksaan);
-                    $("td:eq(4)", row).attr("rowspan", data.totalPemeriksaan);
-                    $("td:eq(5)", row).attr("rowspan", data.totalPemeriksaan);
-                    $("td:eq(6)", row).attr("rowspan", data.totalPemeriksaan);
-                    $("td:eq(7)", row).attr("rowspan", data.totalPemeriksaan);
-                }
-            },
-            drawCallback: function () {
-                // Remove duplicated patient details cells in subsequent rows
-                $("#reportKunjungan tbody")
-                    .find("tr")
-                    .each(function () {
-                        const firstRowData = $(this).data("rowData");
-                        $(this)
-                            .find("td")
-                            .each(function () {
-                                const colIndex = $(this).index();
-                                if (
-                                    colIndex >= 0 &&
-                                    colIndex <= 7 &&
-                                    !firstRowData.isFirst
-                                ) {
-                                    $(this).remove();
-                                }
-                            });
-                    });
-            },
-        });
-    } catch (error) {
-        console.error("Error fetching data:", error);
-    }
-}
-
 function reportKunjungan() {
     if ($.fn.DataTable.isDataTable("#reportKunjungan")) {
         var tabel = $("#reportKunjungan").DataTable();
@@ -159,21 +21,16 @@ function reportKunjungan() {
         },
         success: function (response) {
             // Map response data to a structure suitable for DataTable
-            var dataTableData = response.map(function (item, index) {
+            var dataTableData = response.map(function (item) {
                 // Clone the item to avoid modifying the original object
                 var clonedItem = Object.assign({}, item);
 
                 // Transform pemeriksaan into an object with key-value pairs
                 var pemeriksaanObj = {};
-                if (clonedItem.pemeriksaan) {
-                    clonedItem.pemeriksaan
-                        .split(",")
-                        .forEach(function (pemeriksaan) {
-                            // Trim spaces and assign empty string for hasil if not available
-                            pemeriksaanObj[pemeriksaan.trim()] =
-                                clonedItem.hasil || "";
-                        });
-                }
+                item.pemeriksaan.forEach(function (pemeriksaan) {
+                    // Assign hasil to the respective pemeriksaan name
+                    pemeriksaanObj[pemeriksaan.nmLayanan] = pemeriksaan.hasil;
+                });
 
                 // Add the transformed pemeriksaan object to clonedItem
                 clonedItem.pemeriksaan = pemeriksaanObj;
@@ -184,11 +41,9 @@ function reportKunjungan() {
             // Extract all unique pemeriksaan types from the response
             var uniquePemeriksaan = new Set();
             response.forEach(function (item) {
-                if (item.pemeriksaan) {
-                    item.pemeriksaan.split(",").forEach(function (pemeriksaan) {
-                        uniquePemeriksaan.add(pemeriksaan.trim());
-                    });
-                }
+                item.pemeriksaan.forEach(function (pemeriksaan) {
+                    uniquePemeriksaan.add(pemeriksaan.nmLayanan);
+                });
             });
 
             // Create DataTable columns dynamically
@@ -219,7 +74,7 @@ function reportKunjungan() {
                 },
             ];
 
-            // Add each pemeriksaan as a column with its name as title
+            // Add each unique pemeriksaan as a column with its name as title
             uniquePemeriksaan.forEach(function (pemeriksaan) {
                 columns.push({
                     data: "pemeriksaan." + pemeriksaan,
@@ -269,7 +124,6 @@ function reportKunjungan() {
                 .container()
                 .appendTo("#reportKunjungan_wrapper .col-md-6:eq(0)");
         },
-
         error: function (xhr, status, error) {
             console.error("Error:", error);
         },
@@ -280,6 +134,9 @@ function reportKunjungan() {
 //     if ($.fn.DataTable.isDataTable("#reportKunjungan")) {
 //         var tabel = $("#reportKunjungan").DataTable();
 //         tabel.clear().destroy();
+//         $("#reportKunjungan thead").remove();
+//         $("#reportKunjungan tbody").remove();
+//         $("#reportKunjungan tfoot").remove();
 //     }
 //     var tglAwal = document.getElementById("tglAwal").value;
 //     var tglAkhir = document.getElementById("tglAkhir").value;
@@ -292,32 +149,77 @@ function reportKunjungan() {
 //             tglAkhir: tglAkhir,
 //         },
 //         success: function (response) {
-//             response.forEach(function (item, index) {
-//                 item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
+//             // Map response data to a structure suitable for DataTable
+//             var dataTableData = response.map(function (item) {
+//                 // Clone the item to avoid modifying the original object
+//                 var clonedItem = Object.assign({}, item);
+
+//                 // Transform pemeriksaan into an object with key-value pairs
+//                 var pemeriksaanObj = {};
+//                 item.pemeriksaan.forEach(function (pemeriksaan) {
+//                     // Assign hasil to the respective pemeriksaan name
+//                     pemeriksaanObj[pemeriksaan.nmLayanan] = pemeriksaan.hasil;
+//                 });
+
+//                 // Add the transformed pemeriksaan object to clonedItem
+//                 clonedItem.pemeriksaan = pemeriksaanObj;
+
+//                 return clonedItem;
 //             });
-//             // console.log("🚀 ~ reportKunjungan ~ response:", response);
-//             $("#reportKunjungan")
+
+//             // Extract all unique pemeriksaan types from the response
+//             var uniquePemeriksaan = new Set();
+//             response.forEach(function (item) {
+//                 item.pemeriksaan.forEach(function (pemeriksaan) {
+//                     uniquePemeriksaan.add(pemeriksaan.nmLayanan);
+//                 });
+//             });
+
+//             // Create DataTable columns dynamically
+//             var columns = [
+//                 {
+//                     data: null,
+//                     title: "No",
+//                     render: function (data, type, row, meta) {
+//                         return meta.row + meta.settings._iDisplayStart + 1;
+//                     },
+//                 },
+//                 { data: "tgl", title: "Tanggal" },
+//                 { data: "norm", title: "Nomor Rekam Medis" },
+//                 { data: "jaminan", title: "Jaminan" },
+//                 {
+//                     data: "nama",
+//                     title: "Nama",
+//                     className: "col-2", // Set custom class for width
+//                     render: function (data, type, row) {
+//                         return data.toUpperCase();
+//                     },
+//                 },
+//                 { data: "alamat", title: "Alamat", className: "col-3" }, // Set custom class for width
+//                 {
+//                     data: "dokter_nama",
+//                     title: "Nama Dokter",
+//                     className: "col-3", // Set custom class for width
+//                 },
+//             ];
+
+//             // Add each unique pemeriksaan as a column with its name as title
+//             uniquePemeriksaan.forEach(function (pemeriksaan) {
+//                 columns.push({
+//                     data: "pemeriksaan." + pemeriksaan,
+//                     title: pemeriksaan, // Use pemeriksaan name as column title
+//                     defaultContent: "-",
+//                 });
+//             });
+
+//             // Initialize DataTable with dynamic columns
+//             var table = $("#reportKunjungan")
 //                 .DataTable({
-//                     data: response,
-//                     columns: [
-//                         { data: "no" },
-//                         { data: "tgl" },
-//                         { data: "norm" },
-//                         { data: "jaminan" },
-//                         {
-//                             data: "nama",
-//                             render: function (data, type, row) {
-//                                 return data.toUpperCase();
-//                             },
-//                         },
-//                         { data: "alamat" },
-//                         { data: "dokter_nama" },
-//                         { data: "petugas_nama" },
-//                         { data: "pemeriksaan" },
-//                         { data: "hasil" },
-//                     ],
+//                     data: dataTableData,
+//                     columns: columns,
 //                     order: [0, "asc"],
 //                     lengthChange: false,
+//                     paging: false,
 //                     autoWidth: true,
 //                     buttons: [
 //                         {
@@ -328,18 +230,42 @@ function reportKunjungan() {
 //                             extend: "excel",
 //                             text: "Export to Excel",
 //                             title:
-//                                 "Laporan Hasil Pemeriksaan Lab  " +
+//                                 "Laporan Hasil Pemeriksaan Lab " +
 //                                 tglAwal +
 //                                 " s.d. " +
 //                                 tglAkhir,
 //                             filename:
-//                                 "Daftar Penjamin Laboratorium  " +
+//                                 "Daftar Penjamin Laboratorium " +
 //                                 tglAwal +
 //                                 " s.d. " +
 //                                 tglAkhir,
 //                         },
-//                         "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+//                         "colvis", // Show/Hide Columns button
 //                     ],
+//                     // Add border style to DataTable
+//                     initComplete: function () {
+//                         this.api()
+//                             .table()
+//                             .node()
+//                             .classList.add("table", "table-bordered-custom");
+//                     },
+//                     footerCallback: function (row, data, start, end, display) {
+//                         var api = this.api();
+//                         var footerRow = $(api.table().footer()).find('tr');
+//                         footerRow.empty();
+
+//                         // Calculate and append totals for each column
+//                         api.columns().every(function (index) {
+//                             var total = 0;
+//                             this.data().each(function (value) {
+//                                 if (value !== "-" && !isNaN(value)) {
+//                                     total += parseFloat(value);
+//                                 }
+//                             });
+//                             var footerText = (total !== 0) ? total : "-";
+//                             footerRow.append('<th>' + footerText + '</th>');
+//                         });
+//                     },
 //                 })
 //                 .buttons()
 //                 .container()

@@ -41,23 +41,7 @@
                                     <div class="table-responsive pt-2 px-2">
                                         <table id="reportKunjungan"class="table table-striped pt-0 mt-0 fs-6"
                                             style="width:100%" cellspacing="0">
-                                            {{-- <thead class="bg-secondary">
-                                                <tr>
-                                                    <th>No</th>
-                                                    <th>Tanggal</th>
-                                                    <th>NoRM</th>
-                                                    <th>Jaminan</th>
-                                                    <th>Pasien</th>
-                                                    <th>Alamat</th>
-                                                    <th>Dokter</th>
-                                                    <th>Petugas</th>
-                                                    <th>Pemeriksaan</th>
-                                                    <th>Hasil</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody> --}}
-                                        </table>
+
                                     </div>
                                 </div>
                                 <div class="container-fluid" id="poin" style="display:none;">

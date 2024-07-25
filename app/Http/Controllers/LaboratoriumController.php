@@ -280,6 +280,7 @@ class LaboratoriumController extends Controller
                             'idLayanan' => $data['idLayanan'],
                             'hasil' => $data['hasil'],
                             'petugas' => $data['petugas'],
+                            'ket' => $data['ket'],
                             // 'updated_at' => now(), // Jika ada kolom updated_at dan ingin diperbarui
                         ]);
                 } else {
@@ -372,12 +373,12 @@ class LaboratoriumController extends Controller
         // return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
         return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
     }
-    public function rekapKunjungan2(Request $request)
+    public function rekapKunjungan(Request $request)
     {
         $norm = $request->input('norm');
         $tglAwal = $request->input('tglAwal', now()->toDateString());
         $tglAkhir = $request->input('tglAkhir', now()->toDateString());
-        // dd($tglAkhir);
+
         $data = LaboratoriumKunjunganModel::with('pemeriksaan', 'pemeriksaan.petugas.biodata', 'pemeriksaan.pemeriksaan', 'petugas.biodata', 'dokter.biodata')
             ->where('norm', 'like', '%' . $norm . '%')
             ->whereBetween('created_at', [
@@ -387,10 +388,48 @@ class LaboratoriumController extends Controller
             ->get();
 
         $lab = json_decode($data, true);
+        $pasien = [];
 
-        return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
+        foreach ($lab as $d) {
+            $tanggal = Carbon::parse($d['updated_at'])->format('d-m-Y');
+            $dokter = ($d['dokter']['gelar_d'] ?? null) . " " . ($d['dokter']['biodata']['nama'] ?? null) . " " . ($d['dokter']['gelar_b'] ?? null);
+            $admin = ($d['petugas']['gelar_d'] ?? null) . " " . ($d['petugas']['biodata']['nama'] ?? null) . " " . ($d['petugas']['gelar_b'] ?? null);
+
+            $pemeriksaanDetails = [];
+            foreach ($d['pemeriksaan'] as $pemeriksaan) {
+                $petugas = ($pemeriksaan['petugas']['gelar_d'] ?? null) . " " . ($pemeriksaan['petugas']['biodata']['nama'] ?? null) . " " . ($pemeriksaan['petugas']['gelar_b'] ?? null);
+                $hasilLab = ($pemeriksaan['hasil'] ?? null) . " " . ($pemeriksaan['ket'] ?? null);
+                $pemeriksaanDetails[] = [
+                    'idLab' => $pemeriksaan['idLab'] ?? null,
+                    'idLayanan' => $pemeriksaan['idLayanan'] ?? null,
+                    'nmLayanan' => $pemeriksaan['pemeriksaan']['nmLayanan'] ?? null,
+                    'tarif' => $pemeriksaan['pemeriksaan']['tarif'] ?? null,
+                    'hasil' => $hasilLab ?? null,
+                    'hasil_murni' => $pemeriksaan['hasil'] ?? null,
+                    'petugas' => $petugas ?? null,
+                ];
+            }
+
+            $pasien[] = [
+                'id' => $d['id'] ?? null,
+                'notrans' => $d['notrans'] ?? null,
+                'tgl' => $tanggal ?? null,
+                'norm' => $d['norm'] ?? null,
+                'jaminan' => $d['layanan'] ?? null,
+                'nama' => $d['nama'] ?? null,
+                'alamat' => $d['alamat'] ?? null,
+                'dokter_nip' => $d['dokter']['nip'] ?? null,
+                'dokter_nama' => $dokter ?? null,
+                'admin_nip' => $d['petugas']['nip'] ?? null,
+                'admin_nama' => $admin ?? null,
+                'pemeriksaan' => $pemeriksaanDetails ?? null,
+            ];
+        }
+
+        return response()->json($pasien, 200, [], JSON_PRETTY_PRINT);
     }
-    public function rekapKunjungan(Request $request)
+
+    public function rekapKunjungan1(Request $request)
     {
         $norm = $request->input('norm');
         $tglAwal = $request->input('tglAwal', now()->toDateString());

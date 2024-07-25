@@ -101,6 +101,7 @@ async function dataLab(pemeriksaan, notrans) {
             item.no = index + 1;
             // Jika hasil null maka kembalikan ""
             item.hasiLab = item.hasil == null ? "" : item.hasil;
+            item.ket = item.ket == null ? "" : item.ket;
             var kelas = item.pemeriksaan.kelas;
             // console.log("🚀 ~ data.forEach ~ kelas:", kelas);
         });
@@ -146,6 +147,7 @@ async function dataLab(pemeriksaan, notrans) {
                     render: function (data, type, row) {
                         var kelas = row.pemeriksaan.kelas;
                         var idLayanan = row.pemeriksaan.idLayanan;
+                        console.log("🚀 ~ dataLab ~ idLayanan:", idLayanan);
                         var hasilLabHtml = "";
 
                         if (kelas === "94") {
@@ -177,24 +179,24 @@ async function dataLab(pemeriksaan, notrans) {
 
                             hasilLabHtml += `<option value="NR" ${
                                 data === "NR" ? "selected" : ""
-                            }>NR</option>`;
+                            }>Non Reaktif (HIV)</option>`;
 
                             hasilLabHtml += `<option value="Reaktif" ${
                                 data === "Reaktif" ? "selected" : ""
-                            }>Reaktif</option>`;
+                            }>Reaktif (HIV)</option>`;
 
                             hasilLabHtml += `<option value="Negatif" ${
                                 data === "Negatif" || data === "NEGATIF"
                                     ? "selected"
                                     : ""
-                            }>Negatif</option>`;
+                            }>Negatif (Sifilis)</option>`;
 
                             hasilLabHtml += `<option value="Positif" ${
                                 data === "Positif" ? "selected" : ""
-                            }>Positif</option>`;
+                            }>Positif (Sifilis)</option>`;
 
                             hasilLabHtml += `</select>`;
-                        } else if (kelas === "GD") {
+                        } else if (kelas === "99") {
                             hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
 
                             hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
@@ -216,7 +218,7 @@ async function dataLab(pemeriksaan, notrans) {
                             }>O</option>`;
 
                             hasilLabHtml += `</select>`;
-                        } else if (kelas === "RDT") {
+                        } else if (kelas === "97") {
                             hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
 
                             hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
@@ -238,13 +240,21 @@ async function dataLab(pemeriksaan, notrans) {
                             }>IGG R dan IGM NR</option>`;
 
                             hasilLabHtml += `</select>`;
-                        } else if (kelas === "HA") {
+                        } else if (kelas === "98") {
                             hasilLabHtml = `<input type="text" class="form-control-sm col hasil" id="hasil${row.idLab}" value="Terlampir">`;
                         } else {
                             hasilLabHtml = `<input type="text" class="form-control-sm col hasil" id="hasil${row.idLab}" value="${data}">`;
                         }
 
                         return hasilLabHtml;
+                    },
+                },
+                {
+                    data: "ket",
+                    render: function (data, type, row) {
+                        var ketHasilLabHtml = "";
+                        ketHasilLabHtml = `<input type="text" class="form-control-sm col hasil" id="ket${row.idLab}" value="${data}">`;
+                        return ketHasilLabHtml;
                     },
                 },
             ],
@@ -288,6 +298,7 @@ function simpan() {
             notrans: notrans,
             hasil: $("#hasil" + row.idLab).val(),
             petugas: $("#analis" + row.idLab).val(),
+            ket: $("#ket" + row.idLab).val(),
         }))
         .toArray();
 

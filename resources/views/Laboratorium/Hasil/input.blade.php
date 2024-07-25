@@ -63,12 +63,12 @@
                                 <table id="inputHasil" class="table table-tight">
                                     <thead>
                                         <tr>
-                                            {{-- <th>Aksi</th> --}}
                                             <th>NO</th>
                                             <th>NO RM</th>
                                             <th>Pemeriksaan</th>
                                             <th>Petugas</th>
                                             <th>Hasil</th>
+                                            <th>Ket</th>
                                         </tr>
                                     </thead>
                                     <tbody>
