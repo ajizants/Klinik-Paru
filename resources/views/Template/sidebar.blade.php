@@ -76,6 +76,31 @@
                                     </li>
                                 </ul>
                             </li>
+                            <!-- Gizi Section -->
+                            <li class="nav-item">
+                                <a href="" class="nav-link">
+                                    {{-- <i class="fa-solid fa-pills nav-icon"></i> --}}
+                                    <i class="fa-brands fa-nutritionix  nav-icon"></i>
+                                    <p>
+                                        Gizi
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview" style="display: none;">
+                                    <li class="nav-item ml-4">
+                                        <a class="nav-link" href="{{ url('/gizi') }}">
+                                            <i class="nav-icon fas fa-edit"></i>
+                                            <p>Input Gizi</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item ml-4">
+                                        <a class="nav-link" href="{{ url('/masterGizi') }}">
+                                            <i class="fa-solid fa-database nav-icon"></i>
+                                            <p>Master Gizi</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                             <!-- Farmasi Section -->
                             <li class="nav-item">
                                 <a href="" class="nav-link">
@@ -173,6 +198,12 @@
                                 <a class="nav-link" href="{{ url('/report') }}">
                                     <i class="fa-solid fa-chart-column nav-icon"></i>
                                     <p>Laporan Petugas</p>
+                                </a>
+                            </li>
+                            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Farmasi">
+                                <a class="nav-link" href="{{ url('/riwayatGizi') }}">
+                                    <i class="fa-solid fa-chart-column nav-icon"></i>
+                                    <p>Riwayat Transaksi Gizi</p>
                                 </a>
                             </li>
                             <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Farmasi">

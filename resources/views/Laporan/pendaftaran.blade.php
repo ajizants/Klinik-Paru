@@ -8,7 +8,7 @@
             <h6 class="m-0 font-weight-bold text-primary">Rekap Jumlah Kunjungan</h6>
         </div>
         <!-- Card Body -->
-        <div class="card-body mb-2">
+        {{-- <div class="card-body mb-2">
             <div class="row">
                 <label class="col-form-label">Rentang Tanggal :</label>
                 <div class="form-group col-3">
@@ -49,19 +49,8 @@
                     <tbody class="table-bordered border-warning">
                     </tbody>
                 </table>
-                {{-- <table class="table table-bordered" id="total" width="100%" cellspacing="0">
-                    <thead class="bg bg-teal">
-                        <tr>
-                            <th class="col-1">No</th>
-                            <th class="col-1">Keterangan</th>
-                            <th class="col-1">Jumlah</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table> --}}
             </div>
-        </div>
+        </div> --}}
         <div class="card-body mb-2">
             <div class="row">
                 <label class="col-form-label">Rentang Tanggal :</label>
@@ -89,6 +78,7 @@
                     cellspacing="0">
                     <thead class="bg bg-teal table-bordered border-warning">
                         <tr>
+                            <th>Aksi</th>
                             <th>Urut</th>
                             <th>Tanggal</th>
                             <th>Penjamin</th>
@@ -101,6 +91,29 @@
                             <th class="col-3">Alamat</th>
                             <th>Poli</th>
                             <th class="col-3">Dokter</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-bordered border-warning">
+                    </tbody>
+                </table>
+            </div>
+            <div class="container-fluid d-flex justify-content-center">
+                <h5>Rekapan Jumlah Pasien </h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover dataTable dtr-inline" id="total" width="100%"
+                    cellspacing="0">
+                    <thead class="bg bg-teal table-bordered border-warning">
+                        <tr>
+                            <th class="text-center">Jumlah Pasien</th>
+                            <th class="text-center">Pasien Batal</th>
+                            <th class="text-center">Pasien Skip</th>
+                            <th class="text-center">Pasien BPJS</th>
+                            <th class="text-center">Pasien UMUM</th>
+                            <th class="text-center">Pasien LAMA</th>
+                            <th class="text-center">Pasien BARU</th>
+                            <th class="text-center">Pasien JKN</th>
+                            <th class="text-center">Pasien OTS</th>
                         </tr>
                     </thead>
                     <tbody class="table-bordered border-warning">

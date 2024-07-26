@@ -3,6 +3,7 @@
 use App\Http\Controllers\AntrianController;
 use App\Http\Controllers\DotsController;
 use App\Http\Controllers\FarmasiController;
+use App\Http\Controllers\GiziModelController;
 use App\Http\Controllers\GudangFarmasiController;
 use App\Http\Controllers\IgdController;
 use App\Http\Controllers\InputController;
@@ -56,6 +57,7 @@ Route::post('antrianIGD', [AntrianController::class, 'antrianIGD']);
 Route::post('antrianKasir', [AntrianController::class, 'antrianKasir']);
 Route::post('antrianFarmasi', [AntrianController::class, 'antrianFarmasi']);
 Route::post('antrianLaboratorium', [AntrianController::class, 'antrianLaboratorium']);
+Route::post('pendaftaran/selesai', [AntrianController::class, 'selesaiRM']);
 
 //transaksi gudang igd
 Route::post('addJenisBmhp', [InputController::class, 'addJenisBmhp']);
@@ -110,7 +112,7 @@ Route::post('rekap/Kunjungan_Lab', [LaboratoriumController::class, 'rekapKunjung
 Route::post('hasil/antrian', [LaboratoriumController::class, 'antrianHasil']);
 Route::post('rekap/lab/poin', [LaboratoriumController::class, 'poinPetugas']);
 Route::post('rekap/lab/jumlah_pemeriksaan', [LaboratoriumController::class, 'jumlah_pemeriksaan']);
-Route::get('tes', [LaboratoriumController::class, 'tes']);
+Route::post('rekap/lab/waktu_pemeriksaan', [LaboratoriumController::class, 'waktu_pemeriksaan']);
 
 Route::post('addHasilLab', [LaboratoriumController::class, 'addHasil']);
 Route::post('cariRiwayatLab', [LaboratoriumController::class, 'riwayat']);
@@ -184,6 +186,15 @@ Route::post('cariTsRO', [ROTransaksiController::class, 'cariTransaksiRo']);
 Route::post('dataTransaksiRo', [ROTransaksiController::class, 'dataTransaksiRo']);
 Route::post('hasilRo', [ROTransaksiController::class, 'hasilRo']);
 Route::post('logBook', [ROTransaksiController::class, 'logBook']);
+
+//Gizi
+Route::get('gizi', [GiziModelController::class, 'index']);
+Route::post('simpanGizi', [GiziModelController::class, 'simpanGizi']);
+Route::post('editGizi', [GiziModelController::class, 'editGizi']);
+Route::post('deleteGizi', [GiziModelController::class, 'deleteGizi']);
+Route::post('cariGizi', [GiziModelController::class, 'cariGizi']);
+Route::post('dataGizi', [GiziModelController::class, 'dataGizi']);
+Route::post('rekapGizi', [GiziModelController::class, 'rekapGizi']);
 
 //API Riwayat Untuk migrasi SIM RS
 Route::get('riwayatKunjungan', [RiwayatController::class, 'index']);

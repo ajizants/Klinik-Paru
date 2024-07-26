@@ -51,7 +51,12 @@ class KominfoModel extends Model
                     $d['kecamatan_nama'] . ', ' .
                     $d['kabupaten_nama'];
 
+                $check = KunjunganWaktuSelesai::where('notrans', $d['no_trans'])->first();
+                // jika $check null
+                $checkIn = $check == null ? 'danger' : 'success';
+
                 return [
+                    "check_in" => $checkIn,
                     "status_pulang" => $statusPulang,
                     "no_reg" => $d["no_reg"] ?? 0,
                     "id" => $d["id"] ?? 0,

@@ -1,3 +1,40 @@
+function cetak(norm) {
+    console.log("🚀 ~ cetak ~ norm:", norm);
+    // window.open("http://rsparu.kkpm.local/Cetak/RM/norm/" + norm);
+    // window.open("http://rsparu.kkpm.local/Cetak/Kartu/norm/" + norm);
+    window.open("http://rsparu.kkpm.local/Cetak/Label/norm/" + norm);
+    window.open("http://rsparu.kkpm.local/Cetak/Label2/norm/" + norm);
+}
+
+function selesai(norm, notrans, btn) {
+    if (!norm) {
+        Toast.fire({
+            icon: "error",
+            title: "Belum Ada Data Transaksi...!!! ",
+        });
+    } else {
+        $.ajax({
+            url: "/api/pendaftaran/selesai",
+            type: "post",
+            data: {
+                norm: norm,
+                notrans: notrans,
+            },
+            success: function (response) {
+                Toast.fire({
+                    icon: "success",
+                    title:
+                        "Pasien No RM " +
+                        norm +
+                        " Selesai di daftar, Maturnuwun...!!!",
+                });
+                btn.classList.remove("btn-danger");
+                btn.classList.add("btn-success");
+            },
+        });
+    }
+}
+
 function reportPendaftaran(tglAwal, tglAkhir) {
     var tglA = formatDate(new Date(tglAwal));
     var tglB = formatDate(new Date(tglAkhir));
@@ -18,12 +55,20 @@ function reportPendaftaran(tglAwal, tglAkhir) {
         success: function (response) {
             var pendaftaran = response["data"];
             var total = response["total"];
-            console.log("🚀 ~ reportPendaftaran ~ total:", total);
-            console.log("🚀 ~ reportPendaftaran ~ $data:", pendaftaran);
+            // console.log("🚀 ~ reportPendaftaran ~ total:", total);
+            // console.log("🚀 ~ reportPendaftaran ~ $data:", pendaftaran);
+            pendaftaran.forEach(function (item, index) {
+                item.aksi = `<button type="button" class="btn btn-primary mr-2"
+                                    onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak"><i class="fa-solid fa-print"></i></button>
+                                <button type="button" class="btn btn-${item.check_in}"
+                                    onclick="selesai('${item.pasien_no_rm}','${item.no_trans}', this)" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`;
+            });
+
             $("#report")
                 .DataTable({
                     data: pendaftaran,
                     columns: [
+                        { data: "aksi", className: "col-2" },
                         { data: "antrean_nomor" },
                         { data: "tanggal" },
                         { data: "penjamin_nama" },
@@ -38,6 +83,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                         { data: "dokter_nama", className: "col-3" },
                     ],
                     autoWidth: false,
+                    order: [[1, "asc"]],
                     buttons: [
                         {
                             extend: "excelHtml5",
@@ -87,6 +133,10 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                         { data: "jumlah_daftar_JKN", className: "text-center" },
                     ],
                     autoWidth: false,
+                    ordering: false,
+                    paging: true,
+                    searching: false,
+                    lengthChange: false,
                     buttons: [
                         {
                             extend: "excelHtml5",

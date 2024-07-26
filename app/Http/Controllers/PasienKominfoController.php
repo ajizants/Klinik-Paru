@@ -240,6 +240,7 @@ class PasienKominfoController extends Controller
 
         $data = array_values($filteredData);
 
+
         $res = [
             "total" => $jumlah,
             "data" => $data,

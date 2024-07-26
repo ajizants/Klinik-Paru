@@ -529,23 +529,131 @@ class LaboratoriumController extends Controller
         return response()->json($labHasilPemeriksaan, 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function jumlah_pemeriksaan2(Request $request)
+    public function waktu_pemeriksaan(Request $request)
     {
         $mulaiTgl = $request->input('tglAwal', now()->toDateString());
         $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
 
-        $labHasilPemeriksaan = DB::table('t_kunjungan_lab_hasil')
-            ->select(
-                DB::raw('COUNT(t_kunjungan_lab_hasil.idLab) AS jumlah'),
-                'kasir_m_layanan.nmLayanan AS nama_layanan',
-                'kasir_m_layanan.idLayanan AS kode_layanan'
-            )
-            ->join('kasir_m_layanan', 't_kunjungan_lab_hasil.idLayanan', '=', 'kasir_m_layanan.idLayanan')
-            ->whereBetween(DB::raw('DATE_FORMAT(t_kunjungan_lab_hasil.created_at, "%Y-%m-%d")'), [$mulaiTgl, $selesaiTgl])
-            ->groupBy('kasir_m_layanan.idLayanan', 'kasir_m_layanan.nmLayanan')
-            ->get();
+        $labHasilPemeriksaan = LaboratoriumHasilModel::whereBetween(DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")'), [$mulaiTgl, $selesaiTgl])->get();
+        $data = [];
+        foreach ($labHasilPemeriksaan as $d) {
+            $waktuMulai = date('Y-m-d H:i:s', strtotime($d->created_at));
+            $waktuSelesai = date('Y-m-d H:i:s', strtotime($d->updated_at));
+            $durasi = max(0, round((strtotime($waktuSelesai) - strtotime($waktuMulai)) / 60, 2));
+            $data[] = [
+                'waktu_mulai' => $waktuMulai,
+                'waktu_selesai' => $waktuSelesai,
+                "durasi" => $durasi,
+                "idLab" => $d->idLab,
+                "notrans" => $d->notrans,
+                "norm" => $d->norm,
+                "idLayanan" => $d->idLayanan,
+                "hasil" => $d->pemeriksaan_fisik,
+                "ket" => $d->ket,
+                "created_at" => $d->created_at,
+                "updated_at" => $d->updated_at,
 
-        return response()->json($labHasilPemeriksaan, 200, [], JSON_PRETTY_PRINT);
+            ];
+        }
+
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+        // return response()->json($labHasilPemeriksaan, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    private function calculateAverages($data)
+    {
+        $total = count($data);
+
+        $total_tunggu_daftar = 0;
+        $total_tunggu_lab = 0;
+        $total_tunggu_hasil_lab = 0;
+        $total_tunggu_ro = 0;
+        $total_tunggu_hasil_ro = 0;
+        $total_tunggu_poli = 0;
+        $total_durasi_poli = 0;
+        $total_tunggu_tensi = 0;
+        $total_tunggu_igd = 0;
+        $total_tunggu_farmasi = 0;
+        $total_tunggu_kasir = 0;
+
+        $max_tunggu_daftar = 0;
+        $max_tunggu_lab = 0;
+        $max_tunggu_hasil_lab = 0;
+        $max_tunggu_hasil_ro = 0;
+        $max_tunggu_ro = 0;
+        $max_tunggu_poli = 0;
+        $max_durasi_poli = 0;
+        $max_tunggu_tensi = 0;
+        $max_tunggu_igd = 0;
+        $max_tunggu_farmasi = 0;
+        $max_tunggu_kasir = 0;
+
+        foreach ($data as $message) {
+            $total_tunggu_daftar += $message['tunggu_daftar'];
+            $total_tunggu_lab += $message['tunggu_lab'];
+            $total_tunggu_hasil_lab += $message['tunggu_hasil_lab'];
+            $total_tunggu_hasil_ro += $message['tunggu_hasil_ro'];
+            $total_tunggu_ro += $message['tunggu_ro'];
+            $total_tunggu_poli += $message['tunggu_poli'];
+            $total_durasi_poli += $message['durasi_poli'];
+            $total_tunggu_tensi += $message['tunggu_tensi'];
+            $total_tunggu_igd += $message['tunggu_igd'];
+            $total_tunggu_farmasi += $message['tunggu_farmasi'];
+            $total_tunggu_kasir += $message['tunggu_kasir'];
+
+            // Update max values
+            $max_tunggu_daftar = max($max_tunggu_daftar, $message['tunggu_daftar']);
+            $max_tunggu_lab = max($max_tunggu_lab, $message['tunggu_lab']);
+            $max_tunggu_hasil_lab = max($max_tunggu_hasil_lab, $message['tunggu_hasil_lab']);
+            $max_tunggu_hasil_ro = max($max_tunggu_hasil_ro, $message['tunggu_hasil_ro']);
+            $max_tunggu_ro = max($max_tunggu_ro, $message['tunggu_ro']);
+            $max_tunggu_poli = max($max_tunggu_poli, $message['tunggu_poli']);
+            $max_durasi_poli = max($max_durasi_poli, $message['durasi_poli']);
+            $max_tunggu_tensi = max($max_tunggu_tensi, $message['tunggu_tensi']);
+            $max_tunggu_igd = max($max_tunggu_igd, $message['tunggu_igd']);
+            $max_tunggu_farmasi = max($max_tunggu_farmasi, $message['tunggu_farmasi']);
+            $max_tunggu_kasir = max($max_tunggu_kasir, $message['tunggu_kasir']);
+        }
+
+        $avg_tunggu_daftar = round($total_tunggu_daftar / $total, 2);
+        $avg_tunggu_lab = round($total_tunggu_lab / $total, 2);
+        $avg_tunggu_hasil_lab = round($total_tunggu_hasil_lab / $total, 2);
+        $avg_tunggu_hasil_ro = round($total_tunggu_hasil_ro / $total, 2);
+        $avg_tunggu_ro = round($total_tunggu_ro / $total, 2);
+        $avg_tunggu_poli = round($total_tunggu_poli / $total, 2);
+        $avg_durasi_poli = round($total_durasi_poli / $total, 2);
+        $avg_tunggu_tensi = round($total_tunggu_tensi / $total, 2);
+        $avg_tunggu_igd = round($total_tunggu_igd / $total, 2);
+        $avg_tunggu_farmasi = round($total_tunggu_farmasi / $total, 2);
+        $avg_tunggu_kasir = round($total_tunggu_kasir / $total, 2);
+
+        $results = [
+            'avg_tunggu_daftar' => $avg_tunggu_daftar,
+            'avg_tunggu_lab' => $avg_tunggu_lab,
+            'avg_tunggu_hasil_lab' => $avg_tunggu_hasil_lab,
+            'avg_tunggu_hasil_ro' => $avg_tunggu_hasil_ro,
+            'avg_tunggu_ro' => $avg_tunggu_ro,
+            'avg_tunggu_poli' => $avg_tunggu_poli,
+            'avg_durasi_poli' => $avg_durasi_poli,
+            'avg_tunggu_tensi' => $avg_tunggu_tensi,
+            'avg_tunggu_igd' => $avg_tunggu_igd,
+            'avg_tunggu_farmasi' => $avg_tunggu_farmasi,
+            'avg_tunggu_kasir' => $avg_tunggu_kasir,
+
+            'max_tunggu_daftar' => $max_tunggu_daftar,
+            'max_tunggu_lab' => $max_tunggu_lab,
+            'max_tunggu_hasil_lab' => $max_tunggu_hasil_lab,
+            'max_tunggu_hasil_ro' => $max_tunggu_hasil_ro,
+            'max_tunggu_ro' => $max_tunggu_ro,
+            'max_tunggu_poli' => $max_tunggu_poli,
+            'max_durasi_poli' => $max_durasi_poli,
+            'max_tunggu_tensi' => $max_tunggu_tensi,
+            'max_tunggu_igd' => $max_tunggu_igd,
+            'max_tunggu_farmasi' => $max_tunggu_farmasi,
+            'max_tunggu_kasir' => $max_tunggu_kasir,
+        ];
+
+        return $results;
     }
 
 }

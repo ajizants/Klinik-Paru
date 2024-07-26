@@ -158,4 +158,20 @@ class HomeController extends Controller
 
         return view('RO.LogBook.main')->with('title', $title);
     }
+
+    public function gizi()
+    {
+        $title = 'Gizi';
+        return view('Gizi.Trans.main')->with('title', $title);
+    }
+    public function riwayatGizi()
+    {
+        $title = 'Riwayat Gizi';
+        return view('Gizi.Riwayat.main')->with('title', $title);
+    }
+    public function masterGizi()
+    {
+        $title = 'masterGizi';
+        return view('Gizi.Master.main')->with('title', $title);
+    }
 }

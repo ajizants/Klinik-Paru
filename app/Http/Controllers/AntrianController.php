@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\KunjunganModel;
+use App\Models\KunjunganWaktuSelesai;
 use App\Models\PasienModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AntrianController extends Controller
 {
@@ -469,4 +472,44 @@ class AntrianController extends Controller
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
         // return response()->json($res, 200, [], JSON_PRETTY_PRINT);
     }
+
+    public function selesaiRM(Request $request)
+    {
+        $norm = $request->input('norm');
+        $notrans = $request->input('notrans');
+
+        try {
+            DB::beginTransaction();
+
+            // Cari entri dengan notrans yang diberikan
+            $data = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
+
+            if ($data) {
+                // Jika entri sudah ada, perbarui kolom updated_at
+                $data->updated_at = now();
+            } else {
+                // Jika entri belum ada, buat entri baru
+                $data = new KunjunganWaktuSelesai;
+                $data->norm = $norm;
+                $data->notrans = $notrans;
+            }
+
+            $data->save();
+
+            $now = date('Y-m-d H:i:s');
+
+            $msg = "Pendaftaran Pasien No. RM: " . $norm . " Selesai Tanggal: " . $now;
+
+            DB::commit();
+
+            return response()->json([
+                'message' => $msg,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollback(); // Rollback transaksi jika terjadi kesalahan
+            Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
+            return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
+        }
+    }
+
 }

@@ -50,6 +50,10 @@ Route::middleware('auth')->group(function () {
     Route::get('masterRo', [HomeController::class, 'masterRo'])->name('masterRo')->middleware('role:ro');
     Route::get('riwayatRo', [HomeController::class, 'riwayatRo'])->name('hasilRo')->middleware('role:ro');
     Route::post('waktu_layanan', [PasienKominfoController::class, 'waktuLayanan']);
+    //gizi
+    Route::get('gizi', [HomeController::class, 'gizi'])->name('gizi')->middleware('role:gizi');
+    Route::get('masterGizi', [HomeController::class, 'masterGizi'])->name('masterGizi')->middleware('role:gizi');
+    Route::get('riwayatGizi', [HomeController::class, 'riwayatGizi'])->name('riwayatGizi')->middleware('role:gizi');
 });
 Route::get('dispenser', [HomeController::class, 'dispenser'])->name('dispenser');
 Route::get('verif', [HomeController::class, 'verif'])->name('verif');
