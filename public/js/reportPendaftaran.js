@@ -121,7 +121,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                 .DataTable({
                     data: pendaftaran,
                     columns: [
-                        { data: "aksi", className: "col-3" },
+                        { data: "aksi", className: "px-0 col-3" },
                         { data: "antrean_nomor" },
                         { data: "tanggal" },
                         { data: "no_sep" },
