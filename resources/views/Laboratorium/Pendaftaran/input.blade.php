@@ -13,15 +13,6 @@
                                         <input type="text" name="norm" id="norm" class="form-control"
                                             placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required
                                             onkeyup="enterCariRM(event,'lab');" />
-                                        {{-- <div class="input-group-addon btn btn-danger">
-                                            <span class="fa-solid fa-magnifying-glass" onclick="searchRMObat();"
-                                                data-toggle="tooltip" data-placement="top"
-                                                title="Selain Pasien Hari ini"></span>
-                                        </div> --}}
-                                        {{-- <marquee id="ket" class="col-sm-12 text-danger font-weight-bold"
-                                            direction="left" behavior="scroll" scrollamount="5">
-                                            Klik Tombol Cari berwarna merah untuk menginputkan pemeriksaan bukan pasien
-                                        </marquee> --}}
                                     </div>
                                     <label for="layanan" class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
                                         :</label>
@@ -56,6 +47,23 @@
                                             readonly />
                                     </div>
                                 </div>
+                                <div class="form-grup row mt-2">
+                                    <label for="analis" class="col-sm-1 col-form-label font-weight-bold">Admin
+                                        :</label>
+                                    <div class="col">
+                                        <select id="analis" class="form-control border border-primary" required>
+                                            <option value="">--Pilih Petugas--</option>
+                                        </select>
+                                    </div>
+                                    <label for="dokter" class="col-sm-1 col-form-label font-weight-bold">Dokter
+                                        :</label>
+                                    <div class="col">
+                                        <select id="dokter" class="form-control mb-3 border border-primary" required>
+                                            <option value="">--Pilih Dokter--</option>
+                                        </select>
+                                    </div>
+                                </div>
+
 
                                 <div class=" form-grup d-flex justify-content-center" hidden>
                                     <button type="button" class="btn btn-primary col" data-toggle="modal"
@@ -69,9 +77,6 @@
                 </div>
                 <div class="container-fluid">
                     <div class="card card-secondary">
-                        {{-- <div class="card-header">
-                            <h4 class="card-title">Input Pemeriksaan Laboratorium</h4>
-                        </div> --}}
                         @csrf
                         <div class="card-body p-2">
                             <div class="row px-2">
@@ -159,24 +164,6 @@
                             <div class="card-footer p-0">
                                 <form id="form_Petugas">
                                     <div class="form-grup row d-flex justify-content-end">
-                                        <label for="dokter" class="col-sm-1 col-form-label font-weight-bold">Dokter
-                                            :</label>
-                                        <div class="col-sm-3">
-                                            <select id="dokter"
-                                                class="form-control select2bs4 mb-3 border border-primary" required>
-                                                <option value="">--Pilih Dokter--</option>
-                                            </select>
-                                        </div>
-                                        <label for="analis" class="col-sm-1 col-form-label font-weight-bold">Admin
-                                            :</label>
-                                        <div class="col-sm-3">
-                                            <select id="analis"
-                                                class="form-control select2bs4 border border-primary" required>
-                                                <option value="">--Pilih Petugas--</option>
-                                            </select>
-                                        </div>
-
-
                                         <div class="col-auto">
                                             <a class="btn btn-primary" id="tombol_selesai"
                                                 onclick="resetForm('Transaksi Selesai...!!!');">Selesai</a>

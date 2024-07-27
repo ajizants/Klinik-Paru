@@ -150,7 +150,10 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                         },
                     ],
                     autoWidth: false,
-                    order: [[14, "asc"]],
+                    order: [
+                        [14, "asc"],
+                        [1, "asc"],
+                    ],
                     buttons: [
                         {
                             extend: "excelHtml5",
