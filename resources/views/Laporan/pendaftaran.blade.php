@@ -74,11 +74,10 @@
 
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered table-hover dataTable dtr-inline" id="report" width="120%"
-                    cellspacing="0">
+                <table class="table table-bordered table-hover dataTable dtr-inline" id="report" cellspacing="0">
                     <thead class="bg bg-teal table-bordered border-warning">
                         <tr>
-                            <th>Aksi</th>
+                            <th class="col-3">Aksi</th>
                             <th>Urut</th>
                             <th>Tanggal</th>
                             <th>No SEP</th>
@@ -92,6 +91,7 @@
                             <th class="col-3">Alamat</th>
                             <th>Poli</th>
                             <th class="col-3">Dokter</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody class="table-bordered border-warning">

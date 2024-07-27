@@ -53,10 +53,11 @@ class KominfoModel extends Model
 
                 $check = KunjunganWaktuSelesai::where('notrans', $d['no_trans'])->first();
                 // jika $check null
-                $checkIn = $check == null ? 'danger' : 'success';
+                $checkRm = $check->waktu_selesai_rm ?? null;
                 $igd = $check->waktu_selesai_igd ?? null;
-                $noSep= $check->no_sep ?? "";
 
+                $checkIn = $checkRm == null ? 'danger' : 'success';
+                $noSep= $check->no_sep ?? "";
                 $checkInIGD = $igd == null ? 'danger' : 'success';
 
                 return [

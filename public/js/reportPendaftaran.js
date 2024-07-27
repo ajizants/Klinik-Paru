@@ -110,13 +110,18 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                                     onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak"><i class="fa-solid fa-print"></i></button>
                             <button type="button" class="btn btn-${item.check_in}" id="checkin" placeholder="Selesai" data-toggle="modal"
                                     data-target="#modalSep" onclick="isiForm('${item.pasien_no_rm}', '${item.pasien_nama}','${item.penjamin_nama}','${item.no_trans}','${item.no_sep}',this)"><i class="fa-regular fa-square-check"></i></button>`;
+                if (item.check_in == "danger") {
+                    item.status = "Belum";
+                } else {
+                    item.status = "Selesai";
+                }
             });
 
             $("#report")
                 .DataTable({
                     data: pendaftaran,
                     columns: [
-                        { data: "aksi", className: "col-2" },
+                        { data: "aksi", className: "col-3" },
                         { data: "antrean_nomor" },
                         { data: "tanggal" },
                         { data: "no_sep" },
@@ -130,9 +135,22 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                         { data: "pasien_alamat", className: "col-3" },
                         { data: "poli_nama" },
                         { data: "dokter_nama", className: "col-3" },
+                        {
+                            data: "status",
+                            render: function (data) {
+                                const statusClasses = {
+                                    Belum: "danger",
+                                    Selesai: "success",
+                                    default: "secondary",
+                                };
+                                return `<div class="badge badge-${
+                                    statusClasses[data] || statusClasses.default
+                                }">${data}</div>`;
+                            },
+                        },
                     ],
                     autoWidth: false,
-                    order: [[1, "asc"]],
+                    order: [[14, "asc"]],
                     buttons: [
                         {
                             extend: "excelHtml5",
