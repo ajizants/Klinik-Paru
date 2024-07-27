@@ -81,6 +81,7 @@
                             <th>Aksi</th>
                             <th>Urut</th>
                             <th>Tanggal</th>
+                            <th>No SEP</th>
                             <th>Penjamin</th>
                             <th>Daftar By</th>
                             <th>Ket</th>
@@ -97,8 +98,8 @@
                     </tbody>
                 </table>
             </div>
-            <div class="container-fluid d-flex justify-content-center">
-                <h5>Rekapan Jumlah Pasien </h5>
+            <div class="container-fluid d-flex justify-content-center bg-warning border p-1 mt-1">
+                <h5 class="m-2"><b>Rekapan Jumlah Pasien</b></h5>
             </div>
             <div class="table-responsive">
                 <table class="table table-bordered table-hover dataTable dtr-inline" id="total" width="100%"
@@ -112,8 +113,8 @@
                             <th class="text-center">Pasien UMUM</th>
                             <th class="text-center">Pasien LAMA</th>
                             <th class="text-center">Pasien BARU</th>
-                            <th class="text-center">Pasien JKN</th>
                             <th class="text-center">Pasien OTS</th>
+                            <th class="text-center">Pasien JKN</th>
                         </tr>
                     </thead>
                     <tbody class="table-bordered border-warning">
@@ -123,10 +124,56 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="modalSep" data-backdrop="static" data-keyboard="false" tabindex="-1"
+        aria-labelledby="modalSepLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalSepLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formSep">
+                        <div class="form-grup">
+                            <label for="norm">No. RM</label>
+                            <input type="text" class="form-control" id="norm" readonly>
+                            <input type="text" class="form-control" id="notrans" readonly>
+                        </div>
+                        <div class="form-grup">
+                            <label for="nama">Nama</label>
+                            <input type="text" class="form-control" id="nama" readonly>
+                        </div>
+                        <div class="form-grup">
+                            <label for="jaminan">Jaminan</label>
+                            <input type="text" class="form-control" id="jaminan" readonly>
+                        </div>
+                        <div class="form-grup">
+                            <label for="noSep">No. SEP</label>
+                            <input type="text" class="form-control" id="noSep" required onkeyup="checkEnter(event)">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="selesai();">Simpan</button>
+                    <button type="button" class="btn btn-danger"data-dismiss="modal">Batal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     @include('Template.footer')
 
     </div>
+
+
+
+
+
+
     @include('Template.script')
 
 

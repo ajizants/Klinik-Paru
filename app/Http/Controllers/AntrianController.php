@@ -477,6 +477,7 @@ class AntrianController extends Controller
     {
         $norm = $request->input('norm');
         $notrans = $request->input('notrans');
+        $nosep= $request->input('nosep');
 
         try {
             DB::beginTransaction();
@@ -486,12 +487,15 @@ class AntrianController extends Controller
 
             if ($data) {
                 // Jika entri sudah ada, perbarui kolom updated_at
-                $data->updated_at = now();
+                $data->waktu_selesai_rm = now();
+                $data->no_sep = $nosep;
             } else {
                 // Jika entri belum ada, buat entri baru
                 $data = new KunjunganWaktuSelesai;
                 $data->norm = $norm;
                 $data->notrans = $notrans;
+                $data->no_sep = $nosep;
+                $data->waktu_selesai_rm = now();
             }
 
             $data->save();

@@ -6,7 +6,16 @@ function cetak(norm) {
     window.open("http://rsparu.kkpm.local/Cetak/Label2/norm/" + norm);
 }
 
-function selesai(norm, notrans, btn) {
+function checkEnter(event) {
+    if (event.key === "Enter" || event.keyCode === 13) {
+        selesai(); // Call the selesai function when Enter key is pressed
+    }
+}
+
+function selesai(norm, notrans) {
+    var norm = norm ? norm : $("#norm").val();
+    var notrans = notrans ? notrans : $("#notrans").val();
+    var nosep = $("#noSep").val();
     if (!norm) {
         Toast.fire({
             icon: "error",
@@ -19,17 +28,59 @@ function selesai(norm, notrans, btn) {
             data: {
                 norm: norm,
                 notrans: notrans,
+                nosep: nosep,
             },
             success: function (response) {
-                Toast.fire({
-                    icon: "success",
-                    title: response.message,
+                Swal.fire({
+                    icon: "info",
+                    title: response.message + "Sedang memperbarui data...!!!",
+                    showConfirmButton: true,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
                 });
-                btn.classList.remove("btn-danger");
-                btn.classList.add("btn-success");
+                reportPendaftaran(tglAwal, tglAkhir);
+                document.getElementById("formSep").reset();
+                $("#modalSep").modal("hide");
             },
         });
     }
+}
+
+function isiForm(norm, nama, jaminan, notrans, nosep, btn) {
+    $("#norm").val(norm);
+    $("#nama").val(nama);
+    $("#jaminan").val(jaminan);
+    $("#notrans").val(notrans);
+    $("#noSep").val(nosep);
+    btn.classList.remove("btn-danger");
+    btn.classList.add("btn-success");
+}
+
+function segarkan() {
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencarikan data...!!!\n Proses lama jika mencari lebih dari 10 hari",
+        showConfirmButton: true,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+    reportPendaftaran(tglAwal, tglAkhir);
+}
+function cariJumlah() {
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencarikan data...!!!\n Proses lama jika mencari lebih dari 10 hari",
+        showConfirmButton: true,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+    reportJumlah(tglAwal, tglAkhir);
 }
 
 function reportPendaftaran(tglAwal, tglAkhir) {
@@ -57,8 +108,8 @@ function reportPendaftaran(tglAwal, tglAkhir) {
             pendaftaran.forEach(function (item, index) {
                 item.aksi = `<button type="button" class="btn btn-primary mr-2"
                                     onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak"><i class="fa-solid fa-print"></i></button>
-                                <button type="button" class="btn btn-${item.check_in}"
-                                    onclick="selesai('${item.pasien_no_rm}','${item.no_trans}', this)" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`;
+                            <button type="button" class="btn btn-${item.check_in}" id="checkin" placeholder="Selesai" data-toggle="modal"
+                                    data-target="#modalSep" onclick="isiForm('${item.pasien_no_rm}', '${item.pasien_nama}','${item.penjamin_nama}','${item.no_trans}','${item.no_sep}',this)"><i class="fa-regular fa-square-check"></i></button>`;
             });
 
             $("#report")
@@ -68,6 +119,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                         { data: "aksi", className: "col-2" },
                         { data: "antrean_nomor" },
                         { data: "tanggal" },
+                        { data: "no_sep" },
                         { data: "penjamin_nama" },
                         { data: "daftar_by" },
                         { data: "pasien_lama_baru" },
@@ -381,7 +433,6 @@ function formatDate(date) {
         throw new Error("Invalid date");
     }
 
-    console.log("🚀 ~ formatDate ~ date:", date);
     let day = String(date.getDate()).padStart(2, "0");
     let month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() returns month from 0-11
     let year = date.getFullYear();
@@ -445,29 +496,7 @@ window.addEventListener("load", function () {
         },
     });
     reportPendaftaran(tglAwal, tglAkhir);
+    $("#modalSep").on("shown.bs.modal", function () {
+        $("#noSep").focus();
+    });
 });
-
-function segarkan() {
-    Swal.fire({
-        icon: "info",
-        title: "Sedang mencarikan data...!!!\n Proses lama jika mencari lebih dari 10 hari",
-        showConfirmButton: true,
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        },
-    });
-    reportPendaftaran(tglAwal, tglAkhir);
-}
-function cariJumlah() {
-    Swal.fire({
-        icon: "info",
-        title: "Sedang mencarikan data...!!!\n Proses lama jika mencari lebih dari 10 hari",
-        showConfirmButton: true,
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        },
-    });
-    reportJumlah(tglAwal, tglAkhir);
-}

@@ -55,6 +55,7 @@ class KominfoModel extends Model
                 // jika $check null
                 $checkIn = $check == null ? 'danger' : 'success';
                 $igd = $check->waktu_selesai_igd ?? null;
+                $noSep= $check->no_sep ?? "";
 
                 $checkInIGD = $igd == null ? 'danger' : 'success';
 
@@ -62,6 +63,7 @@ class KominfoModel extends Model
                     "check_in" => $checkIn,
                     "igd_selesai" => $checkInIGD,
                     "status_pulang" => $statusPulang,
+                    "no_sep" => $noSep,
                     "no_reg" => $d["no_reg"] ?? 0,
                     "id" => $d["id"] ?? 0,
                     "no_trans" => $d["no_trans"] ?? 0,
@@ -425,8 +427,8 @@ class KominfoModel extends Model
                     $waktuSelesaiRM = $message["loket_pendaftaran_selesai_waktu"];
                     $lamaSelesaiRM = $tunggu_daftar;
                 } else {
-                    $waktuSelesaiRM = date('Y-m-d H:i:s', strtotime($selesaiRm->created_at));
-                    $lamaSelesaiRM = max(0, round((strtotime($selesaiRm->created_at) - strtotime($message["loket_pendaftaran_panggil_waktu"])) / 60, 2));
+                    $waktuSelesaiRM = date('Y-m-d H:i:s', strtotime($selesaiRm->waktu_selesai_rm));
+                    $lamaSelesaiRM = max(0, round((strtotime($selesaiRm->waktu_selesai_rm) - strtotime($message["loket_pendaftaran_panggil_waktu"])) / 60, 2));
                 }
 
                 // Menentukan waktu tunggu tensi

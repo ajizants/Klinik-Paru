@@ -15,6 +15,8 @@ class KunjunganWaktuSelesai extends Model
     protected $fillable = [
         'norm',
         'notrans',
+        'no_sep',
+        'waktu_selesai_rm',
         'waktu_selesai_igd',
         'created_at',
         'updated_at',
