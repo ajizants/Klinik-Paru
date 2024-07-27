@@ -312,6 +312,7 @@ function drawDataTable(dataArray, ruang) {
     }
 }
 
+//antrianall
 function fetchDataAntrianAll(tanggal, ruang, callback) {
     $.ajax({
         url: "/api/antrian/kominfo",
@@ -415,7 +416,8 @@ function processResponse(response, ruang, statusFilter) {
         } else if (ruang === "lab") {
             link = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariTsLab('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
         } else if (ruang === "igd") {
-            link = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariKominfo('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
+            link = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariKominfo('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>
+                    <button type="button" class="aksi-button btn-sm btn-${item.igd_selesai} py-0 icon-link icon-link-hover" onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this)" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`;
         } else {
             link = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariKominfo('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
         }

@@ -54,9 +54,13 @@ class KominfoModel extends Model
                 $check = KunjunganWaktuSelesai::where('notrans', $d['no_trans'])->first();
                 // jika $check null
                 $checkIn = $check == null ? 'danger' : 'success';
+                $igd = $check->waktu_selesai_igd ?? null;
+
+                $checkInIGD = $igd == null ? 'danger' : 'success';
 
                 return [
                     "check_in" => $checkIn,
+                    "igd_selesai" => $checkInIGD,
                     "status_pulang" => $statusPulang,
                     "no_reg" => $d["no_reg"] ?? 0,
                     "id" => $d["id"] ?? 0,
@@ -413,11 +417,20 @@ class KominfoModel extends Model
             $res = array_map(function ($message) {
 
                 // Menentukan waktu tunggu daftar
-                // $tunggu_daftar = ($message["daftar_by"] == "JKN") ? 2 : max(0, round((strtotime($message["loket_pendaftaran_panggil_waktu"]) - strtotime($message["loket_pendaftaran_skip_waktu"] ?? $message["loket_pendaftaran_menunggu_waktu"])) / 60, 2));
+                $message["loket_pendaftaran_menunggu_waktu"] = date('Y-m-d') . ' 07:30:00';
+                $tunggu_panggil_daftar = ($message["daftar_by"] == "JKN") ? 2 : max(0, round((strtotime($message["loket_pendaftaran_panggil_waktu"]) - strtotime($message["loket_pendaftaran_skip_waktu"] ?? $message["loket_pendaftaran_menunggu_waktu"])) / 60, 2));
                 $tunggu_daftar = ($message["daftar_by"] == "JKN") ? 2 : max(0, round((strtotime($message["loket_pendaftaran_selesai_waktu"]) - strtotime($message["loket_pendaftaran_panggil_waktu"])) / 60, 2));
+                $selesaiRm = KunjunganWaktuSelesai::where('norm', $message['pasien_no_rm'])->whereDate('created_at', $message['tanggal'])->first();
+                if (is_null($selesaiRm)) {
+                    $waktuSelesaiRM = $message["loket_pendaftaran_selesai_waktu"];
+                    $lamaSelesaiRM = $tunggu_daftar;
+                } else {
+                    $waktuSelesaiRM = date('Y-m-d H:i:s', strtotime($selesaiRm->created_at));
+                    $lamaSelesaiRM = max(0, round((strtotime($selesaiRm->created_at) - strtotime($message["loket_pendaftaran_panggil_waktu"])) / 60, 2));
+                }
 
                 // Menentukan waktu tunggu tensi
-                $tunggu_tensi = max(0, round((strtotime($message["ruang_tensi_panggil_waktu"]) - strtotime($message["ruang_tensi_skip_waktu"] ?? $message["loket_pendaftaran_selesai_waktu"])) / 60, 2));
+                $tunggu_tensi = max(0, round((strtotime($message["ruang_tensi_panggil_waktu"]) - strtotime($message["ruang_tensi_skip_waktu"] ?? $waktuSelesaiRM)) / 60, 2));
 
                 // Menentukan durasi poli
                 $durasi_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["loket_pendaftaran_selesai_waktu"])) / 60, 2));
@@ -541,6 +554,7 @@ class KominfoModel extends Model
                     "oke" => $oke,
                     "rodata" => $Rdata,
                     "labdata" => $Ldata,
+
                     "lama_pelayanan_pasien" => $lama_pelayanan_tiap_pasien,
                     "no_reg" => $message["no_reg"] ?? 0,
                     "no_trans" => $message["no_trans"] ?? 0,
@@ -558,10 +572,12 @@ class KominfoModel extends Model
                     "pendaftaran_menunggu" => $message["loket_pendaftaran_menunggu_waktu"] ?? 0,
                     "status_pulang" => $statusPulang,
 
-                    "tunggu_daftar" => $tunggu_daftar ?? 0,
+                    "tunggu_daftar" => $tunggu_panggil_daftar ?? 0,
                     "pendaftaran_panggil" => $message["loket_pendaftaran_panggil_waktu"] ?? 0,
                     "pendaftaran_skip" => $message["loket_pendaftaran_skip_waktu"] ?? 0,
                     "pendaftaran_selesai" => $message["loket_pendaftaran_selesai_waktu"] ?? 0,
+                    "waktu_selesai_RM" => $waktuSelesaiRM ?? 0,
+                    "lama_selesai_RM" => $lamaSelesaiRM ?? 0,
 
                     "tunggu_tensi" => $tunggu_tensi ?? 0,
                     // "tensi_menunggu" => $message["ruang_tensi_menunggu_waktu"]??0,

@@ -511,5 +511,43 @@ class AntrianController extends Controller
             return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
         }
     }
+    public function selesaiIGD(Request $request)
+    {
+        $norm = $request->input('norm');
+        $notrans = $request->input('notrans');
+
+        try {
+            DB::beginTransaction();
+
+            // Cari entri dengan notrans yang diberikan
+            $data = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
+
+            if ($data) {
+                // Jika entri sudah ada, perbarui kolom updated_at
+                $data->waktu_selesai_igd = now();
+            } else {
+                // Jika entri belum ada, buat entri baru
+                $data = new KunjunganWaktuSelesai;
+                $data->norm = $norm;
+                $data->notrans = $notrans;
+            }
+
+            $data->save();
+
+            $now = date('Y-m-d H:i:s');
+
+            $msg = "Pasien No. RM: " . $norm . " Selesai Tindakan Tanggal: " . $now;
+
+            DB::commit();
+
+            return response()->json([
+                'message' => $msg,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollback(); // Rollback transaksi jika terjadi kesalahan
+            Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
+            return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
+        }
+    }
 
 }

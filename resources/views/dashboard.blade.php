@@ -120,7 +120,7 @@
                                 <table class="table table-bordered" id="rataTabel" width="100%" cellspacing="0">
                                     <thead class="bg bg-teal">
                                         <tr>
-                                            <th>Label</th>
+                                            <th>Rata-Rata</th>
                                             <th>Waktu Tunggu (menit)</th>
                                             <th>Keterangan</th>
                                         </tr>
@@ -159,7 +159,7 @@
                                 <table class="table table-bordered" id="terlamaTabel" width="100%" cellspacing="0">
                                     <thead class="bg bg-teal">
                                         <tr>
-                                            <th>Label</th>
+                                            <th>Waktu Terlama</th>
                                             <th>Waktu Tunggu (menit)</th>
                                             <th>Keterangan</th>
                                         </tr>
@@ -200,9 +200,10 @@
                                 <th class="col-3">Dokter</th>
                                 <th class="col-2">Ambil No Antrian</th>
                                 <th class="col-2">Lama Tunggu Pendaftaran (menit)</th>
-                                <th class="col-2">Skip Pendafataran</th>
                                 <th class="col-2">Panggil Pendafataran</th>
                                 <th class="col-2">Selesai Pendaftaran</th>
+                                <th class="col-2">Selesai RM</th>
+                                <th class="col-2">Lama RM Siap</th>
                                 <th class="col-2">Lama Tunggu Tensi (menit)</th>
                                 <th class="col-2">Skip Tensi</th>
                                 <th class="col-2">Panggil Tensi</th>
@@ -212,12 +213,10 @@
                                 <th class="col-2">Panggil Poli</th>
                                 <th class="col-2">Selesai Poli</th>
                                 <th class="col-2">Lama Tunggu Lab (menit)</th>
-                                {{-- <th class="col-2">Skip Lab</th> --}}
                                 <th class="col-2">Panggil Lab</th>
                                 <th class="col-2">Selesai Lab</th>
                                 <th class="col-2">Lama Hasil Lab (menit)</th>
                                 <th class="col-2">Lama Tunggu RO (menit)</th>
-                                {{-- <th class="col-2">Skip RO</th> --}}
                                 <th class="col-2">Panggil RO</th>
                                 <th class="col-2">Selesai RO</th>
                                 <th class="col-2">Lama Hasil RO (menit)</th>

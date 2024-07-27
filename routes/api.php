@@ -58,6 +58,7 @@ Route::post('antrianKasir', [AntrianController::class, 'antrianKasir']);
 Route::post('antrianFarmasi', [AntrianController::class, 'antrianFarmasi']);
 Route::post('antrianLaboratorium', [AntrianController::class, 'antrianLaboratorium']);
 Route::post('pendaftaran/selesai', [AntrianController::class, 'selesaiRM']);
+Route::post('igd/selesai', [AntrianController::class, 'selesaiIGD']);
 
 //transaksi gudang igd
 Route::post('addJenisBmhp', [InputController::class, 'addJenisBmhp']);

@@ -109,6 +109,32 @@ function dataBMHP() {
         },
     });
 }
+
+function checkOut(norm, notrans, btn) {
+    if (!norm) {
+        Toast.fire({
+            icon: "error",
+            title: "Belum Ada Data Transaksi...!!! ",
+        });
+    } else {
+        $.ajax({
+            url: "/api/igd/selesai",
+            type: "post",
+            data: {
+                norm: norm,
+                notrans: notrans,
+            },
+            success: function (response) {
+                Toast.fire({
+                    icon: "success",
+                    title: response.message,
+                });
+                btn.classList.remove("btn-danger");
+                btn.classList.add("btn-success");
+            },
+        });
+    }
+}
 // function fetchDataAntrian(params, callback) {
 //     console.log("🚀 ~ fetchDataAntrian ~ params:", params);
 //     $.ajax({

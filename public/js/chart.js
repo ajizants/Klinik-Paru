@@ -225,9 +225,10 @@ function waktuLayanan(tglAwal, tglAkhir, tanggal) {
                         { data: "dokter_nama", className: "col-3" },
                         { data: "pendaftaran_menunggu", className: "col-2" },
                         { data: "tunggu_daftar" },
-                        { data: "pendaftaran_skip", className: "col-2" },
                         { data: "pendaftaran_panggil", className: "col-2" },
                         { data: "pendaftaran_selesai", className: "col-2" },
+                        { data: "waktu_selesai_RM", className: "col-2" },
+                        { data: "lama_selesai_RM", className: "col-2" },
                         { data: "tunggu_tensi", className: "col-2" },
                         { data: "tensi_skip", className: "col-2" },
                         { data: "tensi_panggil", className: "col-2" },
@@ -320,6 +321,13 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                             rata_waktu: data.avg_tunggu_daftar.toFixed(2),
                             background:
                                 data.avg_tunggu_daftar > 60 ? "red" : "green",
+                        },
+                        {
+                            kategori:
+                                "Tunggu RM, Mulai di panggil sampai selesai RM Siap",
+                            rata_waktu: data.avg_tunggu_rm.toFixed(2),
+                            background:
+                                data.avg_tunggu_rm > 60 ? "red" : "green",
                         },
                         {
                             kategori: "Tunggu Tensi",
@@ -441,6 +449,13 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                 data.max_tunggu_daftar > 60 ? "red" : "green",
                         },
                         {
+                            kategori:
+                                "Tunggu Terlama RM Siap, Mulai di panggil sampai RM Siap",
+                            waktu_terlama: data.max_tunggu_rm.toFixed(2),
+                            background:
+                                data.max_tunggu_rm > 60 ? "red" : "green",
+                        },
+                        {
                             kategori: "Tunggu Terlama di Tensi",
                             waktu_terlama: data.max_tunggu_tensi.toFixed(2),
                             background:
@@ -550,6 +565,7 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                 data: {
                     labels: [
                         "Tunggu Daftar",
+                        "Tunggu RM",
                         "Tunggu Tensi",
                         "Tunggu Poli",
                         "Tunggu Lab",
@@ -572,6 +588,7 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                 ")",
                             data: [
                                 data.avg_tunggu_daftar,
+                                data.avg_tunggu_rm,
                                 data.avg_tunggu_tensi,
                                 data.avg_tunggu_poli,
                                 data.avg_tunggu_lab,
@@ -585,6 +602,9 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                             ],
                             backgroundColor: [
                                 data.avg_tunggu_daftar > 60
+                                    ? "rgba(255, 99, 132, 0.2)"
+                                    : "rgba(54, 162, 235, 0.2)",
+                                data.avg_tunggu_rm > 60
                                     ? "rgba(255, 99, 132, 0.2)"
                                     : "rgba(54, 162, 235, 0.2)",
                                 data.avg_tunggu_tensi > 60
@@ -621,6 +641,9 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                             ],
                             borderColor: [
                                 data.avg_tunggu_daftar > 60
+                                    ? "rgba(255, 99, 132, 1)"
+                                    : "rgba(54, 162, 235, 1)",
+                                data.avg_tunggu_rm > 60
                                     ? "rgba(255, 99, 132, 1)"
                                     : "rgba(54, 162, 235, 1)",
                                 data.avg_tunggu_tensi > 60
@@ -672,6 +695,7 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                 data: {
                     labels: [
                         "Tunggu Daftar",
+                        "Tunggu RM",
                         "Tunggu Tensi",
                         "Tunggu Poli",
                         "Tunggu Lab",
@@ -694,6 +718,7 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                 ")",
                             data: [
                                 data.max_tunggu_daftar,
+                                data.max_tunggu_rm,
                                 data.max_tunggu_tensi,
                                 data.max_tunggu_poli,
                                 data.max_tunggu_lab,
@@ -707,6 +732,9 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                             ],
                             backgroundColor: [
                                 data.max_tunggu_daftar > 60
+                                    ? "rgba(255, 99, 132, 0.2)"
+                                    : "rgba(54, 162, 235, 0.2)",
+                                data.max_tunggu_rm > 60
                                     ? "rgba(255, 99, 132, 0.2)"
                                     : "rgba(54, 162, 235, 0.2)",
                                 data.max_tunggu_tensi > 60
@@ -743,6 +771,9 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                             ],
                             borderColor: [
                                 data.max_tunggu_daftar > 60
+                                    ? "rgba(255, 99, 132, 1)"
+                                    : "rgba(54, 162, 235, 1)",
+                                data.max_tunggu_rm > 60
                                     ? "rgba(255, 99, 132, 1)"
                                     : "rgba(54, 162, 235, 1)",
                                 data.max_tunggu_tensi > 60

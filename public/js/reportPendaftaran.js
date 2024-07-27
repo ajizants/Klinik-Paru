@@ -23,10 +23,7 @@ function selesai(norm, notrans, btn) {
             success: function (response) {
                 Toast.fire({
                     icon: "success",
-                    title:
-                        "Pasien No RM " +
-                        norm +
-                        " Selesai di daftar, Maturnuwun...!!!",
+                    title: response.message,
                 });
                 btn.classList.remove("btn-danger");
                 btn.classList.add("btn-success");
