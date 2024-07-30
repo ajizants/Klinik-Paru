@@ -57,7 +57,7 @@ class KominfoModel extends Model
                 $igd = $check->waktu_selesai_igd ?? null;
 
                 $checkIn = $checkRm == null ? 'danger' : 'success';
-                $noSep= $check->no_sep ?? "";
+                $noSep = $check->no_sep ?? "";
                 $checkInIGD = $igd == null ? 'danger' : 'success';
 
                 return [
@@ -423,10 +423,11 @@ class KominfoModel extends Model
                 $message["loket_pendaftaran_menunggu_waktu"] = date('Y-m-d') . ' 07:30:00';
                 $tunggu_panggil_daftar = ($message["daftar_by"] == "JKN") ? 2 : max(0, round((strtotime($message["loket_pendaftaran_panggil_waktu"]) - strtotime($message["loket_pendaftaran_skip_waktu"] ?? $message["loket_pendaftaran_menunggu_waktu"])) / 60, 2));
                 $tunggu_daftar = ($message["daftar_by"] == "JKN") ? 2 : max(0, round((strtotime($message["loket_pendaftaran_selesai_waktu"]) - strtotime($message["loket_pendaftaran_panggil_waktu"])) / 60, 2));
-                $selesaiRm = KunjunganWaktuSelesai::where('norm', $message['pasien_no_rm'])->whereDate('created_at', $message['tanggal'])->first();
+                $selesaiRm = KunjunganWaktuSelesai::where('norm', $message['pasien_no_rm'])->whereDate('waktu_selesai_rm', $message['tanggal'])->first();
+                $Rmdata = $selesaiRm ? true : false;
                 if (is_null($selesaiRm)) {
                     $waktuSelesaiRM = $message["loket_pendaftaran_selesai_waktu"];
-                    $lamaSelesaiRM = $tunggu_daftar;
+                    $lamaSelesaiRM = 0;
                 } else {
                     $waktuSelesaiRM = date('Y-m-d H:i:s', strtotime($selesaiRm->waktu_selesai_rm));
                     $lamaSelesaiRM = max(0, round((strtotime($selesaiRm->waktu_selesai_rm) - strtotime($message["loket_pendaftaran_panggil_waktu"])) / 60, 2));
@@ -448,7 +449,6 @@ class KominfoModel extends Model
                 $pangRo = !is_null($message["ruang_rontgen_panggil_waktu"]);
 
                 if ($pangLab && $pangRo) {
-                    $oke = "ada semua";
                     if (strtotime($message["ruang_laboratorium_panggil_waktu"]) < strtotime($message["ruang_rontgen_panggil_waktu"])) {
                         $tunggu_lab = max(0, round((strtotime($message["ruang_laboratorium_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
                         $tunggu_ro = max(0, round((strtotime($message["ruang_rontgen_panggil_waktu"]) - strtotime($message["ruang_laboratorium_selesai_waktu"])) / 60, 2));
@@ -458,17 +458,14 @@ class KominfoModel extends Model
                     }
                     $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_rontgen_panggil_waktu"])) / 60, 2));
                 } elseif ($pangLab) {
-                    $oke = "ada lab";
                     $tunggu_lab = max(0, round((strtotime($message["ruang_laboratorium_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
                     $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_laboratorium_panggil_waktu"])) / 60, 2));
                     $tunggu_ro = 0;
                 } elseif ($pangRo) {
-                    $oke = "ada ro";
                     $tunggu_ro = max(0, round((strtotime($message["ruang_rontgen_panggil_waktu"]) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
                     $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_rontgen_panggil_waktu"])) / 60, 2));
                     $tunggu_lab = 0;
                 } else {
-                    $oke = "kosong";
                     $tunggu_lab = $tunggu_ro = 0;
                     $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_poli_skip_waktu"] ?? $message["ruang_tensi_selesai_waktu"])) / 60, 2));
                 }
@@ -496,7 +493,17 @@ class KominfoModel extends Model
                     // dd($lama_ro);
                 }
 
-                $labData = LaboratoriumHasilModel::where('norm', $message['pasien_no_rm'])
+                // $LabWaktuBta = LaboratoriumHasilModel::where('norm', $message['pasien_no_rm'])
+                //     ->whereDate('tgltrans', $message['tanggal'])
+                //     ->whereIn('idLayanan', [130, 214])
+                //     ->first();
+                // $bta = $LabWaktuBta ? true : false;
+                // if (is_null($LabWaktuBta)) {
+                //     $lamaHasilBta = 0;
+                // } else {
+                //     $lamaHasilBta = max(0, round((strtotime($LabWaktuBta->updated_at) - strtotime($LabWaktuBta->created_at)) / 60, 2));
+                // }
+                $labData = LaboratoriumKunjunganModel::where('norm', $message['pasien_no_rm'])
                     ->whereDate('created_at', $message['tanggal'])->first();
                 // dd($labData);
                 $Ldata = $labData ? true : false;
@@ -512,19 +519,8 @@ class KominfoModel extends Model
 
                 } else {
                     $panggilLab = date('Y-m-d H:i:s', strtotime($labData->created_at));
-                    $selesaiLab = date('Y-m-d H:i:s', strtotime($labData->updated_at));
-
-                    // if ($message["ruang_laboratorium_panggil_waktu"] == null) {
-                    //     if (strtotime($message["ruang_poli_selesai_waktu"]) > strtotime($message["ruang_tensi_selesai_waktu"])) {
-                    $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($labData->created_at)) / 60, 2));
-                    // $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_poli_selesai_waktu"])) / 60, 2));
-                    //     } else {
-                    //         $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($labData->created_at)) / 60, 2));
-                    //     }
-                    //     $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_tensi_selesai_waktu"])) / 60, 2));
-                    // } else {
-                    //     $lama_lab = max(0, round((strtotime($labData->updated_at) - strtotime($message["ruang_laboratorium_panggil_waktu"])) / 60, 2));
-                    // }
+                    $selesaiLab = date('Y-m-d H:i:s', strtotime($labData->waktu_selesai ?: $labData->updated_at));
+                    $lama_lab = max(0, round((strtotime($labData->waktu_selesai) - strtotime($labData->created_at)) / 60, 2));
                 }
 
                 $igdData = IGDTransModel::where('norm', $message['pasien_no_rm'])->whereDate('created_at', $message['tanggal'])->first();
@@ -550,13 +546,20 @@ class KominfoModel extends Model
                         $lama_igd = max(0, round((strtotime($igdData->updated_at) - strtotime($message["ruang_poli_skip_waktu"])) / 60, 2));
                     }
                 }
+                $oke = false;
+                if ($Rdata || $Ldata || $igd) {
+                    $oke = true;
+                }
 
                 return [
+                    "oke" => $oke,
                     "ro" => $pangRo,
                     "lab" => $pangLab,
-                    "oke" => $oke,
+
+                    "rm" => $Rmdata,
                     "rodata" => $Rdata,
                     "labdata" => $Ldata,
+                    "igddata" => $igd,
 
                     "lama_pelayanan_pasien" => $lama_pelayanan_tiap_pasien,
                     "no_reg" => $message["no_reg"] ?? 0,
@@ -572,11 +575,11 @@ class KominfoModel extends Model
                     "jenis_kelamin" => $message["jenis_kelamin_nama"] ?? 0,
                     "poli_nama" => $message["poli_nama"] ?? 0,
                     "dokter_nama" => $message["dokter_nama"] ?? 0,
-                    "pendaftaran_menunggu" => $message["loket_pendaftaran_menunggu_waktu"] ?? 0,
+                    "pendaftaran_menunggu" => $message["waktu_daftar"] ?? 0,
                     "status_pulang" => $statusPulang,
 
                     "tunggu_daftar" => $tunggu_panggil_daftar ?? 0,
-                    "pendaftaran_panggil" => $message["loket_pendaftaran_panggil_waktu"] ?? 0,
+                    "pendaftaran_panggil" => $message["loket_pendaftaran_skip_waktu"] ?? $message["loket_pendaftaran_panggil_waktu"] ?? 0,
                     "pendaftaran_skip" => $message["loket_pendaftaran_skip_waktu"] ?? 0,
                     "pendaftaran_selesai" => $message["loket_pendaftaran_selesai_waktu"] ?? 0,
                     "waktu_selesai_RM" => $waktuSelesaiRM ?? 0,
@@ -600,7 +603,7 @@ class KominfoModel extends Model
                     "laboratorium_panggil" => $message["ruang_laboratorium_panggil_waktu"] ?? 0,
                     "laboratorium_skip" => $message["ruang_laboratorium_skip_waktu"] ?? 0,
                     "laboratorium_selesai" => $message["ruang_laboratorium_selesai_waktu"] ?? 0,
-                    "laboratorium_selesai" => $selesaiLab ?? 0,
+                    // "laboratorium_selesai" => $selesaiLab ?? 0,
                     "selesai_lab" => $selesaiLab,
                     "tunggu_hasil_lab" => $lama_lab,
 

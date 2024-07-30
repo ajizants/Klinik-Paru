@@ -206,6 +206,7 @@ Route::post('dataPasien', [PasienKominfoController::class, 'dataPasien']);
 Route::post('cpptKominfo', [PasienKominfoController::class, 'newCpptRequest']);
 Route::post('antrian/kominfo', [PasienKominfoController::class, 'antrianAll']);
 Route::post('poin_kominfo', [PasienKominfoController::class, 'rekapPoin']);
+Route::post('poin_kominfo/pecah', [PasienKominfoController::class, 'rekapPoinPecah']);
 Route::post('kominfo/waktu_layanan', [PasienKominfoController::class, 'waktuLayanan']);
 Route::post('kominfo/rata_waktu_tunggu', [PasienKominfoController::class, 'avgWaktuTunggu']);
 Route::post('kominfo/pendaftaran', [PasienKominfoController::class, 'pendaftaranFilter']); //cari No RM

@@ -12,7 +12,7 @@ class LaboratoriumKunjunganModel extends Model
     protected $table = "t_kunjungan_lab";
 
     protected $fillable = [
-        'notrans', 'norm', 'nik', 'petugas', 'dokter', 'alamat', 'created_at', 'updated_at', 'nama', 'layanan', 'ket',
+        'notrans', 'norm', 'nik', 'petugas', 'dokter', 'alamat', 'waktu_selesai', 'created_at', 'updated_at', 'nama', 'layanan', 'ket',
     ];
 
     public function pemeriksaan()

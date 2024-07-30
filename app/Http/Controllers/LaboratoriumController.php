@@ -217,6 +217,7 @@ class LaboratoriumController extends Controller
                     $kunjunganLab->layanan = $jaminan;
                     $kunjunganLab->petugas = $petugas;
                     $kunjunganLab->dokter = $dokter;
+                    $kunjunganLab->ket = "Belum";
                     $kunjunganLab->save();
                     return response()->json(['message' => 'Transaksi berhasil disimpan...!!'], 200);
                 }
@@ -256,6 +257,8 @@ class LaboratoriumController extends Controller
     {
         // Mendapatkan dataTerpilih dari permintaan
         $dataTerpilih = $request->input('dataTerpilih');
+        $ketStatus = $request->input('keterangan');
+        // dd($ketStatus);
 
         // Validasi bahwa dataTerpilih harus array dan tidak boleh kosong
         if (!is_array($dataTerpilih) || empty($dataTerpilih)) {
@@ -289,10 +292,13 @@ class LaboratoriumController extends Controller
                     ], 400);
                 }
             }
-            $kunjungan = LaboratoriumKunjunganModel::where('notrans', $data['notrans'])->first();
-            $kunjungan->update([
-                'updated_at' => now(), // Jika ada kolom updated_at dan ingin diperbarui
-            ]);
+            if ($ketStatus == "Selesai") {
+                $kunjungan = LaboratoriumKunjunganModel::where('notrans', $data['notrans'])->first();
+                $kunjungan->update([
+                    'waktu_selesai' => now(), // Jika ada kolom updated_at dan ingin diperbarui
+                    'ket' => $ketStatus,
+                ]);
+            }
 
             // Commit transaksi database
             DB::commit();
@@ -359,18 +365,8 @@ class LaboratoriumController extends Controller
                 "idLab" => $transaksi["riwayat_lab"]["idLab"] ?? null,
                 "ket" => $transaksi["ket"] ?? null,
                 "idLayanan" => $transaksi["riwayat_lab"]["idLayanan"] ?? null,
-                // "NamaLayanan" => $transaksi["layanan"]["nmLayanan"] ?? null,
-                // "jumlah" => $transaksi["jumlah"] ?? null,
-                // "nippetugas" => $transaksi["petugas"]["biodata"]["nip"] ?? null,
-                // "petugas" => ($transaksi["petugas"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["gelar_b"] ?? null),
-                // "nippetugas" => $transaksi["petugas"]["biodata"]["nip"] ?? null,
-                // "dokter" => ($transaksi["dokter"]["gelar_d"] ?? null) . ' ' . ($transaksi["dokter"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["dokter"]["gelar_b"] ?? null),
-                // "created_at" => $transaksi["created_at"] ?? null,
-                // "updated_at" => $transaksi["updated_at"] ?? null,
             ];
         }
-        // dd($formattedData);
-        // return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
         return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
     }
     public function rekapKunjungan(Request $request)

@@ -5,6 +5,21 @@ var Toast = Swal.mixin({
     timer: 3000,
 });
 
+let keterangan; // Define status globally
+
+document.getElementById("statusSwitch").addEventListener("change", function () {
+    var statusLabel = document.getElementById("statusLabel");
+
+    if (this.checked) {
+        statusLabel.textContent = "Selesai";
+        keterangan = "Selesai";
+    } else {
+        statusLabel.textContent = "Belum";
+        keterangan = "Belum";
+    }
+    console.log("🚀 ~ status:", keterangan); // This will log the correct status
+});
+
 async function cariTsLab(norm, tgl) {
     formatNorm($("#norm"));
     norm = norm || $("#norm").val();
@@ -58,11 +73,25 @@ async function cariTsLab(norm, tgl) {
             $("#layanan").val(data.layanan);
             $("#dokter").val(data.dokter).trigger("change");
             $("#analis").val(data.petugas).trigger("change");
-            //masukan nilai cretaed_at (timestamp) ke dalam element #tgltrans
-            // $("#tgltrans").val(data.created_at); //kenapa kosong, type element date
+            var rawDateTime = data.waktu_selesai;
+            if (rawDateTime !== null) {
+                const waktuSelesai = formatWaktu(rawDateTime);
+                console.log("🚀 ~ cariTsLab ~ waktuSelesai:", waktuSelesai);
+                $("#waktuSelesai").text(waktuSelesai);
+                $("#divSwitch").hide();
+            }
+            // var ket = data.ket;
+            // if (ket == "Selesai") {
+            //     document.getElementById("statusSwitch").checked = true;
+            //     document.getElementById("statusLabel").textContent = "Selesai";
+            //     keterangan = "Selesai";
+            // } else {
+            //     document.getElementById("statusSwitch").checked = false;
+            //     document.getElementById("statusLabel").textContent = "Belum";
+            //     keterangan = "Belum";
+            // }
 
             const notrans = data.notrans;
-            console.log("🚀 ~ cariTsLab ~ notrans:", notrans);
             var pemeriksaan = data.pemeriksaan;
             dataLab(pemeriksaan);
             Swal.close();
@@ -74,6 +103,13 @@ async function cariTsLab(norm, tgl) {
             title: "Terjadi kesalahan saat mencari data...!!! /n" + error,
         });
     }
+}
+
+function formatWaktu(dateTimeString) {
+    const [datePart, timePart] = dateTimeString.split(" ");
+    const [year, month, day] = datePart.split("-");
+    const formattedDate = `${day}-${month}-${year}`;
+    return `${formattedDate} ${timePart}`;
 }
 async function dataLab(pemeriksaan, notrans) {
     if ($.fn.DataTable.isDataTable("#inputHasil")) {
@@ -146,8 +182,6 @@ async function dataLab(pemeriksaan, notrans) {
                     data: "hasiLab",
                     render: function (data, type, row) {
                         var kelas = row.pemeriksaan.kelas;
-                        var idLayanan = row.pemeriksaan.idLayanan;
-                        console.log("🚀 ~ dataLab ~ idLayanan:", idLayanan);
                         var hasilLabHtml = "";
 
                         if (kelas === "94") {
@@ -272,6 +306,7 @@ async function dataLab(pemeriksaan, notrans) {
 function simpan() {
     const norm = $("#norm").val();
     const notrans = $("#notrans").val();
+    console.log("🚀 ~ simpan ~ status:", keterangan);
 
     if (!norm || !notrans) {
         const dataKurang = [];
@@ -307,7 +342,10 @@ function simpan() {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ dataTerpilih: dataTerpilih }),
+        body: JSON.stringify({
+            dataTerpilih: dataTerpilih,
+            keterangan: keterangan,
+        }),
     })
         .then((response) => {
             if (!response.ok) throw new Error("Network response was not ok");
@@ -335,6 +373,10 @@ function simpan() {
 function resetForm(message) {
     document.getElementById("form_identitas").reset();
 
+    document.getElementById("statusSwitch").checked = false; // Uncheck the switch
+    document.getElementById("statusLabel").textContent = "Belum"; // Update the text
+    keterangan = "Belum";
+
     if ($.fn.DataTable.isDataTable("#inputHasil")) {
         let tableTrans = $("#inputHasil").DataTable();
         tableTrans.clear().destroy();
@@ -348,6 +390,9 @@ function resetForm(message) {
         .toISOString()
         .split("T")[0];
     antrian();
+
+    $("#waktuSelesai").text("-");
+    $("#divSwitch").show();
 }
 
 function antrian() {

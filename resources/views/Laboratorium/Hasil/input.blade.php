@@ -75,7 +75,42 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="card-footer form-row d-flex justify-content-end">
+                            <div class="card-footer form-row d-flex justify-content-end aligment-items-center">
+                                <div class="col-3 pt-2 d-flex aligment-items-center">
+                                    <div>
+                                        <b class="mr-2">Waktu Selesai Hasil:</b> <span id="waktuSelesai">-</span>
+                                    </div>
+                                </div>
+                                <div class="col-auto" id="divSwitch">
+                                    <label class="switch">
+                                        <input type="checkbox" id="statusSwitch">
+                                        <span class="slider round"></span>
+                                        <span id="statusLabel" class="status-text text-dark">Belum</span>
+                                    </label>
+                                </div>
+                                {{-- <script>
+                                    // document.getElementById('statusSwitch').addEventListener('change', function() {
+                                    //     var statusLabel = document.getElementById('statusLabel');
+                                    //     if (this.checked) {
+                                    //         statusLabel.textContent = 'Selesai';
+                                    //     } else {
+                                    //         statusLabel.textContent = 'Belum Selesai';
+                                    //     }
+                                    // });
+                                    let isCompleted = false; // Initial state: "Belum Selesai"
+                                    let status = "Belum";
+                                    document.getElementById('statusSwitch').addEventListener('change', function() {
+                                        var statusLabel = document.getElementById('statusLabel');
+
+                                        if (this.checked) {
+                                            statusLabel.textContent = 'Selesai';
+                                            status = "Selesai";
+                                        } else {
+                                            statusLabel.textContent = 'Belum';
+                                            status = "Belum";
+                                        }
+                                    });
+                                </script> --}}
                                 <div class="col-auto">
                                     <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>
                                 </div>
@@ -86,53 +121,5 @@
                             </div>
                         </div>
                     </div>
-                    {{-- </div> --}}
-                    {{-- <form id="frmPetugas">
-                                <div class="mx-2 form-grup row">
-                                    <label for="sampling" class="col-sm-1 col-form-label font-weight-bold">Sampling
-                                        :</label>
-                                    <div class="col-sm-3">
-                                        <select id="sampling" class="form-control select2bs4 border border-primary"
-                                            required>
-                                            <option value="">--Pilih Petugas--</option>
-                                        </select>
-                                        <label for="bakteri"
-                                            class="col-sm-1 col-form-label font-weight-bold">Bakteriologi
-                                            :</label>
-                                        <div class="col-sm-3">
-                                            <select id="bakteri"
-                                                class="form-control select2bs4 mb-3 border border-primary" required>
-                                                <option value="">--Pilih Petugas--</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <label for="admin" class="col-sm-1 col-form-label font-weight-bold">Administrasi
-                                        :</label>
-                                    <div class="col-sm-3">
-                                        <select id="admin"
-                                            class="form-control select2bs4 mb-3 border border-primary" required>
-                                            <option value="">--Pilih Petugas--</option>
-                                        </select>
-                                    </div>
-                                    <label for="darah" class="col-sm-1 col-form-label font-weight-bold">Darah
-                                        :</label>
-                                    <div class="col-sm-3">
-                                        <select id="darah" class="form-control select2bs4 border border-primary"
-                                            required>
-                                            <option value="">--Pilih Petugas--</option>
-                                        </select>
-                                    </div>
-                                    <label for="imuno" class="col-sm-1 col-form-label font-weight-bold">Imuno
-                                        :</label>
-                                    <div class="col-sm-2">
-                                        <select id="imuno" class="form-control select2bs4 border border-primary"
-                                            required>
-                                            <option value="">--Pilih Petugas--</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </form> --}}
 
-                    {{-- </div> --}}
-                    {{-- </div> --}}
                 </div>

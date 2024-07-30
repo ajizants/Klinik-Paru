@@ -240,7 +240,6 @@ class PasienKominfoController extends Controller
 
         $data = array_values($filteredData);
 
-
         $res = [
             "total" => $jumlah,
             "data" => $data,
@@ -1119,6 +1118,19 @@ class PasienKominfoController extends Controller
         return response()->json($data);
 
     }
+    public function rekapPoinPecah(Request $request)
+    {
+
+        $params = $request->only(['tanggal_awal', 'tanggal_akhir']);
+
+        $model = new KominfoModel();
+
+        $data = $model->cpptRequest($params);
+        $res = $data['response']['data'];
+
+        return response()->json($res);
+
+    }
 
     public function waktuLayanan(Request $request)
     {
@@ -1155,6 +1167,21 @@ class PasienKominfoController extends Controller
     private function calculateAverages($data)
     {
         $total = count($data);
+        $total_rm = count(array_filter($data, function ($item) {
+            return isset($item['rm']) && $item['rm'] === true;
+        }));
+        $total_ro = count(array_filter($data, function ($item) {
+            return isset($item['rodata']) && $item['rodata'] === true;
+        }));
+        $total_lab = count(array_filter($data, function ($item) {
+            return isset($item['labdata']) && $item['labdata'] === true;
+        }));
+        $total_igd= count(array_filter($data, function ($item) {
+            return isset($item['igddata']) && $item['igddata'] === true;
+        }));
+        $total_tanpa_tambahan = count(array_filter($data, function ($item) {
+            return isset($item['oke']) && $item['oke'] === false;
+        }));
 
         $total_tunggu_daftar = 0;
         $total_tunggu_rm = 0;
@@ -1198,7 +1225,7 @@ class PasienKominfoController extends Controller
 
             // Update max values
             $max_tunggu_daftar = max($max_tunggu_daftar, $message['tunggu_daftar']);
-            $max_tunggu_rm = max($max_tunggu_daftar, $message['lama_selesai_RM']);
+            $max_tunggu_rm = max($max_tunggu_rm, $message['lama_selesai_RM']);
             $max_tunggu_lab = max($max_tunggu_lab, $message['tunggu_lab']);
             $max_tunggu_hasil_lab = max($max_tunggu_hasil_lab, $message['tunggu_hasil_lab']);
             $max_tunggu_hasil_ro = max($max_tunggu_hasil_ro, $message['tunggu_hasil_ro']);
@@ -1212,19 +1239,26 @@ class PasienKominfoController extends Controller
         }
 
         $avg_tunggu_daftar = round($total_tunggu_daftar / $total, 2);
-        $avg_tunggu_rm = round($total_tunggu_rm / $total, 2);
-        $avg_tunggu_lab = round($total_tunggu_lab / $total, 2);
-        $avg_tunggu_hasil_lab = round($total_tunggu_hasil_lab / $total, 2);
-        $avg_tunggu_hasil_ro = round($total_tunggu_hasil_ro / $total, 2);
-        $avg_tunggu_ro = round($total_tunggu_ro / $total, 2);
         $avg_tunggu_poli = round($total_tunggu_poli / $total, 2);
         $avg_durasi_poli = round($total_durasi_poli / $total, 2);
         $avg_tunggu_tensi = round($total_tunggu_tensi / $total, 2);
-        $avg_tunggu_igd = round($total_tunggu_igd / $total, 2);
         $avg_tunggu_farmasi = round($total_tunggu_farmasi / $total, 2);
         $avg_tunggu_kasir = round($total_tunggu_kasir / $total, 2);
 
+        $avg_tunggu_rm = round($total_tunggu_rm / $total_rm, 2);
+        $avg_tunggu_igd = round($total_tunggu_igd / $total, 2);
+        $avg_tunggu_lab = round($total_tunggu_lab / $total_lab, 2);
+        $avg_tunggu_hasil_lab = round($total_tunggu_hasil_lab / $total_lab, 2);
+        $avg_tunggu_hasil_ro = round($total_tunggu_hasil_ro / $total_ro, 2);
+        $avg_tunggu_ro = round($total_tunggu_ro / $total_ro, 2);
+
         $results = [
+            'total_pasien' => $total,
+            'total_ro' => $total_ro,
+            'total_lab' => $total_lab,
+            'total_igd' => $total_igd,
+            'total_tanpa_tambahan' => $total_tanpa_tambahan,
+            'total_rm' => $total_rm,
             'avg_tunggu_daftar' => $avg_tunggu_daftar,
             'avg_tunggu_rm' => $avg_tunggu_rm,
             'avg_tunggu_lab' => $avg_tunggu_lab,
@@ -1250,6 +1284,19 @@ class PasienKominfoController extends Controller
             'max_tunggu_igd' => $max_tunggu_igd,
             'max_tunggu_farmasi' => $max_tunggu_farmasi,
             'max_tunggu_kasir' => $max_tunggu_kasir,
+
+            'total_tunggu_daftar' => round($total_tunggu_daftar, 2),
+            'total_tunggu_rm' => round($total_tunggu_rm, 2),
+            'total_tunggu_lab' => round($total_tunggu_lab, 2),
+            'total_tunggu_hasil_lab' => round($total_tunggu_hasil_lab, 2),
+            'total_tunggu_hasil_ro' => round($total_tunggu_hasil_ro, 2),
+            'total_tunggu_ro' => round($total_tunggu_ro, 2),
+            'total_tunggu_poli' => round($total_tunggu_poli, 2),
+            'total_durasi_poli' => round($total_durasi_poli, 2),
+            'total_tunggu_tensi' => round($total_tunggu_tensi, 2),
+            'total_tunggu_igd' => round($total_tunggu_igd, 2),
+            'total_tunggu_farmasi' => round($total_tunggu_farmasi, 2),
+            'total_tunggu_kasir' => round($total_tunggu_kasir, 2),
         ];
 
         return $results;

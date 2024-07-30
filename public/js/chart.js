@@ -182,7 +182,6 @@ function formatDate(date) {
         throw new Error("Invalid date");
     }
 
-    console.log("🚀 ~ formatDate ~ date:", date);
     let day = String(date.getDate()).padStart(2, "0");
     let month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() returns month from 0-11
     let year = date.getFullYear();
@@ -213,15 +212,15 @@ function waktuLayanan(tglAwal, tglAkhir, tanggal) {
                     data: response,
                     columns: [
                         { data: "antrean_nomor" },
-                        { data: "tanggal" },
+                        // { data: "tanggal" },
                         { data: "penjamin_nama" },
-                        { data: "daftar_by" },
-                        { data: "status_pasien" },
+                        // { data: "daftar_by" },
+                        // { data: "status_pasien" },
                         { data: "pasien_no_rm" },
                         { data: "pasien_nama", className: "col-3" },
                         { data: "jenis_kelamin" },
                         { data: "pasien_umur" },
-                        { data: "poli_nama" },
+                        // { data: "poli_nama" },
                         { data: "dokter_nama", className: "col-3" },
                         { data: "pendaftaran_menunggu", className: "col-2" },
                         { data: "tunggu_daftar" },
@@ -557,8 +556,157 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                 .buttons()
                 .container()
                 .appendTo("#terlamaTabel_wrapper .col-md-6:eq(0)");
+            $("#penunjangTabel")
+                .DataTable({
+                    destroy: true, // Hapus tabel yang sudah ada sebelumnya
+                    data: [
+                        {
+                            kategori: "Total Pasien",
+                            nilai: data.total_pasien,
+                        },
+                        {
+                            kategori: "Total Pasien Radiologi",
+                            nilai: data.total_ro,
+                        },
+                        {
+                            kategori: "Total Pasien Laboratorium",
+                            nilai: data.total_lab,
+                        },
+                        {
+                            kategori: "Total Pasien Tindakan",
+                            nilai: data.total_igd,
+                        },
+                        {
+                            kategori:
+                                "Total Waktu tunggu pendaftaran, pasien ambil nomor sampai di panggil",
+                            nilai: data.total_tunggu_daftar.toFixed(2),
+                        },
+                        {
+                            kategori: "Total Waktu tunggu rekam medis siap",
+                            nilai: data.total_tunggu_rm.toFixed(2),
+                        },
+                        {
+                            kategori: "Total Waktu tunggu hasil Laboratorium",
+                            nilai: data.total_tunggu_hasil_lab.toFixed(2),
+                        },
+                        {
+                            kategori: "Total Waktu tunggu hasil Radiologi",
+                            nilai: data.total_tunggu_hasil_ro.toFixed(2),
+                        },
+                        {
+                            kategori:
+                                "Total Waktu tunggu poli, dari pasien mendaftar sampai di panggil poli, termasuk waktu berapa lama pasien di periksa penunjang",
+                            nilai: data.total_durasi_poli.toFixed(2),
+                        },
+                        {
+                            kategori:
+                                "Total Waktu tunggu tensi, dari RM siap sampai panggil tensi",
+                            nilai: data.total_tunggu_tensi.toFixed(2),
+                        },
+                    ],
+                    columns: [{ data: "kategori" }, { data: "nilai" }],
+                    order: [[1, "asc"]], // Urutkan berdasarkan kolom kedua (rata_waktu) secara ascending
+                    paging: true,
+                    searching: false,
+                    info: true,
+                    responsive: true,
+                    pageLength: 7,
+                    lengthMenu: [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, "All"],
+                    ],
+                    buttons: [
+                        {
+                            extend: "excelHtml5",
+                            text: "Excel",
+                            title:
+                                "Waktu Layanan Tanggal: " +
+                                tglA +
+                                " s.d. " +
+                                tglB,
+                            filename:
+                                "Waktu Layanan Tanggal: " +
+                                tglA +
+                                "  s.d. " +
+                                tglB,
+                        },
+                        // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+                    ],
+                })
+                .buttons()
+                .container()
+                .appendTo("#terlamaTabel_wrapper .col-md-6:eq(0)");
 
             // Gambar grafik menggunakan Chart.js seperti sebelumnya
+            var ctx = document
+                .getElementById("chartPenunjang")
+                .getContext("2d");
+            var myPieChart = new Chart(ctx, {
+                type: "pie",
+                data: {
+                    labels: [
+                        "Total RO",
+                        "Total Lab",
+                        "Total IGD",
+                        "Tanpa Penunjang",
+                    ],
+                    datasets: [
+                        {
+                            label: "Distribution",
+                            data: [
+                                data.total_ro,
+                                data.total_lab,
+                                data.total_igd,
+                                data.total_tanpa_tambahan,
+                            ],
+                            backgroundColor: [
+                                "rgba(54, 162, 235, 0.5)",
+                                "rgba(255, 206, 86, 0.5)",
+                                "rgba(75, 192, 192, 0.5)",
+                                "rgba(245, 19, 15, 0.5)",
+                            ],
+                            borderColor: [
+                                "rgba(54, 162, 235, 1)",
+                                "rgba(255, 206, 86, 1)",
+                                "rgba(75, 192, 192, 1)",
+                                "rgba(245, 19, 15, 1)",
+                            ],
+                            borderWidth: 1,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: "top",
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.label || "";
+                                    if (label) {
+                                        label += ": ";
+                                    }
+                                    if (context.raw !== null) {
+                                        label += `${context.raw} (${(
+                                            (context.raw / data.total_pasien) *
+                                            100
+                                        ).toFixed(2)}%)`;
+                                    }
+                                    return label;
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+
+            // Update total pasien display
+            document.getElementById(
+                "totalPasien"
+            ).innerHTML = `<b>Total Pasien:</b> ${data.total_pasien}`;
+
             var ctx = document.getElementById("myChart").getContext("2d");
             var myChart = new Chart(ctx, {
                 type: "bar",

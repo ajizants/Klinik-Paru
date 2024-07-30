@@ -17,6 +17,11 @@ class HomeController extends Controller
         $title = 'Dashboard';
         return view('dashboard')->with('title', $title);
     }
+    public function forbidden()
+    {
+        $title = 'Forbidden';
+        return view('403')->with('title', $title);
+    }
 
     public function igd()
     {

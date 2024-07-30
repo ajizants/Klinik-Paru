@@ -19,6 +19,7 @@ class Role
             return $next($request);
         }
 
-        abort(403, 'Anda tidak memiliki hak mengakses laman tersebut!');
+        // abort(403, 'Anda tidak memiliki hak mengakses laman tersebut!');
+        return redirect()->route('forbidden');
     }
 }
