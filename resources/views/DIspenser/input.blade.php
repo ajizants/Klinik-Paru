@@ -206,9 +206,7 @@
     {{-- <script src="{{ asset('public/js/anjunganMandiri.js') }}"></script> --}}
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Menambahkan event listener pada tombol
             document.getElementById("mulai_pendaftaran").addEventListener("click", function() {
-                // Memindahkan fokus ke elemen dengan ID norm
                 document.getElementById("norm").focus();
             });
             document.getElementById("norm").addEventListener("keydown", function(event) {
