@@ -876,17 +876,18 @@ class PasienKominfoController extends Controller
         $params = [
             'tanggal_awal' => $tanggal,
             'tanggal_akhir' => $tanggal,
+            'no_rm' => $norm,
         ];
         $model = new KominfoModel();
         $data = $model->pendaftaranRequest($params);
 
-        // Filter hasil yang normnya sama dengan $norm
-        $filteredData = array_filter($data, function ($message) use ($norm) {
-            return $message['pasien_no_rm'] === $norm;
-        });
+        // // Filter hasil yang normnya sama dengan $norm
+        // $filteredData = array_filter($data, function ($message) use ($norm) {
+        //     return $message['pasien_no_rm'] === $norm;
+        // });
 
-        // Ambil elemen pertama dari hasil yang difilter
-        $result = reset($filteredData);
+        // // Ambil elemen pertama dari hasil yang difilter
+        $result = reset($data);
 
         // Jika tidak ada hasil yang sesuai, berikan respons yang sesuai
         if ($result === false) {
@@ -1176,7 +1177,7 @@ class PasienKominfoController extends Controller
         $total_lab = count(array_filter($data, function ($item) {
             return isset($item['labdata']) && $item['labdata'] === true;
         }));
-        $total_igd= count(array_filter($data, function ($item) {
+        $total_igd = count(array_filter($data, function ($item) {
             return isset($item['igddata']) && $item['igddata'] === true;
         }));
         $total_tanpa_tambahan = count(array_filter($data, function ($item) {

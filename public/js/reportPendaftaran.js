@@ -2,8 +2,8 @@ function cetak(norm) {
     console.log("🚀 ~ cetak ~ norm:", norm);
     // window.open("http://rsparu.kkpm.local/Cetak/RM/norm/" + norm);
     // window.open("http://rsparu.kkpm.local/Cetak/Kartu/norm/" + norm);
-    window.open("http://rsparu.kkpm.local/Cetak/Label/norm/" + norm);
-    window.open("http://rsparu.kkpm.local/Cetak/Label2/norm/" + norm);
+    // window.open("http://rsparu.kkpm.local/Cetak/Label/norm/" + norm);
+    window.open("http://rsparu.kkpm.local/Cetak/Label3/norm/" + norm);
 }
 
 function checkEnter(event) {

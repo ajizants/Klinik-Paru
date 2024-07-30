@@ -211,6 +211,17 @@
                 // Memindahkan fokus ke elemen dengan ID norm
                 document.getElementById("norm").focus();
             });
+            document.getElementById("norm").addEventListener("keydown", function(event) {
+                if (event.key === "Enter" || event.keyCode === 13) { // Check for Enter key
+                    event.preventDefault(); // Prevent the default action (optional)
+                    // Your code to execute on Enter key press
+                    console.log("Enter key pressed!");
+
+                    cariRM($("#norm").val());
+                    $("#keyPad").modal("hide");
+                }
+            });
+
         });
 
         function keypadPress(value) {
