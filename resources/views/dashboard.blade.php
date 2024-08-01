@@ -246,10 +246,12 @@
                                     <th class="col-2">Skip Tensi</th>
                                     <th class="col-2">Panggil Tensi</th>
                                     <th class="col-2">Selesai Tensi</th>
+                                    <th class="col-2">Lama di Tensi (menit)</th>
                                     <th class="col-2">Lama Tunggu Poli (menit)</th>
                                     <th class="col-2">Skip Poli</th>
                                     <th class="col-2">Panggil Poli</th>
                                     <th class="col-2">Selesai Poli</th>
+                                    <th class="col-2">Lama di Poli (menit)</th>
                                     <th class="col-2">Lama Tunggu Lab (menit)</th>
                                     <th class="col-2">Panggil Lab</th>
                                     <th class="col-2">Selesai Lab</th>
@@ -261,6 +263,7 @@
                                     <th class="col-2">Lama Tunggu IGD (menit)</th>
                                     <th class="col-2">Panggil IGD</th>
                                     <th class="col-2">Selesai IGD</th>
+                                    <th class="col-2">Lama IGD</th>
                                     <th class="col-2">Lama Tunggu Farmasi (menit)</th>
                                     <th class="col-2">Panggil Farmasi</th>
                                     <th class="col-2">Selesai Farmasi</th>

@@ -1145,6 +1145,173 @@ class PasienKominfoController extends Controller
         return response()->json($data);
     }
 
+    // public function avgWaktuTunggu(Request $request)
+    // {
+    //     try {
+    //         $params = $request->all();
+    //         $model = new KominfoModel();
+
+    //         // Ambil data dari model menggunakan metode waktuLayananRequest
+    //         $data = $model->waktuLayananRequest($params);
+
+    //         // Hitung rata-rata dan waktu terlama
+    //         $results = $this->calculateAverages($data);
+
+    //         // Kembalikan response dalam format JSON
+    //         return response()->json(['data' => $results]);
+    //     } catch (\Exception $e) {
+    //         // Tangani kesalahan
+    //         return response()->json(['error' => $e->getMessage()], 500);
+    //     }
+    // }
+
+    // private function calculateAverages($data)
+    // {
+    //     // dd($data);
+    //     $total = count($data);
+    //     $total_rm = count(array_filter($data, function ($item) {
+    //         return isset($item['rm']) && $item['rm'] === true;
+    //     }));
+    //     $total_ro = count(array_filter($data, function ($item) {
+    //         return isset($item['rodata']) && $item['rodata'] === true;
+    //     }));
+    //     $total_lab = count(array_filter($data, function ($item) {
+    //         return isset($item['labdata']) && $item['labdata'] === true;
+    //     }));
+    //     $total_igd = count(array_filter($data, function ($item) {
+    //         return isset($item['igddata']) && $item['igddata'] === true;
+    //     }));
+    //     $total_tanpa_tambahan = count(array_filter($data, function ($item) {
+    //         return isset($item['oke']) && $item['oke'] === false;
+    //     }));
+
+    //     $total_tunggu_daftar = 0;
+    //     $total_tunggu_rm = 0;
+    //     $total_tunggu_lab = 0;
+    //     $total_tunggu_hasil_lab = 0;
+    //     $total_tunggu_ro = 0;
+    //     $total_tunggu_hasil_ro = 0;
+    //     $total_tunggu_poli = 0;
+    //     $total_durasi_poli = 0;
+    //     $total_tunggu_tensi = 0;
+    //     $total_tunggu_igd = 0;
+    //     $total_tunggu_farmasi = 0;
+    //     $total_tunggu_kasir = 0;
+
+    //     $max_tunggu_daftar = 0;
+    //     $max_tunggu_rm = 0;
+    //     $max_tunggu_lab = 0;
+    //     $max_tunggu_hasil_lab = 0;
+    //     $max_tunggu_hasil_ro = 0;
+    //     $max_tunggu_ro = 0;
+    //     $max_tunggu_poli = 0;
+    //     $max_durasi_poli = 0;
+    //     $max_tunggu_tensi = 0;
+    //     $max_tunggu_igd = 0;
+    //     $max_tunggu_farmasi = 0;
+    //     $max_tunggu_kasir = 0;
+
+    //     foreach ($data as $message) {
+    //         $total_tunggu_daftar += $message['tunggu_daftar'];
+    //         $total_tunggu_rm += $message['lama_selesai_RM'];
+    //         $total_tunggu_lab += $message['tunggu_lab'];
+    //         $total_tunggu_hasil_lab += $message['tunggu_hasil_lab'];
+    //         $total_tunggu_hasil_ro += $message['tunggu_hasil_ro'];
+    //         $total_tunggu_ro += $message['tunggu_ro'];
+    //         $total_tunggu_poli += $message['tunggu_poli'];
+    //         $total_durasi_poli += $message['durasi_poli'];
+    //         $total_tunggu_tensi += $message['tunggu_tensi'];
+    //         $total_tunggu_igd += $message['tunggu_igd'];
+    //         $total_tunggu_farmasi += $message['tunggu_farmasi'];
+    //         $total_tunggu_kasir += $message['tunggu_kasir'];
+
+    //         // Update max values
+    //         $max_tunggu_daftar = max($max_tunggu_daftar, $message['tunggu_daftar']);
+    //         $max_tunggu_rm = max($max_tunggu_rm, $message['lama_selesai_RM']);
+    //         $max_tunggu_lab = max($max_tunggu_lab, $message['tunggu_lab']);
+    //         $max_tunggu_hasil_lab = max($max_tunggu_hasil_lab, $message['tunggu_hasil_lab']);
+    //         $max_tunggu_hasil_ro = max($max_tunggu_hasil_ro, $message['tunggu_hasil_ro']);
+    //         $max_tunggu_ro = max($max_tunggu_ro, $message['tunggu_ro']);
+    //         $max_tunggu_poli = max($max_tunggu_poli, $message['tunggu_poli']);
+    //         $max_durasi_poli = max($max_durasi_poli, $message['durasi_poli']);
+    //         $max_tunggu_tensi = max($max_tunggu_tensi, $message['tunggu_tensi']);
+    //         $max_tunggu_igd = max($max_tunggu_igd, $message['tunggu_igd']);
+    //         $max_tunggu_farmasi = max($max_tunggu_farmasi, $message['tunggu_farmasi']);
+    //         $max_tunggu_kasir = max($max_tunggu_kasir, $message['tunggu_kasir']);
+    //     }
+
+    //     $avg_tunggu_daftar = round($total_tunggu_daftar / $total, 2);
+    //     $avg_tunggu_poli = round($total_tunggu_poli / $total, 2);
+    //     $avg_durasi_poli = round($total_durasi_poli / $total, 2);
+    //     $avg_tunggu_tensi = round($total_tunggu_tensi / $total, 2);
+    //     $avg_tunggu_farmasi = round($total_tunggu_farmasi / $total, 2);
+    //     $avg_tunggu_kasir = round($total_tunggu_kasir / $total, 2);
+
+    //     if ($message['oke'] === true) {
+    //         $avg_tunggu_rm = round($total_tunggu_rm / $total_rm ?: $total, 2);
+    //         $avg_tunggu_igd = round($total_tunggu_igd / $total_igd ?: $total, 2);
+    //         $avg_tunggu_lab = round($total_tunggu_lab / $total_lab, 2);
+    //         $avg_tunggu_hasil_lab = round($total_tunggu_hasil_lab / $total_lab, 2);
+    //         $avg_tunggu_hasil_ro = round($total_tunggu_hasil_ro / $total_ro, 2);
+    //         $avg_tunggu_ro = round($total_tunggu_ro / $total_ro, 2);
+    //     } else {
+    //         $avg_tunggu_rm = 0;
+    //         $avg_tunggu_igd = 0;
+    //         $avg_tunggu_lab = 0;
+    //         $avg_tunggu_hasil_lab = 0;
+    //         $avg_tunggu_hasil_ro = 0;
+    //         $avg_tunggu_ro = 0;
+    //     }
+    //     $results = [
+    //         'total_pasien' => $total,
+    //         'total_ro' => $total_ro,
+    //         'total_lab' => $total_lab,
+    //         'total_igd' => $total_igd,
+    //         'total_tanpa_tambahan' => $total_tanpa_tambahan,
+    //         'total_rm' => $total_rm,
+    //         'avg_tunggu_daftar' => $avg_tunggu_daftar,
+    //         'avg_tunggu_rm' => $avg_tunggu_rm,
+    //         'avg_tunggu_lab' => $avg_tunggu_lab,
+    //         'avg_tunggu_hasil_lab' => $avg_tunggu_hasil_lab,
+    //         'avg_tunggu_hasil_ro' => $avg_tunggu_hasil_ro,
+    //         'avg_tunggu_ro' => $avg_tunggu_ro,
+    //         'avg_tunggu_poli' => $avg_tunggu_poli,
+    //         'avg_durasi_poli' => $avg_durasi_poli,
+    //         'avg_tunggu_tensi' => $avg_tunggu_tensi,
+    //         'avg_tunggu_igd' => $avg_tunggu_igd,
+    //         'avg_tunggu_farmasi' => $avg_tunggu_farmasi,
+    //         'avg_tunggu_kasir' => $avg_tunggu_kasir,
+
+    //         'max_tunggu_daftar' => $max_tunggu_daftar,
+    //         'max_tunggu_rm' => $max_tunggu_rm,
+    //         'max_tunggu_lab' => $max_tunggu_lab,
+    //         'max_tunggu_hasil_lab' => $max_tunggu_hasil_lab,
+    //         'max_tunggu_hasil_ro' => $max_tunggu_hasil_ro,
+    //         'max_tunggu_ro' => $max_tunggu_ro,
+    //         'max_tunggu_poli' => $max_tunggu_poli,
+    //         'max_durasi_poli' => $max_durasi_poli,
+    //         'max_tunggu_tensi' => $max_tunggu_tensi,
+    //         'max_tunggu_igd' => $max_tunggu_igd,
+    //         'max_tunggu_farmasi' => $max_tunggu_farmasi,
+    //         'max_tunggu_kasir' => $max_tunggu_kasir,
+
+    //         'total_tunggu_daftar' => round($total_tunggu_daftar, 2),
+    //         'total_tunggu_rm' => round($total_tunggu_rm, 2),
+    //         'total_tunggu_lab' => round($total_tunggu_lab, 2),
+    //         'total_tunggu_hasil_lab' => round($total_tunggu_hasil_lab, 2),
+    //         'total_tunggu_hasil_ro' => round($total_tunggu_hasil_ro, 2),
+    //         'total_tunggu_ro' => round($total_tunggu_ro, 2),
+    //         'total_tunggu_poli' => round($total_tunggu_poli, 2),
+    //         'total_durasi_poli' => round($total_durasi_poli, 2),
+    //         'total_tunggu_tensi' => round($total_tunggu_tensi, 2),
+    //         'total_tunggu_igd' => round($total_tunggu_igd, 2),
+    //         'total_tunggu_farmasi' => round($total_tunggu_farmasi, 2),
+    //         'total_tunggu_kasir' => round($total_tunggu_kasir, 2),
+    //     ];
+
+    //     return $results;
+    // }
+
     public function avgWaktuTunggu(Request $request)
     {
         try {
@@ -1167,140 +1334,75 @@ class PasienKominfoController extends Controller
 
     private function calculateAverages($data)
     {
-        $total = count($data);
-        $total_rm = count(array_filter($data, function ($item) {
-            return isset($item['rm']) && $item['rm'] === true;
-        }));
-        $total_ro = count(array_filter($data, function ($item) {
-            return isset($item['rodata']) && $item['rodata'] === true;
-        }));
-        $total_lab = count(array_filter($data, function ($item) {
-            return isset($item['labdata']) && $item['labdata'] === true;
-        }));
-        $total_igd = count(array_filter($data, function ($item) {
-            return isset($item['igddata']) && $item['igddata'] === true;
-        }));
-        $total_tanpa_tambahan = count(array_filter($data, function ($item) {
-            return isset($item['oke']) && $item['oke'] === false;
-        }));
+        // Initialize totals and max values
+        // return $data;
+        $totals = [
+            'tunggu_daftar' => 0,
+            'tunggu_rm' => 0,
+            'tunggu_lab' => 0,
+            'tunggu_hasil_lab' => 0,
+            'tunggu_hasil_ro' => 0,
+            'tunggu_ro' => 0,
+            'tunggu_poli' => 0,
+            'durasi_poli' => 0,
+            'tunggu_tensi' => 0,
+            'tunggu_igd' => 0,
+            'tunggu_farmasi' => 0,
+            'tunggu_kasir' => 0,
+        ];
 
-        $total_tunggu_daftar = 0;
-        $total_tunggu_rm = 0;
-        $total_tunggu_lab = 0;
-        $total_tunggu_hasil_lab = 0;
-        $total_tunggu_ro = 0;
-        $total_tunggu_hasil_ro = 0;
-        $total_tunggu_poli = 0;
-        $total_durasi_poli = 0;
-        $total_tunggu_tensi = 0;
-        $total_tunggu_igd = 0;
-        $total_tunggu_farmasi = 0;
-        $total_tunggu_kasir = 0;
+        $maxValues = $totals;
 
-        $max_tunggu_daftar = 0;
-        $max_tunggu_rm = 0;
-        $max_tunggu_lab = 0;
-        $max_tunggu_hasil_lab = 0;
-        $max_tunggu_hasil_ro = 0;
-        $max_tunggu_ro = 0;
-        $max_tunggu_poli = 0;
-        $max_durasi_poli = 0;
-        $max_tunggu_tensi = 0;
-        $max_tunggu_igd = 0;
-        $max_tunggu_farmasi = 0;
-        $max_tunggu_kasir = 0;
+        $counts = [
+            'rm' => 0,
+            'ro' => 0,
+            'lab' => 0,
+            'igd' => 0
+        ];
 
         foreach ($data as $message) {
-            $total_tunggu_daftar += $message['tunggu_daftar'];
-            $total_tunggu_rm += $message['lama_selesai_RM'];
-            $total_tunggu_lab += $message['tunggu_lab'];
-            $total_tunggu_hasil_lab += $message['tunggu_hasil_lab'];
-            $total_tunggu_hasil_ro += $message['tunggu_hasil_ro'];
-            $total_tunggu_ro += $message['tunggu_ro'];
-            $total_tunggu_poli += $message['tunggu_poli'];
-            $total_durasi_poli += $message['durasi_poli'];
-            $total_tunggu_tensi += $message['tunggu_tensi'];
-            $total_tunggu_igd += $message['tunggu_igd'];
-            $total_tunggu_farmasi += $message['tunggu_farmasi'];
-            $total_tunggu_kasir += $message['tunggu_kasir'];
+            // Check for valid values and handle them properly
+            foreach ($totals as $key => &$total) {
+                $value = $message[$key] ?? 0;
+                if (is_array($value)) {
+                    $value = 0; // Or handle the array case as needed
+                }
+                $total += $value;
+                $maxValues[$key] = max($maxValues[$key], $value);
+            }
 
-            // Update max values
-            $max_tunggu_daftar = max($max_tunggu_daftar, $message['tunggu_daftar']);
-            $max_tunggu_rm = max($max_tunggu_rm, $message['lama_selesai_RM']);
-            $max_tunggu_lab = max($max_tunggu_lab, $message['tunggu_lab']);
-            $max_tunggu_hasil_lab = max($max_tunggu_hasil_lab, $message['tunggu_hasil_lab']);
-            $max_tunggu_hasil_ro = max($max_tunggu_hasil_ro, $message['tunggu_hasil_ro']);
-            $max_tunggu_ro = max($max_tunggu_ro, $message['tunggu_ro']);
-            $max_tunggu_poli = max($max_tunggu_poli, $message['tunggu_poli']);
-            $max_durasi_poli = max($max_durasi_poli, $message['durasi_poli']);
-            $max_tunggu_tensi = max($max_tunggu_tensi, $message['tunggu_tensi']);
-            $max_tunggu_igd = max($max_tunggu_igd, $message['tunggu_igd']);
-            $max_tunggu_farmasi = max($max_tunggu_farmasi, $message['tunggu_farmasi']);
-            $max_tunggu_kasir = max($max_tunggu_kasir, $message['tunggu_kasir']);
+            // Update counts for specific categories
+            $counts['rm'] += isset($message['rm']) && $message['rm'] === true ? 1 : 0;
+            $counts['ro'] += isset($message['rodata']) && $message['rodata'] === true ? 1 : 0;
+            $counts['lab'] += isset($message['labdata']) && $message['labdata'] === true ? 1 : 0;
+            $counts['igd'] += isset($message['igddata']) && $message['igddata'] === true ? 1 : 0;
         }
 
-        $avg_tunggu_daftar = round($total_tunggu_daftar / $total, 2);
-        $avg_tunggu_poli = round($total_tunggu_poli / $total, 2);
-        $avg_durasi_poli = round($total_durasi_poli / $total, 2);
-        $avg_tunggu_tensi = round($total_tunggu_tensi / $total, 2);
-        $avg_tunggu_farmasi = round($total_tunggu_farmasi / $total, 2);
-        $avg_tunggu_kasir = round($total_tunggu_kasir / $total, 2);
+        // Calculate averages
+        $results = [];
+        foreach ($totals as $key => $total) {
+            $results["avg_$key"] = round($total / count($data), 2);
+            $results["max_$key"] = $maxValues[$key];
+            $results["total_$key"] = round($total, 2);
+        }
 
-        $avg_tunggu_rm = round($total_tunggu_rm / $total_rm, 2);
-        $avg_tunggu_igd = round($total_tunggu_igd / $total, 2);
-        $avg_tunggu_lab = round($total_tunggu_lab / $total_lab, 2);
-        $avg_tunggu_hasil_lab = round($total_tunggu_hasil_lab / $total_lab, 2);
-        $avg_tunggu_hasil_ro = round($total_tunggu_hasil_ro / $total_ro, 2);
-        $avg_tunggu_ro = round($total_tunggu_ro / $total_ro, 2);
+        // Special handling for cases where counts are zero
+        foreach ($counts as $key => $count) {
+            $results["avg_tunggu_{$key}"] = $count > 0 ? round($totals["tunggu_{$key}"] / $count, 2) : 0;
+        }
 
-        $results = [
-            'total_pasien' => $total,
-            'total_ro' => $total_ro,
-            'total_lab' => $total_lab,
-            'total_igd' => $total_igd,
-            'total_tanpa_tambahan' => $total_tanpa_tambahan,
-            'total_rm' => $total_rm,
-            'avg_tunggu_daftar' => $avg_tunggu_daftar,
-            'avg_tunggu_rm' => $avg_tunggu_rm,
-            'avg_tunggu_lab' => $avg_tunggu_lab,
-            'avg_tunggu_hasil_lab' => $avg_tunggu_hasil_lab,
-            'avg_tunggu_hasil_ro' => $avg_tunggu_hasil_ro,
-            'avg_tunggu_ro' => $avg_tunggu_ro,
-            'avg_tunggu_poli' => $avg_tunggu_poli,
-            'avg_durasi_poli' => $avg_durasi_poli,
-            'avg_tunggu_tensi' => $avg_tunggu_tensi,
-            'avg_tunggu_igd' => $avg_tunggu_igd,
-            'avg_tunggu_farmasi' => $avg_tunggu_farmasi,
-            'avg_tunggu_kasir' => $avg_tunggu_kasir,
-
-            'max_tunggu_daftar' => $max_tunggu_daftar,
-            'max_tunggu_rm' => $max_tunggu_rm,
-            'max_tunggu_lab' => $max_tunggu_lab,
-            'max_tunggu_hasil_lab' => $max_tunggu_hasil_lab,
-            'max_tunggu_hasil_ro' => $max_tunggu_hasil_ro,
-            'max_tunggu_ro' => $max_tunggu_ro,
-            'max_tunggu_poli' => $max_tunggu_poli,
-            'max_durasi_poli' => $max_durasi_poli,
-            'max_tunggu_tensi' => $max_tunggu_tensi,
-            'max_tunggu_igd' => $max_tunggu_igd,
-            'max_tunggu_farmasi' => $max_tunggu_farmasi,
-            'max_tunggu_kasir' => $max_tunggu_kasir,
-
-            'total_tunggu_daftar' => round($total_tunggu_daftar, 2),
-            'total_tunggu_rm' => round($total_tunggu_rm, 2),
-            'total_tunggu_lab' => round($total_tunggu_lab, 2),
-            'total_tunggu_hasil_lab' => round($total_tunggu_hasil_lab, 2),
-            'total_tunggu_hasil_ro' => round($total_tunggu_hasil_ro, 2),
-            'total_tunggu_ro' => round($total_tunggu_ro, 2),
-            'total_tunggu_poli' => round($total_tunggu_poli, 2),
-            'total_durasi_poli' => round($total_durasi_poli, 2),
-            'total_tunggu_tensi' => round($total_tunggu_tensi, 2),
-            'total_tunggu_igd' => round($total_tunggu_igd, 2),
-            'total_tunggu_farmasi' => round($total_tunggu_farmasi, 2),
-            'total_tunggu_kasir' => round($total_tunggu_kasir, 2),
-        ];
+        // Include total counts
+        $results = array_merge($results, [
+            'total_pasien' => count($data),
+            'total_ro' => $counts['ro'],
+            'total_lab' => $counts['lab'],
+            'total_igd' => $counts['igd'],
+            'total_tanpa_tambahan' => count(array_filter($data, fn($item) => isset($item['oke']) && $item['oke'] === false)),
+            'total_rm' => $counts['rm'],
+        ]);
 
         return $results;
     }
+
 
 }
