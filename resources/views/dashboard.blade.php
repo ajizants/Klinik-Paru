@@ -24,9 +24,6 @@
             </div>
             <!-- Card Body -->
             <div class="card-body mb-2">
-                {{-- <div class="chart-area">
-                    <canvas id="myAreaChart" class="mb-3 pb-3"></canvas>
-                </div> --}}
                 <div class="row">
                     <div class="card shadow mb-4 col">
                         <!-- Card Header - Dropdown -->
@@ -35,7 +32,7 @@
                         </div>
                         <!-- Card Body -->
                         <div class="card-body mb-2">
-                            <div class="chart-area">
+                            <div class="chart-area" id="divChartIGD">
                                 <canvas id="myAreaChart" class="mb-3 pb-3"></canvas>
                             </div>
                         </div>
@@ -105,7 +102,7 @@
                         <!-- Card Body -->
                         <div class="card-body mb-2">
                             <div class="chart-area">
-                                <canvas id="myChart" class="mb-3 pb-3" width="100%" height="80%"></canvas>
+                                <canvas id="chartAvg" class="mb-3 pb-3" width="100%" height="80%"></canvas>
                             </div>
                         </div>
                     </div>

@@ -297,6 +297,11 @@ function waktuLayanan(tglAwal, tglAkhir, tanggal) {
         },
     });
 }
+
+var myPieChart;
+var chartAvg;
+var chartTerlama;
+
 function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
     var tglA = formatDate(tglAwal);
     var tglB = formatDate(tglAkhir);
@@ -644,7 +649,10 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
             var ctx = document
                 .getElementById("chartPenunjang")
                 .getContext("2d");
-            var myPieChart = new Chart(ctx, {
+            if (myPieChart) {
+                myPieChart.destroy();
+            }
+            myPieChart = new Chart(ctx, {
                 type: "pie",
                 data: {
                     labels: [
@@ -709,9 +717,11 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
             document.getElementById(
                 "totalPasien"
             ).innerHTML = `<b>Total Pasien:</b> ${data.total_pasien}`;
-
-            var ctx = document.getElementById("myChart").getContext("2d");
-            var myChart = new Chart(ctx, {
+            if (chartAvg) {
+                chartAvg.destroy();
+            }
+            var ctx = document.getElementById("chartAvg").getContext("2d");
+            chartAvg = new Chart(ctx, {
                 type: "bar",
                 data: {
                     labels: [
@@ -840,8 +850,12 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                     },
                 },
             });
+
+            if (chartTerlama) {
+                chartTerlama.destroy();
+            }
             var ctx = document.getElementById("chartTerlama").getContext("2d");
-            var chartTerlama = new Chart(ctx, {
+            chartTerlama = new Chart(ctx, {
                 type: "bar",
                 data: {
                     labels: [
