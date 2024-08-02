@@ -10,9 +10,10 @@ class GiziModelController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function subKelas()
     {
-        //
+        $data = GiziModel::all();
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
 
     /**

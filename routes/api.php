@@ -3,6 +3,7 @@
 use App\Http\Controllers\AntrianController;
 use App\Http\Controllers\DotsController;
 use App\Http\Controllers\FarmasiController;
+use App\Http\Controllers\GiziDxModelController;
 use App\Http\Controllers\GiziModelController;
 use App\Http\Controllers\GudangFarmasiController;
 use App\Http\Controllers\IgdController;
@@ -196,6 +197,16 @@ Route::post('deleteGizi', [GiziModelController::class, 'deleteGizi']);
 Route::post('cariGizi', [GiziModelController::class, 'cariGizi']);
 Route::post('dataGizi', [GiziModelController::class, 'dataGizi']);
 Route::post('rekapGizi', [GiziModelController::class, 'rekapGizi']);
+//dx gizi
+Route::get('gizi/dx/subKelas', [GiziDxModelController::class, 'subKelas']);
+Route::post('gizi/dx/subKelas', [GiziDxModelController::class, 'simpanSubKelas']);
+Route::post('gizi/dx/subKelas/delete', [GiziDxModelController::class, 'deleteSubKelas']);
+Route::get('gizi/dx/kelas', [GiziDxModelController::class, 'kelas']);
+Route::post('gizi/dx/kelas', [GiziDxModelController::class, 'simpanKelas']);
+Route::post('gizi/dx/kelas/delete', [GiziDxModelController::class, 'deleteKelas']);
+Route::get('gizi/dx/domain', [GiziDxModelController::class, 'domain']);
+Route::post('gizi/dx/domain', [GiziDxModelController::class, 'simpanDomain']);
+Route::post('gizi/dx/domain/delete', [GiziDxModelController::class, 'deleteDomain']);
 
 //API Riwayat Untuk migrasi SIM RS
 Route::get('riwayatKunjungan', [RiwayatController::class, 'index']);

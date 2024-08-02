@@ -1,12 +1,6 @@
                 <div class="modal fade" id="modal-pasienTB">
                     <div class="modal-dialog modal-dialog modal-dialog-scrollable modal-xl">
                         <div class="modal-content">
-                            {{-- <div class="modal-header pb-0">
-                                <h4 class="modal-title">Form Tambah Pasien TBC Baru</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div> --}}
                             <div class="modal-body">
                                 <div class="card-body p-2">
                                     <div class="container-fluid">
@@ -23,29 +17,33 @@
                                                         <label for="modal-norm"
                                                             class="col-sm-1 col-form-label font-weight-bold mb-0">No
                                                             RM</label>
-                                                        <div class="col-sm-2">
+                                                        <div class="col-sm-2 input-group input-group-sm">
                                                             <input type="text" name="modal-norm" id="modal-norm"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control" placeholder=" No RM" maxlength="6"
                                                                 pattern="[0-9]{6}" required />
                                                         </div>
 
                                                         <label for="modal-layanan"
                                                             class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan</label>
-                                                        <div class="col-sm-2">
+                                                        <div class="col-sm-2 input-group input-group-sm">
                                                             <input type="text" id="modal-layanan"
-                                                                class="form-control bg-white border border-white"
-                                                                placeholder="Layanan" readonly />
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control bg-white" placeholder="Layanan"
+                                                                readonly />
                                                         </div>
 
                                                         <label for="modal-nama"
                                                             class="col-sm-1 col-form-label font-weight-bold mb-0">Nama</label>
-                                                        <div class="col-sm-5">
+                                                        <div class="col-sm-5 input-group input-group-sm">
                                                             <input type="text" id="modal-nama"
-                                                                class="form-control bg-white border border-white"
-                                                                placeholder="Nama Pasien" readonly>
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control bg-white" placeholder="Nama Pasien"
+                                                                readonly>
                                                             <input type="text" id="modal-notrans"
-                                                                class="form-control bg-white border border-white"
-                                                                placeholder="notrans Pasien" readonly hidden>
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control" placeholder="notrans Pasien"
+                                                                readonly hidden>
                                                         </div>
                                                     </div>
 
@@ -53,26 +51,26 @@
                                                         <label for="modal-hp"
                                                             class="col-sm-1 col-form-label font-weight-bold mb-0">No
                                                             HP</label>
-                                                        <div class="col-sm-2">
+                                                        <div class="col-sm-2 input-group input-group-sm">
                                                             <input type="text" id="modal-hp"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control bg-white" placeholder="No HP" />
                                                         </div>
 
                                                         <label for="modal-nik"
                                                             class="col-sm-1 col-form-label font-weight-bold mb-0">NIK</label>
-                                                        <div class="col-sm-2">
+                                                        <div class="col-sm-2 input-group input-group-sm">
                                                             <input type="text" id="modal-nik"
-                                                                class="form-control bg-white border border-white"
-                                                                placeholder="NIK" />
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control" placeholder="NIK" />
                                                         </div>
 
                                                         <label for="modal-alamat"
                                                             class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat</label>
-                                                        <div class="col-sm-5">
-                                                            {{-- <textarea id="modal-alamat" class="form-control bg-white border border-white" style="height: 69px;"
-                                                                placeholder="Alamat Pasien" readonly></textarea> --}}
+                                                        <div class="col-sm-5 input-group input-group-sm">
                                                             <input id="modal-alamat"
-                                                                class="form-control bg-white border border-white"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control bg-white"
                                                                 placeholder="Alamat Pasien" readonly />
                                                         </div>
                                                     </div>
@@ -82,6 +80,7 @@
                                                             class="col-sm-1 col-form-label font-weight-bold">Dokter</label> --}}
                                                         <div class="col-sm-3">
                                                             <select id="modal-dokter"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control select2bs4 mb-3 border border-primary">
                                                                 <option value="">--Pilih Dokter--</option>
                                                             </select>
@@ -91,6 +90,7 @@
                                                             class="col-sm-1 col-form-label font-weight-bold">Petugas</label> --}}
                                                         <div class="col-sm-3">
                                                             <select id="modal-petugas"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control select2bs4 border border-primary">
                                                                 <option value="">--Pilih Petugas--</option>
                                                             </select>
@@ -101,6 +101,7 @@
                                                             Medis</label> --}}
                                                         <div class="col-sm-3">
                                                             <select id="modal-kdDx"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control select2bs4 mb-3 border border-primary">
                                                                 <option value="">--Pilih Diagnosa--</option>
                                                             </select>
@@ -110,6 +111,7 @@
                                                             class="col-sm-1 col-form-label font-weight-bold">Obat</label> --}}
                                                         <div class="col-sm-3">
                                                             <select id="modal-obtDots"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control select2bs4 border border-info">
                                                                 <option value="">--Jenis Obat--</option>
                                                             </select>
@@ -121,19 +123,19 @@
                                                             class="col-sm-1 col-form-label font-weight-bold">BB</label> --}}
                                                         <div class="col-sm-1">
                                                             <input type="text" id="modal-bb"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control form-control-sm border border-info"
                                                                 placeholder="BB" required />
                                                         </div>
                                                         <div class="col-sm-2">
-                                                            {{-- <input type="text" id="modal-sample"
-                                                                class="form-control form-control-sm border border-info"
-                                                                placeholder="Sample" required /> --}}
                                                             <select name="Modal sample" id="modal-sample"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control select2bs4 border border-info">
                                                                 <option value="">--Sample TCM--</option>
                                                                 <option value="Sputum">Sputum</option>
                                                                 <option value="Cairan Pleura">Cairan Pleura</option>
-                                                                <option value="Jaringan Biopsi">Jaringan Biopsi</option>
+                                                                <option value="Jaringan Biopsi">Jaringan Biopsi
+                                                                </option>
                                                                 <option value="Cairan Lambung">Cairan Lambung</option>
                                                                 <option value="Lainnya">Lainnya, Tulis di keterangan
                                                                 </option>
@@ -144,6 +146,7 @@
                                                             TCM</label> --}}
                                                         <div class="col-sm-3">
                                                             <select id="modal-tcm"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control select2bs4 border border-info">
                                                                 <option value="">--Pilih Hasil TCM--</option>
                                                                 <option value="Tidak Periksa">Tidak Periksa</option>
@@ -167,12 +170,9 @@
                                                             </select>
                                                         </div>
 
-
-                                                        {{-- <label for="modal-hiv"
-                                                            class="col-sm-1 col-form-label font-weight-bold">Status
-                                                            HIV</label> --}}
                                                         <div class="col-sm-3">
                                                             <select id="modal-hiv"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control select2bs4 border border-info">
                                                                 <option value="">--Pilih Status HIV--</option>
                                                                 <option value="Positif HIV">Positif</option>
@@ -182,9 +182,6 @@
                                                             </select>
                                                         </div>
 
-                                                        {{-- <label for="modal-dm"
-                                                            class="col-sm-1 col-form-label font-weight-bold">Status
-                                                            DM</label> --}}
                                                         <div class="col-sm-3">
                                                             <select id="modal-dm"
                                                                 class="form-control select2bs4 border border-info">
@@ -198,20 +195,20 @@
                                                     </div>
 
                                                     <div class="form-group row mt-3">
-
                                                         <label for="modal-tglmulai"
                                                             class="col-sm-1 col-form-label font-weight-bold">Tgl
                                                             Mulai</label>
-                                                        <div class="col-sm-3">
+                                                        <div class="col-sm-3 input-group input-group-sm">
                                                             <input id="modal-tglmulai" type="date"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control border border-primary" />
                                                         </div>
-                                                        <div class="col-sm">
+                                                        <div class="col-sm input-group input-group-sm">
                                                             <input type="text" id="modal-ket"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control border border-info"
                                                                 placeholder="Keterangan Lain" />
                                                         </div>
-
                                                     </div>
 
                                                     <div

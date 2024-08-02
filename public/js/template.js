@@ -126,6 +126,10 @@ function toggleSections(sectionToShow) {
         "#hasilPemeriksaan",
         "#poin",
         "#jmlhPeriksa",
+
+        "#SubKelas",
+        "#Kelas",
+        "#Domain",
     ];
     sections.forEach(function (section) {
         if (section === sectionToShow) {

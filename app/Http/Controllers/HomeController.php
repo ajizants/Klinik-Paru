@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GiziDxDomainModel;
+use App\Models\GiziDxKelasModel;
 use App\Models\LayananModel;
 use App\Models\ROJenisFoto;
 
@@ -176,7 +178,10 @@ class HomeController extends Controller
     }
     public function masterGizi()
     {
-        $title = 'masterGizi';
-        return view('Gizi.Master.main')->with('title', $title);
+        $title = 'Master Gizi';
+        $domain = GiziDxDomainModel::all();
+        $kelas = GiziDxKelasModel::all();
+        return view('Gizi.Master.main', compact('title', 'domain', 'kelas'));
     }
+
 }
