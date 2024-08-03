@@ -1,7 +1,6 @@
 @extends('Template.lte')
 
 @section('content')
-    <!-- Begin Page Content -->
     <div class="container-fluid">
 
         <!-- Area Chart -->
@@ -282,9 +281,6 @@
     </div>
     <!-- /.content-wrapper -->
 
-    @include('Template.footer')
-
-    </div>
     @include('Template.script')
 
     <!-- my script -->

@@ -4,20 +4,6 @@
 @section('content')
     @include('Gizi.Riwayat.input')
 
-
-
-
-
-
-    </div>
-    </section>
-    <!-- /.content -->
-    </div>
-    <!-- /.content-wrapper -->
-
-    @include('Template.footer')
-
-    </div>
     @include('Template.script')
 
     <div class="modal fade" id="modal-update">

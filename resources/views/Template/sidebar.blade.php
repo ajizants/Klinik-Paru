@@ -230,6 +230,12 @@
                                     <p>Laporan Pendaftaran</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/Riwayat/Pasien') }}">
+                                    <i class="fa-solid fa-book-medical nav-icon"></i>
+                                    <p>Riwayat Pasien</p>
+                                </a>
+                            </li>
                         </ul>
                     </nav>
 

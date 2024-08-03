@@ -120,16 +120,6 @@
         </div>
     </div>
 
-
-    @include('Template.footer')
-
-    </div>
-
-
-
-
-
-
     @include('Template.script')
 
 

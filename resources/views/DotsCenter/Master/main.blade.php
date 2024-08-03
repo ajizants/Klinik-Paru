@@ -7,7 +7,7 @@
 
 
 
-    </div>
+    {{-- </div>
     </section>
     <!-- /.content -->
     </div>
@@ -16,7 +16,7 @@
     @include('Template.footer')
 
     </div>
-    @include('Template.script')
+    @include('Template.script') --}}
 
     <!-- my script -->
     <script src="{{ asset('js/alert.js') }}"></script>

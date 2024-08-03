@@ -8,7 +8,7 @@
 
 
 
-    </div>
+    {{-- </div>
     </section>
     <!-- /.content -->
     </div>
@@ -16,7 +16,7 @@
 
     @include('Template.footer')
 
-    </div>
+    </div> --}}
     @include('DotsCenter.Trans.modals')
     @include('Template.script')
 

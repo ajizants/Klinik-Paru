@@ -56,6 +56,8 @@ Route::middleware('auth')->group(function () {
     Route::get('gizi', [HomeController::class, 'gizi'])->name('gizi')->middleware('role:gizi');
     Route::get('masterGizi', [HomeController::class, 'masterGizi'])->name('masterGizi')->middleware('role:gizi');
     Route::get('riwayatGizi', [HomeController::class, 'riwayatGizi'])->name('riwayatGizi')->middleware('role:gizi');
+    //riwayat diagnosa
+    Route::get('/Riwayat/Pasien', [HomeController::class, 'riwayatKunjungan'])->name('riwayatKunjungan')->middleware('role:dokter');
 });
 Route::get('dispenser', [HomeController::class, 'dispenser'])->name('dispenser');
 Route::get('verif', [HomeController::class, 'verif'])->name('verif');

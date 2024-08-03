@@ -209,7 +209,7 @@ Route::post('gizi/dx/domain', [GiziDxModelController::class, 'simpanDomain']);
 Route::post('gizi/dx/domain/delete', [GiziDxModelController::class, 'deleteDomain']);
 
 //API Riwayat Untuk migrasi SIM RS
-Route::get('riwayatKunjungan', [RiwayatController::class, 'index']);
+Route::post('riwayatKunjungan', [RiwayatController::class, 'index']);
 
 Route::post('noAntrianKominfo', [PasienKominfoController::class, 'newPendaftaran']);
 Route::post('pasienKominfo', [PasienKominfoController::class, 'newPasien']);

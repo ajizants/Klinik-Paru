@@ -30,23 +30,17 @@
 <body class="sidebar-mini layout-fixed control-sidebar-slide-open sidebar-collapse text-sm">
     <div class="wrapper">
 
-        <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
             <img class="animation__shake" src="{{ asset('img/LOGO_KKPM.png') }}" alt="KKPM-Logo" height="200"
                 width="200">
             <span><b>Versi</b> {{ env('APP_LARAVEL_VERSION') }}</span>
         </div>
 
-        <!-- Navbar -->
         @include('Template.navbar')
-        <!-- /.navbar -->
 
-        <!-- Main Sidebar Container -->
         @include('Template.sidebar')
 
-        <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper" id="topSection">
-            <!-- Content Header (Page header) -->
             <div class="content-header py-0">
                 <div class="container-fluid">
                     <div class="row d-flex justify-content-end">
@@ -62,14 +56,16 @@
                     </div><!-- /.row -->
                 </div><!-- /.container-fluid -->
             </div>
-            <!-- /.content-header -->
 
-            <!-- Main content -->
             <section class="content">
                 <div class="container-fluid">
                     @yield('content')
+                </div>
+            </section>
+        </div>
+        @include('Template.footer')
 
-
+    </div>
 
 </body>
 

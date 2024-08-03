@@ -9,17 +9,6 @@
 
 
 
-
-
-    </div>
-    </section>
-    <!-- /.content -->
-    </div>
-    <!-- /.content-wrapper -->
-
-    @include('Template.footer')
-
-    </div>
     @include('Template.script')
 
     <!-- my script -->

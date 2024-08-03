@@ -4,15 +4,7 @@
     @include('Kasir.antrian')
     @include('Kasir.input')
 
-    /div>
-    </section>
-    <!-- /.content -->
-    </div>
-    <!-- /.content-wrapper -->
 
-    @include('Template.footer')
-
-    </div>
     @include('DotsCenter.Trans.modals')
     @include('Template.script')
 

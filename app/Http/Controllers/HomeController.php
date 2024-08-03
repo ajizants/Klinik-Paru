@@ -184,4 +184,10 @@ class HomeController extends Controller
         return view('Gizi.Master.main', compact('title', 'domain', 'kelas'));
     }
 
+    public function riwayatKunjungan()
+    {
+        $title = 'Riwayat Kunjungan';
+        return view('Laporan.diagnosa')->with('title', $title);
+    }
+
 }
