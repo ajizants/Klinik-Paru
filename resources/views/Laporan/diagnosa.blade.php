@@ -35,7 +35,7 @@
                         <tr>
                             <th>Urut</th>
                             <th>Tanggal</th>
-                            <th>penjamin</th>
+                            <th>Penjamin</th>
                             <th>No. RM</th>
                             <th class="col-2">Nama Pasien</th>
                             <th>Desa</th>

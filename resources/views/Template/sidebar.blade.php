@@ -236,6 +236,14 @@
                                     <p>Riwayat Pasien</p>
                                 </a>
                             </li>
+                            <li class="nav-item"
+                                style="margin-top: 100px;>
+                                <a class="nav-link"
+                                href="#">
+
+                                </a>
+                            </li>
+
                         </ul>
                     </nav>
 
