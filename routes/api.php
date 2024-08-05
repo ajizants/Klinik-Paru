@@ -3,6 +3,7 @@
 use App\Http\Controllers\AntrianController;
 use App\Http\Controllers\DotsController;
 use App\Http\Controllers\FarmasiController;
+use App\Http\Controllers\GiziAsesmenAwalController;
 use App\Http\Controllers\GiziDxModelController;
 use App\Http\Controllers\GiziModelController;
 use App\Http\Controllers\GudangFarmasiController;
@@ -190,13 +191,10 @@ Route::post('hasilRo', [ROTransaksiController::class, 'hasilRo']);
 Route::post('logBook', [ROTransaksiController::class, 'logBook']);
 
 //Gizi
-Route::get('gizi', [GiziModelController::class, 'index']);
-Route::post('simpanGizi', [GiziModelController::class, 'simpanGizi']);
-Route::post('editGizi', [GiziModelController::class, 'editGizi']);
-Route::post('deleteGizi', [GiziModelController::class, 'deleteGizi']);
-Route::post('cariGizi', [GiziModelController::class, 'cariGizi']);
-Route::post('dataGizi', [GiziModelController::class, 'dataGizi']);
-Route::post('rekapGizi', [GiziModelController::class, 'rekapGizi']);
+Route::post('gizi/asesmenAwal', [GiziAsesmenAwalController::class, 'search']);
+Route::post('gizi/asesmenAwal/add', [GiziAsesmenAwalController::class, 'store']);
+Route::post('gizi/asesmenAwal/delete', [GiziAsesmenAwalController::class, 'destroy']);
+
 //dx gizi
 Route::get('gizi/dx/subKelas', [GiziDxModelController::class, 'subKelas']);
 Route::post('gizi/dx/subKelas', [GiziDxModelController::class, 'simpanSubKelas']);

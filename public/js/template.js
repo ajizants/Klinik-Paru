@@ -130,6 +130,9 @@ function toggleSections(sectionToShow) {
         "#SubKelas",
         "#Kelas",
         "#Domain",
+
+        "#kunjungan",
+        "#asesmen",
     ];
     sections.forEach(function (section) {
         if (section === sectionToShow) {
@@ -159,6 +162,8 @@ function enterCariRM(event, ruang) {
             cariTsLab(norm, tgl, ruang);
         } else if (ruang == "dots") {
             cariPasienTb(norm, tgl, ruang);
+        }else if(ruang == "gizi"){
+            cariPasienGizi(norm, tgl, ruang);
         }
     }
 }

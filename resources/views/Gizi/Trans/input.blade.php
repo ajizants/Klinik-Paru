@@ -1,150 +1,124 @@
                 <div class="container-fluid">
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="iperiksa" onclick="showPeriksa();"><b>Jenis Pemeriksaan</b></a>
-                        </li>
-                        {{-- <li class="nav-item">
-                            <a class="nav-link" id="ireagen" onclick="showReagen();"><b>Laporan Reagen</b></a>
-                        </li> --}}
-                    </ul>
+
                 </div>
-                <div class="container-fluid mt-1" id="periksa">
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <h4 class="card-title">Jenis Pemeriksaan</h4>
+                <div class="container-fluid">
+                    <div class="card card-secondary">
+                        @csrf
+                        <div class="card-header p-2">
+                            <h4 class="m-0 font-weight-bold text-center text-light">Asuhan Gizi</h4>
                         </div>
-                        <div class="card-body shadow">
-                            <div class="row">
-                                <button type="button" class="btn btn-success" data-toggle="modal"
-                                    data-target="#modal-layanan">Tambah Layanan</button>
-                            </div>
-                            <div class="table-responsive pt-2 px-2">
-                                <table id="dataPeriksa"class="table table-striped pt-0 mt-0 fs-6" style="width:100%"
-                                    cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>Aksi</th>
-                                            <th>No</th>
-                                            <th>Pemeriksaan</th>
-                                            <th>Tarif</th>
-                                            <th>Status</th>
-                                            <th>Kelas</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    </tbody>
-
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="container-fluid" id="reagen">
-                    <div class="card card-warning">
-                        <div class="card-header">
-                            <h4 class="card-title">Laporan Jumlah total pemeriksaan (penggunaan reagen)</h4>
-                        </div>
-                        <div class="card-body shadow">
-                            <div class="table-responsive pt-2 px-2">
-                                <table id="reportReagen"class="table table-striped pt-0 mt-0 fs-6" style="width:100%"
-                                    cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Tanggal</th>
-                                            <th>Pemeriksaan</th>
-                                            <th>Jumlah</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-
-
-                <!-- Modal -->
-                <div class="modal fade" id="modal-layanan">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Tambah Layanan Laboratorium</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="card-body p-2">
-                                    <div class="container-fluid">
-                                        <div class="card card-black">
-                                            <!-- form start -->
-                                            @csrf
-                                            <form class="form-horizontal" id="form_layanan">
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="form-group col">
-                                                            <label for="idLayanan"
-                                                                class="col-sm-3 col-form-label font-weight-bold">Nama
-                                                                Layanan</label>
-                                                            <div class="col-md row">
-                                                                <input type="text" id="nmLayanan"
-                                                                    class="form-control-sm col-md bg-white border border-white"
-                                                                    placeholder="Nama Layanan">
-                                                            </div>
-                                                            <label for="tarif"
-                                                                class="col-md col-form-label font-weight-bold">Tarif
-                                                                Layanan</label>
-                                                            <div class="col-md">
-                                                                <input id="tarif"
-                                                                    class="form-control-sm col-md bg-white border border-white"
-                                                                    placeholder="Tarif" />
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="form-group col">
-                                                            <label for="layanan"
-                                                                class="col-sm-3 col-form-label font-weight-bold">Status</label>
-                                                            <div class="col">
-                                                                <select id="layanan"
-                                                                    class="form-control select2bs4 border border-primary">
-                                                                    <option value="">--Status Layanan--</option>
-                                                                    <option value="1">Aktif</option>
-                                                                    <option value="0">Tidak Aktif</option>
-                                                                </select>
-                                                            </div>
-                                                            <label for="kelas"
-                                                                class="col-sm-3 col-form-label font-weight-bold">Grup</label>
-                                                            <div class="col">
-                                                                <select id="kelas"
-                                                                    class="form-control select2bs4 border border-primary">
-                                                                    <option value="">--Pilih Kelas--</option>
-                                                                    <option value="9">LAYANAN LABORATORIUM</option>
-                                                                    <option value="91">HEMATOLOGI</option>
-                                                                    <option value="92">KIMIA DARAH</option>
-                                                                    <option value="93">IMUNO SEROLOGI</option>
-                                                                    <option value="94">BAKTERIOLOGI</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- /.card-body -->
-                                            </form>
+                        <div class="card-body p-2">
+                            <div class="card card-lime">
+                                <div class="card-header">
+                                    <h4 class="card-title">Identitas</h4>
+                                </div>
+                                @csrf
+                                <form class="form-horizontal" id="form_identitas">
+                                    <div class="card-body" id="inputSection">
+                                        <div class="form-grup row">
+                                            <label for="norm"
+                                                class="col-sm-1 col-form-label font-weight-bold mb-0 ">No
+                                                RM
+                                                :</label>
+                                            <div class="col-sm-2 input-group input-group-sm" style="overflow: hidden;">
+                                                <input type="text" name="norm" id="norm"
+                                                    aria-describedby="inputGroup-sizing-sm" class="form-control"
+                                                    placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required
+                                                    onkeyup="enterCariRM(event,'gizi');" />
+                                            </div>
+                                            <label for="layanan"
+                                                class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
+                                                :</label>
+                                            <div class="col-sm-2 input-group input-group-sm">
+                                                <input type="text" id="layanan" class="form-control bg-white"
+                                                    aria-describedby="inputGroup-sizing-sm" placeholder="Layanan" />
+                                            </div>
+                                            <label for="nama"
+                                                class="col-sm-1 col-form-label font-weight-bold  mb-0">Nama
+                                                :</label>
+                                            <div class="col-sm-5 input-group input-group-sm">
+                                                <input type="text" id="nama" class="form-control"
+                                                    aria-describedby="inputGroup-sizing-sm" placeholder="Nama Pasien">
+                                            </div>
+                                        </div>
+                                        <div class="form-grup row mt-2">
+                                            <label for="tglLahir"
+                                                class="col-sm-1 col-form-label font-weight-bold mb-0">Tgl
+                                                Lahir
+                                                :</label>
+                                            <div class="col-sm-2 input-group input-group-sm">
+                                                <input type="date" id="tglLahir" class="form-control bg-white"
+                                                    aria-describedby="inputGroup-sizing-sm"
+                                                    placeholder="Tanggal Transaksi" />
+                                            </div>
+                                            <label for="notrans"
+                                                class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
+                                                :</label>
+                                            <div class="col-sm-2 input-group input-group-sm">
+                                                <input type="text" id="notrans" class="form-control bg-white"
+                                                    aria-describedby="inputGroup-sizing-sm"
+                                                    placeholder="Nomor Transaksi" required />
+                                            </div>
+                                            <label for="alamat"
+                                                class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat
+                                                :</label>
+                                            <div class="col-sm-5 input-group input-group-sm">
+                                                <input id="alamat" class="form-control bg-white"
+                                                    aria-describedby="inputGroup-sizing-sm"
+                                                    placeholder="Alamat Pasien" />
+                                            </div>
+                                        </div>
+                                        <div class="form-grup row mt-2">
+                                            <label for="tgltrans"
+                                                class="col-sm-1 col-form-label font-weight-bold mb-0">Tgl
+                                                Input :</label>
+                                            <div class="col-sm-2 input-group input-group-sm">
+                                                <input type="date" id="tgltrans" class="form-control bg-white"
+                                                    aria-describedby="inputGroup-sizing-sm"
+                                                    placeholder="Tanggal Transaksi" />
+                                            </div>
+                                            <label for="ahli_gizi"
+                                                class="col-sm-1 col-form-label font-weight-bold">Petugas
+                                                :</label>
+                                            <div class="col input-group input-group-sm">
+                                                <select type="select" id="ahli_gizi"
+                                                    class="form-control border border-primary"
+                                                    aria-describedby="inputGroup-sizing-sm" required>
+                                                    <option value="199902072022032008">REGINA DONA ZHAFIRA A.Md.Gz.
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <label for="dokter"
+                                                class="col-sm-1 col-form-label font-weight-bold">Dokter
+                                                :</label>
+                                            <div class="col input-group input-group-sm">
+                                                <select type="select"id="dokter"
+                                                    aria-describedby="inputGroup-sizing-sm"
+                                                    class="form-control mb-3 border border-primary" required>
+                                                    <option value="">--Pilih Dokter--</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </form>
                             </div>
-                            <div class="modal-footer justify-content-end">
-                                <button type="button" class="btn btn-primary" data-dismiss="modal"
-                                    onclick="addLayanan();">Simpan</button>
+
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a type="button" class="nav-link active bg-blue"
+                                        onclick="toggleSections('#kunjungan');"><b>Kunjungan</b></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a type="button" class="nav-link" onclick="toggleSections('#asesmen');"><b>Asesmen
+                                            Awal</b></a>
+                                </li>
+                            </ul>
+                            <div id="kunjungan">
+                                @include('Gizi.Trans.kunjungan')
+                            </div>
+
+                            <div id="asesmen" style="display: none;">
+                                @include('Gizi.Trans.asesment')
                             </div>
                         </div>
-                        <!-- /.modal-content -->
                     </div>
-                    <!-- /.modal-dialog -->
-                </div>

@@ -107,9 +107,9 @@ function reportPendaftaran(tglAwal, tglAkhir) {
             // console.log("🚀 ~ reportPendaftaran ~ $data:", pendaftaran);
             pendaftaran.forEach(function (item, index) {
                 var nama_pasien = item.pasien_nama.replace(/'/g, "\\'");
-                item.aksi = `<button type="button" class="btn btn-primary mr-2"
+                item.aksi = `<button type="button" class="btn btn-primary mr-2 mb-2"
                                     onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak"><i class="fa-solid fa-print"></i></button>
-                            <button type="button" class="btn btn-${item.check_in}" id="checkin" placeholder="Selesai" data-toggle="modal"
+                            <button type="button" class="btn btn-${item.check_in} mb-2" id="checkin" placeholder="Selesai" data-toggle="modal"
                                     data-target="#modalSep" onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}','${item.penjamin_nama}','${item.no_trans}','${item.no_sep}',this)"><i class="fa-regular fa-square-check"></i></button>`;
                 if (item.check_in == "danger") {
                     item.status = "Belum";
@@ -122,7 +122,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                 .DataTable({
                     data: pendaftaran,
                     columns: [
-                        { data: "aksi", className: "px-0 col-3" },
+                        { data: "aksi", className: "col-3" },
                         { data: "antrean_nomor" },
                         { data: "tanggal" },
                         { data: "no_sep" },

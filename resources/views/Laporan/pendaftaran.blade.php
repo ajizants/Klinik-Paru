@@ -20,7 +20,7 @@
                         <input type="text" class="form-control float-right" id="reservation">
                     </div>
                 </div>
-                <div class="col-1">
+                <div class="col">
                     <button type="button" class="btn btn-success" onclick="segarkan();">
                         Segarkan
                         <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top" title="Update Data"
@@ -33,7 +33,7 @@
                 <table class="table table-bordered table-hover dataTable dtr-inline" id="report" cellspacing="0">
                     <thead class="bg bg-teal table-bordered border-warning">
                         <tr>
-                            <th class="px-0 col-3">Aksi</th>
+                            <th style="width: 25px">Aksi</th>
                             <th>Urut</th>
                             <th>Tanggal</th>
                             <th>No SEP</th>

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DiagnosaModel;
 use App\Models\GiziDxDomainModel;
 use App\Models\GiziDxKelasModel;
+use App\Models\GiziDxSubKelasModel;
 use App\Models\LayananModel;
 use App\Models\ROJenisFoto;
 
@@ -169,7 +171,10 @@ class HomeController extends Controller
     public function gizi()
     {
         $title = 'Gizi';
-        return view('Gizi.Trans.main')->with('title', $title);
+        $sub = GiziDxSubKelasModel::with('domain')->get();
+        $dxMed=DiagnosaModel::get();
+        // dd($sub);
+        return view('Gizi.Trans.main', compact('title', 'sub',"dxMed"));
     }
     public function riwayatGizi()
     {
@@ -181,6 +186,7 @@ class HomeController extends Controller
         $title = 'Master Gizi';
         $domain = GiziDxDomainModel::all();
         $kelas = GiziDxKelasModel::all();
+
         return view('Gizi.Master.main', compact('title', 'domain', 'kelas'));
     }
 

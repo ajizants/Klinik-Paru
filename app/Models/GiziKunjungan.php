@@ -9,6 +9,6 @@ class GiziKunjungan extends Model
 {
     use HasFactory;
     protected $connection = ('mysql');
-    protected $table = 'gizi_kunjungan';
+    protected $table = 't_kunjungan_gizi';
     protected $primaryKey = 'id';
 }

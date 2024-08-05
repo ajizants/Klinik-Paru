@@ -10,7 +10,7 @@ class GiziDxSubKelasModel extends Model
     use HasFactory;
     protected $connection = ('mysql');
     protected $table = ('gizi_dx_kelas_sub');
-    protected $primarykey = 'id';
+    // protected $primarykey = 'id';
     protected $fillable = [
         'kode',
         'domain',

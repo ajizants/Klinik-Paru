@@ -728,6 +728,8 @@ function handleMetadata(response, ruang) {
             case "lab":
                 handleLab(cppt, pasien, pendaftaran);
                 break;
+            case "gizi":
+                isiIdentitas(pasien, pendaftaran);
             default:
                 Swal.fire({
                     icon: "error",
@@ -787,6 +789,10 @@ function isiIdentitas(pasien, pendaftaran, permintaan) {
     if ($("#jk").length) {
         $("#jk").val(pasien.jenis_kelamin_nama);
     }
+    if ($("#tglLahir").length) {
+        $("#tglLahir").val(pasien.pasien_tgl_lahir);
+    }
+
     jk = pasien.jenis_kelamin_nama;
     var tanggalHariIni = new Date().toLocaleDateString("en-CA");
 
