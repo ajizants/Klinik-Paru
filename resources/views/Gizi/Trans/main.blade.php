@@ -67,8 +67,7 @@
                     $("#dokter").val(data.dokter).trigger("change");
                     isiAsesmen(data);
                     Swal.close();
-                    var btndelete = document.getElementById("delete_ts");
-                    btndelete.style.display = "block";
+
                     scrollToInputSection();
                 }
             } catch (error) {
@@ -305,6 +304,15 @@
             //     .catch((error) => {
             //         console.error('Error:', error);
             //     });
+        }
+
+        function resetForm() {
+            document.getElementById("form_kunjungan").reset();
+            document.getElementById("form_asesment").reset();
+            document.getElementById("form_identitas").reset();
+            $("#form_kunjungan select").trigger("change");
+            $("#form_asesment select").trigger("change");
+            $("#form_identitas select").trigger("change");
         }
 
 

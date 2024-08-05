@@ -3,7 +3,7 @@
         <h3 class="card-title">Kunjungan Pasien</h3>
     </div>
     @csrf
-    <form>
+    <form id="form_asesment">
         <div class="card-body">
             <label>Riwayat Gizi</label>
             <div class="row mb-2">
@@ -343,11 +343,9 @@
                 <a class="btn btn-primary" id="tombol_selesai" onclick="validasi('asesment');">Simpan</a>
             </div>
             <div class="col-auto">
-                <a class="btn btn-warning" id="tblBatal" onclick="batal();">Batal</a>
+                <a class="btn btn-warning" id="tblBatal" onclick="resetForm();">Batal</a>
             </div>
-            <div class="col-auto">
-                <a class="btn btn-danger" id="delete_ts" onclick="delete_ts();" style="display: none;">Hapus</a>
-            </div>
+
         </div>
     </div>
 

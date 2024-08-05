@@ -5,7 +5,7 @@
                 <h3 class="card-title">Kunjungan Pasien</h3>
             </div>
             @csrf
-            <form>
+            <form id="form_kunjungan">
                 <div class="card-body">
                     <div class="col">
                         <div class="input-group input-group-sm mb-2 row">
@@ -74,7 +74,7 @@
                                     onclick="validasi('kunjungan');">Simpan</a>
                             </div>
                             <div class="col-auto">
-                                <a class="btn btn-warning" id="tblBatal" onclick="batal();">Batal</a>
+                                <a class="btn btn-warning" id="tblBatal" onclick="resetForm();">Batal</a>
                             </div>
                         </div>
                     </div>
