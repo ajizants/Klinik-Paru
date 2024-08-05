@@ -106,10 +106,11 @@ function reportPendaftaran(tglAwal, tglAkhir) {
             // console.log("🚀 ~ reportPendaftaran ~ total:", total);
             // console.log("🚀 ~ reportPendaftaran ~ $data:", pendaftaran);
             pendaftaran.forEach(function (item, index) {
+                var nama_pasien = item.pasien_nama.replace(/'/g, "\\'");
                 item.aksi = `<button type="button" class="btn btn-primary mr-2"
                                     onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak"><i class="fa-solid fa-print"></i></button>
                             <button type="button" class="btn btn-${item.check_in}" id="checkin" placeholder="Selesai" data-toggle="modal"
-                                    data-target="#modalSep" onclick="isiForm('${item.pasien_no_rm}', '${item.pasien_nama}','${item.penjamin_nama}','${item.no_trans}','${item.no_sep}',this)"><i class="fa-regular fa-square-check"></i></button>`;
+                                    data-target="#modalSep" onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}','${item.penjamin_nama}','${item.no_trans}','${item.no_sep}',this)"><i class="fa-regular fa-square-check"></i></button>`;
                 if (item.check_in == "danger") {
                     item.status = "Belum";
                 } else {
