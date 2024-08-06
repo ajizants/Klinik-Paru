@@ -138,8 +138,12 @@
 
         function tabelKunjungan(kunjungan) {
             console.log("🚀 ~ tabelKunjungan ~ kunjungan:", kunjungan);
+            if ($.fn.DataTable.isDataTable("#tabel_kunjungan")) {
+                var table = $("#tabel_kunjungan").DataTable();
+                table.clear().destroy();
+            }
             kunjungan.forEach(function(item, index) {
-                item.actions = `<a href="#" class="delete" data-id="${item.id}">
+                item.actions = `<a class="delete" data-id="${item.id}" onclick="deleteKunjungan(${item.id})">
                             <i class="fas fa-trash"></i>
                         </a>`;
                 item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
@@ -192,11 +196,6 @@
                 pageLength: 5,
             });
         }
-
-
-
-
-
 
         function validasi(tombol) {
             const kunjungan = [
@@ -257,8 +256,6 @@
                 tombol === "asesment" ? simpanAsesment() : tombol === "kunjungan" ? simpanKunjungan() : null;
             }
         }
-
-
 
         function getFormValues(ids) {
             let values = {};
@@ -402,6 +399,62 @@
                 });
             }
         }
+
+        async function deleteKunjungan(id) {
+            try {
+                const response = await fetch("/api/gizi/kunjungan/delete", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        id
+                    }),
+                });
+
+                if (!response.ok) {
+                    const message = response.status === 404 ?
+                        "Data tidak ditemukan." :
+                        "Terjadi kesalahan saat menghapus data.";
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: message,
+                    });
+                    throw new Error("Network response was not ok");
+                }
+
+                const data = await response.json();
+                Swal.fire({
+                    icon: "success",
+                    title: "Sukses",
+                    text: data.message || "Data telah dihapus.",
+
+                });
+                // Ambil referensi ke tabel
+                var table = $("#tabel_kunjungan").DataTable(); // Ganti dengan selector yang sesuai
+
+                // Cari dan hapus baris dengan idLab yang dihapus dari tabel
+                var rowIndex = table.row("#row_" + id).index();
+                table.row(rowIndex).remove().draw(false); // Menghapus baris dan menggambar ulang tabel
+
+                // Update ulang nomor urutan (no) pada semua baris yang tersisa
+                table.rows().every(function(rowIdx, tableLoop, rowLoop) {
+                    var data = this.data();
+                    data.no = rowLoop + 1; // Nomor urutan dimulai dari 1
+
+                    // Update data pada baris
+                    this.data(data).draw(false);
+                });
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Terjadi kesalahan.",
+                    text: error.message || "Terjadi kesalahan yang tidak terduga.",
+                });
+            }
+        }
+
 
 
 
