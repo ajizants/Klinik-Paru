@@ -14,7 +14,7 @@
                                 </div>
                                 @csrf
                                 <form class="form-horizontal" id="form_identitas">
-                                    <div class="card-body">
+                                    <div class="card-body p-2">
                                         <div class="form-grup row"id="inputSection">
                                             <label for="norm"
                                                 class="col-sm-1 col-form-label font-weight-bold mb-0 ">No
@@ -117,15 +117,19 @@
                             </div>
 
                             <ul class="nav nav-tabs">
-                                <li class="nav-item">
+                                <li class="nav-item" style="height: 35px;">
                                     <a type="button" class="nav-link active bg-blue"
                                         onclick="toggleSections('#kunjungan');"><b>Kunjungan</b></a>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item" style="height: 35px;">
                                     <a type="button" class="nav-link"
                                         onclick="toggleSections('#asesmen');"><b>Asesmen
                                             Awal</b></a>
                                 </li>
+                                <div class="col-2"></div>
+                                <div class="ml-5 col d-flex justify-content-start" ">
+                                    <p id="nama_diagnosa" class="ml-5 bg-warning blink px-1 rounded"></p>
+                                </div>
                             </ul>
                             <div id="kunjungan">
                                 @include('Gizi.Trans.kunjungan')

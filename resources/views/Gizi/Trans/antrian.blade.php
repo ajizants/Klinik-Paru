@@ -18,9 +18,6 @@
                     <a type="button" class="nav-link active bg-blue" onclick="toggleSections('#dTunggu');"><b>Daftar
                             Tunggu</b></a>
                 </li>
-                {{-- <li class="nav-item">
-                    <a type="button" class="nav-link" onclick="toggleSections('#dBelum');"><b>Belum Upoload</b></a>
-                </li> --}}
                 <li class="nav-item">
                     <a type="button" class="nav-link" onclick="toggleSections('#dSelesai');"><b>Daftar Selesai</b></a>
                 </li>

@@ -714,8 +714,9 @@ function handleMetadata(response, ruang) {
         var cppt = response.response.cppt ? response.response.cppt[0] : [];
         var pendaftaran = response.response.pendaftaran[0];
         var notrans = pendaftaran.no_trans;
+        var dxMed = cppt.diagnosa[0];
+        console.log("🚀 ~ handleMetadata ~ dxMed:", dxMed);
 
-        console.log("🚀 ~ handleMetadata ~ ruang:", ruang);
         switch (ruang) {
             case "igd":
                 handleIgd(cppt, pasien, pendaftaran);
@@ -735,7 +736,7 @@ function handleMetadata(response, ruang) {
                 handleLab(cppt, pasien, pendaftaran);
                 break;
             case "gizi":
-                isiIdentitas(pasien, pendaftaran);
+                isiIdentitas(pasien, pendaftaran, dxMed);
                 break;
             default:
                 Swal.fire({
@@ -784,6 +785,7 @@ function handleLab(cppt, pasien, pendaftaran) {
 }
 
 function isiIdentitas(pasien, pendaftaran, permintaan) {
+    console.log("🚀 ~ isiIdentitas ~ permintaan:", permintaan);
     // Set values for input fields
     $("#layanan").val(pendaftaran.penjamin_nama); // Trigger change event if needed
     $("#norm").val(pasien.pasien_no_rm);
@@ -792,15 +794,17 @@ function isiIdentitas(pasien, pendaftaran, permintaan) {
     $("#notrans").val(pendaftaran.no_trans);
     $("#dokter").val(pendaftaran.nip_dokter).trigger("change");
 
-    // Set values for optional fields if they exist
+    //RO
     if ($("#jk").length) {
         $("#jk").val(pasien.jenis_kelamin_nama);
     }
+    //ro-end
+
+    //gizi-start
     if ($("#tglLahir").length) {
         $("#tglLahir").val(pasien.pasien_tgl_lahir);
     }
 
-    // Determine gender and set value if gender field exists
     let gender =
         pasien.jenis_kelamin_nama === "L"
             ? "male"
@@ -813,17 +817,18 @@ function isiIdentitas(pasien, pendaftaran, permintaan) {
     if ($("#age").length) {
         $("#age").val(pendaftaran.pasien_umur_tahun);
     }
+    $("#nama_diagnosa").html(
+        `<b>Diagnosa Medis: ${permintaan.nama_diagnosa}</b>`
+    );
+    //gizi-end
 
-    console.log("🚀 ~ isiIdentitas ~ gender:", gender);
+    $("#permintaan").html(`<b>${permintaan}</b>`);
 
     // Convert today's date to "en-CA" format
     const tanggalHariIni = new Date().toLocaleDateString("en-CA");
 
     // Format the registration date
     const tglDaftar = pendaftaran.tanggal.split("-").reverse().join("-");
-
-    // Update the permintaan content
-    $("#permintaan").html(`<b>${permintaan}</b>`);
 
     // Show warning if registration date is not today's date
     if (pendaftaran.tanggal !== tanggalHariIni) {

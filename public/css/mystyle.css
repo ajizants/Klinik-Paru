@@ -86,6 +86,24 @@ canvas#confetti {
     }
 }
 
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.blink {
+    -webkit-animation: blink 2s infinite;
+    animation: blink 2s infinite;
+    color: red;
+}
+
 /* Apply the animation to the greeting message */
 div[style*="animation: zoomIn"] {
     animation: zoomIn 4s;

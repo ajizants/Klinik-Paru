@@ -14,7 +14,8 @@
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
-    <script>
+    <script src="{{ asset('js/mainGizi.js') }}"></script>
+    {{-- <script>
         let age;
         async function cariPasienGizi(norm, tgl, ruang) {
 
@@ -455,9 +456,6 @@
             }
         }
 
-
-
-
         function reset() {
             document.getElementById("form_kunjungan").reset();
             document.getElementById("form_asesment").reset();
@@ -589,6 +587,7 @@
 
 
         $(document).ready(function() {
+            var table = $("#tabel_kunjungan").DataTable();
             setTodayDate();
             populateDokterOptions();
             $('.select2Multi').select2({
@@ -605,7 +604,7 @@
             });
 
         });
-    </script>
+    </script> --}}
 
 
     <div class="modal fade" id="modal-xl">
