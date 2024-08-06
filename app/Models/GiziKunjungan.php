@@ -22,6 +22,6 @@ class GiziKunjungan extends Model
 
     public function dxMedis()
     {
-        return $this->belongsTo(DiagnosaModel::class, 'dxMedis', 'kode_dx');
+        return $this->belongsTo(DiagnosaModel::class, 'dxMedis', 'kdDiag');
     }
 }

@@ -343,7 +343,9 @@
                         title: 'Data Berhasil',
                         text: data.message,
                     })
-                    tabelKunjungan(data.data);
+                    var norm = data.data.norm
+                    console.log("🚀 ~ simpanKunjungan ~ norm:", norm)
+                    cariKunjungan(norm);
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -354,6 +356,54 @@
                     });
                 });
         }
+
+        async function cariKunjungan(norm) {
+            try {
+                const requestData = {
+                    norm
+                }; // Include norm in requestData
+                const response = await fetch("/api/gizi/kunjungan", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(requestData),
+                });
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        // Handle specific case when resource is not found
+                        cariKominfo(norm, tgl, ruang);
+                    } else {
+                        // Display a general error message
+                        Swal.fire({
+                            icon: "error",
+                            title: "Terjadi kesalahan saat mengambil data kunjungan...!!!",
+                        });
+                        throw new Error("Network response was not ok");
+                    }
+                } else {
+                    const data = await response.json();
+                    let kunjungan = data.data;
+
+                    // Ensure kunjungan is an array
+                    if (!Array.isArray(kunjungan)) {
+                        kunjungan = [kunjungan];
+                    }
+
+                    // Pass the data to tabelKunjungan
+                    tabelKunjungan(kunjungan);
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Terjadi kesalahan saat mencari data...!!!",
+                    text: error.message || "Unknown error",
+                });
+            }
+        }
+
+
 
         function reset() {
             document.getElementById("form_kunjungan").reset();
