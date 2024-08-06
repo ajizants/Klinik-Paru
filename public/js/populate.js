@@ -681,6 +681,11 @@ function cariKominfo(norm, tgl, ruang) {
             },
             error: function (error) {
                 console.error("Error fetching data:", error);
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Error fetching data: " + error,
+                });
             },
         });
     }
@@ -710,6 +715,7 @@ function handleMetadata(response, ruang) {
         var pendaftaran = response.response.pendaftaran[0];
         var notrans = pendaftaran.no_trans;
 
+        console.log("🚀 ~ handleMetadata ~ ruang:", ruang);
         switch (ruang) {
             case "igd":
                 handleIgd(cppt, pasien, pendaftaran);
@@ -730,6 +736,7 @@ function handleMetadata(response, ruang) {
                 break;
             case "gizi":
                 isiIdentitas(pasien, pendaftaran);
+                break;
             default:
                 Swal.fire({
                     icon: "error",
@@ -777,15 +784,15 @@ function handleLab(cppt, pasien, pendaftaran) {
 }
 
 function isiIdentitas(pasien, pendaftaran, permintaan) {
-    console.log("🚀 ~ isiIdentitas ~ pendaftaran:", pendaftaran);
-    console.log("🚀 ~ isiIdentitas ~ pasien:", pasien);
-    $("#layanan").val(pendaftaran.penjamin_nama); // Trigger change event jika diperlukan
+    // Set values for input fields
+    $("#layanan").val(pendaftaran.penjamin_nama); // Trigger change event if needed
     $("#norm").val(pasien.pasien_no_rm);
     $("#nama").val(pasien.pasien_nama);
     $("#alamat").val(pasien.pasien_alamat);
     $("#notrans").val(pendaftaran.no_trans);
     $("#dokter").val(pendaftaran.nip_dokter).trigger("change");
-    //cari jika ada element jk maka isi jk
+
+    // Set values for optional fields if they exist
     if ($("#jk").length) {
         $("#jk").val(pasien.jenis_kelamin_nama);
     }
@@ -793,23 +800,36 @@ function isiIdentitas(pasien, pendaftaran, permintaan) {
         $("#tglLahir").val(pasien.pasien_tgl_lahir);
     }
 
-    jk = pasien.jenis_kelamin_nama;
-    var tanggalHariIni = new Date().toLocaleDateString("en-CA");
+    // Determine gender and set value if gender field exists
+    let gender =
+        pasien.jenis_kelamin_nama === "L"
+            ? "male"
+            : pasien.jenis_kelamin_nama === "P"
+            ? "female"
+            : null;
+    if ($("#gender").length) {
+        $("#gender").val(gender);
+    }
+    if ($("#age").length) {
+        $("#age").val(pendaftaran.pasien_umur_tahun);
+    }
 
-    var tglDaftar = pendaftaran.tanggal.split("-").reverse().join("-");
+    console.log("🚀 ~ isiIdentitas ~ gender:", gender);
 
-    // Memperbarui konten asktindContent
+    // Convert today's date to "en-CA" format
+    const tanggalHariIni = new Date().toLocaleDateString("en-CA");
+
+    // Format the registration date
+    const tglDaftar = pendaftaran.tanggal.split("-").reverse().join("-");
+
+    // Update the permintaan content
     $("#permintaan").html(`<b>${permintaan}</b>`);
 
+    // Show warning if registration date is not today's date
     if (pendaftaran.tanggal !== tanggalHariIni) {
         Swal.fire({
             icon: "warning",
-            title:
-                "Pasien atas nama " +
-                pasien.pasien_nama +
-                " adalah pasien tanggal " +
-                tglDaftar +
-                "\n Jangan Lupa Mengganti Tanggal Transaksi...!!",
+            title: `Pasien atas nama ${pasien.pasien_nama} adalah pasien tanggal ${tglDaftar}\n Jangan Lupa Mengganti Tanggal Transaksi...!!`,
         });
         scrollToInputSection();
     } else {

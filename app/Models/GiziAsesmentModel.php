@@ -23,10 +23,13 @@ class GiziAsesmentModel extends Model
 
     // Tipe data dari primary key
     protected $keyType = 'int';
+    protected $casts = [
+        'keluhan' => 'array',
+    ];
 
     // Kolom-kolom yang dapat diisi massal
     protected $fillable = [
-        'notrans', 'tgltrans', 'norm', 'nama', 'tglLahir', 'alamat', 'layanan',
+        'notrans', 'tgltrans', 'norm', 'nama', 'tglLahir', 'alamat', 'jk', 'layanan',
         'dokter', 'ahli_gizi', 'frek_makan', 'frek_selingan', 'makanan_selingan',
         'alergi_makanan', 'pantangan_makanan', 'makanan_pokok', 'lauk_hewani',
         'lauk_nabati', 'sayuran', 'buah', 'minuman', 'bb_awal', 'bbi', 'tb_awal',
@@ -37,4 +40,18 @@ class GiziAsesmentModel extends Model
 
     // Jika Anda tidak ingin menggunakan timestamps
     // public $timestamps = false;
+
+    public function dxGizi()
+    {
+        return $this->belongsTo(GiziDxSubKelasModel::class, 'dxGizi', 'kode');
+    }
+
+    public function dxMedis()
+    {
+        return $this->belongsTo(DiagnosaModel::class, 'dxMedis', 'kode_dx');
+    }
+    public function kunjungan()
+    {
+        return $this->hasMany(GiziKunjungan::class, 'norm', 'norm');
+    }
 }

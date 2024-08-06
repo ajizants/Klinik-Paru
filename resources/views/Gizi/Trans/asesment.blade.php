@@ -291,6 +291,16 @@
             <label>Perincian Energi dan Zat Gizi </label>
             <div class="row mb-2">
                 <div class="col-md pr-1 pl-0 pb-1">
+                    <select id="activity" class="form-control select2bs4 mb-2 border border-primary" required>
+                        <option value="0">-- Tingkat Aktivitas --</option>
+                        <option value="1.2">Sedentari (tidak aktif)</option>
+                        <option value="1.375">Ringan (aktivitas ringan 1-3 hari/minggu)</option>
+                        <option value="1.55">Sedang (aktivitas sedang 3-5 hari/minggu)</option>
+                        <option value="1.725">Tinggi (aktivitas tinggi 6-7 hari/minggu)</option>
+                        <option value="1.9">Sangat Tinggi (aktivitas sangat tinggi)</option>
+                    </select>
+                </div>
+                <div class="col-md pr-1 pl-0 pb-1">
                     <div class="input-group input-group-sm">
                         <input type="text" id="energi" class="form-control"
                             aria-describedby="inputGroup-sizing-sm" placeholder="Energi" />
@@ -335,15 +345,47 @@
                     </div>
                 </div>
             </div>
+            <div class="row mb-2">
+                <details>
+                    <summary><strong>Perhitungan Metabolic Rate (BMR)</strong></summary>
+                    <p><strong>1. Data yang dibutuhkan adalah usia, berat badan,
+                            tinggi badan, jenis kelamin, dan tingkat aktivitas.</strong></p>
+
+                    <p><strong>2. Menghitung BMR (Basal Metabolic Rate) menggunakan Rumus Harris-Benedict:</strong></p>
+                    <ul>
+                        <li>Untuk pria: BMR = 88.362 + (13.397 * berat badan dalam kg) + (4.799 * tinggi badan dalam cm)
+                            - (5.677 * usia dalam tahun)</li>
+                        <li>Untuk wanita: BMR = 447.593 + (9.247 * berat badan dalam kg) + (3.098 * tinggi badan dalam
+                            cm) - (4.330 * usia dalam tahun)</li>
+                    </ul>
+
+                    <p><strong>3. Mengalikan BMR dengan Faktor Aktivitas:</strong> Faktor aktivitas tergantung pada
+                        tingkat aktivitas harian Anda:</p>
+                    <ul>
+                        <li>Sedentari (tidak aktif): 1.2</li>
+                        <li>Ringan (aktivitas ringan 1-3 hari/minggu): 1.375</li>
+                        <li>Sedang (aktivitas sedang 3-5 hari/minggu): 1.55</li>
+                        <li>Tinggi (aktivitas tinggi 6-7 hari/minggu): 1.725</li>
+                        <li>Sangat Tinggi (aktivitas sangat tinggi): 1.9</li>
+                    </ul>
+
+                    <p><strong>4. Menghitung Kebutuhan Protein, Lemak, dan Karbohidrat:</strong></p>
+                    <ul>
+                        <li>Protein: 15% dari total kalori. 1 gram protein = 4 kalori.</li>
+                        <li>Lemak: 25% dari total kalori. 1 gram lemak = 9 kalori.</li>
+                        <li>Karbohidrat: 60% dari total kalori. 1 gram karbohidrat = 4 kalori.</li>
+                    </ul>
+                </details>
+            </div>
         </div>
     </form>
     <div class="card-footer">
         <div class="form-grup row d-flex justify-content-end">
             <div class="col-auto">
-                <a class="btn btn-primary" id="tombol_selesai" onclick="validasi('asesment');">Simpan</a>
+                <a class="btn btn-primary" onclick="validasi('asesment');">Simpan</a>
             </div>
             <div class="col-auto">
-                <a class="btn btn-warning" id="tblBatal" onclick="resetForm();">Batal</a>
+                <a class="btn btn-warning" onclick="reset();">Batal</a>
             </div>
 
         </div>

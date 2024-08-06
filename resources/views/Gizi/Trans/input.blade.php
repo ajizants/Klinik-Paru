@@ -14,8 +14,8 @@
                                 </div>
                                 @csrf
                                 <form class="form-horizontal" id="form_identitas">
-                                    <div class="card-body" id="inputSection">
-                                        <div class="form-grup row">
+                                    <div class="card-body">
+                                        <div class="form-grup row"id="inputSection">
                                             <label for="norm"
                                                 class="col-sm-1 col-form-label font-weight-bold mb-0 ">No
                                                 RM
@@ -36,9 +36,13 @@
                                             <label for="nama"
                                                 class="col-sm-1 col-form-label font-weight-bold  mb-0">Nama
                                                 :</label>
-                                            <div class="col-sm-5 input-group input-group-sm">
+                                            <div class="col-sm-4 input-group input-group-sm">
                                                 <input type="text" id="nama" class="form-control"
                                                     aria-describedby="inputGroup-sizing-sm" placeholder="Nama Pasien">
+                                            </div>
+                                            <div class="col-sm-1 input-group input-group-sm">
+                                                <input type="text" id="gender" class="form-control"
+                                                    aria-describedby="inputGroup-sizing-sm" placeholder="JK">
                                             </div>
                                         </div>
                                         <div class="form-grup row mt-2">
@@ -62,10 +66,19 @@
                                             <label for="alamat"
                                                 class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat
                                                 :</label>
-                                            <div class="col-sm-5 input-group input-group-sm">
+                                            <div class="col-sm-4 input-group input-group-sm">
                                                 <input id="alamat" class="form-control bg-white"
                                                     aria-describedby="inputGroup-sizing-sm"
                                                     placeholder="Alamat Pasien" />
+                                            </div>
+                                            <div class="col-sm-1 input-group input-group-sm">
+                                                <input type="text" id="age" class="form-control bg-white"
+                                                    aria-describedby="inputGroup-sizing-sm" placeholder="age" />
+                                                <div class="input-group-append">
+                                                    <div class="input-group-text" style="height: 31px;"">
+                                                        th
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="form-grup row mt-2">
@@ -109,7 +122,8 @@
                                         onclick="toggleSections('#kunjungan');"><b>Kunjungan</b></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a type="button" class="nav-link" onclick="toggleSections('#asesmen');"><b>Asesmen
+                                    <a type="button" class="nav-link"
+                                        onclick="toggleSections('#asesmen');"><b>Asesmen
                                             Awal</b></a>
                                 </li>
                             </ul>

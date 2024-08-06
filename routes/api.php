@@ -5,7 +5,7 @@ use App\Http\Controllers\DotsController;
 use App\Http\Controllers\FarmasiController;
 use App\Http\Controllers\GiziAsesmenAwalController;
 use App\Http\Controllers\GiziDxModelController;
-use App\Http\Controllers\GiziModelController;
+use App\Http\Controllers\GiziKunjunganController;
 use App\Http\Controllers\GudangFarmasiController;
 use App\Http\Controllers\IgdController;
 use App\Http\Controllers\InputController;
@@ -194,6 +194,10 @@ Route::post('logBook', [ROTransaksiController::class, 'logBook']);
 Route::post('gizi/asesmenAwal', [GiziAsesmenAwalController::class, 'search']);
 Route::post('gizi/asesmenAwal/add', [GiziAsesmenAwalController::class, 'store']);
 Route::post('gizi/asesmenAwal/delete', [GiziAsesmenAwalController::class, 'destroy']);
+
+Route::post('gizi/kunjungan', [GiziKunjunganController::class, 'search']);
+Route::post('gizi/kunjungan/add', [GiziKunjunganController::class, 'store']);
+Route::post('gizi/kunjungan/delete', [GiziKunjunganController::class, 'destroy']);
 
 //dx gizi
 Route::get('gizi/dx/subKelas', [GiziDxModelController::class, 'subKelas']);

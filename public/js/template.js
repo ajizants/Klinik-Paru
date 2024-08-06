@@ -146,6 +146,7 @@ function toggleSections(sectionToShow) {
 }
 
 function enterCariRM(event, ruang) {
+    console.log("🚀 ~ enterCariRM ~ ruang:", ruang);
     if (event.key === "Enter") {
         var tgl = $("#tanggal").val();
         var formatNorm = $("#norm").val().replace(/\D/g, "");
@@ -154,7 +155,6 @@ function enterCariRM(event, ruang) {
             formatNorm = "0" + formatNorm;
         }
 
-        console.log("🚀 ~ enterCariRM ~ norm:", formatNorm);
         $("#norm").val(formatNorm.slice(0, 6));
         var norm = formatNorm.slice(0, 6);
 
@@ -162,7 +162,7 @@ function enterCariRM(event, ruang) {
             cariTsLab(norm, tgl, ruang);
         } else if (ruang == "dots") {
             cariPasienTb(norm, tgl, ruang);
-        }else if(ruang == "gizi"){
+        } else if (ruang == "gizi") {
             cariPasienGizi(norm, tgl, ruang);
         }
     }

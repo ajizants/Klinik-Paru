@@ -15,10 +15,11 @@
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
     <script>
+        let age;
         async function cariPasienGizi(norm, tgl, ruang) {
 
             norm = norm || formatNorm($("#norm").val);
-            tgl = tgl || $("#tanggal").val();
+            tgl = tgl || $("#tgltrans").val();
             var requestData = {
                 norm: norm,
                 tgl: tgl
@@ -57,6 +58,8 @@
                     const hasil = await response.json();
                     console.log("🚀 ~ cariPasienGizi ~ hasil:", hasil)
                     const data = hasil.data
+                    const kunjungan = hasil.data.kunjungan
+                    console.log("🚀 ~ cariPasienGizi ~ kunjungan:", kunjungan)
                     console.log("🚀 ~ cariTsLab ~ data:", data);
                     $("#norm").val(data.norm);
                     $("#nama").val(data.nama);
@@ -64,8 +67,14 @@
                     $("#alamat").val(data.alamat);
                     $("#notrans").val(data.notrans);
                     $("#layanan").val(data.layanan);
+                    $("#gender").val(data.jk);
                     $("#dokter").val(data.dokter).trigger("change");
+
                     isiAsesmen(data);
+                    calculateAge();
+
+                    tabelKunjungan(kunjungan);
+
                     Swal.close();
 
                     scrollToInputSection();
@@ -127,31 +136,67 @@
             });
         }
 
+        function tabelKunjungan(kunjungan) {
+            console.log("🚀 ~ tabelKunjungan ~ kunjungan:", kunjungan);
+            kunjungan.forEach(function(item, index) {
+                item.actions = `<a href="#" class="delete" data-id="${item.id}">
+                            <i class="fas fa-trash"></i>
+                        </a>`;
+                item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
+                item.dx = item.dx_gizi.sub_kelas + " berhubungan dengan " + item.etiologi
+            });
 
+            $("#tabel_kunjungan").DataTable({
+                data: kunjungan,
+                columns: [{
+                        data: "actions"
+                    },
+                    {
+                        data: "no"
+                    },
+                    {
+                        data: 'created_at',
+                        render: function(data, type, row) {
+                            // Create a new Date object from the data
+                            const date = new Date(data);
 
+                            // Format the date as dd/mm/yyyy
+                            const day = String(date.getDate()).padStart(2, '0');
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const year = date.getFullYear();
 
-        function calculateIMT() {
-            const weightInput = document.getElementById('bb');
-            const heightInput = document.getElementById('tb');
-            const imtInput = document.getElementById('imt');
-
-            const weight = parseFloat(weightInput.value);
-            const height = parseFloat(heightInput.value);
-
-            if (!isNaN(weight) && !isNaN(height) && height > 0) {
-                // Convert height from cm to meters
-                const heightInMeters = height / 100;
-
-                // Calculate IMT
-                const imt = weight / (heightInMeters * heightInMeters);
-
-                // Display IMT rounded to 2 decimal places
-                imtInput.value = imt.toFixed(2);
-            } else {
-                // Clear IMT if input is invalid
-                imtInput.value = '';
-            }
+                            return `${day}/${month}/${year}`;
+                        }
+                    },
+                    {
+                        data: "bb"
+                    },
+                    {
+                        data: "tb"
+                    },
+                    {
+                        data: "imt"
+                    },
+                    {
+                        data: "parameter"
+                    },
+                    {
+                        data: "dx"
+                    },
+                    {
+                        data: "evaluasi"
+                    }
+                ],
+                order: [2, "asc"],
+                paging: true,
+                pageLength: 5,
+            });
         }
+
+
+
+
+
 
         function validasi(tombol) {
             const kunjungan = [
@@ -236,10 +281,10 @@
             const values = getFormValues(ids);
             const selectedValues = $('.select2Multi').val();
             var keluhan = selectedValues.join(', ');
+            var gender = $('#gender').val();
 
-            // Menambahkan selectedValues ke objek values
-            // values.keluhan = keluhan;
             values.keluhan = selectedValues;
+            values.jk = gender;
 
             const data = JSON.stringify(values);
             console.log("🚀 ~ simpanKunjungan ~ data:", data)
@@ -282,43 +327,164 @@
             const data = JSON.stringify(values);
             console.log("🚀 ~ simpanKunjungan ~ data:", data)
 
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Fungsi ini belum jadi',
-            });
-
-            // Mengirim data menggunakan fetch
-            // fetch('/your-endpoint', {
-            //         method: 'POST',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            //         },
-            //         body: JSON.stringify(values)
-            //     })
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         console.log('Success:', data);
-            //     })
-            //     .catch((error) => {
-            //         console.error('Error:', error);
-            //     });
+            fetch('/api/gizi/kunjungan/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify(values)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data Berhasil',
+                        text: data.message,
+                    })
+                    tabelKunjungan(data.data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Terjadi kesalahan saat menyimpan data...!!!\n' + error,
+                    });
+                });
         }
 
-        function resetForm() {
+        function reset() {
             document.getElementById("form_kunjungan").reset();
             document.getElementById("form_asesment").reset();
             document.getElementById("form_identitas").reset();
             $("#form_kunjungan select").trigger("change");
             $("#form_asesment select").trigger("change");
             $("#form_identitas select").trigger("change");
+            if ($.fn.DataTable.isDataTable("#tabel_kunjungan")) {
+                var table = $("#tabel_kunjungan").DataTable();
+                table.clear().destroy();
+            }
+            setTodayDate();
+            scrollToTop();
         }
 
+        function calculateIMT(ket) {
+            console.log("🚀 ~ calculateIMT ~ ket:", ket);
 
-        // Add event listeners to inputs
-        document.getElementById('bb').addEventListener('input', calculateIMT);
-        document.getElementById('tb').addEventListener('input', calculateIMT);
+            let weightInput, heightInput, imtInput;
+
+            if (ket === 'kunjungan') {
+                weightInput = document.getElementById('bb');
+                heightInput = document.getElementById('tb');
+                imtInput = document.getElementById('imt');
+            } else {
+                weightInput = document.getElementById('bb_awal');
+                heightInput = document.getElementById('tb_awal');
+                imtInput = document.getElementById('imt_awal');
+            }
+
+            const weight = parseFloat(weightInput.value);
+            const height = parseFloat(heightInput.value);
+
+            if (!isNaN(weight) && !isNaN(height) && height > 0) {
+                // Convert height from cm to meters
+                const heightInMeters = height / 100;
+
+                // Calculate IMT
+                const imt = weight / (heightInMeters * heightInMeters);
+
+                // Display IMT rounded to 2 decimal places
+                imtInput.value = imt.toFixed(2);
+            } else {
+                // Clear IMT if input is invalid
+                imtInput.value = '';
+            }
+        }
+
+        function calculateAge() {
+            // Ambil tanggal lahir dari input
+            const birthDateInput = $('#tglLahir').val(); // Use .val() instead of .value
+            const birthDate = new Date(birthDateInput);
+
+            // Cek apakah input valid
+            if (isNaN(birthDate.getTime())) { // Use getTime() to check if the date is valid
+                alert('Silakan masukkan tanggal lahir yang valid.');
+                return;
+            }
+
+            // Tanggal hari ini
+            const today = new Date();
+
+            // Hitung usia
+            age = today.getFullYear() - birthDate.getFullYear();
+            const monthDifference = today.getMonth() - birthDate.getMonth();
+
+            // Koreksi usia jika belum ulang tahun tahun ini
+            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            console.log("🚀 ~ calculateAge ~ age--:", age)
+            $('#age').val(age);
+            // calculateNutrients(age);
+        }
+
+        function calculateNutrients(age) {
+            // Ambil nilai dari input
+            age = age || parseFloat(document.getElementById('age').value);
+            const weight = parseFloat(document.getElementById('bb_awal').value);
+            const height = parseFloat(document.getElementById('tb_awal').value);
+            const gender = document.getElementById('gender').value;
+            const activityFactor = parseFloat(document.getElementById('activity').value);
+
+            // Cek apakah input valid
+            if (isNaN(age) || isNaN(weight) || isNaN(height)) {
+                // alert('Silakan isi semua kolom dengan benar.');
+                console.log(
+                    "🚀 ~ calculateNutrients ~ : Silakan isi semua kolom dengan benar."
+                )
+                return;
+            }
+
+            // Hitung BMR berdasarkan jenis kelamin
+            let BMR;
+            if (gender === 'male') {
+                BMR = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+            } else {
+                BMR = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+            }
+
+            // Hitung kebutuhan kalori harian
+            const dailyCalories = BMR * activityFactor;
+
+            // Hitung kebutuhan protein, lemak, dan karbohidrat
+            const protein = (dailyCalories * 0.15) / 4; // 15% dari kalori, 1 gram protein = 4 kalori
+            const fat = (dailyCalories * 0.25) / 9; // 25% dari kalori, 1 gram lemak = 9 kalori
+            const carbs = (dailyCalories * 0.60) / 4; // 60% dari kalori, 1 gram karbohidrat = 4 kalori
+            console.log("🚀 ~ calculateNutrients :", carbs, fat, protein, dailyCalories)
+
+            $('#energi').val(dailyCalories.toFixed(2));
+            $('#protein').val(protein.toFixed(2));
+            $('#lemak').val(fat.toFixed(2));
+            $('#karbohidrat').val(carbs.toFixed(2));
+        }
+
+        document.getElementById('bb').addEventListener('input', function() {
+            calculateIMT('kunjungan');
+        });
+        document.getElementById('tb').addEventListener('input', function() {
+            calculateIMT('kunjungan');
+        });
+
+        document.getElementById('bb_awal').addEventListener('input', function() {
+            calculateIMT('asesmen');
+        });
+        document.getElementById('tb_awal').addEventListener('input', function() {
+            calculateIMT('asesmen');
+        });
+
+
         $(document).ready(function() {
             setTodayDate();
             populateDokterOptions();
@@ -328,8 +494,11 @@
             });
 
             $('#getValuesButton').on('click', function() {
-                var selectedValues = $('.select2Multi').val(); // Mendapatkan array nilai terpilih
-                console.log(selectedValues); // Menampilkan nilai di konsol
+                var selectedValues = $('.select2Multi').val();
+            });
+
+            $('#activity').change(function() {
+                calculateNutrients();
             });
 
         });

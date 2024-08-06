@@ -18,7 +18,8 @@ class GiziAsesmenAwalController extends Controller
 
         if ($request->has('norm')) {
             // Mencari data berdasarkan 'norm'
-            $asesmen = GiziAsesmentModel::where('norm', 'like', '%' . $request->norm . '%')->first();
+            $asesmen = GiziAsesmentModel::where('norm',  $request->norm )
+            ->with('kunjungan.dxGizi')->first();
 
             if ($asesmen == null) {
                 // Jika tidak ada data ditemukan
