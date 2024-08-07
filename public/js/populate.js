@@ -816,10 +816,10 @@ function isiIdentitas(pasien, pendaftaran, permintaan) {
     }
     if ($("#age").length) {
         $("#age").val(pendaftaran.pasien_umur_tahun);
+        $("#nama_diagnosa").html(
+            `<b>Diagnosa Medis: ${permintaan.nama_diagnosa}</b>`
+        );
     }
-    $("#nama_diagnosa").html(
-        `<b>Diagnosa Medis: ${permintaan.nama_diagnosa}</b>`
-    );
     //gizi-end
 
     $("#permintaan").html(`<b>${permintaan}</b>`);
