@@ -67,9 +67,10 @@ class LaboratoriumController extends Controller
             if ($request->input('notrans') == null) {
                 $norm = $request->input('norm');
                 $tgl = $request->input('tgl');
+                // dd($tgl);
                 $data = LaboratoriumKunjunganModel::with('pemeriksaan.pemeriksaan')
-                    ->where('norm', 'like', '%' . $norm . '%')
                     ->whereDate('created_at', 'like', '%' . $tgl . '%')
+                    ->where('norm', 'like', '%' . $norm . '%')
                     ->first();
 
                 $lab = json_decode($data, true);
@@ -85,8 +86,11 @@ class LaboratoriumController extends Controller
                 return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
             } else {
                 $notrans = $request->input('notrans');
+                $tgl = $request->input('tgl');
+
                 $data = LaboratoriumHasilModel::with('pemeriksaan')
-                    ->where('notrans', 'like', '%' . $notrans . '%')->get();
+                    ->where('notrans', 'like', '%' . $notrans . '%')
+                    ->whereDate('created_at', 'like', '%' . $tgl . '%')->get();
                 return response()->json($data, 200, [], JSON_PRETTY_PRINT);
             }
         } catch (\Exception $e) {
@@ -204,7 +208,7 @@ class LaboratoriumController extends Controller
             // Extract notrans and tujuan from the request
 
             if ($notrans !== null) {
-                $dataKunjungan = LaboratoriumKunjunganModel::where('notrans', $notrans)->first();
+                $dataKunjungan = LaboratoriumKunjunganModel::where('notrans', $notrans)->whereDate('created_at', now())->first();
 
                 if ($dataKunjungan == null) {
                     $kunjunganLab = new LaboratoriumKunjunganModel();

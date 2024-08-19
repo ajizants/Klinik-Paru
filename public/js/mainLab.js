@@ -198,10 +198,12 @@ function tampilkanOrder(notrans) {
     console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
     var notrans = notrans ? notrans : $("#notrans").val();
     console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
+    var tgl = $("#tgltrans").val();
+    console.log("🚀 ~ tampilkanOrder ~ tgl:", tgl);
     $.ajax({
         url: "/api/cariTsLab",
         type: "post",
-        data: { notrans: notrans },
+        data: { notrans: notrans, tgl: tgl },
         success: function (response) {
             if ($.fn.DataTable.isDataTable("#dataTrans")) {
                 var table = $("#dataTrans").DataTable();
@@ -369,7 +371,7 @@ async function cariTsLab(norm, tgl, ruang) {
             $("#dokter").val(data.dokter).trigger("change");
             $("#analis").val(data.petugas).trigger("change");
 
-            dataLab(data);
+            dataLab(data, tgl);
             Swal.close();
             var btndelete = document.getElementById("delete_ts");
             btndelete.style.display = "block";
@@ -383,7 +385,7 @@ async function cariTsLab(norm, tgl, ruang) {
         });
     }
 }
-function dataLab(data) {
+function dataLab(data, tgl) {
     if ($.fn.DataTable.isDataTable("#dataTrans")) {
         var table = $("#dataTrans").DataTable();
         table.destroy();
