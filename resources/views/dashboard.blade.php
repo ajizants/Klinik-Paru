@@ -279,9 +279,6 @@
         </section>
         <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
-
-    @include('Template.script')
 
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
@@ -289,8 +286,4 @@
     <script src="{{ asset('vendor/chart.js/Chart.bundle.min.js') }}"></script>
 
     <script src="{{ asset('js/chart.js') }}"></script>
-
-    </body>
-
-    </html>
 @endsection

@@ -1,7 +1,6 @@
 @extends('Template.lte')
 
 @section('content')
-    {{-- Data per pasien --}}
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
@@ -60,8 +59,6 @@
         </div>
     </div>
 
-
-    @include('Template.script')
 
 
     <!-- my script -->
@@ -330,8 +327,4 @@
 
         });
     </script>
-
-    </body>
-
-    </html>
 @endsection

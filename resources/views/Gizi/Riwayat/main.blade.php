@@ -4,7 +4,7 @@
 @section('content')
     @include('Gizi.Riwayat.input')
 
-    @include('Template.script')
+    {{-- @include('Template.script') --}}
 
     <div class="modal fade" id="modal-update">
         <div class="modal-dialog modal-xl">

@@ -18,7 +18,7 @@
 
     </div> --}}
     @include('DotsCenter.Trans.modals')
-    @include('Template.script')
+    {{-- @include('Template.script') --}}
 
     <!-- my script -->
 

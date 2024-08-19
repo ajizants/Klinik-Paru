@@ -3,96 +3,97 @@
                     <!-- Card Header - Accordion -->
                     <a href="#collapseCardExample" class="d-block card-header py-1 bg bg-info" data-toggle="collapse"
                         role="button" aria-expanded="true" aria-controls="collapseCardExample">
-                        <h4 id="inputSection" class="m-0 font-weight-bold text-dark text-center">Transaksi</h4>
+                        <h4 id="inputSection" class="m-0 font-weight-bold text-dark text-center">Laporan Radiologi/Log
+                            Book</h4>
                     </a>
                     <!-- Card Content - Collapse -->
                     <div class="collapse show" id="collapseCardExample">
                         <div class="card-body p-2">
+                            <div class="container-fluid py-2">
+                                <div class="form-grup row ">
+                                    <label for="reservation" class="col-sm-1 col-form-label">Tanggal:</label>
+                                    <div class="input-group col-sm-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="far fa-calendar-alt"></i>
+                                            </span>
+                                        </div>
+                                        <input type="text" class="form-control float-right" id="reservation">
+                                    </div>
+                                </div>
+                            </div>
                             <div class="container-fluid">
                                 <div class="card card-warning">
                                     <div class="card-header">
-                                        <h3 class="card-title">Formulir Pencarian</h3>
+                                        <h3 class="card-title">Jumlah Petugas</h3>
+                                    </div>
+                                    <div class="card-body table-responsive">
+                                        <table class="table table-bordered" id="jumlahPetugas">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>NIP</th>
+                                                    <th>Nama</th>
+                                                    <th>Jumlah</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="card card-success">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Hasil Pemotretan</h3>
                                     </div>
                                     <!-- /.card-header -->
-                                    <!-- form start -->
-                                    @csrf
-                                    <form class="form-horizontal">
-                                        <div class="card-body" id="frm-pencarian">
-                                            <div class="form-grup row">
-                                                <label for="norm"
-                                                    class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
-                                                    :</label>
-                                                <div class="col-sm-2 input-group">
-                                                    <input type="text" name="norm" id="norm"
-                                                        class="form-control" placeholder="No RM" maxlength="6"
-                                                        pattern="[0-9]{6}" />
-                                                </div>
+                                    <div class="card-body table-responsive">
+                                        <table id="hasilRo" class="display table table-striped table-hover">
+                                            <thead class="bg bg-secondary">
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>No Reg</th>
+                                                    <th>Tanggal</th>
+                                                    <th>No RM</th>
+                                                    <th>Nama</th>
+                                                    <th>Jaminan</th>
+                                                    <th>JK</th>
+                                                    <th class="col-4">Alamat</th>
+                                                    <th>Nama Foto</th>
+                                                    <th>Ukuran Film</th>
+                                                    <th>Kondisi</th>
+                                                    <th>Jml Film</th>
+                                                    <th>Jml Expose</th>
+                                                    <th>Jml Rusak</th>
+                                                    <th>Proyeksi</th>
+                                                    <th>Mesin</th>
+                                                    <th>Catatan</th>
+                                                    <th>Petugas</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                            <tfoot class="bg bg-secondary">
+                                                <tr>
+                                                    <th>Totals</th>
+                                                    <th colspan="7"></th>
+                                                    <th id="jenisFoto"></th>
+                                                    <th colspan="2"></th>
+                                                    <th id="totalJmlFilmDipakai"></th>
+                                                    <th id="totalJmlExpose"></th>
+                                                    <th id="totalJmlFilmRusak"></th>
+                                                    <th id="proyeksi"></th>
+                                                    <th id ="mesin"> </th>
+                                                    <th > </th>
+                                                    <th id ="petugas" > </th>
+                                                </tr>
+                                            </tfoot>
 
-                                                <label class="col-sm-1 col-form-label">Tanggal:</label>
-                                                <div class="input-group col-sm-3">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="far fa-calendar-alt"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" class="form-control float-right"
-                                                        id="reservation">
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                        <!-- /.card-body -->
-                                    </form>
-                                </div>
-                            </div>
-                            @csrf
-                            <form class="">
-                                <div class="container-fluid" id="formtrans">
-                                    <div class="form-group">
-                                        <div class="card card-success">
-                                            <div class="card-header">
-                                                <h3 class="card-title">Hasil Pemotretan</h3>
-                                            </div>
-                                            <!-- /.card-header -->
-                                            <div class="card-body table-responsive">
-                                                <table id="hasilRo" class="display table table-striped table-hover"
-                                                    style="width:100%">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>No</th>
-                                                            <th>No Reg</th>
-                                                            <th>Tanggal</th>
-                                                            <th>No RM</th>
-                                                            <th>Nama</th>
-                                                            <th>Jaminan</th>
-                                                            <th>JK</th>
-                                                            <th>Alamat</th>
-                                                            {{-- <th>Kecamatan</th>
-                                                            <th>Kabupaten</th> --}}
-                                                            <th>Nama Foto</th>
-                                                            <th>Ukuran Film</th>
-                                                            <th>Kondisi</th>
-                                                            <th>Jml Film</th>
-                                                            <th>Jml Expose</th>
-                                                            <th>Jml Rusak</th>
-                                                            <th>Proyeksi</th>
-                                                            <th>Mesin</th>
-                                                            <th>Catatan</th>
-                                                            <th>Petugas</th>
-                                                            <!-- Tambahkan kolom sesuai dengan data yang diterima dari permintaan AJAX -->
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <!-- Data akan dimasukkan di sini setelah permintaan AJAX berhasil -->
-                                                    </tbody>
-                                                    <tfoot></tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <!-- /.card-body-->
+                                        </table>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>

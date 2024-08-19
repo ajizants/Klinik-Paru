@@ -6,9 +6,6 @@
     @include('Laboratorium.Hasil.input')
 
 
-
-    @include('Template.script')
-
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>

@@ -3,7 +3,7 @@
 @section('content')
     @include('Gizi.Master.input')
 
-    @include('Template.script')
+    {{-- @include('Template.script') --}}
 
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>

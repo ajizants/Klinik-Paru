@@ -248,184 +248,6 @@ class ROTransaksiController extends Controller
         }
         return response()->json($res, 200, [], JSON_PRETTY_PRINT);
     }
-
-    public function logBook1(Request $request)
-    {
-        $norm = $request->input('norm');
-        $tglAwal = $request->input('tglAwal');
-        $tglAkhir = $request->input('tglAkhir');
-        $data = ROTransaksiModel::with('pasien', 'proyeksi', 'mesin', 'kv', 'ma', 's', 'kondisiOld', 'film', 'foto', 'radiografer.radiografer', 'kunjungan')
-            ->when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
-                return $query->where('norm', $norm);
-            })
-            ->whereBetween('tglTrans', [$tglAwal, $tglAkhir])
-            ->get();
-
-        $res = [];
-        // $kominfoModel = new KominfoModel();
-        foreach ($data as $d) {
-            // Cari Layanan
-            if ($d['layanan'] === "" || $d['layanan'] === null) {
-                if ($d['kunjungan']['kkelompok'] == "1") {
-                    $d['layanan'] = "UMUM";
-                } elseif ($d['kunjungan']['kkelompok'] == "2") {
-                    $d['layanan'] = "BPJS";
-                } else {
-                    $d['layanan'] = "JAMKESDA";
-                }
-            }
-
-            //Cari Kondisi RO
-            if ($d['ma'] === null && $d['s'] === null && $d['kv'] === null) {
-                $d['kondisiRo'] = $d['kondisiOld']['kondisiRo'] ?? null;
-            } else {
-                $kv = ROJenisKondisi::where('kdKondisiRo', $d['kv'])->first();
-                $ma = ROJenisKondisi::where('kdKondisiRo', $d['ma'])->first();
-                $s = ROJenisKondisi::where('kdKondisiRo', $d['s'])->first();
-
-                if ($kv && $ma && $s) {
-                    $d['kondisiRo'] = $kv->nmKondisi . "  " . $ma->nmKondisi . "  " . $s->nmKondisi;
-                } else {
-                    // Handle jika ada yang tidak ditemukan atau null
-                    $d['kondisiRo'] = "Tidak ditemukan kondisi yang sesuai";
-                }
-            }
-
-            //Cari Proyeksi
-            $kdProy = [];
-            if ($d['kdProyeksi'] === null) {
-                if ($d['pa'] === 1) {
-                    $kdProy[] = 'pa';
-                }
-                if ($d['ap'] === 1) {
-                    $kdProy[] = 'ap';
-                }
-                if ($d['lateral'] === 1) {
-                    $kdProy[] = 'lateral';
-                }
-                if ($d['obliq'] === 1) {
-                    $kdProy[] = 'obliq';
-                }
-
-                // Join the array elements into a string separated by commas
-                $proy = !empty($kdProy) ? implode(', ', $kdProy) : null;
-                $kdProyeksi = $d['proyeksi']['kdProyeksi'] ?? null;
-            } else {
-                $proy = $d['proyeksi']['proyeksi'] ?? null;
-                $kdProyeksi = $d['proyeksi']['kdProyeksi'] ?? null;
-            }
-
-            $res[] = [
-                "notrans" => $d['notrans'],
-                "norm" => $d['norm'],
-                "tgltrans" => $d['tgltrans'],
-                "ktujuan" => $d['ktujuan'],
-                "pasienRawat" => $d['pasienRawat'],
-                "noreg" => $d['noreg'],
-
-                "jmlExpose" => $d['jmlExpose'],
-                "jmlFilmDipakai" => $d['jmlFilmDipakai'],
-                "jmlFilmRusak" => $d['jmlFilmRusak'],
-
-                "catatan" => $d['catatan'],
-                "selesai" => $d['selesai'],
-
-                "layanan" => $d['layanan'],
-                "kdLayanan" => $d['kunjungan']['kkelompok'] ?? null,
-                "file" => $d['file'],
-
-                // "pasien_nik" => $pasien['response']['data']['pasien_nik'],
-                // "pasien_no_kk" => $pasien['response']['data']['pasien_no_kk'],
-                // "pasien_nama" => $pasien['response']['data']['pasien_nama'],
-                // "pasien_no_rm" => $pasien['response']['data']['pasien_no_rm'],
-                // "jenis_kelamin_id" => $pasien['response']['data']['jenis_kelamin_id'],
-                // "jenis_kelamin_nama" => $pasien['response']['data']['jenis_kelamin_nama'],
-                // "pasien_tempat_lahir" => $pasien['response']['data']['pasien_tempat_lahir'],
-                // "pasien_tgl_lahir" => $pasien['response']['data']['pasien_tgl_lahir'],
-                // "pasien_no_hp" => $pasien['response']['data']['pasien_no_hp'],
-                // "pasien_domisili" => $pasien['response']['data']['pasien_alamat'],
-                // "pasien_alamat" => $pasien['response']['data']['kelurahan_nama'] . ", " . $pasien['response']['data']['pasien_rt'] . "/" . $pasien['response']['data']['pasien_rw'] . ", " . $pasien['response']['data']['kecamatan_nama'] . ", " . $pasien['response']['data']['kabupaten_nama'] . ", " . $pasien['response']['data']['provinsi_nama'],
-                // "provinsi_nama" => $pasien['response']['data']['provinsi_nama'],
-                // "kabupaten_nama" => $pasien['response']['data']['kabupaten_nama'],
-                // "kecamatan_nama" => $pasien['response']['data']['kecamatan_nama'],
-                // "kelurahan_nama" => $pasien['response']['data']['kelurahan_nama'],
-                // "pasien_rt" => $pasien['response']['data']['pasien_rt'],
-                // "pasien_rw" => $pasien['response']['data']['pasien_rw'],
-                // "penjamin_nama" => $pasien['response']['data']['penjamin_nama'],
-
-                "norm" => $d['pasien']['norm'] ?? null,
-                "noktp" => $d['pasien']['noktp'] ?? null,
-                "nama" => $d['pasien']['nama'] ?? null,
-                "domisili" => $d['pasien']['alamat'] ?? null,
-                "jeniskel" => $d['pasien']['jeniskel'] ?? null,
-                "jkel" => $d['pasien']['jkel'] ?? null,
-                "tmptlahir" => $d['pasien']['tmptlahir'] ?? null,
-                "tgllahir" => $d['pasien']['tgllahir'] ?? null,
-                "umur" => $d['pasien']['umur'] ?? null,
-                "nohp" => $d['pasien']['nohp'] ?? null,
-                "alamatDbOld" => ($d['pasien']['kelurahan'] ?? null) . ", " . ($d['pasien']['rtrw'] ?? null) . ", " . ($d['pasien']['kecamatan'] ?? null) . ", " . ($d['pasien']['kabupaten'] ?? null),
-                "rtrw" => $d['pasien']['rtrw'] ?? null,
-                "provinsi" => $d['pasien']['provinsi'] ?? null,
-                "kabupaten" => $d['pasien']['kabupaten'] ?? null,
-                "kecamatan" => $d['pasien']['kecamatan'] ?? null,
-                "kelurahan" => $d['pasien']['kelurahan'] ?? null,
-
-                "kdFoto" => $d['kdFoto'],
-                "kdFoto" => $d['foto']['kdFoto'] ?? null,
-                "nmFoto" => $d['foto']['nmFoto'] ?? null,
-
-                "kdKv" => $d['kv'],
-                "kdMa" => $d['ma'],
-                "KdS" => $d['s'],
-                "kdKondisiRo" => $d['kdKondisiRo'],
-                "kondisiRo" => $d['kondisiRo'],
-                // "ma" => [
-                //     "kdKondisiRo" => $ma['kdKondisiRo'] ?? null,
-                //     "nmKondisiMa" => $ma['nmKondisi'] ?? null,
-                //     "grupMa" => $ma['grup'] ?? null,
-                //     "statusMa" => $ma['status'] ?? null,
-                // ],
-                // "kv" => [
-                //     "kdKondisiRo" => $kv['kdKondisiRo'] ?? null,
-                //     "nmKondisiKv" => $kv['nmKondisi'] ?? null,
-                //     "grupKv" => $kv['grup'] ?? null,
-                //     "statusKv" => $kv['status'] ?? null,
-                // ],
-                // "s" => [
-                //     "kdKondisiRo" => $s['kdKondisiRo'] ?? null,
-                //     "nmKondisiS" => $s['nmKondisi'] ?? null,
-                //     "grupS" => $s['grup'] ?? null,
-                //     "statusS" => $s['status'] ?? null,
-                // ],
-
-                "kdFilm" => $d['kdFilm'],
-                "kdFilm" => $d['film']['kdFilm'] ?? null,
-                "ukuranFilm" => $d['film']['ukuranFilm'] ?? null,
-
-                "kdProyeksi" => $kdProyeksi,
-                "proyeksi" => $proy,
-                "pa" => $d['pa'],
-                "ap" => $d['ap'],
-                "lateral" => $d['lateral'],
-                "obliq" => $d['obliq'],
-
-                "kdMesin" => $d['kdMesin'],
-                "kdMesin" => $d['mesin']['kdMesin'] ?? null,
-                "nmMesin" => $d['mesin']['nmMesin'] ?? null,
-
-                "p_rontgen" => $d['radiografer']['p_rontgen'] ?? null,
-                "radiografer_nama" => ($d['radiografer']['radiografer']['nama'] ?? null) . ", Amd.Rad.",
-            ];
-
-        }
-
-        if ($data->isEmpty()) {
-            return response()->json(['message' => 'Data transaksi tidak ditemukan'], 404, [], JSON_PRETTY_PRINT);
-        } else {
-            return response()->json(['data' => $res], 200, [], JSON_PRETTY_PRINT);
-            // return response()->json(['data' => $data], 200, [], JSON_PRETTY_PRINT);
-        }
-    }
     public function logBook(Request $request)
     {
         // dd($request->all());
@@ -442,6 +264,7 @@ class ROTransaksiController extends Controller
             ->get();
 
         $res = [];
+        $jumlah = [];
 
         // $kominfoModel = new KominfoModel();
         foreach ($data as $d) {
@@ -511,18 +334,9 @@ class ROTransaksiController extends Controller
                 $jkPasien = $d['jk'];
             }
 
-            // $jmlhPA = count(array_filter($d, function ($item) {
-            //     return isset($item['proyeksi']) && $item['proyeksi'] === 'PA';
-            // }));
-            // dd($jmlhPA);
-
             $res[] = [
                 "notrans" => $d['notrans'],
                 "norm" => $d['norm'],
-
-                // "namaT" => $d['nama'],
-                // "alamatT" => $d['alamat'],
-                // "jkT" => $d['jk'],
 
                 "nama" => $namaPasien,
                 "alamatDbOld" => $alamatFix,
@@ -543,25 +357,6 @@ class ROTransaksiController extends Controller
                 "layanan" => $d['layanan'],
                 "kdLayanan" => $d['kunjungan']['kkelompok'] ?? null,
                 "file" => $d['file'],
-
-                // "pasien_nik" => $pasien['response']['data']['pasien_nik'],
-                // "pasien_no_kk" => $pasien['response']['data']['pasien_no_kk'],
-                // "pasien_nama" => $pasien['response']['data']['pasien_nama'],
-                // "pasien_no_rm" => $pasien['response']['data']['pasien_no_rm'],
-                // "jenis_kelamin_id" => $pasien['response']['data']['jenis_kelamin_id'],
-                // "jenis_kelamin_nama" => $pasien['response']['data']['jenis_kelamin_nama'],
-                // "pasien_tempat_lahir" => $pasien['response']['data']['pasien_tempat_lahir'],
-                // "pasien_tgl_lahir" => $pasien['response']['data']['pasien_tgl_lahir'],
-                // "pasien_no_hp" => $pasien['response']['data']['pasien_no_hp'],
-                // "pasien_domisili" => $pasien['response']['data']['pasien_alamat'],
-                // "pasien_alamat" => $pasien['response']['data']['kelurahan_nama'] . ", " . $pasien['response']['data']['pasien_rt'] . "/" . $pasien['response']['data']['pasien_rw'] . ", " . $pasien['response']['data']['kecamatan_nama'] . ", " . $pasien['response']['data']['kabupaten_nama'] . ", " . $pasien['response']['data']['provinsi_nama'],
-                // "provinsi_nama" => $pasien['response']['data']['provinsi_nama'],
-                // "kabupaten_nama" => $pasien['response']['data']['kabupaten_nama'],
-                // "kecamatan_nama" => $pasien['response']['data']['kecamatan_nama'],
-                // "kelurahan_nama" => $pasien['response']['data']['kelurahan_nama'],
-                // "pasien_rt" => $pasien['response']['data']['pasien_rt'],
-                // "pasien_rw" => $pasien['response']['data']['pasien_rw'],
-                // "penjamin_nama" => $pasien['response']['data']['penjamin_nama'],
 
                 "norm" => $d['pasien']['norm'] ?? null,
                 "noktp" => $d['pasien']['noktp'] ?? null,
@@ -589,24 +384,6 @@ class ROTransaksiController extends Controller
                 "KdS" => $d['s'],
                 "kdKondisiRo" => $d['kdKondisiRo'],
                 "kondisiRo" => $d['kondisiRo'],
-                // "ma" => [
-                //     "kdKondisiRo" => $ma['kdKondisiRo'] ?? null,
-                //     "nmKondisiMa" => $ma['nmKondisi'] ?? null,
-                //     "grupMa" => $ma['grup'] ?? null,
-                //     "statusMa" => $ma['status'] ?? null,
-                // ],
-                // "kv" => [
-                //     "kdKondisiRo" => $kv['kdKondisiRo'] ?? null,
-                //     "nmKondisiKv" => $kv['nmKondisi'] ?? null,
-                //     "grupKv" => $kv['grup'] ?? null,
-                //     "statusKv" => $kv['status'] ?? null,
-                // ],
-                // "s" => [
-                //     "kdKondisiRo" => $s['kdKondisiRo'] ?? null,
-                //     "nmKondisiS" => $s['nmKondisi'] ?? null,
-                //     "grupS" => $s['grup'] ?? null,
-                //     "statusS" => $s['status'] ?? null,
-                // ],
 
                 "kdFilm" => $d['kdFilm'],
                 "kdFilm" => $d['film']['kdFilm'] ?? null,
@@ -626,14 +403,40 @@ class ROTransaksiController extends Controller
                 "p_rontgen" => $d['radiografer']['p_rontgen'] ?? null,
                 "radiografer_nama" => ($d['radiografer']['radiografer']['nama'] ?? null) . ", Amd.Rad.",
             ];
-
         }
+
+        $ambar = count(array_filter($res, function ($item) {
+            return isset($item['p_rontgen']) && $item['p_rontgen'] === '197404231998032006';
+        }));
+
+        $nofi = count(array_filter($res, function ($item) {
+            return isset($item['p_rontgen']) && $item['p_rontgen'] === '199009202011012001';
+        }));
+
+        $jumlah = [
+            [
+                "nama" => "AMBARSARI, Amd.Rad.",
+                "nip" => "197404231998032006",
+                "jml" => $ambar,
+            ],
+            [
+                "nama" => "NOFI INDRIYANI, Amd.Rad.",
+                "nip" => "199009202011012001",
+                "jml" => $nofi,
+            ],
+        ];
+
+        $response = [
+            "jumlah" => $jumlah,
+            "data" => $res,
+
+        ];
 
         if ($data->isEmpty()) {
             return response()->json(['message' => 'Data transaksi tidak ditemukan'], 404, [], JSON_PRETTY_PRINT);
         } else {
-            return response()->json(['data' => $res], 200, [], JSON_PRETTY_PRINT);
-            // return response()->json(['data' => $data], 200, [], JSON_PRETTY_PRINT);
+            // return response()->json(['data' => $res], 200, [], JSON_PRETTY_PRINT);
+            return response()->json($response, 200, [], JSON_PRETTY_PRINT);
         }
     }
 

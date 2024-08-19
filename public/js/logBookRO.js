@@ -12,8 +12,8 @@ function cariRo(tglAwal, tglAkhir, norm) {
     // var tglAkhir = $("#tglAkhir").val(); // tambahkan ini
     var tglA = formatDate(new Date(tglAwal));
     var tglB = formatDate(new Date(tglAkhir));
-    if ($.fn.DataTable.isDataTable("#hasilRo")) {
-        var tabletindakan = $("#hasilRo").DataTable();
+    if ($.fn.DataTable.isDataTable("#hasilRo, #jumlahPetugas")) {
+        var tabletindakan = $("#hasilRo, #jumlahPetugas").DataTable();
         tabletindakan.destroy();
     }
 
@@ -47,6 +47,61 @@ function cariRo(tglAwal, tglAkhir, norm) {
                                     data-nama="${item.nama}"><i class="fas fa-trash"></i></a>`;
             });
 
+            // $("#hasilRo")
+            //     .DataTable({
+            //         data: response.data,
+            //         columns: [
+            //             {
+            //                 data: null, // Data null akan diisi oleh render function
+            //                 render: function (data, type, row, meta) {
+            //                     return meta.row + 1; // Nomor urut mulai dari 1
+            //                 },
+            //                 title: "No", // Judul kolom
+            //             },
+            //             { data: "noreg" },
+            //             { data: "tgltrans" },
+            //             { data: "norm" },
+            //             { data: "nama" },
+            //             { data: "layanan" },
+            //             { data: "jkel" },
+            //             { data: "alamatDbOld" },
+            //             { data: "nmFoto" },
+            //             { data: "ukuranFilm" },
+            //             { data: "kondisiRo" },
+            //             { data: "jmlFilmDipakai" },
+            //             { data: "jmlExpose" },
+            //             { data: "jmlFilmRusak" },
+            //             { data: "proyeksi" },
+            //             { data: "nmMesin" },
+            //             { data: "catatan" },
+            //             { data: "radiografer_nama" },
+            //         ],
+            //         autoWidth: false,
+            //         buttons: [
+            //             {
+            //                 extend: "copyHtml5",
+            //                 text: "Salin",
+            //             },
+            //             {
+            //                 extend: "excelHtml5",
+            //                 text: "Excel",
+            //                 title:
+            //                     "Log Book Radiologi Tanggal: " +
+            //                     tglA +
+            //                     " s.d. " +
+            //                     tglB,
+            //                 filename:
+            //                     "Log Book Radiologi Tanggal: " +
+            //                     tglA +
+            //                     "  s.d. " +
+            //                     tglB,
+            //             },
+            //             "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+            //         ],
+            //     })
+            //     .buttons()
+            //     .container()
+            //     .appendTo("#hasilRo_wrapper .col-md-6:eq(0)");
             $("#hasilRo")
                 .DataTable({
                     data: response.data,
@@ -64,7 +119,7 @@ function cariRo(tglAwal, tglAkhir, norm) {
                         { data: "nama" },
                         { data: "layanan" },
                         { data: "jkel" },
-                        { data: "alamatDbOld" },
+                        { data: "alamatDbOld", className: "col-4" },
                         { data: "nmFoto" },
                         { data: "ukuranFilm" },
                         { data: "kondisiRo" },
@@ -76,11 +131,200 @@ function cariRo(tglAwal, tglAkhir, norm) {
                         { data: "catatan" },
                         { data: "radiografer_nama" },
                     ],
-                    // order: [
-                    //     [1, "asc"],
-                    //     [0, "asc"],
-                    // ],
+                    autoWidth: false,
+                    paging: true,
+                    buttons: [
+                        {
+                            extend: "copyHtml5",
+                            text: "Salin",
+                        },
+                        {
+                            extend: "excelHtml5",
+                            text: "Excel",
+                            title:
+                                "Log Book Radiologi Tanggal: " +
+                                tglA +
+                                " s.d. " +
+                                tglB,
+                            filename:
+                                "Log Book Radiologi Tanggal: " +
+                                tglA +
+                                "  s.d. " +
+                                tglB,
+                        },
+                        "colvis",
+                    ],
+                    // footerCallback: function (row, data, start, end, display) {
+                    //     var api = this.api();
 
+                    //     // Calculate totals
+                    //     var totalJmlFilmDipakai = api
+                    //         .column(11)
+                    //         .data()
+                    //         .reduce(function (a, b) {
+                    //             return (
+                    //                 (parseInt(a, 10) || 0) +
+                    //                 (parseInt(b, 10) || 0)
+                    //             );
+                    //         }, 0);
+
+                    //     var totalJmlExpose = api
+                    //         .column(12)
+                    //         .data()
+                    //         .reduce(function (a, b) {
+                    //             return (
+                    //                 (parseInt(a, 10) || 0) +
+                    //                 (parseInt(b, 10) || 0)
+                    //             );
+                    //         }, 0);
+
+                    //     var totalJmlFilmRusak = api
+                    //         .column(13)
+                    //         .data()
+                    //         .reduce(function (a, b) {
+                    //             return (
+                    //                 (parseInt(a, 10) || 0) +
+                    //                 (parseInt(b, 10) || 0)
+                    //             );
+                    //         }, 0);
+
+                    //     // Calculate specific Jeni Foto counts
+                    //     var jenisFoto = api.column(8).data();
+                    //     var jml = {};
+
+                    //     // Count occurrences of each unique value
+                    //     jenisFoto.each(function (val) {
+                    //         if (val) {
+                    //             jml[val] = (jml[val] || 0) + 1;
+                    //         }
+                    //     });
+
+                    //     // Create a summary string for Jeni Foto counts, excluding counts of 0
+                    //     var foto = [
+                    //         jml["THORAX"] ? "THORAX: " + jml["THORAX"] : null,
+                    //         jml["CRIRUS"] ? "CRIRUS: " + jml["CRIRUS"] : null,
+                    //         jml["THORAX Lat"]
+                    //             ? "THORAX Lat: " + jml["THORAX Lat"]
+                    //             : null,
+                    //         jml["ABDOMEN"]
+                    //             ? "ABDOMEN: " + jml["ABDOMEN"]
+                    //             : null,
+                    //         jml["THORAX PA & LAT"]
+                    //             ? "THORAX PA & LAT: " + jml["THORAX PA & LAT"]
+                    //             : null,
+                    //         jml["LUMBAL AP"]
+                    //             ? "LUMBAL AP: " + jml["LUMBAL AP"]
+                    //             : null,
+                    //         jml["LUTUT"] ? "LUTUT: " + jml["LUTUT"] : null,
+                    //         jml["SIKU"] ? "SIKU: " + jml["SIKU"] : null,
+                    //     ]
+                    //         .filter(Boolean)
+                    //         .join("\n");
+
+                    //     // Calculate specific Proyeksi counts
+                    //     var proyeksiData = api.column(14).data();
+                    //     var counts = {};
+
+                    //     // Count occurrences of each unique value
+                    //     proyeksiData.each(function (val) {
+                    //         if (val) {
+                    //             counts[val] = (counts[val] || 0) + 1;
+                    //         }
+                    //     });
+
+                    //     // Create a summary string for Proyeksi counts, excluding counts of 0
+                    //     var summary = [
+                    //         counts["PA"] ? "PA: " + counts["PA"] : null,
+                    //         counts["AP"] ? "AP: " + counts["AP"] : null,
+                    //         counts["LATERAL"]
+                    //             ? "LATERAL: " + counts["LATERAL"]
+                    //             : null,
+                    //         counts["PA+LATERAL"]
+                    //             ? "PA+LATERAL: " + counts["PA+LATERAL"]
+                    //             : null,
+                    //     ]
+                    //         .filter(Boolean)
+                    //         .join("\n");
+
+                    //     // Calculate specific Mesin counts
+                    //     var dataMesin = api.column(15).data();
+                    //     var totalMesin = {};
+
+                    //     // Count occurrences of each unique value
+                    //     dataMesin.each(function (val) {
+                    //         if (val) {
+                    //             totalMesin[val] = (totalMesin[val] || 0) + 1;
+                    //         }
+                    //     });
+
+                    //     // Create a summary string for Mesin counts, excluding counts of 0
+                    //     var mesin = [
+                    //         totalMesin["Indoray 1"]
+                    //             ? "Indoray 1: " + totalMesin["Indoray 1"]
+                    //             : null,
+                    //         totalMesin["Indoray 2"]
+                    //             ? "Indoray 2: " + totalMesin["Indoray 2"]
+                    //             : null,
+                    //     ]
+                    //         .filter(Boolean)
+                    //         .join("\n");
+
+                    //     // Calculate specific Petugas counts
+                    //     var dataPetugas = api.column(17).data();
+                    //     var totalPetugas = {};
+
+                    //     // Count occurrences of each unique value
+                    //     dataPetugas.each(function (val) {
+                    //         if (val) {
+                    //             totalPetugas[val] =
+                    //                 (totalPetugas[val] || 0) + 1;
+                    //         }
+                    //     });
+
+                    //     // Create a summary string for Petugas counts, excluding counts of 0
+                    //     var petugas = [
+                    //         totalPetugas["AMBARSARI, Amd.Rad."]
+                    //             ? "AMBARSARI, Amd.Rad.: " +
+                    //               totalPetugas["AMBARSARI, Amd.Rad."]
+                    //             : null,
+                    //         totalPetugas["NOFI INDRIYANI, Amd.Rad."]
+                    //             ? "NOFI INDRIYANI, Amd.Rad.: " +
+                    //               totalPetugas["NOFI INDRIYANI, Amd.Rad."]
+                    //             : null,
+                    //     ]
+                    //         .filter(Boolean)
+                    //         .join("\n");
+
+                    //     // Update footer
+                    //     $(api.column(8).footer()).html(foto);
+                    //     $(api.column(11).footer()).html(totalJmlFilmDipakai);
+                    //     $(api.column(12).footer()).html(totalJmlExpose);
+                    //     $(api.column(13).footer()).html(totalJmlFilmRusak);
+                    //     $("#jenisFoto").html(foto);
+                    //     $("#proyeksi").html(summary);
+                    //     $("#mesin").html(mesin);
+                    //     $("#petugas").html(petugas);
+                    // },
+                })
+                .buttons()
+                .container()
+                .appendTo("#hasilRo_wrapper .col-md-6:eq(0)");
+
+            $("#jumlahPetugas")
+                .DataTable({
+                    data: response.jumlah,
+                    columns: [
+                        {
+                            data: null, // Data null akan diisi oleh render function
+                            render: function (data, type, row, meta) {
+                                return meta.row + 1; // Nomor urut mulai dari 1
+                            },
+                            title: "No", // Judul kolom
+                        },
+                        { data: "nip" },
+                        { data: "nama" },
+                        { data: "jml" },
+                    ],
                     autoWidth: false,
                     buttons: [
                         {
@@ -101,12 +345,12 @@ function cariRo(tglAwal, tglAkhir, norm) {
                                 "  s.d. " +
                                 tglB,
                         },
-                        "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+                        "colvis",
                     ],
                 })
                 .buttons()
                 .container()
-                .appendTo("#hasilRo_wrapper .col-md-6:eq(0)");
+                .appendTo("#jumlahPetugas_wrapper .col-md-6:eq(0)");
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);

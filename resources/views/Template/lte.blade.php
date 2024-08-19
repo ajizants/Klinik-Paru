@@ -24,7 +24,7 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
     <link type="text/css" rel="stylesheet" href="{{ asset('css/mystyle.css') }}">
-
+    @include('Template.script')
 </head>
 
 <body class="sidebar-mini layout-fixed control-sidebar-slide-open sidebar-collapse text-sm">

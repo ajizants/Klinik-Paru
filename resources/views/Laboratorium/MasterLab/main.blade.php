@@ -5,7 +5,11 @@
     @include('Laboratorium.MasterLab.input')
 
 
-    @include('Template.script')
+
+    <!-- my script -->
+    <script src="{{ asset('js/template.js') }}"></script>
+    <script src="{{ asset('js/populate.js') }}"></script>
+    <script src="{{ asset('js/masterLab.js') }}"></script>
 
     <div class="modal fade" id="modal-update">
         <div class="modal-dialog modal-xl">
@@ -86,8 +90,4 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-    <!-- my script -->
-    <script src="{{ asset('js/template.js') }}"></script>
-    <script src="{{ asset('js/populate.js') }}"></script>
-    <script src="{{ asset('js/masterLab.js') }}"></script>
 @endsection

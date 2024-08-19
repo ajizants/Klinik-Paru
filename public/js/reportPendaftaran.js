@@ -184,6 +184,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                 .DataTable({
                     data: [total],
                     columns: [
+                        { data: "jumlah_no_antrian", className: "text-center" },
                         { data: "jumlah_pasien", className: "text-center" },
                         {
                             data: "jumlah_pasien_batal",

@@ -17,7 +17,7 @@
     @include('Template.footer')
 
     </div>
-    @include('Template.script')
+
 
 
     <!-- my script -->

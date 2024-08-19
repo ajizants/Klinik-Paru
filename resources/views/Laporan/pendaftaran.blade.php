@@ -62,6 +62,7 @@
                     cellspacing="0">
                     <thead class="bg bg-teal table-bordered border-warning">
                         <tr>
+                            <th class="text-center">Jumlah No Antri</th>
                             <th class="text-center">Jumlah Pasien</th>
                             <th class="text-center">Pasien Batal</th>
                             <th class="text-center">Pasien Skip</th>
@@ -120,16 +121,9 @@
         </div>
     </div>
 
-    @include('Template.script')
-
-
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('vendor/chart.js/Chart.min.js') }}"></script>
     <script src="{{ asset('vendor/chart.js/Chart.bundle.min.js') }}"></script>
     <script src="{{ asset('js/reportPendaftaran.js') }}"></script>
-
-    </body>
-
-    </html>
 @endsection

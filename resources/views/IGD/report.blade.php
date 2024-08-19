@@ -50,53 +50,7 @@
             </div>
         </div>
     </div>
-    {{-- <div class="card shadow mb-4">
-        <!-- Card Header - Accordion -->
-        <a href="#collapseCardDaftarTindakan" class="d-block card-header py-1 bg bg-info" data-toggle="collapse"
-            role="button" aria-expanded="true" aria-controls="collapseCardDaftarTindakan">
-            <h4 id="DaftarTindakanSection" class="m-0 font-weight-bold text-dark text-center">REPORT PETUGAS IGD By PEGAWAI
-            </h4>
-        </a>
-        <!-- Card Content - Collapse -->
-        <div class="collapse show" id="collapseCardDaftarTindakan">
-            <div class="container">
-                <fieldset>
-                    <div class="form-group">
-                        @csrf
-                        <form class="form-inline d-flex justify-content-start p-2">
-                            <label for="mulaiTglAll"> <b>Tanggal Awal :</b></label>
-                            <input type="date" class="form-control bg bg-warning m-2" id="mulaiTglAll"
-                                value="{{ old('date') }}" required>
-                            <label for="selesaiTglAll" class="form-label"><b>Tanggal Akhir :</b></label>
-                            <input type="date" class="form-control bg bg-warning m-2" id="selesaiTglAll"
-                                value="{{ old('date') }}" required>
-                            <a id="cariAll" class="btn btn-success d-flex justify-content-center mx-2">Cari</a>
-                        </form>
-                        <div class="col  border border-3 border-info mt-2 p-4">
-                            <div class="table-responsive pt-2 px-2">
-                                <table id="reportAll" name="reportAll" class="table table-striped" style="width:100%"
-                                    cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th class="">No</th>
-                                            <th class="">Nip</th>
-                                            <th class="">Nama</th>
-                                            <th class="col-3">Jumlah</th>
-                                            <th class="">Status</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                            <div id="loadingSpinner" style="display: none;">
-                                <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
 
-            </div>
-        </div>
-    </div> --}}
     <div class="card shadow mb-4">
         <!-- Card Header - Accordion -->
         <a href="#collapseCardPoin" class="d-block card-header py-1 bg bg-info" data-toggle="collapse" role="button"
@@ -154,8 +108,6 @@
     @include('Template.footer')
 
     </div>
-    @include('Template.script')
-
     <!-- my script -->
     <script src="{{ asset('js/report.js') }}"></script>
 @endsection

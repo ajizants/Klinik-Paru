@@ -188,6 +188,7 @@ class PasienKominfoController extends Controller
         // dd($dataPendaftaranResponse);
 
         // Filter data dengan keterangan "SELESAI DOPANGGIL PENDAFTARAN"
+        // $filteredData = $dataPendaftaranResponse;
         $filteredData = array_filter($dataPendaftaranResponse, function ($item) {
             return isset($item['keterangan']) && $item['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
         });
@@ -224,9 +225,14 @@ class PasienKominfoController extends Controller
         $jumlahSkip = count(array_filter($dataPendaftaranResponse, function ($item) {
             return isset($item['keterangan']) && strpos($item['keterangan'], 'SKIP LOKET PENDAFTARAN') !== false;
         }));
+        $jumlahTunggu = count(array_filter($dataPendaftaranResponse, function ($item) {
+            return isset($item['keterangan']) && strpos($item['keterangan'], 'MENUNGGU DIPANGGIL LOKET PENDAFTARAN') !== false;
+        }));
 
         // Build response
         $jumlah = [
+            'jumlah_no_antrian' => (int) count($dataPendaftaranResponse),
+            'jumlah_no_menunggu' => (int) $jumlahTunggu,
             'jumlah_pasien' => (int) count($filteredData),
             'jumlah_pasien_batal' => (int) $jumlahBatal,
             'jumlah_nomor_skip' => (int) $jumlahSkip,
@@ -1357,7 +1363,7 @@ class PasienKominfoController extends Controller
             'rm' => 0,
             'ro' => 0,
             'lab' => 0,
-            'igd' => 0
+            'igd' => 0,
         ];
 
         foreach ($data as $message) {
@@ -1403,6 +1409,5 @@ class PasienKominfoController extends Controller
 
         return $results;
     }
-
 
 }

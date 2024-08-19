@@ -5,7 +5,6 @@
     @include('RO.Trans.antrian')
     @include('RO.Trans.input')
 
-    @include('Template.script')
 
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
