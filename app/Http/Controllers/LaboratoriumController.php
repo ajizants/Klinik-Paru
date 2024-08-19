@@ -79,8 +79,11 @@ class LaboratoriumController extends Controller
                 $pemeriksaan = LaboratoriumHasilModel::with('pemeriksaan')
                 ->where('norm', 'like', '%' . $norm . '%')
                 ->whereDate('created_at', 'like', '%' . $tgl . '%')->get();
+                // dd($pemeriksaan);
+                if (!empty($pemeriksaan) && $pemeriksaan != "[]") {
+                    $data->pemeriksaan = $pemeriksaan;
+                }
 
-                $data->pemeriksaan = $pemeriksaan;
 
 
                 $lab = json_decode($data, true);
