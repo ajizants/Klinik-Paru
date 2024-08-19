@@ -127,7 +127,7 @@
                                                         <th>NO</th>
                                                         <th>NO RM</th>
                                                         <th>Item Pemeriksaan</th>
-                                                        {{-- <th>Hasil</th> --}}
+                                                        <th>TGL</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>

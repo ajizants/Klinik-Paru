@@ -227,6 +227,21 @@ function tampilkanOrder(notrans) {
                     { data: "no" },
                     { data: "norm", className: "col-2" },
                     { data: "pemeriksaan.nmLayanan" },
+                    {
+                        data: "created_at",
+                        render: function (data) {
+                            // Format the date using JavaScript
+                            const formattedDate = new Date(data).toLocaleString(
+                                "id-ID",
+                                {
+                                    year: "numeric",
+                                    month: "numeric",
+                                    day: "numeric",
+                                }
+                            );
+                            return formattedDate;
+                        },
+                    },
                 ],
                 order: [1, "asc"],
                 scrollY: "220px",
@@ -408,6 +423,20 @@ function dataLab(data, tgl) {
             { data: "no" },
             { data: "norm" },
             { data: "pemeriksaan.nmLayanan" },
+            {
+                data: "created_at",
+                render: function (data) {
+                    // Format the date using JavaScript
+                    const formattedDate = new Date(
+                        data
+                    ).toLocaleString("id-ID", {
+                        year: "numeric",
+                        month: "numeric",
+                        day: "numeric",
+                    });
+                    return formattedDate;
+                },
+            },
         ],
         order: [1, "asc"],
         scrollY: "220px",

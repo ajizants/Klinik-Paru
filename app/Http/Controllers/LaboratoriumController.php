@@ -68,13 +68,22 @@ class LaboratoriumController extends Controller
                 $norm = $request->input('norm');
                 $tgl = $request->input('tgl');
                 // dd($tgl);
-                $data = LaboratoriumKunjunganModel::with('pemeriksaan.pemeriksaan')
-                    ->whereDate('created_at', 'like', '%' . $tgl . '%')
-                    ->where('norm', 'like', '%' . $norm . '%')
-                    ->first();
+                // $data = LaboratoriumKunjunganModel::with('pemeriksaan.pemeriksaan')
+                // ->where('created_at', 'like', '%' . $tgl . '%')
+                // ->where('norm', 'like', '%' . $norm . '%')
+                // ->first();
+                $data = LaboratoriumKunjunganModel::where('created_at', 'like', '%' . $tgl . '%')
+                ->where('norm', 'like', '%' . $norm . '%')
+                ->first();
+
+                $pemeriksaan = LaboratoriumHasilModel::with('pemeriksaan')
+                ->where('norm', 'like', '%' . $norm . '%')
+                ->whereDate('created_at', 'like', '%' . $tgl . '%')->get();
+
+                $data->pemeriksaan = $pemeriksaan;
+
 
                 $lab = json_decode($data, true);
-                // dd($lab);
                 if ($data == null) {
                     $res = [
                         'message' => 'Belum ada Transaksi Lab',
