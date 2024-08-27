@@ -440,8 +440,22 @@ function showFoto(foto) {
         tabel.clear().destroy();
     }
     foto.forEach(function (item, index) {
-        const parts = item.foto.split("_");
-        const ket = parts[2].split(".")[0]; // Extract the third part and remove the extension
+        let ket = ""; // Default value if no valid 'ket' part is found
+
+        // Check if the file name includes an underscore and has at least three parts
+        if (item.foto.includes("_")) {
+            const parts = item.foto.split("_");
+
+            if (parts.length > 2) {
+                // Safely access the third part and remove the extension
+                ket = parts[2].split(".")[0];
+            }
+        }
+
+        // If 'ket' is empty or undefined, you can provide a fallback or leave it as an empty string
+        if (!ket) {
+            ket = ""; // Or some other fallback value
+        }
         console.log("🚀 ~ ket:", ket);
 
         item.actions = `<a type="button"  class="btn-sm btn-danger mx-2"
