@@ -167,14 +167,23 @@ class HomeController extends Controller
 
         return view('RO.LogBook.main')->with('title', $title);
     }
+    public function rontgenHasil()
+    {
+        $title = 'Hasil Rontgen';
+        $appUrlRo = env('APP_URLRO');
+        return view('RO.Hasil.main', compact('appUrlRo'))->with([
+            'title' => $title,
+
+        ]);
+    }
 
     public function gizi()
     {
         $title = 'Gizi';
         $sub = GiziDxSubKelasModel::with('domain')->get();
-        $dxMed=DiagnosaModel::get();
+        $dxMed = DiagnosaModel::get();
         // dd($sub);
-        return view('Gizi.Trans.main', compact('title', 'sub',"dxMed"));
+        return view('Gizi.Trans.main', compact('title', 'sub', "dxMed"));
     }
     public function riwayatGizi()
     {

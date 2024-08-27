@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
     //riwayat diagnosa
     Route::get('/Riwayat/Pasien', [HomeController::class, 'riwayatKunjungan'])->name('riwayatKunjungan')->middleware('role:dokter');
 });
+Route::get('RO/Hasil', [HomeController::class, 'rontgenHasil'])->name('rontgenHasil');
 Route::get('dispenser', [HomeController::class, 'dispenser'])->name('dispenser');
 Route::get('verif', [HomeController::class, 'verif'])->name('verif');
 Route::get('displayAntrian', [HomeController::class, 'displayAntrian'])->name('displayAntrian');

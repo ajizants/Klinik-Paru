@@ -12,6 +12,10 @@ class TransPetugasModel extends Model
     public $incrementing = false;
     public $timestamps = false;
 
+    protected $fillable = [
+        'notrans', 'p_dokter_poli', 'p_rontgen',
+    ];
+
     public function pegawai()
     {
         return $this->hasOne(PegawaiModel::class, 'nip', 'p_dokter_poli');

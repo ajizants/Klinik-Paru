@@ -8,6 +8,8 @@ use App\Models\ROJenisKondisi;
 use App\Models\ROTransaksiHasilModel;
 use App\Models\ROTransaksiModel;
 use App\Models\TransPetugasModel;
+use function PHPUnit\Framework\isEmpty;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -44,7 +46,7 @@ class ROTransaksiController extends Controller
             'norm' => 'required',
             'nama' => 'required',
             'alamat' => 'required',
-            'tglRo' => 'required|date_format:Y-m-d',
+            'tgltrans' => 'required|date_format:Y-m-d',
             'noreg' => 'required',
             'pasienRawat' => 'required',
             'kdFoto' => 'required',
@@ -57,10 +59,10 @@ class ROTransaksiController extends Controller
             'jmlFilmRusak' => 'required',
             'kdMesin' => 'required',
             'kdProyeksi' => 'required',
-            // 'catatan' => 'required',
             'layanan' => 'required',
             'p_rontgen' => 'required',
             'dokter' => 'required',
+            'jk' => 'required',
         ]);
 
         // Jika validasi gagal, kembalikan respons dengan pesan error
@@ -92,7 +94,7 @@ class ROTransaksiController extends Controller
             $transaksi->nama = $request->input('nama');
             $transaksi->alamat = $request->input('alamat');
             $transaksi->jk = $request->input('jk');
-            $transaksi->tgltrans = $request->input('tglRo');
+            $transaksi->tgltrans = $request->input('tgltrans');
             $transaksi->noreg = $request->input('noreg');
             $transaksi->pasienRawat = $request->input('pasienRawat');
             $transaksi->kdFoto = $request->input('kdFoto');
@@ -109,7 +111,15 @@ class ROTransaksiController extends Controller
             $transaksi->layanan = $request->input('layanan');
             $transaksi->selesai = 1;
             $transaksi->kdKondisiRo = 55;
-
+            if ($request->input('ket_foto') == '') {
+                $ket_foto = 'PA';
+            } else {
+                $ket_foto = $request->input('ket_foto');
+            }
+            // dd($ket_foto);
+            $tanggalBersih = preg_replace("/[^0-9]/", "", $request->input('tgltrans'));
+            $namaFile = $tanggalBersih . '_' . $request->input('norm') . '_' . $ket_foto . $request->input('foto') . '.' . pathinfo($request->file('gambar')->getClientOriginalName(), PATHINFO_EXTENSION);
+            // dd($namaFile);
             // Simpan data ke dalam database
             $transaksi->save();
 
@@ -133,24 +143,27 @@ class ROTransaksiController extends Controller
             DB::beginTransaction();
             try {
                 if ($request->hasFile('gambar')) {
+                    // dd($namaFile);
                     $upload = ROTransaksiHasilModel::where('norm', $request->input('norm'))
-                        ->whereDate('tanggal', $request->input('tglRo'))
+                        ->where('foto', $namaFile)
+                        ->whereDate('tanggal', $request->input('tgltrans'))
                         ->first();
+                    // dd($upload);
 
                     if (!$upload) {
                         // Jika tidak ada data, buat entitas baru
                         $upload = new ROTransaksiHasilModel();
                         $upload->norm = $request->input('norm');
-                        $upload->tanggal = $request->input('tglRo');
+                        $upload->tanggal = $request->input('tgltrans');
                         $upload->nama = $request->input('nama');
-                        $tanggalBersih = preg_replace("/[^0-9]/", "", $request->input('tglRo'));
-                        $namaFile = $tanggalBersih . '_' . $request->input('norm') . '.' . pathinfo($request->file('gambar')->getClientOriginalName(), PATHINFO_EXTENSION);
                         $upload->foto = $namaFile;
 
                         // Upload gambar karena data belum ada
                         $file = $request->file('gambar');
                         $fileName = $file->getClientOriginalName();
                         $filePath = $file->getPathname();
+                        $jenis = $request->input('ket_foto');
+                        // dd($jenis);
 
                         $param = [
                             [
@@ -163,11 +176,15 @@ class ROTransaksiController extends Controller
                             ],
                             [
                                 'name' => 'tanggal',
-                                'contents' => $request->input('tglRo'),
+                                'contents' => $request->input('tgltrans'),
                             ],
                             [
                                 'name' => 'nama',
                                 'contents' => $request->input('nama'),
+                            ],
+                            [
+                                'name' => 'jenis',
+                                'contents' => $jenis,
                             ],
                             [
                                 'name' => 'foto',
@@ -187,7 +204,8 @@ class ROTransaksiController extends Controller
                     }
                 } else {
                     $upload = ROTransaksiHasilModel::where('norm', $request->input('norm'))
-                        ->whereDate('tanggal', $request->input('tglRo'))
+                        ->whereDate('tanggal', $request->input('tgltrans'))
+                        ->where('foto', $namaFile)
                         ->first();
 
                     if (!$upload) {
@@ -214,6 +232,7 @@ class ROTransaksiController extends Controller
                 Log::error('Terjadi kesalahan saat mengupload gambar: ' . $e->getMessage());
                 return response()->json(['message' => 'Terjadi kesalahan saat mengupload gambar: ' . $e->getMessage()], 500);
             }
+
         } catch (\Exception $e) {
             DB::rollback(); // Rollback transaksi jika terjadi kesalahan
             Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
@@ -221,13 +240,140 @@ class ROTransaksiController extends Controller
         }
     }
 
+    public function updateGambar(Request $request)
+    {
+        // Sanitize the date by removing non-numeric characters
+        $tanggalBersih = preg_replace("/[^0-9]/", "", $request->input('tgltrans'));
+
+        // Construct the new file name
+        $namaFile = $tanggalBersih . '_' . $request->input('norm') . '_' . $request->input('ket_foto') . $request->input('foto') . '.' . $request->file('gambar')->getClientOriginalExtension();
+        // dd($namaFile);
+        // Find the existing record by ID
+        $dataFoto = ROTransaksiHasilModel::where('norm', $request->input('norm'))
+            ->where('foto', $namaFile)->first();
+        // dd($dataFoto);
+
+        if ($dataFoto) {
+            // Update the record with new data
+            $dataFoto->norm = $request->input('norm');
+            $dataFoto->tanggal = $request->input('tgltrans');
+            $dataFoto->nama = $request->input('nama');
+            $dataFoto->foto = $namaFile;
+
+            // Upload gambar karena data belum ada
+            $file = $request->file('gambar');
+            $fileName = $file->getClientOriginalName();
+            $filePath = $file->getPathname();
+            $jenis = $request->input('ket_foto');
+            // dd($jenis);
+
+            $param = [
+                [
+                    'name' => 'norm',
+                    'contents' => $request->input('norm'),
+                ],
+                [
+                    'name' => 'notrans',
+                    'contents' => $request->input('notrans'),
+                ],
+                [
+                    'name' => 'tanggal',
+                    'contents' => $request->input('tgltrans'),
+                ],
+                [
+                    'name' => 'nama',
+                    'contents' => $request->input('nama'),
+                ],
+                [
+                    'name' => 'jenis',
+                    'contents' => $jenis,
+                ],
+                [
+                    'name' => 'foto',
+                    'contents' => fopen($filePath, 'r'),
+                    'filename' => $fileName,
+                ],
+            ];
+
+            // Update foto di db rontgen dengan memanggil metode simpanFoto()
+            $keterangan_upload = $dataFoto->simpanFoto($param);
+            //ambil message dari respon
+            $resMsg = [
+                // 'metadata' => [
+                'message' => $keterangan_upload['message'],
+                'status' => 200,
+                // ],
+            ];
+            // Save the updated record to the database RS Paru
+            $dataFoto->save();
+
+            return response()->json($resMsg, 200, [], JSON_PRETTY_PRINT);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Data not found'], 404);
+    }
+
+    public function deleteGambar(Request $request)
+    {
+        $msg = [];
+        DB::beginTransaction();
+        $client = new Client(); // Moved client instantiation outside try block
+
+        try {
+            $gambar = ROTransaksiHasilModel::find($request->input('id')); // Use find for better readability
+            if (!$gambar) {
+                // Data not found
+                $msg = [
+                    'metadata' => [
+                        'message' => 'Data tidak ditemukan',
+                        'status' => 404,
+                    ],
+                ];
+                return response()->json($msg, 404); // Return response immediately
+            }
+
+            // Prepare for external deletion
+            $url = env('APP_URL_DELETE'); // Ensure this points to the correct URL of your PHP script on Server B
+            $urlDelete = $url . '?id=' . $request->input('id');
+
+            // Send request to delete the image from the external server
+            $response = $client->request('GET', $urlDelete);
+            if ($response->getStatusCode() !== 200) {
+                throw new \Exception('Gagal menghapus gambar di server eksternal.');
+            }
+
+            $res = json_decode($response->getBody()->getContents(), true);
+            // Delete the local image record
+            $gambar->delete();
+            $msg = [
+                'metadata' => [
+                    // 'message' => $res['message'],
+                    'message' => "Gambar berhasil di hapus",
+                    'status' => 200,
+                ],
+            ];
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Terjadi kesalahan saat menghapus gambar: ' . $e->getMessage());
+            $msg = [
+                'metadata' => [
+                    'message' => 'Terjadi kesalahan saat menghapus gambar: ' . $e->getMessage(),
+                    'status' => 500,
+                ],
+            ];
+        }
+
+        return response()->json($msg, 200, [], JSON_PRETTY_PRINT);
+    }
+
     public function hasilRo(Request $request)
     {
         $norm = $request->input('norm');
-        $data = ROTransaksiHasilModel::on('mysql')
-            ->when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
-                return $query->where('norm', $norm);
-            })
+        $data = RoHasilModel::when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
+            return $query->where('norm', $norm);
+        })
             ->get();
         if ($data->isEmpty()) {
             $res = [
@@ -485,7 +631,7 @@ class ROTransaksiController extends Controller
                     return $query->where('norm', $norm);
                 })
                 ->whereDate('tanggal', $tgl)
-                ->first();
+                ->get();
 
             if (!$data_foto) {
                 $foto = [

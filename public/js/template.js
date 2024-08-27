@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 function formatNorm(inputElement) {
-    console.log("🚀 ~ formatNorm ~ inputElement:", inputElement);
+    // console.log("🚀 ~ formatNorm ~ inputElement:", inputElement);
     // Pastikan inputElement adalah objek jQuery yang valid
     if (inputElement && inputElement.val) {
         // Hapus karakter selain digit
@@ -146,7 +146,7 @@ function toggleSections(sectionToShow) {
 }
 
 function enterCariRM(event, ruang) {
-    console.log("🚀 ~ enterCariRM ~ ruang:", ruang);
+    // console.log("🚀 ~ enterCariRM ~ ruang:", ruang);
     if (event.key === "Enter") {
         var tgl = $("#tanggal").val();
         var formatNorm = $("#norm").val().replace(/\D/g, "");

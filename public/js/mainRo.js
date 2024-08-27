@@ -82,13 +82,17 @@ function validateAndSubmit() {
     }
 }
 
+var gambarInput = document.getElementById("fileRo");
+var gambarInput2 = document.getElementById("fileRo2");
+var gambarInput3 = document.getElementById("fileRo3");
 async function simpan() {
     try {
         var notrans = document.getElementById("notrans").value;
         var norm = document.getElementById("norm").value;
         var nama = document.getElementById("nama").value;
         var alamat = document.getElementById("alamat").value;
-        var tglRo = document.getElementById("tglRo").value;
+        var tgltrans = document.getElementById("tglRo").value;
+        var jk = document.getElementById("jk").value;
         var noreg = document.getElementById("noreg").value;
         var pasienRawat = document.querySelector(
             'input[name="pasienRawat"]:checked'
@@ -108,6 +112,7 @@ async function simpan() {
         var p_rontgen = document.getElementById("p_rontgen").value;
         var dokter = document.getElementById("dokter").value;
 
+        var ket_foto = document.getElementById("ket_foto").value;
         var gambar = gambarInput.files[0];
 
         if (gambar) {
@@ -125,7 +130,7 @@ async function simpan() {
         formData.append("nama", nama);
         formData.append("alamat", alamat);
         formData.append("jk", jk);
-        formData.append("tglRo", tglRo);
+        formData.append("tgltrans", tgltrans);
         formData.append("noreg", noreg);
         formData.append("kdFoto", kdFoto);
         formData.append("kdFilm", kdFilm);
@@ -142,6 +147,7 @@ async function simpan() {
         formData.append("layanan", layanan);
         formData.append("p_rontgen", p_rontgen);
         formData.append("dokter", dokter);
+        formData.append("ket_foto", ket_foto);
         formData.append("gambar", foto);
 
         // Kirim data menggunakan fetch API dengan async/await
@@ -183,6 +189,111 @@ async function simpan() {
             text: "Terjadi kesalahan saat menyimpan data: " + error.message,
         });
     }
+}
+
+function multyPic() {}
+async function update() {
+    try {
+        var norm = document.getElementById("norm").value;
+        var nama = document.getElementById("nama").value;
+        var tglRo = document.getElementById("tglRo").value;
+
+        var ket_foto = document.getElementById("ket_foto_new").value;
+        var gambar = gambarInput2.files[0];
+
+        // Membuat objek FormData untuk mengirim data dengan file
+        var formData = new FormData();
+        formData.append("norm", norm);
+        formData.append("nama", nama);
+        formData.append("tgltrans", tglRo);
+
+        if (gambar) {
+            formData.append("gambar", gambar);
+            formData.append("ket_foto", ket_foto);
+        }
+
+        // Kirim data menggunakan fetch API dengan async/await
+        const response = await fetch("/api/updateRo", {
+            method: "POST",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || response.statusText);
+        }
+
+        const responseData = await response.json();
+        console.log("Data berhasil disimpan:", responseData);
+        var $msg = responseData.message;
+        console.log("🚀 ~ update ~ $msg:", $msg);
+        Swal.fire({
+            icon: "success",
+            title:
+                "Data berhasil disimpan,\n \n" +
+                "Maturnuwun...!!" +
+                "\n\nKeterangan: " +
+                $msg,
+        });
+    } catch (error) {
+        console.error("Terjadi kesalahan saat menyimpan data:", error.message);
+
+        // Tampilkan pesan error menggunakan SweetAlert
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Terjadi kesalahan saat menyimpan data: " + error.message,
+        });
+    }
+}
+
+function deleteFoto(id) {
+    console.log("🚀 ~ deleteFoto ~ id:", id);
+
+    Swal.fire({
+        title: "Konfirmasi",
+        text: "Apakah Anda yakin ingin menghapus?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Hapus!",
+    }).then(async (result) => {
+        // Menambahkan async di sini
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch("/api/deleteFotoPasien", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ id: id }),
+                });
+
+                console.log("🚀 ~ deleteFoto ~ response:", response);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || response.statusText);
+                } else {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Data Berhasil",
+                        text: "Data berhasil dihapus.",
+                    });
+                }
+            } catch (error) {
+                console.error(
+                    "Terjadi kesalahan saat menghapus data:",
+                    error.message
+                );
+                Swal.fire({
+                    icon: "error",
+                    title: "Terjadi Kesalahan",
+                    text: "Gagal menghapus data: " + error.message,
+                });
+            }
+        }
+    });
 }
 
 async function cariTsRo(norm, tgl) {
@@ -229,18 +340,16 @@ async function cariTsRo(norm, tgl) {
             // Ensure data and the 'transaksi_ro' object exist before setting values
             if (data && data.data && data.data.transaksi_ro) {
                 const transaksi = data.data.transaksi_ro;
-                console.log("🚀 ~ cariTsRo ~ transaksi:", transaksi);
                 const petugas = data.data.petugas;
                 const foto = data.data.foto_thorax;
-                var idFoto = foto.id;
+                showFoto(foto);
 
                 //ternary check transaksi.jk, if null get from transaksi.pasien.jkel
                 jk = transaksi.jk || transaksi.pasien.jkel;
-                console.log("🚀 ~ cariTsRo ~ jk:", jk);
-                var alamat = `${transaksi.pasien.kelurahan}, ${transaksi.pasien.rtrw}, ${transaksi.pasien.kecamatan}, ${transaksi.pasien.kabupaten}`;
-                $("#norm").val(transaksi.pasien.norm || "");
-                $("#nama").val(transaksi.pasien.nama || "");
-                $("#alamat").val(alamat || "");
+                // var alamat = `${transaksi.pasien.kelurahan}, ${transaksi.pasien.rtrw}, ${transaksi.pasien.kecamatan}, ${transaksi.pasien.kabupaten}`;
+                $("#norm").val(transaksi.norm || "");
+                $("#nama").val(transaksi.nama || "");
+                $("#alamat").val(transaksi.alamat || "");
                 // jk = transaksi.pasien.jkel || "";
                 $("#jk").val(transaksi.jk || transaksi.pasien.jkel);
                 $("#notrans").val(transaksi.notrans || "");
@@ -284,21 +393,6 @@ async function cariTsRo(norm, tgl) {
                 $("#p_rontgen")
                     .val(petugas.p_rontgen || "")
                     .trigger("change");
-                $("#idFoto").text(
-                    "ID Foto " + foto.id + " - " + foto.nama || ""
-                );
-                if (foto && foto.foto) {
-                    $("#preview").show();
-                    $("#idFoto").text(
-                        "ID Foto " + foto.id + " - " + foto.nama || ""
-                    );
-                    $("#displayRo")
-                        .attr("src", appUrlRo + foto.foto)
-                        .css({ width: "110px", height: "110px" })
-                        .show();
-                } else {
-                    $("#displayRo").attr("src", "").hide();
-                }
 
                 Swal.close();
                 scrollToInputSection();
@@ -318,6 +412,91 @@ async function cariTsRo(norm, tgl) {
         });
         // Optionally, handle the error by informing the user or retrying
     }
+}
+
+async function hasilRo(norm, tgl) {
+    var norm = norm || $("#norm").val();
+    var tgl = tgl || $("#tglRo").val();
+    try {
+        const response = await fetch("/api/ro", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ norm, tgl }),
+        });
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error("Terjadi kesalahan saat mencari data:", error);
+    }
+}
+
+function showFoto(foto) {
+    console.log("🚀 ~ showFoto ~ foto:", foto);
+    $("#preview").show();
+    if ($.fn.DataTable.isDataTable("#tableRo")) {
+        var tabel = $("#tableRo").DataTable();
+        tabel.clear().destroy();
+    }
+    foto.forEach(function (item, index) {
+        const parts = item.foto.split("_");
+        const ket = parts[2].split(".")[0]; // Extract the third part and remove the extension
+        console.log("🚀 ~ ket:", ket);
+
+        item.actions = `<a type="button"  class="btn-sm btn-danger mx-2"
+                            data-id="${item.id}"
+                            data-foto="${item.foto}"
+                            data-norm="${item.norm}"
+                            data-nama="${item.nama}"
+                            onclick="deleteFoto('${item.id}')"
+                            ><i class="fas fa-trash"></i></a>
+                        <a type="button"  class="btn-sm btn-warning mx-2"
+                            data-id="${item.id}"
+                            data-foto="${item.foto}"
+                            data-norm="${item.norm}"
+                            data-nama="${item.nama}"
+                            data-toggle="modal" data-target="#staticBackdrop"
+                            onclick="document.getElementById('idFoto').value = '${item.id}'; document.getElementById('nmFoto').value = '${item.foto}';document.getElementById('ket_foto_new').value = '${ket}';"
+                            ><i class="fas fa-pen-to-square"></i></a>`;
+        item.no = index + 1;
+    });
+
+    $("#tableRo").DataTable({
+        data: foto,
+        paging: false,
+        searching: false,
+        ordering: false,
+        columns: [
+            { data: "actions", className: "text-center col-2" },
+            { data: "id" },
+            {
+                data: "foto",
+                render: function (data, type, row) {
+                    return `
+                    <a type="button" class="btn-sm btn-primary px-5" data-toggle="modal" data-target="#modalFoto" onclick="modalFotoShow('${row.foto}')">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>`;
+                },
+            },
+            { data: "tanggal" },
+            { data: "foto" },
+        ],
+    });
+}
+
+function modalFotoShow(foto) {
+    // Update the modal image source
+    // const appUrlRo = "your_image_directory_url/"; // Replace with the actual directory URL
+    const fullImageUrl = appUrlRo + foto;
+
+    // Set the image source in the modal
+    document.getElementById("modalFotoImage").src = fullImageUrl;
+
+    // Optionally, you can set the modal title or other elements here
+
+    // Show the modal (this is redundant if you're already triggering it with data-toggle)
+    $("#modalFoto").modal("show");
 }
 
 async function cariPasien() {
@@ -401,9 +580,8 @@ function askRo(button) {
 
     scrollToInputSection();
 }
-var gambarInput = document.getElementById("fileRo");
 
-function updateAntrian() {
+async function updateAntrian() {
     var tbBlmUpload = $("#daftarUpload");
     var tbSelesai = $("#daftarSelesai");
     $("#daftarTunggu").DataTable();
@@ -488,148 +666,6 @@ function processAntrianData(data, filter, tabel) {
     }
     $("#loadingSpinner").hide();
 }
-
-// function fetchDataAntrian(params, callback) {
-//     console.log("🚀 ~ fetchDataAntrian ~ params:", params);
-//     $.ajax({
-//         url: "/api/cpptKominfo",
-//         type: "post",
-//         data: params,
-//         success: function (response) {
-//             callback(response);
-//         },
-//         error: function (xhr) {
-//             // Tangani kesalahan jika diperlukan
-//         },
-//     });
-// }
-
-// // Fungsi untuk inisialisasi tabel data antrian
-// function initializeDataAntrian(response) {
-//     if (response && response.response && response.response.data) {
-//         var dataArray = response.response.data.filter(function (item) {
-//             return item.status === "belum";
-//         });
-
-//         dataArray.forEach(function (item) {
-//             var asktind = "";
-//             if (item.radiologi && Array.isArray(item.radiologi)) {
-//                 item.radiologi.forEach(function (radiologi) {
-//                     asktind += `${radiologi.layanan} (${radiologi.keterangan}), `;
-//                 });
-//             }
-//             item.asktind = asktind;
-//             item.index = dataArray.indexOf(item) + 1;
-
-//             var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-//             item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-//                             data-norm="${item.pasien_no_rm}"
-//                             data-nama="${item.pasien_nama}"
-//                             data-dokter="${item.dokter_nama}"
-//                             data-asktind="${asktind}"
-//                             data-kddokter="${item.nip_dokter}"
-//                             data-alamat="${alamat}"
-//                             data-layanan="${item.penjamin_nama}"
-//                             data-notrans="${item.no_trans}"
-//                             data-tgltrans="${item.tanggal}"
-//                             onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
-//         });
-
-//         $("#dataAntrian").DataTable({
-//             data: dataArray,
-//             columns: [
-//                 { data: "aksi", className: "text-center p-2" },
-//                 {
-//                     data: "status",
-//                     className: "text-center p-2",
-//                     render: function (data) {
-//                         var backgroundColor =
-//                             data === "belum" ? "danger" : "success";
-//                         return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-//                     },
-//                 },
-//                 { data: "antrean_nomor", className: "text-center p-2" },
-//                 { data: "tanggal", className: "text-center p-2 col-1" },
-//                 { data: "penjamin_nama", className: "text-center p-2" },
-//                 { data: "pasien_no_rm", className: "text-center p-2" },
-//                 { data: "pasien_nama", className: "p-2 col-2" },
-//                 { data: "asktind", className: "p-2 col-4" },
-//                 { data: "dokter_nama", className: "p-2 col-2" },
-//             ],
-//             order: [
-//                 [1, "asc"],
-//                 [2, "asc"],
-//             ],
-//         });
-//     } else {
-//         console.error(
-//             "Invalid response or response.response.data is not available:",
-//             response
-//         );
-//         // Tangani error atau tampilkan pesan yang sesuai
-//     }
-// }
-
-// // Fungsi untuk mengambil dan menampilkan data antrian
-// function antrian() {
-//     $("#loadingSpinner").show();
-//     var tanggal_awal = $("#tanggal").val();
-//     var tanggal_akhir = $("#tanggal").val();
-
-//     var param = {
-//         tanggal_awal: tanggal_awal,
-//         tanggal_akhir: tanggal_akhir,
-//         ruang: "ro",
-//     };
-
-//     fetchDataAntrian(param, function (response) {
-//         $("#loadingSpinner").hide();
-
-//         if ($.fn.DataTable.isDataTable("#dataAntrian")) {
-//             var table = $("#dataAntrian").DataTable();
-//             if (response && response.response && response.response.data) {
-//                 var dataArray = response.response.data.filter(function (item) {
-//                     return item.status === "belum";
-//                 });
-
-//                 // Proses ulang data untuk memperbarui kolom 'aksi' dan lainnya jika diperlukan
-//                 dataArray.forEach(function (item) {
-//                     var asktind = "";
-//                     if (item.radiologi && Array.isArray(item.radiologi)) {
-//                         item.radiologi.forEach(function (radiologi) {
-//                             asktind += `${radiologi.layanan} ket: ${radiologi.layanan}, `;
-//                         });
-//                     }
-//                     item.asktind = asktind;
-//                     item.index = dataArray.indexOf(item) + 1;
-
-//                     var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-//                     item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-//                                     data-norm="${item.pasien_no_rm}"
-//                                     data-nama="${item.pasien_nama}"
-//                                     data-dokter="${item.dokter_nama}"
-//                                     data-asktind="${asktind}"
-//                                     data-kddokter="${item.nip_dokter}"
-//                                     data-alamat="${alamat}"
-//                                     data-layanan="${item.penjamin_nama}"
-//                                     data-notrans="${item.no_trans}"
-//                                     data-tgltrans="${item.tanggal}"
-//                                     onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
-//                 });
-
-//                 // Hapus data yang ada, tambahkan data baru, dan gambar ulang tabel
-//                 table.clear().rows.add(dataArray).draw();
-//             } else {
-//                 console.error(
-//                     "Invalid response or response.response.data is not available:",
-//                     response
-//                 );
-//             }
-//         } else {
-//             initializeDataAntrian(response);
-//         }
-//     });
-// }
 
 window.addEventListener("load", function () {
     setTglRo();

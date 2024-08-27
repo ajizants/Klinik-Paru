@@ -115,8 +115,7 @@
                                                             placeholder="Permintaan RO"> --}}
                                                     <div class="col-md-6 border border-3 border-dark"
                                                         style="height: 47px;"">
-                                                        <p id="permintaan"
-                                                        class="fw-bold fs-3">Permintaan RO:</p>
+                                                        <p id="permintaan" class="fw-bold fs-3">Permintaan RO:</p>
                                                     </div>
 
                                                 </div>
@@ -227,56 +226,167 @@
                                                     <div class="form-group row" style="margin-right: 100px;">
                                                         <label for="catatan" class="col-sm-1">Catatan</label>
                                                         <div class="col-sm pr-0">
-                                                            <textarea name="catatan" id="catatan" class="form-control textarea" rows="5"></textarea>
-                                                        </div>
-                                                        <div class="col-sm-3 ml-2" id="preview"
-                                                            style="display: none">
-                                                            <p id="idFoto" class="mb-0"></p>
-                                                            <img id="displayRo" src="" alt="Fetched Photo" />
+                                                            <textarea name="catatan" id="catatan" class="form-control textarea"></textarea>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group row">
-                                                        <label for="fileRo" class="col-form-label">Upload
-                                                            Foto</label>
-                                                        <div class="col-sm-4 ml-2">
-                                                            <input type="file" name="gambar" id="fileRo"
-                                                                class="form-control-sm" placeholder=" Pilih Foto"
-                                                                title="Foto Ro" /><span>
-                                                        </div>
 
+                                                    <div class="form-group row">
+                                                        <label class="col-form-label">Foto Rontgen</label>
+
+                                                        <div class="col-sm-auto ml-2">
+                                                            <input type="file" name="gambar" id="fileRo"
+                                                                class="form-control-sm col" placeholder=" Pilih Foto"
+                                                                title="Foto Ro" />
+                                                        </div>
+                                                        <div class="col-sm-auto">
+                                                            <input class="form-control form-control-sm col"
+                                                                name="Ket Foto 1" id="ket_foto"title="Nama Foto"
+                                                                placeholder=" Nama Foto" />
+                                                        </div>
+                                                        <div class="form-group col-sm-auto">
+                                                            <button type="button" class="btn btn-primary btn-sm"
+                                                                data-toggle="modal" data-target="#staticBackdrop">
+                                                                Upload Lebih dari 1 Foto Rontgen
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row" id="preview"style="display: none">
+                                                        <div class="col-12 table-responsive">
+                                                            <table id="tableRo"
+                                                                class="table table-striped table-hover table-bordered pt-0 mt-0 fs-6"
+                                                                style="width: 100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <td class="col-2" style="width: 35px">Aksi
+                                                                        </td>
+                                                                        <td>ID</td>
+                                                                        <td>Foto Rontgen</td>
+                                                                        <td>Nama Foto</td>
+                                                                        <td>Tanggal</td>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- /.card-body-->
-                                    </div>
-                                </div>
-
-                                <div class="form-row d-flex justify-content-end">
-                                    <label class="col-form-label" for="dokter">Dokter</label>
-                                    <div class="col-3">
-                                        <select id="dokter"
-                                            class="select2bs4 form-control mb-3 border border-primary">
-                                            <option value="">--Pilih Dokter--</option>
-                                        </select>
-                                    </div>
-                                    <label class="col-sm-1 text-right col-form-label" for="p_rontgen">Petugas</label>
-                                    <div class="col-sm-3">
-                                        <select id="p_rontgen" name="p_rontgen"
-                                            class="form-control select2bs4 petugas" required="">
-                                            <option value="">--Pilih--</option>
-                                        </select>
                                     </div>
 
-                                    <div class="col-auto">
-                                        {{-- <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a> --}}
-                                        <a class="btn btn-success" id="tblSimpan"
-                                            onclick="validateAndSubmit();">Simpan</a>
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="staticBackdrop" data-backdrop="static"
+                                        data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="staticBackdropLabel">Update
+                                                        Foto Rontgen Lainnya</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="formUpdate">
+                                                        <label for="idFoto"
+                                                            class=" col-form-label font-weight-bold mb-0 ">ID Foto
+                                                            :</label>
+                                                        <div class=" input-group">
+                                                            <input type="number" name="idFoto" id="idFoto"
+                                                                class="form-control-sm col-sm"
+                                                                placeholder="ID Foto" />
+                                                        </div>
+                                                        <label for="nmFoto"
+                                                            class=" col-form-label font-weight-bold mb-0 ">Nama Foto
+                                                            :</label>
+                                                        <div class=" input-group">
+                                                            <input type="text" name="nmFoto" id="nmFoto"
+                                                                class="form-control-sm col-sm"
+                                                                placeholder="Nama Foto" />
+                                                        </div>
+                                                        <label for="ket_foto_new"
+                                                            class="Form-Control-sm col-form-label font-weight-bold mb-0 ">Ket
+                                                            Foto
+                                                            :</label>
+                                                        <div class=" input-group">
+                                                            <input type="text" name="ket_foto_new"
+                                                                id="ket_foto_new" class="form-control-sm col-sm"
+                                                                placeholder="Ket Foto" />
+                                                        </div>
+                                                        <label class="col-form-label">Pilih
+                                                            Foto Rontgen</label>
+                                                        <div class="ml-2">
+                                                            <input type="file" name="gambar2" id="fileRo2"
+                                                                class="form-control-sm" placeholder=" Pilih Foto"
+                                                                title="Foto Ro" /><span>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary"
+                                                        onclick="update();">Upload</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-auto">
-                                        <a class="btn btn-danger" id="tblBatal" onclick="rstForm();">Batal</a>
+
+                                    <!-- Modal Show Foto -->
+                                    <div class="modal fade" id="modalFoto" tabindex="-1"
+                                        aria-labelledby="modalFotoLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered modal-xl">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalFotoLabel">Foto Rontgen</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img id="modalFotoImage" src="" alt="Foto Rontgen"
+                                                        class="img-fluid">
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+
+
+                                    <div class="form-row d-flex justify-content-end">
+                                        <label class="col-form-label" for="dokter">Dokter</label>
+                                        <div class="col-3">
+                                            <select id="dokter"
+                                                class="select2bs4 form-control mb-3 border border-primary">
+                                                <option value="">--Pilih Dokter--</option>
+                                            </select>
+                                        </div>
+                                        <label class="col-sm-1 text-right col-form-label"
+                                            for="p_rontgen">Petugas</label>
+                                        <div class="col-sm-3">
+                                            <select id="p_rontgen" name="p_rontgen"
+                                                class="form-control select2bs4 petugas" required="">
+                                                <option value="">--Pilih--</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-auto">
+                                            {{-- <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a> --}}
+                                            <a class="btn btn-success" id="tblSimpan"
+                                                onclick="validateAndSubmit();">Simpan</a>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a class="btn btn-danger" id="tblBatal" onclick="rstForm();">Batal</a>
+                                        </div>
+                                    </div>
                             </form>
                         </div>
                     </div>

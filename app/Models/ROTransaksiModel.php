@@ -11,6 +11,12 @@ class ROTransaksiModel extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
+    protected $fillable = [
+        'norm', 'nama', 'alamat', 'jk', 'tgltrans', 'noreg', 'pasienRawat',
+        'kdFoto', 'kdFilm', 'ma', 'kv', 's', 'jmlExpose', 'jmlFilmDipakai',
+        'jmlFilmRusak', 'kdMesin', 'kdProyeksi', 'catatan', 'layanan',
+    ];
+
     public function film()
     {
         return $this->hasOne(ROJenisFilm::class, 'kdFilm', 'kdFilm');

@@ -185,6 +185,8 @@ Route::post('deletekondisiRo', [RoMasterController::class, 'deletekondisiRo']);
 Route::post('deleteproyeksiRo', [RoMasterController::class, 'deleteproyeksiRo']);
 
 Route::post('addTransaksiRo', [ROTransaksiController::class, 'addTransaksiRo']);
+Route::post('updateRo', [ROTransaksiController::class, 'updateGambar']);
+Route::post('deleteFotoPasien', [ROTransaksiController::class, 'deleteGambar']);
 Route::post('cariTsRO', [ROTransaksiController::class, 'cariTransaksiRo']);
 Route::post('dataTransaksiRo', [ROTransaksiController::class, 'dataTransaksiRo']);
 Route::post('hasilRo', [ROTransaksiController::class, 'hasilRo']);
