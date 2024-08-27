@@ -125,8 +125,33 @@
             new Panzoom(container, options, {
                 // Toolbar
             });
-
         }
+        document.addEventListener("DOMContentLoaded", function() {
+            var tglTransInput = document.getElementById("waktu");
+
+            function updateDateTime() {
+                var now = new Date();
+                var options = {
+                    timeZone: "Asia/Jakarta",
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                };
+                // var formattedDate = now.toLocaleString("id-ID", options);
+                let tglnow = now
+                    .toLocaleString("id-ID", options)
+                    .replace(
+                        /(\d{4})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})/,
+                        "$1-$2-$3 $4.$5.$6"
+                    );
+
+                tglTransInput.value = tglnow;
+            }
+            setInterval(updateDateTime, 1000);
+        });
     </script>
     <style>
         #myPanzoom {
