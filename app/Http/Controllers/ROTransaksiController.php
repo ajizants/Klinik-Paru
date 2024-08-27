@@ -421,12 +421,10 @@ class ROTransaksiController extends Controller
 
             if ($data->isEmpty()) {
                 $res = [
-                    'metadata' => [
-                        'message' => 'Data foto thorax tidak ditemukan, silahkan menghubungi radiologi',
-                        'status' => 404,
-                    ],
-                    'data' => [],
+                    'message' => 'Data foto thorax tidak ditemukan, silahkan menghubungi radiologi',
+                    'status' => 404,
                 ];
+                return response()->json($res, 404, [], JSON_PRETTY_PRINT);
             } else {
                 $res = [
                     'metadata' => [

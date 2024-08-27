@@ -60,25 +60,32 @@
                     }),
                 });
 
+                // Extract the JSON data even if the response is not OK
+                const data = await response.json();
+
                 if (!response.ok) {
-                    const data = await response.json();
-                    const msg = data.message;
-                    console.log("🚀 ~ cari ~ msg:", msg);
+                    // Show the error message from the response
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: msg,
+                        text: data.message, // Extracted message from response
                     });
                     return; // Exit if data not found
                 }
 
-                const data = await response.json();
                 const foto = data.data;
-                show(foto);
-                Swal.close();
+                show(foto); // Assuming show is a function to display the data
+                Swal.close(); // Close any open SweetAlert if successful
             } catch (error) {
+                // Catch and log any error that occurs during the fetch process
                 console.error("Terjadi kesalahan saat mencari data:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Terjadi kesalahan saat mencari data, silahkan coba lagi.',
+                });
             }
+
         }
     </script>
     <script>
