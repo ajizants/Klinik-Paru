@@ -111,16 +111,18 @@ class ROTransaksiController extends Controller
             $transaksi->layanan = $request->input('layanan');
             $transaksi->selesai = 1;
             $transaksi->kdKondisiRo = 55;
-            if ($request->input('ket_foto') == '') {
-                $ket_foto = 'PA';
+            if ($request->hasFile('gambar')) {
+                if ($request->input('ket_foto') == '') {
+                    $ket_foto = 'PA';
+                } else {
+                    $ket_foto = $request->input('ket_foto');
+                }
+                $tanggalBersih = preg_replace("/[^0-9]/", "", $request->input('tgltrans'));
+                $namaFile = $tanggalBersih . '_' . $request->input('norm') . '_' . $ket_foto . $request->input('foto') . '.' . pathinfo($request->file('gambar')->getClientOriginalName(), PATHINFO_EXTENSION);
             } else {
-                $ket_foto = $request->input('ket_foto');
+                $namaFile = null;
             }
-            // dd($ket_foto);
-            $tanggalBersih = preg_replace("/[^0-9]/", "", $request->input('tgltrans'));
-            $namaFile = $tanggalBersih . '_' . $request->input('norm') . '_' . $ket_foto . $request->input('foto') . '.' . pathinfo($request->file('gambar')->getClientOriginalName(), PATHINFO_EXTENSION);
-            // dd($namaFile);
-            // Simpan data ke dalam database
+
             $transaksi->save();
 
             // Simpan transaksi petugas, cari data berdasarkan notrans, jika ada update, jika tidak ada create

@@ -243,7 +243,7 @@
                                                                 name="Ket Foto 1" id="ket_foto"title="Nama Foto"
                                                                 placeholder=" Nama Foto" />
                                                         </div>
-                                                        <div class="form-group col-sm-auto">
+                                                        <div class="form-group col-sm-auto" style="display: none;">
                                                             <button type="button" class="btn btn-primary btn-sm"
                                                                 data-toggle="modal" data-target="#staticBackdrop">
                                                                 Upload Lebih dari 1 Foto Rontgen
