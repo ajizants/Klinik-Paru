@@ -195,6 +195,12 @@
                             {{-- LAPORAN --}}
                             <li class="nav-header">LAPORAN</li>
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/RO/Hasil') }}">
+                                    <i class="fa-solid fa-x-ray nav-icon"></i>
+                                    <p>Hasil RO</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ url('/report') }}">
                                     <i class="fa-solid fa-chart-column nav-icon"></i>
                                     <p>Laporan Petugas</p>
