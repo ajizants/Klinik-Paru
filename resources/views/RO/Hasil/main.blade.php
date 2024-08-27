@@ -61,10 +61,13 @@
                 });
 
                 if (!response.ok) {
+                    const data = await response.json();
+                    const msg = data.message;
+                    console.log("🚀 ~ cari ~ msg:", msg);
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'Data tidak ditemukan',
+                        text: msg,
                     });
                     return; // Exit if data not found
                 }
