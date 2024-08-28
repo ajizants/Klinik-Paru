@@ -87,11 +87,12 @@
             }
 
         }
-    </script>
-    <script>
+
         function show(foto) {
             const preview = document.getElementById('preview');
-            preview.innerHTML = ''; // Clear existing items
+            const buttondiv = document.getElementById('buttondiv');
+            buttondiv.innerHTML = '';
+            preview.innerHTML = '';
 
             if (!Array.isArray(foto) || foto.length === 0) {
                 preview.innerHTML =
@@ -101,27 +102,98 @@
 
             foto.forEach((item, index) => {
                 const imageUrl = `${appUrlRo}${item.foto}`;
+                const caption = `${item.norm} - ${item.nama} - ${item.tanggal}`;
+                const panzoomid = `myPanzoom${item.id}`;
+                const buttonid = `btn${item.id}`;
+
+                const button =
+                    `<button type="button" class="btn btn-primary btn-sm mx-3" id="${buttonid}" onclick="toggleImage('${item.tanggal}', '${buttonid}')">Foto Tanggal: ${item.tanggal}</button>`;
+
                 const card = `
-                 <div class="col gallery">
-                     <a data-toggle="modal" data-target="#exampleModal"onclick="openPanZoom('${imageUrl}')">
-                     <div class="card m-2" style="cursor: pointer;" >
-                         <div class="card-body" style="height: 25rem;">
-                             <img src="${imageUrl}" class="card-img-top" alt="Image ${index + 1}" style="height: 100%; width: 100%; object-fit: cover;">
-                         </div>
-                         <div class="card-footer">
-                             <h5 class="text-center">${item.norm} - ${item.nama}</h5>
-                             <h5 class="text-center">Tanggal: ${item.tanggal}</h5>
-                         </div>
-                     </div>
-                     </a>
-                 </div>`;
+            <div class="col-6 gallery" id="${item.tanggal}">
+                <div class="card m-2" style="cursor: pointer;">
+                    <div class="f-panzoom" id="${panzoomid}">
+                        <div class="f-custom-controls top-right">
+                            <button data-panzoom-action="toggleFS" class="toggleFullscreen">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <g>
+                                        <path d="M14.5 9.5 21 3m0 0h-6m6 0v6M3 21l6.5-6.5M3 21v-6m0 6h6" />
+                                    </g>
+                                    <g>
+                                        <path d="m14 10 7-7m-7 7h6m-6 0V4M3 21l7-7m0 0v6m0-6H4" />
+                                    </g>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="f-custom-controls bottom-right">
+                            <button data-panzoom-change='{"angle": 90}'>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 4.55a8 8 0 0 1 6 14.9M15 15v5h5M5.63 7.16v.01M4.06 11v.01M4.63 15.1v.01M7.16 18.37v.01M11 19.94v.01" />
+                                </svg>
+                            </button>
+                            <button data-panzoom-action="zoomIn">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 5v14M5 12h14" />
+                                </svg>
+                            </button>
+                            <button data-panzoom-action="zoomOut">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M5 12h14" />
+                                </svg>
+                            </button>
+                        </div>
+                        <img class="f-panzoom__content" id="zoomed-image" src="${imageUrl}" />
+                    </div>
+                    <div class="card-footer">
+                        <h5 class="text-center">${item.norm} - ${item.nama}</h5>
+                        <h5 class="text-center">Tanggal: ${item.tanggal}</h5>
+                    </div>
+                </div>
+            </div>`;
+
+                buttondiv.insertAdjacentHTML('beforeend', button);
                 preview.insertAdjacentHTML('beforeend', card);
+
+                const container = document.getElementById(panzoomid);
+                const options = {
+                    click: "toggleCover",
+                    Toolbar: {
+                        display: ["zoomIn", "zoomOut"],
+                    },
+                };
+
+                new Panzoom(container, options);
             });
         }
 
-        function openPanZoom(imageUrl) {
+        function toggleImage(id, buttonid) {
+            const card = document.getElementById(id);
+            const button = document.getElementById(buttonid);
+
+            if (card) {
+                if (card.style.display === 'block') {
+                    // Hide the card
+                    card.style.display = 'none';
+                    button.style.opacity = '0';
+                    button.classList.remove('btn-success'); // Remove the success class
+                    button.classList.add('btn-primary'); // Add the primary class back
+                } else {
+                    // Show the card
+                    card.style.display = 'block';
+                    button.style.opacity = '1';
+                    button.classList.remove('btn-primary'); // Remove the existing class
+                    button.classList.add('btn-success'); // Add the success class
+                }
+            }
+        }
+
+
+
+
+        function openPanZoom(imageUrl, caption, panzoomid) {
             const modal = document.getElementById('exampleModal');
             const zoomedImage = document.getElementById('zoomed-image');
+            const captionId = document.getElementById('caption');
             const container = document.getElementById("myPanzoom");
             const options = {
                 click: "toggleCover",
@@ -131,6 +203,7 @@
             };
 
             zoomedImage.src = imageUrl;
+            captionId.innerHTML = caption;
 
             new Panzoom(container, options, {
                 // Toolbar
@@ -164,11 +237,6 @@
         });
     </script>
     <style>
-        #myPanzoom {
-            height: 500px;
-        }
-
-
         .f-custom-controls {
             position: absolute;
 

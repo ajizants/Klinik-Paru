@@ -17,6 +17,7 @@
                                         <button type="button" class="mx-2 btn btn-primary col-sm-auto"
                                             onclick="cari();">Cari</button>
                                     </div>
+                                    <div class="form-group row" id="buttondiv"></div>
                                 </div>
                                 <div class="container-fluid">
                                     <div id="preview" class="p-3 row"></div>
@@ -76,6 +77,8 @@
                                             </button>
                                         </div>
                                         <img class="f-panzoom__content" id="zoomed-image" src="" />
+                                        <div class="f-panzoom__caption" data-selectable id="caption">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
