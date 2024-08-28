@@ -148,7 +148,14 @@ function toggleSections(sectionToShow) {
 function enterCariRM(event, ruang) {
     // console.log("🚀 ~ enterCariRM ~ ruang:", ruang);
     if (event.key === "Enter") {
-        var tgl = $("#tanggal").val();
+        var tgl; // Declare the variable
+
+        // Check if the element with ID tgltrans exists
+        if ($("#tgltrans").length) {
+            tgl = $("#tgltrans").val();
+        } else {
+            tgl = $("#tanggal").val();
+        }
         var formatNorm = $("#norm").val().replace(/\D/g, "");
 
         while (formatNorm.length < 6) {

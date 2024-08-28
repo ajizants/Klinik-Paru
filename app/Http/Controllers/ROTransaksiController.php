@@ -8,6 +8,7 @@ use App\Models\ROJenisKondisi;
 use App\Models\ROTransaksiHasilModel;
 use App\Models\ROTransaksiModel;
 use App\Models\TransPetugasModel;
+use Carbon\Carbon;
 use function PHPUnit\Framework\isEmpty;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -88,6 +89,18 @@ class ROTransaksiController extends Controller
             } else {
                 $massage = 'Transaksi Update...!!';
             }
+            $tglTrans = $request->input('tgltrans'); // Assuming tglTrans is in 'Y-m-d' format
+            $currentDateTime = Carbon::now(); // Get current date and time
+            $today = $currentDateTime->format('Y-m-d');
+
+            // Check if today's date is not the same as tglTrans
+            if ($today !== $tglTrans) {
+                // Create a Carbon instance using tglTrans and the current time
+                $tanggal = Carbon::createFromFormat('Y-m-d H:i:s', $tglTrans . ' ' . $currentDateTime->format('H:i:s'));
+            } else {
+                // Use the current date and time
+                $tanggal = $currentDateTime;
+            }
 
             // Isi properti model dengan data dari permintaan
             $transaksi->norm = $request->input('norm');
@@ -111,6 +124,9 @@ class ROTransaksiController extends Controller
             $transaksi->layanan = $request->input('layanan');
             $transaksi->selesai = 1;
             $transaksi->kdKondisiRo = 55;
+            $transaksi->created_at = $tanggal;
+            $transaksi->updated_at = $tanggal;
+
             if ($request->hasFile('gambar')) {
                 if ($request->input('ket_foto') == '') {
                     $ket_foto = 'PA';

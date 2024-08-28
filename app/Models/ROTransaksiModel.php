@@ -14,7 +14,7 @@ class ROTransaksiModel extends Model
     protected $fillable = [
         'norm', 'nama', 'alamat', 'jk', 'tgltrans', 'noreg', 'pasienRawat',
         'kdFoto', 'kdFilm', 'ma', 'kv', 's', 'jmlExpose', 'jmlFilmDipakai',
-        'jmlFilmRusak', 'kdMesin', 'kdProyeksi', 'catatan', 'layanan',
+        'jmlFilmRusak', 'kdMesin', 'kdProyeksi', 'catatan', 'layanan','created_at', 'updated_at',
     ];
 
     public function film()

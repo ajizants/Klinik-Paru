@@ -179,6 +179,18 @@ class LaboratoriumController extends Controller
         $jaminan = $request->input('jaminan');
         $dokter = $request->input('dokter');
         $petugas = $request->input('petugas');
+        $tglTrans = $request->input('tgltrans'); // Assuming tglTrans is in 'Y-m-d' format
+        $currentDateTime = Carbon::now(); // Get current date and time
+        $today = $currentDateTime->format('Y-m-d');
+
+        // Check if today's date is not the same as tglTrans
+        if ($today !== $tglTrans) {
+            // Create a Carbon instance using tglTrans and the current time
+            $tanggal = Carbon::createFromFormat('Y-m-d H:i:s', $tglTrans . ' ' . $currentDateTime->format('H:i:s'));
+        } else {
+            // Use the current date and time
+            $tanggal = $currentDateTime;
+        }
 
         try {
             // Memulai transaksi database
@@ -197,8 +209,8 @@ class LaboratoriumController extends Controller
                         'idLayanan' => $data['idLayanan'],
                         'petugas' => $petugas,
                         'dokter' => $dokter,
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'created_at' => $tanggal,
+                        'updated_at' => $tanggal,
                     ];
                 } else {
                     return response()->json([
@@ -217,7 +229,7 @@ class LaboratoriumController extends Controller
             // Extract notrans and tujuan from the request
 
             if ($notrans !== null) {
-                $dataKunjungan = LaboratoriumKunjunganModel::where('notrans', $notrans)->whereDate('created_at', now())->first();
+                $dataKunjungan = LaboratoriumKunjunganModel::where('notrans', $notrans)->whereDate('created_at', $tanggal)->first();
 
                 if ($dataKunjungan == null) {
                     $kunjunganLab = new LaboratoriumKunjunganModel();
@@ -231,6 +243,8 @@ class LaboratoriumController extends Controller
                     $kunjunganLab->petugas = $petugas;
                     $kunjunganLab->dokter = $dokter;
                     $kunjunganLab->ket = "Belum";
+                    $kunjunganLab->created_at = $tanggal;
+                    $kunjunganLab->updated_at = $tanggal;
                     $kunjunganLab->save();
                     return response()->json(['message' => 'Transaksi berhasil disimpan...!!'], 200);
                 }

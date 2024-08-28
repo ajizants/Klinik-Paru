@@ -101,6 +101,7 @@ function simpan() {
     var petugas = $("#analis").val();
     var dokter = $("#dokter").val();
     var tujuan = $("#tujuan").val();
+    var tgltrans = $("#tgltrans").val();
 
     if (!norm || !notrans || !dokter || !petugas) {
         var dataKurang = [];
@@ -160,6 +161,7 @@ function simpan() {
                 tujuan: tujuan,
                 petugas: petugas,
                 dokter: dokter,
+                tgltrans: tgltrans,
                 dataTerpilih: dataTerpilih,
             }),
         })
