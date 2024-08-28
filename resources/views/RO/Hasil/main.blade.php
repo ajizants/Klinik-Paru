@@ -113,7 +113,7 @@
                 const card = `
             <div class="col-6 gallery" id=${cardid} style="display:none; ">
                 <div class="card m-2" style="cursor: pointer; height: 700px;">
-                    <div class="f-panzoom" id="${panzoomid}">
+                    <div class="f-panzoom" id="${panzoomid}"style=" height: 700px;">
                         <div class="f-custom-controls top-right">
                             <button data-panzoom-action="toggleFS" class="toggleFullscreen">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
