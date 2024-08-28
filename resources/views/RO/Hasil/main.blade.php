@@ -103,14 +103,15 @@
             foto.forEach((item, index) => {
                 const imageUrl = `${appUrlRo}${item.foto}`;
                 const caption = `${item.norm} - ${item.nama} - ${item.tanggal}`;
+                const cardid = `${item.id}_${item.tanggal}`;
                 const panzoomid = `myPanzoom${item.id}`;
                 const buttonid = `btn${item.id}`;
 
                 const button =
-                    `<button type="button" class="btn btn-primary btn-sm mx-3" id="${buttonid}" onclick="toggleImage('${item.tanggal}', '${buttonid}')">Foto Tanggal: ${item.tanggal}</button>`;
+                    `<a type="button" class="btn btn-primary btn-sm mx-3" id="${buttonid}" onclick="toggleImage('${cardid}', '${buttonid}')">Foto Tanggal: ${item.tanggal}</a>`;
 
                 const card = `
-            <div class="col-6 gallery" id="${item.tanggal}">
+            <div class="col-6 gallery" id=${cardid} style="display:none;">
                 <div class="card m-2" style="cursor: pointer;">
                     <div class="f-panzoom" id="${panzoomid}">
                         <div class="f-custom-controls top-right">
@@ -174,13 +175,13 @@
                 if (card.style.display === 'block') {
                     // Hide the card
                     card.style.display = 'none';
-                    button.style.opacity = '0';
+                    // button.style.opacity = '0';
                     button.classList.remove('btn-success'); // Remove the success class
                     button.classList.add('btn-primary'); // Add the primary class back
                 } else {
                     // Show the card
                     card.style.display = 'block';
-                    button.style.opacity = '1';
+                    // button.style.opacity = '1';
                     button.classList.remove('btn-primary'); // Remove the existing class
                     button.classList.add('btn-success'); // Add the success class
                 }
