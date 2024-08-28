@@ -111,8 +111,8 @@
                     `<a type="button" class="btn btn-primary btn-sm mx-3" id="${buttonid}" onclick="toggleImage('${cardid}', '${buttonid}')">Foto Tanggal: ${item.tanggal}</a>`;
 
                 const card = `
-            <div class="col-6 gallery" id=${cardid} style="display:none;">
-                <div class="card m-2" style="cursor: pointer;">
+            <div class="col-6 gallery" id=${cardid} style="display:none; ">
+                <div class="card m-2" style="cursor: pointer; height: 700px;">
                     <div class="f-panzoom" id="${panzoomid}">
                         <div class="f-custom-controls top-right">
                             <button data-panzoom-action="toggleFS" class="toggleFullscreen">

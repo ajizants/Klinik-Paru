@@ -20,7 +20,7 @@
                                     <div class="form-group row" id="buttondiv"></div>
                                 </div>
                                 <div class="container-fluid">
-                                    <div id="preview" class="p-3 row"></div>
+                                    <div id="preview" class="row"></div>
 
                                 </div>
                             </div>
