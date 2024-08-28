@@ -32,6 +32,21 @@
     <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- SweetAlert2 -->
     <script src="{{ asset('vendor/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="{{ asset('vendor/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/jszip/jszip.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/pdfmake/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/pdfmake/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/daterangepicker/daterangepicker.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
 
@@ -39,9 +54,13 @@
     <script>
         var appUrlRo = @json($appUrlRo);
         var hasilRo = @json($hasilRo);
-        console.log("🚀 ~ hasilRo:", hasilRo)
+        var hasilLab = @json($hasilLab);
 
         async function cari() {
+            const preview = document.getElementById('preview');
+            const buttondiv = document.getElementById('buttondiv');
+            buttondiv.innerHTML = '';
+            preview.innerHTML = '';
             Swal.fire({
                 title: 'Loading',
                 didOpen: () => {
@@ -66,12 +85,18 @@
                 const data = await response.json();
 
                 if (!response.ok) {
-                    // Show the error message from the response
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: data.message, // Extracted message from response
-                    });
+                    const preview = document.getElementById('preview');
+                    const info = `
+                            <div class="col d-flex justify-content-center h2">
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                    <h2><i class="icon fas fa-ban"></i> Alert!</h2>
+                                    ${data.message}
+                                </div>
+                            </div>
+                            `;
+                    preview.innerHTML = info;
+                    Swal.close();
                     return; // Exit if data not found
                 }
 
@@ -88,6 +113,67 @@
                 });
             }
 
+        }
+
+        async function cariLab() {
+            const previewLab = document.getElementById('previewLab');
+            previewLab.innerHTML = '';
+            Swal.fire({
+                title: 'Loading',
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+
+            var norm = $('#norm').val().padStart(6, '0');
+
+            try {
+                const response = await fetch("/api/hasil/lab", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        norm
+                    }),
+                });
+
+                // Extract the JSON data even if the response is not OK
+                const data = await response.json();
+
+                if (!response.ok) {
+                    // Show the error message from the response
+                    if ($.fn.DataTable.isDataTable("#reportKunjungan")) {
+                        var tabel = $("#reportKunjungan").DataTable();
+                        tabel.clear().destroy();
+                        $("#reportKunjungan thead").remove();
+                        $("#reportKunjungan tbody").remove();
+                    }
+                    const previewLab = document.getElementById('previewLab');
+                    const info = `
+                            <div class="col d-flex justify-content-center h2">
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                    <h2><i class="icon fas fa-ban"></i> Alert!</h2>
+                                    ${data}
+                                </div>
+                            </div>
+                            `;
+                    previewLab.innerHTML = info;
+                    return; // Exit if data not found
+                }
+
+                showHasilLab(data); // Assuming show is a function to display the data
+                Swal.close(); // Close any open SweetAlert if successful
+            } catch (error) {
+                // Catch and log any error that occurs during the fetch process
+                console.error("Terjadi kesalahan saat mencari data:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Terjadi kesalahan saat mencari data, silahkan coba lagi.',
+                });
+            }
         }
 
         function show(foto) {
@@ -190,6 +276,134 @@
             }
         }
 
+        function showHasilLab(hasilLab) {
+            if ($.fn.DataTable.isDataTable("#reportKunjungan")) {
+                var tabel = $("#reportKunjungan").DataTable();
+                tabel.clear().destroy();
+                $("#reportKunjungan thead").remove();
+                $("#reportKunjungan tbody").remove();
+            }
+
+            // Format date to dd-mm-yyyy
+            function formatDate(dateStr) {
+                var date = new Date(dateStr);
+                var day = String(date.getDate()).padStart(2, '0');
+                var month = String(date.getMonth() + 1).padStart(2, '0'); // January is 0!
+                var year = date.getFullYear();
+                return `${day}-${month}-${year}`;
+            }
+
+            // Grouping data by date
+            var groupedData = {};
+            hasilLab.forEach(function(item) {
+                var dateKey = formatDate(item.created_at);
+                if (!groupedData[dateKey]) {
+                    groupedData[dateKey] = Object.assign({}, item, {
+                        pemeriksaan: {}
+                    });
+                }
+                // Merge pemeriksaan results into the group
+                groupedData[dateKey].pemeriksaan[item.pemeriksaan.nmLayanan] = item.hasil;
+            });
+
+            // Convert groupedData into an array for DataTable
+            var dataTableData = Object.keys(groupedData).map(function(dateKey) {
+                var item = groupedData[dateKey];
+                item.created_at = dateKey;
+                return item;
+            });
+
+            // Extract all unique pemeriksaan types and their ket from the hasilLab
+            var uniquePemeriksaan = new Set();
+            var pemeriksaanKetMap = {}; // Map to store pemeriksaan with their ket
+            hasilLab.forEach(function(item) {
+                const keterangan = item.ket ? item.ket : ""; // Use empty string if null
+                const pemeriksaanLabel = item.pemeriksaan.nmLayanan + (keterangan ? " - " + keterangan : "");
+                uniquePemeriksaan.add(item.pemeriksaan.nmLayanan);
+                pemeriksaanKetMap[item.pemeriksaan.nmLayanan] = keterangan; // Store ket for each pemeriksaan
+            });
+
+            // Create DataTable columns dynamically
+            var columns = [{
+                    data: null,
+                    title: "No",
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+                },
+                {
+                    data: "created_at",
+                    title: "Tanggal"
+                },
+                {
+                    data: "norm",
+                    title: "Nomor Rekam Medis"
+                },
+                {
+                    data: "pasien.layanan",
+                    title: "Jaminan"
+                },
+                {
+                    data: "pasien.nama",
+                    title: "Nama",
+                    className: "col-2",
+                    render: function(data, type, row) {
+                        return data.toUpperCase();
+                    },
+                },
+                {
+                    data: "pasien.alamat",
+                    title: "Alamat",
+                    className: "col-3"
+                },
+                {
+                    data: "dokter.biodata.nama",
+                    title: "Nama Dokter",
+                    className: "col-3"
+                },
+            ];
+
+            // Add each unique pemeriksaan as a column with its name as title
+            uniquePemeriksaan.forEach(function(pemeriksaan) {
+                const ket = pemeriksaanKetMap[pemeriksaan] ? pemeriksaanKetMap[pemeriksaan] : ""; // Get ket value
+                columns.push({
+                    data: "pemeriksaan." + pemeriksaan,
+                    title: pemeriksaan + (ket ? " - " + ket : ""), // Append ket if exists
+                    defaultContent: "-",
+                });
+            });
+
+            // Initialize DataTable with dynamic columns
+            var table = $("#reportKunjungan").DataTable({
+                data: dataTableData,
+                columns: columns,
+                order: [0, "asc"],
+                lengthChange: true,
+                autoWidth: true,
+                buttons: [{
+                        extend: "copyHtml5",
+                        text: "Salin",
+                    },
+                    {
+                        extend: "excel",
+                        text: "Export to Excel",
+                        title: "Laporan Hasil Pemeriksaan Lab",
+                        filename: "Daftar Penjamin Laboratorium",
+                    },
+                    "colvis",
+                ],
+                rowGroup: {
+                    dataSrc: 'created_at' // Group rows by the formatted date
+                },
+                initComplete: function() {
+                    this.api().table().node().classList.add("table", "table-bordered-custom");
+                },
+            });
+
+            table.buttons().container().appendTo("#reportKunjungan_wrapper .col-md-6:eq(0)");
+        }
+
+
 
 
 
@@ -238,9 +452,37 @@
             }
             setInterval(updateDateTime, 1000);
 
-            if (hasilRo.length > 0) {
+            if (Array.isArray(hasilRo) && hasilRo.length > 0) {
                 show(hasilRo);
+            } else {
+                const preview = document.getElementById('preview');
+                const info = `
+                            <div class="col d-flex justify-content-center h2">
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                    <h2><i class="icon fas fa-ban"></i> Alert!</h2>
+                                    ${hasilRo}
+                                </div>
+                            </div>
+                            `;
+                preview.innerHTML = info;
             }
+            if (Array.isArray(hasilLab) && hasilLab.length > 0) {
+                showHasilLab(hasilLab);
+            } else {
+                const previewLab = document.getElementById('previewLab');
+                const info = `
+                            <div class="col d-flex justify-content-center h3">
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                    <h2><i class="icon fas fa-ban"></i> Alert!</h2>
+                                    ${hasilLab}
+                                </div>
+                            </div>
+                            `;
+                previewLab.innerHTML = info;
+            }
+
         });
     </script>
     <style>
@@ -395,264 +637,7 @@
             </ul>
         </nav>
 
-        <aside class="main-sidebar sidebar-dark-navy elevation-4">
-            <!-- Brand Logo -->
-            <a href="" class="brand-link">
-                <img src="{{ asset('img/LOGO KKPM.jpg') }}" alt="KKPM Logo"
-                    class="bg bg-light brand-image img-circle elevation-3" width="30" height="30">
-                <span class="brand-text font-weight-light text-md"><b>KKPM</b></span>
-            </a>
-
-            <!-- Sidebar -->
-            <div class="sidebar bg-navy font-weight-bold">
-                <!-- Sidebar Menu -->
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
-                        data-accordion="false">
-                        <!-- Dashboard -->
-                        <li class="nav-item">
-                            <a href="{{ url('home') }}" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-                        <li class="nav-header">TRANSAKSI</li>
-                        <!-- IGD Section -->
-                        <li class="nav-item">
-                            <a href="" class="nav-link">
-                                <i class="fa-solid fa-truck-medical nav-icon"></i>
-                                <p>
-                                    Ruang Tindakan
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview" style="display: none;">
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/igd') }}" id="masukIGD">
-                                        <i class="nav-icon fas fa-edit"></i>
-                                        <p>Input Tindakan</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/gudangIGD') }}">
-                                        <i class="fa-solid fa-database nav-icon"></i>
-                                        <p>Master Tindakan</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/askep') }}">
-                                        <i class="fa-solid fa-file-pen nav-icon"></i>
-                                        <p>ASKEP</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="" class="nav-link">
-                                <i class="nav-icon fa-solid fa-hand-holding-medical"></i>
-                                <p>
-                                    Dots Center
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview" style="display: none;">
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/dots') }}">
-                                        <i class="nav-icon fas fa-edit"></i>
-                                        <p>Input Dots Center</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/dots_master') }}">
-                                        <i class="fa-solid fa-database nav-icon"></i>
-                                        <p>Master Dots Center</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <!-- Gizi Section -->
-                        <li class="nav-item">
-                            <a href="" class="nav-link">
-                                {{-- <i class="fa-solid fa-pills nav-icon"></i> --}}
-                                <i class="fa-brands fa-nutritionix  nav-icon"></i>
-                                <p>
-                                    Gizi
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview" style="display: none;">
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/gizi') }}">
-                                        <i class="nav-icon fas fa-edit"></i>
-                                        <p>Input Gizi</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/masterGizi') }}">
-                                        <i class="fa-solid fa-database nav-icon"></i>
-                                        <p>Master Gizi</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <!-- Farmasi Section -->
-                        <li class="nav-item">
-                            <a href="" class="nav-link">
-                                <i class="fa-solid fa-pills nav-icon"></i>
-                                <p>
-                                    Farmasi
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview" style="display: none;">
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/farmasi') }}">
-                                        <i class="nav-icon fas fa-edit"></i>
-                                        <p>Input Farmasi</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/gudangFarmasi') }}">
-                                        <i class="fa-solid fa-database nav-icon"></i>
-                                        <p>Master Farmasi</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <!-- lab Section -->
-                        <li class="nav-item">
-                            <a href="" class="nav-link">
-                                <i class="fa-solid fa-microscope nav-icon"></i>
-                                <p>
-                                    Laboratorium
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview" style="display: none;">
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/lab') }}">
-                                        {{-- <i class="fa-regular fa-address-card nav-icon"></i> --}}
-                                        <i class="fa-solid fa-user-pen nav-icon"></i>
-                                        <p>Pendaftaran Lab</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/hasilLab') }}">
-                                        <i class="nav-icon fas fa-edit"></i>
-                                        <p>Input Hasil Lab</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/masterLab') }}">
-                                        <i class="fa-solid fa-database nav-icon"></i>
-                                        <p>Master Lab</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <!-- RO Section -->
-                        <li class="nav-item">
-                            <a href="" class="nav-link">
-                                <i class="nav-icon fa-solid fa-circle-radiation"></i>
-                                <p>
-                                    Radiologi
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview" style="display: none;">
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/ro') }}">
-                                        {{-- <i class="fa-regular fa-id-card nav-icon"></i> --}}
-                                        <i class="fa-regular nav-icon fas fa-edit"></i>
-                                        <p>Input Radiologi</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item ml-4">
-                                    <a class="nav-link" href="{{ url('/masterRo') }}">
-                                        <i class="fa-solid fa-database nav-icon"></i>
-                                        <p>Master Radiologi</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <!-- Kasir Section -->
-                        {{-- @if (auth()->user()->role === 'kasir' || auth()->user()->role === 'admin') --}}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/kasir') }}">
-                                <i class="fa-solid fa-cash-register nav-icon"></i>
-                                <p>Kasir</p>
-                            </a>
-                        </li>
-                        {{-- @endif --}}
-
-                        {{-- LAPORAN --}}
-                        <li class="nav-header">LAPORAN</li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/RO/Hasil') }}">
-                                <i class="fa-solid fa-x-ray nav-icon"></i>
-                                <p>Hasil RO</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/report') }}">
-                                <i class="fa-solid fa-chart-column nav-icon"></i>
-                                <p>Laporan Petugas</p>
-                            </a>
-                        </li>
-                        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Farmasi">
-                            <a class="nav-link" href="{{ url('/riwayatGizi') }}">
-                                <i class="fa-solid fa-chart-column nav-icon"></i>
-                                <p>Riwayat Transaksi Gizi</p>
-                            </a>
-                        </li>
-                        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Farmasi">
-                            <a class="nav-link" href="{{ url('/logFarmasi') }}">
-                                <i class="fa-solid fa-chart-column nav-icon"></i>
-                                <p>Riwayat Transaksi Farmasi</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/riwayatRo') }}">
-                                <i class="fa-solid fa-chart-column nav-icon"></i>
-                                <p>Laporan Radiologi</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/riwayatLab') }}">
-                                <i class="fa-solid fa-chart-column nav-icon"></i>
-                                <p>Laporan Laboratorium</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/Laporan/Pendaftaran') }}">
-                                <i class="fa-solid fa-chart-column nav-icon"></i>
-                                <p>Laporan Pendaftaran</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/Riwayat/Pasien') }}">
-                                <i class="fa-solid fa-book-medical nav-icon"></i>
-                                <p>Riwayat Pasien</p>
-                            </a>
-                        </li>
-                        <li class="nav-item"
-                            style="margin-top: 100px;>
-                            <a class="nav-link" href="#">
-
-                            </a>
-                        </li>
-
-                    </ul>
-                </nav>
-
-                <!-- /.sidebar-menu -->
-            </div>
-            <!-- /.sidebar -->
-        </aside>
+        @include('Template.sidebar')
 
         <div class="content-wrapper" id="topSection">
             <div class="content-header py-0">
@@ -674,46 +659,12 @@
             <section class="content">
                 <div class="container-fluid">
                     @include('RO.Hasil.input')
+
                 </div>
             </section>
         </div>
-
-        <!-- /.footer -->
-        <footer class="main-footer">
-            <strong>Copyright &copy; {{ date('Y') }} <a href="#">Klinik Utama Kesehatan Paru Masyarakat
-                    Kelas
-                    A</a>.</strong>
-            All rights reserved.
-            <div class="float-right d-none d-sm-inline-block">
-                <b>Versi</b> {{ env('APP_LARAVEL_VERSION') }}
-            </div>
-        </footer>
-
-
-        <!-- Logout Modal-->
-        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="ModalLabel">Ready to Leave?</h5>
-                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">Select "Logout" below if you are ready to end your current session.
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                        <a class="btn btn-primary" href="{{ route('actionlogout') }}">Logout</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
     </div>
-
+    {{-- @include('Template.footer') --}}
 </body>
 
 </html>

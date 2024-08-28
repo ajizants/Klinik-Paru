@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KunjunganModel;
 use App\Models\LaboratoriumHasilModel;
 use App\Models\LaboratoriumKunjunganModel;
 use App\Models\LayananModel;
@@ -73,18 +72,16 @@ class LaboratoriumController extends Controller
                 // ->where('norm', 'like', '%' . $norm . '%')
                 // ->first();
                 $data = LaboratoriumKunjunganModel::where('created_at', 'like', '%' . $tgl . '%')
-                ->where('norm', 'like', '%' . $norm . '%')
-                ->first();
+                    ->where('norm', 'like', '%' . $norm . '%')
+                    ->first();
 
                 $pemeriksaan = LaboratoriumHasilModel::with('pemeriksaan')
-                ->where('norm', 'like', '%' . $norm . '%')
-                ->whereDate('created_at', 'like', '%' . $tgl . '%')->get();
+                    ->where('norm', 'like', '%' . $norm . '%')
+                    ->whereDate('created_at', 'like', '%' . $tgl . '%')->get();
                 // dd($pemeriksaan);
                 if (!empty($pemeriksaan) && $pemeriksaan != "[]") {
                     $data->pemeriksaan = $pemeriksaan;
                 }
-
-
 
                 $lab = json_decode($data, true);
                 if ($data == null) {
@@ -348,42 +345,30 @@ class LaboratoriumController extends Controller
         }
     }
 
-    public function riwayat(Request $request)
+    public function hasil(Request $request)
     {
-        $tglAwal = $request->input('tglAwal', now()->toDateString());
-        $tglAkhir = $request->input('tglAkhir', now()->toDateString());
-        // dd($tglAkhir);
-        $notrans = $request->input('notrans');
-        $data = KunjunganModel::with('riwayatLab', 'riwayatLab.layanan', 'riwayatLab.petugas.biodata', 'riwayatLab.dokter.biodata')
-            ->where('notrans', 'like', '%' . $notrans . '%')
-            ->whereBetween(DB::raw('DATE(tglTrans)'), [$tglAwal, $tglAkhir])
-            ->whereHas('riwayatLab')
-            ->get();
-        // dd($data);
-        $lab = json_decode($data, true);
-        $formattedData = [];
-        foreach ($lab as $transaksi) {
-            if ($transaksi["kkelompok"] === 1) {
-                $jaminan = "UMUM";
-            } elseif ($transaksi["kkelompok"] === 1) {
-                $jaminan = "BPJS";
-            } else {
-                $jaminan = "";
+        $norm = $request->input('norm');
+        // dd($norm);
+        try {
+            $hasilLab = LaboratoriumHasilModel::with('pasien', 'pemeriksaan', 'petugas.biodata', 'dokter.biodata')
+                ->where('norm', $norm) // Filter by norm using a LIKE condition
+                ->get();
+            if ($hasilLab->isEmpty()) {
+                $hasilLab = "Data Hasil Laboratorium pada Pasien dengan Norm: <u><b>" . $norm . "</b></u> tidak ditemukan,
+                <br> Jika pasien melakukan Pemeriksaan Lab di KKPM, silahkan Menghubungi Bagian Laboratorium.
+                <br> Dengan catatan pemeriksaan dilakukan Setelah Tanggal : <u><b>18 Juli 2024</b></u>, sebelum tanggal tersebut data tidak ada di sistem. Terima Kasih...";
+                return response()->json($hasilLab, 404, [], JSON_PRETTY_PRINT);
             }
 
-            $formattedData[] = [
-                "notrans" => $transaksi["notrans"] ?? null,
-                "norm" => $transaksi["norm"] ?? null,
-                "nourut" => $transaksi["nourut"] ?? null,
-                "tgltrans" => $transaksi["tgltrans"] ?? null,
-                "janiman" => $jaminan,
-
-                "idLab" => $transaksi["riwayat_lab"]["idLab"] ?? null,
-                "ket" => $transaksi["ket"] ?? null,
-                "idLayanan" => $transaksi["riwayat_lab"]["idLayanan"] ?? null,
-            ];
+            // dd($hasilLab); // Debug: Dump and Die
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat mengakses database Lab. Silahkan hubungi TIM IT.',
+                'error' => $e->getMessage(),
+                'status' => 500,
+            ], 500, [], JSON_PRETTY_PRINT);
         }
-        return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
+        return response()->json($hasilLab, 200, [], JSON_PRETTY_PRINT);
     }
     public function rekapKunjungan(Request $request)
     {

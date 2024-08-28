@@ -421,7 +421,7 @@ class ROTransaksiController extends Controller
 
             if ($data->isEmpty()) {
                 $res = [
-                    'message' => 'Data foto thorax tidak ditemukan, silahkan menghubungi radiologi',
+                    'message' => 'Data Foto Thorax pada Pasien dengan Norm: <u><b>' . $norm . '</b></u> tidak ditemukan,<br> Jika pasien melakukan Foto Thorax di KKPM, silahkan Menghubungi Bagian Radiologi. Terima Kasih..."',
                     'status' => 404,
                 ];
                 return response()->json($res, 404, [], JSON_PRETTY_PRINT);

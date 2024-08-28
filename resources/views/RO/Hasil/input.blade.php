@@ -1,33 +1,66 @@
                     <div class="card shadow mb-4">
-                        <!-- Card Header - Accordion -->
-                        <a href="#collapseCardExample" class="d-block card-header py-1 bg-info" data-toggle="collapse"
-                            role="button" aria-expanded="true" aria-controls="collapseCardExample">
-                            <h4 id="inputSection" class="m-0 font-weight-bold text-dark text-center">Hasil Foto Thorax
-                            </h4>
-                        </a>
-                        <!-- Card Content - Collapse -->
-                        <div class="collapse show" id="collapseCardExample">
-                            <div class="card-body p-2">
-                                <div class="container-fluid py-2">
-                                    <div class="form-group row">
-                                        <label for="reservation" class="col-sm-auto col-form-label">No Rekam
-                                            Medis:</label>
-                                        <input type="text" class="form-control col-2" id="norm"
-                                            onkeyup="if (event.keyCode === 13) { cari(); }">
-                                        <button type="button" class="mx-2 btn btn-primary col-sm-auto"
-                                            onclick="cari();">Cari</button>
-                                    </div>
-                                    <div class="form-group row" id="buttondiv"></div>
-                                </div>
-                                <div class="container-fluid">
-                                    <div id="preview" class="row"></div>
+                        <div class="card-body p-2">
+                            <div class="form-group row p-2">
+                                <label for="reservation" class="col-sm-auto col-form-label">No Rekam
+                                    Medis:</label>
+                                <input type="text" class="form-control col-2" id="norm"
+                                    onkeyup="if (event.keyCode === 13) { cari();cariLab() }">
+                                <button type="button" class="mx-2 btn btn-primary col-sm-auto"
+                                    onclick="cari();cariLab()">Cari</button>
+                            </div>
 
+
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Accordion -->
+                                <a href="#collapseCardExample" class="d-block card-header py-1 bg-info"
+                                    data-toggle="collapse" role="button" aria-expanded="true"
+                                    aria-controls="collapseCardExample">
+                                    <h4 id="inputSection" class="m-0 font-weight-bold text-dark text-center">Hasil Foto
+                                        Thorax
+                                    </h4>
+                                </a>
+                                <!-- Card Content - Collapse -->
+                                <div class="collapse show" id="collapseCardExample">
+                                    <div class="card-body p-2">
+                                        <div class="container-fluid py-2">
+                                            <div class="form-group row" id="buttondiv"></div>
+                                        </div>
+                                        <div class="container-fluid">
+                                            <div id="preview" class="row"></div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Accordion -->
+                                <a href="#cardHasilLab" class="d-block card-header py-1 bg-info" data-toggle="collapse"
+                                    role="button" aria-expanded="true" aria-controls="cardHasilLab">
+                                    <h4 id="inputSection" class="m-0 font-weight-bold text-dark text-center">Hasil
+                                        Laborat
+                                    </h4>
+                                </a>
+                                <!-- Card Content - Collapse -->
+                                <div class="collapse show" id="cardHasilLab">
+                                    <div class="card-body p-2" ">
+                                        <div class="container-fluid">
+                                            <div id="previewLab" class="row"></div>
+
+                                        </div>
+                                        {{-- <div class="container-fluid"> --}}
+                                        <div class="table-responsive pt-2 px-2">
+                                            <table id="reportKunjungan"class=" table table-striped pt-0 mt-0 fs-6"
+                                        style="width:100%" cellspacing="0">
+                                    </div>
+                                    {{-- </div> --}}
                                 </div>
                             </div>
                         </div>
                     </div>
+                    </div>
 
-                    <!-- Modal -->
+                    {{-- <!-- Modal -->
                     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog modal-xl">
@@ -83,4 +116,4 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}

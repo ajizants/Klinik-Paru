@@ -6,6 +6,7 @@ use App\Models\DiagnosaModel;
 use App\Models\GiziDxDomainModel;
 use App\Models\GiziDxKelasModel;
 use App\Models\GiziDxSubKelasModel;
+use App\Models\LaboratoriumHasilModel;
 use App\Models\LayananModel;
 use App\Models\RoHasilModel;
 use App\Models\ROJenisFoto;
@@ -172,51 +173,55 @@ class HomeController extends Controller
     {
         $title = 'Hasil Rontgen';
         $appUrlRo = env('APP_URLRO');
-        $norm = str_pad($id, 6, '0', STR_PAD_LEFT);
+        $norm = str_pad($id, 6, '0', STR_PAD_LEFT); // Normalize ID to 6 digits
 
         $hasilRo = "";
         try {
             $hasilRo = RoHasilModel::when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
-                return $query->where('norm', $norm);
+                return $query->where('norm', $norm); // Filter by norm if valid
             })
                 ->get();
 
-            // if ($hasilRO->isEmpty()) {
-            //     $res = [
-            //         'message' => 'Data foto thorax tidak ditemukan, silahkan menghubungi radiologi',
-            //         'status' => 404,
-            //     ];
-            //     return response()->json($res, 404, [], JSON_PRETTY_PRINT);
-            // } else {
-            //     $res = [
-            //         'metadata' => [
-            //             'message' => 'Data foto thorax ditemukan',
-            //             'status' => 200,
-            //         ],
-            //         'data' => $hasilRO,
-            //     ];
-            // }
-            // return response()->json($res, 200, [], JSON_PRETTY_PRINT);
+            if ($hasilRo->isEmpty()) {
+                $hasilRo = "Data Foto Thorax pada Pasien dengan Norm: <u><b>" . $norm . "</b></u> tidak ditemukan,<br> Jika pasien melakukan Foto Thorax di KKPM, silahkan Menghubungi Bagian Radiologi. Terima Kasih...";
+            }
         } catch (\Exception $e) {
-
             return response()->json([
                 'message' => 'Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.',
                 'status' => 500,
             ], 500, [], JSON_PRETTY_PRINT);
-
         }
-        // dd($hasilRo);
-        return view('RO.Hasil.main', compact('appUrlRo', 'hasilRo'))->with([
-            'title' => $title,
 
+        try {
+            $hasilLab = LaboratoriumHasilModel::with('pasien', 'pemeriksaan', 'petugas.biodata', 'dokter.biodata')
+                ->where('norm', $norm ) // Filter by norm using a LIKE condition
+                ->get();
+            if ($hasilLab->isEmpty()) {
+                $hasilLab = "Data Hasil Laboratorium pada Pasien dengan Norm: <u><b>" . $norm . "</b></u> tidak ditemukan,
+                    <br> Jika pasien melakukan Pemeriksaan Lab di KKPM, silahkan Menghubungi Bagian Laboratorium.
+                    <br> Dengan catatan pemeriksaan dilakukan Setelah Tanggal : <u><b>18 Juli 2024</b></u>, sebelum tanggal tersebut data tidak ada di sistem. Terima Kasih...";
+            }
+            // dd($hasilLab); // Debug: Dump and Die
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat mengakses database Lab. Silahkan hubungi TIM IT.',
+                'error' => $e->getMessage(),
+                'status' => 500,
+            ], 500, [], JSON_PRETTY_PRINT);
+        }
+
+        return view('RO.Hasil.main', compact('appUrlRo', 'hasilRo', 'hasilLab'))->with([
+            'title' => $title,
         ]);
     }
+
     public function roHasil()
     {
         $title = 'Hasil Rontgen';
         $appUrlRo = env('APP_URLRO');
-        $hasilRo = "";
-        return view('RO.Hasil.main', compact('appUrlRo', 'hasilRo'))->with([
+        $hasilRo = "Silahkan Ketikan No RM dan tekan Enter/Klik Tombol Cari";
+        $hasilLab = "Silahkan Ketikan No RM dan tekan Enter/Klik Tombol Cari";
+        return view('RO.Hasil.main', compact('appUrlRo', 'hasilRo', 'hasilLab'))->with([
             'title' => $title,
 
         ]);

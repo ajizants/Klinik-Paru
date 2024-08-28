@@ -111,8 +111,9 @@ Route::post('addTransaksiLab', [LaboratoriumController::class, 'addTransaksi']);
 Route::post('/lab/deleteTs', [LaboratoriumController::class, 'deleteTs']);
 Route::post('deleteLab', [LaboratoriumController::class, 'deleteLab']);
 
-Route::post('rekap/Kunjungan_Lab', [LaboratoriumController::class, 'rekapKunjungan']);
+Route::post('hasil/lab', [LaboratoriumController::class, 'hasil']);
 Route::post('hasil/antrian', [LaboratoriumController::class, 'antrianHasil']);
+Route::post('rekap/Kunjungan_Lab', [LaboratoriumController::class, 'rekapKunjungan']);
 Route::post('rekap/lab/poin', [LaboratoriumController::class, 'poinPetugas']);
 Route::post('rekap/lab/jumlah_pemeriksaan', [LaboratoriumController::class, 'jumlah_pemeriksaan']);
 Route::post('rekap/lab/waktu_pemeriksaan', [LaboratoriumController::class, 'waktu_pemeriksaan']);
