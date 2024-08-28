@@ -38,6 +38,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/panzoom/panzoom.umd.js"></script>
     <script>
         var appUrlRo = @json($appUrlRo);
+        var hasilRo = @json($hasilRo);
+        console.log("🚀 ~ hasilRo:", hasilRo)
 
         async function cari() {
             Swal.fire({
@@ -235,6 +237,10 @@
                 tglTransInput.value = tglnow;
             }
             setInterval(updateDateTime, 1000);
+
+            if (hasilRo.length > 0) {
+                show(hasilRo);
+            }
         });
     </script>
     <style>

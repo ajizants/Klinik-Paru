@@ -7,6 +7,7 @@ use App\Models\GiziDxDomainModel;
 use App\Models\GiziDxKelasModel;
 use App\Models\GiziDxSubKelasModel;
 use App\Models\LayananModel;
+use App\Models\RoHasilModel;
 use App\Models\ROJenisFoto;
 
 class HomeController extends Controller
@@ -167,11 +168,55 @@ class HomeController extends Controller
 
         return view('RO.LogBook.main')->with('title', $title);
     }
-    public function rontgenHasil()
+    public function rontgenHasil($id)
     {
         $title = 'Hasil Rontgen';
         $appUrlRo = env('APP_URLRO');
-        return view('RO.Hasil.main', compact('appUrlRo'))->with([
+        $norm = str_pad($id, 6, '0', STR_PAD_LEFT);
+
+        $hasilRo = "";
+        try {
+            $hasilRo = RoHasilModel::when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
+                return $query->where('norm', $norm);
+            })
+                ->get();
+
+            // if ($hasilRO->isEmpty()) {
+            //     $res = [
+            //         'message' => 'Data foto thorax tidak ditemukan, silahkan menghubungi radiologi',
+            //         'status' => 404,
+            //     ];
+            //     return response()->json($res, 404, [], JSON_PRETTY_PRINT);
+            // } else {
+            //     $res = [
+            //         'metadata' => [
+            //             'message' => 'Data foto thorax ditemukan',
+            //             'status' => 200,
+            //         ],
+            //         'data' => $hasilRO,
+            //     ];
+            // }
+            // return response()->json($res, 200, [], JSON_PRETTY_PRINT);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.',
+                'status' => 500,
+            ], 500, [], JSON_PRETTY_PRINT);
+
+        }
+        // dd($hasilRo);
+        return view('RO.Hasil.main', compact('appUrlRo', 'hasilRo'))->with([
+            'title' => $title,
+
+        ]);
+    }
+    public function roHasil()
+    {
+        $title = 'Hasil Rontgen';
+        $appUrlRo = env('APP_URLRO');
+        $hasilRo = "";
+        return view('RO.Hasil.main', compact('appUrlRo', 'hasilRo'))->with([
             'title' => $title,
 
         ]);
