@@ -83,18 +83,6 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="card shadow mb-4 col" style="display: none;">
-                        <!-- Card Header - Dropdown -->
-                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
-                            <h6 class="m-0 font-weight-bold text-primary">Grafik Rata-Rata Layanan Pasien</h6>
-                        </div>
-                        <!-- Card Body -->
-                        <div class="card-body mb-2">
-                            <div class="chart-area">
-                                <canvas id="chartAvg" class="mb-3 pb-3" width="100%" height="80%"></canvas>
-                            </div>
-                        </div>
-                    </div>
                     <div class="card shadow mb-4 col">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
@@ -124,7 +112,20 @@
                     </div>
 
                 </div>
+
                 <div class="row">
+                    <div class="card shadow mb-4 col">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
+                            <h6 class="m-0 font-weight-bold text-primary">Grafik Rata-Rata Layanan Pasien</h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body mb-2">
+                            <div class="chart-area">
+                                <canvas id="chartAvg" class="mb-3 pb-3" width="100%" height="80%"></canvas>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card shadow mb-4 col">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
@@ -137,7 +138,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card shadow mb-4 col">
+                    <div class="card shadow mb-4 col" style="display: none;">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
                             <h6 class="m-0 font-weight-bold text-primary">Waktu Tunggu Terlama Layanan Pasien</h6>
@@ -166,7 +167,7 @@
                     <div class="card shadow mb-4 col">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
-                            <h6 class="m-0 font-weight-bold text-primary">Waktu SPM</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Prosentase Capaian Waktu SPM</h6>
                         </div>
                         <!-- Card Body -->
                         <div class="card-body mb-2">
