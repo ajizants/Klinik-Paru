@@ -185,8 +185,8 @@
                                             <th>Jumlah Pasien</th>
                                             <th>Jumlah Waktu Tunggu > 90 menit</th>
                                             <th>Prosentase Waktu Tunggu > 90 menit</th>
-                                            <th>Jumlah Waktu Tunggu > 90 menit</th>
-                                            <th>Prosentase Waktu Tunggu > 90 menit</th>
+                                            <th>Jumlah Waktu Tunggu < 90 menit</th>
+                                            <th>Prosentase Waktu Tunggu < 90 menit</th>
                                         </tr>
                                     </thead>
                                     <tbody>
