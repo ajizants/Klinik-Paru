@@ -577,7 +577,7 @@ class KominfoModel extends Model
                     "status_pulang" => $statusPulang,
 
                     "tunggu_daftar" => $tunggu_panggil_daftar ?? 0,
-                    "pendaftaran_panggil" => $message["loket_pendaftaran_skip_waktu"] ?? $message["loket_pendaftaran_panggil_waktu"] ?? 0,
+                    "pendaftaran_panggil" => $message["loket_pendaftaran_panggil_waktu"] ?? 0,
                     "pendaftaran_skip" => $message["loket_pendaftaran_skip_waktu"] ?? 0,
                     "pendaftaran_selesai" => $message["loket_pendaftaran_selesai_waktu"] ?? 0,
                     "lama_pendaftaran" => $lama_daftar ?? 0,

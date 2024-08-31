@@ -173,6 +173,35 @@
                     <div class="card shadow mb-4 col">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
+                            <h6 class="m-0 font-weight-bold text-primary">Waktu SPM</h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body mb-2">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="spmTabel" width="100%" cellspacing="0">
+                                    <thead class="bg bg-teal">
+                                        <tr>
+                                            <th>Keterangan/Label</th>
+                                            <th>Jumlah Pasien</th>
+                                            <th>Jumlah Waktu Tunggu > 90 menit</th>
+                                            <th>Prosentase Waktu Tunggu < 90 menit</th>
+                                            <th>Jumlah Waktu Tunggu > 90 menit</th>
+                                            <th>Prosentase Waktu Tunggu < 90 menit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Table rows will be dynamically populated with data -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card shadow mb-4 col">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
                             <h6 class="m-0 font-weight-bold text-primary">Grafik Pemeriksaan Penunjang Pasien</h6>
                         </div>
                         <!-- Card Body -->
@@ -234,6 +263,7 @@
                                     <th class="col-3">Dokter</th>
                                     <th class="col-2">Ambil No Antrian</th>
                                     <th class="col-2">Lama Tunggu Pendaftaran (menit)</th>
+                                    <th class="col-2">Skip Pendafataran</th>
                                     <th class="col-2">Panggil Pendafataran</th>
                                     <th class="col-2">Selesai Pendaftaran</th>
                                     <th class="col-2">Selesai RM</th>
@@ -243,6 +273,7 @@
                                     <th class="col-2">Panggil Tensi</th>
                                     <th class="col-2">Selesai Tensi</th>
                                     <th class="col-2">Lama di Tensi (menit)</th>
+                                    <th class="col-2">Durasi Tunggu Poli (menit)</th>
                                     <th class="col-2">Lama Tunggu Poli (menit)</th>
                                     <th class="col-2">Skip Poli</th>
                                     <th class="col-2">Panggil Poli</th>

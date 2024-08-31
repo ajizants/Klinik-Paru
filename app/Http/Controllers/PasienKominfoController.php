@@ -908,8 +908,8 @@ class PasienKominfoController extends Controller
 
     private function calculateAverages($data)
     {
-        // Initialize totals and max values
-        // return $data;
+        // dd($data);
+        // Initialize totals, max values, and counts
         $totals = [
             'tunggu_daftar' => 0,
             'tunggu_rm' => 0,
@@ -934,15 +934,26 @@ class PasienKominfoController extends Controller
             'igd' => 0,
         ];
 
+        // Initialize counts for above and below 90 minutes
+        $above90 = $totals;
+        $below90 = $totals;
+
         foreach ($data as $message) {
             // Check for valid values and handle them properly
             foreach ($totals as $key => &$total) {
                 $value = $message[$key] ?? 0;
                 if (is_array($value)) {
-                    $value = 0; // Or handle the array case as needed
+                    $value = 0; // Handle array case as needed
                 }
                 $total += $value;
                 $maxValues[$key] = max($maxValues[$key], $value);
+
+                // Count values above and below 90 minutes
+                if ($value > 90) {
+                    $above90[$key]++;
+                } else {
+                    $below90[$key]++;
+                }
             }
 
             // Update counts for specific categories
@@ -952,12 +963,18 @@ class PasienKominfoController extends Controller
             $counts['igd'] += isset($message['igddata']) && $message['igddata'] === true ? 1 : 0;
         }
 
-        // Calculate averages
+        // Calculate averages, maximum values, and percentages
         $results = [];
         foreach ($totals as $key => $total) {
             $results["avg_$key"] = round($total / count($data), 2);
             $results["max_$key"] = $maxValues[$key];
             $results["total_$key"] = round($total, 2);
+
+            $results["lebih_$key"] = $above90[$key];
+            $results["lebih_persen_$key"] = round(($above90[$key] / count($data)) * 100, 2);
+
+            $results["kurang_$key"] = $below90[$key];
+            $results["kurang_persen_$key"] = round(($below90[$key] / count($data)) * 100, 2);
         }
 
         // Special handling for cases where counts are zero
@@ -977,5 +994,6 @@ class PasienKominfoController extends Controller
 
         return $results;
     }
+
 
 }

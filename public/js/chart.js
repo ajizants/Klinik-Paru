@@ -224,6 +224,7 @@ function waktuLayanan(tglAwal, tglAkhir, tanggal) {
                         { data: "dokter_nama", className: "col-3" },
                         { data: "mulai_panggil", className: "col-2" },
                         { data: "tunggu_daftar" },
+                        { data: "pendaftaran_skip", className: "col-2" },
                         { data: "pendaftaran_panggil", className: "col-2" },
                         { data: "pendaftaran_selesai", className: "col-2" },
                         { data: "waktu_selesai_rm", className: "col-2" },
@@ -233,6 +234,17 @@ function waktuLayanan(tglAwal, tglAkhir, tanggal) {
                         { data: "tensi_panggil", className: "col-2" },
                         { data: "tensi_selesai", className: "col-2" },
                         { data: "lama_tensi", className: "col-2" },
+                        {
+                            data: "durasi_poli",
+                            className: "col-2",
+                            render: function (data, type, row) {
+                                if (data > 90) {
+                                    return `<span class="p-1 font-weight-bold bg-danger" >${data}</span>`;
+                                }
+                                return data;
+                            },
+                        },
+
                         { data: "tunggu_poli", className: "col-2" },
                         { data: "poli_skip", className: "col-2" },
                         { data: "poli_panggil", className: "col-2" },
@@ -532,6 +544,177 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                                 );
                             },
                         },
+                    ],
+                    order: [[1, "dsc"]], // Urutkan berdasarkan kolom kedua (rata_waktu) secara ascending
+                    paging: true,
+                    searching: false,
+                    info: true,
+                    responsive: true,
+                    pageLength: 7,
+                    lengthMenu: [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, "All"],
+                    ],
+                    buttons: [
+                        {
+                            extend: "excelHtml5",
+                            text: "Excel",
+                            title:
+                                "Waktu Layanan Tanggal: " +
+                                tglA +
+                                " s.d. " +
+                                tglB,
+                            filename:
+                                "Waktu Layanan Tanggal: " +
+                                tglA +
+                                "  s.d. " +
+                                tglB,
+                        },
+                        // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+                    ],
+                })
+                .buttons()
+                .container()
+                .appendTo("#terlamaTabel_wrapper .col-md-6:eq(0)");
+            $("#spmTabel")
+                .DataTable({
+                    destroy: true, // Hapus tabel yang sudah ada sebelumnya
+                    data: [
+                        {
+                            kategori:
+                                "Waktu Tunggu di Pendaftaran, Mulai di panggil sampai selesai di daftar",
+                            jumlah_pasien: data.total_pasien,
+                            waktu_lebih: data.lebih_tunggu_daftar,
+                            persen_lebih:
+                                data.lebih_persen_tunggu_daftar.toFixed(2) +
+                                " %",
+                            waktu_kurang: data.kurang_tunggu_daftar,
+                            persen_kurang:
+                                data.kurang_persen_tunggu_daftar.toFixed(2) +
+                                " %",
+                        },
+                        {
+                            kategori:
+                                "Waktu Tunggu RM Siap, Mulai di panggil pendaftaran sampai RM Siap",
+                            jumlah_pasien: data.total_pasien,
+                            waktu_lebih: data.lebih_tunggu_rm,
+                            persen_lebih:
+                                data.lebih_persen_tunggu_rm.toFixed(2) + " %",
+                            waktu_kurang: data.kurang_tunggu_rm,
+                            persen_kurang:
+                                data.kurang_persen_tunggu_rm.toFixed(2) + " %",
+                        },
+                        {
+                            kategori: "Waktu Tunggu di Tensi",
+                            jumlah_pasien: data.total_pasien,
+                            waktu_lebih: data.lebih_tunggu_tensi,
+                            persen_lebih:
+                                data.lebih_persen_tunggu_tensi.toFixed(2) +
+                                " %",
+                            waktu_kurang: data.kurang_tunggu_tensi,
+                            persen_kurang:
+                                data.kurang_persen_tunggu_tensi.toFixed(2) +
+                                " %",
+                        },
+                        {
+                            kategori: "Waktu Tunggu di Poli",
+                            jumlah_pasien: data.total_pasien,
+                            waktu_lebih: data.lebih_tunggu_poli,
+                            persen_lebih:
+                                data.lebih_persen_tunggu_poli.toFixed(2) + " %",
+                            waktu_kurang: data.kurang_tunggu_poli,
+                            persen_kurang:
+                                data.kurang_persen_tunggu_poli.toFixed(2) +
+                                " %",
+                        },
+                        {
+                            kategori: "Waktu Tunggu di Lab",
+                            jumlah_pasien: data.total_lab,
+                            waktu_lebih: data.lebih_tunggu_lab,
+                            persen_lebih:
+                                data.lebih_persen_tunggu_lab.toFixed(2) + " %",
+                            waktu_kurang: data.kurang_tunggu_lab,
+                            persen_kurang:
+                                data.kurang_persen_tunggu_lab.toFixed(2) + " %",
+                        },
+                        {
+                            kategori: "Waktu Tunggu Hasil Lab",
+                            jumlah_pasien: data.total_lab,
+                            waktu_lebih: data.lebih_tunggu_hasil_lab,
+                            persen_lebih:
+                                data.lebih_persen_tunggu_hasil_lab.toFixed(2) +
+                                " %",
+                            waktu_kurang: data.kurang_tunggu_hasil_lab,
+                            persen_kurang:
+                                data.kurang_persen_tunggu_hasil_lab.toFixed(2) +
+                                " %",
+                        },
+                        {
+                            kategori: "Waktu Tunggu Hasil RO",
+                            jumlah_pasien: data.total_ro,
+                            waktu_lebih: data.lebih_tunggu_hasil_ro,
+                            persen_lebih:
+                                data.lebih_persen_tunggu_hasil_ro.toFixed(2) +
+                                " %",
+                            waktu_kurang: data.kurang_tunggu_hasil_ro,
+                            persen_kurang:
+                                data.kurang_persen_tunggu_hasil_ro.toFixed(2) +
+                                " %",
+                        },
+                        {
+                            kategori: "Waktu Tunggu di IGD",
+                            jumlah_pasien: data.total_igd,
+                            waktu_lebih: data.lebih_tunggu_igd,
+                            persen_lebih:
+                                data.lebih_persen_tunggu_igd.toFixed(2) + " %",
+                            waktu_kurang: data.kurang_tunggu_igd,
+                            persen_kurang:
+                                data.kurang_persen_tunggu_igd.toFixed(2) + " %",
+                        },
+                        {
+                            kategori: "Waktu Tunggu di Farmasi",
+                            jumlah_pasien: data.total_pasien,
+                            waktu_lebih: data.lebih_tunggu_farmasi,
+                            persen_lebih:
+                                data.lebih_persen_tunggu_farmasi.toFixed(2) +
+                                " %",
+                            waktu_kurang: data.kurang_tunggu_farmasi,
+                            persen_kurang:
+                                data.kurang_persen_tunggu_farmasi.toFixed(2) +
+                                " %",
+                        },
+                        {
+                            kategori: "Waktu Tunggu di Kasir",
+                            jumlah_pasien: data.total_pasien,
+                            waktu_lebih: data.lebih_tunggu_kasir,
+                            persen_lebih:
+                                data.lebih_persen_tunggu_kasir.toFixed(2) +
+                                " %",
+                            waktu_kurang: data.kurang_tunggu_kasir,
+                            persen_kurang:
+                                data.kurang_persen_tunggu_kasir.toFixed(2) +
+                                " %",
+                        },
+                        {
+                            kategori:
+                                "Waktu Tunggu di Poli, Mulai dari selesai Pendaftaran sampai di panggil Poli (termasuk jika ada pemeriksaan penunjang)",
+                            jumlah_pasien: data.total_pasien,
+                            waktu_lebih: data.lebih_durasi_poli,
+                            persen_lebih:
+                                data.lebih_persen_durasi_poli.toFixed(2) + " %",
+                            waktu_kurang: data.kurang_durasi_poli,
+                            persen_kurang:
+                                data.kurang_persen_durasi_poli.toFixed(2) +
+                                " %",
+                        },
+                    ],
+                    columns: [
+                        { data: "kategori" },
+                        { data: "jumlah_pasien" },
+                        { data: "waktu_lebih" },
+                        { data: "persen_lebih" },
+                        { data: "waktu_kurang" },
+                        { data: "persen_kurang" },
                     ],
                     order: [[1, "dsc"]], // Urutkan berdasarkan kolom kedua (rata_waktu) secara ascending
                     paging: true,
