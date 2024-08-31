@@ -716,7 +716,7 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal) {
                         { data: "waktu_kurang" },
                         { data: "persen_kurang" },
                     ],
-                    order: [[1, "dsc"]], // Urutkan berdasarkan kolom kedua (rata_waktu) secara ascending
+                    order: [[2, "dsc"]], // Urutkan berdasarkan kolom kedua (rata_waktu) secara ascending
                     paging: true,
                     searching: false,
                     info: true,
