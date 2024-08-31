@@ -899,7 +899,10 @@ class PasienKominfoController extends Controller
             $results = $this->calculateAverages($data);
 
             // Kembalikan response dalam format JSON
-            return response()->json(['data' => $results]);
+            return response()->json(
+                ['data' => $results,
+                'waktu' => $data,
+            ]);
         } catch (\Exception $e) {
             // Tangani kesalahan
             return response()->json(['error' => $e->getMessage()], 500);
@@ -966,15 +969,24 @@ class PasienKominfoController extends Controller
         // Calculate averages, maximum values, and percentages
         $results = [];
         foreach ($totals as $key => $total) {
-            $results["avg_$key"] = round($total / count($data), 2);
+            if(stripos($key, 'lab') !== false){
+                $jml=$counts['lab'];
+            }elseif(stripos($key, 'ro') !== false){
+                $jml=$counts['ro'];
+            }elseif(stripos($key, 'igd') !== false){
+                $jml=$counts['igd'];
+            }else{
+                $jml=count($data);
+            }
+            $results["avg_$key"] = round($total / $jml, 2);
             $results["max_$key"] = $maxValues[$key];
             $results["total_$key"] = round($total, 2);
 
             $results["lebih_$key"] = $above90[$key];
-            $results["lebih_persen_$key"] = round(($above90[$key] / count($data)) * 100, 2);
+            $results["lebih_persen_$key"] = round(($above90[$key] / $jml) * 100, 2);
 
             $results["kurang_$key"] = $below90[$key];
-            $results["kurang_persen_$key"] = round(($below90[$key] / count($data)) * 100, 2);
+            $results["kurang_persen_$key"] = round(($below90[$key] / $jml) * 100, 2);
         }
 
         // Special handling for cases where counts are zero
@@ -994,6 +1006,5 @@ class PasienKominfoController extends Controller
 
         return $results;
     }
-
 
 }

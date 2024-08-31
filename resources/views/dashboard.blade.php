@@ -68,32 +68,22 @@
         {{-- Tabel rata rata dan terlama --}}
         <div class="card shadow">
             <div class="card-header bg-info">
-                <div class="row">
-                    <h6 class="m-0 font-weight-bold">Pencarian data pasien, Tanggal :</h6>
-                    {{-- <label class="col-form-label" for="tanggal">Rata-Rata Waktu Layanan, Tanggal :</label> --}}
-                    <div class="form-group ml-2 mb-0 row">
-                        <div class="input-group col-7">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="far fa-calendar-alt"></i>
-                                </span>
-                            </div>
-                            <input type="text" class="form-control float-right" id="ratawaktulayanan">
+                <div class="form-group row mb-0">
+                    <Label for="ratawaktulayanan" class="col-form-label font-weight-bold">Pencarian data pasien, Tanggal
+                        :</Label>
+                    <div class="input-group col-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="far fa-calendar-alt"></i>
+                            </span>
                         </div>
-                        <div class="input-group col-5">
-                            <input type="date" class="form-control col-sm-9" id="tanggal" value="{{ old('date') }}"
-                                required onchange="updtWaktuLayanan();">
-                            <div class="input-group-addon btn btn-success">
-                                <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top"
-                                    title="Update Pasien Hari ini" id="cariantrian" onclick="updtWaktuLayanan();"></span>
-                            </div>
-                        </div>
+                        <input type="text" class="form-control float-right" id="ratawaktulayanan">
                     </div>
                 </div>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="card shadow mb-4 col">
+                    <div class="card shadow mb-4 col" style="display: none;">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
                             <h6 class="m-0 font-weight-bold text-primary">Grafik Rata-Rata Layanan Pasien</h6>
@@ -116,9 +106,12 @@
                                 <table class="table table-bordered" id="rataTabel" width="100%" cellspacing="0">
                                     <thead class="bg bg-teal">
                                         <tr>
-                                            <th>Rata-Rata</th>
-                                            <th>Waktu Tunggu (menit)</th>
-                                            <th>Keterangan</th>
+                                            <th>Keterangan/Label</th>
+                                            <th>Total Pasien</th>
+                                            <th>Total Waktu Tunggu (menit)</th>
+                                            <th>Rata-Rata (menit)</th>
+                                            <th>Waktu Tunggu Terlama (menit)</th>
+                                            <th>Ket</th>
                                         </tr>
                                     </thead>
                                     <tbody>
