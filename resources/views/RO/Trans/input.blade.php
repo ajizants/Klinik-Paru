@@ -49,7 +49,7 @@
                                                     :</label>
                                                 <div class="col-sm-4">
                                                     <input type="text" id="nama" class="form-control bg-white"
-                                                        placeholder="Nama Pasien" readonly>
+                                                        placeholder="Nama Pasien">
                                                 </div>
                                                 <div class="col-sm-1">
                                                     <input type="text" id="jk" class="form-control bg-white"
