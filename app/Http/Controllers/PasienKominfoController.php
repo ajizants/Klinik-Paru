@@ -894,15 +894,15 @@ class PasienKominfoController extends Controller
 
             // Ambil data dari model menggunakan metode waktuLayananRequest
             $data = $model->waktuLayananRequest($params);
-
+            // dd($data);
             // Hitung rata-rata dan waktu terlama
             $results = $this->calculateAverages($data);
 
             // Kembalikan response dalam format JSON
             return response()->json(
                 ['data' => $results,
-                'waktu' => $data,
-            ]);
+                    'waktu' => $data,
+                ]);
         } catch (\Exception $e) {
             // Tangani kesalahan
             return response()->json(['error' => $e->getMessage()], 500);
@@ -969,14 +969,19 @@ class PasienKominfoController extends Controller
         // Calculate averages, maximum values, and percentages
         $results = [];
         foreach ($totals as $key => $total) {
-            if(stripos($key, 'lab') !== false){
-                $jml=$counts['lab'];
-            }elseif(stripos($key, 'ro') !== false){
-                $jml=$counts['ro'];
-            }elseif(stripos($key, 'igd') !== false){
-                $jml=$counts['igd'];
-            }else{
-                $jml=count($data);
+            if (stripos($key, 'lab') !== false) {
+                $jml = $counts['lab'] == 0 ? 1 : $counts['lab'];
+
+            } elseif (stripos($key, 'ro') !== false) {
+                $jml = $counts['ro'] == 0 ? 1 : $counts['ro'];
+
+                // $jml = $counts['ro'];
+            } elseif (stripos($key, 'igd') !== false) {
+                $jml = $counts['igd'] == 0 ? 1 : $counts['igd'];
+
+                // $jml = $counts['igd'];
+            } else {
+                $jml = count($data);
             }
             $results["avg_$key"] = round($total / $jml, 2);
             $results["max_$key"] = $maxValues[$key];
