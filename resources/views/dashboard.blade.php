@@ -99,7 +99,8 @@
                                             <th>Total Waktu Tunggu (menit)</th>
                                             <th>Rata-Rata (menit)</th>
                                             <th>Waktu Tunggu Terlama (menit)</th>
-                                            <th>Ket</th>
+                                            <th>Waktu Tunggu Tercepat (menit)</th>
+                                            {{-- <th>Ket</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>

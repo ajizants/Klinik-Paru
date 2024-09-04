@@ -306,7 +306,7 @@ async function dataLab(pemeriksaan, notrans) {
 function simpan() {
     const norm = $("#norm").val();
     const notrans = $("#notrans").val();
-    console.log("🚀 ~ simpan ~ status:", keterangan);
+    const tglTrans= $("#tgltrans").val();
 
     if (!norm || !notrans) {
         const dataKurang = [];
@@ -345,6 +345,7 @@ function simpan() {
         body: JSON.stringify({
             dataTerpilih: dataTerpilih,
             keterangan: keterangan,
+            tglTrans: tglTrans,
         }),
     })
         .then((response) => {

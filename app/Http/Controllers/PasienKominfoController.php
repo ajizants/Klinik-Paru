@@ -894,7 +894,12 @@ class PasienKominfoController extends Controller
 
             // Ambil data dari model menggunakan metode waktuLayananRequest
             $data = $model->waktuLayananRequest($params);
-            // dd($data);
+            // $data=[
+            //     "error" => "cURL error 7: Failed to connect to kkpm.banyumaskab.go.id port 443 after 4399 ms: No route to host (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://kkpm.banyumaskab.go.id/api_kkpm/v1/pendaftaran/data_pendaftaran"
+            //     ];
+            if (isset($data['error'])) {
+                return response()->json(['error' => $data['error']], 500);
+            }
             // Hitung rata-rata dan waktu terlama
             $results = $this->calculateAverages($data);
 
@@ -909,9 +914,112 @@ class PasienKominfoController extends Controller
         }
     }
 
+    // private function calculateAverages($data)
+    // {
+    //     // dd($data);
+    //     // Initialize totals, max values, and counts
+    //     $totals = [
+    //         'tunggu_daftar' => 0,
+    //         'tunggu_rm' => 0,
+    //         'tunggu_lab' => 0,
+    //         'tunggu_hasil_lab' => 0,
+    //         'tunggu_hasil_ro' => 0,
+    //         'tunggu_ro' => 0,
+    //         'tunggu_poli' => 0,
+    //         'durasi_poli' => 0,
+    //         'durasi_poli_tanpa_penunjang' => 0,
+    //         'tunggu_tensi' => 0,
+    //         'tunggu_igd' => 0,
+    //         'tunggu_farmasi' => 0,
+    //         'tunggu_kasir' => 0,
+    //     ];
+
+    //     $maxValues = $totals;
+
+    //     $counts = [
+    //         'rm' => 0,
+    //         'ro' => 0,
+    //         'lab' => 0,
+    //         'igd' => 0,
+    //     ];
+
+    //     // Initialize counts for above and below 90 minutes
+    //     $above90 = $totals;
+    //     $below90 = $totals;
+
+    //     foreach ($data as $message) {
+    //         // Check for valid values and handle them properly
+    //         foreach ($totals as $key => &$total) {
+    //             $value = $message[$key] ?? 0;
+    //             if (is_array($value)) {
+    //                 $value = 0; // Handle array case as needed
+    //             }
+    //             $total += $value;
+    //             $maxValues[$key] = max($maxValues[$key], $value);
+
+    //             // Count values above and below 90 minutes
+    //             if ($value > 90) {
+    //                 $above90[$key]++;
+    //             } else {
+    //                 $below90[$key]++;
+    //             }
+    //         }
+
+    //         // Update counts for specific categories
+    //         $counts['rm'] += isset($message['rm']) && $message['rm'] === true ? 1 : 0;
+    //         $counts['ro'] += isset($message['rodata']) && $message['rodata'] === true ? 1 : 0;
+    //         $counts['lab'] += isset($message['labdata']) && $message['labdata'] === true ? 1 : 0;
+    //         $counts['igd'] += isset($message['igddata']) && $message['igddata'] === true ? 1 : 0;
+    //     }
+
+    //     // Calculate averages, maximum values, and percentages
+    //     $results = [];
+    //     foreach ($totals as $key => $total) {
+    //         if (stripos($key, 'lab') !== false) {
+    //             $jml = $counts['lab'] == 0 ? 1 : $counts['lab'];
+
+    //         } elseif (stripos($key, 'ro') !== false) {
+    //             $jml = $counts['ro'] == 0 ? 1 : $counts['ro'];
+
+    //             // $jml = $counts['ro'];
+    //         } elseif (stripos($key, 'igd') !== false) {
+    //             $jml = $counts['igd'] == 0 ? 1 : $counts['igd'];
+
+    //             // $jml = $counts['igd'];
+    //         } else {
+    //             $jml = count($data);
+    //         }
+    //         $results["avg_$key"] = round($total / $jml, 2);
+    //         $results["max_$key"] = $maxValues[$key];
+    //         $results["total_$key"] = round($total, 2);
+
+    //         $results["lebih_$key"] = $above90[$key];
+    //         $results["lebih_persen_$key"] = round(($above90[$key] / $jml) * 100, 2);
+
+    //         $results["kurang_$key"] = $below90[$key];
+    //         $results["kurang_persen_$key"] = round(($below90[$key] / $jml) * 100, 2);
+    //     }
+
+    //     // Special handling for cases where counts are zero
+    //     foreach ($counts as $key => $count) {
+    //         $results["avg_tunggu_{$key}"] = $count > 0 ? round($totals["tunggu_{$key}"] / $count, 2) : 0;
+    //     }
+
+    //     // Include total counts
+    //     $results = array_merge($results, [
+    //         'total_pasien' => count($data),
+    //         'total_ro' => $counts['ro'],
+    //         'total_lab' => $counts['lab'],
+    //         'total_igd' => $counts['igd'],
+    //         'total_tanpa_tambahan' => count(array_filter($data, fn($item) => isset($item['oke']) && $item['oke'] === false)),
+    //         'total_rm' => $counts['rm'],
+    //     ]);
+
+    //     return $results;
+    // }
+
     private function calculateAverages($data)
     {
-        // dd($data);
         // Initialize totals, max values, and counts
         $totals = [
             'tunggu_daftar' => 0,
@@ -924,11 +1032,13 @@ class PasienKominfoController extends Controller
             'durasi_poli' => 0,
             'tunggu_tensi' => 0,
             'tunggu_igd' => 0,
+            'lama_igd' => 0,
             'tunggu_farmasi' => 0,
             'tunggu_kasir' => 0,
         ];
 
         $maxValues = $totals;
+        $minValues = array_fill_keys(array_keys($totals), PHP_INT_MAX);
 
         $counts = [
             'rm' => 0,
@@ -937,10 +1047,15 @@ class PasienKominfoController extends Controller
             'igd' => 0,
         ];
 
-        // Initialize counts for above and below 90 minutes
+        // Initialize above and below 90 minutes counters
         $above90 = $totals;
         $below90 = $totals;
 
+        // Initialize variables for "oke" false
+        $totalDurasiPoliOkeFalse = 0;
+        $countOkeFalse = 0;
+
+        // Process each patient's data
         foreach ($data as $message) {
             // Check for valid values and handle them properly
             foreach ($totals as $key => &$total) {
@@ -950,6 +1065,7 @@ class PasienKominfoController extends Controller
                 }
                 $total += $value;
                 $maxValues[$key] = max($maxValues[$key], $value);
+                $minValues[$key] = min($minValues[$key], $value);
 
                 // Count values above and below 90 minutes
                 if ($value > 90) {
@@ -964,32 +1080,39 @@ class PasienKominfoController extends Controller
             $counts['ro'] += isset($message['rodata']) && $message['rodata'] === true ? 1 : 0;
             $counts['lab'] += isset($message['labdata']) && $message['labdata'] === true ? 1 : 0;
             $counts['igd'] += isset($message['igddata']) && $message['igddata'] === true ? 1 : 0;
+
+            // Accumulate lama_igd if present
+            $lamaIgdValue = $message['lama_igd'] ?? 0;
+            if ($lamaIgdValue > 0) {
+                $totals['lama_igd'] += $lamaIgdValue;
+            }
+
+            // If "oke" is false, accumulate durasi_poli and count
+            if (isset($message['oke']) && $message['oke'] === false) {
+                $totalDurasiPoliOkeFalse += $message['durasi_poli'] ?? 0;
+                $countOkeFalse++;
+            }
         }
 
-        // Calculate averages, maximum values, and percentages
+        // Calculate averages and metrics
         $results = [];
         foreach ($totals as $key => $total) {
+            // Use appropriate count for lab, ro, igd
+            $jml = count($data);
             if (stripos($key, 'lab') !== false) {
                 $jml = $counts['lab'] == 0 ? 1 : $counts['lab'];
-
             } elseif (stripos($key, 'ro') !== false) {
                 $jml = $counts['ro'] == 0 ? 1 : $counts['ro'];
-
-                // $jml = $counts['ro'];
             } elseif (stripos($key, 'igd') !== false) {
                 $jml = $counts['igd'] == 0 ? 1 : $counts['igd'];
-
-                // $jml = $counts['igd'];
-            } else {
-                $jml = count($data);
             }
+
             $results["avg_$key"] = round($total / $jml, 2);
             $results["max_$key"] = $maxValues[$key];
+            $results["min_$key"] = $minValues[$key];
             $results["total_$key"] = round($total, 2);
-
             $results["lebih_$key"] = $above90[$key];
             $results["lebih_persen_$key"] = round(($above90[$key] / $jml) * 100, 2);
-
             $results["kurang_$key"] = $below90[$key];
             $results["kurang_persen_$key"] = round(($below90[$key] / $jml) * 100, 2);
         }
@@ -1009,7 +1132,72 @@ class PasienKominfoController extends Controller
             'total_rm' => $counts['rm'],
         ]);
 
+        // Calculate average durasi_poli for "oke" false
+        $results['avg_durasi_poli_oke_false'] = $countOkeFalse > 0 ? round($totalDurasiPoliOkeFalse / $countOkeFalse, 2) : 0;
+
+        // Calculate average lama_igd
+        $results['avg_lama_igd'] = $counts['igd'] > 0 ? round($totals['lama_igd'] / $counts['igd'], 2) : 0;
+
+        // Calculate average for "tunggu_ro"
+        $rodata = array_filter($data, function ($d) {
+            return $d['rodata'] === true;
+        });
+        $jumlahRo = count($rodata);
+        $totalWaktuRo = array_sum(array_column($rodata, 'tunggu_ro')); // Sum up 'tunggu_ro' values
+        $results['avg_tunggu_ro'] = $jumlahRo > 0 ? round($totalWaktuRo / $jumlahRo, 2) : 0;
+        $results['max_tunggu_ro'] = $jumlahRo > 0 ? max(array_column($rodata, 'tunggu_ro')) : 0;
+        $results['min_tunggu_ro'] = $jumlahRo > 0 ? min(array_column($rodata, 'tunggu_ro')) : 0;
+        $results['lebih_tunggu_ro'] = count(array_filter($rodata, fn($d) => $d['tunggu_ro'] > 90));
+        $results['lebih_persen_tunggu_ro'] = $jumlahRo > 0 ? round(($results['lebih_tunggu_ro'] / $jumlahRo) * 100, 2) : 0;
+        $results['kurang_tunggu_ro'] = $jumlahRo > 0 ? $jumlahRo - $results['lebih_tunggu_ro'] : 0;
+        $results['kurang_persen_tunggu_ro'] = $jumlahRo > 0 ? round(($results['kurang_tunggu_ro'] / $jumlahRo) * 100, 2) : 0;
+        $totalWaktuRo = array_sum(array_column($rodata, 'tunggu_hasil_ro')); // Sum up 'tunggu_ro' values
+        $results['avg_tunggu_hasil_ro'] = $jumlahRo > 0 ? round($totalWaktuRo / $jumlahRo, 2) : 0;
+        $results['max_tunggu_hasil_ro'] = $jumlahRo > 0 ? max(array_column($rodata, 'tunggu_hasil_ro')) : 0;
+        $results['min_tunggu_hasil_ro'] = $jumlahRo > 0 ? min(array_column($rodata, 'tunggu_hasil_ro')) : 0;
+        $results['lebih_tunggu_hasil_ro'] = count(array_filter($rodata, fn($d) => $d['tunggu_hasil_ro'] > 90));
+        $results['lebih_persen_tunggu_hasil_ro'] = $jumlahRo > 0 ? round(($results['lebih_tunggu_hasil_ro'] / $jumlahRo) * 100, 2) : 0;
+        $results['kurang_tunggu_hasil_ro'] = $jumlahRo > 0 ? $jumlahRo - $results['lebih_tunggu_hasil_ro'] : 0;
+        $results['kurang_persen_tunggu_hasil_ro'] = $jumlahRo > 0 ? round(($results['kurang_tunggu_hasil_ro'] / $jumlahRo) * 100, 2) : 0;
+
+        // Similar calculations for lab
+        $labdata = array_filter($data, function ($d) {
+            return $d['labdata'] === true;
+        });
+        $jumlahLab = count($labdata);
+        $totalWaktuLab = array_sum(array_column($labdata, 'tunggu_hasil_lab'));
+        $results['avg_tunggu_hasil_lab'] = $jumlahLab > 0 ? round($totalWaktuLab / $jumlahLab, 2) : 0;
+        $results['max_tunggu_hasil_lab'] = $jumlahLab > 0 ? max(array_column($labdata, 'tunggu_hasil_lab')) : 0;
+        $results['min_tunggu_hasil_lab'] = $jumlahLab > 0 ? min(array_column($labdata, 'tunggu_hasil_lab')) : 0;
+        $results['lebih_tunggu_hasil_lab'] = count(array_filter($labdata, fn($d) => $d['tunggu_hasil_lab'] > 90));
+        $results['lebih_persen_tunggu_hasil_lab'] = $jumlahLab > 0 ? round(($results['lebih_tunggu_hasil_lab'] / $jumlahLab) * 100, 2) : 0;
+        $results['kurang_tunggu_hasil_lab'] = $jumlahLab > 0 ? $jumlahLab - $results['lebih_tunggu_hasil_lab'] : 0;
+        $results['kurang_persen_tunggu_hasil_lab'] = $jumlahLab > 0 ? round(($results['kurang_tunggu_hasil_lab'] / $jumlahLab) * 100, 2) : 0;
+        $totalWaktuLab = array_sum(array_column($labdata, 'tunggu_lab'));
+        $results['avg_tunggu_lab'] = $jumlahLab > 0 ? round($totalWaktuLab / $jumlahLab, 2) : 0;
+        $results['max_tunggu_lab'] = $jumlahLab > 0 ? max(array_column($labdata, 'tunggu_lab')) : 0;
+        $results['min_tunggu_lab'] = $jumlahLab > 0 ? min(array_column($labdata, 'tunggu_lab')) : 0;
+        $results['lebih_tunggu_lab'] = count(array_filter($labdata, fn($d) => $d['tunggu_lab'] > 90));
+        $results['lebih_persen_tunggu_lab'] = $jumlahLab > 0 ? round(($results['lebih_tunggu_lab'] / $jumlahLab) * 100, 2) : 0;
+        $results['kurang_tunggu_lab'] = $jumlahLab > 0 ? $jumlahLab - $results['lebih_tunggu_lab'] : 0;
+        $results['kurang_persen_tunggu_lab'] = $jumlahLab > 0 ? round(($results['kurang_tunggu_lab'] / $jumlahLab) * 100, 2) : 0;
+
+        // Similar calculations for igd
+        $igddata = array_filter($data, function ($d) {
+            return $d['igddata'] === true;
+        });
+        $jumlahIgd = count($igddata);
+        $totalWaktuIgd = array_sum(array_column($igddata, 'tunggu_igd'));
+        $results['avg_tunggu_igd'] = $jumlahIgd > 0 ? round($totalWaktuIgd / $jumlahIgd, 2) : 0;
+        $results['max_tunggu_igd'] = $jumlahIgd > 0 ? max(array_column($igddata, 'tunggu_igd')) : 0;
+        $results['min_tunggu_igd'] = $jumlahIgd > 0 ? min(array_column($igddata, 'tunggu_igd')) : 0;
+        $results['lebih_tunggu_igd'] = count(array_filter($igddata, fn($d) => $d['tunggu_igd'] > 90));
+        $results['lebih_persen_tunggu_igd'] = $jumlahIgd > 0 ? round(($results['lebih_tunggu_igd'] / $jumlahIgd) * 100, 2) : 0;
+        $results['kurang_tunggu_igd'] = $jumlahIgd > 0 ? $jumlahIgd - $results['lebih_tunggu_igd'] : 0;
+        $results['kurang_persen_tunggu_igd'] = $jumlahIgd > 0 ? round(($results['kurang_tunggu_igd'] / $jumlahIgd) * 100, 2) : 0;
+
         return $results;
     }
+
 
 }

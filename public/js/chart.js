@@ -199,133 +199,6 @@ function formatDt(date) {
     return `${year}-${month}-${day}`;
 }
 
-// function waktuLayanan(tglAwal, tglAkhir, tanggal) {
-//     // var tglAwal = $("#tglAwal").val(); // tambahkan ini
-//     // var tglAkhir = $("#tglAkhir").val(); // tambahkan ini
-//     var tglA = formatDate(new Date(tglAwal));
-//     var tglB = formatDate(new Date(tglAkhir));
-//     if ($.fn.DataTable.isDataTable("#waktuLayanan")) {
-//         var tabletindakan = $("#waktuLayanan").DataTable();
-//         tabletindakan.destroy();
-//     }
-
-//     $.ajax({
-//         url: "/api/kominfo/waktu_layanan",
-//         type: "post",
-//         data: {
-//             tanggal_awal: tglAwal,
-//             tanggal_akhir: tglAkhir,
-//             tanggal: tanggal,
-//         },
-//         success: function (response) {
-//             Swal.fire({
-//                 icon: "success",
-//                 title: "Data Ditemukan...!!!",
-//             });
-//             $("#waktuLayanan")
-//                 .DataTable({
-//                     data: response,
-//                     columns: [
-//                         { data: "antrean_nomor" },
-//                         // { data: "tanggal" },
-//                         { data: "penjamin_nama" },
-//                         // { data: "daftar_by" },
-//                         // { data: "status_pasien" },
-//                         { data: "pasien_no_rm" },
-//                         { data: "pasien_nama", className: "col-3" },
-//                         { data: "jenis_kelamin" },
-//                         { data: "pasien_umur" },
-//                         // { data: "poli_nama" },
-//                         { data: "dokter_nama", className: "col-3" },
-//                         { data: "mulai_panggil", className: "col-2" },
-//                         { data: "tunggu_daftar" },
-//                         { data: "pendaftaran_skip", className: "col-2" },
-//                         { data: "pendaftaran_panggil", className: "col-2" },
-//                         { data: "pendaftaran_selesai", className: "col-2" },
-//                         { data: "waktu_selesai_rm", className: "col-2" },
-//                         { data: "tunggu_rm", className: "col-2" },
-//                         { data: "tunggu_tensi", className: "col-2" },
-//                         { data: "tensi_skip", className: "col-2" },
-//                         { data: "tensi_panggil", className: "col-2" },
-//                         { data: "tensi_selesai", className: "col-2" },
-//                         { data: "lama_tensi", className: "col-2" },
-//                         {
-//                             data: "durasi_poli",
-//                             className: "col-2",
-//                             render: function (data, type, row) {
-//                                 if (data > 90) {
-//                                     return `<span class="p-1 font-weight-bold bg-danger" >${data}</span>`;
-//                                 }
-//                                 return data;
-//                             },
-//                         },
-
-//                         { data: "tunggu_poli", className: "col-2" },
-//                         { data: "poli_skip", className: "col-2" },
-//                         { data: "poli_panggil", className: "col-2" },
-//                         { data: "poli_selesai", className: "col-2" },
-//                         { data: "lama_poli", className: "col-2" },
-//                         { data: "tunggu_lab", className: "col-2" },
-//                         // { data: "laboratorium_skip", className: "col-2" },
-//                         { data: "laboratorium_panggil", className: "col-2" },
-//                         { data: "laboratorium_selesai", className: "col-2" },
-//                         { data: "tunggu_hasil_lab", className: "col-2" },
-//                         { data: "tunggu_ro", className: "col-2" },
-//                         // { data: "rontgen_skip", className: "col-2" },
-//                         { data: "rontgen_panggil", className: "col-2" },
-//                         { data: "rontgen_selesai", className: "col-2" },
-//                         { data: "tunggu_hasil_ro", className: "col-2" },
-//                         { data: "tunggu_igd", className: "col-2" },
-//                         { data: "igd_panggil", className: "col-2" },
-//                         { data: "igd_selesai", className: "col-2" },
-//                         { data: "lama_igd", className: "col-2" },
-//                         { data: "tunggu_farmasi", className: "col-2" },
-//                         { data: "farmasi_panggil", className: "col-2" },
-//                         { data: "farmasi_selesai", className: "col-2" },
-//                         { data: "tunggu_kasir", className: "col-2" },
-//                         { data: "kasir_panggil", className: "col-2" },
-//                         { data: "kasir_selesai", className: "col-2" },
-//                     ],
-//                     autoWidth: false,
-//                     buttons: [
-//                         {
-//                             extend: "excelHtml5",
-//                             text: "Excel",
-//                             title:
-//                                 "Waktu Layanan Tanggal: " +
-//                                 tglA +
-//                                 " s.d. " +
-//                                 tglB,
-//                             filename:
-//                                 "Waktu Layanan Tanggal: " +
-//                                 tglA +
-//                                 "  s.d. " +
-//                                 tglB,
-//                         },
-//                         {
-//                             extend: "colvis",
-//                             text: "Tampilkan Kolom",
-//                         },
-//                         // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
-//                     ],
-//                 })
-//                 .buttons()
-//                 .container()
-//                 .appendTo("#waktuLayanan_wrapper .col-md-6:eq(0)");
-//             setTimeout(function () {});
-//         },
-//         error: function (xhr, status, error) {
-//             console.error("Error:", error);
-//             Swal.fire({
-//                 icon: "error",
-//                 title:
-//                     "Terjadi kesalahan saat mengambil data pasien...!!!\n" +
-//                     error,
-//             });
-//         },
-//     });
-// }
-
 function setTabelWaktu(waktu, tglA, tglB) {
     $("#waktuLayanan")
         .DataTable({
@@ -360,7 +233,6 @@ function setTabelWaktu(waktu, tglA, tglB) {
                         return data;
                     },
                 },
-
                 { data: "tunggu_poli", className: "col-2" },
                 { data: "poli_skip", className: "col-2" },
                 { data: "poli_panggil", className: "col-2" },
@@ -369,7 +241,17 @@ function setTabelWaktu(waktu, tglA, tglB) {
                 { data: "tunggu_lab", className: "col-2" },
                 { data: "laboratorium_panggil", className: "col-2" },
                 { data: "laboratorium_selesai", className: "col-2" },
-                { data: "tunggu_hasil_lab", className: "col-2" },
+                // { data: "tunggu_hasil_lab", className: "col-2" },
+                {
+                    data: "tunggu_hasil_lab",
+                    className: "col-2",
+                    render: function (data, type, row) {
+                        if (data > 120) {
+                            return `<span class="p-1 font-weight-bold bg-danger" >${data}</span>`;
+                        }
+                        return data;
+                    },
+                },
                 { data: "tunggu_ro", className: "col-2" },
                 { data: "rontgen_panggil", className: "col-2" },
                 { data: "rontgen_selesai", className: "col-2" },
@@ -406,114 +288,6 @@ function setTabelWaktu(waktu, tglA, tglB) {
         .appendTo("#waktuLayanan_wrapper .col-md-6:eq(0)");
 }
 
-// function setTabelRataWaktu(data, tglA, tglB) {
-//     $("#rataTabel")
-//         .DataTable({
-//             //////destroy: true,
-//             data: [
-//                 {
-//                     kategori:
-//                         "Tunggu Daftar, Mulai di panggil sampai selesai di daftar",
-//                     rata_waktu: data.avg_tunggu_daftar.toFixed(2),
-//                     background: data.avg_tunggu_daftar > 60 ? "red" : "green",
-//                 },
-//                 {
-//                     kategori:
-//                         "Tunggu RM, Mulai di panggil sampai selesai RM Siap",
-//                     rata_waktu: data.avg_tunggu_rm.toFixed(2),
-//                     background: data.avg_tunggu_rm > 60 ? "red" : "green",
-//                 },
-//                 {
-//                     kategori: "Tunggu Tensi",
-//                     rata_waktu: data.avg_tunggu_tensi.toFixed(2),
-//                     background: data.avg_tunggu_tensi > 60 ? "red" : "green",
-//                 },
-//                 {
-//                     kategori: "Tunggu Poli",
-//                     rata_waktu: data.avg_tunggu_poli.toFixed(2),
-//                     background: data.avg_tunggu_poli > 60 ? "red" : "green",
-//                 },
-//                 {
-//                     kategori: "Tunggu Lab",
-//                     rata_waktu: data.avg_tunggu_lab.toFixed(2),
-//                     background: data.avg_tunggu_lab > 60 ? "red" : "green",
-//                 },
-//                 {
-//                     kategori: "Tunggu Hasil Lab",
-//                     rata_waktu: data.avg_tunggu_hasil_lab.toFixed(2),
-//                     background:
-//                         data.avg_tunggu_hasil_lab > 60 ? "red" : "green",
-//                 },
-//                 {
-//                     kategori: "Tunggu RO",
-//                     rata_waktu: data.avg_tunggu_ro.toFixed(2),
-//                     background: data.avg_tunggu_ro > 60 ? "red" : "green",
-//                 },
-//                 {
-//                     kategori: "Tunggu Hasil RO",
-//                     rata_waktu: data.avg_tunggu_hasil_ro.toFixed(2),
-//                     background: data.avg_tunggu_hasil_ro > 60 ? "red" : "green",
-//                 },
-//                 {
-//                     kategori: "Tunggu IGD",
-//                     rata_waktu: data.avg_tunggu_igd.toFixed(2),
-//                     background: data.avg_tunggu_igd > 60 ? "red" : "green",
-//                 },
-//                 {
-//                     kategori: "Tunggu Farmasi",
-//                     rata_waktu: data.avg_tunggu_farmasi.toFixed(2),
-//                     background: data.avg_tunggu_farmasi > 60 ? "red" : "green",
-//                 },
-//                 {
-//                     kategori: "Tunggu Kasir",
-//                     rata_waktu: data.avg_tunggu_kasir.toFixed(2),
-//                     background: data.avg_tunggu_kasir > 60 ? "red" : "green",
-//                 },
-//                 {
-//                     kategori: "Durasi Poli dari Pendaftaran",
-//                     rata_waktu: data.avg_durasi_poli.toFixed(2),
-//                     background: data.avg_durasi_poli > 60 ? "red" : "green",
-//                 },
-//             ],
-//             columns: [
-//                 { data: "kategori" },
-//                 { data: "rata_waktu" },
-//                 {
-//                     data: "background",
-//                     render: function (data) {
-//                         return (
-//                             '<div style="background-color: ' +
-//                             data +
-//                             '; width: 50px; height: 20px;"></div>'
-//                         );
-//                     },
-//                 },
-//             ],
-//             order: [[1, "dsc"]],
-//             paging: true,
-//             searching: false,
-//             info: true,
-//             responsive: true,
-//             pageLength: 7,
-//             lengthMenu: [
-//                 [10, 25, 50, -1],
-//                 [10, 25, 50, "All"],
-//             ],
-//             buttons: [
-//                 {
-//                     extend: "excelHtml5",
-//                     text: "Excel",
-//                     title: "Waktu Layanan Tanggal: " + tglA + " s.d. " + tglB,
-//                     filename:
-//                         "Waktu Layanan Tanggal: " + tglA + "  s.d. " + tglB,
-//                 },
-//                 // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
-//             ],
-//         })
-//         .buttons()
-//         .container()
-//         .appendTo("#rataTabel_wrapper .col-md-6:eq(0)");
-// }
 function setTabelRataWaktu(data, tglA, tglB) {
     $("#rataTabel")
         .DataTable({
@@ -526,7 +300,13 @@ function setTabelRataWaktu(data, tglA, tglB) {
                     total_waktu: data.total_tunggu_daftar,
                     rata_waktu: data.avg_tunggu_daftar.toFixed(2),
                     waktu_terlama: data.max_tunggu_daftar.toFixed(2),
-                    background: data.avg_tunggu_daftar > 60 ? "red" : "green",
+                    waktu_tercepat: data.min_tunggu_daftar.toFixed(2),
+                    background:
+                        data.avg_tunggu_daftar > 60
+                            ? "red"
+                            : data.avg_tunggu_daftar > 0
+                            ? "green"
+                            : null,
                 },
                 {
                     kategori:
@@ -535,7 +315,13 @@ function setTabelRataWaktu(data, tglA, tglB) {
                     total_waktu: data.total_tunggu_rm,
                     rata_waktu: data.avg_tunggu_rm.toFixed(2),
                     waktu_terlama: data.max_tunggu_rm.toFixed(2),
-                    background: data.avg_tunggu_rm > 60 ? "red" : "green",
+                    waktu_tercepat: data.min_tunggu_rm.toFixed(2),
+                    background:
+                        data.avg_tunggu_rm > 60
+                            ? "red"
+                            : data.avg_tunggu_rm > 0
+                            ? "green"
+                            : null,
                 },
                 {
                     kategori: "Tunggu Tensi",
@@ -543,7 +329,13 @@ function setTabelRataWaktu(data, tglA, tglB) {
                     total_waktu: data.total_tunggu_tensi,
                     rata_waktu: data.avg_tunggu_tensi.toFixed(2),
                     waktu_terlama: data.max_tunggu_tensi.toFixed(2),
-                    background: data.avg_tunggu_tensi > 60 ? "red" : "green",
+                    waktu_tercepat: data.min_tunggu_tensi.toFixed(2),
+                    background:
+                        data.avg_tunggu_tensi > 60
+                            ? "red"
+                            : data.avg_tunggu_tensi > 0
+                            ? "green"
+                            : null,
                 },
                 {
                     kategori: "Tunggu Poli",
@@ -551,7 +343,13 @@ function setTabelRataWaktu(data, tglA, tglB) {
                     total_waktu: data.total_tunggu_poli,
                     rata_waktu: data.avg_tunggu_poli.toFixed(2),
                     waktu_terlama: data.max_tunggu_poli.toFixed(2),
-                    background: data.avg_tunggu_poli > 60 ? "red" : "green",
+                    waktu_tercepat: data.min_tunggu_poli.toFixed(2),
+                    background:
+                        data.avg_tunggu_poli > 60
+                            ? "red"
+                            : data.avg_tunggu_poli > 0
+                            ? "green"
+                            : null,
                 },
                 {
                     kategori: "Tunggu Lab",
@@ -559,7 +357,13 @@ function setTabelRataWaktu(data, tglA, tglB) {
                     total_waktu: data.total_tunggu_lab,
                     rata_waktu: data.avg_tunggu_lab.toFixed(2),
                     waktu_terlama: data.max_tunggu_lab.toFixed(2),
-                    background: data.avg_tunggu_lab > 60 ? "red" : "green",
+                    waktu_tercepat: data.min_tunggu_lab.toFixed(2),
+                    background:
+                        data.avg_tunggu_lab > 60
+                            ? "red"
+                            : data.avg_tunggu_lab > 0
+                            ? "green"
+                            : null,
                 },
                 {
                     kategori: "Tunggu Hasil Lab",
@@ -567,8 +371,13 @@ function setTabelRataWaktu(data, tglA, tglB) {
                     total_waktu: data.total_tunggu_hasil_lab,
                     rata_waktu: data.avg_tunggu_hasil_lab.toFixed(2),
                     waktu_terlama: data.max_tunggu_hasil_lab.toFixed(2),
+                    waktu_tercepat: data.min_tunggu_hasil_lab.toFixed(2),
                     background:
-                        data.avg_tunggu_hasil_lab > 60 ? "red" : "green",
+                        data.avg_tunggu_hasil_lab > 120
+                            ? "red"
+                            : data.avg_tunggu_hasil_lab > 0
+                            ? "green"
+                            : null,
                 },
                 {
                     kategori: "Tunggu RO",
@@ -576,65 +385,123 @@ function setTabelRataWaktu(data, tglA, tglB) {
                     total_waktu: data.total_tunggu_ro,
                     rata_waktu: data.avg_tunggu_ro.toFixed(2),
                     waktu_terlama: data.max_tunggu_ro.toFixed(2),
-                    background: data.avg_tunggu_ro > 60 ? "red" : "green",
+                    waktu_tercepat: data.min_tunggu_ro.toFixed(2),
+                    background:
+                        data.avg_tunggu_ro > 60
+                            ? "red"
+                            : data.avg_tunggu_ro > 0
+                            ? "green"
+                            : null,
                 },
+                // {
+                //     kategori: "Tunggu Hasil RO",
+                //     total_pasien: data.total_ro,
+                //     total_waktu: data.total_tunggu_hasil_ro,
+                //     rata_waktu: data.avg_tunggu_hasil_ro.toFixed(2),
+                //     waktu_terlama: data.max_tunggu_hasil_ro.toFixed(2),
+                //     waktu_tercepat: data.min_tunggu_hasil_ro.toFixed(2),
+                //     background:
+                //         data.avg_tunggu_hasil_ro > 60
+                //             ? "red"
+                //             : data.avg_tunggu_hasil_ro > 0
+                //             ? "green"
+                //             : null,
+                // },
+                // {
+                //     kategori: "Tunggu IGD",
+                //     total_pasien: data.total_igd,
+                //     total_waktu: data.total_tunggu_igd,
+                //     rata_waktu: data.avg_tunggu_igd.toFixed(2),
+                //     waktu_terlama: data.max_tunggu_igd.toFixed(2),
+                //     waktu_tercepat: data.min_tunggu_igd.toFixed(2),
+                //     background:
+                //         data.avg_tunggu_igd > 60
+                //             ? "red"
+                //             : data.avg_tunggu_igd > 0
+                //             ? "green"
+                //             : null,
+                // },
                 {
-                    kategori: "Tunggu Hasil RO",
-                    total_pasien: data.total_ro,
-                    total_waktu: data.total_tunggu_hasil_ro,
-                    rata_waktu: data.avg_tunggu_hasil_ro.toFixed(2),
-                    waktu_terlama: data.max_tunggu_hasil_ro.toFixed(2),
-                    background: data.avg_tunggu_hasil_ro > 60 ? "red" : "green",
-                },
-                {
-                    kategori: "Tunggu IGD",
+                    kategori: "Durasi Layanan Tindakan",
                     total_pasien: data.total_igd,
-                    total_waktu: data.total_tunggu_igd,
-                    rata_waktu: data.avg_tunggu_igd.toFixed(2),
-                    waktu_terlama: data.max_tunggu_igd.toFixed(2),
-                    background: data.avg_tunggu_igd > 60 ? "red" : "green",
+                    total_waktu: data.total_lama_igd,
+                    rata_waktu: data.avg_lama_igd.toFixed(2),
+                    waktu_terlama: data.max_lama_igd.toFixed(2),
+                    waktu_tercepat: data.min_lama_igd.toFixed(2),
+                    background:
+                        data.avg_lama_igd > 60
+                            ? "red"
+                            : data.avg_lama_igd > 0
+                            ? "green"
+                            : null,
                 },
+                // {
+                //     kategori: "Tunggu Farmasi",
+                //     total_pasien: data.total_pasien,
+                //     total_waktu: data.total_tunggu_farmasi,
+                //     rata_waktu: data.avg_tunggu_farmasi.toFixed(2),
+                //     waktu_terlama: data.max_tunggu_farmasi.toFixed(2),
+                //     waktu_tercepat: data.min_tunggu_farmasi.toFixed(2),
+                //     background:
+                //         data.avg_tunggu_farmasi > 60
+                //             ? "red"
+                //             : data.avg_tunggu_farmasi > 0
+                //             ? "green"
+                //             : null,
+                // },
+                // {
+                //     kategori: "Tunggu Kasir",
+                //     total_pasien: data.total_pasien,
+                //     total_waktu: data.total_tunggu_kasir,
+                //     rata_waktu: data.avg_tunggu_kasir.toFixed(2),
+                //     waktu_terlama: data.max_tunggu_kasir.toFixed(2),
+                //     waktu_tercepat: data.min_tunggu_kasir.toFixed(2),
+                //     background:
+                //         data.avg_tunggu_kasir > 60
+                //             ? "red"
+                //             : data.avg_tunggu_kasir > 0
+                //             ? "green"
+                //             : null,
+                // },
                 {
-                    kategori: "Tunggu Farmasi",
-                    total_pasien: data.total_pasien,
-                    total_waktu: data.total_tunggu_farmasi,
-                    rata_waktu: data.avg_tunggu_farmasi.toFixed(2),
-                    waktu_terlama: data.max_tunggu_farmasi.toFixed(2),
-                    background: data.avg_tunggu_farmasi > 60 ? "red" : "green",
-                },
-                {
-                    kategori: "Tunggu Kasir",
-                    total_pasien: data.total_pasien,
-                    total_waktu: data.total_tunggu_kasir,
-                    rata_waktu: data.avg_tunggu_kasir.toFixed(2),
-                    waktu_terlama: data.max_tunggu_kasir.toFixed(2),
-                    background: data.avg_tunggu_kasir > 60 ? "red" : "green",
-                },
-                {
-                    kategori: "Durasi Poli dari Pendaftaran",
+                    kategori:
+                        "Durasi Poli dari Pendaftaran selesai sampai dipanggil Poli",
                     total_pasien: data.total_pasien,
                     total_waktu: data.total_durasi_poli,
                     rata_waktu: data.avg_durasi_poli.toFixed(2),
                     waktu_terlama: data.max_durasi_poli.toFixed(2),
-                    background: data.avg_durasi_poli > 60 ? "red" : "green",
+                    waktu_tercepat: data.min_durasi_poli.toFixed(2),
+                    background:
+                        data.avg_durasi_poli > 60
+                            ? "red"
+                            : data.avg_durasi_poli > 0
+                            ? "green"
+                            : null,
                 },
             ],
             columns: [
                 { data: "kategori" },
                 { data: "total_pasien" },
                 { data: "total_waktu" },
-                { data: "rata_waktu" },
-                { data: "waktu_terlama" },
                 {
-                    data: "background",
-                    render: function (data) {
+                    data: "rata_waktu",
+                    render: function (data, type, row) {
+                        const backgroundColor = row.background; // Mengambil nilai warna dari kolom 'background'
+                        const textColor =
+                            backgroundColor === null ? "black" : "white";
                         return (
                             '<div style="background-color: ' +
+                            (backgroundColor || "transparent") +
+                            "; color: " +
+                            textColor +
+                            '; padding: 5px;">' +
                             data +
-                            '; width: 50px; height: 20px;"></div>'
+                            "</div>"
                         );
                     },
                 },
+                { data: "waktu_terlama" },
+                { data: "waktu_tercepat" },
             ],
             order: [[2, "asc"]],
             paging: false,
@@ -663,12 +530,14 @@ function setTabelTerlamaWaktu(data, tglA, tglB) {
                     kategori:
                         "Tunggu Terlama di Pendaftaran, Mulai di panggil sampai selesai di daftar",
                     waktu_terlama: data.max_tunggu_daftar.toFixed(2),
+                    waktu_tercepat: data.min_tunggu_daftar.toFixed(2),
                     background: data.max_tunggu_daftar > 60 ? "red" : "green",
                 },
                 {
                     kategori:
                         "Tunggu Terlama RM Siap, Mulai di panggil sampai RM Siap",
                     waktu_terlama: data.max_tunggu_rm.toFixed(2),
+                    waktu_tercepat: data.min_tunggu_rm.toFixed(2),
                     background: data.max_tunggu_rm > 60 ? "red" : "green",
                 },
                 {
@@ -884,11 +753,11 @@ function setTabelSpmWaktu(data, tglA, tglB) {
                 { data: "persen_kurang" },
             ],
             order: [[2, "dsc"]],
-            paging: true,
+            paging: false,
             searching: false,
             info: true,
             responsive: true,
-            pageLength: 7,
+            // pageLength: 11,
             lengthMenu: [
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"],
@@ -1350,8 +1219,14 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal, tglA, tglB) {
                 },
             });
         },
-        error: function (err) {
+        error: function (err, response) {
             console.error("Error fetching data:", err);
+            console.log("🚀 ~ ratawaktulayanan ~ response:", response);
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Terjadi kesalahan, silahkan coba lagi!",
+            });
         },
     });
 }
@@ -1408,7 +1283,7 @@ window.addEventListener("load", function () {
         // autoApply: true, // Apply selection automatically when selecting a date range
         locale: {
             format: "DD-MM-YYYY",
-            separator: " sampai dengan ",
+            separator: "  s.d.  ",
             applyLabel: "Cari",
             cancelLabel: "Batal",
             customRangeLabel: "Custom Range",

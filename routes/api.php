@@ -215,6 +215,7 @@ Route::post('gizi/dx/domain/delete', [GiziDxModelController::class, 'deleteDomai
 
 //API Riwayat Untuk migrasi SIM RS
 Route::post('riwayatKunjungan', [RiwayatController::class, 'index']);
+Route::post('riwayatKunjungan/jumlahDx', [RiwayatController::class, 'CountDxMedis']);
 
 Route::post('noAntrianKominfo', [PasienKominfoController::class, 'newPendaftaran']);
 Route::post('pasienKominfo', [PasienKominfoController::class, 'newPasien']);

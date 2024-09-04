@@ -285,7 +285,17 @@ class LaboratoriumController extends Controller
         // Mendapatkan dataTerpilih dari permintaan
         $dataTerpilih = $request->input('dataTerpilih');
         $ketStatus = $request->input('keterangan');
-        // dd($ketStatus);
+        $tglTrans = Carbon::createFromFormat('Y-m-d', $request->input('tglTrans')); // Memastikan format yang benar
+        $tglNow = Carbon::now(); // Mengambil waktu sekarang sebagai objek Carbon
+
+        if ($tglTrans < $tglNow) {
+            // Jika tglTrans lebih kecil dari hari ini
+            $waktuSelesai = $tglTrans->copy()->setTime(now()->hour, now()->minute, now()->second);
+            $waktuSelesai = $waktuSelesai->format('Y-m-d H:i:s');
+        } else {
+            // Jika tglTrans sama atau lebih besar dari hari ini
+            $waktuSelesai = now()->format('Y-m-d H:i:s');
+        }
 
         // Validasi bahwa dataTerpilih harus array dan tidak boleh kosong
         if (!is_array($dataTerpilih) || empty($dataTerpilih)) {
@@ -320,9 +330,11 @@ class LaboratoriumController extends Controller
                 }
             }
             if ($ketStatus == "Selesai") {
-                $kunjungan = LaboratoriumKunjunganModel::where('notrans', $data['notrans'])->first();
+                $kunjungan = LaboratoriumKunjunganModel::where('norm', $data['norm'])
+                    ->where('created_at','like', '%' . $tglTrans->format('Y-m-d') . '%')
+                    ->first();
                 $kunjungan->update([
-                    'waktu_selesai' => now(), // Jika ada kolom updated_at dan ingin diperbarui
+                    'waktu_selesai' => $waktuSelesai,
                     'ket' => $ketStatus,
                 ]);
             }
@@ -332,6 +344,7 @@ class LaboratoriumController extends Controller
 
             return response()->json([
                 'message' => 'Data Berhasil Diperbarui',
+                'waktu_selesai' => $waktuSelesai,
             ], 200);
 
         } catch (\Exception $e) {

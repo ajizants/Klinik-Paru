@@ -516,8 +516,8 @@ class KominfoModel extends Model
 
                 // Menentukan waktu tunggu lab dan rontgen dan poli
                 $selesaiTensi = strtotime($message['ruang_tensi_selesai_waktu']);
-                $panggilPoli = strtotime($message['ruang_poli_panggil_waktu']);
-                $selesaiPoli = strtotime($message['ruang_poli_selesai_waktu']);
+                $panggilPoli = strtotime($message['ruang_poli_panggil_waktu']) ?: null;
+                $selesaiPoli = strtotime($message['ruang_poli_selesai_waktu']) ?: null;
                 $panggilLabMat = strtotime($panggilLab);
                 $panggilRoMat = strtotime($panggilRo);
                 $selesaiLabMat = strtotime($selesaiLab);
@@ -525,7 +525,7 @@ class KominfoModel extends Model
                 $tunggu_lab = $tunggu_ro = 0;
 
                 if ($Ldata && $Rdata) {
-                    $waktuTunggu=$this->urutan($panggilPoli, $panggilLabMat, $panggilRoMat, $selesaiTensi);
+                    $waktuTunggu = $this->urutan($panggilPoli, $panggilLabMat, $panggilRoMat, $selesaiTensi);
                     $tunggu_lab = $waktuTunggu['tunggu_lab'];
                     $tunggu_ro = $waktuTunggu['tunggu_ro'];
                     $tunggu_poli = $waktuTunggu['tunggu_poli'];
@@ -640,11 +640,17 @@ class KominfoModel extends Model
 
     private function urutan($panggilPoli, $panggilLabMat, $panggilRoMat, $selesaiTensi)
     {
+
         $waktuArray = [
             'panggilPoli' => $panggilPoli,
             'panggilLabMat' => $panggilLabMat,
             'panggilRoMat' => $panggilRoMat,
         ];
+
+        // // Filter array untuk menghapus nilai yang null, kosong, atau 0
+        $waktuArray = array_filter($waktuArray, function ($value) {
+            return !is_null($value) && $value !== '' && $value !== 0;
+        });
 
         // Urutkan array berdasarkan waktu
         asort($waktuArray);
@@ -653,14 +659,24 @@ class KominfoModel extends Model
         $waktuUrut = array_values($waktuArray);
         $kunciUrut = array_keys($waktuArray);
 
+        // dd($waktuUrut, $kunciUrut, $selesaiTensi);
+
         // Tentukan waktu yang lebih awal dan selisih antar waktu
         $waktuPertama = $kunciUrut[0];
         $waktuKedua = $kunciUrut[1];
-        $waktuKetiga = $kunciUrut[2];
+        // $waktuKetiga = $kunciUrut[2];
 
         $selisih0_1 = max(0, round(($waktuUrut[0] - $selesaiTensi) / 60, 2));
         $selisih1_2 = max(0, round(($waktuUrut[1] - $waktuUrut[0]) / 60, 2));
-        $selisih2_3 = max(0, round(($waktuUrut[2] - $waktuUrut[1]) / 60, 2));
+        if (count($waktuArray) > 2) {
+            // Mengambil waktu urut yang sudah diurutkan
+            $waktuUrut = array_values($waktuArray); // Mengambil nilai dari array yang sudah diurutkan
+            $selisih2_3 = max(0, round(($waktuUrut[2] - $waktuUrut[1]) / 60, 2));
+        } else {
+            $selisih2_3 = 0;
+        }
+
+        // dd($selisih0_1, $selisih1_2, $selisih2_3);
 
         if ($waktuPertama == 'panggilPoli') {
             // dd("waktu pertama poli");
@@ -700,7 +716,7 @@ class KominfoModel extends Model
         return [
             'tunggu_poli' => $tunggu_poli,
             'tunggu_lab' => $tunggu_lab,
-            'tunggu_ro' => $tunggu_ro
+            'tunggu_ro' => $tunggu_ro,
         ];
     }
 

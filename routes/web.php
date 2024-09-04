@@ -26,6 +26,16 @@ Route::get('actionlogout', [LoginController::class, 'actionlogout'])->name('acti
 Route::get('forbidden', [HomeController::class, 'forbidden'])->name('forbidden')->middleware('auth');
 
 Route::get('logFarmasi', [HomeController::class, 'logFarmasi'])->name('logFarmasi')->middleware('auth');
+
+Route::get('RO/Hasil/{id}', [HomeController::class, 'rontgenHasil'])->name('rontgenHasil');
+
+Route::get('RO/Hasil', [HomeController::class, 'roHasil'])->name('roHasil');
+
+Route::get('dispenser', [HomeController::class, 'dispenser'])->name('dispenser');
+
+Route::get('verif', [HomeController::class, 'verif'])->name('verif');
+
+Route::get('displayAntrian', [HomeController::class, 'displayAntrian'])->name('displayAntrian');
 //menu
 Route::middleware('auth')->group(function () {
     Route::get('report', [HomeController::class, 'report'])->name('report');
@@ -59,8 +69,3 @@ Route::middleware('auth')->group(function () {
     //riwayat diagnosa
     Route::get('/Riwayat/Pasien', [HomeController::class, 'riwayatKunjungan'])->name('riwayatKunjungan')->middleware('role:dokter');
 });
-Route::get('RO/Hasil/{id}', [HomeController::class, 'rontgenHasil'])->name('rontgenHasil');
-Route::get('RO/Hasil', [HomeController::class, 'roHasil'])->name('roHasil');
-Route::get('dispenser', [HomeController::class, 'dispenser'])->name('dispenser');
-Route::get('verif', [HomeController::class, 'verif'])->name('verif');
-Route::get('displayAntrian', [HomeController::class, 'displayAntrian'])->name('displayAntrian');
