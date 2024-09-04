@@ -134,6 +134,7 @@ class ROTransaksiController extends Controller
                     $ket_foto = $request->input('ket_foto');
                 }
                 $tanggalBersih = preg_replace("/[^0-9]/", "", $request->input('tgltrans'));
+                $id = $tanggalBersih . $request->input('norm');
                 $namaFile = $tanggalBersih . '_' . $request->input('norm') . '_' . $ket_foto . $request->input('foto') . '.' . pathinfo($request->file('gambar')->getClientOriginalName(), PATHINFO_EXTENSION);
             } else {
                 $namaFile = null;
@@ -171,6 +172,7 @@ class ROTransaksiController extends Controller
                     if (!$upload) {
                         // Jika tidak ada data, buat entitas baru
                         $upload = new ROTransaksiHasilModel();
+                        $upload->id = $id;
                         $upload->norm = $request->input('norm');
                         $upload->tanggal = $request->input('tgltrans');
                         $upload->nama = $request->input('nama');
@@ -184,6 +186,10 @@ class ROTransaksiController extends Controller
                         // dd($jenis);
 
                         $param = [
+                            [
+                                'name' => 'id',
+                                'contents' => $id,
+                            ],
                             [
                                 'name' => 'norm',
                                 'contents' => $request->input('norm'),
@@ -263,12 +269,17 @@ class ROTransaksiController extends Controller
         // Sanitize the date by removing non-numeric characters
         $tanggalBersih = preg_replace("/[^0-9]/", "", $request->input('tgltrans'));
 
+        $id = $tanggalBersih . $request->input('norm');
+
         // Construct the new file name
         $namaFile = $tanggalBersih . '_' . $request->input('norm') . '_' . $request->input('ket_foto') . $request->input('foto') . '.' . $request->file('gambar')->getClientOriginalExtension();
+        $key = pathinfo($namaFile, PATHINFO_FILENAME);
         // dd($namaFile);
         // Find the existing record by ID
         $dataFoto = ROTransaksiHasilModel::where('norm', $request->input('norm'))
-            ->where('foto', $namaFile)->first();
+            ->where('foto', 'like', '%' . $key . '%')
+            ->first();
+
         // dd($dataFoto);
 
         if ($dataFoto) {
@@ -286,6 +297,10 @@ class ROTransaksiController extends Controller
             // dd($jenis);
 
             $param = [
+                [
+                    'name' => 'id',
+                    'contents' => $id,
+                ],
                 [
                     'name' => 'norm',
                     'contents' => $request->input('norm'),
@@ -326,9 +341,10 @@ class ROTransaksiController extends Controller
             $dataFoto->save();
 
             return response()->json($resMsg, 200, [], JSON_PRETTY_PRINT);
+        } else {
+            return response()->json(['message' => 'Data not found'], 404);
         }
 
-        return response()->json(['success' => false, 'message' => 'Data not found'], 404);
     }
 
     public function deleteGambar(Request $request)
@@ -352,7 +368,9 @@ class ROTransaksiController extends Controller
 
             // Prepare for external deletion
             $url = env('APP_URL_DELETE'); // Ensure this points to the correct URL of your PHP script on Server B
+            // dd($url);
             $urlDelete = $url . '?id=' . $request->input('id');
+            // dd($urlDelete);
 
             // Send request to delete the image from the external server
             $response = $client->request('GET', $urlDelete);
