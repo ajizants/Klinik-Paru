@@ -126,6 +126,7 @@ class ROTransaksiController extends Controller
             $transaksi->kdKondisiRo = 55;
             $transaksi->created_at = $tanggal;
             $transaksi->updated_at = $tanggal;
+            $id="";
 
             if ($request->hasFile('gambar')) {
                 if ($request->input('ket_foto') == '') {
@@ -134,7 +135,11 @@ class ROTransaksiController extends Controller
                     $ket_foto = $request->input('ket_foto');
                 }
                 $tanggalBersih = preg_replace("/[^0-9]/", "", $request->input('tgltrans'));
-                $id = $tanggalBersih . $request->input('norm');
+
+                // $id = $tanggalBersih . '_' . $request->input('norm') . '_' . $ket_foto;
+                $dataRO = ROTransaksiHasilModel::orderBy('id', 'desc')->first();
+                $id = $dataRO->id + 1;
+                // dd($id);
                 $namaFile = $tanggalBersih . '_' . $request->input('norm') . '_' . $ket_foto . $request->input('foto') . '.' . pathinfo($request->file('gambar')->getClientOriginalName(), PATHINFO_EXTENSION);
             } else {
                 $namaFile = null;
