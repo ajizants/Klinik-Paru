@@ -177,7 +177,8 @@ async function simpan() {
                 $msgThorax,
         });
 
-        rstForm();
+        // rstForm();
+        updateHasilro(norm, tgltrans);
         updateAntrian();
     } catch (error) {
         console.error("Terjadi kesalahan saat menyimpan data:", error.massage);
@@ -191,7 +192,41 @@ async function simpan() {
     }
 }
 
-function multyPic() {}
+async function updateHasilro(norm, tgltrans) {
+    const requestData = {
+        norm: norm,
+        tgltrans: tgltrans,
+    };
+    try {
+        const response = await fetch("/api/hasilRo", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+        });
+
+        if (!response.ok) {
+            if (response.status == 404) {
+                console.error("No data found");
+            } else {
+                throw new Error("Network response was not ok");
+            }
+        } else {
+            const data = await response.json();
+            const foto = data.data;
+            console.log("🚀 ~ updateHasilro ~ foto:", foto);
+            showFoto(foto);
+        }
+    } catch (error) {
+        console.error("Terjadi kesalahan saat mencari data:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Terjadi kesalahan saat mencari data...!!! /n" + error,
+        });
+        // Optionally, handle the error by informing the user or retrying
+    }
+}
 async function update() {
     try {
         var idFoto = document.getElementById("idFoto").value;
@@ -299,19 +334,16 @@ function deleteFoto(id) {
     });
 }
 
-
 function removeRow(id) {
     const table = $("#tableRo").DataTable();
-    const row = $(`#tableRo .btn-danger[data-id='${id}']`).closest('tr');
+    const row = $(`#tableRo .btn-danger[data-id='${id}']`).closest("tr");
 
     if (row.length) {
         table.row(row).remove().draw();
-        console.log("🚀 ~ Row removed successfully");
     } else {
         console.error("🚀 ~ Row not found with id:", id);
     }
 }
-
 
 async function cariTsRo(norm, tgl) {
     // Format the norm input field
@@ -517,16 +549,8 @@ function showFoto(foto) {
 }
 
 function modalFotoShow(foto) {
-    // Update the modal image source
-    // const appUrlRo = "your_image_directory_url/"; // Replace with the actual directory URL
     const fullImageUrl = appUrlRo + foto;
-
-    // Set the image source in the modal
     document.getElementById("modalFotoImage").src = fullImageUrl;
-
-    // Optionally, you can set the modal title or other elements here
-
-    // Show the modal (this is redundant if you're already triggering it with data-toggle)
     $("#modalFoto").modal("show");
 }
 

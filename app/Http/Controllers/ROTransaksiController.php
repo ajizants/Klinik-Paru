@@ -410,53 +410,15 @@ class ROTransaksiController extends Controller
         return response()->json($msg, 200, [], JSON_PRETTY_PRINT);
     }
 
-    // public function hasilRo(Request $request)
-    // {
-    //     try {
-    //         $norm = $request->input('norm');
-    //         $data = RoHasilModel::when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
-    //             return $query->where('norm', $norm);
-    //         })
-    //             ->get();
-
-    //         if ($data->isEmpty()) {
-    //             $res = [
-    //                 'metadata' => [
-    //                     'message' => 'Data foto thorax tidak ditemukan, silahkan menghubungi radiologi',
-    //                     'status' => 404,
-    //                 ],
-    //                 'data' => [],
-    //             ];
-    //         } else {
-    //             $res = [
-    //                 'metadata' => [
-    //                     'message' => 'Data foto thorax ditemukan',
-    //                     'status' => 200,
-    //                 ],
-    //                 'data' => $data,
-    //             ];
-    //         }
-    //     } catch (\Exception $e) {
-    //         // Handle the exception if the database is down or any other error occurs
-    //         $res = [
-    //             'metadata' => [
-    //                 'message' => 'Terjadi kesalahan saat mengakses database. Silahkan coba lagi nanti.',
-    //                 'status' => 500,
-    //             ],
-    //             'data' => [],
-    //         ];
-    //     }
-
-    //     return response()->json($res, 200, [], JSON_PRETTY_PRINT);
-    // }
-
     public function hasilRo(Request $request)
     {
         try {
             $norm = $request->input('norm');
+            $tgl = $request->input('tgltrans');
             $data = RoHasilModel::when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
                 return $query->where('norm', $norm);
             })
+                ->where('tanggal', 'like', '%' . $tgl . '%')
                 ->get();
 
             if ($data->isEmpty()) {

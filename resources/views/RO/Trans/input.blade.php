@@ -384,7 +384,7 @@
                                                 onclick="validateAndSubmit();">Simpan</a>
                                         </div>
                                         <div class="col-auto">
-                                            <a class="btn btn-danger" id="tblBatal" onclick="rstForm();">Batal</a>
+                                            <a class="btn btn-danger" id="tblBatal" onclick="rstForm();">Selesai / Reset</a>
                                         </div>
                                     </div>
                             </form>
