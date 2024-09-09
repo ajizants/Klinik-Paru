@@ -252,7 +252,7 @@ class HomeController extends Controller
     public function riwayatKunjungan()
     {
         $title = 'Riwayat Kunjungan';
-        return view('Laporan.diagnosa')->with('title', $title);
+        return view('Laporan.riwayatPasien')->with('title', $title);
     }
 
 }

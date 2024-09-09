@@ -377,7 +377,7 @@
             var table = $("#reportKunjungan").DataTable({
                 data: dataTableData,
                 columns: columns,
-                order: [0, "asc"],
+                order: [1, "asc"],
                 lengthChange: true,
                 autoWidth: true,
                 buttons: [{
@@ -390,13 +390,17 @@
                         title: "Laporan Hasil Pemeriksaan Lab",
                         filename: "Daftar Penjamin Laboratorium",
                     },
-                    "colvis",
+                    {
+                        extend: "colvis",
+                        text: "Tampilkan Kolom",
+                    },
+
                 ],
                 rowGroup: {
                     dataSrc: 'created_at' // Group rows by the formatted date
                 },
                 initComplete: function() {
-                    this.api().table().node().classList.add("table", "table-bordered-custom");
+                    this.api().table().node().classList.add("table");
                 },
             });
 

@@ -10,20 +10,24 @@
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="http://rsparu.kkpm.local" target="_blank"" class="nav-link">RS Paru</a>
                 </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="http://172.16.10.88/ro" target="_blank"" class="nav-link">Aplikasi Radiologi</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="https://kkpm.banyumaskab.go.id/administrator/auth" target="_blank""
+                        class="nav-link">Aplikasi KOMINFO</a>
+                </li>
             </ul>
 
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
                 <!-- Navbar Search -->
-                <li class="class="nav-item form-inline"">
+                <li class="nav-item form-inline">
                     <label for="waktu" class="font-weight-bold mb-0 mr-2">Waktu
                         :</label>
                     <input type="text" id="waktu" class="bg-white border border-white " readonly />
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                        <i class="fas fa-search"></i>
-                    </a>
                     <div class="navbar-search-block">
                         <form class="form-inline">
                             <div class="input-group input-group-sm">

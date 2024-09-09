@@ -8,10 +8,10 @@
             <p class="lead">Anda tidak memiliki hak mengakses laman tersebut!</p>
             <a href="{{ route('home') }}" class="btn btn-primary">Kembali ke Beranda</a>
         </div>
+        <div class="d-flex justify-content-center mt-5">
+            <img src="{{ asset('img/Cry.png') }}" alt="Forbidden" style="height: 200px;width: 200px">
+        </div>
     </div>
-    <!-- /.container-fluid -->
-
-    @include('Template.footer')
 
 
     <!-- jQuery -->

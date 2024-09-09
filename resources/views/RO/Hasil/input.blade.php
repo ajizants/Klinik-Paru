@@ -50,8 +50,10 @@
                                         </div>
                                         {{-- <div class="container-fluid"> --}}
                                         <div class="table-responsive pt-2 px-2">
-                                            <table id="reportKunjungan"class=" table table-striped pt-0 mt-0 fs-6"
-                                        style="width:100%" cellspacing="0">
+                                            <table id="reportKunjungan"class=" table table-striped table-hover
+                                        table-bordered-dark pt-0 mt-0 fs-6" style="width:100%" cellspacing="0">
+                                        <thead class="bg bg-info"></thead>
+
                                     </div>
                                     {{-- </div> --}}
                                 </div>
