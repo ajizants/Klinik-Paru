@@ -194,6 +194,7 @@ async function simpan() {
 function multyPic() {}
 async function update() {
     try {
+        var idFoto = document.getElementById("idFoto").value;
         var norm = document.getElementById("norm").value;
         var nama = document.getElementById("nama").value;
         var tglRo = document.getElementById("tglRo").value;
@@ -203,6 +204,7 @@ async function update() {
 
         // Membuat objek FormData untuk mengirim data dengan file
         var formData = new FormData();
+        formData.append("idFoto", idFoto);
         formData.append("norm", norm);
         formData.append("nama", nama);
         formData.append("tgltrans", tglRo);
@@ -280,6 +282,7 @@ function deleteFoto(id) {
                         title: "Data Berhasil",
                         text: "Data berhasil dihapus.",
                     });
+                    removeRow(id);
                 }
             } catch (error) {
                 console.error(
@@ -295,6 +298,20 @@ function deleteFoto(id) {
         }
     });
 }
+
+
+function removeRow(id) {
+    const table = $("#tableRo").DataTable();
+    const row = $(`#tableRo .btn-danger[data-id='${id}']`).closest('tr');
+
+    if (row.length) {
+        table.row(row).remove().draw();
+        console.log("🚀 ~ Row removed successfully");
+    } else {
+        console.error("🚀 ~ Row not found with id:", id);
+    }
+}
+
 
 async function cariTsRo(norm, tgl) {
     // Format the norm input field

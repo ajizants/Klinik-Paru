@@ -126,7 +126,7 @@ class ROTransaksiController extends Controller
             $transaksi->kdKondisiRo = 55;
             $transaksi->created_at = $tanggal;
             $transaksi->updated_at = $tanggal;
-            $id="";
+            $id = "";
 
             if ($request->hasFile('gambar')) {
                 if ($request->input('ket_foto') == '') {
@@ -273,9 +273,8 @@ class ROTransaksiController extends Controller
     {
         // Sanitize the date by removing non-numeric characters
         $tanggalBersih = preg_replace("/[^0-9]/", "", $request->input('tgltrans'));
-
-        $id = $tanggalBersih . $request->input('norm');
-
+        $dataRO = ROTransaksiHasilModel::orderBy('id', 'desc')->first();
+        $id = $dataRO->id + 1;
         // Construct the new file name
         $namaFile = $tanggalBersih . '_' . $request->input('norm') . '_' . $request->input('ket_foto') . $request->input('foto') . '.' . $request->file('gambar')->getClientOriginalExtension();
         $key = pathinfo($namaFile, PATHINFO_FILENAME);
@@ -360,6 +359,7 @@ class ROTransaksiController extends Controller
 
         try {
             $gambar = ROTransaksiHasilModel::find($request->input('id')); // Use find for better readability
+            // dd($gambar);
             if (!$gambar) {
                 // Data not found
                 $msg = [
@@ -390,6 +390,7 @@ class ROTransaksiController extends Controller
                 'metadata' => [
                     // 'message' => $res['message'],
                     'message' => "Gambar berhasil di hapus",
+                    'DB_RO' => $res,
                     'status' => 200,
                 ],
             ];
