@@ -277,6 +277,18 @@ function addTindakan() {
         });
     }
 }
+
+function setHarga() {
+    const bmhpElement = document.getElementById("bmhp");
+    const selectedOption = bmhpElement.options[bmhpElement.selectedIndex];
+    const produkId = selectedOption.getAttribute("prdukid");
+    const jual = selectedOption.getAttribute("jual");
+    console.log("🚀 ~ setHarga ~ jual:", jual);
+    console.log("🚀 ~ setHarga ~ produkId:", produkId);
+    $("#jual").val(jual);
+    $("#productID").val(produkId);
+    $("#total").val(0);
+}
 $(document).ready(function () {
     setTglRo();
     $(".select2bs4").select2({ theme: "bootstrap4" });
@@ -305,10 +317,10 @@ $(document).ready(function () {
     });
 
     setTodayDate();
-    populateTindakanOptions();
-    populateDokterOptions();
-    populatePetugasOptions();
-    populateBmhpOptions();
+    // populateTindakanOptions();
+    // populateDokterOptions();
+    // populatePetugasOptions();
+    // populateBmhpOptions();
     updateAntrian();
     setInterval(function () {
         updateAntrian();

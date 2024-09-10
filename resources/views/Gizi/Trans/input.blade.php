@@ -109,6 +109,11 @@
                                                     aria-describedby="inputGroup-sizing-sm"
                                                     class="form-control mb-3 border border-primary" required>
                                                     <option value="">--Pilih Dokter--</option>
+                                                    @foreach (collect($dokter)->sortBy('nama') as $item)
+                                                        <!-- Convert to collection and sort by 'nama' -->
+                                                        <option value="{{ $item->nip }}">{{ $item->gelar_d }}
+                                                            {{ $item->nama }} {{ $item->gelar_b }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>

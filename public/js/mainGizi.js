@@ -742,7 +742,6 @@ document.getElementById("tb_awal").addEventListener("input", function () {
 $(document).ready(function () {
     var table = $("#tabel_kunjungan").DataTable();
     setTodayDate();
-    populateDokterOptions();
     $(".select2Multi").select2({
         placeholder: "Pilih Keluhan",
         tags: true,

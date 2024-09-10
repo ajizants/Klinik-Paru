@@ -6,7 +6,48 @@ var Toast = Swal.mixin({
 });
 
 let table; // Declare the DataTable variable outside the function
+function tabelPemeriksaan(itemPemeriksaan, item, pilihSemuaId) {
+    console.log("🚀 ~ itemPemeriksaan ~ itemPemeriksaan:", itemPemeriksaan);
+    if ($.fn.DataTable.isDataTable("#tabelPemeriksaan")) {
+        table.clear().destroy();
+    }
 
+    table = $("#tabelPemeriksaan").DataTable({
+        data: itemPemeriksaan,
+        columns: [
+            {
+                data: null,
+                render: function (data, type, row) {
+                    return `<input type="checkbox" class="select-checkbox mt-2 data-checkbox ${item}" id="${row.idLayanan}">`;
+                },
+            },
+            {
+                data: "nmLayanan",
+                render: function (data, type, row) {
+                    return `<label type="text" class="form-check-label mt-1" for="${row.idLayanan}" style="font-size: medium;">${data}</label>`;
+                },
+            },
+            {
+                data: "tarif",
+                render: function (data, type, row) {
+                    var formattedTarif = parseInt(data).toLocaleString(
+                        "id-ID",
+                        {
+                            style: "currency",
+                            currency: "IDR",
+                            minimumFractionDigits: 0,
+                        }
+                    );
+                    return `<label type="text" class="form-check-label mt-1" for="${row.idLayanan}" style="font-size: medium;">${formattedTarif}</label>`;
+                },
+            },
+        ],
+        order: [1, "asc"],
+        scrollY: "220px",
+        paging: false,
+        // responsive: true,
+    });
+}
 function layanan(kelas, grupLayanan, pilihSemuaId) {
     if ($.fn.DataTable.isDataTable("#" + grupLayanan)) {
         table.clear().destroy();
@@ -176,6 +217,10 @@ function simpan() {
             .then((data) => {
                 console.log(data);
                 var massage = data.message;
+                Swal.fire({
+                    icon: "success",
+                    title: massage,
+                });
                 var notrans = $("#notrans").val();
                 tampilkanOrder(notrans);
                 $('table thead input[type="checkbox"]').prop("checked", false);
@@ -429,13 +474,14 @@ function dataLab(data, tgl) {
                 data: "created_at",
                 render: function (data) {
                     // Format the date using JavaScript
-                    const formattedDate = new Date(
-                        data
-                    ).toLocaleString("id-ID", {
-                        year: "numeric",
-                        month: "numeric",
-                        day: "numeric",
-                    });
+                    const formattedDate = new Date(data).toLocaleString(
+                        "id-ID",
+                        {
+                            year: "numeric",
+                            month: "numeric",
+                            day: "numeric",
+                        }
+                    );
                     return formattedDate;
                 },
             },
@@ -659,36 +705,17 @@ function updateAntrian() {
 
 $(document).ready(function () {
     setTodayDate();
-    // handlePilihSemuaClick("pilih-hematologi", "hematologi");
-    // handlePilihSemuaClick("pilih-kimia", "kimia");
-    // handlePilihSemuaClick("pilih-imuno", "imuno");
-    handlePilihSemuaClick("pilih-bakteriologi", "bakteriologi");
+    handlePilihSemuaClick("pilih-semua", "item");
     $("#tabelData,#dataTrans").DataTable({
         scrollY: "200px",
     });
-    populateDokterOptions();
-    populateAnalisOptions();
     populateTujuan();
     updateAntrian();
     setInterval(function () {
         updateAntrian();
     }, 150000);
-    // layanan(91, "hematologi", "pilih-hematologi");
-    // layanan(92, "kimia", "pilih-kimia");
-    // layanan(93, "imuno", "pilih-imuno");
-    layanan(9, "bakteriologi", "pilih-bakteriologi");
-
-    // $("#dataAntrian").on("click", ".panggil", function (e) {
-    //     e.preventDefault();
-
-    //     let panggilData = $(this).data("panggil");
-    //     console.log(
-    //         "🚀 ~ file: mainFarmasi.js:478 ~ panggilData:",
-    //         panggilData
-    //     );
-
-    //     panggilPasien(panggilData);
-    // });
+    // layanan(9, "bakteriologi", "pilih-bakteriologi");
+    tabelPemeriksaan(itemPemeriksaan, "item", "pilih-semua");
 
     $("#dataTrans").on("click", ".delete", function (e) {
         e.preventDefault();

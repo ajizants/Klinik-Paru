@@ -730,7 +730,7 @@ window.addEventListener("load", function () {
     populateFoto();
     populateUkuranFilm();
     populateMesin();
-    populateProyeksi();
+    // populateProyeksi();
     kondisiRo();
     updateAntrian();
     $("#norm").on("keyup", function (event) {

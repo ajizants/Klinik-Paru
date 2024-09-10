@@ -11,6 +11,10 @@
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
     <script src="{{ asset('js/mainLab.js') }}"></script>
+    <script>
+        const itemPemeriksaan = @json($layananLab);
+        console.log("🚀 ~ layanan:", itemPemeriksaan)
+    </script>
 
 
     <div class="modal fade" id="modal-xl">

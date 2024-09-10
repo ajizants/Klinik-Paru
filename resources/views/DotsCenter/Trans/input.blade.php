@@ -82,7 +82,13 @@
                                                     <select id="petugas"
                                                         class="form-control select2bs4 border border-primary">
                                                         <option value="">--Pilih Petugas--</option>
+                                                        @foreach (collect($perawat)->sortBy('nama') as $item)
+                                                            <!-- Convert to collection and sort by 'nama' -->
+                                                            <option value="{{ $item->nip }}">{{ $item->gelar_d }}
+                                                                {{ $item->nama }} {{ $item->gelar_b }}</option>
+                                                        @endforeach
                                                     </select>
+
                                                 </div>
                                                 <label for="dokter"
                                                     class="col-sm-1 col-form-label font-weight-bold">Dokter
@@ -90,7 +96,11 @@
                                                 <div class="col-sm-4">
                                                     <select id="dokter"
                                                         class="form-control select2bs4 mb-3 border border-primary">
-                                                        <option value="">--Pilih Dokter--</option>
+                                                        <option value="">--Pilih Dokter--</option>.
+                                                        @foreach ($dokter as $item)
+                                                            <option value="{{ $item->nip }}">{{ $item->gelar_d }}
+                                                                {{ $item->nama }} {{ $item->gelar_b }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -132,9 +142,14 @@
                                                             <label for="blnKe">
                                                                 Pengobatan Bulan Ke
                                                             </label>
-                                                            <select id="blnKe"
+                                                            <select id="blnKe" onchange="setKontrol('blnKe','nxKontrol');"
                                                                 class="form-control select2bs4 border border-primary">
-                                                                <option value="">--Pilih Kemajuan--</option>
+                                                                {{-- <option value="">--Pilih Kemajuan--</option> --}}
+                                                                @foreach ($bulan as $item)
+                                                                    <option nilai="{{ $item->nilai }}"
+                                                                        value="{{ $item->id }}">
+                                                                        {{ $item->nmBlnKe }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <div class="form-group">
@@ -148,6 +163,10 @@
                                                             <select id="obatDots"
                                                                 class="form-control select2bs4 border border-primary">
                                                                 <option value="">--Jenis Obat--</option>
+                                                                @foreach ($obat as $item)
+                                                                    <option value="{{ $item->kd }}">
+                                                                        {{ $item->nmPengobatan }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <div class="form-group">

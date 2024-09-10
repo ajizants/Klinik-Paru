@@ -135,6 +135,10 @@
                                                                 class="form-control select2bs4 ">
                                                                 <option value="">--Pilih Foto--
                                                                 </option>
+                                                                @foreach ($foto as $foto)
+                                                                    <option value="{{ $foto->foto }}">
+                                                                        {{ $foto->nmFoto }}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <label for="kdFilm"
@@ -146,6 +150,10 @@
                                                                 <option value="">--Pilih Ukuran
                                                                     Film--
                                                                 </option>
+                                                                @foreach ($film as $film)
+                                                                    <option value="{{ $film->kdFilm }}">
+                                                                        {{ $film->ukuranFilm }}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
@@ -157,6 +165,10 @@
                                                                 class="form-control select2bs4 ">
                                                                 <option value="">--Pilih KV--
                                                                 </option>
+                                                                @foreach ($kv as $kv)
+                                                                    <option value="{{ $kv->kdKondisiRo }}">
+                                                                        {{ $kv->nmKondisi }}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <div class="col-sm-2">
@@ -164,6 +176,10 @@
                                                                 class="form-control select2bs4 ">
                                                                 <option value="">--Pilih mA--
                                                                 </option>
+                                                                @foreach ($ma as $ma)
+                                                                    <option value="{{ $ma->kdKondisiRo }}">
+                                                                        {{ $ma->nmKondisi }}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <div class="col-sm-2">
@@ -171,6 +187,10 @@
                                                                 class="form-control select2bs4 ">
                                                                 <option value="">--Pilih S--
                                                                 </option>
+                                                                @foreach ($s as $s)
+                                                                    <option value="{{ $s->kdKondisiRo }}">
+                                                                        {{ $s->nmKondisi }}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <label for="kdMesin"
@@ -179,6 +199,10 @@
                                                             <select name="kdMesin" id="kdMesin"
                                                                 class="form-control select2bs4 " required="">
                                                                 <option value="">--Pilih Mesin--</option>
+                                                                @foreach ($mesin as $mesin)
+                                                                    <option value="{{ $mesin->kdMesin }}">
+                                                                        {{ $mesin->nmMesin }}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
@@ -220,6 +244,10 @@
                                                             <select name="kdProyeksi" id="kdProyeksi"
                                                                 class="form-control select2bs4 " required="">
                                                                 <option value="">--Pilih Proyeksi--</option>
+                                                                @foreach ($proyeksi as $proyeksi)
+                                                                    <option value="{{ $proyeksi->kdProyeksi }}">
+                                                                        {{ $proyeksi->proyeksi }}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
@@ -366,7 +394,11 @@
                                         <div class="col-3">
                                             <select id="dokter"
                                                 class="select2bs4 form-control mb-3 border border-primary">
-                                                <option value="">--Pilih Dokter--</option>
+                                                <option value="">--Dokter--</option>
+                                                @foreach ($dokter as $dok)
+                                                    <option value="{{ $dok->nip }}">{{ $dok->gelar_d }}
+                                                        {{ $dok->nama }} {{ $dok->gelar_b }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <label class="col-sm-1 text-right col-form-label"
@@ -374,7 +406,11 @@
                                         <div class="col-sm-3">
                                             <select id="p_rontgen" name="p_rontgen"
                                                 class="form-control select2bs4 petugas" required="">
-                                                <option value="">--Pilih--</option>
+                                                <option value="">--Radiografer--</option>
+                                                @foreach ($radiografer as $rad)
+                                                    <option value="{{ $rad->nip }}">{{ $rad->gelar_d }}
+                                                        {{ $rad->nama }} {{ $rad->gelar_b }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
 
@@ -384,7 +420,8 @@
                                                 onclick="validateAndSubmit();">Simpan</a>
                                         </div>
                                         <div class="col-auto">
-                                            <a class="btn btn-danger" id="tblBatal" onclick="rstForm();">Selesai / Reset</a>
+                                            <a class="btn btn-danger" id="tblBatal" onclick="rstForm();">Selesai /
+                                                Reset</a>
                                         </div>
                                     </div>
                             </form>

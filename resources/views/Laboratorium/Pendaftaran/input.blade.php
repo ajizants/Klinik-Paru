@@ -52,7 +52,11 @@
                                         :</label>
                                     <div class="col">
                                         <select id="analis" class="form-control border border-primary" required>
-                                            <option value="">--Pilih Petugas--</option>
+                                            <option value="">--Pilih Analis--</option>
+                                            @foreach ($analis as $item)
+                                                <option value="{{ $item->nip }}">{{ $item->gelar_d }}
+                                                    {{ $item->nama }} {{ $item->gelar_b }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <label for="dokter" class="col-sm-1 col-form-label font-weight-bold">Dokter
@@ -60,6 +64,10 @@
                                     <div class="col">
                                         <select id="dokter" class="form-control mb-3 border border-primary" required>
                                             <option value="">--Pilih Dokter--</option>
+                                            @foreach ($dokter as $item)
+                                                <option value="{{ $item->nip }}">{{ $item->gelar_d }}
+                                                    {{ $item->nama }} {{ $item->gelar_b }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -96,7 +104,7 @@
                                             <h4 class="card-title">Pilih Pemeriksaan</h4>
                                         </div>
                                         <div class="card-body p-1 card-body table-responsive">
-                                            <table id="bakteriologi" class="table table-tight table-hover">
+                                            {{-- <table id="bakteriologi" class="table table-tight table-hover">
                                                 <thead>
                                                     <tr>
                                                         <th><input type="checkbox" id="pilih-bakteriologi"></th>
@@ -105,10 +113,23 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+
+                                                </tbody>
+                                            </table> --}}
+                                            <table id="tabelPemeriksaan" class="table table-tight table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th><input type="checkbox" id="pilih-semua"></th>
+                                                        <th>Item Pemeriksaan</th>
+                                                        <th>Harga</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
                                                 </tbody>
                                             </table>
                                             <div class="d-flex justify-content-center mt-3">
-                                                <a class="btn btn-success col" id="tblSimpan" onclick="simpan();">Simpan
+                                                <a class="btn btn-success col" id="tblSimpan"
+                                                    onclick="simpan();">Simpan
                                                     Pemeriksaan</a>
                                             </div>
                                         </div>

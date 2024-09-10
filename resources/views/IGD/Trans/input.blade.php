@@ -96,6 +96,11 @@
                                                     <select id="tindakan"
                                                         class="select2bs4 form-control border border-primary">
                                                         <option value="">--Pilih Tindakan--</option>
+                                                        @foreach (collect($tindakan)->sortBy('nama') as $item)
+                                                            <!-- Convert to collection and sort by 'nama' -->
+                                                            <option value="{{ $item->kdTindakan }}">
+                                                                {{ $item->nmTindakan }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
@@ -103,6 +108,11 @@
                                                     <select id="petugas"
                                                         class="select2bs4 form-control mb-3 border border-primary">
                                                         <option value="">--Pilih Petugas--</option>
+                                                        @foreach (collect($perawat)->sortBy('nama') as $item)
+                                                            <!-- Convert to collection and sort by 'nama' -->
+                                                            <option value="{{ $item->nip }}">{{ $item->gelar_d }}
+                                                                {{ $item->nama }} {{ $item->gelar_b }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
@@ -110,6 +120,11 @@
                                                     <select id="dokter"
                                                         class="select2bs4 form-control mb-3 border border-primary">
                                                         <option value="">--Pilih Dokter--</option>
+                                                        @foreach (collect($dokter)->sortBy('nama') as $item)
+                                                            <!-- Convert to collection and sort by 'nama' -->
+                                                            <option value="{{ $item->nip }}">{{ $item->gelar_d }}
+                                                                {{ $item->nama }} {{ $item->gelar_b }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                                 <br>
@@ -162,9 +177,16 @@
                                             <form class="form-grup col">
                                                 <div class="form-grup col">
                                                     <label for="bmhp"> BMHP :</label>
-                                                    <select id="bmhp"
+                                                    <select id="bmhp" onchange="setHarga();"
                                                         class="bmhp form-control border border-primary">
                                                         <option value="">--Pilih BMHP--</option>
+                                                        @foreach (collect($bmhp)->sortBy('nmObat') as $item)
+                                                            <option prdukid="{{ $item->product_id }}"
+                                                                jual="{{ $item->hargaJual }}"
+                                                                value="{{ $item->id }}">{{ $item->nmObat }}
+                                                                ---( Sisa Stok: {{ $item->sisa }} )---
+                                                            </option>
+                                                        @endforeach
                                                     </select>
                                                     <br>
                                                     <div class="input-group d-flex justify-content-center">

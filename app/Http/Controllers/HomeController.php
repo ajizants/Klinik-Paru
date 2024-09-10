@@ -2,17 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BMHPModel;
 use App\Models\DiagnosaModel;
+use App\Models\DotsBlnModel;
+use App\Models\DotsObatModel;
 use App\Models\GiziDxDomainModel;
 use App\Models\GiziDxKelasModel;
 use App\Models\GiziDxSubKelasModel;
 use App\Models\LaboratoriumHasilModel;
 use App\Models\LayananModel;
+use App\Models\PegawaiModel;
 use App\Models\RoHasilModel;
+use App\Models\ROJenisFilm;
 use App\Models\ROJenisFoto;
+use App\Models\ROJenisKondisi;
+use App\Models\ROJenisMesin;
+use App\Models\RoProyeksiModel;
+use App\Models\TindakanModel;
 
 class HomeController extends Controller
 {
+
+    private function pegawai($kdjab)
+    {
+        $data = PegawaiModel::with(['biodata', 'jabatan'])->whereIn('kd_jab', $kdjab)->get();
+
+        $pegawai = [];
+        foreach ($data as $peg) {
+            $pegawai[] = array_map('strval', [
+                "nip" => $peg["nip"] ?? null,
+                "status" => $peg["stat_pns"] ?? null,
+                "gelar_d" => $peg["gelar_d"] ?? null,
+                "gelar_b" => $peg["gelar_b"] ?? null,
+                "kd_jab" => $peg["kd_jab"] ?? null,
+                "kd_pend" => $peg["kd_pend"] ?? null,
+                "kd_jurusan" => $peg["kd_jurusan"] ?? null,
+                "tgl_masuk" => $peg["tgl_masuk"] ?? null,
+                "nama" => $peg["biodata"]["nama"] ?? null,
+                "jeniskel" => $peg["biodata"]["jeniskel"] ?? null,
+                "tempat_lahir" => $peg["biodata"]["tempat_lahir"] ?? null,
+                "tgl_lahir" => $peg["biodata"]["tgl_lahir"] ?? null,
+                "alamat" => $peg["biodata"]["alamat"] ?? null,
+                "kd_prov" => $peg["biodata"]["kd_prov"] ?? null,
+                "kd_kab" => $peg["biodata"]["kd_kab"] ?? null,
+                "kd_kec" => $peg["biodata"]["kd_kec"] ?? null,
+                "kd_kel" => $peg["biodata"]["kd_kel"] ?? null,
+                "kdAgama" => $peg["biodata"]["kdAgama"] ?? null,
+                "status_kawin" => $peg["biodata"]["status_kawin"] ?? null,
+                "nm_jabatan" => $peg["jabatan"]["nm_jabatan"] ?? null,
+            ]);
+        }
+        return $pegawai;
+    }
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function lte()
     {
         $title = 'Dashboard';
@@ -32,7 +77,20 @@ class HomeController extends Controller
     public function igd()
     {
         $title = 'IGD';
-        return view('IGD.Trans.main')->with('title', $title);
+        $dokter = $this->pegawai([1, 7, 8]);
+        $perawat = $this->pegawai([10, 15]);
+        $tindakan = TindakanModel::all();
+        $bmhp = BMHPModel::all();
+        $dxMed = DiagnosaModel::all();
+
+        $dokter = array_map(function ($item) {
+            return (object) $item;
+        }, $dokter);
+        $perawat = array_map(function ($item) {
+            return (object) $item;
+        }, $perawat);
+
+        return view('IGD.Trans.main', compact('tindakan', 'bmhp', 'dxMed', 'dokter', 'perawat'))->with('title', $title);
     }
     public function askep()
     {
@@ -42,7 +100,20 @@ class HomeController extends Controller
     public function dots()
     {
         $title = 'Dots Center';
-        return view('DotsCenter.Trans.main')->with('title', $title);
+        $dokter = $this->pegawai([1, 7, 8]);
+        $perawat = $this->pegawai([10, 15]);
+        $bulan = DotsBlnModel::all();
+        $obat = DotsObatModel::all();
+        $dxMed = DiagnosaModel::all();
+
+        $dokter = array_map(function ($item) {
+            return (object) $item;
+        }, $dokter);
+        $perawat = array_map(function ($item) {
+            return (object) $item;
+        }, $perawat);
+
+        return view('DotsCenter.Trans.main', compact('bulan', 'obat', 'dxMed', 'dokter', 'perawat'))->with('title', $title);
     }
     public function farmasi()
     {
@@ -69,10 +140,44 @@ class HomeController extends Controller
         $title = 'KASIR';
         return view('Kasir.main')->with('title', $title);
     }
+
+    private function layanan($kelas)
+    {
+        $data = LayananModel::where('kelas', 'like', '%' . $kelas . '%')
+            ->where('status', 'like', '%1%')
+            ->get();
+
+        $layanan = [];
+
+        foreach ($data as $d) {
+            $layanan[] = [
+                'idLayanan' => $d->idLayanan,
+                'kelas' => $d->kelas,
+                'nmLayanan' => $d->nmLayanan,
+                'tarif' => $d->tarif,
+            ];
+        }
+
+        return $layanan;
+    }
     public function lab()
     {
         $title = 'Pendaftaran Laboratorium';
-        return view('Laboratorium.Pendaftaran.main')->with('title', $title);
+        $layananLab = $this->layanan(9);
+        // dd($layananLab);
+        $dokter = $this->pegawai([1, 7, 8]);
+        $analis = $this->pegawai([11]);
+
+        $dokter = array_map(function ($item) {
+            return (object) $item;
+        }, $dokter);
+        $analis = array_map(function ($item) {
+            return (object) $item;
+        }, $analis);
+        $layananLab = array_map(function ($item) {
+            return (object) $item;
+        }, $layananLab);
+        return view('Laboratorium.Pendaftaran.main', compact('layananLab', 'dokter', 'analis'))->with('title', $title);
     }
     public function hasilLab()
     {
@@ -148,18 +253,53 @@ class HomeController extends Controller
     public function masterRo()
     {
         $title = 'Master Radiologi';
-        $dataROJenisFoto = ROJenisFoto::all(); // Mengambil semua data ROJenisFoto
-        // dd($dataROJenisFoto);
+        $dataROJenisFoto = ROJenisFoto::all();
         return view('RO.Master.main', compact('title', 'dataROJenisFoto'));
     }
     public function ro()
     {
         $title = 'Radiologi';
         $appUrlRo = env('APP_URLRO');
-        // dd($appUrlRo);
-        return view('RO.Trans.main', compact('appUrlRo'))->with([
-            'title' => $title,
+        $proyeksi = RoProyeksiModel::all();
+        $kondisi = ROJenisKondisi::all();
+        $mesin = ROJenisMesin::all();
+        $foto = ROJenisFoto::all();
+        $film = ROJenisFilm::all();
+        $dokter = $this->pegawai([1, 7, 8]);
+        $radiografer = $this->pegawai([12]);
 
+        $kv = array_filter($kondisi->toArray(), function ($p) {
+            return $p['grup'] === 'KV';
+        });
+
+        $ma = array_filter($kondisi->toArray(), function ($p) {
+            return $p['grup'] === 'mA';
+        });
+
+        $s = array_filter($kondisi->toArray(), function ($p) {
+            return $p['grup'] === 's';
+        });
+
+        $kv = array_map(function ($item) {
+            return (object) $item;
+        }, $kv);
+
+        $ma = array_map(function ($item) {
+            return (object) $item;
+        }, $ma);
+
+        $s = array_map(function ($item) {
+            return (object) $item;
+        }, $s);
+        $dokter = array_map(function ($item) {
+            return (object) $item;
+        }, $dokter);
+        $radiografer = array_map(function ($item) {
+            return (object) $item;
+        }, $radiografer);
+
+        return view('RO.Trans.main', compact('appUrlRo', 'proyeksi', 'mesin', 'foto', 'film', 'kv', 'ma', 's', 'dokter', 'radiografer'))->with([
+            'title' => $title,
         ]);
     }
 
@@ -194,7 +334,7 @@ class HomeController extends Controller
 
         try {
             $hasilLab = LaboratoriumHasilModel::with('pasien', 'pemeriksaan', 'petugas.biodata', 'dokter.biodata')
-                ->where('norm', $norm ) // Filter by norm using a LIKE condition
+                ->where('norm', $norm) // Filter by norm using a LIKE condition
                 ->get();
             if ($hasilLab->isEmpty()) {
                 $hasilLab = "Data Hasil Laboratorium pada Pasien dengan Norm: <u><b>" . $norm . "</b></u> tidak ditemukan,
@@ -232,8 +372,13 @@ class HomeController extends Controller
         $title = 'Gizi';
         $sub = GiziDxSubKelasModel::with('domain')->get();
         $dxMed = DiagnosaModel::get();
+        $dokter = $this->pegawai([1, 7, 8]);
+
+        $dokter = array_map(function ($item) {
+            return (object) $item;
+        }, $dokter);
         // dd($sub);
-        return view('Gizi.Trans.main', compact('title', 'sub', "dxMed"));
+        return view('Gizi.Trans.main', compact('title', 'sub', "dxMed", "dokter"));
     }
     public function riwayatGizi()
     {

@@ -83,6 +83,12 @@
                                                                 aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control select2bs4 mb-3 border border-primary">
                                                                 <option value="">--Pilih Dokter--</option>
+                                                                @foreach ($dokter as $item)
+                                                                    <option value="{{ $item->nip }}">
+                                                                        {{ $item->gelar_d }}
+                                                                        {{ $item->nama }} {{ $item->gelar_b }}
+                                                                    </option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
 
@@ -93,6 +99,12 @@
                                                                 aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control select2bs4 border border-primary">
                                                                 <option value="">--Pilih Petugas--</option>
+                                                                @foreach (collect($perawat)->sortBy('nama') as $item)
+                                                                    <!-- Convert to collection and sort by 'nama' -->
+                                                                    <option value="{{ $item->nip }}">
+                                                                        {{ $item->gelar_d }} {{ $item->nama }}
+                                                                        {{ $item->gelar_b }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
 
@@ -104,6 +116,10 @@
                                                                 aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control select2bs4 mb-3 border border-primary">
                                                                 <option value="">--Pilih Diagnosa--</option>
+                                                                @foreach ($dxMed as $item)
+                                                                    <option value="{{ $item->kdDiag }}">
+                                                                        {{ $item->diagnosa }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
 
@@ -114,6 +130,10 @@
                                                                 aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control select2bs4 border border-info">
                                                                 <option value="">--Jenis Obat--</option>
+                                                                @foreach ($obat as $item)
+                                                                    <option value="{{ $item->kd }}">
+                                                                        {{ $item->nmPengobatan }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
@@ -235,9 +255,13 @@
                                                             Bulan Ke
                                                         </label>
                                                         <div class="col-sm-3">
-                                                            <select id="modal-blnKe"
+                                                            <select id="modal-blnKe" onchange="setKontrol('modal-blnKe','modal-nxKontrol');"
                                                                 class="form-control select2bs4 border border-primary">
                                                                 <option value="">--Pilih Kemajuan--</option>
+                                                                @foreach ($bulan as $item)
+                                                                    <option nilai="{{ $item->nilai }}" value="{{ $item->id }}">
+                                                                        {{ $item->nmBlnKe }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <label for="modal-nxKontrol"

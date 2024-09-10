@@ -349,18 +349,12 @@ function updateAntrian() {
 }
 
 function populate() {
-    populateObat();
-    populateBlnKeOptions();
-    populateDokterOptions();
-    populatePetugasOptions();
-    populateDxMedis();
+    // populateObat();
+    // populateBlnKeOptions();
+    // populateDokterOptions();
+    // populatePetugasOptions();
+    // populateDxMedis();
 }
-// function handleKeyUp(event) {
-//     if (event.key === "Enter") {
-
-//         cariPasienTb();
-//     }
-// }
 function cariPasien() {
     // Corrected the usage of getElementById and value()
     let norm = document.getElementById("norm").value;
@@ -371,6 +365,26 @@ function cariPasien() {
     // Assuming formatNorm and searchByRM are defined elsewhere in your code
     formatNorm(norm);
     searchByRM($("#norm").val(), date);
+}
+
+function setKontrol(bln, kntrl) {
+    const tglKontrolInput = document.getElementById(kntrl);
+    const tglKunjInput = document.getElementById("tglKunj");
+    const blnKe = document.getElementById(bln);
+    const tglKunjValue = new Date(tglKunjInput.value); // Parse the date value
+    const selectedOption = blnKe.options[blnKe.selectedIndex];
+    const nilaiValue = parseInt(selectedOption.getAttribute("nilai"), 10); // Retrieve and parse the 'nilai' attribute
+
+    if (isNaN(tglKunjValue.getTime()) || isNaN(nilaiValue)) {
+        console.error("Invalid date or nilai value.");
+        return;
+    }
+
+    const tglKontrolDate = new Date(tglKunjValue);
+
+    tglKontrolDate.setDate(tglKontrolDate.getDate() + nilaiValue);
+    var formattedDate = tglKontrolDate.toISOString().split("T")[0];
+    tglKontrolInput.value = formattedDate;
 }
 
 $(document).ready(function () {
