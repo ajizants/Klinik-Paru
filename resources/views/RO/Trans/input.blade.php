@@ -136,7 +136,7 @@
                                                                 <option value="">--Pilih Foto--
                                                                 </option>
                                                                 @foreach ($foto as $foto)
-                                                                    <option value="{{ $foto->foto }}">
+                                                                    <option value="{{ $foto->kdFoto }}">
                                                                         {{ $foto->nmFoto }}
                                                                 @endforeach
                                                             </select>

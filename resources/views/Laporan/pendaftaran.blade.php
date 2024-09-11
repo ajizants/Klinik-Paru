@@ -123,7 +123,7 @@
 
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
-    <script src="{{ asset('vendor/chart.js/Chart.min.js') }}"></script>
-    <script src="{{ asset('vendor/chart.js/Chart.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/chart.js/Chart.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/chart.js/Chart.bundle.min.js') }}"></script>
     <script src="{{ asset('js/reportPendaftaran.js') }}"></script>
 @endsection

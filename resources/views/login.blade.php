@@ -12,13 +12,14 @@
     <title>KKPM - Login</title>
 
     <!-- Custom fonts for this template-->
-    <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('vendor/plugins/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    {{-- <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet"> --}}
+    <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
     <style>
         body {
             background: url("{{ asset('img/halaman kkpm.jpg') }}") no-repeat center center fixed;
@@ -32,8 +33,8 @@
 
 <body>
     <div class="container">
-        <div class="card border-0 shadow-lg my-5" style="width: 30rem;">
-            <div class="card-body">
+        <div class="card border-primary shadow-lg my-5" style="width: 30rem;">
+            <div class="card-body transparent">
                 <div class="p-3">
                     <div class="text-center">
                         <img src="{{ asset('img/LOGO KKPM.jpg') }}" alt="Logo KKPM" width="50">
@@ -63,27 +64,27 @@
                                     Me</label>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
+                        <button type="submit" class="btn bg-gradient-primary btn-block">Login</button>
                         <hr>
                     </form>
                     <hr>
-                    {{-- <div class="text-center">
+                    <div class="text-center">
                         <a class="small" href="forgot-password.html">Forgot Password?</a>
                     </div>
                     <div class="text-center">
                         <a class="small" href="register.html">Create an Account!</a>
-                    </div> --}}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/jquery-easing/jquery.easing.min.js') }}"></script>
 
 </body>
 

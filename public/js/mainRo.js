@@ -725,13 +725,6 @@ function processAntrianData(data, filter, tabel) {
 window.addEventListener("load", function () {
     setTglRo();
     setTodayDate();
-    populateRadiograferOptions();
-    populateDokterOptions();
-    populateFoto();
-    populateUkuranFilm();
-    populateMesin();
-    // populateProyeksi();
-    kondisiRo();
     updateAntrian();
     $("#norm").on("keyup", function (event) {
         if (event.key === "Enter") {

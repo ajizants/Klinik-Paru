@@ -54,10 +54,6 @@ class HomeController extends Controller
         }
         return $pegawai;
     }
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
     public function lte()
     {
         $title = 'Dashboard';
@@ -71,7 +67,7 @@ class HomeController extends Controller
     public function forbidden()
     {
         $title = 'Forbidden';
-        return view('403')->with('title', $title);
+        return view('Template.403')->with('title', $title);
     }
 
     public function igd()
