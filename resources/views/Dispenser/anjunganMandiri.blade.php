@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Anjungan Pendaftaran Mandiri</title>
     <!-- Google Font: Source Sans Pro -->
-    {{-- <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700;900&display=swap" rel="stylesheet">
@@ -16,9 +14,18 @@
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="{{ asset('vendor/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
-    <!-- Theme style -->
-    {{-- <link type="text/css" rel="stylesheet" href="{{ asset('css/mystyle.css') }}"> --}}
     <style>
+        #reader {
+            width: 500px;
+            height: 300px;
+        }
+
+        #scanner-container {
+            width: 500px;
+            height: 300px;
+            border: 1px solid black;
+        }
+
         .merriweather-light {
             font-family: "Merriweather", serif;
             font-weight: 300;
@@ -76,6 +83,7 @@
         body,
         html {
             background: url("{{ asset('img/lungs.jpg') }}") no-repeat center center fixed;
+            /* background: url("{{ asset('img/LOGO_KKPM.png') }}") no-repeat center center fixed; */
             background-size: cover;
             margin: 0;
             padding: 0;
@@ -112,7 +120,7 @@
                     rgba(50, 167, 231, 0.9) 100%
                     /* Warna akhir */
                 );
-            height: 15rem;
+            height: 10rem;
         }
 
         .logo {
@@ -130,11 +138,15 @@
         }
 
         .fs-2 {
-            font-size: 2.5rem;
+            font-size: 2rem;
         }
 
         .fs-3 {
             font-size: 3rem;
+        }
+
+        .fs-4 {
+            font-size: 4rem;
         }
 
         .identitas {
@@ -142,26 +154,43 @@
             left: 20rem;
         }
 
-        .tombol {
-            width: 100%;
-            height: 150px;
+        .btn-lg {
+            height: 170px;
             border-radius: 15px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            font-size: 150px;
-            font-weight: 600;
+            font-size: 90px;
+            font-weight: 900;
+            margin-bottom: 2rem;
+        }
+
+        .btn-lg:hover {
+            background-color: rgb(0, 255, 85);
         }
 
         .box {
-            height: 500px;
+            /* height: 500px; */
             border-radius: 15px;
             font-size: 100px;
             font-weight: 600;
-            background-color: rgb(0, 0, 0, 0.3);
+            /* background-color: rgb(0, 0, 0, 0.3); */
             padding: 1rem;
         }
     </style>
 
+    <!-- Script -->
+    <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- SweetAlert2 -->
+    <script src="{{ asset('vendor/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+    <!-- InputMask -->
+    <script src="{{ asset('vendor/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
+    <!-- QR CODE -->
+    <script src="https://unpkg.com/html5-qrcode@2.2.1/minified/html5-qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+
+    <!-- AdminLTE App -->
+    <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
 </head>
 
 <body>
@@ -169,11 +198,11 @@
         <header class="row containerHeader text-center text-white py-3 px-2 text-uppercase font-weight-bold"
             style="">
             <div class="col-2">
-                <img src="{{ asset('img/LOGO_KKPM.png') }}" alt="KKPM-Logo" height="144" width="144">
+                <img src="{{ asset('img/LOGO_KKPM.png') }}" alt="KKPM-Logo" height="110" width="120">
             </div>
 
             <div class="col px-3">
-                <h1 class="fs-3 font-weight-bolder bordered-text merriweather-black">Selamat Datang di</h1>
+                <h1 class="fs-3 font-weight-bolder bordered-text merriweather-black">Selamat Datang</h1>
                 <h3 class="fs-2 font-weight-bolder bordered-text merriweather-black">Klinik Utama Kesehatan Paru
                     Masyarakat Kelas A</h3>
             </div>
@@ -222,30 +251,56 @@
             </div>
         </div> --}}
 
-        <main class="container-fluid d-flex aligmn-items-center text-center mt-5" style="height: 40rem;">
-            <div class="row">
-                <div class="col">
-                    <div class=" box">
-                        <h3 class="text-light">Untuk ambil antrian, Silakan klik tombol di bawah ini.</h3>
-                        <button class="tombol col btn btn-info btn-lg" onclick="ambil_antrean(1)">
-                            <h1>UMUM</h1>
-                        </button>
-                        <button class="tombol col btn btn-warning btn-lg py-5 " onclick="ambil_antrean(2)">
-                            <h1>BPJS</h1>
-                        </button>
+        <main class="container-fluid d-flex aligmn-items-center text-center" style="height: 40rem;">
+            {{-- <div class="row d-flex justify-content-center"> --}}
+            <div class="col">
+                <div class=" box">
+                    <div style="height: 4rem">
+                        <h3 class="bg-dark py-2 text-light mb-1">Untuk ambil antrian, Silakan pilih tombol UMUM/BPJS di
+                            bawah ini.
+                        </h3>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="box">
-                        <h3 class="text-light">Untuk memulai verifikasi pendaftaran online, silakan klik tombol di bawah
-                            ini.</h3>
-                        <button class="col btn btn-success btn-lg py-5" type="button" data-toggle="modal"
-                            data-target="#keyPad" id="mulai_pendaftaran" onclick="setFocus()">
-                            <h3>Mulai
-                                Verifikasi</h3>
+                    <button class="col btn btn-light btn-lg fw-3" onclick="ambil_antrean(1)">
+                        UMUM
+                    </button>
+                    <button class="col btn btn-light btn-lg fw-3 mb-5" onclick="ambil_antrean(2)">
+                        BPJS
+                    </button>
+                    <div class="p-3 rounded" style="background-color: rgba(0, 0, 0, 0.6)">
+                        <div class="mt-5" style="height: 4rem">
+                            <h3 class="bg-dark py-2 text-light mb-1">Untuk memulai verifikasi pendaftaran online,
+                                silakan
+                                klik tombol
+                                di
+                                bawah
+                                ini.</h3>
+                        </div>
+                        <button class="col btn btn-success btn-lg mb-0" style="font-size: 70px" type="button"
+                            data-toggle="modal" data-target="#keyPad" id="mulai_pendaftaran" onclick="setFocus()">
+                            Mulai Verifikasi
+                        </button>
+                        {{-- <button class="col btn btn-success btn-lg mb-0" style="font-size: 70px" type="button"
+                            data-toggle="modal" data-target="#modalScan" id="mulai_pendaftaran"
+                            onclick="startScanner()" style="display: none">
+                            Scan Untuk Verifikasi
+                        </button> --}}
                     </div>
                 </div>
             </div>
+            {{-- <div class="col">
+                <div class="box">
+                    <div style="height: 6rem">
+                        <h3 class="text-light mb-4">Untuk memulai verifikasi pendaftaran online, silakan klik tombol
+                            di
+                            bawah
+                            ini.</h3>
+                    </div>
+                    <button class="col btn btn-success btn-lg" type="button" data-toggle="modal" data-target="#keyPad"
+                        id="mulai_pendaftaran" onclick="setFocus()">
+                        Mulai Verifikasi
+                    </button>
+                </div>
+            </div> --}}
             <div id="print" style="display: none;">
                 <div class="row">
                     <span>
@@ -359,8 +414,10 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
-                    <div id="scanner-container" style="width: 100%;height: 100%;max-height: 400px;overflow: hidden;">
-                    </div>
+                    <h1>Barcode Scanner</h1>
+                    <div id="reader"></div>
+                    <div id="scanner-container"></div>
+                    <div id="result">Result will be shown here</div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal"
@@ -371,20 +428,61 @@
     </div>
 
 
-    <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
-    <!-- Bootstrap 4 -->
-    <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <!-- SweetAlert2 -->
-    <script src="{{ asset('vendor/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
-    <!-- InputMask -->
-    <script src="{{ asset('vendor/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('vendor/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
-    <!-- DataTables  & Plugins -->
-
-    <!-- AdminLTE App -->
-    <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
-    {{-- <script src="{{ asset('public/js/anjunganMandiri.js') }}"></script> --}}
     <script>
+        function startScanner() {
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#scanner-container'), // Target element for video
+                    constraints: {
+                        width: 500,
+                        height: 300,
+                        facingMode: "environment" // Use the rear camera
+                    },
+                },
+                decoder: {
+                    readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader",
+                        "code_39_vin_reader", "upc_reader", "upc_e_reader", "codabar_reader"
+                    ]
+                }
+            }, function(err) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                console.log("QuaggaJS initialized successfully.");
+                Quagga.start(); // Mulai kamera
+            });
+
+            // Menangani hasil scan
+            Quagga.onDetected(function(result) {
+                var code = result.codeResult.code;
+                document.getElementById('result').innerText = "Barcode detected: " + code;
+                console.log("Barcode detected:", code);
+            });
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            // Tampilkan hasil barcode yang dipindai
+            document.getElementById('result').innerHTML = `Barcode detected: ${decodedText}`;
+        }
+
+        function onScanError(errorMessage) {
+            // Tangani error (jika diperlukan)
+            console.warn(`Scan error: ${errorMessage}`);
+        }
+
+
+        function scan() {
+            let html5QrcodeScanner = new Html5QrcodeScanner("reader", {
+                fps: 10, // Frame per second
+                qrbox: 250 // Set the scanning box size
+            });
+            html5QrcodeScanner.render(onScanSuccess, onScanError);
+
+        }
+
         function updateTime() {
             const now = new Date();
 
