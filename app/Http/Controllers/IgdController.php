@@ -40,6 +40,10 @@ class IgdController extends Controller
             ->where('notrans', 'LIKE', '%' . $notrans . '%')
             ->get();
 
+        if ($dataTindakan->isEmpty()) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
         return response()->json($dataTindakan, 200, [], JSON_PRETTY_PRINT);
     }
 

@@ -413,7 +413,34 @@ async function cariTsLab(norm, tgl, ruang) {
 
         if (!response.ok) {
             if (response.status == 404) {
-                cariKominfo(norm, tgl, ruang);
+                // cariKominfo(norm, tgl, ruang);
+                $("#dataTrans").DataTable({
+                    data: [
+                        {
+                            ket: "Belum Ada Transaksi",
+                        },
+                    ],
+                    columns: [
+                        {
+                            data: "ket",
+                            createdCell: function (
+                                td,
+                                cellData,
+                                rowData,
+                                row,
+                                col
+                            ) {
+                                $(td)
+                                    .attr("colspan", 5)
+                                    .addClass("bg-warning text-center");
+                            },
+                        },
+                    ],
+                    paging: false, // Disable pagination if not needed
+                    searching: false, // Disable searching if not needed
+                    ordering: false, // Disable ordering if not needed
+                    info: false, // Disable table information display
+                });
             } else {
                 Swal.fire({
                     icon: "error",
@@ -421,6 +448,7 @@ async function cariTsLab(norm, tgl, ruang) {
                 });
                 throw new Error("Network response was not ok");
             }
+            Swal.close();
         } else {
             const data = await response.json();
             console.log("🚀 ~ cariTsLab ~ data:", data);

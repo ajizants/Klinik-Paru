@@ -67,8 +67,8 @@
                                 <th>Jaminan</th>
                                 <th>No RM</th>
                                 <th class="col-1">Nama Pasien</th>
-                                <th class="col-3">Permintaan</th>
                                 <th class="col-3">Dokter</th>
+                                <th class="col-3">Permintaan</th>
                             </tr>
                         </thead>
                     </table>

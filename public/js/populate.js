@@ -4,95 +4,61 @@ var Toast = Swal.mixin({
     showConfirmButton: false,
     timer: 3000,
 });
+
+let jk = "";
 function fetchDataAntrian(params, callback) {
-    // console.log("🚀 ~ fetchDataAntrian ~ params:", params);
     $.ajax({
         url: "/api/cpptKominfo",
-        type: "post",
-        data: params, // Mengirimkan array params sebagai data
-        success: function (response) {
-            callback(response);
-        },
+        type: "POST",
+        data: params,
+        success: callback,
         error: function (xhr) {
-            // Tangani kesalahan jika diperlukan
+            // Handle error if needed
         },
     });
 }
 
 function initializeDataAntrian(response, ruang) {
-    // console.log("🚀 ~ initializeDataAntrian ~ ruang:", ruang);
-    // Pastikan response.data adalah objek yang berisi data pasien
-    if (response && response.response && response.response.data) {
-        // var dataArray = Object.values(response.response.data);
-        var dataArray = response.response.data.filter(function (item) {
-            return item.status === "belum";
-        });
-        processDataArray(dataArray, ruang);
+    const data = response?.response?.data || [];
+    const filteredData = data.filter((item) => item.status === "belum");
+    // const dataArray = filteredData.length ? filteredData : getNoDataMessage();
+
+    // processDataArray(dataArray, ruang);
+    // drawDataTable(dataArray, ruang);
+
+    if (filteredData.length) {
+        const dataArray = filteredData;
+        processDataArray(filteredData, ruang);
         drawDataTable(dataArray, ruang);
     } else {
-        var noDataMsg = [
-            {
-                aksi: "",
-                status: "",
-                tanggal: "",
-                antrean_nomor: "",
-                pasien_no_rm: "",
-                penjamin_nama: "",
-                pasien_nama: "Belum ada data masuk",
-                dokter_nama: "",
-                nmDiagnosa: "",
-                asktind: "",
-            },
-        ];
-        drawDataTable(noDataMsg, ruang);
+        const dataArray = getNoDataMessage();
+        drawDataTable(dataArray, ruang);
     }
 }
 
 function antrian(ruang) {
-    // console.log("🚀 ~ antrian ~ ruang:", ruang);
     $("#loadingSpinner").show();
-    var tanggal_awal = $("#tanggal").val(); // Ganti id input tanggal_awal
-    var tanggal_akhir = $("#tanggal").val(); // Ganti id input tanggal_akhir
-    // var no_rm = $("#norm").val(); // Ganti id input no_rm
 
-    var param = {
-        tanggal_awal: tanggal_awal,
-        tanggal_akhir: tanggal_akhir,
+    const params = {
+        tanggal_awal: $("#tanggal").val(),
+        tanggal_akhir: $("#tanggal").val(),
         ruang: ruang,
     };
 
-    fetchDataAntrian(param, function (response) {
-        // console.log("🚀 ~ response:", response);
+    fetchDataAntrian(params, function (response) {
         $("#loadingSpinner").hide();
-        // var ruang = ruang;
-        // console.log("🚀 ~ antrian - fetchDataAntrian~ ruang:", ruang);
-        if ($.fn.DataTable.isDataTable("#dataAntrian")) {
-            var table = $("#dataAntrian").DataTable();
 
-            if (response && response.response && response.response.data) {
-                // var dataArray = Object.values(response.response.data);
-                var dataArray = response.response.data.filter(function (item) {
-                    return item.status === "belum";
-                });
-                processDataArray(dataArray, ruang);
-            } else {
-                var noDataMsg = [
-                    {
-                        aksi: "",
-                        status: "",
-                        tanggal: "",
-                        antrean_nomor: "",
-                        pasien_no_rm: "",
-                        penjamin_nama: "",
-                        pasien_nama: "Belum ada data masuk",
-                        dokter_nama: "",
-                        nmDiagnosa: "",
-                        asktind: "",
-                    },
-                ];
-                dataArray = noDataMsg;
-            }
-            table.clear().rows.add(dataArray).draw();
+        if ($.fn.DataTable.isDataTable("#dataAntrian")) {
+            const table = $("#dataAntrian").DataTable();
+            const data = response?.response?.data || [];
+            const filteredData = data.filter((item) => item.status === "belum");
+            processDataArray(filteredData, ruang);
+            table
+                .clear()
+                .rows.add(
+                    filteredData.length ? filteredData : getNoDataMessage()
+                )
+                .draw();
         } else {
             initializeDataAntrian(response, ruang);
         }
@@ -100,216 +66,139 @@ function antrian(ruang) {
 }
 
 function processDataArray(dataArray, ruang) {
-    // console.log("🚀 ~ processDataArray ~ ruang:", ruang);
-    if (ruang === "dots") {
-        dataArray.forEach(function (item) {
-            item.index = dataArray.indexOf(item) + 1;
-            item.nmDiagnosa = item.diagnosa[0].nama_diagnosa;
-            var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-            item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-                                    onclick="cariPasienTb('${item.pasien_no_rm}','${item.tanggal}');"><i class="fas fa-pen-to-square"></i></a>`;
-        });
-    } else if (ruang === "ro") {
-        dataArray.forEach(function (item) {
-            var asktind = "";
-            if (item.radiologi && Array.isArray(item.radiologi)) {
-                item.radiologi.forEach(function (radiologi) {
-                    asktind += `${radiologi.layanan} ( ${radiologi.keterangan} ), `;
-                });
-            }
-            item.asktind = asktind;
-            item.index = dataArray.indexOf(item) + 1;
+    dataArray.forEach((item, index) => {
+        item.index = index + 1;
+        item.aksi = generateActionButton(item, ruang);
 
-            var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-            item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-                                                data-norm="${item.pasien_no_rm}"
-                                                data-nama="${item.pasien_nama}"
-                                                data-dokter="${item.dokter_nama}"
-                                                data-asktind="${asktind}"
-                                                data-kddokter="${item.nip_dokter}"
-                                                data-alamat="${alamat}"
-                                                data-layanan="${item.penjamin_nama}"
-                                                data-notrans="${item.no_trans}"
-                                                data-tgltrans="${item.tanggal}"
-                                                onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
-        });
-    } else if (ruang === "igd") {
-        console.log("🚀 ~ dataArray igd:", dataArray);
-        dataArray.forEach(function (item) {
-            var asktind = "";
-            // Pastikan item.tindakan adalah array sebelum mengaksesnya
-            if (item.tindakan && Array.isArray(item.tindakan)) {
-                item.tindakan.forEach(function (tindakan) {
-                    asktind += `${tindakan.nama_tindakan} : ${tindakan.nama_obat},<br>`;
-                });
-            }
-            item.asktind = asktind;
-            item.index = dataArray.indexOf(item) + 1;
-
-            var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-            item.aksi = `<a href="" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-                                        data-norm="${item.pasien_no_rm}"
-                                        data-nama="${item.pasien_nama}"
-                                        data-dokter="${item.dokter_nama}"
-                                        data-asktind="${asktind}"
-                                        data-kddokter="${item.nip_dokter}"
-                                        data-alamat="${alamat}"
-                                        data-layanan="${item.penjamin_nama}"
-                                        data-notrans="${item.no_trans}"
-                                        data-tgltrans="${item.tanggal}"><i class="fas fa-pen-to-square"></i></a>`;
-        });
-    } else if (ruang === "lab") {
-        dataArray.forEach(function (item) {
-            let asktind = "";
-            if (item.laboratorium && Array.isArray(item.laboratorium)) {
-                item.laboratorium.forEach(function (lab, index) {
-                    // Add data in pairs
-                    asktind += `${lab.layanan} (${lab.keterangan})`;
-                    // Add comma if it's an odd index, otherwise add a new line
-                    if ((index + 1) % 2 === 0) {
-                        asktind += ",<br>";
-                    } else {
-                        asktind += ",  ";
-                    }
-                });
-
-                // Remove the last comma and space or newline for a clean ending
-                if (asktind.endsWith(", ")) {
-                    asktind = asktind.slice(0, -2);
-                } else if (asktind.endsWith(",<br>")) {
-                    asktind = asktind.slice(0, -1);
-                }
-            }
-            item.asktind = asktind;
-            item.index = dataArray.indexOf(item) + 1;
-
-            const alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-            item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-                            data-norm="${item.pasien_no_rm}"
-                            data-nama="${item.pasien_nama}"
-                            data-dokter="${item.dokter_nama}"
-                            data-asktind="${asktind}"
-                            data-kddokter="${item.nip_dokter}"
-                            data-alamat="${alamat}"
-                            data-layanan="${item.penjamin_nama}"
-                            data-notrans="${item.no_trans}"
-                            data-tgltrans="${item.tanggal}"
-                            onclick="askLab(this);"><i class="fas fa-pen-to-square"></i></a>`;
-        });
-    }
+        switch (ruang) {
+            case "dots":
+                item.nmDiagnosa = item.diagnosa[0]?.nama_diagnosa || "";
+                break;
+            case "ro":
+                item.asktind = generateAsktindString(item.radiologi);
+                break;
+            case "igd":
+                item.asktind = generateAsktindString(item.tindakan, true);
+                break;
+            case "lab":
+                item.asktind = generateAsktindString(
+                    item.laboratorium,
+                    false,
+                    true
+                );
+                break;
+        }
+    });
 }
 
 function drawDataTable(dataArray, ruang) {
-    if (ruang === "dots") {
-        $("#dataAntrian").DataTable({
-            data: dataArray,
-            columns: [
-                { data: "aksi", className: "text-center p-2" },
-                {
-                    data: "status",
-                    className: "text-center p-2",
-                    render: function (data, type, row) {
-                        var backgroundColor =
-                            data === "belum" ? "danger" : "success";
-                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-                    },
-                },
-                { data: "tanggal", className: "text-center p-2 col-1" },
-                { data: "antrean_nomor", className: "text-center p-2" },
-                { data: "pasien_no_rm", className: "text-center p-2" },
-                { data: "penjamin_nama", className: "text-center p-2" },
-                { data: "pasien_nama", className: "p-2 col-2" },
-                { data: "dokter_nama", className: "p-2 col-3" },
-                { data: "nmDiagnosa", className: "p-2 col-4" },
-            ],
-            order: [
-                [1, "asc"],
-                [2, "asc"],
-            ],
-        });
-    } else if (ruang === "ro") {
-        $("#dataAntrian").DataTable({
-            data: dataArray,
-            columns: [
-                { data: "aksi", className: "text-center p-2" },
-                {
-                    data: "status",
-                    className: "text-center p-2",
-                    render: function (data) {
-                        var backgroundColor =
-                            data === "belum" ? "danger" : "success";
-                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-                    },
-                },
-                { data: "tanggal", className: "text-center p-2 col-1" },
-                { data: "antrean_nomor", className: "text-center p-2" },
-                { data: "penjamin_nama", className: "text-center p-2" },
-                { data: "pasien_no_rm", className: "text-center p-2" },
-                { data: "pasien_nama", className: "p-2 col-2" },
-                { data: "asktind", className: "p-2 col-3" },
-                { data: "dokter_nama", className: "p-2 col-3" },
-            ],
-            order: [
-                [1, "asc"],
-                [2, "asc"],
-            ],
-        });
-    } else if (ruang === "igd") {
-        $("#dataAntrian").DataTable({
-            data: dataArray,
-            columns: [
-                { data: "aksi", className: "text-center p-2" },
-                {
-                    data: "status",
-                    className: "text-center p-2",
-                    render: function (data, type, row) {
-                        var backgroundColor =
-                            data === "belum" ? "danger" : "success";
-                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-                    },
-                },
-                { data: "tanggal", className: "text-center p-2 col-1" },
-                { data: "antrean_nomor", className: "text-center p-2" },
-                { data: "pasien_no_rm", className: "text-center p-2" },
-                { data: "penjamin_nama", className: "text-center p-2" },
-                { data: "pasien_nama", className: "p-2 col-2" },
-                { data: "asktind", className: "p-2 col-4" },
-                { data: "dokter_nama", className: "p-2 col-3" },
-            ],
-            order: [
-                [1, "asc"],
-                [2, "asc"],
-            ],
-        });
-    } else if (ruang == "lab") {
-        $("#dataAntrian").DataTable({
-            data: dataArray,
-            columns: [
-                { data: "aksi", className: "text-center p-2" },
-                {
-                    data: "status",
-                    className: "text-center p-2",
-                    render: function (data) {
-                        var backgroundColor =
-                            data === "belum" ? "danger" : "success";
-                        return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-                    },
-                },
-                { data: "antrean_nomor", className: "text-center p-2" },
-                { data: "tanggal", className: "text-center p-2 col-1" },
-                { data: "penjamin_nama", className: "text-center p-2" },
-                { data: "pasien_no_rm", className: "text-center p-2" },
-                { data: "pasien_nama", className: "p-2 col-2" },
-                { data: "asktind", className: "p-2 col-4" },
-                { data: "dokter_nama", className: "p-2 col-3" },
-            ],
-            order: [
-                [1, "asc"],
-                [2, "asc"],
-            ],
-            pageLength: 5,
-        });
+    const columns = getColumnsForRuang(ruang);
+    $("#dataAntrian").DataTable({
+        data: dataArray,
+        columns: columns,
+        order: [
+            [1, "asc"],
+            [2, "asc"],
+        ],
+        pageLength: ruang === "lab" ? 5 : 10,
+    });
+}
+
+function generateActionButton(item, ruang) {
+    const commonAttributes = `
+        data-norm="${item.pasien_no_rm}"
+        data-nama="${item.pasien_nama}"
+        data-dokter="${item.dokter_nama}"
+        data-asktind="${item.asktind || ""}"
+        data-kddokter="${item.nip_dokter}"
+        data-alamat="${getFormattedAddress(item)}"
+        data-layanan="${item.penjamin_nama}"
+        data-notrans="${item.no_trans}"
+        data-tgltrans="${item.tanggal}"
+    `;
+
+    switch (ruang) {
+        case "dots":
+            return `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+                onclick="cariPasienTb('${item.pasien_no_rm}','${item.tanggal}');"><i class="fas fa-pen-to-square"></i></a>`;
+        case "ro":
+            return `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+                ${commonAttributes} onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
+        case "igd":
+            return `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+        ${commonAttributes} onclick="setTransaksi(this);"><i class="fas fa-pen-to-square"></i></a>`;
+        case "lab":
+            return `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+                ${commonAttributes} onclick="askLab(this);"><i class="fas fa-pen-to-square"></i></a>`;
     }
+}
+
+function getFormattedAddress(item) {
+    return `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
+}
+
+function generateAsktindString(data, addNewLine = false, isLab = false) {
+    if (!Array.isArray(data)) return "";
+
+    return data
+        .map((item, index) => {
+            const separator = isLab
+                ? index % 2 === 1
+                    ? ",<br>"
+                    : ",  "
+                : ", ";
+            return `${item.layanan || item.nama_tindakan} (${
+                item.keterangan || item.nama_obat
+            })${addNewLine ? "<br>" : separator}`;
+        })
+        .join("")
+        .replace(/(,\s*<br>|,\s)$/, "");
+}
+
+function getColumnsForRuang(ruang) {
+    const commonColumns = [
+        { data: "aksi", className: "text-center p-2" },
+        {
+            data: "status",
+            className: "text-center p-2",
+            render: (data) =>
+                `<div class="badge badge-${
+                    data === "belum" ? "danger" : "success"
+                }">${data}</div>`,
+        },
+        { data: "tanggal", className: "text-center p-2 col-1" },
+        { data: "antrean_nomor", className: "text-center p-2" },
+        { data: "penjamin_nama", className: "text-center p-2" },
+        { data: "pasien_no_rm", className: "text-center p-2" },
+        { data: "pasien_nama", className: "p-2 col-2" },
+        { data: "dokter_nama", className: "p-2 col-3" },
+    ];
+
+    const extraColumns = {
+        dots: [{ data: "nmDiagnosa", className: "p-2 col-4" }],
+        ro: [{ data: "asktind", className: "p-2 col-3" }],
+        igd: [{ data: "asktind", className: "p-2 col-4" }],
+        lab: [{ data: "asktind", className: "p-2 col-4" }],
+    };
+
+    return commonColumns.concat(extraColumns[ruang] || []);
+}
+
+function getNoDataMessage() {
+    return [
+        {
+            aksi: "",
+            status: "",
+            tanggal: "",
+            antrean_nomor: "",
+            pasien_no_rm: "",
+            penjamin_nama: "",
+            pasien_nama: "Belum ada data masuk",
+            dokter_nama: "",
+            nmDiagnosa: "",
+            asktind: "",
+        },
+    ];
 }
 
 //antrianall
@@ -317,10 +206,11 @@ function fetchDataAntrianAll(tanggal, ruang, callback) {
     $.ajax({
         url: "/api/antrian/kominfo",
         type: "post",
-        data: { tanggal: tanggal, ruang: ruang },
+        data: { tanggal, ruang },
         success: callback,
         error: function (xhr) {
-            // console.error("Error fetching data:", xhr);
+            console.error("Error fetching data:", xhr);
+            // Uncomment below to retry on error
             // fetchDataAntrianAll(tanggal, ruang, callback);
         },
     });
@@ -328,74 +218,52 @@ function fetchDataAntrianAll(tanggal, ruang, callback) {
 
 function initializeDataTable(selector, data, columns, order = [1, "asc"]) {
     $(selector).DataTable({
-        data: data,
-        columns: columns,
-        order: order,
+        data,
+        columns,
+        order,
         destroy: true,
     });
 }
 
 function getColumnDefinitions(statusType = "status_pulang", ruang) {
-    if (ruang == "lab" || ruang == "dots") {
-        return [
-            { data: "aksi", className: "text-center p-2" },
-            {
-                data: statusType,
-                className: "text-center p-2 col-1",
-                render: function (data) {
-                    const statusClasses = {
-                        "Belum Pulang": "danger",
-                        "Sudah Pulang": "success",
-                        "Tidak Ada Permintaan": "danger",
-                        "Belum Ada Ts RO": "danger",
-                        "Belum Upload Foto Thorax": "warning",
-                        "Sudah Selesai": "success",
-                        default: "secondary",
-                    };
-                    return `<div class="badge badge-${
-                        statusClasses[data] || statusClasses.default
-                    }">${data}</div>`;
-                },
+    const baseColumns = [
+        { data: "aksi", className: "text-center p-2 col-1" },
+        {
+            data: statusType,
+            className: "text-center p-2",
+            render: function (data) {
+                const statusClasses = {
+                    "Belum Pulang": "danger",
+                    "Sudah Pulang": "success",
+                    "Tidak Ada Permintaan": "danger",
+                    "Belum Ada Ts RO": "danger",
+                    "Belum Upload Foto Thorax": "warning",
+                    "Sudah Selesai": "success",
+                    default: "secondary",
+                };
+                return `<div class="badge badge-${
+                    statusClasses[data] || statusClasses.default
+                }">${data}</div>`;
             },
-            { data: "tanggal" },
-            { data: "antrean_nomor", className: "text-center p-2" },
-            { data: "penjamin_nama", className: "text-center p-2" },
-            { data: "pasien_no_rm", className: "text-center p-2" },
-            { data: "pasien_nik", className: "p-2 col-1" },
-            { data: "pasien_nama", className: "p-2 col-2" },
-            { data: "poli_nama", className: "p-2" },
-            { data: "dokter_nama", className: "p-2 col-3" },
-        ];
-    } else {
-        return [
-            { data: "aksi", className: "text-center p-2 col-1" },
-            {
-                data: statusType,
-                className: "text-center p-2",
-                render: function (data) {
-                    const statusClasses = {
-                        "Belum Pulang": "danger",
-                        "Sudah Pulang": "success",
-                        "Tidak Ada Permintaan": "danger",
-                        "Belum Ada Ts RO": "danger",
-                        "Belum Upload Foto Thorax": "warning",
-                        "Sudah Selesai": "success",
-                        default: "secondary",
-                    };
-                    return `<div class="badge badge-${
-                        statusClasses[data] || statusClasses.default
-                    }">${data}</div>`;
-                },
-            },
-            { data: "tanggal", className: "p-2" },
-            { data: "antrean_nomor", className: "text-center p-2" },
-            { data: "penjamin_nama", className: "text-center p-2" },
-            { data: "pasien_no_rm", className: "text-center p-2" },
-            { data: "pasien_nama", className: "p-2 col-3" },
-            { data: "poli_nama", className: "p-2" },
-            { data: "dokter_nama", className: "p-2 col-3" },
-        ];
-    }
+        },
+        { data: "tanggal", className: "col-1 p-2" },
+        { data: "antrean_nomor", className: "text-center p-2" },
+        { data: "penjamin_nama", className: "text-center p-2" },
+        { data: "pasien_no_rm", className: "text-center p-2" },
+    ];
+
+    const extraColumns =
+        ruang === "lab" || ruang === "dots"
+            ? [{ data: "pasien_nik", className: "p-2 col-1" }]
+            : [];
+
+    const commonColumns = [
+        { data: "pasien_nama", className: "p-2 col-3" },
+        { data: "dokter_nama", className: "p-2 col-3" },
+        { data: "poli_nama", className: "p-2" },
+    ];
+
+    return [...baseColumns, ...extraColumns, ...commonColumns];
 }
 
 function processResponse(response, ruang, statusFilter) {
@@ -404,28 +272,98 @@ function processResponse(response, ruang, statusFilter) {
         return;
     }
 
-    const data = response.response.data;
+    const data = response.response.data.map((item) => ({
+        ...item,
+        tgl: $("#tanggal").val(),
+        aksi: generateActionLink(item, ruang),
+    }));
+
     const filteredData = data.filter((item) => item.status === statusFilter);
-    const tanggal = $("#tanggal").val();
-
-    data.forEach((item) => {
-        item.tgl = tanggal;
-        let link;
-        if (ruang === "dots") {
-            link = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariPasienTb('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
-        } else if (ruang === "lab") {
-            link = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariTsLab('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
-        } else if (ruang === "igd") {
-            link = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariKominfo('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>
-                    <button type="button" class="aksi-button btn-sm btn-${item.igd_selesai} py-0 icon-link icon-link-hover" onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this)" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`;
-        } else {
-            link = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariKominfo('${item.pasien_no_rm}', '${item.tgl}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`;
-        }
-
-        item.aksi = link;
-    });
 
     return { data, filteredData };
+}
+
+function generateActionLink(item, ruang) {
+    const commonAttributes = `
+        data-norm="${item.pasien_no_rm}"
+        data-nama="${item.pasien_nama}"
+        data-dokter="${item.dokter_nama}"
+        data-asktind="${item.asktind || ""}"
+        data-jk="${item.jenis_kelamin_nama}"
+        data-kddokter="${item.nip_dokter}"
+        data-alamat="${item.pasien_alamat}"
+        data-layanan="${item.penjamin_nama}"
+        data-notrans="${item.no_trans}"
+        data-tgltrans="${item.tanggal}"
+    `;
+    const links = {
+        dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+        lab: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+        ro: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+        igd: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
+              <button type="button" ${commonAttributes} class="aksi-button btn-sm btn-${item.igd_selesai} py-0 icon-link icon-link-hover" onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this,'${ruang}')" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`,
+        default: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    };
+    // const links = {
+    //     dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariPasienTb('${item.pasien_no_rm}', '${item.tanggal}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    //     lab: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariTsLab('${item.pasien_no_rm}', '${item.tanggal}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    //     ro: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariTsRo('${item.pasien_no_rm}', '${item.tanggal}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    //     igd: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariTsIgd('${item.pasien_no_rm}', '${item.tanggal}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>
+    //           <button type="button" ${commonAttributes} class="aksi-button btn-sm btn-${item.igd_selesai} py-0 icon-link icon-link-hover" onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this)" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`,
+    //     default: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariKominfo('${item.pasien_no_rm}', '${item.tanggal}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    // };
+    return links[ruang] || links.default;
+}
+
+function setTransaksi(button, ruang) {
+    var norm = $(button).data("norm");
+    var nama = $(button).data("nama");
+    var dokter = $(button).data("kddokter");
+    var alamat = $(button).data("alamat");
+    var layanan = $(button).data("layanan");
+    var notrans = $(button).data("notrans");
+    var tgltrans = $(button).data("tgltrans");
+    var tgl = $(button).data("tgltrans");
+    var asktind = $(button).data("asktind");
+    jk = $(button).data("jk");
+    console.log("🚀 ~ setTransaksi ~ jk:", jk);
+    switch (ruang) {
+        case "igd":
+            cariTsIgd(notrans, norm, tgl, ruang);
+            break;
+        case "lab":
+            cariTsLab(norm, tgl, ruang);
+            break;
+        case "ro":
+            if ($.fn.DataTable.isDataTable("#tableRo")) {
+                var tabel = $("#tableRo").DataTable();
+                tabel.clear().destroy();
+            }
+            cariTsRo(norm, tgl, ruang);
+            break;
+        case "dots":
+            cariPasienTb(norm, tgl, ruang);
+            break;
+        default:
+            $("#igd").hide();
+            $("#lab").hide();
+            $("#ro").hide();
+    }
+
+    $("#norm").val(norm);
+    $("#nama").val(nama);
+    $("#jk").val(jk);
+    $("#dokter").val(dokter);
+    $("#dokter").trigger("change");
+    $("#alamat").val(alamat);
+    $("#layanan").val(layanan);
+    $("#notrans").val(notrans);
+    $("#tgltrans").val(tgltrans);
+    $("#tgltind").val(tgl);
+    $("#asktind").val(asktind);
+    $("#permintaan").html(`<b>${asktind}</b>`);
+
+    scrollToInputSection();
 }
 
 function antrianAll(ruang) {
@@ -439,217 +377,48 @@ function antrianAll(ruang) {
             ruang,
             "Sudah Selesai"
         );
+        const blmUpload = processResponse(
+            response,
+            ruang,
+            "Belum Upload Foto Thorax"
+        );
+        const belumUpload = blmUpload.filteredData;
 
         initializeDataTable(
             "#antrianall",
             data,
             getColumnDefinitions("status_pulang", ruang)
         );
-        if (ruang === "igd" || ruang === "lab") {
+
+        if (ruang === "igd" || ruang === "lab" || ruang === "dots") {
             initializeDataTable(
                 "#dataSelesai",
                 filteredData,
                 getColumnDefinitions("status")
             );
         }
+        if (ruang === "ro") {
+            initializeDataTable(
+                "#dataSelesai",
+                filteredData,
+                getColumnDefinitions("status")
+            );
+            initializeDataTable(
+                "#daftarUpload",
+                belumUpload,
+                getColumnDefinitions("status")
+            );
+        }
     });
 }
 
-// function cariKominfo(norm, tgl, ruang) {
-//     var normValue = norm ? norm : $("#norm").val();
-//     if (ruang == "ro") {
-//         var tgl = tgl ? tgl : $("#tglRO").val();
-//     } else {
-//         var tgl = tgl ? tgl : $("#tanggal").val();
-//     }
-//     // console.log(normValue)
-//     // Add leading zeros if the value has less than 6 digits
-//     while (normValue.length < 6) {
-//         normValue = "0" + normValue;
-//     }
-//     if (
-//         isNaN(normValue) ||
-//         normValue === null ||
-//         normValue === undefined ||
-//         normValue == 0
-//     ) {
-//         Swal.fire({
-//             icon: "error",
-//             title: "No Rm Tidak Valid...!!! ",
-//         });
-//     } else {
-//         Swal.fire({
-//             icon: "info",
-//             title: "Sedang Mencari Data Pasien di Aplikasi KOMINFO\n Mohon Ditunggu ...!!!",
-//             // allowOutsideClick: false, // Mencegah interaksi di luar dialog
-//             didOpen: () => {
-//                 Swal.showLoading(); // Menampilkan loading spinner
-//             },
-//         });
-
-//         $.ajax({
-//             url: "/api/dataPasien",
-//             method: "POST",
-//             data: {
-//                 no_rm: normValue,
-//                 tanggal: tgl,
-//             },
-//             dataType: "json",
-//             success: function (response) {
-//                 if (response.error) {
-//                     console.error("Error: " + response.error);
-//                     Swal.fire({
-//                         icon: "error",
-//                         title:
-//                             "Unexpected metadata code: " +
-//                             code +
-//                             "\n Silahkan Coba Lagi",
-//                     });
-//                 } else if (response.metadata) {
-//                     var code = response.metadata.code;
-
-//                     if (code === 404) {
-//                         Swal.fire({
-//                             icon: "info",
-//                             title: response.metadata.message,
-//                         });
-//                     } else if (code === 204) {
-//                         Swal.fire({
-//                             icon: "info",
-//                             title: response.metadata.message,
-//                         });
-//                         if (ruang != "lab") {
-//                             rstForm();
-//                         }
-//                     } else if (code === 200) {
-//                         Swal.fire({
-//                             icon: "info",
-//                             title: response.metadata.message,
-//                             showConfirmButton: false,
-//                             allowOutsideClick: false,
-//                         });
-//                         var pasien = response.response.pasien;
-//                         // var cppt = response.response.cppt;
-//                         // if (cppt == null) {
-//                         //     cppt = [];
-//                         // } else {
-//                         //     cppt = response.response.cppt[0];
-//                         // }
-//                         var cppt = response.response.cppt
-//                             ? response.response.cppt[0]
-//                             : [];
-
-//                         var pendaftaran = response.response.pendaftaran[0];
-//                         var notrans = pendaftaran.no_trans;
-
-//                         if (ruang == "igd") {
-//                             let permintaan = "";
-//                             var item = cppt; // Ambil data tindakan dari cppt
-
-//                             if (item.tindakan && Array.isArray(item.tindakan)) {
-//                                 item.tindakan.forEach(function (tindakan) {
-//                                     // Add data in pairs
-//                                     permintaan += `${tindakan.nama_tindakan} : ${tindakan.nama_obat},<br>`;
-//                                 });
-//                             }
-//                             item.permintaan = permintaan;
-//                             console.log(
-//                                 "🚀 ~ cariKominfo ~ permintaan:",
-//                                 permintaan
-//                             );
-//                             isiIdentitas(pasien, pendaftaran, permintaan);
-//                             // isiIdentitas(pasien, pendaftaran, cppt);
-//                             dataTindakan(notrans);
-//                         } else if (ruang == "farmasi") {
-//                             dataFarmasi();
-//                             isiIdentitas(pasien, pendaftaran);
-//                         } else if (ruang == "ro") {
-//                             let permintaan = "";
-//                             var item = cppt; // Ambil data tindakan dari cppt
-
-//                             if (
-//                                 item.radiologi &&
-//                                 Array.isArray(item.radiologi)
-//                             ) {
-//                                 item.radiologi.forEach(function (radiologi) {
-//                                     // Add data in pairs
-//                                     permintaan += `${radiologi.layanan} (${radiologi.keterangan}),<br>`;
-//                                 });
-//                             }
-//                             item.permintaan = permintaan;
-//                             console.log(
-//                                 "🚀 ~ cariKominfo ~ permintaan:",
-//                                 permintaan
-//                             );
-//                             isiIdentitas(pasien, pendaftaran, permintaan);
-//                         } else if (ruang == "dots") {
-//                             isiBiodataModal(norm, tgl, pasien, pendaftaran);
-//                         } else if (ruang == "lab") {
-//                             let permintaan = "";
-//                             var item = cppt; // Ambil data laboratorium dari cppt
-
-//                             if (
-//                                 item.laboratorium &&
-//                                 Array.isArray(item.laboratorium)
-//                             ) {
-//                                 item.laboratorium.forEach(function (
-//                                     lab,
-//                                     index
-//                                 ) {
-//                                     // Add data in pairs
-//                                     permintaan += `${lab.layanan} (${lab.keterangan})`;
-//                                     // Add comma if it's an odd index, otherwise add a new line
-//                                     if ((index + 1) % 2 === 0) {
-//                                         permintaan += ",<br>";
-//                                     } else {
-//                                         permintaan += ", ";
-//                                     }
-//                                 });
-
-//                                 // Remove the last comma and space or <br> for a clean ending
-//                                 if (permintaan.endsWith(", ")) {
-//                                     permintaan = permintaan.slice(0, -2);
-//                                 } else if (permintaan.endsWith(",<br>")) {
-//                                     permintaan = permintaan.slice(0, -5);
-//                                 }
-//                             }
-//                             item.permintaan = permintaan;
-//                             console.log(
-//                                 "🚀 ~ cariKominfo ~ permintaan:",
-//                                 permintaan
-//                             );
-//                             isiIdentitas(pasien, pendaftaran, permintaan);
-//                         }
-//                     } else {
-//                         // Handle other potential status codes
-//                         Swal.fire({
-//                             icon: "error",
-//                             title: "Unexpected metadata code: " + code,
-//                         });
-//                     }
-//                 }
-//             },
-
-//             error: function (error) {
-//                 console.error("Error fetching data:", error);
-//             },
-//         });
-//     }
-// }
-
 function cariKominfo(norm, tgl, ruang) {
-    var normValue = norm || $("#norm").val();
+    const normValue = (norm || $("#norm").val()).padStart(6, "0");
     tgl =
         ruang === "ro" ? tgl || $("#tglRO").val() : tgl || $("#tanggal").val();
 
-    // Tambahkan nol di depan jika panjang nilai kurang dari 6 digit
-    normValue = normValue.padStart(6, "0");
-
     if (isNaN(normValue) || !normValue) {
-        Swal.fire({
-            icon: "error",
-            title: "No Rm Tidak Valid...!!!",
-        });
+        Swal.fire({ icon: "error", title: "No Rm Tidak Valid...!!!" });
     } else {
         Swal.fire({
             icon: "info",
@@ -660,31 +429,22 @@ function cariKominfo(norm, tgl, ruang) {
         $.ajax({
             url: "/api/dataPasien",
             method: "POST",
-            data: {
-                no_rm: normValue,
-                tanggal: tgl,
-            },
+            data: { no_rm: normValue, tanggal: tgl },
             dataType: "json",
             success: function (response) {
                 if (response.error) {
-                    console.error("Error: " + response.error);
                     Swal.fire({
                         icon: "error",
-                        title:
-                            "Unexpected metadata code: " +
-                            response.error +
-                            "\n Silahkan Coba Lagi",
+                        title: `Unexpected metadata code: ${response.error}\n Silahkan Coba Lagi`,
                     });
                 } else if (response.metadata) {
                     handleMetadata(response, ruang);
                 }
             },
             error: function (error) {
-                console.error("Error fetching data:", error);
-
                 Swal.fire({
                     icon: "error",
-                    title: "Error fetching data: " + error,
+                    title: `Error fetching data: ${error}`,
                 });
             },
         });
@@ -692,17 +452,12 @@ function cariKominfo(norm, tgl, ruang) {
 }
 
 function handleMetadata(response, ruang) {
-    var code = response.metadata.code;
-    var message = response.metadata.message;
+    const code = response.metadata.code;
+    const message = response.metadata.message;
 
     if (code === 404 || code === 204) {
-        Swal.fire({
-            icon: "info",
-            title: message,
-        });
-        if (code === 204 && ruang !== "lab") {
-            rstForm();
-        }
+        Swal.fire({ icon: "info", title: message });
+        if (code === 204 && ruang !== "lab") rstForm();
     } else if (code === 200) {
         Swal.fire({
             icon: "info",
@@ -710,17 +465,17 @@ function handleMetadata(response, ruang) {
             showConfirmButton: false,
             allowOutsideClick: false,
         });
-        var pasien = response.response.pasien;
-        var cppt = response.response.cppt ? response.response.cppt[0] : [];
-        var pendaftaran = response.response.pendaftaran[0];
-        var notrans = pendaftaran.no_trans;
-        var dxMed = cppt.diagnosa[0];
-        console.log("🚀 ~ handleMetadata ~ dxMed:", dxMed);
+        const pasien = response.response.pasien;
+        const cppt = response.response.cppt ? response.response.cppt[0] : [];
+        console.log("🚀 ~ handleMetadata ~ cppt:", cppt);
+        const pendaftaran = response.response.pendaftaran[0];
+        const dxMed = cppt.diagnosa[0];
+        // console.log("🚀 ~ handleMetadata ~ dxMed:", dxMed);
 
         switch (ruang) {
             case "igd":
                 handleIgd(cppt, pasien, pendaftaran);
-                dataTindakan(notrans);
+                dataTindakan(pendaftaran.no_trans);
                 break;
             case "farmasi":
                 dataFarmasi();
@@ -753,39 +508,43 @@ function handleMetadata(response, ruang) {
 }
 
 function handleIgd(cppt, pasien, pendaftaran) {
-    let permintaan = "";
-    if (cppt.tindakan && Array.isArray(cppt.tindakan)) {
-        cppt.tindakan.forEach(function (tindakan) {
-            permintaan += `${tindakan.nama_tindakan} : ${tindakan.nama_obat},<br>`;
-        });
-    }
+    const permintaan =
+        cppt.tindakan
+            ?.map(
+                (tindakan) =>
+                    `${tindakan.nama_tindakan} : ${tindakan.nama_obat}`
+            )
+            .join(",<br>") || "";
     isiIdentitas(pasien, pendaftaran, permintaan);
 }
 
 function handleRo(cppt, pasien, pendaftaran) {
-    let permintaan = "";
-    if (cppt.radiologi && Array.isArray(cppt.radiologi)) {
-        cppt.radiologi.forEach(function (radiologi) {
-            permintaan += `${radiologi.layanan} (${radiologi.keterangan}),<br>`;
-        });
-    }
+    const permintaan =
+        cppt.radiologi
+            ?.map(
+                (radiologi) => `${radiologi.layanan} (${radiologi.keterangan})`
+            )
+            .join(",<br>") || "";
     isiIdentitas(pasien, pendaftaran, permintaan);
 }
 
 function handleLab(cppt, pasien, pendaftaran) {
-    let permintaan = "";
-    if (cppt.laboratorium && Array.isArray(cppt.laboratorium)) {
-        cppt.laboratorium.forEach(function (lab, index) {
-            permintaan += `${lab.layanan} (${lab.keterangan})`;
-            permintaan += (index + 1) % 2 === 0 ? ",<br>" : ", ";
-        });
-        permintaan = permintaan.replace(/, $|,<br>$/, "");
-    }
+    const permintaan =
+        cppt.laboratorium
+            ?.map(
+                (lab, index) =>
+                    `${lab.layanan} (${lab.keterangan})${
+                        (index + 1) % 2 === 0 ? ",<br>" : ", "
+                    }`
+            )
+            .join("")
+            .replace(/, $|,<br>$/, "") || "";
     isiIdentitas(pasien, pendaftaran, permintaan);
 }
 
 function isiIdentitas(pasien, pendaftaran, permintaan) {
     console.log("🚀 ~ isiIdentitas ~ permintaan:", permintaan);
+
     // Set values for input fields
     $("#layanan").val(pendaftaran.penjamin_nama); // Trigger change event if needed
     $("#norm").val(pasien.pasien_no_rm);
@@ -794,55 +553,75 @@ function isiIdentitas(pasien, pendaftaran, permintaan) {
     $("#notrans").val(pendaftaran.no_trans);
     $("#dokter").val(pendaftaran.nip_dokter).trigger("change");
 
-    //RO
-    if ($("#jk").length) {
-        $("#jk").val(pasien.jenis_kelamin_nama);
-    }
-    //ro-end
+    // Handle specific fields for different sections
+    setOptionalFields(pasien, pendaftaran, permintaan);
 
-    //gizi-start
-    if ($("#tglLahir").length) {
-        $("#tglLahir").val(pasien.pasien_tgl_lahir);
-    }
-
-    let gender =
-        pasien.jenis_kelamin_nama === "L"
-            ? "male"
-            : pasien.jenis_kelamin_nama === "P"
-            ? "female"
-            : null;
-    if ($("#gender").length) {
-        $("#gender").val(gender);
-    }
-    if ($("#age").length) {
-        $("#age").val(pendaftaran.pasien_umur_tahun);
-        $("#nama_diagnosa").html(
-            `<b>Diagnosa Medis: ${permintaan.nama_diagnosa}</b>`
-        );
-    }
-    //gizi-end
-
+    // Display permintaan
     $("#permintaan").html(`<b>${permintaan}</b>`);
 
     // Convert today's date to "en-CA" format
     const tanggalHariIni = new Date().toLocaleDateString("en-CA");
 
     // Format the registration date
-    const tglDaftar = pendaftaran.tanggal.split("-").reverse().join("-");
+    const tglDaftar = formatDate(pendaftaran.tanggal);
 
     // Show warning if registration date is not today's date
     if (pendaftaran.tanggal !== tanggalHariIni) {
-        Swal.fire({
-            icon: "warning",
-            title: `Pasien atas nama ${pasien.pasien_nama} adalah pasien tanggal ${tglDaftar}\n Jangan Lupa Mengganti Tanggal Transaksi...!!`,
-        });
-        scrollToInputSection();
+        showWarning(pasien.pasien_nama, tglDaftar);
     } else {
-        setTimeout(function () {
-            Swal.close();
-            scrollToInputSection();
-        }, 1000);
+        closeSwalAfterDelay();
     }
+}
+
+function setOptionalFields(pasien, pendaftaran, permintaan) {
+    // For RO
+    if ($("#jk").length) {
+        $("#jk").val(pasien.jenis_kelamin_nama);
+    }
+
+    // For Gizi
+    if ($("#tglLahir").length) {
+        $("#tglLahir").val(pasien.pasien_tgl_lahir);
+    }
+
+    const gender =
+        pasien.jenis_kelamin_nama === "L"
+            ? "male"
+            : pasien.jenis_kelamin_nama === "P"
+            ? "female"
+            : null;
+
+    if ($("#gender").length) {
+        $("#gender").val(gender);
+    }
+
+    if ($("#age").length) {
+        $("#age").val(pendaftaran.pasien_umur_tahun);
+        if (permintaan.nama_diagnosa) {
+            $("#nama_diagnosa").html(
+                `<b>Diagnosa Medis: ${permintaan.nama_diagnosa}</b>`
+            );
+        }
+    }
+}
+
+function formatDate(dateString) {
+    return dateString.split("-").reverse().join("-");
+}
+
+function showWarning(pasienNama, tglDaftar) {
+    Swal.fire({
+        icon: "warning",
+        title: `Pasien atas nama ${pasienNama} adalah pasien tanggal ${tglDaftar}\n Jangan Lupa Mengganti Tanggal Transaksi...!!`,
+    });
+    scrollToInputSection();
+}
+
+function closeSwalAfterDelay() {
+    setTimeout(() => {
+        Swal.close();
+        scrollToInputSection();
+    }, 1000);
 }
 
 async function searchRMObat(norm) {
@@ -1453,7 +1232,6 @@ function populateSupplierOptions() {
 //     });
 // }
 
-
 //SDM
 // function populateDokterOptions() {
 //     var dokterSelectElement = $("#dokter");
@@ -1614,7 +1392,6 @@ function populateSupplierOptions() {
 //         });
 //     });
 // }
-
 
 //DOTS CENTER
 // function populateBlnKeOptions() {

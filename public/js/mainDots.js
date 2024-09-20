@@ -342,19 +342,10 @@ function selesai() {
 }
 
 function updateAntrian() {
-    pasienTB();
-    pasienTelat();
     antrianAll("dots");
     antrian("dots");
 }
 
-function populate() {
-    // populateObat();
-    // populateBlnKeOptions();
-    // populateDokterOptions();
-    // populatePetugasOptions();
-    // populateDxMedis();
-}
 function cariPasien() {
     // Corrected the usage of getElementById and value()
     let norm = document.getElementById("norm").value;
@@ -392,14 +383,6 @@ $(document).ready(function () {
     $(".select2bs4").select2();
     $("#modal-pasienTB .select2bs4").select2();
 
-    // $("#modal-Ftb").on("click", function (e) {
-    //     populateBlnKeOptions();
-    //     populateDokterOptions();
-    //     populateObat();
-    //     populatePetugasOptions();
-    //     populateDxMedis();
-    // });
-
     $("#modal-pasienTB #modal-norm").on("keyup", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -417,5 +400,7 @@ $(document).ready(function () {
 
     setTodayDate();
     updateAntrian();
-    populate();
+    pasienTB();
+    pasienTelat();
+    // pasienKontrol();
 });

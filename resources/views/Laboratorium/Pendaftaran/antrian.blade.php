@@ -71,8 +71,8 @@
                                 <th>Jaminan</th>
                                 <th>No RM</th>
                                 <th class="col-3">Nama Pasien</th>
-                                <th>Poli</th>
                                 <th class="col-3">Dokter</th>
+                                <th>Poli</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -87,7 +87,7 @@
                         cellspacing="0">
                         <thead class="bg bg-secondary">
                             <tr>
-                                <th width="15px">Aksi</th>
+                                <th>Aksi</th>
                                 <th class="col-1">status</th>
                                 <th>Tanggal</th>
                                 <th>Urut</th>
@@ -95,8 +95,8 @@
                                 <th>No RM</th>
                                 <th class="col-1">NIK</th>
                                 <th class="col-2">Nama Pasien</th>
-                                <th>Poli</th>
                                 <th class="col-3">Dokter</th>
+                                <th>Poli</th>
                             </tr>
                         </thead>
                         <tbody>

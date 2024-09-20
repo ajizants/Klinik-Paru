@@ -5,7 +5,7 @@
         <h4 id="antrianSection" class="m-0 font-weight-bold text-dark text-center">Antrian</h4>
     </a>
     <!-- Card Content - Collapse -->
-    <div class="collapse show" id="collapseCardAntrian">
+    <div class="collapse show collapse show card-body p-0" id="collapseCardAntrian">
         <div class="col-sm-4 d-flex justify-content-center position-absolute">
             <div class="input-group col d-flex justify-content-center">
                 <input type="date" class="form-control col-sm-4 bg bg-warning" id="tanggal"
@@ -24,15 +24,23 @@
                 </div>
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link active bg-blue" id="ikontrol" type="button"
-                            onclick="toggleSections('#dKontrol');"><b>Pasien
-                                Kontrol</b></a>
+                        <a class="nav-link active bg-blue" id="itunggu" type="button"
+                            onclick="toggleSections('#dTunggu');"><b>Pasien
+                                DX TB</b></a>
+                    </li>
+                    <li class="nav-item">
+                        <a type="button" class="nav-link" onclick=" toggleSections('#dSelesai')"><b>Selesai</b></a>
                     </li>
                     <li class="nav-item">
                         <a type="button" class="nav-link" id="iall"
-                            onclick="toggleSections('#dSelesai');"><b>Antrian All</b></a>
+                            onclick="toggleSections('#dAntrian');"><b>Antrian All</b></a>
                     </li>
                     <li class="col"></li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="ikontrol" type="button"
+                            onclick="toggleSections('#dKontrol');"><b>Pasien
+                                Tepat Waktu</b></a>
+                    </li>
                     <li class="nav-item">
                         <a type="button" class="nav-link" id="itelat" onclick="toggleSections('#dTelat');"><b>Pasien
                                 Telat</b></a>
@@ -47,12 +55,81 @@
                     </li>
 
                 </ul>
-                <div id="dKontrol" class="card-body card-body-hidden p-2">
+                <div id="dTunggu" class="card-body card-body-hidden p-2">
                     <div class="table-responsive pt-2 px-2">
                         <table id="dataAntrian" class="table table-striped table-hover pt-0 mt-0 fs-6"
                             style="width:100%" cellspacing="0">
-                            <thead class="bg bg-primary">
+                            <thead class="bg bg-orange">
                                 <tr>
+                                    <th width="15px">Aksi</th>
+                                    <th width="15px">status</th>
+                                    <th>Tanggal</th>
+                                    <th>Urut</th>
+                                    <th>Jaminan</th>
+                                    <th>No RM</th>
+                                    <th class="col-3">Nama Pasien</th>
+                                    <th class="col-3">Dokter</th>
+                                    <th>Poli</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="dSelesai" class="card-body card-body-hidden p-2" style="display: none;">
+                    <div class="table-responsive pt-2 px-2">
+                        <table id="dataSelesai" class="table table-striped table-hover pt-0 mt-0 fs-6"
+                            style="width:100%" cellspacing="0">
+                            <thead class="bg bg-teal">
+                                <tr>
+                                    <th width="15px">Aksi</th>
+                                    <th width="15px">status</th>
+                                    <th>Tanggal</th>
+                                    <th>Urut</th>
+                                    <th>Jaminan</th>
+                                    <th>No RM</th>
+                                    <th class="col-3">Nama Pasien</th>
+                                    <th class="col-3">Dokter</th>
+                                    <th>Poli</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="dAntrian" class="card-body card-body-hidden p-2" style="display: none;">
+                    <div class="table-responsive pt-2 px-2">
+                        <table id="antrianall" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
+                            cellspacing="0">
+                            <thead class="bg bg-secondary">
+                                <tr>
+                                    <th>Aksi</th>
+                                    <th class="col-1">status</th>
+                                    <th>Tanggal</th>
+                                    <th>Urut</th>
+                                    <th>Jaminan</th>
+                                    <th>No RM</th>
+                                    <th class="col-1">NIK</th>
+                                    <th class="col-2">Nama Pasien</th>
+                                    <th class="col-3">Dokter</th>
+                                    <th>Poli</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="dKontrol" class="card-body card-body-hidden p-2" style="display: none;">
+                    <div class="table-responsive pt-2 px-2">
+                        <table id="Pkontrol" class="table table-striped table-hover pt-0 mt-0 fs-6"
+                            style="width:100%" cellspacing="0">
+                            <thead class="bg bg-primary">
+                                {{-- <tr>
                                     <th width="15px">Aksi</th>
                                     <th>status</th>
                                     <th>Tanggal</th>
@@ -62,6 +139,19 @@
                                     <th class="col-1">Nama Pasien</th>
                                     <th class="col-3">Dokter</th>
                                     <th class="col-3">Diagnosa</th>
+                                </tr> --}}
+                                <tr>
+                                    <th width="15px">Aksi</th>
+                                    {{-- <th width="35px">Telat</th> --}}
+                                    <th width="35px">Rencana Kontrol</th>
+                                    <th width="40px">Terakhir Kontrol</th>
+                                    <th width="15px"class="text-center">No</th>
+                                    <th width="15px" class="text-center">NoRM</th>
+                                    <th width="15px"class="text-center">No HP</th>
+                                    <th width="36px"class="text-center">Bln Ke</th>
+                                    <th width="">Nama</th>
+                                    <th width="">Alamat</th>
+                                    <th width="">Dokter</th>
                                 </tr>
                             </thead>
                         </table>
@@ -69,14 +159,14 @@
                 </div>
                 <div id="dTelat" class="card-body card-body-hidden p-2" style="display: none;">
                     <div class="table-responsive pt-2 px-2">
-                        <table id="Ptelat" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
-                            cellspacing="0">
+                        <table id="Ptelat" class="table table-striped table-hover pt-0 mt-0 fs-6"
+                            style="width:100%" cellspacing="0">
                             <thead class="bg bg-warning">
                                 <tr>
                                     <th width="15px">Aksi</th>
                                     <th width="35px">Telat</th>
-                                    <th width="35px">Kontrol</th>
-                                    <th width="35px">Terakhir Kontrol</th>
+                                    <th width="35px">Rencana Kontrol</th>
+                                    <th width="40px">Terakhir Kontrol</th>
                                     <th width="15px"class="text-center">No</th>
                                     <th width="15px" class="text-center">NoRM</th>
                                     <th width="15px"class="text-center">No HP</th>
@@ -91,14 +181,14 @@
                 </div>
                 <div id="dDo" class="card-body card-body-hidden p-2" style="display: none;">
                     <div class="table-responsive pt-2 px-2">
-                        <table id="Pdo" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
-                            cellspacing="0">
+                        <table id="Pdo" class="table table-striped table-hover pt-0 mt-0 fs-6"
+                            style="width:100%" cellspacing="0">
                             <thead class="bg bg-danger">
                                 <tr>
                                     <th width="15px">Aksi</th>
                                     <th width="35px">Telat</th>
-                                    <th width="35px">Kontrol</th>
-                                    <th width="35px">Terakhir Kontrol</th>
+                                    <th width="35px">Rencana Kontrol</th>
+                                    <th width="40px">Terakhir Kontrol</th>
                                     <th width="15px"class="text-center">No</th>
                                     <th width="15px" class="text-center">NoRM</th>
                                     <th width="15px"class="text-center">No HP</th>
@@ -132,7 +222,7 @@
                         </table>
                     </div>
                 </div>
-                <div id="dSelesai" class="card-body card-body-hidden p-2"style="display: none;">
+                <div id="dAntrian" class="card-body card-body-hidden p-2"style="display: none;">
                     <div class="table-responsive pt-2 px-2">
                         <table id="antrianall" class="table table-striped table-hover pt-0 mt-0 fs-6"
                             style="width:100%" cellspacing="0">
@@ -146,8 +236,8 @@
                                     <th>No RM</th>
                                     <th>NIK</th>
                                     <th class="col-3">Nama Pasien</th>
-                                    <th>Poli</th>
                                     <th class="col-3">Dokter</th>
+                                    <th>Poli</th>
                                 </tr>
                             </thead>
                         </table>

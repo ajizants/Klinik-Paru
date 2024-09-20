@@ -18,6 +18,7 @@ use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\RoMasterController;
 use App\Http\Controllers\ROTransaksiController;
 use App\Http\Controllers\StokController;
+use App\Http\Controllers\VerifController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -228,4 +229,7 @@ Route::post('kominfo/waktu_layanan', [PasienKominfoController::class, 'waktuLaya
 Route::post('kominfo/rata_waktu_tunggu', [PasienKominfoController::class, 'avgWaktuTunggu']);
 Route::post('kominfo/pendaftaran', [PasienKominfoController::class, 'pendaftaranFilter']); //cari No RM
 Route::post('kominfo/pendaftaran/report', [PasienKominfoController::class, 'reportPendaftaran']);
+
+Route::post('verif/pendaftaran', [VerifController::class, 'index']);
+Route::post('ambil/no/kominfo',[PasienKominfoController::class,'ambilAntrean']);
 // });

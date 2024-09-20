@@ -28,6 +28,8 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
     <link type="text/css" rel="stylesheet" href="{{ asset('css/mystyle.css') }}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/panzoom/panzoom.css" />
     {{-- Scripting --}}
     <!-- jQuery -->
     <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
@@ -59,6 +61,8 @@
     <script src="{{ asset('vendor/plugins/confetti/confetti.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/panzoom/panzoom.umd.js"></script>
 
     {{-- <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script> --}}
 

@@ -380,6 +380,44 @@ class KominfoModel extends Model
             return ['error' => $e->getMessage()];
         }
     }
+    public function ambilNoRequest($penjamin_id)
+    {
+        // Inisialisasi klien GuzzleHTTP
+        $client = new Client;
+
+        // URL endpoint API yang ingin diakses
+        $url = 'https://kkpm.banyumaskab.go.id/administrator/display_tv/ambil_antrean';
+
+        // Data POST
+        $data = [
+            'penjamin_id' => $penjamin_id,
+        ];
+
+        try {
+            // Lakukan permintaan POST dengan otentikasi dasar
+            $response = $client->request('POST', $url, [
+                'timeout' => 200,
+                'form_params' => $data,
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                ],
+            ]);
+
+            // Ambil body response
+            $body = $response->getBody();
+
+            // Konversi response body ke array
+            $data = json_decode($body, true);
+
+            // Kembalikan data
+            return $data;
+
+        } catch (\Exception $e) {
+            // Tangani kesalahan
+            return ['error' => $e->getMessage()];
+        }
+
+    }
 
     public function waktuLayananRequest(array $params)
     {

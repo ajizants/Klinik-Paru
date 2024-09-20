@@ -13,7 +13,7 @@ function hitungTotalHarga() {
     var hargaJual = parseFloat(nilaiJual) || 0;
     var qty = parseFloat($("#qty").val()) || 0;
     var totalharga = hargaJual * qty;
-    $("#total").val(totalharga); // Menampilkan total harga dengan pemisah ribuan
+    $("#total").val(totalharga);
 }
 
 async function searchRMObat() {
@@ -289,6 +289,34 @@ function setHarga() {
     $("#productID").val(produkId);
     $("#total").val(0);
 }
+
+function setTransaksi(button) {
+    var norm = $(button).data("norm");
+    var nama = $(button).data("nama");
+    var dokter = $(button).data("kddokter");
+    var alamat = $(button).data("alamat");
+    var layanan = $(button).data("layanan");
+    var notrans = $(button).data("notrans");
+    var tgltrans = $(button).data("tgltrans");
+    var tgl = $(button).data("tgl");
+    var asktind = $(button).data("asktind");
+
+    $("#norm").val(norm);
+    $("#nama").val(nama);
+    $("#dokter").val(dokter);
+    $("#dokter").trigger("change");
+    $("#alamat").val(alamat);
+    $("#layanan").val(layanan);
+    $("#notrans").val(notrans);
+    $("#tgltrans").val(tgltrans);
+    $("#tgltind").val(tgl);
+    $("#asktind").val(asktind);
+    $("#permintaan").html(`<b>${asktind}</b>`);
+
+    scrollToInputSection();
+    // dataTindakan(notrans, norm);
+    cariTsIgd(notrans, norm, tgl);
+}
 $(document).ready(function () {
     setTglRo();
     $(".select2bs4").select2({ theme: "bootstrap4" });
@@ -342,34 +370,34 @@ $(document).ready(function () {
         }
     });
 
-    $("#dataAntrian").on("click", ".aksi-button", function (e) {
-        e.preventDefault();
+    // $("#dataAntrian").on("click", ".aksi-button", function (e) {
+    //     e.preventDefault();
 
-        var norm = $(this).data("norm");
-        var nama = $(this).data("nama");
-        var dokter = $(this).data("kddokter");
-        var alamat = $(this).data("alamat");
-        var layanan = $(this).data("layanan");
-        var notrans = $(this).data("notrans");
-        var tgltrans = $(this).data("tgltrans");
-        var tgl = $(this).data("tgl");
-        var asktind = $(this).data("asktind");
+    //     var norm = $(this).data("norm");
+    //     var nama = $(this).data("nama");
+    //     var dokter = $(this).data("kddokter");
+    //     var alamat = $(this).data("alamat");
+    //     var layanan = $(this).data("layanan");
+    //     var notrans = $(this).data("notrans");
+    //     var tgltrans = $(this).data("tgltrans");
+    //     var tgl = $(this).data("tgl");
+    //     var asktind = $(this).data("asktind");
 
-        $("#norm").val(norm);
-        $("#nama").val(nama);
-        $("#dokter").val(dokter);
-        $("#dokter").trigger("change");
-        $("#alamat").val(alamat);
-        $("#layanan").val(layanan);
-        $("#notrans").val(notrans);
-        $("#tgltrans").val(tgltrans);
-        $("#tgltind").val(tgl);
-        $("#asktind").val(asktind);
-        $("#permintaan").html(`<b>${asktind}</b>`);
+    //     $("#norm").val(norm);
+    //     $("#nama").val(nama);
+    //     $("#dokter").val(dokter);
+    //     $("#dokter").trigger("change");
+    //     $("#alamat").val(alamat);
+    //     $("#layanan").val(layanan);
+    //     $("#notrans").val(notrans);
+    //     $("#tgltrans").val(tgltrans);
+    //     $("#tgltind").val(tgl);
+    //     $("#asktind").val(asktind);
+    //     $("#permintaan").html(`<b>${asktind}</b>`);
 
-        scrollToInputSection();
-        dataTindakan();
-    });
+    //     scrollToInputSection();
+    //     dataTindakan();
+    // });
 
     $("#dataTindakan").on("click", ".edit", function (e) {
         e.preventDefault();

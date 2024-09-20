@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\BMHPModel;
 use App\Models\DiagnosaModel;
 use App\Models\DotsBlnModel;
+use App\Models\DotsModel;
 use App\Models\DotsObatModel;
+use App\Models\DotsTransModel;
 use App\Models\GiziDxDomainModel;
 use App\Models\GiziDxKelasModel;
 use App\Models\GiziDxSubKelasModel;
@@ -19,6 +21,7 @@ use App\Models\ROJenisKondisi;
 use App\Models\ROJenisMesin;
 use App\Models\RoProyeksiModel;
 use App\Models\TindakanModel;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -93,6 +96,79 @@ class HomeController extends Controller
         $title = 'ASKEP';
         return view('Askep.main')->with('title', $title);
     }
+
+    private function pasienTB()
+    {
+        $Ptb = DotsModel::all();
+        $pasienTB = [];
+
+        foreach ($Ptb as $d) {
+            $kdDiag = $d['kdDx'];
+
+            $dx = DiagnosaModel::where('kdDiag', $kdDiag)->first();
+            $d['diagnosa'] = $dx['diagnosa'] ?? 'Unknown Diagnosis';
+
+            if ($d['hasilBerobat'] === null) {
+                $d['statusPengobatan'] = "Belum Ada Pengobatan";
+            } else {
+                $status = DotsBlnModel::where('id', $d['hasilBerobat'])->first();
+                $d['statusPengobatan'] = $status['nmBlnKe'] ?? 'Unknown Status';
+            }
+            $dataDokter = PegawaiModel::with('biodata')->where('nip', $d->dokter)->first();
+            $namaDokter = $dataDokter->gelar_d . " " . $dataDokter->biodata->nama . " " . $dataDokter->gelar_b;
+            $d['namaDokter'] = $namaDokter;
+
+            $pasienTB[] = $d;
+        }
+        return $pasienTB;
+    }
+
+    private function pasienTelat()
+    {
+        $Ptb = DotsModel::all();
+        $pasien_telat = [];
+
+        foreach ($Ptb as $d) {
+            // Cari transaksi yang paling baru untuk pasien ini
+            $Pkontrol = DotsTransModel::with('bln', 'dokter')
+                ->where('norm', $d->norm)
+                ->latest('created_at')
+                ->first();
+
+            // Jika ada transaksi yang memenuhi kriteria
+            if ($Pkontrol) {
+                $now = Carbon::now();
+                $nxKontrolDate = Carbon::parse($Pkontrol->nxKontrol);
+                $terakhir_kontrol = $Pkontrol->created_at;
+
+                $kdBlnke = $Pkontrol->bln->id;
+                $blnke = $Pkontrol->bln->nmBlnKe;
+                $selisihHari = $terakhir_kontrol->diffInDays($now);
+                $dataDokter = PegawaiModel::with('biodata')->where('nip', $Pkontrol->dokter)->first();
+                $namaDokter = $dataDokter->gelar_d . " " . $dataDokter->biodata->nama . " " . $dataDokter->gelar_b;
+
+                if ($selisihHari > 30) {
+                    $d->status = 'DO';
+                } elseif ($selisihHari > 7) {
+                    $d->status = 'Telat';
+                } else {
+                    $d->status = 'Tepat Waktu';
+                }
+
+                $d->terakhir = $terakhir_kontrol->format('d-m-Y');
+                $d->selisih = $selisihHari;
+                $d->nxKontrol = $nxKontrolDate->format('d-m-Y');
+                $d->blnKe = $blnke;
+                $d->kdPengobatan = $kdBlnke;
+                $d->namaDokter = $namaDokter;
+
+                $pasien_telat[] = $d;
+            }
+        }
+        // return $Pkontrol;
+        return $pasien_telat;
+    }
+
     public function dots()
     {
         $title = 'Dots Center';
@@ -101,16 +177,30 @@ class HomeController extends Controller
         $bulan = DotsBlnModel::all();
         $obat = DotsObatModel::all();
         $dxMed = DiagnosaModel::all();
+        $pasienTB = $this->pasienTB();
+        // $dataTelat = $this->pasienTelat();
+        // $pasienTelat = array_filter($dataTelat, function ($message) {
+        //     return $message['status'] === 'Telat';
+        // });
+        // $pasienDO = array_filter($dataTelat, function ($message) {
+        //     return $message['status'] === 'DO';
+        // });
+        // $pasienTelat = array_values($pasienTelat);
+        // $pasienDO = array_values($pasienDO);
 
+        // Converting arrays to objects for use in the view
         $dokter = array_map(function ($item) {
             return (object) $item;
         }, $dokter);
+
         $perawat = array_map(function ($item) {
             return (object) $item;
         }, $perawat);
 
-        return view('DotsCenter.Trans.main', compact('bulan', 'obat', 'dxMed', 'dokter', 'perawat'))->with('title', $title);
+        return view('DotsCenter.Trans.main', compact('bulan', 'obat', 'dxMed', 'dokter', 'perawat', 'pasienTB'))
+            ->with('title', $title);
     }
+
     public function farmasi()
     {
         $title = 'FARMASI';
@@ -238,7 +328,7 @@ class HomeController extends Controller
     {
         $title = 'Anjungan Mandiri';
 
-        return view('Dispenser.input')->with('title', $title);
+        return view('Dispenser.anjunganMandiri')->with('title', $title);
     }
     public function displayAntrian()
     {

@@ -1,4 +1,127 @@
-function dataTindakan(notrans) {
+async function cariTsIgd(notrans, norm, tgl, ruang) {
+    norm = norm || formatNorm($("#norm").val()); // Tambahkan kurung untuk memanggil val()
+    tgl = tgl || $("#tanggal").val();
+    notrans = notrans || $("#notrans").val();
+    var requestData = { notrans: notrans, norm: norm, tgl: tgl };
+
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencarikan data pasien...!!!",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+
+    if ($.fn.DataTable.isDataTable("#dataTindakan")) {
+        var tabletindakan = $("#dataTindakan").DataTable();
+        tabletindakan.clear().destroy(); // Kosongkan tabel sebelum menghancurkannya
+    }
+
+    try {
+        const response = await fetch("/api/cariDataTindakan", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+        });
+
+        if (!response.ok) {
+            Swal.close();
+            if (response.status == 404) {
+                $("#dataTindakan").DataTable({
+                    data: [
+                        {
+                            ket: "Belum Ada Transaksi",
+                        },
+                    ],
+                    columns: [
+                        {
+                            data: "ket",
+                            createdCell: function (td) {
+                                $(td)
+                                    .attr("colspan", 6)
+                                    .addClass("bg-warning text-center");
+                            },
+                        },
+                    ],
+                    paging: false,
+                    searching: false,
+                    ordering: false,
+                    info: false,
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Terjadi kesalahan saat mengambil data pasien...!!!",
+                });
+                throw new Error(
+                    `Network response was not ok. Status: ${response.status}`
+                );
+            }
+        } else {
+            const data = await response.json();
+            console.log("🚀 ~ cariDataTindakan ~ data:", data);
+
+            data.forEach(function (item, index) {
+                var dokter = `${item.dokter.gelar_d} ${item.dokter.biodata.nama} ${item.dokter.gelar_b}`;
+                var petugas = `${item.petugas.gelar_d} ${item.petugas.biodata.nama} ${item.petugas.gelar_b}`;
+                var tindakan = item.tindakan.nmTindakan;
+                item.actions = `<a href="" class="edit"
+                                    data-id="${item.id}"
+                                    data-kdtind="${item.kdTind}"
+                                    data-tindakan="${tindakan}"
+                                    data-norm="${item.norm}"
+                                    data-petugas="${petugas}"
+                                    data-dokter="${dokter}"><i class="fas fa-pen-to-square pr-3"></i></a>
+                                <a href="" class="delete"
+                                    data-id="${item.id}"
+                                    data-kdTind="${item.kdTind}"
+                                    data-tindakan="${tindakan}"
+                                    data-norm="${item.norm}"
+                                    data-petugas="${petugas}"
+                                    data-dokter="${dokter}"><i class="fas fa-trash"></i></a>`;
+                item.no = index + 1;
+                item.status = item.transbmhp.length > 0 ? "sudah" : "belum";
+            });
+
+            $("#dataTindakan").DataTable({
+                data: data,
+                columns: [
+                    { data: "actions", className: "text-center col-1 p-2" },
+                    {
+                        data: "status",
+                        name: "kdTind",
+                        render: function (data) {
+                            var backgroundColor =
+                                data === "belum" ? "danger" : "success";
+                            return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                        },
+                        className: "p-2",
+                    },
+                    { data: "norm", className: "p-2" },
+                    { data: "tindakan.nmTindakan", className: "p-2" },
+                    { data: "petugas.biodata.nama", className: "p-2" },
+                    { data: "dokter.biodata.nama", className: "p-2" },
+                ],
+                order: [2, "asc"],
+            });
+
+            scrollToInputSection();
+            Swal.close();
+        }
+    } catch (error) {
+        console.error("Terjadi kesalahan saat mencari data:", error);
+        Swal.fire({
+            icon: "error",
+            title: `Terjadi kesalahan saat mencari data...!!!\n${error.message}`,
+        });
+    }
+}
+
+function dataTindakan(notrans, norm) {
     console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
     var notrans = notrans ? notrans : $("#notrans").val();
     console.log("🚀 ~ dataTindakan ~ notrans:", notrans);

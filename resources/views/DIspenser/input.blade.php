@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="{{ asset('vendor/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/bootsrtap5.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
     <!-- Theme style -->
     <link type="text/css" rel="stylesheet" href="{{ asset('css/mystyle.css') }}">
     <style>
@@ -215,7 +215,7 @@
                     // Your code to execute on Enter key press
                     console.log("Enter key pressed!");
 
-                    cariRM($("#norm").val());
+                    keypadPress('enter')
                     $("#keyPad").modal("hide");
                 }
             });
@@ -307,7 +307,8 @@
                         if (result.isConfirmed) {
                             console.log("🚀 ~ cariRM ~ data:", data)
                             $("key_pad").hide();
-                            cetakNoAntrian(data)
+                            // cetakNoAntrian(data)
+                            verifikasiPendaftaran(data)
                             // Swal.close();
                         } else {}
                     });
@@ -320,6 +321,28 @@
                     title: "Terjadi kesalahan saat mencari data...!!! /n" + error,
                 });
             }
+        }
+
+        function verifikasiPendaftaran(data) {
+            console.log("🚀 ~ verifikasiPendaftaran ~ data:", data)
+            const nik = data.pasien_nik
+            fetch('/api/verif/pendaftaran', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nik: nik
+                    }),
+                })
+                .then(response => response.json())
+                .then(result => Swal.fire({
+                    icon: "success",
+                    title: "Verifikasi Pendaftaran Berhasil...!!!",
+                    text: result.message
+                }))
+                .catch(error => console.error('Error executing automation script:', error));
+
         }
 
         function cetakNoAntrian(data) {

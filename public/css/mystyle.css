@@ -161,6 +161,10 @@ div[style*="animation: zoomIn"] {
     border-collapse: collapse;
 }
 
+.table td {
+    font-weight: normal;
+}
+
 /*  */
 
 .switch {

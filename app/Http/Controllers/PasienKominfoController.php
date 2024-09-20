@@ -15,7 +15,15 @@ use Illuminate\Support\Facades\Log;
 
 class PasienKominfoController extends Controller
 {
+    public function ambilAntrean(Request $request)
+    {
+        $penjamin_id = $request->input('penjamin_id');
+        $koneksi = new KominfoModel();
 
+        $noAtian = $koneksi->ambilNoRequest($penjamin_id);
+        // dd($noAtian);
+        return response()->json($noAtian);
+    }
     public function pasienKominfo(Request $request)
     {
         if ($request->has('no_rm')) {
@@ -773,21 +781,27 @@ class PasienKominfoController extends Controller
                     $dots = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
                     $d['status'] = $dots ? 'sudah' : 'belum';
                     $hasTuberculosis = false;
+                    if (isset($d['diagnosa'][0])) {
+                        $dx1 = $d['diagnosa'][0];
 
-                    foreach ($d['diagnosa'] as $item) {
-                        if (stripos($item['nama_diagnosa'], 'tuberculosis') !== false ||
-                            stripos($item['nama_diagnosa'], 'tb lung') !== false &&
-                            stripos($item['nama_diagnosa'], 'Observation for suspected tuberculosis') === false) {
+                        $hasTuberculosis = false;
+                        if (stripos($dx1['nama_diagnosa'], 'tuberculosis') !== false ||
+                            (stripos($dx1['nama_diagnosa'], 'tb') !== false &&
+                                stripos($dx1['nama_diagnosa'], 'Observation for suspected tuberculosis') === false)) {
                             $hasTuberculosis = true;
-                            break;
                         }
-                    }
 
-                    if (!$hasTuberculosis) {
+                        if (!$hasTuberculosis) {
+                            return null;
+                        }
+
+                        $tb = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
+                        $d['status'] = $tb ? 'sudah' : 'belum';
+
+                    } else {
+                        // Handle case where there is no diagnosis
                         return null;
                     }
-                    $tb = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
-                    $d['status'] = $tb ? 'sudah' : 'belum';
 
                 } elseif ($ruang === 'ro') {
                     $ro = ROTransaksiModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
@@ -1198,6 +1212,5 @@ class PasienKominfoController extends Controller
 
         return $results;
     }
-
 
 }

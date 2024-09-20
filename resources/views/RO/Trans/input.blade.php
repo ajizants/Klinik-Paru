@@ -305,6 +305,7 @@
 
 
                                     <!-- Modal -->
+
                                     <div class="modal fade" id="staticBackdrop" data-backdrop="static"
                                         data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                                         aria-hidden="true">
@@ -370,19 +371,30 @@
                                         <div class="modal-dialog modal-dialog-centered modal-xl">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="modalFotoLabel">Foto Rontgen</h5>
+                                                    <h5 class="modal-title" id="modalFotoLabel">Foto Rontgen </h5>
+
                                                     <button type="button" class="close" data-dismiss="modal"
                                                         aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body text-center">
-                                                    <img id="modalFotoImage" src="" alt="Foto Rontgen"
-                                                        class="img-fluid">
+                                                    {{-- <img id="modalFotoImage" src="" alt="Foto Rontgen"
+                                                        class="img-fluid" style="height: 400px;width: 400px"> --}}
+                                                    <div class="card m-2" style="cursor: pointer;">
+                                                        <div class="f-panzoom" id="myPanzoom">
+                                                            <div
+                                                                class="f-panzoom__viewport"style="height: 25rem;width: 25rem">
+                                                                <img class="f-panzoom__content" id="zoomed-image"
+                                                                    src="" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-dismiss="modal">Close</button>
+                                                <div class="modal-footer d-flex justify-content-center">
+                                                    <h5 id="keteranganFoto"></h5>
+                                                    <br>
+                                                    <h5 id="keteranganFoto2"></h5>
                                                 </div>
                                             </div>
                                         </div>

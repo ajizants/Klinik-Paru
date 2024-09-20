@@ -22,6 +22,9 @@
 
     <!-- my script -->
 
+    <script type="text/javascript">
+        let tb = @json($pasienTB)
+    </script>
     <script src="{{ asset('js/alert.js') }}"></script>
     <script src="{{ asset('js/antrianDots.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>

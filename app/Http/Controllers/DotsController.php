@@ -8,6 +8,7 @@ use App\Models\DotsModel;
 use App\Models\DotsObatModel;
 use App\Models\DotsTransModel;
 use App\Models\KominfoModel;
+use App\Models\PegawaiModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -184,6 +185,18 @@ class DotsController extends Controller
             return response()->json($res, 200, [], JSON_PRETTY_PRINT);
         }
     }
+
+    public function kontrol()
+    {
+        $tanggal = Carbon::now()->format('Y-m-d');
+
+        $data = DotsTransModel::with('pasien')
+        ->where('nxKontrol', $tanggal)
+            ->get();
+
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
+
     public function telat()
     {
         // Ambil semua data pasien dari DotsModel
@@ -201,12 +214,13 @@ class DotsController extends Controller
             if ($Pkontrol) {
                 $now = Carbon::now();
                 $nxKontrolDate = Carbon::parse($Pkontrol->nxKontrol);
-                $nxKontrol = $Pkontrol->nxKontrol;
                 $terakhir_kontrol = $Pkontrol->created_at;
 
                 $kdBlnke = $Pkontrol->bln->id;
                 $blnke = $Pkontrol->bln->nmBlnKe;
                 $selisihHari = $terakhir_kontrol->diffInDays($now);
+                $dataDokter = PegawaiModel::with('biodata')->where('nip', $Pkontrol->dokter)->first();
+                $namaDokter = $dataDokter->gelar_d . " " . $dataDokter->biodata->nama . " " . $dataDokter->gelar_b;
 
                 if ($selisihHari > 30) {
                     $d->status = 'DO';
@@ -221,6 +235,7 @@ class DotsController extends Controller
                 $d->nxKontrol = $nxKontrolDate->format('d-m-Y');
                 $d->blnKe = $blnke;
                 $d->kdPengobatan = $kdBlnke;
+                $d->namaDokter = $namaDokter;
 
                 $pasien_telat[] = $d;
             }

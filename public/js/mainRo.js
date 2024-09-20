@@ -1,6 +1,5 @@
 let tanggalFormat;
 let kdtgl;
-let jk = "";
 function setTglRo() {
     var inputTanggal = document.getElementById("tglRo");
     var tanggalHariIni = new Date();
@@ -346,12 +345,12 @@ function removeRow(id) {
 }
 
 async function cariTsRo(norm, tgl) {
-    // Format the norm input field
-    // var appUrlRo = "http://172.16.10.88/ro/file/";
-    rstForm();
-    formatNorm($("#norm"));
-    var norm = norm ? norm : $("#norm").val();
-    var tgl = tgl ? tgl : $("#tglRO").val();
+    console.log("🚀 ~ cariTsRo ~ tgl:", tgl);
+    console.log("🚀 ~ cariTsRo ~ norm:", norm);
+    // rstForm();
+    // formatNorm($("#norm"));
+    norm = norm ? norm : formatNorm($("#norm"));
+    tgl = tgl ? tgl : $("#tglRo").val();
     var requestData = { norm: norm, tgl: tgl };
 
     Swal.fire({
@@ -375,7 +374,35 @@ async function cariTsRo(norm, tgl) {
         if (!response.ok) {
             if (response.status == 404) {
                 // searchRMObat(norm);
-                cariKominfo(norm, tgl, "ro");
+                // cariKominfo(norm, tgl, "ro");
+                $("#tableRo").DataTable({
+                    data: [
+                        {
+                            ket: "Belum Ada Transaksi",
+                        },
+                    ],
+                    columns: [
+                        {
+                            data: "ket",
+                            createdCell: function (
+                                td,
+                                cellData,
+                                rowData,
+                                row,
+                                col
+                            ) {
+                                $(td)
+                                    .attr("colspan", 5)
+                                    .addClass("bg-warning text-center");
+                            },
+                        },
+                    ],
+                    paging: false, // Disable pagination if not needed
+                    searching: false, // Disable searching if not needed
+                    ordering: false, // Disable ordering if not needed
+                    info: false, // Disable table information display
+                });
+                $("#noreg").val("");
             } else {
                 Swal.fire({
                     icon: "error",
@@ -383,6 +410,7 @@ async function cariTsRo(norm, tgl) {
                 });
                 throw new Error("Network response was not ok");
             }
+            Swal.close();
         } else {
             const data = await response.json();
 
@@ -391,7 +419,9 @@ async function cariTsRo(norm, tgl) {
                 const transaksi = data.data.transaksi_ro;
                 const petugas = data.data.petugas;
                 const foto = data.data.foto_thorax;
-                showFoto(foto);
+                if (foto && foto.length > 0) {
+                    showFoto(foto);
+                }
 
                 //ternary check transaksi.jk, if null get from transaksi.pasien.jkel
                 jk = transaksi.jk || transaksi.pasien.jkel;
@@ -483,6 +513,7 @@ async function hasilRo(norm, tgl) {
 
 function showFoto(foto) {
     console.log("🚀 ~ showFoto ~ foto:", foto);
+
     $("#preview").show();
     if ($.fn.DataTable.isDataTable("#tableRo")) {
         var tabel = $("#tableRo").DataTable();
@@ -490,7 +521,8 @@ function showFoto(foto) {
     }
     foto.forEach(function (item, index) {
         let ket = ""; // Default value if no valid 'ket' part is found
-
+        // let ketFoto = item.norm + "-" + item.nama ;
+        // item.ketFoto = ketFoto;
         // Check if the file name includes an underscore and has at least three parts
         if (item.foto.includes("_")) {
             const parts = item.foto.split("_");
@@ -505,11 +537,11 @@ function showFoto(foto) {
         if (!ket) {
             ket = ""; // Or some other fallback value
         }
-        console.log("🚀 ~ ket:", ket);
 
         item.actions = `<a type="button"  class="btn-sm btn-danger mx-2"
                             data-id="${item.id}"
                             data-foto="${item.foto}"
+                            data-ketFoto="${item.ketFoto}"
                             data-norm="${item.norm}"
                             data-nama="${item.nama}"
                             onclick="deleteFoto('${item.id}')"
@@ -517,11 +549,14 @@ function showFoto(foto) {
                         <a type="button"  class="btn-sm btn-warning mx-2"
                             data-id="${item.id}"
                             data-foto="${item.foto}"
+                            data-ketFoto="${item.ketFoto}"
                             data-norm="${item.norm}"
                             data-nama="${item.nama}"
                             data-toggle="modal" data-target="#staticBackdrop"
                             onclick="document.getElementById('idFoto').value = '${item.id}'; document.getElementById('nmFoto').value = '${item.foto}';document.getElementById('ket_foto_new').value = '${ket}';"
-                            ><i class="fas fa-pen-to-square"></i></a>`;
+                            ><i class="fas fa-pen-to-square"></i></a> `;
+        item.buttonShow = `<a type="button" class="btn-sm btn-primary px-5" data-toggle="modal" data-target="#modalFoto" onclick="modalFotoShow('${item.foto}','${item.norm} - ${item.nama}','${item.tanggal}')">
+                            <i class="fa-solid fa-eye"></i></a>`;
         item.no = index + 1;
     });
 
@@ -534,13 +569,7 @@ function showFoto(foto) {
             { data: "actions", className: "text-center col-2" },
             { data: "id" },
             {
-                data: "foto",
-                render: function (data, type, row) {
-                    return `
-                    <a type="button" class="btn-sm btn-primary px-5" data-toggle="modal" data-target="#modalFoto" onclick="modalFotoShow('${row.foto}')">
-                        <i class="fa-solid fa-eye"></i>
-                    </a>`;
-                },
+                data: "buttonShow",
             },
             { data: "tanggal" },
             { data: "foto" },
@@ -548,9 +577,21 @@ function showFoto(foto) {
     });
 }
 
-function modalFotoShow(foto) {
+function modalFotoShow(foto, ketFoto, tgl) {
     const fullImageUrl = appUrlRo + foto;
-    document.getElementById("modalFotoImage").src = fullImageUrl;
+    // document.getElementById("modalFotoImage").src = fullImageUrl;
+    document.getElementById("zoomed-image").src = fullImageUrl;
+    $("#keteranganFoto").html(`<b>${ketFoto}</b>`);
+    $("#keteranganFoto2").html(`<b>${tgl}</b>`);
+    const container = document.getElementById("myPanzoom");
+    const options = {
+        click: "toggleCover",
+        Toolbar: {
+            display: ["zoomIn", "zoomOut"],
+        },
+    };
+
+    new Panzoom(container, options);
     $("#modalFoto").modal("show");
 }
 
@@ -641,11 +682,11 @@ async function updateAntrian() {
     var tbSelesai = $("#daftarSelesai");
     $("#daftarTunggu").DataTable();
 
-    var ruang = "ro";
-    fetchAntrianData(ruang, function (data) {
-        processAntrianData(data, "Belum Upload Foto Thorax", tbBlmUpload);
-        processAntrianData(data, "Sudah Selesai", tbSelesai);
-    });
+    // var ruang = "ro";
+    // fetchAntrianData(ruang, function (data) {
+    //     processAntrianData(data, "Belum Upload Foto Thorax", tbBlmUpload);
+    //     processAntrianData(data, "Sudah Selesai", tbSelesai);
+    // });
 
     antrianAll("ro");
     antrian("ro");
@@ -669,7 +710,7 @@ function tbAntrianBelumUpload(tabel, antrian) {
                     return `<div class="badge badge-${badgeClass}">${data}</div>`;
                 },
             },
-            { data: "tanggal", className: "p-2" },
+            { data: "tanggal", className: "col-1 p-2" },
             { data: "antrean_nomor", className: "text-center p-2" },
             { data: "penjamin_nama", className: "text-center p-2" },
             { data: "pasien_no_rm", className: "text-center p-2" },
