@@ -231,5 +231,7 @@ Route::post('kominfo/pendaftaran', [PasienKominfoController::class, 'pendaftaran
 Route::post('kominfo/pendaftaran/report', [PasienKominfoController::class, 'reportPendaftaran']);
 
 Route::post('verif/pendaftaran', [VerifController::class, 'index']);
+Route::post('verif/pendaftaran/fp', [VerifController::class, 'fingerprint']);
+Route::post('kominfo/submit',[VerifController::class,'submit']);
 Route::post('ambil/no/kominfo',[PasienKominfoController::class,'ambilAntrean']);
 // });

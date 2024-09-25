@@ -1,7 +1,7 @@
 let tglAwal = "";
 let tglAkhir = "";
 
-function formatDate(date) {
+function formatTgl(date) {
     let day = String(date.getDate()).padStart(2, "0");
     let month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() returns month from 0-11
     let year = date.getFullYear();
@@ -10,8 +10,8 @@ function formatDate(date) {
 function cariRo(tglAwal, tglAkhir, norm) {
     // var tglAwal = $("#tglAwal").val(); // tambahkan ini
     // var tglAkhir = $("#tglAkhir").val(); // tambahkan ini
-    var tglA = formatDate(new Date(tglAwal));
-    var tglB = formatDate(new Date(tglAkhir));
+    var tglA = formatTgl(new Date(tglAwal));
+    var tglB = formatTgl(new Date(tglAkhir));
     if ($.fn.DataTable.isDataTable("#hasilRo, #jumlahPetugas")) {
         var tabletindakan = $("#hasilRo, #jumlahPetugas").DataTable();
         tabletindakan.destroy();

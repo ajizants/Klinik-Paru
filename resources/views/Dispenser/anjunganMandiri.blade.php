@@ -277,7 +277,7 @@
                         </div>
                         <button class="col btn btn-success btn-lg mb-0" style="font-size: 70px" type="button"
                             data-toggle="modal" data-target="#keyPad" id="mulai_pendaftaran" onclick="setFocus()">
-                            Mulai Verifikasi
+                            Mulai Verifikasi Mandiri
                         </button>
                         {{-- <button class="col btn btn-success btn-lg mb-0" style="font-size: 70px" type="button"
                             data-toggle="modal" data-target="#modalScan" id="mulai_pendaftaran"
@@ -599,11 +599,11 @@
                             "\n\n Dokter\n " + data.dokter_nama +
                             "\n\n Apakah anda ingin melanjutkan Verifikasi Pendaftaran?",
                         showCancelButton: true,
-                        allowOutsideClick: false,
+                        allowOutsideClick: true,
                         confirmButtonColor: "#3085d6",
                         cancelButtonColor: "#d33",
-                        confirmButtonText: "YA",
-                        cancelButtonText: "TIDAK",
+                        confirmButtonText: "Verivikasi Wajah",
+                        cancelButtonText: "Verivikasi Sidik Jari",
                         width: '600px',
                         customClass: {
                             popup: 'swal-custom-popup', // Tambahkan class khusus untuk popup
@@ -615,9 +615,13 @@
                             console.log("🚀 ~ cariRM ~ data:", data)
                             $("key_pad").hide();
                             // cetakNoAntrian(data)
-                            verifikasiPendaftaran(data)
+                            verifikasiFR(data)
                             // Swal.close();
-                        } else {}
+                        } else {
+                            console.log("🚀 ~ cariRM ~ data:", data)
+                            $("key_pad").hide();
+                            verifikasiFP(data);
+                        }
                     });
                 }
                 $("#norm").val("");
@@ -630,18 +634,72 @@
             }
         }
 
-        function verifikasiPendaftaran(data) {
-            console.log("🚀 ~ verifikasiPendaftaran ~ data:", data)
+        function verifikasiFP(data) {
+            console.log("🚀 ~ verifikasiFP ~ data:", data);
+
             Swal.fire({
                 icon: "info",
-                title: "Proses Verifikasi Pendaftaran...!!!",
-                showConfirmButton: false,
+                title: "Proses Verifikasi...!!!",
+                // showConfirmButton: false,
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
                 },
             });
-            const nik = data.pasien_nik
+
+            const id_number = data.penjamin_nomor;
+            fetch('/api/verif/pendaftaran/fp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id_number: id_number
+                    }),
+                })
+                .then(response => {
+                    if (response.status === 500) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Terjadi Kesalahan",
+                            text: "Verifikasi gagal, silakan coba lagi.",
+                        });
+                        throw new Error('Server error: 500');
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    // Jika verifikasi berhasil, langsung cetak tanpa pertanyaan
+                    Swal.fire({
+                        icon: "success",
+                        title: "Verifikasi Berhasil...!!!",
+                        showConfirmButton: false,
+                        timer: 2000,
+                    }).then(() => {
+                        console.log("🚀 ~ cetakNoAntrian ~ data:", data);
+                        cetakNoAntrian(data);
+
+                    });
+                })
+                .catch(error => {
+                    console.error('Error executing automation script:', error);
+                });
+        }
+
+        function verifikasiFR(data) {
+            console.log("🚀 ~ verifikasiFR ~ data:", data);
+
+            Swal.fire({
+                icon: "info",
+                title: "Proses Verifikasi...!!!",
+                // showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+
+            const nik = data.pasien_nik;
             fetch('/api/verif/pendaftaran', {
                     method: 'POST',
                     headers: {
@@ -651,35 +709,86 @@
                         nik: nik
                     }),
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (response.status === 500) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Terjadi Kesalahan",
+                            text: "Verifikasi gagal, silakan coba lagi.",
+                        });
+                        throw new Error('Server error: 500');
+                    }
+                    return response.json();
+                })
                 .then(result => {
-                    // Jika verifikasi berhasil, tampilkan dialog konfirmasi
+                    // Jika verifikasi berhasil, langsung cetak tanpa pertanyaan
                     Swal.fire({
                         icon: "success",
-                        title: "Verifikasi Berhasil...!!!\n\n" +
-                            "Lanjutkan Mencetak Nomor Antrian?",
-                        // showCancelButton: true,
-                        // confirmButtonColor: "#3085d6",
-                        // cancelButtonColor: "#d33",
-                        // confirmButtonText: "YA",
-                        // cancelButtonText: "TIDAK",
+                        title: "Verifikasi Berhasil...!!!",
+                        showConfirmButton: false,
+                        timer: 2000,
+                    }).then(() => {
+                        console.log("🚀 ~ cetakNoAntrian ~ data:", data);
+                        cetakNoAntrian(data);
+
                     });
-                    // .then((result) => {
-                    //     if (result.isConfirmed) {
-                    // Jika user mengkonfirmasi, cetak nomor antrian
-                    console.log("🚀 ~ cariRM ~ data:", data);
-
-                    // Cetak nomor antrian
-                    Swal.close();
-                    cetakNoAntrian(data);
-
-                    // Tutup swal loading atau proses lain
-                    // }
-                    // });
                 })
-                .catch(error => console.error('Error executing automation script:', error));
-
+                .catch(error => {
+                    console.error('Error executing automation script:', error);
+                });
         }
+        // function verifikasiPendaftaran(data) {
+        //     console.log("🚀 ~ verifikasiPendaftaran ~ data:", data);
+
+        //     Swal.fire({
+        //         icon: "info",
+        //         title: "Proses Verifikasi Pendaftaran...!!!",
+        //         // showConfirmButton: false,
+        //         allowOutsideClick: false,
+        //         didOpen: () => {
+        //             Swal.showLoading();
+        //         },
+        //     });
+
+        //     const nik = data.pasien_nik;
+        //     fetch('/api/verif/pendaftaran', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //             },
+        //             body: JSON.stringify({
+        //                 nik: nik
+        //             }),
+        //         })
+        //         .then(response => {
+        //             if (response.status === 500) {
+        //                 Swal.fire({
+        //                     icon: "error",
+        //                     title: "Terjadi Kesalahan",
+        //                     text: "Verifikasi gagal, silakan coba lagi.",
+        //                 });
+        //                 throw new Error('Server error: 500');
+        //             }
+        //             return response.json();
+        //         })
+        //         .then(result => {
+        //             // Jika verifikasi berhasil, langsung cetak tanpa pertanyaan
+        //             Swal.fire({
+        //                 icon: "success",
+        //                 title: "Verifikasi Berhasil...!!!",
+        //                 showConfirmButton: false,
+        //                 timer: 2000,
+        //             }).then(() => {
+        //                 console.log("🚀 ~ cetakNoAntrian ~ data:", data);
+        //                 cetakNoAntrian(data);
+
+        //             });
+        //         })
+        //         .catch(error => {
+        //             console.error('Error executing automation script:', error);
+        //         });
+        // }
+
 
         function cetakNoAntrian(data) {
             var noAntri = data.antrean_nomor;

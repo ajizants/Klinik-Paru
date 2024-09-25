@@ -324,6 +324,12 @@ class HomeController extends Controller
 
         return view('Dispenser.main')->with('title', $title);
     }
+    public function displayLoket()
+    {
+        $title = 'Ambil Antrian';
+
+        return view('Display.main')->with('title', $title);
+    }
     public function verif()
     {
         $title = 'Anjungan Mandiri';
@@ -333,8 +339,10 @@ class HomeController extends Controller
     public function displayAntrian()
     {
         $title = 'Daftar Tunggu';
+        // Akses video dari folder yang di-share di jaringan
+        $videos = null;
 
-        return view('Display.main')->with('title', $title);
+        return view('Display.main', compact('title', 'videos'));
     }
     public function masterRo()
     {
