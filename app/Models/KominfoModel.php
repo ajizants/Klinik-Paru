@@ -106,6 +106,7 @@ class KominfoModel extends Model
 
             $no_rm = $params['no_rm'];
             if (!empty($no_rm)) {
+                // dd($no_rm);
                 // Filter data berdasarkan no_rm
                 $res = array_filter($res, function ($d) use ($no_rm) {
                     return $d['pasien_no_rm'] === $no_rm;
@@ -947,7 +948,6 @@ class KominfoModel extends Model
         }
     }
 
-
     public function jadwalPoli(array $params)
     {
         $jadwal = [
@@ -1633,6 +1633,8 @@ class KominfoModel extends Model
         $jadwal_terpilih = array_filter($jadwal, function ($item) use ($params) {
             return $item['no_hari'] == $params['no_hari'] && $item['admin_nama'] == $params['admin_nama'];
         });
+
+        $jadwal_terpilih = array_values($jadwal_terpilih);
 
         return $jadwal_terpilih;
 

@@ -183,46 +183,51 @@ class VerifController extends Controller
         $log_id = $data_pendaftaran['log_id'] ?? null;
 
         // <-----proses ambil log id untuk panggil-----> //
-        if ($log_id == null) {
-            // dd("logid null");
-            // Gunakan cookie yang ada untuk mengambil data antrian
-            $antrian = $client->get_data_antrian(['cookie' => $cookie], $request->input('noAntri'));
-            // return $antrian;
-            // Ambil log_id dari data antrian
-            $log_id = isset($antrian['data'][0]['log_id']) ? $antrian['data'][0]['log_id'] : null; // Memastikan ada data
-            $daftarBy = 'OTS';
-        }
+        // if ($log_id == null) {
+        //     // dd("logid null");
+        //     // Gunakan cookie yang ada untuk mengambil data antrian
+        //     $antrian = $client->get_data_antrian(['cookie' => $cookie], $request->input('noAntri'));
+        //     // return $antrian;
+        //     // Ambil log_id dari data antrian
+        //     $log_id = isset($antrian['data'][0]['log_id']) ? $antrian['data'][0]['log_id'] : null; // Memastikan ada data
+        //     $daftarBy = 'OTS';
+        // }
         // return $log_id;
 
         //panggil pasien
-        if ($keterangan == "MENUNGGU DIPANGGIL LOKET PENDAFTARAN") {
-            // dd("menunggu panggil");
-            $panggil = $client->panggil(['cookie' => $cookie], $log_id);
-            // <-----proses submit-----> //
-            $antrian = $client->get_data_antrian(['cookie' => $cookie], $request->input('noAntri'));
-            // return $antrian;
-            // Ambil log_id dari data antrian
-            $log_id = isset($antrian['data'][0]['log_id']) ? $antrian['data'][0]['log_id'] : null; // Memastikan ada data
-            // return $log_id; //246758
-        }
+        // if ($keterangan == "MENUNGGU DIPANGGIL LOKET PENDAFTARAN") {
+        //     // dd("menunggu panggil");
+        //     $panggil = $client->panggil(['cookie' => $cookie], $log_id);
+        //     // <-----proses submit-----> //
+        //     $antrian = $client->get_data_antrian(['cookie' => $cookie], $request->input('noAntri'));
+        //     // return $antrian;
+        //     // Ambil log_id dari data antrian
+        //     $log_id = isset($antrian['data'][0]['log_id']) ? $antrian['data'][0]['log_id'] : null; // Memastikan ada data
+        //     // return $log_id; //246758
+        // }
         // return $log_id;
 
         $pasien = $client->getDataByRM(['cookie' => $cookie], $pasien_no_rm);
         $data_pasien = $pasien['data'] ?? null;
         // return $data_pasien;
         $dokter = $data_pendaftaran['dokter_nama'] ?? null;
-        $hariIni = date('N');
+        $tglKunjungan = $pendaftaranOnline[0]['tanggal'] ?? null;
+        //tentukan hari dengan number dari tgl kunjungan
+        $date = new \DateTime($tglKunjungan);
+        $dayOfWeek = $date->format('N');
         $reqJadwal = [
-            'no_hari' => $hariIni,
+            'no_hari' => $dayOfWeek,
             'admin_nama' => $dokter,
         ];
         $jadwal = $client->jadwalPoli($reqJadwal);
+        //kembalikan jadwal sebagai objek
+        $jadwal = $jadwal[0] ?? null;
+
         // return $jadwal; //tinggal memasukan hari jsawal umum kusus
 
         $form_data = [
             'log_id' => $log_id ?? null,
             'ruang_id_selanjutnya' => 2,
-            'dokter_id' => $data_pendaftaran['dokter_id'] ?? null,
             'penjamin_id' => $penjamin_id ?? null,
             'penjamin_nomor' => $data_pendaftaran['penjamin_nomor'] ?? null,
             'jenis_kunjungan_id' => $jenis_kunjungan_id ?? null,
@@ -230,6 +235,7 @@ class VerifController extends Controller
             'daftar_by' => $data_pendaftaran['daftar_by'] ?? null,
             'pasien_lama_baru' => $data_pendaftaran['pasien_lama_baru'] ?? null,
 
+            'dokter_id' => $jadwal['admin_id'] ?? null,
             'jadwal_umum_khusus' => 'UMUM',
             'jadwal_id' => $jadwal['id'] ?? null,
             'poli_sub_id' => $jadwal['poli_sub_id'] ?? null,
@@ -264,8 +270,8 @@ class VerifController extends Controller
 
         return $form_data;
 
-        // Mengembalikan log_id atau bisa disesuaikan sesuai kebutuhan
-        return response()->json(['log_id' => $log_id]);
+        //coba post ke url kominfo
+
     }
     public function submitJKN(Request $request)
     {
