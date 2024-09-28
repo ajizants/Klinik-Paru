@@ -255,11 +255,13 @@
                                                             Bulan Ke
                                                         </label>
                                                         <div class="col-sm-3">
-                                                            <select id="modal-blnKe" onchange="setKontrol('modal-blnKe','modal-nxKontrol');"
+                                                            <select id="modal-blnKe"
+                                                                onchange="setKontrol('modal-blnKe','modal-nxKontrol');"
                                                                 class="form-control select2bs4 border border-primary">
                                                                 <option value="">--Pilih Kemajuan--</option>
                                                                 @foreach ($bulan as $item)
-                                                                    <option nilai="{{ $item->nilai }}" value="{{ $item->id }}">
+                                                                    <option nilai="{{ $item->nilai }}"
+                                                                        value="{{ $item->id }}">
                                                                         {{ $item->nmBlnKe }}</option>
                                                                 @endforeach
                                                             </select>
@@ -457,16 +459,21 @@
                                                     </div>
 
                                                     <div class="form-group row">
-                                                        <div class="col-sm-3">
+                                                        <div class="col-sm">
                                                             <label for="statusPengobatan"
                                                                 class="col-form-label font-weight-bold">Hasil
                                                                 Berobat</label>
                                                             <select id="statusPengobatan"
                                                                 class="form-control select2bs4 border border-primary">
                                                                 <option value="">--Pilih Kemajuan--</option>
+                                                                @foreach ($bulan as $item)
+                                                                    <option nilai="{{ $item->nilai }}"
+                                                                        value="{{ $item->id }}">
+                                                                        {{ $item->nmBlnKe }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
-                                                        <div class="col-sm-3">
+                                                        <div class="col-sm">
                                                             <label for="modal-tcm-update"
                                                                 class="col-form-label font-weight-bold">Hasil
                                                                 TCM</label>
@@ -493,7 +500,7 @@
                                                                 </option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-sm-3">
+                                                        <div class="col-sm">
                                                             <label for="modal-sample-update"
                                                                 class="col-form-label font-weight-bold">Sample
                                                                 TCM</label>
@@ -511,6 +518,15 @@
                                                                 <option value="Lainnya">Lainnya, Tulis di keterangan
                                                                 </option>
                                                             </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <div class="col">
+                                                            <label for="modal-ket-update"
+                                                                class="col-form-label font-weight-bold">Keterangan Lain</label>
+                                                            <input type="text" id="modal-ket-update"
+                                                                class="form-control form-control-sm border border-info"
+                                                                placeholder="Keterangan Lainnya" />
                                                         </div>
                                                     </div>
                                                 </div>

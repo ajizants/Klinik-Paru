@@ -6,6 +6,7 @@ use DateTime;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class KominfoModel extends Model
 {
@@ -52,7 +53,8 @@ class KominfoModel extends Model
                     $d['pasien_rw'] . ', ' .
                     $d['kecamatan_nama'] . ', ' .
                     $d['kabupaten_nama'];
-
+                $alamatMin = $d['kelurahan_nama'] . ', ' .
+                    $d['kecamatan_nama'];
                 $check = KunjunganWaktuSelesai::where('notrans', $d['no_trans'])->first();
                 // jika $check null
                 $checkRm = $check->waktu_selesai_rm ?? null;
@@ -98,6 +100,7 @@ class KominfoModel extends Model
                     "pasien_umur_bulan" => $d["pasien_umur_bulan"] ?? 0,
                     "pasien_umur_hari" => $d["pasien_umur_hari"] ?? 0,
                     "pasien_alamat" => $alamat ?? 0,
+                    "pasien_alamat_min" => $alamatMin ?? 0,
                 ];
             }, $data['response']['data']);
 
@@ -891,6 +894,59 @@ class KominfoModel extends Model
         $data = json_decode($body, true);
         return $data;
     }
+    public function getTungguTensi()
+    {
+        $client = new Client();
+        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+
+        if (!$cookie) {
+            // Authenticate if no cookie is found
+            $loginResponse = $this->login();
+            $cookie = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+
+        $url = env('BASR_URL_KOMINFO', '') . '/ruang_tensi/get_data?id_ruang_tensi=2';
+
+        try {
+            $response = $client->request('POST', $url, [
+                'form_params' => [
+                    'id_ruang_tensi' => 2,
+                    'length' => 1000,
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Cookie' => $cookie,
+                ],
+            ]);
+
+            // Check if the response status is 200
+            if ($response->getStatusCode() !== 200) {
+                Log::error('Error response body: ' . (string) $response->getBody());
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
+
+            $body = (string) $response->getBody();
+            $data = json_decode($body, true);
+
+            return $data;
+
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            // Handle network or request errors
+            Log::error('Request Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
+        } catch (\Exception $e) {
+            // Handle unexpected errors
+            Log::error('Unexpected Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
+        }
+    }
+
 
     public function jadwalPoli(array $params)
     {

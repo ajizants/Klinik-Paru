@@ -7,6 +7,61 @@ use Illuminate\Support\Facades\Http;
 
 class VerifController extends Controller
 {
+    public function frista(Request $request)
+    {
+        ini_set('max_execution_time', 400);
+
+        // Ambil parameter dari request
+        $id_number = $request->input('id_number');
+        $id_server = $request->input('id_server');
+
+        // URL API Flask di Windows
+        if ($id_server == 1) {
+            $apiUrl = env('FRISTA_API_URL');
+        } else {
+            $apiUrl = env('FRISTA_API_URL2');
+        }
+
+        // Kirim permintaan ke API Flask dengan waktu timeout yang diperpanjang
+        $response = Http::timeout(600)->post($apiUrl, [
+            'id_number' => $id_number,
+        ]);
+
+        // Mengembalikan hasil sebagai JSON
+        return response()->json([
+            'success' => $response->successful(),
+            'output' => $response->json('output'),
+            'error' => $response->json('error'),
+        ]);
+    }
+    public function afterapp(Request $request)
+    {
+        ini_set('max_execution_time', 400);
+
+        // Ambil parameter dari request
+        $id_number = $request->input('id_number');
+        $id_server = $request->input('id_server');
+
+        // URL API Flask di Windows
+        if ($id_server == 1) {
+            $apiUrl = env('FP_API_URL');
+        } else {
+            $apiUrl = env('FP_API_URL2');
+        }
+
+        // Kirim permintaan ke API Flask dengan waktu timeout yang diperpanjang
+        $response = Http::timeout(600)->post($apiUrl, [
+            'id_number' => $id_number,
+        ]);
+        // dd($response);
+
+        // Mengembalikan hasil sebagai JSON
+        return response()->json([
+            'success' => $response->successful(),
+            'output' => $response->json('output'),
+            'error' => $response->json('error'),
+        ]);
+    }
     public function index(Request $request)
     {
         ini_set('max_execution_time', 400);
@@ -15,9 +70,15 @@ class VerifController extends Controller
         $username = env('FRISTA_USERNAME');
         $password = env('FRISTA_PASSWORD');
         $nik = $request->input('nik');
+        $id_server = $request->input('id_server');
 
         // URL API Flask di Windows
-        $apiUrl = env('FRISTA_API_URL');
+        if ($id_server == 1) {
+            $apiUrl = env('FRISTA_API_URL');
+        } else {
+            $apiUrl = env('FRISTA_API_URL2');
+        }
+        // return $apiUrl;
 
         // Kirim permintaan ke API Flask dengan waktu timeout yang diperpanjang
         $response = Http::timeout(600)->post($apiUrl, [
@@ -42,9 +103,14 @@ class VerifController extends Controller
         $username = env('FRISTA_USERNAME');
         $password = env('FRISTA_PASSWORD');
         $id_number = $request->input('id_number');
+        $id_server = $request->input('id_server');
 
         // URL API Flask di Windows
-        $apiUrl = env('FRISTA_API_URL_FP');
+        if ($id_server == 1) {
+            $apiUrl = env('FP_API_URL');
+        } else {
+            $apiUrl = env('FP_API_URL2');
+        }
 
         // Kirim permintaan ke API Flask dengan waktu timeout yang diperpanjang
         $response = Http::timeout(600)->post($apiUrl, [
@@ -70,7 +136,7 @@ class VerifController extends Controller
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
 
         if (!$cookie) {
-            dd("masuk");
+            // dd("masuk");
             // Jika cookie tidak ada, lakukan login
             $loginResponse = $client->login();
             $cookie = $loginResponse['cookies'][0] ?? null;
@@ -126,10 +192,11 @@ class VerifController extends Controller
             $log_id = isset($antrian['data'][0]['log_id']) ? $antrian['data'][0]['log_id'] : null; // Memastikan ada data
             $daftarBy = 'OTS';
         }
+        // return $log_id;
 
         //panggil pasien
         if ($keterangan == "MENUNGGU DIPANGGIL LOKET PENDAFTARAN") {
-            dd("menunggu panggil");
+            // dd("menunggu panggil");
             $panggil = $client->panggil(['cookie' => $cookie], $log_id);
             // <-----proses submit-----> //
             $antrian = $client->get_data_antrian(['cookie' => $cookie], $request->input('noAntri'));
@@ -150,12 +217,11 @@ class VerifController extends Controller
             'admin_nama' => $dokter,
         ];
         $jadwal = $client->jadwalPoli($reqJadwal);
-        return $jadwal; //tinggal memasukan hari jsawal umum kusus
+        // return $jadwal; //tinggal memasukan hari jsawal umum kusus
 
         $form_data = [
             'log_id' => $log_id ?? null,
             'ruang_id_selanjutnya' => 2,
-            'poli_sub_id' => 1,
             'dokter_id' => $data_pendaftaran['dokter_id'] ?? null,
             'penjamin_id' => $penjamin_id ?? null,
             'penjamin_nomor' => $data_pendaftaran['penjamin_nomor'] ?? null,
@@ -164,8 +230,9 @@ class VerifController extends Controller
             'daftar_by' => $data_pendaftaran['daftar_by'] ?? null,
             'pasien_lama_baru' => $data_pendaftaran['pasien_lama_baru'] ?? null,
 
-            'jadwal_umum_khusus' => $data_pasien['jadwal_umum_khusus'] ?? null,
-            'jadwal_id' => $data_pasien['jadwal_id'] ?? null,
+            'jadwal_umum_khusus' => 'UMUM',
+            'jadwal_id' => $jadwal['id'] ?? null,
+            'poli_sub_id' => $jadwal['poli_sub_id'] ?? null,
 
             'no_telp' => $data_pasien['pasien_no_hp'] ?? null,
             'pasien_id' => $data_pasien['id'] ?? null,

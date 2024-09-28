@@ -330,11 +330,11 @@ class HomeController extends Controller
 
         return view('Display.main')->with('title', $title);
     }
-    public function verif()
+    public function verif($id_server)
     {
         $title = 'Anjungan Mandiri';
 
-        return view('Dispenser.anjunganMandiri')->with('title', $title);
+        return view('Dispenser.anjunganMandiri', compact('id_server'))->with('title', $title);
     }
     public function displayAntrian()
     {

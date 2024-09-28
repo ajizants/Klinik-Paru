@@ -633,6 +633,7 @@
                 });
             }
         }
+        const id_server = @json($id_server)
 
         function verifikasiFP(data) {
             console.log("🚀 ~ verifikasiFP ~ data:", data);
@@ -654,7 +655,8 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        id_number: id_number
+                        id_number: id_number,
+                        id_server: id_server
                     }),
                 })
                 .then(response => {
@@ -699,14 +701,16 @@
                 },
             });
 
+            const id_number = data.penjamin_nomor;
             const nik = data.pasien_nik;
-            fetch('/api/verif/pendaftaran', {
+            fetch('/api/verif/pendaftaran/fr', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        nik: nik
+                        id_number: id_number,
+                        id_server: id_server
                     }),
                 })
                 .then(response => {

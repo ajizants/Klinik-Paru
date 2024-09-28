@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasienKominfoController;
@@ -33,9 +34,12 @@ Route::get('RO/Hasil', [HomeController::class, 'roHasil'])->name('roHasil');
 
 Route::get('dispenser', [HomeController::class, 'dispenser'])->name('dispenser');
 
-Route::get('verif', [HomeController::class, 'verif'])->name('verif');
+Route::get('verif/{id}', [HomeController::class, 'verif'])->name('verif');
 
 Route::get('displayAntrian', [HomeController::class, 'displayAntrian'])->name('displayAntrian');
+Route::get('display/loket', [DisplayController::class, 'loket'])->name('loket');
+Route::get('display/tensi', [DisplayController::class, 'tensi'])->name('tensi');
+Route::get('display/poli/{id}', [DisplayController::class, 'poli'])->name('poli');
 //menu
 Route::middleware('auth')->group(function () {
     Route::get('report', [HomeController::class, 'report'])->name('report');

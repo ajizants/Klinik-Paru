@@ -10,6 +10,7 @@ use App\Models\DotsTransModel;
 use App\Models\KominfoModel;
 use App\Models\PegawaiModel;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 
 class DotsController extends Controller
@@ -385,10 +386,28 @@ class DotsController extends Controller
         $id = $request->input('id');
         $status = $request->input('status');
         $sample = $request->input('sample');
+        $ket = $request->input('ket');
+
+        if ($id === null) {
+            return response()->json(['message' => 'ID tidak valid'], 400);
+        }
+
         $pasien = DotsModel::where('id', $id)->first();
+
+        if ($pasien === null) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
         $pasien->hasilBerobat = $status;
         $pasien->sample = $sample;
-        $pasien->save();
+        $pasien->ket = $ket;
+
+        try {
+            $pasien->save();
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Gagal mengupdate data'], 500);
+        }
+
         return response()->json(['message' => 'Data berhasil diupdate']);
     }
 }

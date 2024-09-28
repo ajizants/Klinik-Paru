@@ -735,16 +735,21 @@ class PasienKominfoController extends Controller
         $params = [
             'tanggal_awal' => $tanggal,
             'tanggal_akhir' => $tanggal,
-            'no_rm' => $norm,
+            'no_rm' => $norm ?? '',
         ];
+        // return $params;
         $model = new KominfoModel();
         $data = $model->pendaftaranRequest($params);
+        // return $data;
 
         // // Filter hasil yang normnya sama dengan $norm
-        // $filteredData = array_filter($data, function ($message) use ($norm) {
-        //     return $message['pasien_no_rm'] === $norm;
-        // });
-
+        if ($norm === "" || $norm === null) {
+            $filteredData = array_filter($data, function ($message) {
+                return $message['status_pulang'] === "Belum Pulang";
+            });
+            $result = array_values($filteredData);
+            return response()->json($result);
+        }
         // // Ambil elemen pertama dari hasil yang difilter
         $result = reset($data);
 

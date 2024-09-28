@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AntrianController;
+use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\DotsController;
 use App\Http\Controllers\FarmasiController;
 use App\Http\Controllers\GiziAsesmenAwalController;
@@ -230,8 +231,11 @@ Route::post('kominfo/rata_waktu_tunggu', [PasienKominfoController::class, 'avgWa
 Route::post('kominfo/pendaftaran', [PasienKominfoController::class, 'pendaftaranFilter']); //cari No RM
 Route::post('kominfo/pendaftaran/report', [PasienKominfoController::class, 'reportPendaftaran']);
 
-Route::post('verif/pendaftaran', [VerifController::class, 'index']);
-Route::post('verif/pendaftaran/fp', [VerifController::class, 'fingerprint']);
-Route::post('kominfo/submit',[VerifController::class,'submit']);
-Route::post('ambil/no/kominfo',[PasienKominfoController::class,'ambilAntrean']);
+Route::post('verif/pendaftaran/fr', [VerifController::class, 'frista']);
+Route::post('verif/pendaftaran/fp', [VerifController::class, 'afterapp']);
+// Route::post('verif/pendaftaran/fr', [VerifController::class, 'index']);
+// Route::post('verif/pendaftaran/fp', [VerifController::class, 'fingerprint']);
+Route::post('kominfo/submit', [VerifController::class, 'submit']);
+Route::post('ambil/no/kominfo', [PasienKominfoController::class, 'ambilAntrean']);
+Route::post('list/tunggu/tensi', [DisplayController::class, 'listTungguTensi']);
 // });

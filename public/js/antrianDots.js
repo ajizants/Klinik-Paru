@@ -153,11 +153,13 @@ function editPasienTB(button) {
     var statusPengobatan = button.getAttribute("data-hasilBerobat");
     var tcm = button.getAttribute("data-tcm");
     var sample = button.getAttribute("data-sample");
+    var ket = button.getAttribute("data-ket");
 
     document.getElementById("status-id").value = id;
     document.getElementById("status-norm").value = norm;
     document.getElementById("status-nama").value = nama;
     document.getElementById("status-alamat").value = alamat;
+    document.getElementById("modal-ket-update").value = ket;
     $("#statusPengobatan").val(statusPengobatan).trigger("change");
     $("#modal-tcm-update").val(tcm).trigger("change");
     $("#modal-sample-update").val(sample).trigger("change");
@@ -169,6 +171,7 @@ function updateStatus(id) {
     var status = document.getElementById("statusPengobatan").value;
     var tcm = document.getElementById("modal-tcm-update").value;
     var sample = document.getElementById("modal-sample-update").value;
+    var ket = document.getElementById("modal-ket-update").value;
     $.ajax({
         url: "/api/update/status/pengobatan",
         type: "POST",
@@ -177,6 +180,7 @@ function updateStatus(id) {
             status: status,
             tcm: tcm,
             sample: sample,
+            ket: ket,
         },
         success: function (response) {
             console.log("🚀 ~ updateStatus ~ response:", response);
@@ -184,6 +188,7 @@ function updateStatus(id) {
                 icon: "success",
                 title: "Berhasil Diupdate, Maturnuwun...!!!",
             });
+            document.getElementById("updatePengobatanTB").reset();
             pasienTB();
             pasienTelat();
         },
@@ -540,6 +545,8 @@ function pasienTB() {
             $("#loadingSpinner").hide();
             var dataArray = response.data || [];
             dataArray.forEach(function (item, index) {
+                let ket = item.ket ? item.ket : "";
+
                 item.actions = `<button class="editTB bg-danger"
                                    data-id="${item.id}"
                                     data-norm="${item.norm}"
@@ -549,7 +556,8 @@ function pasienTB() {
                                     data-alamat="${item.alamat}"
                                     data-hasilBerobat="${item.hasilBerobat}"
                                     data-tcm="${item.tcm}"
-                                    data-sputum="${item.sputum}"
+                                    data-sample="${item.sample}"
+                                    data-ket="${ket}"
                                     data-toggle="modal"
                                     data-target="#modal-update"
                                     onclick="editPasienTB(this);"><i class="fa-solid fa-file-pen"></i></button>
@@ -726,41 +734,3 @@ function fillIdentitasTBRiwayat(data) {
     riwayatNik.text(": " + riwayat.pasien.nik);
     riwayatAlamat.text(": " + riwayat.pasien.alamat);
 }
-
-// function processDataArray(dataArray) {
-//     dataArray.forEach(function (item) {
-//         item.index = dataArray.indexOf(item) + 1;
-//         item.nmDiagnosa = item.diagnosa[0].nama_diagnosa;
-//         var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-//         item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-//                                 onclick="cariPasienTb('${item.pasien_no_rm}','${item.tanggal}');"><i class="fas fa-pen-to-square"></i></a>`;
-//     });
-// }
-
-// function drawDataTable(dataArray) {
-//     $("#dataAntrian").DataTable({
-//         data: dataArray,
-//         columns: [
-//             { data: "aksi", className: "text-center p-2" },
-//             {
-//                 data: "status",
-//                 className: "text-center p-2",
-//                 render: function (data, type, row) {
-//                     var backgroundColor =
-//                         data === "belum" ? "danger" : "success";
-//                     return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-//                 },
-//             },
-//             { data: "index", className: "text-center p-2" },
-//             { data: "pasien_no_rm", className: "text-center p-2" },
-//             { data: "penjamin_nama", className: "text-center p-2" },
-//             { data: "pasien_nama", className: "p-2 col-2" },
-//             { data: "dokter_nama", className: "p-2 col-3" },
-//             { data: "nmDiagnosa", className: "p-2 col-4" },
-//         ],
-//         order: [
-//             [1, "asc"],
-//             [2, "asc"],
-//         ],
-//     });
-// }
