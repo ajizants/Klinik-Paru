@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
     <!-- Theme style -->
-    <link type="text/css" rel="stylesheet" href="{{ asset('css/mystyle.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset('css/display.css') }}">
     <style>
         html,
         body {
@@ -37,6 +37,33 @@
             display: none;
             /* Hides scrollbar in Chrome, Safari, and newer versions of Edge */
         }
+
+        .table-container {
+            max-height: 300px;
+            /* Set max height untuk auto scroll */
+            overflow: hidden;
+            /* Sembunyikan scroll bar */
+            position: relative;
+            /* Untuk posisi absolut */
+        }
+
+        .table-auto {
+            animation: scroll 30s linear infinite;
+            -webkit-animation: scroll 30s linear infinite;
+        }
+
+        @keyframes scroll {
+            from {
+                transform: translateY(0);
+                /* Mulai dari atas */
+            }
+
+            to {
+                transform: translateY(-100%);
+                /* Scroll ke atas sepenuhnya */
+            }
+        }
+
 
 
         .marquee-container {
@@ -80,18 +107,22 @@
         <div class="col mt-2">
             <div class="col" id="player"></div>
             <h2 class="text-center">Jadwal Prakk Dokter</h2>
-
-            <div class="table-responsive">
-                <table class="table table-bordered fs-3">
-                    <thead>
+            <div class="table-responsive table-container">
+                <table class="table table-bordered table-striped table-hover mb-0" id="header" style="width:100%">
+                    <thead class="bg bg-dark">
                         <tr>
-                            <th>No</th>
-                            <th>Hari</th>
+                            <th class="col-1">No</th>
+                            <th class="col-2">Hari</th>
                             <th>Waktu</th>
-                            <th>Dokter</th>
+                            <th class="col-5">Dokter</th>
                         </tr>
                     </thead>
-                    <tbody>
+                </table>
+            </div>
+            <div class="table-responsive table-container">
+                <table class="table-auto table table-bordered table-striped table-hover" id="listTunggu"
+                    style="width:100%">
+                    {{-- <tbody>
                         <tr>
                             <td>1</td>
                             <td>Senin s.d Sabtu</td>
@@ -116,6 +147,19 @@
                             <td>08.00 - 14.15 WIB</td>
                             <td>dr. Sigit Dwiyanto</td>
                         </tr>
+                    </tbody> --}}
+                    <tbody id="listJadwal">
+                        @foreach ($jadwal as $item)
+                            <td class="col-1">{{ $loop->iteration }}</td>
+                            <td class="col-2">{{ $item['nama_hari'] }}</td>
+                            <td>
+                                <!-- Convert and display waktu_mulai_poli and waktu_selesai_poli -->
+                                {{ \Carbon\Carbon::createFromTimestamp($item['waktu_mulai_poli'])->format('H:i') }} -
+                                {{ \Carbon\Carbon::createFromTimestamp($item['waktu_selesai_poli'])->format('H:i') }}
+                            </td>
+                            <td class="col-5">{{ $item['admin_nama'] }}</td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>

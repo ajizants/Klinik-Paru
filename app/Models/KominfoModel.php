@@ -1628,8 +1628,10 @@ class KominfoModel extends Model
             ],
         ];
 
-        // return $jadwal;
-        // Filter data jadwal
+        // return ($params);
+        if (empty($params)) {
+            return $jadwal;
+        }
         $jadwal_terpilih = array_filter($jadwal, function ($item) use ($params) {
             return $item['no_hari'] == $params['no_hari'] && $item['admin_nama'] == $params['admin_nama'];
         });

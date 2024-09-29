@@ -13,8 +13,12 @@ class DisplayController extends Controller
         $title = 'Daftar Tunggu Loket';
         // Akses video dari folder yang di-share di jaringan
         $videos = null;
+        $client = new KominfoModel();
+        $params = [];
+        $jadwal = $client->jadwalPoli($params);
+        // return $jadwal;
 
-        return view('Display.loket', compact('title', 'videos'));
+        return view('Display.loket', compact('title', 'videos', 'jadwal'));
     }
 
     public function listTungguTensi()
