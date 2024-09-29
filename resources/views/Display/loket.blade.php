@@ -61,6 +61,44 @@
         </div>
         <div class="col mt-2">
             <div class="col" id="player"></div>
+            <h2 class="text-center">Jadwal Praktek</h2>
+
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Hari</th>
+                            <th>Waktu</th>
+                            <th>Dokter</th>
+                            <th>Poliklinik</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Senin</td>
+                            <td>10.00 - 12.00</td>
+                            <td>Dr. Mulyono, Sp. O</td>
+                            <td>IGD</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Senin</td>
+                            <td>12.00 - 14.00</td>
+                            <td>Dr. Mulyono, Sp. O</td>
+                            <td>IGD</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Senin</td>
+                            <td>14.00 - 16.00</td>
+                            <td>Dr. Mulyono, Sp. O</td>
+                            <td>IGD</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <!-- jQuery -->
