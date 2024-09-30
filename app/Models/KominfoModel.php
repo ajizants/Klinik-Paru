@@ -895,6 +895,65 @@ class KominfoModel extends Model
         $data = json_decode($body, true);
         return $data;
     }
+
+    public function submit(array $data, $log_id = null)
+    {
+        $client = new Client();
+        // https://kkpm.banyumaskab.go.id/administrator/loket_pendaftaran/verifikasi/249235
+        $url = env('BASR_URL_KOMINFO', '') . '/loket_pendaftaran/verifikasi/' . $log_id;
+        // return $url;
+        $form_data = $data['form_data'];
+        // dd($form_data);
+
+        $response = $client->request('POST', $url, [
+            'form_params' => $form_data,
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+                'Cookie' => $data['cookie'],
+            ],
+        ]);
+
+        $body = $response->getBody();
+        $responseData = json_decode($body, true);
+
+        return $responseData;
+
+    }
+    public function getDokterBefore(array $data, $pasien_id = null)
+    {
+        $client = new Client();
+        $url = env('BASR_URL_KOMINFO', '') . '/loket_pendaftaran/kunjunganDokterSebelumnya';
+
+        $response = $client->request('POST', $url, [
+            'form_params' => [
+                'pasien_id' => $pasien_id,
+            ],
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+                'Cookie' => $data['cookie'],
+            ],
+        ]);
+
+        $body = $response->getBody();
+        $responseData = json_decode($body, true);
+
+        // Cek apakah data tersedia
+        $text = $responseData['data']['text'] ?? null;
+
+        if ($text) {
+            // Pecah teks berdasarkan "Kunjungan Sebelumnya Oleh Dokter :"
+            $parts = explode('Kunjungan Sebelumnya Oleh Dokter : ', $text);
+
+            if (isset($parts[1])) {
+                // Pecah lagi berdasarkan tanggal, asumsikan tanggal setelah nama dokter dipisahkan oleh koma
+                $dokterInfo = explode(',', $parts[1]);
+                return trim($dokterInfo[0]); // Ambil hanya nama dokter, tanpa tanggal
+            }
+        }
+
+        return null; // Jika tidak ditemukan, kembalikan null
+    }
+
     public function getTungguTensi()
     {
         $client = new Client();
@@ -1633,7 +1692,7 @@ class KominfoModel extends Model
             return $jadwal;
         }
         $jadwal_terpilih = array_filter($jadwal, function ($item) use ($params) {
-            return $item['no_hari'] == $params['no_hari'] && $item['admin_nama'] == $params['admin_nama'];
+            return $item['no_hari'] == $params['no_hari'] && strpos($item['admin_nama'], $params['admin_nama']) !== false;
         });
 
         $jadwal_terpilih = array_values($jadwal_terpilih);

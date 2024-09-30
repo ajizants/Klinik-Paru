@@ -622,6 +622,16 @@
                             $("key_pad").hide();
                             verifikasiFP(data);
                         }
+
+                        Swal.fire({
+                            icon: "info",
+                            title: "Proses Verifikasi dan pendaftaran...!!\n Mohon Ditunggu ...!!!",
+                            // showConfirmButton: false,
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            },
+                        });
                     });
                 }
                 $("#norm").val("");
@@ -637,18 +647,12 @@
 
         function verifikasiFP(data) {
             console.log("🚀 ~ verifikasiFP ~ data:", data);
-
-            Swal.fire({
-                icon: "info",
-                title: "Proses Verifikasi...!!!",
-                // showConfirmButton: false,
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-            });
-
-            const id_number = data.penjamin_nomor;
+            let id_number = "";
+            if (data.penjamin_nomor == "") {
+                id_number = data.pasien_nik;
+            } else {
+                id_number = data.penjamin_nomor;
+            }
             fetch('/api/verif/pendaftaran/fp', {
                     method: 'POST',
                     headers: {
@@ -672,16 +676,17 @@
                 })
                 .then(result => {
                     // Jika verifikasi berhasil, langsung cetak tanpa pertanyaan
-                    Swal.fire({
-                        icon: "success",
-                        title: "Verifikasi Berhasil...!!!",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    }).then(() => {
-                        console.log("🚀 ~ cetakNoAntrian ~ data:", data);
-                        cetakNoAntrian(data);
+                    // Swal.fire({
+                    //     icon: "success",
+                    //     title: "Verifikasi Berhasil...!!!",
+                    //     showConfirmButton: false,
+                    //     timer: 2000,
+                    // }).then(() => {
+                    console.log("🚀 ~ cetakNoAntrian ~ data:", data);
+                    var no_rm = data.pasien_no_rm;
+                    submitKominfo(no_rm, data);
 
-                    });
+                    // });
                 })
                 .catch(error => {
                     console.error('Error executing automation script:', error);
@@ -690,19 +695,12 @@
 
         function verifikasiFR(data) {
             console.log("🚀 ~ verifikasiFR ~ data:", data);
-
-            Swal.fire({
-                icon: "info",
-                title: "Proses Verifikasi...!!!",
-                // showConfirmButton: false,
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-            });
-
-            const id_number = data.penjamin_nomor;
-            const nik = data.pasien_nik;
+            let id_number = "";
+            if (data.penjamin_nomor == "") {
+                id_number = data.pasien_nik;
+            } else {
+                id_number = data.penjamin_nomor;
+            }
             fetch('/api/verif/pendaftaran/fr', {
                     method: 'POST',
                     headers: {
@@ -726,16 +724,16 @@
                 })
                 .then(result => {
                     // Jika verifikasi berhasil, langsung cetak tanpa pertanyaan
-                    Swal.fire({
-                        icon: "success",
-                        title: "Verifikasi Berhasil...!!!",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    }).then(() => {
-                        console.log("🚀 ~ cetakNoAntrian ~ data:", data);
-                        cetakNoAntrian(data);
-
-                    });
+                    // Swal.fire({
+                    //     icon: "success",
+                    //     title: "Verifikasi Berhasil...!!!",
+                    //     showConfirmButton: false,
+                    //     timer: 2000,
+                    // }).then(() => {
+                    console.log("🚀 ~ cetakNoAntrian ~ data:", data);
+                    var no_rm = data.pasien_no_rm;
+                    submitKominfo(no_rm, data);
+                    // });
                 })
                 .catch(error => {
                     console.error('Error executing automation script:', error);
@@ -793,6 +791,74 @@
         //         });
         // }
 
+        function submitKominfo(no_rm, data) {
+            // Swal.fire({
+            //     icon: "info",
+            //     title: "Proses Verifikasi dan pendaftaran...!!!",
+            //     // showConfirmButton: false,
+            //     allowOutsideClick: false,
+            //     didOpen: () => {
+            //         Swal.showLoading();
+            //     },
+            // });
+            console.log("🚀 ~ submitKominfo ~ no_rm:", no_rm);
+            fetch('/api/verif/pendaftaran/kominfo/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        no_rm: no_rm
+                    }),
+                })
+                .then(response => {
+                    console.log("🚀 ~ submitKominfo ~ response:", response);
+                    if (response.status === 500) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Terjadi Kesalahan",
+                            text: "Verifikasi gagal, silakan coba lagi.",
+                        });
+                        throw new Error('Server error: 500');
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    if (result.code == 200) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Verifikasi Berhasil...!!!",
+                            text: result.message,
+                            showConfirmButton: false,
+                            timer: 3000,
+                        })
+                    } else if (result.code == 500) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Terjadi Kesalahan",
+                            text: result.message,
+                        });
+                    } else if (result.code == 201) {
+                        Swal.fire({
+                            icon: "info",
+                            title: "Pasien Sudah terdaftar pada hari ini...!!",
+                            text: result.message,
+                        });
+                    } else if (result.code == 202) {
+                        Swal.fire({
+                            icon: "info",
+                            title: "Pasien dengan NIK ini sudah terdaftar pada hari ini...!!",
+                            text: result.message,
+                        });
+                    }
+                    cetakNoAntrian(data);
+
+                    console.log("🚀 ~ submitKominfo ~ result:", result);
+                })
+                .catch(error => {
+                    console.error('Error executing automation script:', error);
+                })
+        }
 
         function cetakNoAntrian(data) {
             var noAntri = data.antrean_nomor;

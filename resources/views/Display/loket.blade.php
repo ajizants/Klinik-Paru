@@ -39,7 +39,7 @@
         }
 
         .table-container {
-            max-height: 300px;
+            max-height: 250px;
             /* Set max height untuk auto scroll */
             overflow: hidden;
             /* Sembunyikan scroll bar */
@@ -106,7 +106,7 @@
         </div>
         <div class="col mt-2">
             <div class="col" id="player"></div>
-            <h2 class="text-center">Jadwal Prakk Dokter</h2>
+            <h2 class="text-center">Jadwal Praktek Dokter</h2>
             <div class="table-responsive table-container">
                 <table class="table table-bordered table-striped table-hover mb-0" id="header" style="width:100%">
                     <thead class="bg bg-dark">
