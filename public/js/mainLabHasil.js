@@ -20,7 +20,14 @@ document.getElementById("statusSwitch").addEventListener("change", function () {
     console.log("🚀 ~ status:", keterangan); // This will log the correct status
 });
 
-async function cariTsLab(norm, tgl) {
+function formatWaktu(dateTimeString) {
+    const [datePart, timePart] = dateTimeString.split(" ");
+    const [year, month, day] = datePart.split("-");
+    const formattedDate = `${day}-${month}-${year}`;
+    return `${formattedDate} ${timePart}`;
+}
+
+async function cariTsLab(norm, tgl, task) {
     formatNorm($("#norm"));
     norm = norm || $("#norm").val();
     tgl = tgl || $("#tanggal").val();
@@ -65,35 +72,39 @@ async function cariTsLab(norm, tgl) {
             }
         } else {
             const data = await response.json();
-            $("#norm").val(data.norm);
-            $("#nama").val(data.nama);
-            $("#nik").val(data.nik);
-            $("#alamat").val(data.alamat);
-            $("#notrans").val(data.notrans);
-            $("#layanan").val(data.layanan);
-            $("#dokter").val(data.dokter).trigger("change");
-            $("#analis").val(data.petugas).trigger("change");
-            var rawDateTime = data.waktu_selesai;
-            if (rawDateTime !== null) {
-                const waktuSelesai = formatWaktu(rawDateTime);
-                console.log("🚀 ~ cariTsLab ~ waktuSelesai:", waktuSelesai);
-                $("#waktuSelesai").text(waktuSelesai);
-                $("#divSwitch").hide();
-            }
-            // var ket = data.ket;
-            // if (ket == "Selesai") {
-            //     document.getElementById("statusSwitch").checked = true;
-            //     document.getElementById("statusLabel").textContent = "Selesai";
-            //     keterangan = "Selesai";
-            // } else {
-            //     document.getElementById("statusSwitch").checked = false;
-            //     document.getElementById("statusLabel").textContent = "Belum";
-            //     keterangan = "Belum";
-            // }
+            if (task == "tampil") {
+                $("#norm").val(data.norm);
+                $("#nama").val(data.nama);
+                $("#nik").val(data.nik);
+                $("#alamat").val(data.alamat);
+                $("#notrans").val(data.notrans);
+                $("#layanan").val(data.layanan);
+                $("#dokter").val(data.dokter).trigger("change");
+                $("#analis").val(data.petugas).trigger("change");
+                var rawDateTime = data.waktu_selesai;
+                if (rawDateTime !== null) {
+                    const waktuSelesai = formatWaktu(rawDateTime);
+                    console.log("🚀 ~ cariTsLab ~ waktuSelesai:", waktuSelesai);
+                    $("#waktuSelesai").text(waktuSelesai);
+                    $("#divSwitch").hide();
+                }
+                // var ket = data.ket;
+                // if (ket == "Selesai") {
+                //     document.getElementById("statusSwitch").checked = true;
+                //     document.getElementById("statusLabel").textContent = "Selesai";
+                //     keterangan = "Selesai";
+                // } else {
+                //     document.getElementById("statusSwitch").checked = false;
+                //     document.getElementById("statusLabel").textContent = "Belum";
+                //     keterangan = "Belum";
+                // }
 
-            const notrans = data.notrans;
-            var pemeriksaan = data.pemeriksaan;
-            dataLab(pemeriksaan);
+                const notrans = data.notrans;
+                var pemeriksaan = data.pemeriksaan;
+                dataLab(pemeriksaan);
+            } else {
+                cetak(data);
+            }
             Swal.close();
         }
     } catch (error) {
@@ -103,13 +114,6 @@ async function cariTsLab(norm, tgl) {
             title: "Terjadi kesalahan saat mencari data...!!! /n" + error,
         });
     }
-}
-
-function formatWaktu(dateTimeString) {
-    const [datePart, timePart] = dateTimeString.split(" ");
-    const [year, month, day] = datePart.split("-");
-    const formattedDate = `${day}-${month}-${year}`;
-    return `${formattedDate} ${timePart}`;
 }
 async function dataLab(pemeriksaan, notrans) {
     if ($.fn.DataTable.isDataTable("#inputHasil")) {
@@ -303,10 +307,61 @@ async function dataLab(pemeriksaan, notrans) {
     }
 }
 
+function cetak(data) {
+    console.log("🚀 ~ cetak ~ data:", data);
+    const pemeriksaan = data.pemeriksaan;
+
+    Swal.fire({
+        icon: "success",
+        title: "Verifikasi Berhasil...!!",
+        timer: 3000,
+    });
+
+    let printWindow = window.open("", "_blank");
+    printWindow.document.write(`<html><head><title>Cetak Hasil Lab</title>`);
+
+    printWindow.document.write(`<table width="100%" style="color: black;">
+                                <tbody><tr>
+                                    <td width="20%" style="text-align: center; padding-top: 10px; padding-bottom: 10px">
+                                        <img src="https://kkpm.banyumaskab.go.id/assets/img/banyumas.png" style="width: 30%;">
+                                    </td>
+                                    <td width="60%">
+                                        <p style="font-size: 20px; margin-bottom: -5px; text-align: center; margin-top: 0px;">
+                                            PEMERINTAH KABUPATEN BANYUMAS
+                                        </p>
+
+                                        <p style="font-size: 20px; margin-bottom: -5px; text-align: center; margin-top: 0px;">
+                                            DINAS KESEHATAN
+                                        </p>
+
+                                        <p style="font-size: 20px; margin-bottom: -5px; text-align: center; margin-top: 0px; font-weight: bold;">
+                                            KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A
+                                        </p>
+
+                                        <p style="margin-bottom: -5px; text-align: center; margin-top: 0px;">
+                                            Jalan A. Yani Nomor 33 Purwokerto Timur, Banyumas, Jawa Tengah
+                                        </p>
+
+                                        <p style="margin-bottom: -5px; text-align: center; margin-top: 0px;">
+                                            Kode Pos 53111, Telepon (0281) 635658, Pos-el bkpm_purwokerto@yahoo.com
+                                        </p>
+                                    </td>
+                                    <td width="20%" style="text-align: center; padding-top: 10px; padding-bottom: 10px">
+                                        <img src="https://kkpm.banyumaskab.go.id/assets/img/logo.png" style="width: 40%;">
+                                    </td>
+                                </tr>
+                            </tbody></table>`);
+    printWindow.document.write(`</body></html>`);
+
+    printWindow.open();
+    // printWindow.print();
+    // printWindow.close();
+}
+
 function simpan() {
     const norm = $("#norm").val();
     const notrans = $("#notrans").val();
-    const tglTrans= $("#tgltrans").val();
+    const tglTrans = $("#tgltrans").val();
 
     if (!norm || !notrans) {
         const dataKurang = [];
@@ -442,11 +497,12 @@ function antrianBelum(belumTransaksi, tgl) {
         item.tgl = tgl;
         item.tanggal = moment(item.created_at).format("DD-MM-YYYY");
         item.alamat = item.alamat.replace(/, [^,]*$/, "");
-        item.aksi = `<button class="editTB bg-danger"
+        item.aksi = `<button class="btn btn-danger bg-danger"
                             data-norm="${item.norm}"
                             data-nama="${item.nama}"
                             data-alamat="${item.alamat}"
-                            onclick="cariTsLab('${item.norm}', '${item.tgl}');"><i class="fa-solid fa-file-pen"></i></button>`;
+                            onclick="cariTsLab('${item.norm}', '${item.tgl}','tampil');"><i class="fa-solid fa-file-pen"></i></button>
+                            `;
     });
 
     $("#antrianBelum").DataTable({
@@ -487,17 +543,22 @@ function antrianSudah(sudahTransakasi, tgl) {
         item.tgl = tgl;
         item.tanggal = moment(item.created_at).format("DD-MM-YYYY");
         item.alamat = item.alamat.replace(/, [^,]*$/, "");
-        item.aksi = `<button class="editTB bg-danger"
+        item.aksi = `<button class="btn btn-danger"
                             data-norm="${item.norm}"
                             data-nama="${item.nama}"
                             data-alamat="${item.alamat}"
-                            onclick="cariTsLab('${item.norm}', '${item.tgl}');"><i class="fa-solid fa-file-pen"></i></button>`;
+                            onclick="cariTsLab('${item.norm}', '${item.tgl}','tampil');"><i class="fa-solid fa-file-pen"></i></button>
+                            <button class="btn btn-success"
+                            data-norm="${item.norm}"
+                            data-nama="${item.nama}"
+                            data-alamat="${item.alamat}"
+                            onclick="cariTsLab('${item.norm}', '${item.tgl}','cetak');"><i class="fa-solid fa-print"></i></button>`;
     });
 
     $("#antrianSudah").DataTable({
         data: sudahTransakasi,
         columns: [
-            { data: "aksi" },
+            { data: "aksi", className: "col-2" },
             {
                 data: "status",
                 className: "text-center",

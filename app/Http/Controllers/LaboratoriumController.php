@@ -397,6 +397,25 @@ class LaboratoriumController extends Controller
         }
         return response()->json($hasilLab, 200, [], JSON_PRETTY_PRINT);
     }
+
+    public function cetak(Request $request)
+    {
+        try {
+
+                $notrans = $request->input('notrans');
+                $tgl = $request->input('tgl');
+
+                $data = LaboratoriumHasilModel::with('pemeriksaan')
+                    ->where('notrans', 'like', '%' . $notrans . '%')
+                    ->whereDate('created_at', 'like', '%' . $tgl . '%')->get();
+// kembalikan data ke dalam tampilan tabel view Laboratorium.Hasil.Cetak
+                return view('Laboratorium.Hasil.Cetak', compact('data'));
+                
+        } catch (\Exception $e) {
+            Log::error('Terjadi kesalahan saat mencari data: ' . $e->getMessage());
+            return response()->json(['message' => 'Terjadi kesalahan saat mencari data: ' . $e->getMessage()], 500);
+        }
+    }
     public function rekapKunjungan(Request $request)
     {
         $norm = $request->input('norm');
