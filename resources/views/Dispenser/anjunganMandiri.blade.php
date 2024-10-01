@@ -59,6 +59,7 @@
         /* Mengatur ukuran seluruh modal */
         .swal-custom-popup {
             font-size: 18px;
+            width: 1000px !important;
             /* Ukuran teks dalam popup */
         }
 
@@ -66,6 +67,13 @@
         .swal-custom-popup .swal2-title {
             margin: 20px 0;
             /* Atur jarak judul */
+        }
+
+        .btn-large {
+            padding: 20px 25px !important;
+            /* Perbesar padding */
+            font-size: 19px !important;
+            /* Perbesar ukuran teks */
         }
 
 
@@ -354,7 +362,9 @@
                                             <input type="text" id="norm"
                                                 class="form-control form-control-lg col-md-7 text-center"
                                                 placeholder="Masukan No RM"
-                                                style="height: 80px; font-size: 30px; padding: 20px;" />
+                                                style="height: 80px; font-size: 30px; padding: 20px;"
+                                                {{-- tambahkan batasan 6 angka --}}
+                                                onkeyup="if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,'')" />
                                         </div>
 
                                         <div class="form-group col-md-1 mb-2 d-flex justify-content-end">
@@ -591,24 +601,52 @@
                     }
                     Swal.fire({
                         icon: "question",
-                        title: "Data Pasien Ditemukan...!!!" +
-                            "\n\n" + data.pasien_no_rm +
-                            "\n" + sebutan + data.pasien_nama +
-                            "\n" + data.pasien_alamat +
-                            "\n" + data.penjamin_nama +
-                            "\n\n Dokter\n " + data.dokter_nama +
-                            "\n\n Apakah anda ingin melanjutkan Verifikasi Pendaftaran?",
+                        title: "Data Pasien Ditemukan...!!!",
+                        html: `
+                                <table class="table table-bordered text-left ">
+                                    <tr>
+                                        <th>No Antrean:</th>
+                                        <td>${data.antrean_nomor}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>No RM:</th>
+                                        <td>${data.pasien_no_rm}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Nama Pasien:</th>
+                                        <td>${sebutan} ${data.pasien_nama}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Alamat:</th>
+                                        <td>${data.pasien_alamat}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Penjamin:</th>
+                                        <td>${data.penjamin_nama}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Dokter:</th>
+                                        <td>${data.dokter_nama}</td>
+                                    </tr>
+                                </table>
+                                <p><strong>Apakah anda ingin melanjutkan Verifikasi Pendaftaran?</strong></p>
+                            `,
                         showCancelButton: true,
-                        allowOutsideClick: true,
-                        confirmButtonColor: "#3085d6",
-                        cancelButtonColor: "#d33",
+                        showDenyButton: true,
+                        allowOutsideClick: false,
                         confirmButtonText: "Verivikasi Wajah",
+                        confirmButtonColor: "#008bff",
                         cancelButtonText: "Verivikasi Sidik Jari",
-                        width: '600px',
+                        cancelButtonColor: "#00ff55",
+                        denyButtonText: 'Batal',
+                        denyButtonColor: "#ff0000",
                         customClass: {
                             popup: 'swal-custom-popup', // Tambahkan class khusus untuk popup
                             title: 'swal-custom-title', // Tambahkan class khusus untuk title
-                            icon: 'swal-custom-icon' // Tambahkan class khusus untuk icon
+                            icon: 'swal-custom-icon', // Tambahkan class khusus untuk icon
+                            confirmButton: 'btn-large',
+                            cancelButton: 'btn-large text-dark',
+                            denyButton: 'btn-large',
                         }
                     }).then((result) => {
                         if (result.isConfirmed) {
@@ -616,22 +654,33 @@
                             $("key_pad").hide();
                             // cetakNoAntrian(data)
                             verifikasiFR(data)
-                            // Swal.close();
+
+                            Swal.fire({
+                                icon: "info",
+                                title: "Proses Verifikasi dan pendaftaran...!!\n Mohon Ditunggu ...!!!",
+                                // showConfirmButton: false,
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                },
+                            });
+                        } else if (result.isDenied) {
+                            $("key_pad").hide();
+                            cetakNoAntrian(data);
                         } else {
                             console.log("🚀 ~ cariRM ~ data:", data)
                             $("key_pad").hide();
                             verifikasiFP(data);
+                            Swal.fire({
+                                icon: "info",
+                                title: "Proses Verifikasi dan pendaftaran...!!\n Mohon Ditunggu ...!!!",
+                                // showConfirmButton: false,
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                },
+                            });
                         }
-
-                        Swal.fire({
-                            icon: "info",
-                            title: "Proses Verifikasi dan pendaftaran...!!\n Mohon Ditunggu ...!!!",
-                            // showConfirmButton: false,
-                            allowOutsideClick: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            },
-                        });
                     });
                 }
                 $("#norm").val("");
@@ -684,7 +733,9 @@
                     // }).then(() => {
                     console.log("🚀 ~ cetakNoAntrian ~ data:", data);
                     var no_rm = data.pasien_no_rm;
-                    submitKominfo(no_rm, data);
+                    // submitKominfo(no_rm, data);
+                    cetakNoAntrian(data);
+
 
                     // });
                 })
@@ -732,7 +783,8 @@
                     // }).then(() => {
                     console.log("🚀 ~ cetakNoAntrian ~ data:", data);
                     var no_rm = data.pasien_no_rm;
-                    submitKominfo(no_rm, data);
+                    // submitKominfo(no_rm, data);
+                    cetakNoAntrian(data);
                     // });
                 })
                 .catch(error => {
@@ -791,76 +843,81 @@
         //         });
         // }
 
-        function submitKominfo(no_rm, data) {
-            // Swal.fire({
-            //     icon: "info",
-            //     title: "Proses Verifikasi dan pendaftaran...!!!",
-            //     // showConfirmButton: false,
-            //     allowOutsideClick: false,
-            //     didOpen: () => {
-            //         Swal.showLoading();
-            //     },
-            // });
-            console.log("🚀 ~ submitKominfo ~ no_rm:", no_rm);
-            fetch('/api/verif/pendaftaran/kominfo/submit', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        no_rm: no_rm
-                    }),
-                })
-                .then(response => {
-                    console.log("🚀 ~ submitKominfo ~ response:", response);
-                    if (response.status === 500) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Terjadi Kesalahan",
-                            text: "Verifikasi gagal, silakan coba lagi.",
-                        });
-                        throw new Error('Server error: 500');
-                    }
-                    return response.json();
-                })
-                .then(result => {
-                    if (result.code == 200) {
-                        Swal.fire({
-                            icon: "success",
-                            title: "Verifikasi Berhasil...!!!",
-                            text: result.message,
-                            showConfirmButton: false,
-                            timer: 3000,
-                        })
-                    } else if (result.code == 500) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Terjadi Kesalahan",
-                            text: result.message,
-                        });
-                    } else if (result.code == 201) {
-                        Swal.fire({
-                            icon: "info",
-                            title: "Pasien Sudah terdaftar pada hari ini...!!",
-                            text: result.message,
-                        });
-                    } else if (result.code == 202) {
-                        Swal.fire({
-                            icon: "info",
-                            title: "Pasien dengan NIK ini sudah terdaftar pada hari ini...!!",
-                            text: result.message,
-                        });
-                    }
-                    cetakNoAntrian(data);
+        // function submitKominfo(no_rm, data) {
+        //     // Swal.fire({
+        //     //     icon: "info",
+        //     //     title: "Proses Verifikasi dan pendaftaran...!!!",
+        //     //     // showConfirmButton: false,
+        //     //     allowOutsideClick: false,
+        //     //     didOpen: () => {
+        //     //         Swal.showLoading();
+        //     //     },
+        //     // });
+        //     console.log("🚀 ~ submitKominfo ~ no_rm:", no_rm);
+        //     fetch('/api/verif/pendaftaran/kominfo/submit', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //             },
+        //             body: JSON.stringify({
+        //                 no_rm: no_rm
+        //             }),
+        //         })
+        //         .then(response => {
+        //             console.log("🚀 ~ submitKominfo ~ response:", response);
+        //             if (response.status === 500) {
+        //                 Swal.fire({
+        //                     icon: "error",
+        //                     title: "Terjadi Kesalahan",
+        //                     text: "Verifikasi gagal, silakan coba lagi.",
+        //                 });
+        //                 throw new Error('Server error: 500');
+        //             }
+        //             return response.json();
+        //         })
+        //         .then(result => {
+        //             if (result.code == 200) {
+        //                 Swal.fire({
+        //                     icon: "success",
+        //                     title: "Verifikasi Berhasil...!!!",
+        //                     text: result.message,
+        //                     showConfirmButton: false,
+        //                     timer: 3000,
+        //                 })
+        //             } else if (result.code == 500) {
+        //                 Swal.fire({
+        //                     icon: "error",
+        //                     title: "Terjadi Kesalahan",
+        //                     text: result.message,
+        //                 });
+        //             } else if (result.code == 201) {
+        //                 Swal.fire({
+        //                     icon: "info",
+        //                     title: "Pasien Sudah terdaftar pada hari ini...!!",
+        //                     text: result.message,
+        //                 });
+        //             } else if (result.code == 202) {
+        //                 Swal.fire({
+        //                     icon: "info",
+        //                     title: "Pasien dengan NIK ini sudah terdaftar pada hari ini...!!",
+        //                     text: result.message,
+        //                 });
+        //             }
+        //             cetakNoAntrian(data);
 
-                    console.log("🚀 ~ submitKominfo ~ result:", result);
-                })
-                .catch(error => {
-                    console.error('Error executing automation script:', error);
-                })
-        }
+        //             console.log("🚀 ~ submitKominfo ~ result:", result);
+        //         })
+        //         .catch(error => {
+        //             console.error('Error executing automation script:', error);
+        //         })
+        // }
 
         function cetakNoAntrian(data) {
+            Swal.fire({
+                icon: "success",
+                title: "Verifikasi Berhasil...!!",
+                timer: 3000,
+            });
             var noAntri = data.antrean_nomor;
             var jenis = data.penjamin_nama;
             var no_rm = data.pasien_no_rm;
