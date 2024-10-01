@@ -307,51 +307,40 @@ async function dataLab(pemeriksaan, notrans) {
     }
 }
 
-function cetak(data) {
-    console.log("🚀 ~ cetak ~ data:", data);
-    const pemeriksaan = data.pemeriksaan;
+async function cetak(norm, tgl) {
+    const requestData = { norm: norm, tgl: tgl };
+    try {
+        const response = await fetch("/api/hasil/lab/cetak", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+        });
 
-    Swal.fire({
-        icon: "success",
-        title: "Verifikasi Berhasil...!!",
-        timer: 3000,
-    });
+        if (!response.ok) {
+            if (response.status == 404) {
+                console.error("No data found");
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Terjadi kesalahan saat mengambil data pasien...!!!",
+                });
+                throw new Error("Network response was not ok");
+            }
+        } else {
+            const data = await response.json();
+            let printWindow = window.open(data, "_blank");
 
-    let printWindow = window.open("", "_blank");
-    printWindow.document.write(`<html><head><title>Cetak Hasil Lab</title>`);
-
-    printWindow.document.write(`<table width="100%" style="color: black;">
-                                <tbody><tr>
-                                    <td width="20%" style="text-align: center; padding-top: 10px; padding-bottom: 10px">
-                                        <img src="https://kkpm.banyumaskab.go.id/assets/img/banyumas.png" style="width: 30%;">
-                                    </td>
-                                    <td width="60%">
-                                        <p style="font-size: 20px; margin-bottom: -5px; text-align: center; margin-top: 0px;">
-                                            PEMERINTAH KABUPATEN BANYUMAS
-                                        </p>
-
-                                        <p style="font-size: 20px; margin-bottom: -5px; text-align: center; margin-top: 0px;">
-                                            DINAS KESEHATAN
-                                        </p>
-
-                                        <p style="font-size: 20px; margin-bottom: -5px; text-align: center; margin-top: 0px; font-weight: bold;">
-                                            KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A
-                                        </p>
-
-                                        <p style="margin-bottom: -5px; text-align: center; margin-top: 0px;">
-                                            Jalan A. Yani Nomor 33 Purwokerto Timur, Banyumas, Jawa Tengah
-                                        </p>
-
-                                        <p style="margin-bottom: -5px; text-align: center; margin-top: 0px;">
-                                            Kode Pos 53111, Telepon (0281) 635658, Pos-el bkpm_purwokerto@yahoo.com
-                                        </p>
-                                    </td>
-                                    <td width="20%" style="text-align: center; padding-top: 10px; padding-bottom: 10px">
-                                        <img src="https://kkpm.banyumaskab.go.id/assets/img/logo.png" style="width: 40%;">
-                                    </td>
-                                </tr>
-                            </tbody></table>`);
-    printWindow.document.write(`</body></html>`);
+            Swal.close();
+        }
+    } catch (error) {
+        console.error("Terjadi kesalahan saat mencari data:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Terjadi kesalahan saat mencari data...!!! /n" + error,
+        });
+    }
 
     printWindow.open();
     // printWindow.print();
@@ -470,13 +459,13 @@ function antrian() {
             if (Array.isArray(data)) {
                 var belumTransaksi = data.filter(function (item) {
                     return (
-                        item.status === "Input Hasil Belum Lengkap" ||
-                        item.status === "Belum Input Hasil"
+                        item.status === "Belum Lengkap" ||
+                        item.status === "Belum"
                     );
                 });
 
                 var sudahTransakasi = data.filter(function (item) {
-                    return item.status === "Input Hasil Lengkap";
+                    return item.status === "Lengkap";
                 });
 
                 antrianBelum(belumTransaksi, tgl);
@@ -493,11 +482,21 @@ function antrian() {
 
 function antrianBelum(belumTransaksi, tgl) {
     belumTransaksi.forEach(function (item, index) {
+        // Mengambil nmLayanan dari pemeriksaan
+        const nmLayananArray = item.pemeriksaan.map(
+            (pem) => pem.pemeriksaan.nmLayanan
+        );
+
+        // Menggabungkan nmLayanan menjadi satu string
+        item.pemeriksaan = nmLayananArray.join(", ");
         item.no = index + 1;
         item.tgl = tgl;
         item.tanggal = moment(item.created_at).format("DD-MM-YYYY");
         item.alamat = item.alamat.replace(/, [^,]*$/, "");
         item.aksi = `<button class="btn btn-danger bg-danger"
+                            data-toggle="tooltip" 
+                            data-placement="right" 
+                            title="Input Hasil Lab"
                             data-norm="${item.norm}"
                             data-nama="${item.nama}"
                             data-alamat="${item.alamat}"
@@ -514,9 +513,7 @@ function antrianBelum(belumTransaksi, tgl) {
                 className: "text-center",
                 render: function (data) {
                     var backgroundColor =
-                        data === "Input Hasil Belum Lengkap"
-                            ? "warning"
-                            : "danger";
+                        data === "Belum Lengkap" ? "warning" : "danger";
                     return `<div class="badge badge-${backgroundColor}">${data}</div>`;
                 },
             },
@@ -524,6 +521,7 @@ function antrianBelum(belumTransaksi, tgl) {
             { data: "layanan" },
             { data: "norm", className: "col-1" },
             { data: "nama", className: "col-2" },
+            { data: "pemeriksaan" },
             { data: "alamat", className: "col-4" },
             { data: "nama_dokter", className: "col-3" },
         ],
@@ -539,26 +537,30 @@ function antrianBelum(belumTransaksi, tgl) {
 
 function antrianSudah(sudahTransakasi, tgl) {
     sudahTransakasi.forEach(function (item, index) {
+        const nmLayananArray = item.pemeriksaan.map(
+            (pem) => pem.pemeriksaan.nmLayanan
+        );
+        item.pemeriksaan = nmLayananArray.join(", ");
         item.no = index + 1;
         item.tgl = tgl;
         item.tanggal = moment(item.created_at).format("DD-MM-YYYY");
         item.alamat = item.alamat.replace(/, [^,]*$/, "");
-        item.aksi = `<button class="btn btn-danger"
+        item.aksi = `<button class="btn btn-danger" 
+                            data-toggle="tooltip" 
+                            data-placement="right" 
+                            title="Edit Hasil Lab"
                             data-norm="${item.norm}"
                             data-nama="${item.nama}"
                             data-alamat="${item.alamat}"
                             onclick="cariTsLab('${item.norm}', '${item.tgl}','tampil');"><i class="fa-solid fa-file-pen"></i></button>
-                            <button class="btn btn-success"
-                            data-norm="${item.norm}"
-                            data-nama="${item.nama}"
-                            data-alamat="${item.alamat}"
-                            onclick="cariTsLab('${item.norm}', '${item.tgl}','cetak');"><i class="fa-solid fa-print"></i></button>`;
+                    <a href="/api/hasil/lab/cetak/${item.notrans}/${item.tgl}" method="get" target="_blank" class="btn btn-success"
+                            data-toggle="tooltip" data-placement="right" title="Cetak Hasil Lab"><i class="fa-solid fa-print"></i></a>`;
     });
 
     $("#antrianSudah").DataTable({
         data: sudahTransakasi,
         columns: [
-            { data: "aksi", className: "col-2" },
+            { data: "aksi", className: "col-1" },
             {
                 data: "status",
                 className: "text-center",
@@ -569,9 +571,10 @@ function antrianSudah(sudahTransakasi, tgl) {
             },
             { data: "tanggal" },
             { data: "layanan" },
-            { data: "norm", className: "col-1" },
-            { data: "nama", className: "col-2" },
-            { data: "alamat", className: "col-3" },
+            { data: "norm" },
+            { data: "nama", className: "col-1" },
+            { data: "pemeriksaan" },
+            { data: "alamat", className: "col-2" },
             { data: "nama_dokter", className: "col-3" },
         ],
         paging: true,
@@ -579,7 +582,7 @@ function antrianSudah(sudahTransakasi, tgl) {
             [5, 10, 25, 50, -1],
             [5, 10, 25, 50, "All"],
         ],
-        pageLength: 5,
+        pageLength: 3,
         responsive: true,
     });
 }

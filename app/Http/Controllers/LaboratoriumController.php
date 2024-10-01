@@ -32,11 +32,11 @@ class LaboratoriumController extends Controller
                 $item->jmlh = $pemeriksaan->count();
 
                 if ($nonNullHasilCount == 0) {
-                    $item->status = 'Belum Input Hasil';
+                    $item->status = 'Belum';
                 } else if ($nonNullHasilCount < $item->jmlh) {
-                    $item->status = 'Input Hasil Belum Lengkap';
+                    $item->status = 'Belum Lengkap';
                 } else {
-                    $item->status = 'Input Hasil Lengkap';
+                    $item->status = 'Lengkap';
                 }
 
                 $doctorNipMap = [
@@ -398,19 +398,46 @@ class LaboratoriumController extends Controller
         return response()->json($hasilLab, 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function cetak(Request $request)
+    public function cetak($notrans, $tgl)
     {
         try {
 
-                $notrans = $request->input('notrans');
-                $tgl = $request->input('tgl');
+            // $notrans = $request->input('notrans');
+            // $tgl = $request->input('tgl');
+            // $notrans = "027783";
+            // $tgl = "2024-10-01";
 
-                $data = LaboratoriumHasilModel::with('pemeriksaan')
-                    ->where('notrans', 'like', '%' . $notrans . '%')
-                    ->whereDate('created_at', 'like', '%' . $tgl . '%')->get();
-// kembalikan data ke dalam tampilan tabel view Laboratorium.Hasil.Cetak
-                return view('Laboratorium.Hasil.Cetak', compact('data'));
-                
+            $data = LaboratoriumKunjunganModel::with('pemeriksaan.pemeriksaan')
+                ->where('notrans', 'like', '%' . $notrans . '%')
+                ->whereDate('created_at', 'like', '%' . $tgl . '%')->get();
+            $lab = $data[0];
+            $dataAnalis = [
+                'SUHARTANTI Amd.AK.',
+                'JUNI SUPRAPTI A.Md.AK',
+                'TANTI LISTIYOWATI S.Tr.Kes',
+            ];
+            $nipDokter = $lab->dokter;
+            switch ($nipDokter) {
+                case "198311142011012002":
+                    $dokter = "dr. CEMPAKA NOVA INTANI Sp.P, MM, FISR.";
+                    break;
+                case "9":
+                    $dokter = "dr. AGIL DANARJAYA Sp.P.";
+                    break;
+                case "198907252019022004":
+                    $dokter = "dr. FILLY ULFA KUSUMAWARDANI";
+                    break;
+                case "198903142022031005":
+                    $dokter = "dr. SIGIT DWIYANTO";
+                    break;
+            }
+
+            $analis = $dataAnalis[rand(0, 2)];
+            // return $lab;
+            // return $analis;
+            // return $dokter;
+            return view('Laboratorium.Hasil.Cetak', compact('lab', 'analis', 'dokter'));
+
         } catch (\Exception $e) {
             Log::error('Terjadi kesalahan saat mencari data: ' . $e->getMessage());
             return response()->json(['message' => 'Terjadi kesalahan saat mencari data: ' . $e->getMessage()], 500);

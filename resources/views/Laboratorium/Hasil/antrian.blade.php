@@ -42,6 +42,7 @@
                                 <th>Jaminan</th>
                                 <th>No RM</th>
                                 <th>Nama Pasien</th>
+                                <th>Pemeriksaan</th>
                                 <th>Alamat Pasien</th>
                                 <th>Dokter</th>
                             </tr>
@@ -61,6 +62,7 @@
                                 <th>Jaminan</th>
                                 <th>No RM</th>
                                 <th class="col-2">Nama Pasien</th>
+                                <th>Pemeriksaan</th>
                                 <th>Alamat Pasien</th>
                                 <th>Dokter</th>
                             </tr>
