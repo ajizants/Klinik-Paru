@@ -109,6 +109,7 @@ Route::post('layanan/delete', [KasirController::class, 'delete']);
 Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);
 Route::post('layananlab', [LaboratoriumController::class, 'layananlab']);
 Route::post('cariTsLab', [LaboratoriumController::class, 'cariTsLab']);
+Route::post('getNoSampel', [LaboratoriumController::class, 'noSampel']);
 Route::post('addTransaksiLab', [LaboratoriumController::class, 'addTransaksi']);
 Route::post('/lab/deleteTs', [LaboratoriumController::class, 'deleteTs']);
 Route::post('deleteLab', [LaboratoriumController::class, 'deleteLab']);

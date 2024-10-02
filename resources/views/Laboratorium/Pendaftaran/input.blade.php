@@ -22,9 +22,13 @@
                                     </div>
                                     <label for="nama" class="col-sm-1 col-form-label font-weight-bold  mb-0">Nama
                                         :</label>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-4">
                                         <input type="text" id="nama" class="form-control bg-white"
                                             placeholder="Nama Pasien" readonly>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <input type="text" id="umur" class="form-control bg-white"
+                                            placeholder="Umur">
                                     </div>
                                 </div>
                                 <div class="form-grup row mt-2">
@@ -42,9 +46,13 @@
                                     </div>
                                     <label for="alamat" class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat
                                         :</label>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-4">
                                         <input id="alamat" class="form-control bg-white" placeholder="Alamat Pasien"
                                             readonly />
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <input type="text" id="no_sampel"
+                                            class="form-control bg-warning font-weight-bold" placeholder="No Sampel">
                                     </div>
                                 </div>
                                 <div class="form-grup row mt-2">

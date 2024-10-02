@@ -494,8 +494,8 @@ function antrianBelum(belumTransaksi, tgl) {
         item.tanggal = moment(item.created_at).format("DD-MM-YYYY");
         item.alamat = item.alamat.replace(/, [^,]*$/, "");
         item.aksi = `<button class="btn btn-danger bg-danger"
-                            data-toggle="tooltip" 
-                            data-placement="right" 
+                            data-toggle="tooltip"
+                            data-placement="right"
                             title="Input Hasil Lab"
                             data-norm="${item.norm}"
                             data-nama="${item.nama}"
@@ -519,10 +519,10 @@ function antrianBelum(belumTransaksi, tgl) {
             },
             { data: "tanggal" },
             { data: "layanan" },
-            { data: "norm", className: "col-1" },
-            { data: "nama", className: "col-2" },
+            { data: "norm" },
+            { data: "nama", className: "col-1" },
             { data: "pemeriksaan" },
-            { data: "alamat", className: "col-4" },
+            { data: "alamat", className: "col-2" },
             { data: "nama_dokter", className: "col-3" },
         ],
         paging: true,
@@ -545,9 +545,9 @@ function antrianSudah(sudahTransakasi, tgl) {
         item.tgl = tgl;
         item.tanggal = moment(item.created_at).format("DD-MM-YYYY");
         item.alamat = item.alamat.replace(/, [^,]*$/, "");
-        item.aksi = `<button class="btn btn-danger" 
-                            data-toggle="tooltip" 
-                            data-placement="right" 
+        item.aksi = `<button class="btn btn-danger"
+                            data-toggle="tooltip"
+                            data-placement="right"
                             title="Edit Hasil Lab"
                             data-norm="${item.norm}"
                             data-nama="${item.nama}"

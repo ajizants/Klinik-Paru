@@ -37,7 +37,7 @@
                         <thead class="bg bg-teal">
                             <tr>
                                 <th widh="15px">Aksi</th>
-                                <th>status</th>
+                                <th>Hasil</th>
                                 <th>Tanggal</th>
                                 <th>Jaminan</th>
                                 <th>No RM</th>
@@ -57,7 +57,7 @@
                         <thead class="bg bg-secondary">
                             <tr>
                                 <th widh="15px">Aksi</th>
-                                <th>Status</th>
+                                <th>Hasil</th>
                                 <th>Tanggal</th>
                                 <th>Jaminan</th>
                                 <th>No RM</th>

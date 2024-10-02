@@ -59,6 +59,18 @@ class LaboratoriumController extends Controller
             return response()->json($res, 400, [], JSON_PRETTY_PRINT);
         }
     }
+    public function noSampel()
+    {
+        //cari kunjunganLab hari ini
+        $data = LaboratoriumKunjunganModel::where('created_at', 'like', '%' . now()->toDateString() . '%')->get();
+        $jumlah = $data->count();
+        // buatkan $noSample format 001
+        $noSample = str_pad($jumlah + 1, 3, '0', STR_PAD_LEFT);
+        $res = [
+            'noSample' => $noSample,
+        ];
+        return response()->json($res, 200, [], JSON_PRETTY_PRINT);
+    }
 
     public function cariTsLab(Request $request)
     {
@@ -175,6 +187,7 @@ class LaboratoriumController extends Controller
         $norm = $request->input('norm');
         $nama = $request->input('nama');
         $nik = $request->input('nik');
+        $noSampel = $request->input('noSampel');
         $alamat = $request->input('alamat');
         $jaminan = $request->input('jaminan');
         $dokter = $request->input('dokter');
@@ -238,6 +251,7 @@ class LaboratoriumController extends Controller
                     $kunjunganLab->norm = $norm;
                     $kunjunganLab->nama = $nama;
                     $kunjunganLab->nik = $nik;
+                    $kunjunganLab->noSampel = $noSampel;
                     $kunjunganLab->alamat = $alamat;
                     $kunjunganLab->layanan = $jaminan;
                     $kunjunganLab->petugas = $petugas;
@@ -436,7 +450,7 @@ class LaboratoriumController extends Controller
             // return $lab;
             // return $analis;
             // return $dokter;
-            return view('Laboratorium.Hasil.Cetak', compact('lab', 'analis', 'dokter'));
+            return view('Laboratorium.Hasil.cetak', compact('lab', 'analis', 'dokter'));
 
         } catch (\Exception $e) {
             Log::error('Terjadi kesalahan saat mencari data: ' . $e->getMessage());

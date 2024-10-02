@@ -143,6 +143,7 @@ function simpan() {
     var dokter = $("#dokter").val();
     var tujuan = $("#tujuan").val();
     var tgltrans = $("#tgltrans").val();
+    var noSampel = $("#noSampel").val();
 
     if (!norm || !notrans || !dokter || !petugas) {
         var dataKurang = [];
@@ -197,6 +198,7 @@ function simpan() {
                 norm: norm,
                 nama: nama,
                 nik: nik,
+                noSampel: noSampel,
                 alamat: alamat,
                 jaminan: jaminan,
                 tujuan: tujuan,
@@ -451,6 +453,15 @@ async function cariTsLab(norm, tgl, ruang) {
             Swal.close();
         } else {
             const data = await response.json();
+            let noSampel = data.no_sampel;
+            console.log("🚀 ~ cariTsLab ~ noSampel:", noSampel);
+
+            if (noSampel == null || noSampel == "") {
+                getNoSampel();
+            } else {
+                $("#no_sampel").val(noSampel);
+            }
+
             console.log("🚀 ~ cariTsLab ~ data:", data);
             $("#norm").val(data.norm);
             $("#nama").val(data.nama);
@@ -475,6 +486,29 @@ async function cariTsLab(norm, tgl, ruang) {
         });
     }
 }
+async function getNoSampel() {
+    try {
+        // Metode POST untuk fetch data
+        const response = await fetch("/api/getNoSampel", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        // Parsing hasil response ke JSON
+        const data = await response.json();
+        let noSampel = data.noSample; // Sesuaikan nama properti dengan hasil fetch
+        $("#no_sampel").val(noSampel);
+    } catch (error) {
+        console.error("Terjadi kesalahan saat mencari data:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Terjadi kesalahan saat mencari data...!!!",
+        });
+    }
+}
+
 function dataLab(data, tgl) {
     if ($.fn.DataTable.isDataTable("#dataTrans")) {
         var table = $("#dataTrans").DataTable();
