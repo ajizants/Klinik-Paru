@@ -174,6 +174,7 @@ class LaboratoriumController extends Controller
      */
     public function addTransaksi(Request $request)
     {
+        // dd($request->all());wis
         // Mendapatkan dataTerpilih dari permintaan
         $dataTerpilih = $request->input('dataTerpilih');
 
@@ -188,6 +189,7 @@ class LaboratoriumController extends Controller
         $nama = $request->input('nama');
         $nik = $request->input('nik');
         $noSampel = $request->input('noSampel');
+        $umur = $request->input('umur');
         $alamat = $request->input('alamat');
         $jaminan = $request->input('jaminan');
         $dokter = $request->input('dokter');
@@ -251,7 +253,8 @@ class LaboratoriumController extends Controller
                     $kunjunganLab->norm = $norm;
                     $kunjunganLab->nama = $nama;
                     $kunjunganLab->nik = $nik;
-                    $kunjunganLab->noSampel = $noSampel;
+                    $kunjunganLab->umur = $umur;
+                    $kunjunganLab->no_sampel = $noSampel;
                     $kunjunganLab->alamat = $alamat;
                     $kunjunganLab->layanan = $jaminan;
                     $kunjunganLab->petugas = $petugas;

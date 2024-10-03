@@ -116,6 +116,7 @@ function askLab(button) {
     var notrans = $(button).data("notrans");
     var tgltrans = $(button).data("tgltrans");
     var asktind = $(button).data("asktind");
+    var umur = $(button).data("umur");
 
     $("#norm").val(norm);
     $("#nama").val(nama);
@@ -125,9 +126,11 @@ function askLab(button) {
     $("#layanan").val(layanan).trigger("change");
     $("#notrans").val(notrans);
     $("#tgltrans").val(tgltrans);
+    $("#umur").val(umur);
 
     // Memperbarui konten asktindContent
     $("#permintaan").html(`<b>${asktind}</b>`);
+    getNoSampel();
 
     scrollToInputSection();
 }
@@ -143,7 +146,8 @@ function simpan() {
     var dokter = $("#dokter").val();
     var tujuan = $("#tujuan").val();
     var tgltrans = $("#tgltrans").val();
-    var noSampel = $("#noSampel").val();
+    var noSampel = $("#no_sampel").val();
+    var umur = $("#umur").val();
 
     if (!norm || !notrans || !dokter || !petugas) {
         var dataKurang = [];
@@ -198,6 +202,7 @@ function simpan() {
                 norm: norm,
                 nama: nama,
                 nik: nik,
+                umur: umur,
                 noSampel: noSampel,
                 alamat: alamat,
                 jaminan: jaminan,

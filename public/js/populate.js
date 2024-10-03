@@ -113,8 +113,9 @@ function generateActionButton(item, ruang) {
         data-kddokter="${item.nip_dokter}"
         data-alamat="${getFormattedAddress(item)}"
         data-layanan="${item.penjamin_nama}"
-        data-notrans="${item.no_trans}"
+        data-notrans="${item.no_reg}"
         data-tgltrans="${item.tanggal}"
+        data-umur="${item.umur}"
     `;
 
     switch (ruang) {
@@ -293,8 +294,9 @@ function generateActionLink(item, ruang) {
         data-kddokter="${item.nip_dokter}"
         data-alamat="${item.pasien_alamat}"
         data-layanan="${item.penjamin_nama}"
-        data-notrans="${item.no_trans}"
+        data-notrans="${item.no_reg}"
         data-tgltrans="${item.tanggal}"
+        data
     `;
     const links = {
         dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,

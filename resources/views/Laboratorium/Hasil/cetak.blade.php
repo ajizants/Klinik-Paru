@@ -153,7 +153,8 @@
                     </td>
                     <td width="26%" class="my-0 py-0" style=" text-align: left;">
                         <input type="text" name="umur" id="umur" style="border: none; outline: none;"
-                            value="" class="bg-warning col-3" oninput="removeBgWarning('umur')" /> thn
+                            class="{{ $lab->umur == null || $lab->umur == '' ? 'bg-warning' : '' }}"
+                            value="{{ $lab->umur }}" oninput="removeBgWarning('umur')" />
                     </td>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Dokter</td>
