@@ -142,10 +142,10 @@ function generateActionButton(item, ruang) {
             return `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
                 ${commonAttributes} onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
         case "igd":
-            return `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+            return `<a class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
         ${commonAttributes} onclick="setTransaksi(this);"><i class="fas fa-pen-to-square"></i></a>`;
         case "lab":
-            return `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+            return `<a class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
                 ${commonAttributes} onclick="askLab(this);"><i class="fas fa-pen-to-square"></i></a>`;
     }
 }
