@@ -313,9 +313,9 @@ function setTransaksi(button) {
     $("#asktind").val(asktind);
     $("#permintaan").html(`<b>${asktind}</b>`);
 
-    scrollToInputSection();
     // dataTindakan(notrans, norm);
     cariTsIgd(notrans, norm, tgl);
+    scrollToInputSection();
 }
 $(document).ready(function () {
     setTglRo();

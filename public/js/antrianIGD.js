@@ -1,4 +1,5 @@
 async function cariTsIgd(notrans, norm, tgl, ruang) {
+    console.log("🚀 ~ cariTsIgd ~ cariTsIgd:", cariTsIgd);
     norm = norm || formatNorm($("#norm").val()); // Tambahkan kurung untuk memanggil val()
     tgl = tgl || $("#tanggal").val();
     notrans = notrans || $("#notrans").val();
@@ -110,7 +111,7 @@ async function cariTsIgd(notrans, norm, tgl, ruang) {
             });
 
             scrollToInputSection();
-            Swal.close();
+            // Swal.close();
         }
     } catch (error) {
         console.error("Terjadi kesalahan saat mencari data:", error);
