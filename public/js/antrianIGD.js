@@ -111,7 +111,7 @@ async function cariTsIgd(notrans, norm, tgl, ruang) {
             });
 
             scrollToInputSection();
-            // Swal.close();
+            Swal.close();
         }
     } catch (error) {
         console.error("Terjadi kesalahan saat mencari data:", error);
