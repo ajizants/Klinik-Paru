@@ -110,14 +110,17 @@ function generateActionButton(item, ruang) {
 
     let notrans; // Declare notrans outside of the if-else block
 
+    console.log("🚀 ~ generateActionButton ~ today:", today);
     // Compare item.tanggal with today
     const date = new Date(item.tanggal);
     date.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
+    console.log("🚀 ~ generateActionButton ~ date:", date);
     if (date <= today) {
         notrans = item.no_trans; // Use no_trans if date is less than or equal to today
     } else {
         notrans = item.no_reg; // Use no_reg if date is after today
     }
+    console.log("🚀 ~ generateActionLink ~ notrans cppt:", notrans);
     const commonAttributes = `
         data-norm="${item.pasien_no_rm}"
         data-nama="${item.pasien_nama}"
@@ -298,6 +301,22 @@ function processResponse(response, ruang, statusFilter) {
 }
 
 function generateActionLink(item, ruang) {
+    const today = new Date(2024, 9, 3); // October 3, 2024
+    today.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
+    console.log("🚀 ~ generateActionLink ~ today:", today);
+
+    let notrans; // Declare notrans outside of the if-else block
+
+    // Compare item.tanggal with today
+    const date = new Date(item.tanggal);
+    date.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
+    console.log("🚀 ~ generateActionLink ~ date:", date);
+    if (date <= today) {
+        notrans = item.no_trans; // Use no_trans if date is less than or equal to today
+    } else {
+        notrans = item.no_reg; // Use no_reg if date is after today
+    }
+    console.log("🚀 ~ generateActionLink ~ notrans antrian cppt:", notrans);
     const commonAttributes = `
         data-norm="${item.pasien_no_rm}"
         data-nama="${item.pasien_nama}"
@@ -307,7 +326,7 @@ function generateActionLink(item, ruang) {
         data-kddokter="${item.nip_dokter}"
         data-alamat="${item.pasien_alamat}"
         data-layanan="${item.penjamin_nama}"
-        data-notrans="${item.no_reg}"
+        data-notrans="${notrans}"
         data-tgltrans="${item.tanggal}"
         data
     `;
