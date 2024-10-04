@@ -116,6 +116,7 @@ function askLab(button) {
     var notrans = $(button).data("notrans");
     var tgltrans = $(button).data("tgltrans");
     var asktind = $(button).data("asktind");
+    console.log("🚀 ~ askLab ~ asktind:", asktind);
     var umur = $(button).data("umur");
 
     $("#norm").val(norm);
@@ -131,7 +132,10 @@ function askLab(button) {
     // Memperbarui konten asktindContent
     $("#permintaan").html(`<b>${asktind}</b>`);
     getNoSampel();
-
+    if ($.fn.DataTable.isDataTable("#dataTrans")) {
+        let tableTrans = $("#dataTrans").DataTable();
+        tableTrans.clear().destroy();
+    }
     scrollToInputSection();
 }
 function simpan() {
@@ -492,6 +496,16 @@ async function cariTsLab(norm, tgl, ruang) {
     }
 }
 async function getNoSampel() {
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencarikan data...!!!",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+    // if (!$("#no_sampel").val()) {
     try {
         // Metode POST untuk fetch data
         const response = await fetch("/api/getNoSampel", {
@@ -505,6 +519,8 @@ async function getNoSampel() {
         const data = await response.json();
         let noSampel = data.noSample; // Sesuaikan nama properti dengan hasil fetch
         $("#no_sampel").val(noSampel);
+
+        Swal.close();
     } catch (error) {
         console.error("Terjadi kesalahan saat mencari data:", error);
         Swal.fire({
@@ -512,6 +528,9 @@ async function getNoSampel() {
             title: "Terjadi kesalahan saat mencari data...!!!",
         });
     }
+    // } else {
+    //     Swal.close();
+    // }
 }
 
 function dataLab(data, tgl) {

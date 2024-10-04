@@ -13,7 +13,8 @@ function fetchDataAntrian(params, callback) {
         data: params,
         success: callback,
         error: function (xhr) {
-            // Handle error if needed
+            console.error("Error fetching data:", xhr);
+            alert("Failed to fetch data. Please try again later.");
         },
     });
 }
@@ -68,8 +69,6 @@ function antrian(ruang) {
 function processDataArray(dataArray, ruang) {
     dataArray.forEach((item, index) => {
         item.index = index + 1;
-        item.aksi = generateActionButton(item, ruang);
-
         switch (ruang) {
             case "dots":
                 item.nmDiagnosa = item.diagnosa[0]?.nama_diagnosa || "";
@@ -88,6 +87,7 @@ function processDataArray(dataArray, ruang) {
                 );
                 break;
         }
+        item.aksi = generateActionButton(item, ruang);
     });
 }
 
@@ -105,27 +105,32 @@ function drawDataTable(dataArray, ruang) {
 }
 
 function generateActionButton(item, ruang) {
+    // console.log("🚀 ~ generateActionButton ~ item:", item);
+
     const today = new Date(2024, 9, 3); // October 3, 2024
     today.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
 
-    let notrans; // Declare notrans outside of the if-else block
+    let notrans;
 
-    console.log("🚀 ~ generateActionButton ~ today:", today);
-    // Compare item.tanggal with today
     const date = new Date(item.tanggal);
     date.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
-    console.log("🚀 ~ generateActionButton ~ date:", date);
     if (date <= today) {
-        notrans = item.no_trans; // Use no_trans if date is less than or equal to today
+        notrans = item.no_trans;
     } else {
-        notrans = item.no_reg; // Use no_reg if date is after today
+        notrans = item.no_reg;
     }
-    console.log("🚀 ~ generateActionLink ~ notrans cppt:", notrans);
+
+    // Ensure asktind is properly trimmed and handled
+    const asktind =
+        item.asktind && item.asktind.trim() !== ""
+            ? item.asktind.trim()
+            : "No data";
+
     const commonAttributes = `
         data-norm="${item.pasien_no_rm}"
         data-nama="${item.pasien_nama}"
         data-dokter="${item.dokter_nama}"
-        data-asktind="${item.asktind || ""}"
+        data-asktind="${asktind}"   // Correct access to asktind
         data-kddokter="${item.nip_dokter}"
         data-alamat="${getFormattedAddress(item)}"
         data-layanan="${item.penjamin_nama}"
@@ -155,21 +160,17 @@ function getFormattedAddress(item) {
 }
 
 function generateAsktindString(data, addNewLine = false, isLab = false) {
-    if (!Array.isArray(data)) return "";
+    if (!Array.isArray(data)) return ""; // Ensure data is an array
 
     return data
         .map((item, index) => {
-            const separator = isLab
-                ? index % 2 === 1
-                    ? ",<br>"
-                    : ",  "
-                : ", ";
+            const separator = isLab ? (index % 2 === 1 ? ",<br>" : ", ") : ", ";
             return `${item.layanan || item.nama_tindakan} (${
-                item.keterangan || item.nama_obat
+                item.keterangan || item.nama_obat || ""
             })${addNewLine ? "<br>" : separator}`;
         })
         .join("")
-        .replace(/(,\s*<br>|,\s)$/, "");
+        .replace(/(,\s*<br>|,\s)$/, ""); // Remove trailing separator
 }
 
 function getColumnsForRuang(ruang) {
@@ -303,20 +304,20 @@ function processResponse(response, ruang, statusFilter) {
 function generateActionLink(item, ruang) {
     const today = new Date(2024, 9, 3); // October 3, 2024
     today.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
-    console.log("🚀 ~ generateActionLink ~ today:", today);
+    // console.log("🚀 ~ generateActionLink ~ today:", today);
 
     let notrans; // Declare notrans outside of the if-else block
 
     // Compare item.tanggal with today
     const date = new Date(item.tanggal);
     date.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
-    console.log("🚀 ~ generateActionLink ~ date:", date);
+    // console.log("🚀 ~ generateActionLink ~ date:", date);
     if (date <= today) {
         notrans = item.no_trans; // Use no_trans if date is less than or equal to today
     } else {
         notrans = item.no_reg; // Use no_reg if date is after today
     }
-    console.log("🚀 ~ generateActionLink ~ notrans antrian cppt:", notrans);
+    // console.log("🚀 ~ generateActionLink ~ notrans antrian cppt:", notrans);
     const commonAttributes = `
         data-norm="${item.pasien_no_rm}"
         data-nama="${item.pasien_nama}"
