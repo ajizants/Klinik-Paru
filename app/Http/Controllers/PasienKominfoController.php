@@ -869,16 +869,32 @@ class PasienKominfoController extends Controller
 
     public function rekapPoin(Request $request)
     {
-
         $params = $request->only(['tanggal_awal', 'tanggal_akhir']);
 
         $model = new KominfoModel();
 
+        // Retrieve the data from the model
         $data = $model->poinRequest($params);
 
-        return response()->json($data);
+        // Filter out the "Ruang Poli" entries
+        $filteredData = array_filter($data['response']['data'], function ($item) {
+            return $item['ruang_nama'] !== 'Ruang Poli';
+        });
 
+        // Prepare the response
+        $response = [
+            'metadata' => [
+                'code' => 200,
+                'message' => 'Data ditemukan!',
+            ],
+            'response' => [
+                'data' => array_values($filteredData), // Re-index the array
+            ],
+        ];
+
+        return response()->json($response);
     }
+
     public function rekapPoinPecah(Request $request)
     {
 
