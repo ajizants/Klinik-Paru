@@ -137,9 +137,9 @@
                     <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
                     </td>
-                    <td width="36%" class="my-0 py-0 border-0" style=" font-weight: bold; text-align: left;">
+                    <td width="36%" class="my-0 py-0 px-1 border-0" style=" font-weight: bold; text-align: left;">
                         <input type="text" name="no_sampel" id="no_sampel" style="border: none; outline: none;"
-                            class="{{ $lab->no_sampel == null || $lab->no_sampel == '' ? 'bg-warning' : '' }}"
+                            class="px-2 {{ $lab->no_sampel == null || $lab->no_sampel == '' ? ' bg-warning' : '' }}"
                             oninput="removeBgWarning('no_sampel')" value="{{ $lab->no_sampel }}" />
 
                     </td>
@@ -151,9 +151,9 @@
                     <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
                     </td>
-                    <td width="26%" class="my-0 py-0" style=" text-align: left;">
+                    <td width="26%" class="my-0 py-0 px-1" style=" text-align: left;">
                         <input type="text" name="umur" id="umur" style="border: none; outline: none;"
-                            class="{{ $lab->umur == null || $lab->umur == '' ? 'bg-warning' : '' }}"
+                            class="px-2 {{ $lab->umur == null || $lab->umur == '' ? ' bg-warning' : '' }}"
                             value="{{ $lab->umur }}" oninput="removeBgWarning('umur')" />
                     </td>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
@@ -657,7 +657,7 @@
     <script>
         Swal.fire({
             icon: 'info',
-            title: 'Untuk mencetak hasil lab, silahkan klik tombol \n "ENTER"   atau   "SPASI" \n pada tombol keyboard.\n\n' +
+            title: 'Untuk mencetak hasil lab, silahkan klik tombol \n "ENTER" \n pada tombol keyboard.\n\n' +
                 'Jangan Lupa Mengisikan Umur Paien dan No Sample. Terima Kasih.',
         })
 
