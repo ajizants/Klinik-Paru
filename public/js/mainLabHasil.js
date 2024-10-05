@@ -163,11 +163,11 @@ async function dataLab(pemeriksaan, notrans) {
             {
                 data: "petugas",
                 render: (data, type, row) => {
-                    const inputId = "analis" + row.idLab;
-                    const inputField = `<select id="${inputId}" class="form-control-sm col analis">`;
+                    let inputId = "analis" + row.idLab;
+                    let inputField = `<select id="${inputId}" class="form-control-sm col analis">`;
                     inputField += `<option value="">--- Pilih Petugas ---</option>`;
                     analisData.forEach((petugas) => {
-                        const selected = data === petugas.nip ? "selected" : "";
+                        let selected = data === petugas.nip ? "selected" : "";
                         inputField += `<option value="${petugas.nip}" ${selected}>${petugas.gelar_d} ${petugas.nama} ${petugas.gelar_b}</option>`;
                     });
                     inputField += "</select>";

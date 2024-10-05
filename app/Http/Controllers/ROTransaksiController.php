@@ -459,8 +459,8 @@ class ROTransaksiController extends Controller
             ->when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
                 return $query->where('norm', $norm);
             })
-            ->whereBetween('tglTrans', [$tglAwal, $tglAkhir])
-            ->orderBy('tglTrans', 'asc') // Sort by tglTrans ascending
+            ->whereBetween('tgltrans', [$tglAwal, $tglAkhir])
+            ->orderBy('tgltrans', 'asc') // Sort by tglTrans ascending
             ->orderBy('noreg', 'asc') // Sort by noreg ascending
             ->get();
 

@@ -6,6 +6,7 @@ use App\Models\DotsTransModel;
 use App\Models\FarmasiModel;
 use App\Models\IGDTransModel;
 use App\Models\KominfoModel;
+use App\Models\LaboratoriumHasilModel;
 use App\Models\LaboratoriumKunjunganModel;
 use App\Models\RoHasilModel;
 use App\Models\ROTransaksiModel;
@@ -260,6 +261,104 @@ class PasienKominfoController extends Controller
         ];
 
         return response()->json($res);
+    }
+
+    public function resumePasien(Request $request)
+    {
+        $params = $request->all();
+        $params = [
+            'no_rm' => '027820',
+            'tanggal_awal' => '2024-10-05',
+            'tanggal_akhir' => '2024-10-05',
+        ];
+        $client = new KominfoModel();
+        try {
+            $data = $client->cpptRequest($params);
+            $resumePasienArray = $data['response']['data'];
+
+            // Cek jika $resumePasienArray adalah array
+            if (is_array($resumePasienArray) && count($resumePasienArray) > 0) {
+                // Ambil objek pertama dari array
+                $resumePasien = (object) $resumePasienArray[0];
+            } else {
+                // Jika tidak ada data, kembalikan sebagai objek kosong
+                $resumePasien = new \stdClass();
+            }
+
+            // return $resumePasien; // Mengembalikan objek $resumePasien
+            $alamat = $resumePasien->kelurahan_nama . ', ' . $resumePasien->pasien_rt . '/' . $resumePasien->pasien_rw . ', ' . $resumePasien->kecamatan_nama . ', ' . $resumePasien->kabupaten_nama . ', ' . $resumePasien->provinsi_nama;
+
+            // $norm = $request->input('no_rm');
+            // $tanggal = $request->input('tanggal_awal');
+            $norm = '027820';
+            $tanggal = '2024-10-05';
+
+            //data ro
+            $dataRo = ROTransaksiModel::with('film', 'foto', 'proyeksi')
+                ->where('norm', $norm)
+                ->where('tgltrans', $tanggal)
+                ->first();
+            $ro = [
+                'noReg' => $dataRo->noreg,
+                'tglRo' => Carbon::parse($dataRo->tgltrans)->format('d-m-Y'),
+                'jenisFoto' => $dataRo->foto->nmFoto,
+                'proyeksi' => $dataRo->proyeksi->proyeksi,
+            ];
+            // return $ro;
+            // return $dataRo;
+
+            //data lab
+            $dataLab = LaboratoriumHasilModel::with('pemeriksaan')
+                ->where('norm', $norm)
+                ->where('created_at', 'like', '%' . Carbon::parse($tanggal)->format('Y-m-d') . '%')->get();
+            // return $dataLab;
+            $lab = [];
+            foreach ($dataLab as $item) {
+                $lab[] = [
+                    'idLab' => $item->idLab,
+                    'idLayanan' => $item->idLayanan,
+                    'tanggal' => Carbon::parse($item->created_at)->format('d-m-Y'),
+                    'hasil' => $item->hasil,
+                    // Menghapus (stik) dari nama pemeriksaan
+                    'pemeriksaan' => str_replace(' (Stik)', '', $item->pemeriksaan->nmLayanan),
+                    'totalItem' => count($dataLab),
+                ];
+            }
+            // return $lab;
+
+            //data tindakan
+            $dataTindakan = IGDTransModel::with('tindakan', 'transbmhp.bmhp')
+                ->where('norm', $norm)
+                ->where('created_at', 'like', '%' . Carbon::parse($tanggal)->format('Y-m-d') . '%')->get();
+            // return $dataTindakan;
+            $tindakan = [];
+            foreach ($dataTindakan as $item) {
+                $bmhp = [];
+                foreach ($item->transbmhp as $key) {
+                    $bmhp[] = [
+                        'jumlah' => $key->jml,
+                        'nmBmhp' => $key->bmhp->nmObat,
+                        'sediaan'=> $key->sediaan,
+                    ];
+                }
+                $tindakan[] = [
+                    'id' => $item->id,
+                    'kdTind' => $item->kdTind,
+                    'tanggal' => Carbon::parse($item->created_at)->format('d-m-Y'),
+                    'tindakan' => $item->tindakan->nmTindakan,
+                    'bmhp' => $bmhp,
+                    'totalItem' => count($dataTindakan),
+                ];
+            }
+            // return $tindakan;
+            // $lab = [];
+            // $ro = [];
+            return view('Laporan.resume', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan'));
+
+        } catch (\Exception $e) {
+            Log::error('Terjadi kesalahan saat mencari data: ' . $e->getMessage());
+            return response()->json(['message' => 'Terjadi kesalahan saat mencari data: ' . $e->getMessage()], 500);
+        }
     }
 
     public function pendaftaran2(Request $request)

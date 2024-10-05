@@ -232,6 +232,8 @@ Route::post('kominfo/waktu_layanan', [PasienKominfoController::class, 'waktuLaya
 Route::post('kominfo/rata_waktu_tunggu', [PasienKominfoController::class, 'avgWaktuTunggu']);
 Route::post('kominfo/pendaftaran', [PasienKominfoController::class, 'pendaftaranFilter']); //cari No RM
 Route::post('kominfo/pendaftaran/report', [PasienKominfoController::class, 'reportPendaftaran']);
+Route::get('kominfo/pendaftaran/resume', [PasienKominfoController::class, 'resumePasien']);
+Route::post('kominfo/pendaftaran/resume', [PasienKominfoController::class, 'resumePasien']);
 
 Route::post('verif/pendaftaran/fr', [VerifController::class, 'frista']);
 Route::post('verif/pendaftaran/fp', [VerifController::class, 'afterapp']);

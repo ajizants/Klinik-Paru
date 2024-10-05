@@ -80,6 +80,7 @@ class HomeController extends Controller
         $perawat = $this->pegawai([10, 15]);
         $tindakan = TindakanModel::all();
         $bmhp = BMHPModel::all();
+        // return $bmhp;
         $dxMed = DiagnosaModel::all();
 
         $dokter = array_map(function ($item) {
