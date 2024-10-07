@@ -33,7 +33,7 @@
                 <table class="table table-bordered table-hover dataTable dtr-inline" id="report" cellspacing="0">
                     <thead class="bg bg-teal table-bordered border-warning">
                         <tr>
-                            <th style="width: 25px">Aksi</th>
+                            <th>Aksi</th>
                             <th>Urut</th>
                             <th>Tanggal</th>
                             <th>No SEP</th>

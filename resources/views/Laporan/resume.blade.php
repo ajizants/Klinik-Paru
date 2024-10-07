@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Resume Medis</title>
+    <title>Resume | {{ $resumePasien->pasien_no_rm }} ( {{ $resumePasien->pasien_nama }} )</title>
     <!-- Google Font: Source Sans Pro -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,6 +19,7 @@
         .table-bor th,
         .table-bor td {
             border: 1.2px solid black;
+            padding: 0 5px 0 5px;
             /* Mengatur ketebalan border */
         }
 
@@ -34,6 +35,11 @@
         /* buat semua td align to */
         td {
             vertical-align: top;
+        }
+
+        .table-noborder td {
+            border: none;
+            padding: 8px;
         }
     </style>
     <!-- Script -->
@@ -62,9 +68,9 @@
                 <tr>
                     <td colspan="2" width="20%"
                         style="text-align: center; padding-top: 10px; padding-bottom: 10px">
-                        <img src="{{ asset('img/LOGO_KKPM.png') }}" style="width: 100px;">
+                        <img src="{{ asset('img/banyumas.png') }}" style="width: 100px;">
                     </td>
-                    <td colspan="2" width="50%">
+                    <td colspan="2" width="60%">
                         <p style="font-size: 17px; margin-bottom: -5px; text-align: center; margin-top: 0px;">
                             PEMERINTAH KABUPATEN BANYUMAS
                         </p>
@@ -82,9 +88,9 @@
                             Kode Pos 53111, Telepon (0281) 635658, Pos-el bkpm_purwokerto@yahoo.com
                         </p>
                     </td>
-                    <td colspan="2" width="30%"
+                    <td colspan="2" width="20%"
                         style="text-align: left;font-size:16px; padding-top: 10px; padding-bottom: 10px;">
-
+                        <img src="{{ asset('img/LOGO_KKPM.png') }}" style="width: 100px;">
                     </td>
                 </tr>
                 <tr>
@@ -104,7 +110,7 @@
             </tbody>
         </table>
         {{-- identitas --}}
-        <table class="table-bordered mb-0" width="100%">
+        <table class="table-bor mb-0" width="100%">
             <tbody>
                 <tr>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
@@ -140,7 +146,7 @@
                     <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
                     </td>
-                    <td width="25%" class="my-0 py-0 px-1 border-0" style="text-align: left;">
+                    <td width="25%" class="my-0 py-0" style="text-align: left;">
                         {{-- {{ Carbon\Carbon::parse($resumePasien->created_at)->format('H:i') }} --}}
                         WIB
                     </td>
@@ -152,8 +158,26 @@
                     <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
                     </td>
-                    <td width="35%" class="my-0 py-0 px-1" style=" text-align: left;">
-                        {{ $resumePasien->umur }} </td>
+                    <td width="35%" class="my-0 py-0" style=" text-align: left;">
+                        {{-- {{ $resumePasien->umur }}  --}}
+                        @php
+                            // Assuming $resumePasien->umur contains "64th 11bln 10hr"
+                            $umur = $resumePasien->umur;
+
+                            // Use regular expression to capture the year (digits followed by 'th')
+                            preg_match('/(\d+)th/', $umur, $matches);
+
+                            // If a match is found, format the output
+                            if (isset($matches[1])) {
+                                $tahun = $matches[1] . ' th'; // Add a space between the year and "th"
+                            } else {
+                                $tahun = 'N/A'; // Fallback if no match
+                            }
+                        @endphp
+
+                        <span>{{ $tahun }}</span>
+
+                    </td>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Dokter</td>
                     <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
@@ -174,18 +198,67 @@
                         {{ $alamat }}
                     </td>
                 </tr>
-                <tr style="height: 10px"></tr>
+                <tr style="height: 20px"></tr>
                 <tr>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Data Subjektif</td>
                     <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
                     </td>
-                    <td colspan="4" class="my-0 py-0" style=" text-align: left;">
+                    <td colspan="2" class="my-0 py-0" style=" text-align: left;">
+                        {{-- {{ $resumePasien->data_subjektif }} --}}
                         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos reiciendis eius ipsam
                         eveniet culpa, quod quae, ea consequuntur tempore nihil excepturi ex fuga tenetur dolore atque
                         reprehenderit tempora! Doloremque, minus?
                     </td>
+                    <td colspan="2" rowspan="2" class="my-0 py-0"
+                        style="padding-left: 10px; text-align: left;">
+                        <table class="table-noborder">
+                            <tr>
+                                <td class="my-0 py-0" style=" text-align: left;">
+                                    <li>TD : 200/200
+                                        {{-- {{ $resumePasien->td || '-' }} --}}
+                                        mmHg
+                                    </li>
+                                </td>
+                                <td class="my-0 py-0" style=" text-align: left;">
+                                    <li> Nadi : 200
+                                        {{-- {{ $resumePasien->nadi || '-' }}  --}}
+                                        x/mnt
+                                    </li>
+                                </td>
+                                <td rowspan="3" width="20%"
+                                    style=" padding-top:10px;padding-bottom:10px; font-weight: bold; text-align: center;">
+                                    <img src="{{ asset('img/paru_resume.jpg') }}" alt="QR Code">
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td class="my-0 py-0" style=" text-align: left;">
+                                    <li>Suhu :
+                                        {{-- {{ $resumePasien->suhu || '-' }} --}}
+                                        °C
+                                    </li>
+                                </td>
+                                <td class="my-0 py-0" style=" text-align: left;">
+                                    <li> RR :
+                                        {{-- {{ $resumePasien->rr || '-' }} --}}
+                                        x/mnt
+                                    </li>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td class="my-0 py-0" style=" text-align: left;">
+                                    <li> BB :
+                                        {{-- {{ $resumePasien->rr || '-' }} --}}
+                                        kg
+                                    </li>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+
                 </tr>
                 <tr>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
@@ -194,25 +267,24 @@
                         :
                     </td>
                     <td colspan="2" class="my-0 py-0" style=" text-align: left;">
+                        {{-- {{ $resumePasien->data_objektif }} --}}
                         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos reiciendis eius ipsam
                         eveniet culpa, quod quae, ea consequuntur tempore nihil excepturi ex fuga tenetur dolore atque
                         reprehenderit tempora! Doloremque, minus?
                     </td>
-                    <td colspan="2" class="my-0 py-0" style=" text-align: left;">
-                        <ul style="margin-bottom: 3px;">TD : mmHg, Nadi : X/mnt</ul>
-                        <ul style="margin-bottom: 3px;">RR : X/mnt, Suhu : °C</ul>
-                        <ul style="margin-bottom: 3px;">BB : X/mnt</ul>
-                    </td>
+
                 </tr>
                 <tr>
                     <td class="my-0 py-0" colspan="6" style=" font-weight: bold; text-align: left;">
                         Penunjang Laboratorium</td>
                 </tr>
                 <tr>
-                    <td class="my-0 py-0" colspan="6" style="text-align: left;">
+                    <td class="my-0 py-2" colspan="6" style="text-align: left;">
 
                         @if ($lab == null || $lab == '' || $lab == '[]')
-                            Tidak ada penunjang laboratorium
+                            <div style="margin-left: 38px;">
+                                Tidak ada penunjang laboratorium
+                            </div>
                         @else
                             @php
                                 // Membagi data lab menjadi bagian dengan maksimal 8 item per bagian
@@ -223,15 +295,19 @@
                                     <table style="margin-left: 10px; margin-right: 10px" width="100%">
                                         <thead>
                                             <tr>
-                                                <td class="font-weight-bold py-2"> PEMERIKSAAN</td>
-                                                <td class="text-center font-weight-bold py-2"> HASIL</td>
+                                                <td class="font-weight-bold py-2"> Pemeriksaan</td>
+                                                <td class="text-center font-weight-bold py-2"> Hasil</td>
+                                                <td class="text-center font-weight-bold py-2"> Satuan</td>
+                                                <td class="text-center font-weight-bold py-2"> Nilai Normal</td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($labChunk as $item)
                                                 <tr>
                                                     <td>{{ $item['pemeriksaan'] }}</td>
-                                                    <td>{{ $item['hasil'] }}</td>
+                                                    <td style="padding-left: 20px">{{ $item['hasil'] }}</td>
+                                                    <td style="text-align: center">{{ $item['satuan'] }}</td>
+                                                    <td>{{ $item['normal'] }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -259,13 +335,17 @@
                 </tr>
 
                 <tr>
-                    <td class="my-0 py-0" colspan="6" style=" font-weight: bold; text-align: left;">
+                    <td class="my-0 py-0" colspan="3" style=" font-weight: bold; text-align: left;">
                         Tindakan Medis</td>
+                    <td class="my-0 py-0" colspan="3" style=" font-weight: bold; text-align: left;">
+                        Terapi / Obat</td>
                 </tr>
                 <tr>
-                    <td class="my-0 py-0" colspan="6" style="text-align: left;">
+                    <td class="my-0 py-2" colspan="3" style="text-align: left;">
                         @if ($tindakan == null || $tindakan == '' || $tindakan == '[]')
-                            Tidak ada tindakan medis
+                            <div style="margin-left: 38px;">
+                                Tidak ada tindakan medis
+                            </div>
                         @else
                             @php
                                 // Membagi data lab menjadi bagian dengan maksimal 8 item per bagian
@@ -276,8 +356,8 @@
                                     <table style="margin-left: 10px; margin-right: 10px" width="100%">
                                         <thead>
                                             <tr>
-                                                <td class="font-weight-bold py-2">TINDAKAN</td>
-                                                <td class="text-center font-weight-bold py-2">BMHP/OBAT</td>
+                                                <td class="font-weight-bold py-2">Tindakan</td>
+                                                <td class="text-center font-weight-bold py-2">BMHP/Obat</td>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -293,6 +373,98 @@
                                                     </td>
                                                 </tr>
                                             @endforeach
+                                        </tbody>
+                                    </table>
+                                    <br> <!-- Untuk memberikan jarak antara tabel -->
+                                @endforeach
+                            </div>
+                        @endif
+                    </td>
+
+                    <td class="my-0 py-2" colspan="3" style="text-align: left;">
+                        @if ($tindakan == null || $tindakan == '' || $tindakan == '[]')
+                            <div style="margin-left: 38px;">
+                                Tidak ada terapi / obat
+                            </div>
+                        @else
+                            @php
+                                // Membagi data lab menjadi bagian dengan maksimal 8 item per bagian
+                                $tindakanChunks = array_chunk($tindakan, 5);
+                            @endphp
+                            <div style="margin-left: 30px; display: flex; justify-content: space-between;">
+                                @foreach ($tindakanChunks as $tindakanChunk)
+                                    <table style="margin-left: 10px; margin-right: 10px" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <td class="font-weight-bold py-2">Nama Obat</td>
+                                                <td class="text-center font-weight-bold py-2">Dosis</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{-- @foreach ($tindakanChunk as $item)
+                                                <tr>                                                    
+                                                    <td>{{ $item['tindakan'] }}</td>
+                                                    <td>
+                                                        @foreach ($item['bmhp'] as $item)
+                                                            {{ $item['nmBmhp'] }} :
+                                                            {{ $item['jumlah'] }}
+                                                            {{ $item['sediaan'] }},
+                                                        @endforeach
+                                                    </td>
+                                                </tr>
+                                            @endforeach --}}
+                                                <tr>
+                                                    <td>obat</td>
+                                                    <td>dosis</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>obat</td>
+                                                    <td>dosis</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>obat</td>
+                                                    <td>dosis</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>obat</td>
+                                                    <td>dosis</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>obat</td>
+                                                    <td>dosis</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>obat</td>
+                                                    <td>dosis</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>obat</td>
+                                                    <td>dosis</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>obat</td>
+                                                    <td>dosis</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>obat</td>
+                                                    <td>dosis</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>obat</td>
+                                                    <td>dosis</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>obat</td>
+                                                    <td>dosis</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>obat</td>
+                                                    <td>dosis</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>obat</td>
+                                                    <td>dosis</td>
+                                                </tr>
                                         </tbody>
                                     </table>
                                     <br> <!-- Untuk memberikan jarak antara tabel -->
@@ -305,260 +477,36 @@
                     <td class="my-0 py-0" colspan="2" style="font-weight: bold; text-align: left;">
                         Diagnosa Primer
                     </td>
-                    <td class="my-0 py-0" colspan="4" style="font-weight: bold; text-align: left;">
-                        {{ $resumePasien->diagnosa[0]['nama_diagnosa'] ?? 'Tidak ada diagnosa' }}
+                    <td class="my-0 py-0" colspan="4" style=" text-align: left;">
+                        {{ $resumePasien->diagnosa[0]['nama_diagnosa'] ?? '-' }}
                     </td>
                 </tr>
                 <tr>
                     <td class="my-0 py-0" colspan="2" style="font-weight: bold; text-align: left;">
                         Diagnosa Sekunder
                     </td>
-                    <td class="my-0 py-0" colspan="4" style="font-weight: bold; text-align: left;">
-                        {{ $resumePasien->diagnosa[1]['nama_diagnosa'] ?? 'Tidak ada diagnosa' }} <br>
+                    <td class="my-0 py-0" colspan="4" style=" text-align: left;">
+                        {{ $resumePasien->diagnosa[1]['nama_diagnosa'] ?? '-' }} <br>
                         {{ $resumePasien->diagnosa[2]['nama_diagnosa'] ?? '' }}
                     </td>
                 </tr>
-                <tr>
-                    <td class="my-0 py-0" colspan="6" style=" font-weight: bold; text-align: left;">
-                        Terapi / Obat</td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0" colspan="6" style="text-align: left;">
-                        @if ($tindakan == null || $tindakan == '' || $tindakan == '[]')
-                            Tidak ada terapi / obat
-                        @else
-                            @php
-                                // Membagi data lab menjadi bagian dengan maksimal 8 item per bagian
-                                $tindakanChunks = array_chunk($tindakan, 5);
-                            @endphp
-                            <div style="margin-left: 30px; display: flex; justify-content: space-between;">
-                                @foreach ($tindakanChunks as $tindakanChunk)
-                                    <table style="margin-left: 10px; margin-right: 10px" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <td class="font-weight-bold py-2">TINDAKAN</td>
-                                                <td class="text-center font-weight-bold py-2">BMHP/OBAT</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($tindakanChunk as $item)
-                                                <tr>
-                                                    <td>{{ $item['tindakan'] }}</td>
-                                                    <td>
-                                                        @foreach ($item['bmhp'] as $item)
-                                                            {{ $item['nmBmhp'] }} :
-                                                            {{ $item['jumlah'] }}
-                                                            {{ $item['sediaan'] }},
-                                                        @endforeach
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                    <br> <!-- Untuk memberikan jarak antara tabel -->
-                                @endforeach
-                            </div>
-                        @endif
-                    </td>
-                </tr>
-
             </tbody>
         </table>
         <div style="font-size: 115%;">
-
-            {{-- BTA & TCM --}}
-            {{-- <table class="table table-bor border-dark border" width="100%" style="border-size: 2px; color: black;">
-                <thead class="">
-                    <tr style=" font-weight: bold; text-align: left;"><strong>Bakteriologi</strong></tr>
-                    <tr>
-                        <td class="font-weight-bold
-                        py-2">
-                            PEMERIKSAAN</td>
-                        <td class="text-center font-weight-bold py-2">
-                            HASIL</td>
-                        <td class="font-weight-bold py-2">
-                            NILAI NORMAL</td>
-                    </tr>
-
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="py-1">BTA 1</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($resumePasien->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '130') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1 col-7">Negatif</td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">BTA 2</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '214') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1">Negatif</td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">TCM</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '218' || $item['idLayanan'] == '131') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1">Negatif</td>
-                    </tr>
-                </tbody>
-            </table> --}}
-            {{-- HIV $ Syph --}}
-            {{-- <table class="table table-bor border-dark border" width="100%" style="border-size: 2px; color: black;">
-                <thead class="">
-                    <tr style=" font-weight: bold; text-align: left;"><strong>Imunologi</strong></tr>
-                    <tr>
-                        <td class="font-weight-bold py-2"> PEMERIKSAAN</td>
-                        <td class="font-weight-bold py-2"> NAMA REAGENSIA</td>
-                        <td class="text-center font-weight-bold py-2"> HASIL PEMERIKSAAN</td>
-                        <td class="text-center font-weight-bold py-2"> HASIL AKHIR</td>
-                        <td class="font-weight-bold py-2"> CATATAN</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="py-1" rowspan="3">HIV</td>
-                        <td class="py-1">
-                            <input type="text" name="reagen_1" id="reagen_1"
-                                style="border: none; outline: none;" value="" class="col bg-warning"
-                                oninput="removeBgWarning('reagen_1')" />
-                        </td>
-                        <td class="py-1 text-center">
-                            <input type="checkbox" id="hiv_nr_1" name="hiv_nr_1" style="transform: scale(2);">
-                            <Label for="hiv_nr_1" class="ml-2 mr-5">Non Reaktif</Label>
-                            <input type="checkbox" id="hiv_r_1" name="hiv_r_1" style="transform: scale(2);">
-                            <Label for="hiv_r_1" class="ml-2">Reaktif</Label>
-                        <td class="py-1 pl-3" rowspan="3">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '129') {
-                                        $hasil = $item['hasil']; // Dapatkan hasil
-                                        break; // Keluar dari loop setelah menemukan item yang cocok
-                                    }
-                                }
-                            @endphp
-                            <div class="form-group">
-                                <input type="checkbox" id="kes_nr" name="kes_nr" style="transform: scale(2);"
-                                    @if ($hasil == 'NR') checked @endif>
-                                <label for="kes_nr" class="ml-2 mr-5">NON REAKTIF</label>
-                            </div>
-                            <div class="form-group">
-                                <input type="checkbox" id="kes_r" name="kes_r" style="transform: scale(2);"
-                                    @if ($hasil == 'R') checked @endif>
-                                <label for="kes_r" class="ml-2">REAKTIF</label>
-                            </div>
-                            <div class="form-group">
-                                <input type="checkbox" id="kes_inkon" name="kes_inkon" style="transform: scale(2);"
-                                    @if ($hasil == 'INK') checked @endif>
-                                <label for="kes_inkon" class="ml-2">INKONKLUSIF</label>
-                            </div>
-                        </td>
-                        <td class="py-1 col-2" style="font-size: 80%" rowspan="3">Hasil Tes Non Reaktif tidak
-                            termasuk pemaparan terhadap
-                            HIV yang terjadi
-                            baru-baru ini. (Klien mungkin sedang dalam masa jendela dari infeksi HIV)
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">
-                            <input type="text" name="reagen_2" id="reagen_2"
-                                style="border: none; outline: none;" value="" class="col bg-warning"
-                                oninput="removeBgWarning('reagen_2')" />
-                        </td>
-                        <td class="py-1 text-center">
-                            <input type="checkbox" id="hiv_nr_2" name="hiv_nr_2" style="transform: scale(2);">
-                            <Label for="hiv_nr_2" class="ml-2 mr-5">Non Reaktif</Label>
-                            <input type="checkbox" id="hiv_r_2" name="hiv_r_2" style="transform: scale(2);">
-                            <Label for="hiv_r_2" class="ml-2">Reaktif</Label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">
-                            <input type="text" name="reagen_3" id="reagen_3"
-                                style="border: none; outline: none;" value="" class="col bg-warning"
-                                oninput="removeBgWarning('reagen_3')" />
-                        </td>
-                        <td class="py-1 text-center">
-                            <input type="checkbox" id="hiv_nr_3" name="hiv_nr_3" style="transform: scale(2);">
-                            <Label for="hiv_nr_3" class="ml-2 mr-5">Non Reaktif</Label>
-                            <input type="checkbox" id="hiv_r_3" name="hiv_r_3" style="transform: scale(2);">
-                            <Label for="hiv_r_3" class="ml-2">Reaktif</Label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">SIFILIS (SIPILIS) </td>
-                        <td class="py-1">
-                            <input type="text" name="reagen_4" id="reagen_4"
-                                style="border: none; outline: none;" value="" class="col bg-warning"
-                                oninput="removeBgWarning('reagen_4')" />
-                        </td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '215') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            <div class="form-group">
-                                <input type="checkbox" id="syp_neg" name="syp_neg" style="transform: scale(2);"
-                                    @if ($hasil == 'Negatif') checked @endif>
-                                <label for="syp_neg" class="ml-2 mr-5">Negatif</label>
-                            </div>
-                            <input type="checkbox" id="syp_pos" name="syp_pos" style="transform: scale(2);"
-                                @if ($hasil == 'Positif') checked @endif>
-                            <label for="syp_pos" class="ml-2">Positif</label>
-                        </td>
-                        <td class="py-1 text-center" colspan="2">Nilai Normal: Negatif</td>
-                    </tr>
-                </tbody>
-            </table> --}}
 
             {{-- Petugas --}}
             <table class="table table-borderless" width="100%"">
                 <tbody>
                     <tr>
                         <td width="70%" colspan="3" class="py-6 mt-6"></td>
-                        <td class="py-2">Petugas Pemeriksa,</td>
+                        <td class="py-2" style="text-align: center;">Dokter,</td>
                     </tr>
                     <tr>
-                        <td colspan="4" class="py-2 " height="50px"></td>
+                        <td colspan="4" class="py-2 " height="60px"></td>
                     </tr>
                     <tr>
                         <td width="70%" colspan="3" class="py-2 "></td>
-                        <td class="py-2">{{ $resumePasien->dokter_nama }}</td>
+                        <td class="py-2" style="text-align: center;">{{ $resumePasien->dokter_nama }}</td>
                     </tr>
                 </tbody>
             </table>

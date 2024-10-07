@@ -105,12 +105,25 @@ function reportPendaftaran(tglAwal, tglAkhir) {
             var total = response["total"];
             // console.log("🚀 ~ reportPendaftaran ~ total:", total);
             // console.log("🚀 ~ reportPendaftaran ~ $data:", pendaftaran);
+
             pendaftaran.forEach(function (item, index) {
                 var nama_pasien = item.pasien_nama.replace(/'/g, "\\'");
-                item.aksi = `<button type="button" class="btn btn-primary mr-2 mb-2"
-                                    onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak"><i class="fa-solid fa-print"></i></button>
-                            <button type="button" class="btn btn-${item.check_in} mb-2" id="checkin" placeholder="Selesai" data-toggle="modal"
-                                    data-target="#modalSep" onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}','${item.penjamin_nama}','${item.no_trans}','${item.no_sep}',this)"><i class="fa-regular fa-square-check"></i></button>`;
+                let resume;
+                if (item.penjamin_nama == "BPJS") {
+                    resume = "";
+                } else {
+                    resume = "hidden";
+                }
+                item.aksi = `
+                            
+                            <button type="button" class="btn btn-sm btn-primary mr-2 mb-2"
+                                    onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak">Label</button>
+                            <button type="button" class="btn btn-sm btn-${item.check_in} mr-2 mb-2" id="checkin" placeholder="Selesai" data-toggle="modal"
+                                    data-target="#modalSep" onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}','${item.penjamin_nama}','${item.no_trans}','${item.no_sep}',this)">
+                                    <i class="fa-regular fa-square-check"></i></button>
+                            <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" placeholder="Resume"
+                                    href="/api/resume/${item.pasien_no_rm}/${item.tanggal}" target="_blank" ${resume}>Resume</a>
+                            `;
                 if (item.check_in == "danger") {
                     item.status = "Belum";
                 } else {
@@ -133,9 +146,9 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                         { data: "pasien_nama", className: "col-2" },
                         { data: "jenis_kelamin_nama" },
                         { data: "pasien_umur" },
-                        { data: "pasien_alamat", className: "col-3" },
+                        { data: "pasien_alamat", className: "col-2" },
                         { data: "poli_nama" },
-                        { data: "dokter_nama", className: "col-3" },
+                        { data: "dokter_nama", className: "col-2" },
                         {
                             data: "status",
                             render: function (data) {

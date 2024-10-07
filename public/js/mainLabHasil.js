@@ -144,6 +144,7 @@ async function dataLab(pemeriksaan, notrans) {
 
     const table = $("#inputHasil").DataTable({
         data: data,
+        destroy: true,
         columns: [
             {
                 data: "no",
