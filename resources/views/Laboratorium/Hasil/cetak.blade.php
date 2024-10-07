@@ -152,9 +152,27 @@
                         :
                     </td>
                     <td width="26%" class="my-0 py-0 px-1" style=" text-align: left;">
+                        {{-- {{ $resumePasien->umur }}  --}}
+                        @php
+                            // Assuming $resumePasien->umur contains "64th 11bln 10hr"
+                            $umur = $lab->umur;
+
+                            // Use regular expression to capture the year (digits followed by 'th')
+                            preg_match('/(\d+)th/', $umur, $matches);
+
+                            // If a match is found, format the output
+                            if (isset($matches[1])) {
+                                $tahun = $matches[1] . ' th'; // Add a space between the year and "th"
+                            } else {
+                                $tahun = 'N/A'; // Fallback if no match
+                            }
+                        @endphp
+
+                        {{-- <span>{{ $tahun }}</span> --}}
                         <input type="text" name="umur" id="umur" style="border: none; outline: none;"
                             class="px-2 {{ $lab->umur == null || $lab->umur == '' ? ' bg-warning' : '' }}"
-                            value="{{ $lab->umur }}" oninput="removeBgWarning('umur')" />
+                            value="{{ $tahun }}" oninput="removeBgWarning('umur')" />
+
                     </td>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Dokter</td>

@@ -402,7 +402,7 @@
                                         </thead>
                                         <tbody>
                                             {{-- @foreach ($tindakanChunk as $item)
-                                                <tr>                                                    
+                                                <tr>
                                                     <td>{{ $item['tindakan'] }}</td>
                                                     <td>
                                                         @foreach ($item['bmhp'] as $item)
@@ -413,58 +413,58 @@
                                                     </td>
                                                 </tr>
                                             @endforeach --}}
-                                                <tr>
-                                                    <td>obat</td>
-                                                    <td>dosis</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>obat</td>
-                                                    <td>dosis</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>obat</td>
-                                                    <td>dosis</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>obat</td>
-                                                    <td>dosis</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>obat</td>
-                                                    <td>dosis</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>obat</td>
-                                                    <td>dosis</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>obat</td>
-                                                    <td>dosis</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>obat</td>
-                                                    <td>dosis</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>obat</td>
-                                                    <td>dosis</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>obat</td>
-                                                    <td>dosis</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>obat</td>
-                                                    <td>dosis</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>obat</td>
-                                                    <td>dosis</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>obat</td>
-                                                    <td>dosis</td>
-                                                </tr>
+                                            <tr>
+                                                <td>obat</td>
+                                                <td>dosis</td>
+                                            </tr>
+                                            <tr>
+                                                <td>obat</td>
+                                                <td>dosis</td>
+                                            </tr>
+                                            <tr>
+                                                <td>obat</td>
+                                                <td>dosis</td>
+                                            </tr>
+                                            <tr>
+                                                <td>obat</td>
+                                                <td>dosis</td>
+                                            </tr>
+                                            <tr>
+                                                <td>obat</td>
+                                                <td>dosis</td>
+                                            </tr>
+                                            <tr>
+                                                <td>obat</td>
+                                                <td>dosis</td>
+                                            </tr>
+                                            <tr>
+                                                <td>obat</td>
+                                                <td>dosis</td>
+                                            </tr>
+                                            <tr>
+                                                <td>obat</td>
+                                                <td>dosis</td>
+                                            </tr>
+                                            <tr>
+                                                <td>obat</td>
+                                                <td>dosis</td>
+                                            </tr>
+                                            <tr>
+                                                <td>obat</td>
+                                                <td>dosis</td>
+                                            </tr>
+                                            <tr>
+                                                <td>obat</td>
+                                                <td>dosis</td>
+                                            </tr>
+                                            <tr>
+                                                <td>obat</td>
+                                                <td>dosis</td>
+                                            </tr>
+                                            <tr>
+                                                <td>obat</td>
+                                                <td>dosis</td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                     <br> <!-- Untuk memberikan jarak antara tabel -->

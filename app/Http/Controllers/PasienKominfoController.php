@@ -266,6 +266,9 @@ class PasienKominfoController extends Controller
     // public function resumePasien(Request $request)
     public function resumePasien($no_rm, $tgl)
     {
+        $title = 'Laporan Pendaftaran';
+
+        return view('Template.newPage')->with('title', $title);
         // $params = $request->all();
         $params = [
             'no_rm' => $no_rm,
