@@ -216,13 +216,13 @@
                         <table class="table-noborder">
                             <tr>
                                 <td class="my-0 py-0" style=" text-align: left;">
-                                    <li>TD : 200/200
+                                    <li>TD :
                                         {{-- {{ $resumePasien->td || '-' }} --}}
                                         mmHg
                                     </li>
                                 </td>
                                 <td class="my-0 py-0" style=" text-align: left;">
-                                    <li> Nadi : 200
+                                    <li> Nadi :
                                         {{-- {{ $resumePasien->nadi || '-' }}  --}}
                                         x/mnt
                                     </li>

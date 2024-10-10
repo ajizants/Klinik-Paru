@@ -4,22 +4,6 @@
     @include('Farmasi.Transaksi.antrian')
     @include('Farmasi.Transaksi.input2')
 
-
-
-
-
-
-    </div>
-    </section>
-    <!-- /.content -->
-    </div>
-    <!-- /.content-wrapper -->
-
-    @include('Template.footer')
-
-    </div>
-    @include('Template.script')
-
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/antrianFarmasi.js') }}"></script>

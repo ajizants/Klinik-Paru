@@ -266,9 +266,9 @@ class PasienKominfoController extends Controller
     // public function resumePasien(Request $request)
     public function resumePasien($no_rm, $tgl)
     {
-        $title = 'Laporan Pendaftaran';
+        // $title = 'Laporan Pendaftaran';
 
-        return view('Template.newPage')->with('title', $title);
+        // return view('Template.newPage')->with('title', $title);
         // $params = $request->all();
         $params = [
             'no_rm' => $no_rm,
@@ -364,7 +364,8 @@ class PasienKominfoController extends Controller
                     'id' => $item->id,
                     'kdTind' => $item->kdTind,
                     'tanggal' => Carbon::parse($item->created_at)->format('d-m-Y'),
-                    'tindakan' => $item->tindakan->nmTindakan,
+                    // 'tindakan' => $item->tindakan->nmTindakan,
+                    'tindakan' => preg_replace('/\s?\(.*?\)/', '', $item->tindakan->nmTindakan),
                     'bmhp' => $bmhp,
                     'totalItem' => count($dataTindakan),
                 ];
