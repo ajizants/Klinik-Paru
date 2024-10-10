@@ -336,8 +336,8 @@ class PasienKominfoController extends Controller
                         'hasil' => $item->hasil,
                         // Menghapus (stik) dari nama pemeriksaan
                         'pemeriksaan' => str_replace(' (Stik)', '', $item->pemeriksaan->nmLayanan),
-                        'satuan' => $item->pemeriksaan->satuan ?? "-",
-                        'normal' => $item->pemeriksaan->normal ?? "-",
+                        'satuan' => $item->pemeriksaan->satuan,
+                        'normal' => $item->pemeriksaan->normal,
                         'totalItem' => count($dataLab),
                     ];
                 }

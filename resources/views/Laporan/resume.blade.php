@@ -116,42 +116,12 @@
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         No
                         Rekam Medis</td>
-                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
+                    <td width="2%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
                     </td>
-                    <td width="35%" class="my-0 py-0" style=" text-align: left;">
+                    <td width="30%" class="my-0 py-0" style=" text-align: left;">
                         {{ $resumePasien->pasien_no_rm }}
                     </td>
-                    <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
-                        Tanggal</td>
-                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
-                        :
-                    </td>
-                    <td width="25%" class="my-0 py-0" style=" text-align: left;">
-                        {{ Carbon\Carbon::parse($resumePasien->tanggal)->locale('id')->isoFormat('DD MMMM Y') }} ,
-                    </td>
-                </tr>
-                <tr>
-                    <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
-                        Nama
-                        Pasien / JK</td>
-                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
-                        :
-                    </td>
-                    <td width="35%" class="my-0 py-0" style=" text-align: left;">
-                        {{ $resumePasien->pasien_nama }} / {{ $resumePasien->jenis_kelamin_nama }}
-                    </td>
-                    <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
-                        Jam</td>
-                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
-                        :
-                    </td>
-                    <td width="25%" class="my-0 py-0" style="text-align: left;">
-                        {{-- {{ Carbon\Carbon::parse($resumePasien->created_at)->format('H:i') }} --}}
-                        WIB
-                    </td>
-                </tr>
-                <tr>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Umur
                     </td>
@@ -178,52 +148,71 @@
                         <span>{{ $tahun }}</span>
 
                     </td>
+
+                </tr>
+                <tr>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
-                        Dokter</td>
+                        Nama
+                        Pasien / JK</td>
                     <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
                     </td>
-                    <td width="25%" class="my-0 py-0" style=" text-align: left;">
-                        {{ $resumePasien->dokter_nama }}
+                    <td width="35%" class="my-0 py-0" style=" text-align: left;">
+                        {{ $resumePasien->pasien_nama }} / {{ $resumePasien->jenis_kelamin_nama }}
+                    </td>
+                    <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
+                        Tanggal</td>
+                    <td width="2%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
+                        :
+                    </td>
+                    <td width="36%" class="my-0 py-0" style=" text-align: left;">
+                        {{ Carbon\Carbon::parse($resumePasien->tanggal)->locale('id')->isoFormat('DD MMMM Y') }} ,
                     </td>
                 </tr>
-
                 <tr>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Alamat</td>
                     <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
                     </td>
-                    <td colspan="4" class="my-0 py-0" style=" text-align: left;">
+                    <td class="my-0 py-0" style=" text-align: left;">
                         {{ $alamat }}
                     </td>
+
+                    <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
+                        Jam</td>
+                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
+                        :
+                    </td>
+                    <td width="25%" class="my-0 py-0" style="text-align: left;">
+                        {{-- {{ Carbon\Carbon::parse($resumePasien->created_at)->format('H:i') }} --}}
+                        WIB
+                    </td>
                 </tr>
-                <tr style="height: 20px"></tr>
+
+                <tr style="height: 17px"></tr>
                 <tr>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Data Subjektif</td>
                     <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
                     </td>
-                    <td colspan="2" class="my-0 py-0" style=" text-align: left;">
-                        {{-- {{ $resumePasien->data_subjektif }} --}}
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos reiciendis eius ipsam
-                        eveniet culpa, quod quae, ea consequuntur tempore nihil excepturi ex fuga tenetur dolore atque
-                        reprehenderit tempora! Doloremque, minus?
+                    <td class="my-0 py-0" style=" text-align: left;">
+                        {{ $resumePasien->subjek }}
                     </td>
-                    <td colspan="2" rowspan="2" class="my-0 py-0"
+                    <td colspan="3" rowspan="2" class="my-0 py-0"
                         style="padding-left: 10px; text-align: left;">
                         <table class="table-noborder">
                             <tr>
                                 <td class="my-0 py-0" style=" text-align: left;">
                                     <li>TD :
-                                        {{-- {{ $resumePasien->td || '-' }} --}}
+                                        {{ $resumePasien->objek_tekanan_darah }}
                                         mmHg
                                     </li>
                                 </td>
                                 <td class="my-0 py-0" style=" text-align: left;">
                                     <li> Nadi :
-                                        {{-- {{ $resumePasien->nadi || '-' }}  --}}
+                                        {{ $resumePasien->objek_nadi }}
                                         x/mnt
                                     </li>
                                 </td>
@@ -236,13 +225,13 @@
                             <tr>
                                 <td class="my-0 py-0" style=" text-align: left;">
                                     <li>Suhu :
-                                        {{-- {{ $resumePasien->suhu || '-' }} --}}
+                                        {{ $resumePasien->objek_suhu }}
                                         °C
                                     </li>
                                 </td>
                                 <td class="my-0 py-0" style=" text-align: left;">
                                     <li> RR :
-                                        {{-- {{ $resumePasien->rr || '-' }} --}}
+                                        {{ $resumePasien->objek_rr }}
                                         x/mnt
                                     </li>
                                 </td>
@@ -251,7 +240,7 @@
                             <tr>
                                 <td class="my-0 py-0" style=" text-align: left;">
                                     <li> BB :
-                                        {{-- {{ $resumePasien->rr || '-' }} --}}
+                                        {{ $resumePasien->objek_bb }}
                                         kg
                                     </li>
                                 </td>
@@ -266,11 +255,8 @@
                     <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
                     </td>
-                    <td colspan="2" class="my-0 py-0" style=" text-align: left;">
-                        {{-- {{ $resumePasien->data_objektif }} --}}
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos reiciendis eius ipsam
-                        eveniet culpa, quod quae, ea consequuntur tempore nihil excepturi ex fuga tenetur dolore atque
-                        reprehenderit tempora! Doloremque, minus?
+                    <td class="my-0 py-0" style=" text-align: left;">
+                        {{ $resumePasien->objek_data_objektif }}
                     </td>
 
                 </tr>
@@ -297,7 +283,7 @@
                                             <tr>
                                                 <td class="font-weight-bold py-2"> Pemeriksaan</td>
                                                 <td class="text-center font-weight-bold py-2"> Hasil</td>
-                                                <td class="text-center font-weight-bold py-2"> Satuan</td>
+                                                {{-- <td class="text-center font-weight-bold py-2"> Satuan</td> --}}
                                                 <td class="text-center font-weight-bold py-2"> Nilai Normal</td>
                                             </tr>
                                         </thead>
@@ -305,9 +291,16 @@
                                             @foreach ($labChunk as $item)
                                                 <tr>
                                                     <td>{{ $item['pemeriksaan'] }}</td>
-                                                    <td style="padding-left: 20px">{{ $item['hasil'] }}</td>
-                                                    <td style="text-align: center">{{ $item['satuan'] }}</td>
-                                                    <td>{{ $item['normal'] }}</td>
+                                                    <td style="text-align: center">{{ $item['hasil'] }}
+                                                        {{ $item['satuan'] }}</td>
+                                                    {{-- <td style="text-align: center"></td> --}}
+                                                    <td width="60%">
+                                                        @php
+                                                            $normal = $item['normal'];
+                                                            $normal = str_replace(';', ';<br>', $normal);
+                                                        @endphp
+                                                        {!! $normal !!}
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -414,57 +407,58 @@
                                                 </tr>
                                             @endforeach --}}
                                             <tr>
-                                                <td>obat</td>
-                                                <td>dosis</td>
+                                                <td>Paracetamol (dumy)</td>
+                                                <td>500 mg, 3x1</td>
                                             </tr>
                                             <tr>
-                                                <td>obat</td>
-                                                <td>dosis</td>
+                                                <td>Ibuprofen</td>
+                                                <td>200 mg, 3x1</td>
                                             </tr>
                                             <tr>
-                                                <td>obat</td>
-                                                <td>dosis</td>
+                                                <td>Amoxicillin</td>
+                                                <td>500 mg, 3x1</td>
                                             </tr>
                                             <tr>
-                                                <td>obat</td>
-                                                <td>dosis</td>
+                                                <td>Cetirizine</td>
+                                                <td>10 mg, 1x1</td>
                                             </tr>
                                             <tr>
-                                                <td>obat</td>
-                                                <td>dosis</td>
+                                                <td>Mefenamic Acid</td>
+                                                <td>500 mg, 3x1</td>
                                             </tr>
                                             <tr>
-                                                <td>obat</td>
-                                                <td>dosis</td>
+                                                <td>Loratadine</td>
+                                                <td>10 mg, 1x1</td>
                                             </tr>
                                             <tr>
-                                                <td>obat</td>
-                                                <td>dosis</td>
+                                                <td>Ranitidine</td>
+                                                <td>150 mg, 2x1</td>
                                             </tr>
                                             <tr>
-                                                <td>obat</td>
-                                                <td>dosis</td>
+                                                <td>Aspirin</td>
+                                                <td>100 mg, 1x1</td>
                                             </tr>
                                             <tr>
-                                                <td>obat</td>
-                                                <td>dosis</td>
+                                                <td>Metformin</td>
+                                                <td>500 mg, 2x1</td>
                                             </tr>
                                             <tr>
-                                                <td>obat</td>
-                                                <td>dosis</td>
+                                                <td>Omeprazole</td>
+                                                <td>20 mg, 1x1</td>
                                             </tr>
                                             <tr>
-                                                <td>obat</td>
-                                                <td>dosis</td>
+                                                <td>Ciprofloxacin</td>
+                                                <td>500 mg, 2x1</td>
                                             </tr>
                                             <tr>
-                                                <td>obat</td>
-                                                <td>dosis</td>
+                                                <td>Dexamethasone</td>
+                                                <td>0.5 mg, 3x1</td>
                                             </tr>
                                             <tr>
-                                                <td>obat</td>
-                                                <td>dosis</td>
+                                                <td>Clopidogrel</td>
+                                                <td>75 mg, 1x1</td>
                                             </tr>
+
                                         </tbody>
                                     </table>
                                     <br> <!-- Untuk memberikan jarak antara tabel -->
@@ -498,15 +492,16 @@
             <table class="table table-borderless" width="100%"">
                 <tbody>
                     <tr>
-                        <td width="70%" colspan="3" class="py-6 mt-6"></td>
-                        <td class="py-2" style="text-align: center;">Dokter,</td>
+                        <td width="60%" colspan="2" class="py-6 mt-6"></td>
+                        <td class="py-2" colspan="2" style="text-align: center;">Dokter,</td>
                     </tr>
                     <tr>
                         <td colspan="4" class="py-2 " height="60px"></td>
                     </tr>
                     <tr>
-                        <td width="70%" colspan="3" class="py-2 "></td>
-                        <td class="py-2" style="text-align: center;">{{ $resumePasien->dokter_nama }}</td>
+                        <td width="60%" colspan="2" class="py-2 "></td>
+                        <td class="py-2" colspan="2" style="text-align: center;">
+                            {{ $resumePasien->dokter_nama }}</td>
                     </tr>
                 </tbody>
             </table>
