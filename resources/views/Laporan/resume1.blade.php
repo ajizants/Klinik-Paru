@@ -19,39 +19,16 @@
         .table-bor th,
         .table-bor td {
             border: 1.2px solid black;
-            border-top: 1.2px solid black;
             padding: 0 5px 0 5px;
-        }
-
-        .table-borTL th,
-        .table-borTL td {
-            border: 1.2px solid black;
-            border-top: none !important;
-            padding: 0 5px 0 5px;
-        }
-
-        /* Targeting table inside td */
-        .table-borTL td table {
-            border-top: 1.2px solid black !important;
-            /* Memastikan border-top diterapkan */
+            /* Mengatur ketebalan border */
         }
 
         @media print {
             .table-bor td {
                 border: 1.2px solid #000000;
-                border-top: 1.2px solid black;
+                /* Hitam dalam format hex */
                 color: #000000;
-            }
-
-            .table-borTL td {
-                border: 1.2px solid #000000;
-                border-top: none !important;
-                color: #000000;
-            }
-
-            /* Apply border top in print */
-            .table-borTL td table {
-                border-top: 1.2px solid black !important;
+                /* Hitam untuk teks */
             }
         }
 
@@ -61,7 +38,7 @@
         }
 
         .table-noborder td {
-            border: none !important;
+            border: none;
             padding: 8px;
         }
     </style>
@@ -84,6 +61,7 @@
 
 <body>
 
+    {{-- <div class="container"> --}}
     <div class="container-fluid">
         <table class="table table-borderless  " width="100%" style="color: black;">
             <tbody>
@@ -138,18 +116,18 @@
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         No
                         Rekam Medis</td>
-                    {{-- <td width="2%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
+                    <td width="2%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
-                    </td> --}}
+                    </td>
                     <td width="30%" class="my-0 py-0" style=" text-align: left;">
                         {{ $resumePasien->pasien_no_rm }}
                     </td>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Umur
                     </td>
-                    {{-- <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
+                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
-                    </td> --}}
+                    </td>
                     <td width="35%" class="my-0 py-0" style=" text-align: left;">
                         {{-- {{ $resumePasien->umur }}  --}}
                         @php
@@ -176,17 +154,17 @@
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Nama
                         Pasien / JK</td>
-                    {{-- <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
+                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
-                    </td> --}}
+                    </td>
                     <td width="35%" class="my-0 py-0" style=" text-align: left;">
                         {{ $resumePasien->pasien_nama }} / {{ $resumePasien->jenis_kelamin_nama }}
                     </td>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Tanggal</td>
-                    {{-- <td width="2%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
+                    <td width="2%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
-                    </td> --}}
+                    </td>
                     <td width="36%" class="my-0 py-0" style=" text-align: left;">
                         {{ Carbon\Carbon::parse($resumePasien->tanggal)->locale('id')->isoFormat('DD MMMM Y') }} ,
                     </td>
@@ -194,79 +172,100 @@
                 <tr>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Alamat</td>
-                    {{-- <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
+                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
-                    </td> --}}
+                    </td>
                     <td class="my-0 py-0" style=" text-align: left;">
                         {{ $alamat }}
                     </td>
 
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Jam</td>
-                    {{-- <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
+                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
                         :
-                    </td> --}}
+                    </td>
                     <td width="25%" class="my-0 py-0" style="text-align: left;">
                         {{-- {{ Carbon\Carbon::parse($resumePasien->created_at)->format('H:i') }} --}}
                         WIB
                     </td>
                 </tr>
-            </tbody>
-        </table>
-        {{-- DS DO --}}
-        <table class="table-borTL mb-0" width="100%">
-            <tbody>
+
+                <tr style="height: 17px"></tr>
                 <tr>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
-                        <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Data Subjektif</div>
+                        Data Subjektif</td>
+                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
+                        :
                     </td>
-                    <td colspan="2" class="my-0 py-0" style="width: 50%; text-align: left;">
+                    <td class="my-0 py-0" style=" text-align: left;">
                         {{ $resumePasien->subjek }}
                     </td>
-                    <td rowspan="2" style="padding-left: 10px; text-align: left;">
-                        <div class="resume-container"
-                            style="padding: 10px; display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div style="flex: 1; text-align: left;">
-                                <li>TD: {{ $resumePasien->objek_tekanan_darah }} mmHg</li>
-                                <li>Suhu: {{ $resumePasien->objek_suhu }} °C</li>
-                                <li>BB: {{ $resumePasien->objek_bb }} kg</li>
-                            </div>
+                    <td colspan="3" rowspan="2" class="my-0 py-0"
+                        style="padding-left: 10px; text-align: left;">
+                        <table class="table-noborder">
+                            <tr>
+                                <td class="my-0 py-0" style=" text-align: left;">
+                                    <li>TD :
+                                        {{ $resumePasien->objek_tekanan_darah }}
+                                        mmHg
+                                    </li>
+                                </td>
+                                <td class="my-0 py-0" style=" text-align: left;">
+                                    <li> Nadi :
+                                        {{ $resumePasien->objek_nadi }}
+                                        x/mnt
+                                    </li>
+                                </td>
+                                <td rowspan="3" width="20%"
+                                    style=" padding-top:10px;padding-bottom:10px; font-weight: bold; text-align: center;">
+                                    <img src="{{ asset('img/paru_resume.jpg') }}" alt="QR Code">
+                                </td>
 
-                            <div style="flex: 1; text-align: left;">
-                                <li>Nadi: {{ $resumePasien->objek_nadi }} x/mnt</li>
-                                <li>RR: {{ $resumePasien->objek_rr }} x/mnt</li>
-                            </div>
+                            </tr>
+                            <tr>
+                                <td class="my-0 py-0" style=" text-align: left;">
+                                    <li>Suhu :
+                                        {{ $resumePasien->objek_suhu }}
+                                        °C
+                                    </li>
+                                </td>
+                                <td class="my-0 py-0" style=" text-align: left;">
+                                    <li> RR :
+                                        {{ $resumePasien->objek_rr }}
+                                        x/mnt
+                                    </li>
+                                </td>
 
-                            <div style="flex: 0 0 20%; text-align: center;">
-                                <img src="{{ asset('img/paru_resume.jpg') }}" alt="QR Code" style="max-width: 100%;">
-                            </div>
-                        </div>
-
+                            </tr>
+                            <tr>
+                                <td class="my-0 py-0" style=" text-align: left;">
+                                    <li> BB :
+                                        {{ $resumePasien->objek_bb }}
+                                        kg
+                                    </li>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
+
                 </tr>
                 <tr>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
-                        <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Data Objektif
-                        </div>
+                        Data Objektif</td>
+                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
+                        :
                     </td>
-                    <td colspan="2" class="my-0 py-0" style="width: 50%; text-align: left;">
+                    <td class="my-0 py-0" style=" text-align: left;">
                         {{ $resumePasien->objek_data_objektif }}
                     </td>
-                </tr>
-            </tbody>
-        </table>
 
-        <table class="table-borTL mb-0" width="100%" style="border-top: 0cm solid #000000; !important;">
-            <tbody>
+                </tr>
                 <tr>
-                    <td class="my-0 py-0" colspan="4" style="text-align: left;">
-                        <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Penunjang Laboratorium</div>
+                    <td class="my-0 py-0" colspan="6" style=" font-weight: bold; text-align: left;">
+                        Penunjang Laboratorium</td>
+                </tr>
+                <tr>
+                    <td class="my-0 py-2" colspan="6" style="text-align: left;">
 
                         @if ($lab == null || $lab == '' || $lab == '[]')
                             <div style="margin-left: 38px;">
@@ -274,18 +273,18 @@
                             </div>
                         @else
                             @php
+                                // Membagi data lab menjadi bagian dengan maksimal 8 item per bagian
                                 $labChunks = array_chunk($lab, 8);
                             @endphp
-                            <div style="margin-left: 15px; display: flex; justify-content: space-between;">
+                            <div style="margin-left: 30px; display: flex; justify-content: space-between;">
                                 @foreach ($labChunks as $labChunk)
-                                    <table class="table-bor"
-                                        style="margin-left: 10px; margin-right: 10px; margin-bottom: 5px"
-                                        width="50%">
+                                    <table style="margin-left: 10px; margin-right: 10px" width="100%">
                                         <thead>
                                             <tr>
-                                                <td class="font-weight-bold py-1"> Pemeriksaan</td>
-                                                <td class="text-center font-weight-bold py-1"> Hasil</td>
-                                                <td class="text-center font-weight-bold py-1"> Nilai Normal</td>
+                                                <td class="font-weight-bold py-2"> Pemeriksaan</td>
+                                                <td class="text-center font-weight-bold py-2"> Hasil</td>
+                                                {{-- <td class="text-center font-weight-bold py-2"> Satuan</td> --}}
+                                                <td class="text-center font-weight-bold py-2"> Nilai Normal</td>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -306,17 +305,18 @@
                                             @endforeach
                                         </tbody>
                                     </table>
-                                    <br>
+                                    <br> <!-- Untuk memberikan jarak antara tabel -->
                                 @endforeach
                             </div>
                         @endif
                     </td>
                 </tr>
                 <tr>
-                    <td class="my-0 py-0" style="text-align: left;">
-                        <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Penunjang Radiologi</div>
+                    <td class="my-0 py-0" colspan="6" style=" font-weight: bold; text-align: left;">
+                        Penunjang Radiologi</td>
+                </tr>
+                <tr>
+                    <td class="my-0 py-0" colspan="6" style="text-align: left;">
                         <div style="margin-left: 38px;">
                             @if ($ro == null || $ro == '' || $ro == '[]')
                                 Tidak ada penunjang radiologi
@@ -326,38 +326,38 @@
                         </div>
                     </td>
                 </tr>
-            </tbody>
-        </table>
-        <table class="table-borTL mb-0" width="100%" style="border-top: 0cm solid #000000; !important;">
-            <tbody>
+
                 <tr>
-                    <td class="my-0 py-2" colspan="2" style="text-align: left; width: 50%;">
-                        <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Tindakan Medis</div>
+                    <td class="my-0 py-0" colspan="3" style=" font-weight: bold; text-align: left;">
+                        Tindakan Medis</td>
+                    <td class="my-0 py-0" colspan="3" style=" font-weight: bold; text-align: left;">
+                        Terapi / Obat</td>
+                </tr>
+                <tr>
+                    <td class="my-0 py-2" colspan="3" style="text-align: left;">
                         @if ($tindakan == null || $tindakan == '' || $tindakan == '[]')
                             <div style="margin-left: 38px;">
                                 Tidak ada tindakan medis
                             </div>
                         @else
                             @php
+                                // Membagi data lab menjadi bagian dengan maksimal 8 item per bagian
                                 $tindakanChunks = array_chunk($tindakan, 5);
                             @endphp
-                            <div style="margin-left: 15px; display: flex; justify-content: space-between;">
+                            <div style="margin-left: 30px; display: flex; justify-content: space-between;">
                                 @foreach ($tindakanChunks as $tindakanChunk)
-                                    <table class="table-bor" style="margin-left: 10px; margin-right: 10px"
-                                        width="100%">
+                                    <table style="margin-left: 10px; margin-right: 10px" width="100%">
                                         <thead>
                                             <tr>
-                                                <td class="font-weight-bold py-1">Tindakan</td>
-                                                <td class="text-center font-weight-bold py-1">BMHP/Obat</td>
+                                                <td class="font-weight-bold py-2">Tindakan</td>
+                                                <td class="text-center font-weight-bold py-2">BMHP/Obat</td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($tindakanChunk as $item)
                                                 <tr>
                                                     <td>{{ $item['tindakan'] }}</td>
-                                                    <td width="70%">
+                                                    <td>
                                                         @foreach ($item['bmhp'] as $item)
                                                             {{ $item['nmBmhp'] }} :
                                                             {{ $item['jumlah'] }}
@@ -368,33 +368,44 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                    <br> <!-- Untuk memberikan jarak antara tabel -->
                                 @endforeach
                             </div>
                         @endif
                     </td>
-                    <td class="my-0 py-2" colspan="2" style="text-align: left; width: 50%;">
-                        <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Terapi / Obat</div>
+
+                    <td class="my-0 py-2" colspan="3" style="text-align: left;">
                         @if ($tindakan == null || $tindakan == '' || $tindakan == '[]')
                             <div style="margin-left: 38px;">
                                 Tidak ada terapi / obat
                             </div>
                         @else
                             @php
+                                // Membagi data lab menjadi bagian dengan maksimal 8 item per bagian
                                 $tindakanChunks = array_chunk($tindakan, 5);
                             @endphp
                             <div style="margin-left: 30px; display: flex; justify-content: space-between;">
                                 @foreach ($tindakanChunks as $tindakanChunk)
-                                    <table class="table-bor" style="margin-left: 10px; margin-right: 10px"
-                                        width="100%">
+                                    <table style="margin-left: 10px; margin-right: 10px" width="100%">
                                         <thead>
                                             <tr>
-                                                <td class="font-weight-bold py-1">Nama Obat</td>
-                                                <td class="text-center font-weight-bold py-1">Dosis</td>
+                                                <td class="font-weight-bold py-2">Nama Obat</td>
+                                                <td class="text-center font-weight-bold py-2">Dosis</td>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            {{-- @foreach ($tindakanChunk as $item)
+                                                <tr>
+                                                    <td>{{ $item['tindakan'] }}</td>
+                                                    <td>
+                                                        @foreach ($item['bmhp'] as $item)
+                                                            {{ $item['nmBmhp'] }} :
+                                                            {{ $item['jumlah'] }}
+                                                            {{ $item['sediaan'] }},
+                                                        @endforeach
+                                                    </td>
+                                                </tr>
+                                            @endforeach --}}
                                             <tr>
                                                 <td>Paracetamol (dumy)</td>
                                                 <td>500 mg, 3x1</td>
@@ -450,53 +461,27 @@
 
                                         </tbody>
                                     </table>
+                                    <br> <!-- Untuk memberikan jarak antara tabel -->
                                 @endforeach
                             </div>
                         @endif
                     </td>
                 </tr>
                 <tr>
-                    <td style=" font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
-                        <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Diagnosa Primer</div>
+                    <td class="my-0 py-0" colspan="2" style="font-weight: bold; text-align: left;">
+                        Diagnosa Primer
                     </td>
-                    <td style=" padding-bottom:10px; text-align: left;">
-                        <li>{{ $resumePasien->diagnosa[0]['nama_diagnosa'] }}</li>
-                    </td>
-                    <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
-                        <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Diagnosa Sekunder</div>
-                    </td>
-                    <td style=" padding-bottom:10px; text-align: left;">
-                        @if (count($resumePasien->diagnosa) < 2)
-                            -
-                        @elseif (count($resumePasien->diagnosa) < 3)
-                            <li>
-                                {{ $resumePasien->diagnosa[1]['nama_diagnosa'] }}
-                            </li>
-                        @else
-                            <li>
-                                {{ $resumePasien->diagnosa[2]['nama_diagnosa'] ?? '' }}
-                            </li>
-                        @endif
+                    <td class="my-0 py-0" colspan="4" style=" text-align: left;">
+                        {{ $resumePasien->diagnosa[0]['nama_diagnosa'] ?? '-' }}
                     </td>
                 </tr>
-            </tbody>
-        </table>
-
-        <table class="table-borTL mb-0" width="100%" style="border-top: 0cm solid #000000; !important;">
-            <tbody>
                 <tr>
-                    <td colspan="4" style="padding-bottom: 10px; text-align: left;">
-                        <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Rencana Tindak Lanjut</div>
-                        <p style="margin-left: 38px; text-align: justify;">
-                            {{-- {{ $resumePasien->rencana_tindak_lanjut }} --}}
-                            -
-                        </p>
+                    <td class="my-0 py-0" colspan="2" style="font-weight: bold; text-align: left;">
+                        Diagnosa Sekunder
+                    </td>
+                    <td class="my-0 py-0" colspan="4" style=" text-align: left;">
+                        {{ $resumePasien->diagnosa[1]['nama_diagnosa'] ?? '-' }} <br>
+                        {{ $resumePasien->diagnosa[2]['nama_diagnosa'] ?? '' }}
                     </td>
                 </tr>
             </tbody>

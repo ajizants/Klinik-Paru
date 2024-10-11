@@ -473,7 +473,6 @@ class LaboratoriumController extends Controller
                 \Carbon\Carbon::parse($tglAkhir)->endOfDay(), // Menambahkan waktu akhir hari
             ])
             ->get();
-
         $lab = json_decode($data, true);
         $pasien = [];
 

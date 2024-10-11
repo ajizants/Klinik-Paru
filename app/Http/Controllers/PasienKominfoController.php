@@ -374,6 +374,7 @@ class PasienKominfoController extends Controller
             // $lab = [];
             // $ro = [];
             return view('Laporan.resume', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan'));
+            // return view('Laporan.resume1', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan'));
 
         } catch (\Exception $e) {
             Log::error('Terjadi kesalahan saat mencari data: ' . $e->getMessage());
