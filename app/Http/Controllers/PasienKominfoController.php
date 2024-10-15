@@ -290,6 +290,20 @@ class PasienKominfoController extends Controller
             }
 
             // return $resumePasien; // Mengembalikan objek $resumePasien
+            $dataObats = $resumePasien->resep_obat;
+            $obats = [];
+            // return $dataObats;
+
+            foreach ($dataObats as $obat) {
+                $obats[] = [
+                    'no_resep' => $obat['no_resep'],
+                    'aturan' => $obat['signa_1'] . ' X ' . $obat['signa_2'] . ' ' . $obat['aturan_pakai'],
+                    'nm_obat' => $obat['resep_obat_detail'],
+                ];
+            }
+
+            // return $obats;
+
             // $alamat = $resumePasien->kelurahan_nama . ', ' . $resumePasien->pasien_rt . '/' . $resumePasien->pasien_rw . ', ' . $resumePasien->kecamatan_nama . ', ' . $resumePasien->kabupaten_nama . ', ' . $resumePasien->provinsi_nama;
             $alamat = ucwords(strtolower($resumePasien->kelurahan_nama)) . ', ' .
             $resumePasien->pasien_rt . '/' . $resumePasien->pasien_rw . ', ' .
@@ -373,7 +387,7 @@ class PasienKominfoController extends Controller
             // return $tindakan;
             // $lab = [];
             // $ro = [];
-            return view('Laporan.resume', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan'));
+            return view('Laporan.resume', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan', 'obats'));
             // return view('Laporan.resume1', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan'));
 
         } catch (\Exception $e) {

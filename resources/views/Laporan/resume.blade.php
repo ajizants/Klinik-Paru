@@ -188,7 +188,7 @@
                         :
                     </td> --}}
                     <td width="36%" class="my-0 py-0" style=" text-align: left;">
-                        {{ Carbon\Carbon::parse($resumePasien->tanggal)->locale('id')->isoFormat('DD MMMM Y') }} ,
+                        {{ Carbon\Carbon::parse($resumePasien->tanggal)->locale('id')->isoFormat('DD MMMM Y') }}
                     </td>
                 </tr>
                 <tr>
@@ -207,7 +207,7 @@
                         :
                     </td> --}}
                     <td width="25%" class="my-0 py-0" style="text-align: left;">
-                        {{-- {{ Carbon\Carbon::parse($resumePasien->created_at)->format('H:i') }} --}}
+                        {{ Carbon\Carbon::parse($resumePasien->cppt_created_at)->format('H:i') }}
                         WIB
                     </td>
                 </tr>
@@ -217,15 +217,18 @@
         <table class="table-borTL mb-0" width="100%">
             <tbody>
                 <tr>
-                    <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
+                    <td width="15%" class="my-0 py-0" style="font-weight: bold; text-align: left;">
                         <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Data Subjektif</div>
+                            style="min-height:60px;  font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                            Data Subjektif (S)</div>
                     </td>
                     <td colspan="2" class="my-0 py-0" style="width: 50%; text-align: left;">
                         {{ $resumePasien->subjek }}
                     </td>
                     <td rowspan="2" style="padding-left: 10px; text-align: left;">
+                        <div
+                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                            Tanda-Tanda Vital</div>
                         <div class="resume-container"
                             style="padding: 10px; display: flex; justify-content: space-between; align-items: flex-start;">
                             <div style="flex: 1; text-align: left;">
@@ -238,10 +241,6 @@
                                 <li>Nadi: {{ $resumePasien->objek_nadi }} x/mnt</li>
                                 <li>RR: {{ $resumePasien->objek_rr }} x/mnt</li>
                             </div>
-
-                            <div style="flex: 0 0 20%; text-align: center;">
-                                <img src="{{ asset('img/paru_resume.jpg') }}" alt="QR Code" style="max-width: 100%;">
-                            </div>
                         </div>
 
                     </td>
@@ -249,8 +248,8 @@
                 <tr>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Data Objektif
+                            style="min-height:60px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                            Data Objektif (O)
                         </div>
                     </td>
                     <td colspan="2" class="my-0 py-0" style="width: 50%; text-align: left;">
@@ -262,70 +261,145 @@
 
         <table class="table-borTL mb-0" width="100%" style="border-top: 0cm solid #000000; !important;">
             <tbody>
-                <tr>
-                    <td class="my-0 py-0" colspan="4" style="text-align: left;">
-                        <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Penunjang Laboratorium</div>
+                @if (count($lab) > 8)
+                    <tr>
+                        <td class="my-0 py-0" colspan="4" style="text-align: left;">
+                            <div
+                                style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                                Penunjang Laboratorium</div>
 
-                        @if ($lab == null || $lab == '' || $lab == '[]')
-                            <div style="margin-left: 38px;">
-                                Tidak ada penunjang laboratorium
-                            </div>
-                        @else
-                            @php
-                                $labChunks = array_chunk($lab, 8);
-                            @endphp
-                            <div style="margin-left: 15px; display: flex; justify-content: space-between;">
-                                @foreach ($labChunks as $labChunk)
-                                    <table class="table-bor"
-                                        style="margin-left: 10px; margin-right: 10px; margin-bottom: 5px"
-                                        width="50%">
-                                        <thead>
-                                            <tr>
-                                                <td class="font-weight-bold py-1"> Pemeriksaan</td>
-                                                <td class="text-center font-weight-bold py-1"> Hasil</td>
-                                                <td class="text-center font-weight-bold py-1"> Nilai Normal</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($labChunk as $item)
-                                                <tr>
-                                                    <td>{{ $item['pemeriksaan'] }}</td>
-                                                    <td style="text-align: center">{{ $item['hasil'] }}
-                                                        {{ $item['satuan'] }}</td>
-                                                    {{-- <td style="text-align: center"></td> --}}
-                                                    <td width="60%">
-                                                        @php
-                                                            $normal = $item['normal'];
-                                                            $normal = str_replace(';', ';<br>', $normal);
-                                                        @endphp
-                                                        {!! $normal !!}
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                    <br>
-                                @endforeach
-                            </div>
-                        @endif
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0" style="text-align: left;">
-                        <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Penunjang Radiologi</div>
-                        <div style="margin-left: 38px;">
-                            @if ($ro == null || $ro == '' || $ro == '[]')
-                                Tidak ada penunjang radiologi
+                            @if ($lab == null || $lab == '' || $lab == '[]')
+                                <div style="min-height:60px; margin-left: 38px;">
+                                    Tidak ada penunjang laboratorium
+                                </div>
                             @else
-                                Jensi Foto: {{ $ro['jenisFoto'] }}, Proyeksi: {{ $ro['proyeksi'] }}
+                                @php
+                                    $labChunks = array_chunk($lab, 8);
+                                @endphp
+                                <div style="margin-left: 15px; display: flex; justify-content: space-between;">
+                                    @foreach ($labChunks as $labChunk)
+                                        <table class="table-bor"
+                                            style="margin-left: 10px; margin-right: 10px; margin-bottom: 5px"
+                                            width="50%">
+                                            <thead>
+                                                <tr>
+                                                    <td class="font-weight-bold py-1"> Pemeriksaan</td>
+                                                    <td class="text-center font-weight-bold py-1"> Hasil</td>
+                                                    <td class="text-center font-weight-bold py-1"> Nilai Normal</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($labChunk as $item)
+                                                    <tr>
+                                                        <td>{{ $item['pemeriksaan'] }}</td>
+                                                        <td style="text-align: center">{{ $item['hasil'] }}
+                                                            {{ $item['satuan'] }}</td>
+                                                        {{-- <td style="text-align: center"></td> --}}
+                                                        <td width="60%">
+                                                            @php
+                                                                $normal = $item['normal'];
+                                                                $normal = str_replace(';', ';<br>', $normal);
+                                                            @endphp
+                                                            {!! $normal !!}
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                        <br>
+                                    @endforeach
+                                </div>
                             @endif
-                        </div>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="my-0 py-0" style="width: 50%; text-align: left;">
+                            <div
+                                style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                                Penunjang Radiologi</div>
+                            <div style="min-height:60px; margin-left: 38px;">
+                                @if ($ro == null || $ro == '' || $ro == '[]')
+                                    Tidak ada penunjang radiologi
+                                @else
+                                    Jensi Foto: {{ $ro['jenisFoto'] }}, Proyeksi: {{ $ro['proyeksi'] }}
+                                @endif
+                            </div>
+                        </td>
+                        <td class="my-0 py-0" style="width: 50%; text-align: left;">
+                            <div style="padding: 10px; margin-left: 38px">
+                                <img src="{{ asset('img/paru_resume.jpg') }}" alt="QR Code"
+                                    style="max-width: 100%;">
+                            </div>
+                        </td>
+                    </tr>
+                @else
+                    <tr>
+                        <td class="my-0 py-0" style="text-align: left;">
+                            <div
+                                style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                                Penunjang Laboratorium</div>
+
+                            @if ($lab == null || $lab == '' || $lab == '[]')
+                                <div style="min-height:60px; margin-left: 38px;">
+                                    Tidak ada penunjang laboratorium
+                                </div>
+                            @else
+                                @php
+                                    $labChunks = array_chunk($lab, 8);
+                                @endphp
+                                <div style="margin-left: 15px; display: flex; justify-content: space-between;">
+                                    @foreach ($labChunks as $labChunk)
+                                        <table class="table-bor"
+                                            style="margin-left: 10px; margin-right: 10px; margin-bottom: 5px; width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <td class="font-weight-bold py-1"> Pemeriksaan</td>
+                                                    <td class="text-center font-weight-bold py-1"> Hasil</td>
+                                                    <td class="text-center font-weight-bold py-1"> Nilai Normal</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($labChunk as $item)
+                                                    <tr>
+                                                        <td>{{ $item['pemeriksaan'] }}</td>
+                                                        <td style="text-align: center">{{ $item['hasil'] }}
+                                                            {{ $item['satuan'] }}</td>
+                                                        <td width="60%">
+                                                            @php
+                                                                $normal = $item['normal'];
+                                                                $normal = str_replace(';', ';<br>', $normal);
+                                                            @endphp
+                                                            {!! $normal !!}
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                        <br>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </td>
+
+                        <td class="my-0 py-0" style="width: 50%; text-align: left;">
+                            <div
+                                style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                                Penunjang Radiologi</div>
+                            <div style="min-height:60px; margin-left: 38px;">
+                                @if ($ro == null || $ro == '' || $ro == '[]')
+                                    Tidak ada penunjang radiologi
+                                @else
+                                    Jensi Foto: {{ $ro['jenisFoto'] }}, <br>
+                                    Proyeksi: {{ $ro['proyeksi'] }}
+                                @endif
+                            </div>
+                            <div style="padding: 10px; margin-left: 38px">
+                                <img src="{{ asset('img/paru_resume.jpg') }}" alt="QR Code"
+                                    style="margin-left: 100px; width: 100px;">
+                            </div>
+                        </td>
+                    </tr>
+                @endif
             </tbody>
         </table>
         <table class="table-borTL mb-0" width="100%" style="border-top: 0cm solid #000000; !important;">
@@ -336,7 +410,7 @@
                             style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
                             Tindakan Medis</div>
                         @if ($tindakan == null || $tindakan == '' || $tindakan == '[]')
-                            <div style="margin-left: 38px;">
+                            <div style="min-height:60px; margin-left: 38px;">
                                 Tidak ada tindakan medis
                             </div>
                         @else
@@ -374,100 +448,67 @@
                     </td>
                     <td class="my-0 py-2" colspan="2" style="text-align: left; width: 50%;">
                         <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Terapi / Obat</div>
-                        @if ($tindakan == null || $tindakan == '' || $tindakan == '[]')
+                            style="font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                            Terapi / Obat
+                        </div>
+                        @if ($obats == null || $obats == '' || $obats == '[]')
                             <div style="margin-left: 38px;">
                                 Tidak ada terapi / obat
                             </div>
                         @else
                             @php
-                                $tindakanChunks = array_chunk($tindakan, 5);
+                                $obatsChunks = array_chunk($obats, 10);
                             @endphp
                             <div style="margin-left: 30px; display: flex; justify-content: space-between;">
-                                @foreach ($tindakanChunks as $tindakanChunk)
+                                @foreach ($obatsChunks as $obatsChunk)
                                     <table class="table-bor" style="margin-left: 10px; margin-right: 10px"
                                         width="100%">
                                         <thead>
                                             <tr>
+                                                <td class="font-weight-bold py-1">R/</td>
                                                 <td class="font-weight-bold py-1">Nama Obat</td>
-                                                <td class="text-center font-weight-bold py-1">Dosis</td>
+                                                <td class="text-center font-weight-bold py-1">Aturan Pakai</td>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>Paracetamol (dumy)</td>
-                                                <td>500 mg, 3x1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Ibuprofen</td>
-                                                <td>200 mg, 3x1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Amoxicillin</td>
-                                                <td>500 mg, 3x1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Cetirizine</td>
-                                                <td>10 mg, 1x1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Mefenamic Acid</td>
-                                                <td>500 mg, 3x1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Loratadine</td>
-                                                <td>10 mg, 1x1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Ranitidine</td>
-                                                <td>150 mg, 2x1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Aspirin</td>
-                                                <td>100 mg, 1x1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Metformin</td>
-                                                <td>500 mg, 2x1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Omeprazole</td>
-                                                <td>20 mg, 1x1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Ciprofloxacin</td>
-                                                <td>500 mg, 2x1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Dexamethasone</td>
-                                                <td>0.5 mg, 3x1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Clopidogrel</td>
-                                                <td>75 mg, 1x1</td>
-                                            </tr>
-
+                                            @foreach ($obatsChunk as $item)
+                                                <tr>
+                                                    <td>{{ $item['no_resep'] }}</td>
+                                                    <td>
+                                                        <ul style="padding-left: 20px;">
+                                                            @foreach ($item['nm_obat'] as $obat)
+                                                                <li>{{ $obat['nama_obat'] }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </td>
+                                                    <td>{{ $item['aturan'] }}</td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 @endforeach
                             </div>
                         @endif
                     </td>
+
                 </tr>
                 <tr>
                     <td style=" font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
                         <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Diagnosa Primer</div>
+                            style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                            Diagnosa Primer (A)</div>
                     </td>
                     <td style=" padding-bottom:10px; text-align: left;">
-                        <li>{{ $resumePasien->diagnosa[0]['nama_diagnosa'] }}</li>
+                        @if ($resumePasien->diagnosa == null || $resumePasien->diagnosa == '' || $resumePasien->diagnosa == '[]')
+                            -
+                        @else
+                            <li>{{ $resumePasien->diagnosa[0]['nama_diagnosa'] }}</li>
+                        @endif
                     </td>
                     <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
                         <div
-                            style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Diagnosa Sekunder</div>
+                            style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                            Diagnosa Sekunder (A)</div>
                     </td>
                     <td style=" padding-bottom:10px; text-align: left;">
                         @if (count($resumePasien->diagnosa) < 2)
@@ -492,11 +533,16 @@
                     <td colspan="4" style="padding-bottom: 10px; text-align: left;">
                         <div
                             style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Rencana Tindak Lanjut</div>
-                        <p style="margin-left: 38px; text-align: justify;">
-                            {{-- {{ $resumePasien->rencana_tindak_lanjut }} --}}
-                            -
-                        </p>
+                            Rencana Tindak Lanjut (P)</div>
+                        <li style="margin-left: 38px; text-align: justify;">
+                            Tanggal Kontrol Selanjutnya:
+                            {{ Carbon\Carbon::parse($resumePasien->tanggal_kontrol_selanjutnya)->locale('id')->isoFormat('DD MMMM Y') }}
+                        </li>
+                        @if ($resumePasien->rencana_tindak_lanjut != '-')
+                            <li style="margin-left: 38px; text-align: justify;">
+                                {{ $resumePasien->rencana_tindak_lanjut }}
+                            </li>
+                        @endif
                     </td>
                 </tr>
             </tbody>
@@ -504,75 +550,37 @@
         <div style="font-size: 115%;">
 
             {{-- Petugas --}}
-            <table class="table table-borderless" width="100%"">
+            <table class="table table-bor" width="100%">
                 <tbody>
                     <tr>
-                        <td width="60%" colspan="2" class="py-6 mt-6"></td>
-                        <td class="py-2" colspan="2" style="text-align: center;">Dokter,</td>
-                    </tr>
-                    <tr>
-                        <td colspan="4" class="py-2 " height="60px"></td>
-                    </tr>
-                    <tr>
-                        <td width="60%" colspan="2" class="py-2 "></td>
-                        <td class="py-2" colspan="2" style="text-align: center;">
-                            {{ $resumePasien->dokter_nama }}</td>
+                        <td colspan="4" class="py-2" style="text-align: right;">
+                            <div
+                                style="font-weight: bold; display: flex; flex-direction: column; align-items: flex-end; text-align: center; margin-top: 10px; margin-bottom: 10px; margin-right: 100px;">
+                                Dokter,
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                {{ $resumePasien->dokter_nama }}
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    {{-- <script>
-        Swal.fire({
-            icon: 'info',
-            title: 'Untuk mencetak hasil lab, silahkan klik tombol \n "ENTER" \n pada tombol keyboard.\n\n' +
-                'Jangan Lupa Mengisikan Umur Paien dan No Sample. Terima Kasih.',
-        })
-
-        //buatkan fungsi cek, apakah umur dan no_sampel sudah diisi saat sebelum cetak
-        function cetak() {
-            var umur = document.getElementById("umur").value;
-            var no_sampel = document.getElementById("no_sampel").value;
-            if (umur == "" || no_sampel == "") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Umur dan No Sample harus diisi terlebih dahulu!',
-                }).then(() => {
-                    if (document.getElementById("no_sampel").value == "") {
-                        document.getElementById("no_sampel").focus();
-                    } else {
-                        document.getElementById("umur").focus();
-                    }
-                    return false;
-                })
-                //fokuskan pada umur dan no_sampel
-            } else {
+    <script>
+        //bagaimana untuk mengecek umur dan no_sampel jika cetak dari tombol CTRL + P dan browser
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
                 window.print();
                 // window.onafterprint = function() {
                 window.close();
                 // }
             }
-        }
-        document.getElementById("no_sampel").focus();
-
-        function removeBgWarning(id) {
-            const input = document.getElementById(id);
-            if (input.value) {
-                input.classList.remove('bg-warning');
-            } else {
-                input.classList.add('bg-warning');
-            }
-        }
-
-        //bagaimana untuk mengecek umur dan no_sampel jika cetak dari tombol CTRL + P dan browser
-        document.addEventListener("keydown", function(event) {
-            if (event.key === "Enter") {
-                cetak();
-            }
         })
-    </script> --}}
+    </script>
 </body>
 
 </html>
