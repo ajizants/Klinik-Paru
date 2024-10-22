@@ -474,6 +474,7 @@ function antrianBelum(belumTransaksi, tgl) {
                             data-nama="${item.nama}"
                             data-alamat="${item.alamat}"
                             onclick="cariTsLab('${item.norm}', '${item.tgl}','tampil');"><i class="fa-solid fa-file-pen"></i></button>
+
                             `;
     });
 
@@ -513,21 +514,46 @@ function antrianSudah(sudahTransakasi, tgl) {
         const nmLayananArray = item.pemeriksaan.map(
             (pem) => pem.pemeriksaan.nmLayanan
         );
+        var sebutan = "";
+        let umur = item.umur.split("th")[0];
+        if (umur <= 14) {
+            sebutan = "Anak ";
+        } else if (umur > 14 && umur <= 30) {
+            if (item.jk == "L") {
+                sebutan = "Saudara ";
+            } else {
+                sebutan = "Nona ";
+            }
+        } else if (umur > 30) {
+            if (item.jk == "L") {
+                sebutan = "Bapak ";
+            } else {
+                sebutan = "Ibu ";
+            }
+        }
         item.pemeriksaan = nmLayananArray.join(", ");
         item.no = index + 1;
         item.tgl = tgl;
         item.tanggal = moment(item.created_at).format("DD-MM-YYYY");
         item.alamat = item.alamat.replace(/, [^,]*$/, "");
-        item.aksi = `<button class="btn btn-danger"
-                            data-toggle="tooltip"
-                            data-placement="right"
-                            title="Edit Hasil Lab"
-                            data-norm="${item.norm}"
-                            data-nama="${item.nama}"
-                            data-alamat="${item.alamat}"
-                            onclick="cariTsLab('${item.norm}', '${item.tgl}','tampil');"><i class="fa-solid fa-file-pen"></i></button>
-                    <a href="/api/hasil/lab/cetak/${item.notrans}/${item.tgl}" method="get" target="_blank" class="btn btn-success"
-                            data-toggle="tooltip" data-placement="right" title="Cetak Hasil Lab"><i class="fa-solid fa-print"></i></a>`;
+        let desa = item.alamat.split(",")[0];
+
+        item.aksi = `<div>
+                        <button class="btn btn-danger"
+                                data-toggle="tooltip"
+                                data-placement="right"
+                                title="Edit Hasil Lab"
+                                data-norm="${item.norm}"
+                                data-nama="${item.nama}"
+                                data-alamat="${item.alamat}"
+                                onclick="cariTsLab('${item.norm}', '${item.tgl}','tampil');"><i class="fa-solid fa-file-pen"></i></button>
+                        <a href="/api/hasil/lab/cetak/${item.notrans}/${item.tgl}" method="get" target="_blank" class="btn btn-success"
+                                data-toggle="tooltip" data-placement="right" title="Cetak Hasil Lab"><i class="fa-solid fa-print"></i></a>
+                    </div>
+                    <div class="mt-2">
+                        <a class="panggil px-2 btn btn-sm btn-warning"
+                            onclick="panggil('${sebutan} ${item.nama} dari ${desa}, silahkan menuju ke loket laboratorium')">Panggil <i class="fa-solid fa-volume-high"></i></a>
+                    </div>`;
     });
 
     $("#antrianSudah").DataTable({
@@ -559,6 +585,114 @@ function antrianSudah(sudahTransakasi, tgl) {
         responsive: true,
     });
 }
+
+// Fungsi untuk memproses dan menampilkan teks panggilan
+// function panggil(pesan) {
+//     console.log("🚀 ~ panggil ~ pesan:", pesan);
+//     // Jika Anda ingin menambahkan audio panggilan, contoh penggunaan SpeechSynthesis API:
+//     const utterance = new SpeechSynthesisUtterance(pesan);
+//     utterance.lang = "id-ID"; // Bahasa Indonesia
+//     speechSynthesis.speak(utterance);
+// }
+
+// function panggil(pesan) {
+//     console.log("🚀 ~ panggil ~ pesan:", pesan);
+
+//     // Membuat objek SpeechSynthesisUtterance dengan pesan
+//     const utterance = new SpeechSynthesisUtterance(pesan);
+//     utterance.lang = "id-ID"; // Bahasa Indonesia
+//     utterance.rate = 1; // Menurunkan kecepatan (0.1 - 2, default: 1)
+
+//     // Mendapatkan daftar suara yang tersedia
+//     const voices = speechSynthesis.getVoices();
+
+//     // Memilih suara wanita (jika tersedia) dalam bahasa Indonesia
+//     const femaleVoice = voices.find(
+//         (voice) => voice.lang === "id-ID" && voice.name.includes("Female")
+//     );
+//     console.log("🚀 ~ panggil ~ femaleVoice:", femaleVoice);
+
+//     // Jika ditemukan, gunakan suara wanita; jika tidak, tetap gunakan default
+//     if (femaleVoice) {
+//         utterance.voice = femaleVoice;
+//     }
+
+//     // Memutar suara
+//     speechSynthesis.speak(utterance);
+// }
+// function panggil(pesan) {
+//     console.log("🚀 ~ panggil ~ pesan:", pesan);
+
+//     // 1. Putar suara dingdong sebelum memulai ucapan
+//     const dingdong = new Audio("/audio/dingdong.mp3"); // Ganti path sesuai file Anda
+//     dingdong.play();
+
+//     // 2. Setelah suara dingdong selesai, ucapkan pesan
+//     dingdong.onended = () => {
+//         const utterance = new SpeechSynthesisUtterance(pesan);
+//         utterance.lang = "id-ID"; // Bahasa Indonesia
+//         utterance.rate = 0.6; // Kecepatan bicara
+//         utterance.pitch = 1; // Nada suara
+
+//         // Pilih suara wanita Bahasa Indonesia
+//         const voices = speechSynthesis.getVoices();
+//         const femaleVoice = voices.find(
+//             (voice) => voice.lang === "id-ID" && voice.name.includes("Female")
+//         );
+//         if (femaleVoice) {
+//             utterance.voice = femaleVoice;
+//         }
+
+//         speechSynthesis.speak(utterance);
+//     };
+// }
+
+function panggil(pesan) {
+    //     console.log("🚀 ~ panggil ~ pesan:", pesan);
+
+    // Cek daftar suara yang tersedia
+    const voices = speechSynthesis.getVoices();
+
+    // Cari suara VE Damayanti (atau yang mendukung id-ID)
+    const damayantiVoice = voices.find(
+        (voice) => voice.name.includes("Damayanti") || voice.lang === "id-ID"
+    );
+
+    const utterance = new SpeechSynthesisUtterance(pesan);
+    utterance.lang = "id-ID"; // Bahasa Indonesia
+
+    // Gunakan VE Damayanti jika ditemukan
+    if (damayantiVoice) {
+        utterance.voice = damayantiVoice;
+    } else {
+        console.warn(
+            "VE Damayanti tidak ditemukan, menggunakan suara default."
+        );
+    }
+
+    // Setel kecepatan dan nada suara jika diperlukan
+    utterance.rate = 0.6; // Turunkan sedikit kecepatannya
+    utterance.pitch = 1.0; // Nada normal
+
+    // Tambahkan dingdong sebelum panggilan
+    const dingdong = new Audio("/audio/dingdong.mp3");
+    dingdong
+        .play()
+        .then(() => {
+            setTimeout(() => {
+                speechSynthesis.speak(utterance);
+            }, 1000);
+        })
+        .catch((error) => {
+            console.error("Gagal memutar audio:", error);
+            speechSynthesis.speak(utterance); // Tetap lanjutkan ucapan
+        });
+}
+
+// Pastikan daftar suara sudah dimuat sebelum fungsi dipanggil
+speechSynthesis.onvoiceschanged = () => {
+    console.log("Voices loaded");
+};
 
 $(document).ready(function () {
     setTodayDate();

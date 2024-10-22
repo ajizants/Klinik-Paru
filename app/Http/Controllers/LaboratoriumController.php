@@ -143,6 +143,9 @@ class LaboratoriumController extends Controller
                 'tarif' => $d->tarif,
                 'status' => $d->status,
                 'statusTx' => $status,
+                'satuan' => $d->satuan,
+                'normal' => $d->normal,
+                'estimasi' => $d->estimasi,
             ];
         }
 
@@ -187,6 +190,7 @@ class LaboratoriumController extends Controller
         $notrans = $request->input('notrans');
         $norm = $request->input('norm');
         $nama = $request->input('nama');
+        $jk = $request->input('jk');
         $nik = $request->input('nik');
         $noSampel = $request->input('noSampel');
         $umur = $request->input('umur');
@@ -252,6 +256,7 @@ class LaboratoriumController extends Controller
                     $kunjunganLab->notrans = $notrans;
                     $kunjunganLab->norm = $norm;
                     $kunjunganLab->nama = $nama;
+                    $kunjunganLab->jk = $jk;
                     $kunjunganLab->nik = $nik;
                     $kunjunganLab->umur = $umur;
                     $kunjunganLab->no_sampel = $noSampel;

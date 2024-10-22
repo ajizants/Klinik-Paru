@@ -27,10 +27,18 @@ body {
     position: relative;
     /* Untuk posisi absolut */
 }
+.table-container2 {
+    max-height: 70vh;
+    /* Set max height untuk auto scroll */
+    overflow: hidden;
+    /* Sembunyikan scroll bar */
+    position: relative;
+    /* Untuk posisi absolut */
+}
 
 .table-auto {
-    animation: scroll 10s linear infinite;
-    -webkit-animation: scroll 10s linear infinite;
+    animation: scroll 30s linear infinite;
+    -webkit-animation: scroll 30s linear infinite;
 }
 
 @keyframes scroll {
@@ -43,4 +51,21 @@ body {
         transform: translateY(-100%);
         /* Scroll ke atas sepenuhnya */
     }
+}
+
+.marquee-container {
+    width: 80%;
+    overflow: hidden;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.marquee {
+    /* display: block;
+    white-space: nowrap; */
+    font-size: 30px;
+    font-weight: bold;
+    color: #1602fb;
 }

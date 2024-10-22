@@ -27,6 +27,9 @@
                                             <th>No</th>
                                             <th>Pemeriksaan</th>
                                             <th>Tarif</th>
+                                            <th>Estimasi Selesai(menit)</th>
+                                            <th>Satuan</th>
+                                            <th>Nilai Normal</th>
                                             <th>Status</th>
                                             <th>Kelas</th>
                                         </tr>
@@ -88,8 +91,8 @@
                                                 <div class="card-body">
                                                     <div class="row">
                                                         <div class="form-group col">
-                                                            <label for="idLayanan"
-                                                                class="col-sm-3 col-form-label font-weight-bold">Nama
+                                                            <label for="nmLayanan"
+                                                                class="col-sm col-form-label font-weight-bold">Nama
                                                                 Layanan</label>
                                                             <div class="col-md row">
                                                                 <input type="text" id="nmLayanan"
@@ -105,10 +108,28 @@
                                                                     placeholder="Tarif" />
                                                             </div>
                                                         </div>
+                                                        <div class="form-group col">
+                                                            <label for="satuan"
+                                                                class="col-sm col-form-label font-weight-bold">Satuan
+                                                                Hasil</label>
+                                                            <div class="col-md row">
+                                                                <input type="text" id="satuan"
+                                                                    class="form-control-sm col-md bg-white border border-white"
+                                                                    placeholder="Satuan Hasil">
+                                                            </div>
+                                                            <label for="estimasi"
+                                                                class="col-md col-form-label font-weight-bold">Estimasi
+                                                                Layanan (menit)</label>
+                                                            <div class="col-md">
+                                                                <input id="estimasi"
+                                                                    class="form-control-sm col-md bg-white border border-white"
+                                                                    placeholder="Estimasi Waktu Selesai" />
+                                                            </div>
+                                                        </div>
 
                                                         <div class="form-group col">
                                                             <label for="layanan"
-                                                                class="col-sm-3 col-form-label font-weight-bold">Status</label>
+                                                                class="col-sm col-form-label font-weight-bold">Status</label>
                                                             <div class="col">
                                                                 <select id="layanan"
                                                                     class="form-control select2bs4 border border-primary">
@@ -118,7 +139,7 @@
                                                                 </select>
                                                             </div>
                                                             <label for="kelas"
-                                                                class="col-sm-3 col-form-label font-weight-bold">Grup</label>
+                                                                class="col-sm col-form-label font-weight-bold">Grup</label>
                                                             <div class="col">
                                                                 <select id="kelas"
                                                                     class="form-control select2bs4 border border-primary">
@@ -129,6 +150,17 @@
                                                                     <option value="93">IMUNO SEROLOGI</option>
                                                                     <option value="94">BAKTERIOLOGI</option>
                                                                 </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group col">
+                                                            <label for="normal"
+                                                                class="col-sm col-form-label font-weight-bold">Nilai
+                                                                Normal</label>
+                                                            <div class="col-md row">
+                                                                <textarea type="text" id="normal" class="form-control-sm col-md bg-white border border-white"
+                                                                    placeholder="Nilai Normal"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>

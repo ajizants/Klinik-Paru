@@ -811,7 +811,6 @@
 //     });
 // });
 
-
 var Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -930,8 +929,8 @@ function askLab(button) {
     var notrans = $(button).data("notrans");
     var tgltrans = $(button).data("tgltrans");
     var asktind = $(button).data("asktind");
-    console.log("🚀 ~ askLab ~ asktind:", asktind);
     var umur = $(button).data("umur");
+    let jk = $(button).data("jk");
 
     $("#norm").val(norm);
     $("#nama").val(nama);
@@ -942,6 +941,7 @@ function askLab(button) {
     $("#notrans").val(notrans);
     $("#tgltrans").val(tgltrans);
     $("#umur").val(umur);
+    $("#jk").val(jk).trigger("change");
 
     // Memperbarui konten asktindContent
     $("#permintaan").html(`<b>${asktind}</b>`);
@@ -1041,8 +1041,9 @@ function simpan() {
     var tgltrans = $("#tgltrans").val();
     var noSampel = $("#no_sampel").val();
     var umur = $("#umur").val();
+    var jk = $("#jk").val();
 
-    if (!norm || !notrans || !dokter || !petugas || !noSampel || !umur) {
+    if (!norm || !notrans || !dokter || !petugas || !noSampel || !umur || !jk) {
         var dataKurang = [];
         if (!norm) dataKurang.push("No RM ");
         if (!notrans) dataKurang.push("Nomor Transaksi ");
@@ -1064,6 +1065,7 @@ function simpan() {
         if (!petugas) $("#petugas").focus();
         if (!noSampel) $("#no_sampel").focus();
         if (!umur) $("#umur").focus();
+        if (!jk) $("#jk").focus();
     } else {
         var pemeriksaan = $(".data-checkbox:checked");
 
@@ -1104,6 +1106,7 @@ function simpan() {
                 nama: nama,
                 nik: nik,
                 umur: umur,
+                jk: jk,
                 noSampel: noSampel,
                 alamat: alamat,
                 jaminan: jaminan,

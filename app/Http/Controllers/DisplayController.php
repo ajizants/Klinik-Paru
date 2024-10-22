@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\KominfoModel;
+use App\Models\LaboratoriumKunjunganModel;
+use App\Models\ROTransaksiHasilModel;
+use App\Models\ROTransaksiModel;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class DisplayController extends Controller
 {
@@ -37,6 +39,7 @@ class DisplayController extends Controller
         }
         return $listTunggu;
     }
+
     public function tensi()
     {
 
@@ -45,15 +48,132 @@ class DisplayController extends Controller
         $videos = null;
 
         $listTunggu = $this->listTungguTensi();
-        if (isset($listTunggu['error'])) {
-            // You can log the error or handle it accordingly
-            Log::error('Error fetching waiting list: ' . $listTunggu['error']);
-            // Return an empty array to avoid breaking the view
-            $listTunggu = [];
+        // return $data;
+
+        if (isset($listTunggu['response']['data']) && is_array($listTunggu['response']['data'])) {
+            $filteredData = array_filter(array_map(function ($d) {
+                $d['status'] = 'belum';
+                if (empty($d['laboratorium'])) {
+                    dd("kosong");
+                    return null;
+                }
+                return $d;
+            }, $listTunggu['response']['data']));
         }
-        // return $listTunggu;
+        // return $data;
 
         return view('Display.tensi', compact('title', 'listTunggu'));
+    }
+
+    public function tungguLab()
+    {
+        $tgl = date('Y-m-d');
+        // $tgl = '2024-10-19';
+        $dataLab = LaboratoriumKunjunganModel::with('pemeriksaan.pemeriksaan')
+            ->where('created_at', 'like', '%' . $tgl . '%')
+            ->get();
+
+        $tungguLab = []; // Inisialisasi array
+        $estimasiCounts = []; // Untuk menghitung frekuensi estimasi
+
+        foreach ($dataLab as $d) {
+            $pemeriksaan = $d->pemeriksaan;
+            $nonNullHasilCount = 0;
+
+            foreach ($pemeriksaan as $periksa) {
+                if (!is_null($periksa->hasil)) {
+                    $nonNullHasilCount++;
+                }
+            }
+
+            $jmlh = $pemeriksaan->count();
+
+            if ($nonNullHasilCount == 0) {
+                $status = 'Belum';
+            } else if ($nonNullHasilCount < $jmlh) {
+                $status = 'Belum';
+            } else {
+                $status = 'Selesai';
+            }
+
+            // Cek apakah 'pemeriksaan' dan 'pemeriksaan' di dalamnya tersedia
+            if (!empty($d->pemeriksaan)) {
+                foreach ($d->pemeriksaan as $pemeriksaan) {
+                    if (isset($pemeriksaan->pemeriksaan)) {
+                        $estimasi = $pemeriksaan->pemeriksaan->estimasi;
+
+                        // Hitung frekuensi kemunculan estimasi
+                        if (isset($estimasiCounts[$estimasi])) {
+                            $estimasiCounts[$estimasi]++;
+                        } else {
+                            $estimasiCounts[$estimasi] = 1;
+                        }
+                    }
+                }
+            }
+
+            // Dapatkan estimasi dengan frekuensi tertinggi
+            $estimasiTerbanyak = !empty($estimasiCounts)
+            ? array_search(max($estimasiCounts), $estimasiCounts)
+            : null;
+
+            $jam_masuk = Carbon::parse($d->created_at)->format('H:i');
+
+            $tungguLab[] = [
+                'id' => $d->id,
+                'norm' => $d->norm,
+                'nama' => $d->nama,
+                'alamat' => $d->alamat,
+                'jam_masuk' => $jam_masuk,
+                'satuan' => $pemeriksaan->pemeriksaan->satuan ?? null,
+                'normal' => $pemeriksaan->pemeriksaan->normal ?? null,
+                'estimasi' => $estimasiTerbanyak,
+                'status' => $status,
+            ];
+        }
+
+        return $tungguLab;
+    }
+    public function tungguRo()
+    {
+        $tgl = date('Y-m-d');
+        // $tgl = '2024-10-19';
+        $dataRo = ROTransaksiModel::where('created_at', 'like', '%' . $tgl . '%')
+            ->get();
+        // return $dataRo;
+
+        $tungguRo = []; // Inisialisasi array
+
+        foreach ($dataRo as $d) {
+            $jam_masuk = Carbon::parse($d->created_at)->format('H:i');
+            $status = "Belum";
+            $hasil = ROTransaksiHasilModel::where('norm', $d->norm)->where('tanggal', 'like', '%' . $tgl . '%')->first();
+
+            if ($hasil) {
+                $status = "Selesai";
+            }
+
+            $tungguRo[] = [
+                'id' => $d->id,
+                'norm' => $d->norm,
+                'nama' => $d->nama,
+                'alamat' => $d->alamat,
+                'jam_masuk' => $jam_masuk,
+                'estimasi' => 15,
+                'status' => $status,
+            ];
+        }
+
+        return $tungguRo;
+    }
+    public function lab()
+    {
+
+        $title = 'Daftar Tunggu';
+        $tungguLab = $this->tungguLab();
+        $tungguRo = $this->tungguRo();
+
+        return view('Display.lab', compact('title', 'tungguLab', 'tungguRo'));
     }
     public function poli($id)
     {

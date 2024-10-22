@@ -243,4 +243,7 @@ Route::post('/verif/pendaftaran/kominfo/submit', [VerifController::class, 'submi
 Route::post('kominfo/submit', [VerifController::class, 'submit']);
 Route::post('ambil/no/kominfo', [PasienKominfoController::class, 'ambilAntrean']);
 Route::post('list/tunggu/tensi', [DisplayController::class, 'listTungguTensi']);
+Route::get('list/tunggu/lab', [DisplayController::class, 'tungguLab']);
+Route::get('list/tunggu/ro', [DisplayController::class, 'tungguRo']);
+
 // });

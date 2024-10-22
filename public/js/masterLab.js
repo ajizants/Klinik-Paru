@@ -9,14 +9,22 @@ function showPeriksa() {
 }
 
 function editLayanan(button) {
+    console.log("🚀 ~ editLayanan ~ button:", button);
     var id = button.getAttribute("data-id");
     var nmLayanan = button.getAttribute("data-nmLayanan");
     var tarif = button.getAttribute("data-harga");
     var kelas = button.getAttribute("data-kelas");
     var status = button.getAttribute("data-status");
+    var estimasi = button.getAttribute("data-estimasi");
+    var normal = button.getAttribute("data-normal");
+    var satuan = button.getAttribute("data-satuan");
+
     document.getElementById("status-idLayanan").value = id;
     document.getElementById("status-nmLayanan").value = nmLayanan;
     document.getElementById("status-tarif").value = tarif;
+    document.getElementById("status-estimasi").value = estimasi;
+    document.getElementById("status-normal").value = normal;
+    document.getElementById("status-satuan").value = satuan;
     $("#status-kelas").val(kelas).trigger("change");
     $("#status-layanan").val(status).trigger("change");
 }
@@ -26,6 +34,9 @@ function updateLayanan() {
     var nmLayanan = document.getElementById("status-nmLayanan").value;
     var tarif = document.getElementById("status-tarif").value;
     var kelas = document.getElementById("status-kelas").value;
+    var estimasi = document.getElementById("status-estimasi").value;
+    var normal = document.getElementById("status-normal").value;
+    var satuan = document.getElementById("status-satuan").value;
     var status = document.getElementById("status-layanan").value;
     $.ajax({
         url: "/api/layanan/update",
@@ -36,6 +47,9 @@ function updateLayanan() {
             tarif: tarif,
             kelas: kelas,
             status: status,
+            estimasi: estimasi,
+            normal: normal,
+            satuan: satuan,
         },
         success: function (response) {
             console.log("🚀 ~ updateLayanan ~ response:", response);
@@ -95,6 +109,9 @@ function layananLab() {
                                     data-id="${item.idLayanan}"
                                     data-kelas="${item.kelas}"
                                     data-status="${item.status}"
+                                    data-estimasi="${item.estimasi}"
+                                    data-normal="${item.normal}"
+                                    data-satuan="${item.satuan}"
                                     data-toggle="modal"
                                     data-target="#modal-update"
                                     onclick="editLayanan(this);"><i class="fas fa-pen-to-square pr-3"></i></a>
@@ -115,10 +132,13 @@ function layananLab() {
             $("#dataPeriksa").DataTable({
                 data: response,
                 columns: [
-                    { data: "actions" },
+                    { data: "actions", className: "text-center col-1" },
                     { data: "no" },
                     { data: "nmLayanan" },
                     { data: "tarif" },
+                    { data: "estimasi" },
+                    { data: "satuan" },
+                    { data: "normal" },
                     { data: "status" },
                     { data: "kelas" },
                 ],

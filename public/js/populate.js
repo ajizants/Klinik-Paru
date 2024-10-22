@@ -6,7 +6,7 @@ var Toast = Swal.mixin({
 });
 
 let jk = "";
-function fetchDataAntrian(params, callback) {
+function fetchDataAntrian(ruang, params, callback) {
     $.ajax({
         url: "/api/cpptKominfo",
         type: "POST",
@@ -14,7 +14,15 @@ function fetchDataAntrian(params, callback) {
         success: callback,
         error: function (xhr) {
             console.error("Error fetching data:", xhr);
-            alert("Failed to fetch data. Please try again later.");
+            //atasi jika 404
+            if (xhr.status == 404) {
+                Toast.fire({
+                    icon: "error",
+                    title: "Data Tidak Ditemukan",
+                });
+                const dataArray = getNoDataMessage();
+                drawDataTable(dataArray, ruang);
+            }
         },
     });
 }
@@ -46,7 +54,7 @@ function antrian(ruang) {
         ruang: ruang,
     };
 
-    fetchDataAntrian(params, function (response) {
+    fetchDataAntrian(ruang, params, function (response) {
         $("#loadingSpinner").hide();
 
         if ($.fn.DataTable.isDataTable("#dataAntrian")) {
@@ -137,6 +145,7 @@ function generateActionButton(item, ruang) {
         data-notrans="${notrans}"
         data-tgltrans="${item.tanggal}"
         data-umur="${item.umur}"
+        data-jk="${item.jenis_kelamin_nama}"
     `;
 
     switch (ruang) {
