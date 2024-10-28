@@ -23,7 +23,7 @@
             </div>
             <!-- Card Body -->
             <div class="card-body mb-2">
-                <div class="row">
+                <div class="row  flex-lg-row flex-column">
                     <div class="card shadow mb-4 col">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
@@ -58,10 +58,8 @@
                                     </tbody>
                                 </table>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -82,7 +80,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="row">
+                <div class="row  flex-lg-row flex-column">
                     <div class="card shadow mb-4 col">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
@@ -108,13 +106,10 @@
                                     </tbody>
                                 </table>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
-
-                <div class="row">
+                <div class="row  flex-lg-row flex-column">
                     <div class="card shadow mb-4 col">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
@@ -164,7 +159,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row ">
                     <div class="card shadow mb-4 col">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
@@ -193,7 +188,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row  flex-lg-row flex-column">
                     <div class="card shadow mb-4 col">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">

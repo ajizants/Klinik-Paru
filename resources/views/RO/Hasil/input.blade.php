@@ -23,10 +23,10 @@
                                 <div class="collapse show" id="collapseCardExample">
                                     <div class="card-body p-2">
                                         <div class="container-fluid py-2">
-                                            <div class="form-group row" id="buttondiv"></div>
+                                            <div class="form-group row flex-lg-row flex-column" id="buttondiv"></div>
                                         </div>
                                         <div class="container-fluid">
-                                            <div id="preview" class="row"></div>
+                                            <div id="preview" class="row flex-lg-row flex-column"></div>
 
                                         </div>
                                     </div>

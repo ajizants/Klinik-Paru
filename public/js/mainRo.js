@@ -424,6 +424,8 @@ async function cariTsRo(norm, tgl) {
                 }
 
                 //ternary check transaksi.jk, if null get from transaksi.pasien.jkel
+                let noreg = transaksi.noreg;
+                console.log("🚀 ~ cariTsRo ~ noreg:", noreg);
                 jk = transaksi.jk || transaksi.pasien.jkel;
                 // var alamat = `${transaksi.pasien.kelurahan}, ${transaksi.pasien.rtrw}, ${transaksi.pasien.kecamatan}, ${transaksi.pasien.kabupaten}`;
                 $("#norm").val(transaksi.norm || "");
@@ -538,7 +540,7 @@ function showFoto(foto) {
             ket = ""; // Or some other fallback value
         }
 
-        item.actions = `<a type="button"  class="btn-sm btn-danger mx-2"
+        item.actions = `<a type="button"  class="btn-sm btn-danger mx-2 mt-md-0 mt-2"
                             data-id="${item.id}"
                             data-foto="${item.foto}"
                             data-ketFoto="${item.ketFoto}"
@@ -546,7 +548,7 @@ function showFoto(foto) {
                             data-nama="${item.nama}"
                             onclick="deleteFoto('${item.id}')"
                             ><i class="fas fa-trash"></i></a>
-                        <a type="button"  class="btn-sm btn-warning mx-2"
+                        <a type="button"  class="btn-sm btn-warning mx-2 mt-md-0 mt-2"
                             data-id="${item.id}"
                             data-foto="${item.foto}"
                             data-ketFoto="${item.ketFoto}"
@@ -661,6 +663,7 @@ function askRo(button) {
     var notrans = $(button).data("notrans");
     var tgltrans = $(button).data("tgltrans");
     var asktind = $(button).data("asktind");
+    jk = $(button).data("jk");
 
     $("#norm").val(norm);
     $("#nama").val(nama);
@@ -670,6 +673,7 @@ function askRo(button) {
     $("#layanan").val(layanan).trigger("change");
     $("#notrans").val(notrans);
     $("#tgltrans").val(tgltrans);
+    $("#jk").val(jk);
 
     // Memperbarui konten asktindContent
     $("#permintaan").html(`<b>${asktind}</b>`);

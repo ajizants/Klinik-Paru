@@ -77,7 +77,7 @@
                 @csrf
                 <form class="form-horizontal">
                     <div class="card-body" id="inputSection">
-                        <div class="form-grup row">
+                        <div class="form-group row">
                             <label for="norm" class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
                                 :</label>
                             <div class="col-sm-2 input-group" style="overflow: hidden;">
@@ -107,7 +107,7 @@
                                     readonly>
                             </div>
                         </div>
-                        <div class="form-grup row mt-2">
+                        <div class="form-group row mt-2">
                             <label for="tgltind" class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                 :</label>
                             <div class="col-sm-2">
@@ -129,7 +129,7 @@
                                     readonly />
                             </div>
                         </div>
-                        <div class="mt-2 form-grup row d-flex justify-content-center">
+                        <div class="mt-2 form-group row d-flex justify-content-center">
                             <label for="apoteker" class="col-sm-1 col-form-label font-weight-bold">Petugas
                                 :</label>
                             <div class="col-sm-4">
@@ -145,7 +145,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="mt-3 form-grup d-flex justify-content-center">
+                        <div class="mt-3 form-group d-flex justify-content-center">
                             <button type="button" class="btn btn-primary col" data-toggle="modal"
                                 data-target="#riwayatModal" onclick="showRiwayat()">Lihat
                                 Riwayat

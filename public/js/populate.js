@@ -150,16 +150,16 @@ function generateActionButton(item, ruang) {
 
     switch (ruang) {
         case "dots":
-            return `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+            return `<a type="button" class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
                 onclick="cariPasienTb('${item.pasien_no_rm}','${item.tanggal}');"><i class="fas fa-pen-to-square"></i></a>`;
         case "ro":
-            return `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+            return `<a type="button" class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
                 ${commonAttributes} onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
         case "igd":
-            return `<a class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+            return `<a class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
         ${commonAttributes} onclick="setTransaksi(this);"><i class="fas fa-pen-to-square"></i></a>`;
         case "lab":
-            return `<a class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
+            return `<a class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
                 ${commonAttributes} onclick="askLab(this);"><i class="fas fa-pen-to-square"></i></a>`;
     }
 }
@@ -341,25 +341,18 @@ function generateActionLink(item, ruang) {
         data
     `;
     const links = {
-        dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-        lab: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-        ro: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-        igd: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
-              <button type="button" ${commonAttributes} class="aksi-button btn-sm btn-${item.igd_selesai} py-0 icon-link icon-link-hover" onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this,'${ruang}')" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`,
-        default: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+        dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+        lab: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+        ro: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+        igd: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
+              <button type="button" ${commonAttributes} class="aksi-button btn-sm btn-${item.igd_selesai} py-md-0 py-1 mt-md-0 mt-2 icon-link icon-link-hover" onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this,'${ruang}')" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`,
+        default: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1  icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
     };
-    // const links = {
-    //     dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariPasienTb('${item.pasien_no_rm}', '${item.tanggal}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-    //     lab: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariTsLab('${item.pasien_no_rm}', '${item.tanggal}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-    //     ro: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariTsRo('${item.pasien_no_rm}', '${item.tanggal}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-    //     igd: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariTsIgd('${item.pasien_no_rm}', '${item.tanggal}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>
-    //           <button type="button" ${commonAttributes} class="aksi-button btn-sm btn-${item.igd_selesai} py-0 icon-link icon-link-hover" onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this)" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`,
-    //     default: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover" onclick="cariKominfo('${item.pasien_no_rm}', '${item.tanggal}', '${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-    // };
     return links[ruang] || links.default;
 }
 
 function setTransaksi(button, ruang) {
+    console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi)
     var norm = $(button).data("norm");
     var nama = $(button).data("nama");
     var dokter = $(button).data("kddokter");

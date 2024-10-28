@@ -108,7 +108,7 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-end">
-                        <div class="form-grup row">
+                        <div class="form-group row">
                             <div class="col-auto">
                                 <a class="btn btn-primary" id="tombol_selesai"
                                     onclick="validasi('kunjungan');">Simpan</a>

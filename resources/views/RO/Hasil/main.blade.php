@@ -7,11 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>KKPM | {{ isset($title) ? $title : '' }}</title>
 
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap"
+        rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="{{ asset('vendor/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}">
     <!-- DataTables -->
@@ -22,16 +23,23 @@
     <link rel="stylesheet" href="{{ asset('vendor/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/plugins/daterangepicker/daterangepicker.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/panzoom/panzoom.css" />
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
     <link type="text/css" rel="stylesheet" href="{{ asset('css/mystyle.css') }}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/panzoom/panzoom.css" />
+    {{-- Scripting --}}
     <!-- jQuery -->
     <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap 4 -->
     <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- SweetAlert2 -->
     <script src="{{ asset('vendor/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+    <!-- Select2 -->
+    <script src="{{ asset('vendor/plugins/select2/js/select2.full.min.js') }}"></script>
+    <!-- InputMask -->
+    <script src="{{ asset('vendor/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('vendor/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
     <!-- DataTables  & Plugins -->
     <script src="{{ asset('vendor/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendor/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
@@ -47,6 +55,8 @@
     <script src="{{ asset('vendor/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
     <script src="{{ asset('vendor/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
     <script src="{{ asset('vendor/plugins/daterangepicker/daterangepicker.js') }}"></script>
+    {{-- confetti --}}
+    <script src="{{ asset('vendor/plugins/confetti/confetti.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
 
@@ -196,49 +206,50 @@
                 const buttonid = `btn${item.id}`;
 
                 const button =
-                    `<a type="button" class="btn btn-primary btn-sm mx-3" id="${buttonid}" onclick="toggleImage('${cardid}', '${buttonid}')">Foto Tanggal: ${item.tanggal}</a>`;
+                    `<a type="button" class="btn btn-primary btn-sm mx-3 mt-3" id="${buttonid}" onclick="toggleImage('${cardid}', '${buttonid}')">Foto Tanggal: ${item.tanggal}</a>`;
 
                 const card = `
-            <div class="col-6 gallery" id=${cardid} style="display:none; ">
-                <div class="card m-2" style="cursor: pointer; height: 700px;">
-                    <div class="f-panzoom" id="${panzoomid}"style=" height: 700px;">
-                        <div class="f-custom-controls top-right">
-                            <button data-panzoom-action="toggleFS" class="toggleFullscreen">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <g>
-                                        <path d="M14.5 9.5 21 3m0 0h-6m6 0v6M3 21l6.5-6.5M3 21v-6m0 6h6" />
-                                    </g>
-                                    <g>
-                                        <path d="m14 10 7-7m-7 7h6m-6 0V4M3 21l7-7m0 0v6m0-6H4" />
-                                    </g>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="f-custom-controls bottom-right">
-                            <button data-panzoom-change='{"angle": 90}'>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M9 4.55a8 8 0 0 1 6 14.9M15 15v5h5M5.63 7.16v.01M4.06 11v.01M4.63 15.1v.01M7.16 18.37v.01M11 19.94v.01" />
-                                </svg>
-                            </button>
-                            <button data-panzoom-action="zoomIn">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 5v14M5 12h14" />
-                                </svg>
-                            </button>
-                            <button data-panzoom-action="zoomOut">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M5 12h14" />
-                                </svg>
-                            </button>
-                        </div>
-                        <img class="f-panzoom__content" id="zoomed-image" src="${imageUrl}" />
-                    </div>
-                    <div class="card-footer">
-                        <h5 class="text-center">${item.norm} - ${item.nama}</h5>
-                        <h5 class="text-center">Tanggal: ${item.tanggal}</h5>
-                    </div>
-                </div>
-            </div>`;
+                                <div class="col gallery" id=${cardid} style="display:none; ">
+                                    <div class="card m-2" style="cursor: pointer; height: 700px;">
+                                        <div class="f-panzoom" id="${panzoomid}"style=" height: 700px;">
+                                            <div class="f-custom-controls top-right">
+                                                <button data-panzoom-action="toggleFS" class="toggleFullscreen">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <g>
+                                                            <path d="M14.5 9.5 21 3m0 0h-6m6 0v6M3 21l6.5-6.5M3 21v-6m0 6h6" />
+                                                        </g>
+                                                        <g>
+                                                            <path d="m14 10 7-7m-7 7h6m-6 0V4M3 21l7-7m0 0v6m0-6H4" />
+                                                        </g>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <div class="f-custom-controls bottom-right">
+                                                <button data-panzoom-change='{"angle": 90}'>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M9 4.55a8 8 0 0 1 6 14.9M15 15v5h5M5.63 7.16v.01M4.06 11v.01M4.63 15.1v.01M7.16 18.37v.01M11 19.94v.01" />
+                                                    </svg>
+                                                </button>
+                                                <button data-panzoom-action="zoomIn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M12 5v14M5 12h14" />
+                                                    </svg>
+                                                </button>
+                                                <button data-panzoom-action="zoomOut">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M5 12h14" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <img class="f-panzoom__content" id="zoomed-image" src="${imageUrl}" />
+                                        </div>
+                                        <div class="card-footer">
+                                            <h5 class="text-center">${item.norm} - ${item.nama}</h5>
+                                            <h5 class="text-center">Tanggal: ${item.tanggal}</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
 
                 buttondiv.insertAdjacentHTML('beforeend', button);
                 preview.insertAdjacentHTML('beforeend', card);
@@ -573,20 +584,24 @@
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="http://rsparu.kkpm.local" target="_blank"" class="nav-link">RS Paru</a>
                 </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="http://172.16.10.88/ro" target="_blank"" class="nav-link">Aplikasi Radiologi</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="https://kkpm.banyumaskab.go.id/administrator/auth" target="_blank""
+                        class="nav-link">Aplikasi KOMINFO</a>
+                </li>
             </ul>
 
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
                 <!-- Navbar Search -->
-                <li class="class="nav-item form-inline"">
+                <li class="nav-item form-inline">
                     <label for="waktu" class="font-weight-bold mb-0 mr-2">Waktu
                         :</label>
                     <input type="text" id="waktu" class="bg-white border border-white " readonly />
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                        <i class="fas fa-search"></i>
-                    </a>
                     <div class="navbar-search-block">
                         <form class="form-inline">
                             <div class="input-group input-group-sm">
@@ -615,11 +630,11 @@
                             <!-- Message Start -->
                             <div class="media">
                                 <img src="{{ asset('img/user1.webp') }}" alt="User Avatar"
-                                    class="img-size-50 mr-3 img-circle">
+                                    class="img-size-50 mr-3 img-circle">/
                                 <div class="media-body">
                                     <h3 class="dropdown-item-title">
-                                        <b>Guest</b>
-                                        <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                                        <span class="float-right text-sm text-danger"><i
+                                                class="fas fa-star"></i></span>
                                     </h3>
                                     <p class="text-sm">Wis Rampung Lik...?</p>
                                 </div>
@@ -640,6 +655,7 @@
                 </li>
             </ul>
         </nav>
+
 
         @include('Template.sidebar')
 

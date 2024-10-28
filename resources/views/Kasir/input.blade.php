@@ -17,7 +17,7 @@
                                 @csrf
                                 <form class="form-horizontal" id="formIdentitas">
                                     <div class="card-body">
-                                        <div class="form-grup row">
+                                        <div class="form-group row">
                                             <label for="norm"
                                                 class="col-sm-1 col-form-label font-weight-bold mb-0">No RM
                                                 :</label>
@@ -41,7 +41,7 @@
                                                     placeholder="Nama Pasien" readonly>
                                             </div>
                                         </div>
-                                        <div class="form-grup row mt-3">
+                                        <div class="form-group row mt-3">
                                             <label for="tglKunj"
                                                 class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                                 :</label>
@@ -65,7 +65,7 @@
                                                     placeholder="Alamat Pasien" readonly />
                                             </div>
                                         </div>
-                                        <div class="mt-3 form-grup row d-flex justify-content-center">
+                                        <div class="mt-3 form-group row d-flex justify-content-center">
                                             <label for="petugas"
                                                 class="col-sm-1 col-form-label font-weight-bold">Petugas
                                                 :</label>

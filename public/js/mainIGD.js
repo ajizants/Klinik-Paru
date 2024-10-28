@@ -370,35 +370,6 @@ $(document).ready(function () {
         }
     });
 
-    // $("#dataAntrian").on("click", ".aksi-button", function (e) {
-    //     e.preventDefault();
-
-    //     var norm = $(this).data("norm");
-    //     var nama = $(this).data("nama");
-    //     var dokter = $(this).data("kddokter");
-    //     var alamat = $(this).data("alamat");
-    //     var layanan = $(this).data("layanan");
-    //     var notrans = $(this).data("notrans");
-    //     var tgltrans = $(this).data("tgltrans");
-    //     var tgl = $(this).data("tgl");
-    //     var asktind = $(this).data("asktind");
-
-    //     $("#norm").val(norm);
-    //     $("#nama").val(nama);
-    //     $("#dokter").val(dokter);
-    //     $("#dokter").trigger("change");
-    //     $("#alamat").val(alamat);
-    //     $("#layanan").val(layanan);
-    //     $("#notrans").val(notrans);
-    //     $("#tgltrans").val(tgltrans);
-    //     $("#tgltind").val(tgl);
-    //     $("#asktind").val(asktind);
-    //     $("#permintaan").html(`<b>${asktind}</b>`);
-
-    //     scrollToInputSection();
-    //     dataTindakan();
-    // });
-
     $("#dataTindakan").on("click", ".edit", function (e) {
         e.preventDefault();
         var id = $(this).data("id");

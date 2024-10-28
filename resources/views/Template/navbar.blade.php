@@ -1,4 +1,4 @@
-        <nav class="main-header navbar navbar-expand navbar-light bg-white font-weight-bold">
+        <nav class="main-header navbar navbar-expand navbar-light font-weight-bold" style="background-color: #babcbf">
             <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -25,7 +25,7 @@
                 <li class="nav-item form-inline">
                     <label for="waktu" class="font-weight-bold mb-0 mr-2">Waktu
                         :</label>
-                    <input type="text" id="waktu" class="bg-white border border-white " readonly />
+                    <label type="text" id="waktu" class="font-weight-bold mb-0 mr-2" readonly></label>
                 </li>
                 <li class="nav-item">
                     <div class="navbar-search-block">

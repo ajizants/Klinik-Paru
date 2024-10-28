@@ -10,7 +10,7 @@
                         <div class="card-body">
                             @csrf
                             <fieldset>
-                                <div class="form-grup row border border-3 border-info mx-1">
+                                <div class="form-group row border border-3 border-info mx-1">
                                     <h5 class="border-bottom border-3 border-info py-2">Identitas</h5>
                                     <div class="row">
                                         <div class="col-md-3 form-inline">

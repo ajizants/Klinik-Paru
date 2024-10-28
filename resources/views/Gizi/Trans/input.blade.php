@@ -15,7 +15,7 @@
                                 @csrf
                                 <form class="form-horizontal" id="form_identitas">
                                     <div class="card-body p-2">
-                                        <div class="form-grup row"id="inputSection">
+                                        <div class="form-group row"id="inputSection">
                                             <label for="norm"
                                                 class="col-sm-1 col-form-label font-weight-bold mb-0 ">No
                                                 RM
@@ -45,7 +45,7 @@
                                                     aria-describedby="inputGroup-sizing-sm" placeholder="JK">
                                             </div>
                                         </div>
-                                        <div class="form-grup row mt-2">
+                                        <div class="form-group row mt-2">
                                             <label for="tglLahir"
                                                 class="col-sm-1 col-form-label font-weight-bold mb-0">Tgl
                                                 Lahir
@@ -81,7 +81,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-grup row mt-2">
+                                        <div class="form-group row mt-2">
                                             <label for="tgltrans"
                                                 class="col-sm-1 col-form-label font-weight-bold mb-0">Tgl
                                                 Input :</label>

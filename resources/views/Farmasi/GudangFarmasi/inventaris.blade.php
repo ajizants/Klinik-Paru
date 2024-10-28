@@ -226,7 +226,7 @@
                                         placeholder="Id Gudang" readonly hidden>
                                 </div>
                                 <div class="row">
-                                    <div class="form-grup col-4">
+                                    <div class="form-group col-4">
                                         <label for="productID" class="form-label pt-2">Produk ID</label>
                                         <div id="obatg">
                                             <input id="productID" class="form-control-sm col border border-primary"
@@ -259,7 +259,7 @@
                                                 placeholder="Harga Jual" required>
                                         </div>
                                     </div>
-                                    <div class="form-grup col-4">
+                                    <div class="form-group col-4">
                                         <label for="nmObat" class="form-label pt-2">
                                             Nama Obat </label>
                                         <div class="">
@@ -300,7 +300,7 @@
                                                 placeholder="sisaStok" readonly hidden>
                                         </div>
                                     </div>
-                                    <div class="form-grup col-4">
+                                    <div class="form-group col-4">
                                         <label for="sediaan" class="form-label pt-2">
                                             Sediaan*
                                         </label>

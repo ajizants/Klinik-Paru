@@ -47,21 +47,14 @@ input::-webkit-input-placeholder {
     font-size: 17px;
 }
 
-.delete {
-    color: red;
-}
-
 .edit:hover i {
     font-size: 17px;
 }
-
-.panggil:hover i {
-    font-size: 17px;
-}
-
 .delete:hover i {
     font-size: 17px;
-    color: red;
+}
+.panggil:hover i {
+    font-size: 17px;
 }
 
 /* confetti */

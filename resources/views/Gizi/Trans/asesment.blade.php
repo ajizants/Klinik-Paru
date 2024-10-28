@@ -380,7 +380,7 @@
         </div>
     </form>
     <div class="card-footer">
-        <div class="form-grup row d-flex justify-content-end">
+        <div class="form-group row d-flex justify-content-end">
             <div class="col-auto">
                 <a class="btn btn-primary" onclick="validasi('asesment');">Simpan</a>
             </div>

@@ -6,7 +6,7 @@
                         @csrf
                         <form class="form-horizontal" id="form_identitas">
                             <div class="card-body">
-                                <div class="form-grup row">
+                                <div class="form-group row">
                                     <label for="norm" class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
                                         :</label>
                                     <div class="col-sm-2 input-group" style="overflow: hidden;">
@@ -31,7 +31,7 @@
                                             placeholder="umur">
                                     </div>
                                 </div>
-                                <div class="form-grup row mt-2">
+                                <div class="form-group row mt-2">
                                     <label for="tgltrans" class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                         :</label>
                                     <div class="col-sm-2">

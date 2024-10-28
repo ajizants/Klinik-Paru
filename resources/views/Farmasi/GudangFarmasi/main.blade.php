@@ -17,8 +17,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form class="form-grup">
-                        <div class="form-grup row">
+                    <form class="form-group">
+                        <div class="form-group row">
                             <div class="form-inline col">
                                 <label for="nmObat" class="col-4 d-flex justify-content-start"> Nama Obat </label>
                                 <input type="text" id="nmObat" class="form-control-sm col-5 border border-info"
@@ -34,7 +34,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-grup row pt-3">
+                        <div class="form-group row pt-3">
                             <div class="form-inline col">
                                 <label for="tglBeli" class="col-4 d-flex justify-content-start"> Tanggal Pembelian </label>
                                 <input type="date" id="tglBeli" class="form-control-sm col-5 border border-info"
@@ -46,7 +46,7 @@
                                     value="{{ now()->format('Y-m-d') }}" required>
                             </div>
                         </div>
-                        <div class="form-grup row pt-3">
+                        <div class="form-group row pt-3">
                             <div class="form-inline col">
                                 <label for="hargaBeli" class="col-4 d-flex justify-content-start"> Harga Beli </label>
                                 <input type="text" id="hargaBeli" class="form-control-sm col-5 border border-info"
@@ -58,7 +58,7 @@
                                     placeholder="Harga Jual" required>
                             </div>
                         </div>
-                        <div class="form-grup row pt-3">
+                        <div class="form-group row pt-3">
                             <div class="form-inline col">
                                 <label for="jenis" class="col-4 d-flex justify-content-start"> Jenis </label>
                                 <select id="jenis" class="form-control select2bs4 border border-black"

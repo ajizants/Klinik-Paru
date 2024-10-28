@@ -10,7 +10,7 @@
                     <div class="collapse show" id="collapseCardExample">
                         <div class="card-body p-2">
                             <div class="container-fluid py-2">
-                                <div class="form-grup row ">
+                                <div class="form-group row ">
                                     <label for="reservation" class="col-sm-1 col-form-label">Tanggal:</label>
                                     <div class="input-group col-sm-3">
                                         <div class="input-group-prepend">
@@ -85,8 +85,8 @@
                                                     <th id="totalJmlFilmRusak"></th>
                                                     <th id="proyeksi"></th>
                                                     <th id ="mesin"> </th>
-                                                    <th > </th>
-                                                    <th id ="petugas" > </th>
+                                                    <th> </th>
+                                                    <th id ="petugas"> </th>
                                                 </tr>
                                             </tfoot>
 

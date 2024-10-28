@@ -18,7 +18,7 @@
                                     @csrf
                                     <form class="form-horizontal">
                                         <div class="card-body" id="frm-identitas">
-                                            <div class="form-grup row">
+                                            <div class="form-group row">
                                                 <label for="norm"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
                                                     :</label>
@@ -48,7 +48,7 @@
                                                         placeholder="Nama Pasien" readonly>
                                                 </div>
                                             </div>
-                                            <div class="form-grup row mt-2">
+                                            <div class="form-group row mt-2">
                                                 <label for="tgltind"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                                     :</label>
@@ -85,7 +85,7 @@
                                         <!-- /.card-header -->
                                         <div class="card-body p-2">
                                             @csrf
-                                            <form class="form-grup col">
+                                            <form class="form-group col">
                                                 <div class="card-body p-1 card-body table-responsive" id="permintaan"
                                                     style="height: 8rem">
                                                 </div>
@@ -174,8 +174,8 @@
                                         <!-- /.card-header -->
                                         <div class="card-body p-2">
                                             @csrf
-                                            <form class="form-grup col">
-                                                <div class="form-grup col">
+                                            <form class="form-group col">
+                                                <div class="form-group col">
                                                     <label for="bmhp"> BMHP :</label>
                                                     <select id="bmhp" onchange="setHarga();"
                                                         class="bmhp form-control border border-primary">

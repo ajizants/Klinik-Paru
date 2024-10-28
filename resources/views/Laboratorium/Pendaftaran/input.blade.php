@@ -6,7 +6,7 @@
         @csrf
         <form class="form-horizontal" id="form_identitas">
             <div class="card-body" id="inputSection">
-                <div class="form-grup row">
+                <div class="form-group row">
                     <label for="norm" class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
                         :</label>
                     <div class="col-sm-2 input-group" style="overflow: hidden;">
@@ -37,7 +37,7 @@
                         <input type="text" id="umur" class="form-control bg-white" placeholder="Umur">
                     </div>
                 </div>
-                <div class="form-grup row mt-2">
+                <div class="form-group row mt-2">
                     <label for="tgltrans" class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                         :</label>
                     <div class="col-sm-2">
@@ -60,7 +60,7 @@
                             placeholder="No Sampel">
                     </div>
                 </div>
-                <div class="form-grup row mt-2">
+                <div class="form-group row mt-2">
                     <label for="analis" class="col-sm-1 col-form-label font-weight-bold">Admin
                         :</label>
                     <div class="col">
@@ -86,7 +86,7 @@
                 </div>
 
 
-                <div class=" form-grup d-flex justify-content-center" hidden>
+                <div class=" form-group d-flex justify-content-center" hidden>
                     <button type="button" class="btn btn-primary col" data-toggle="modal" data-target="#riwayatModal"
                         onclick="showRiwayat()" hidden>Lihat
                         Riwayat
@@ -196,7 +196,7 @@
             </div> --}}
             <div class="card-footer p-0">
                 <form id="form_Petugas">
-                    <div class="form-grup row d-flex justify-content-end">
+                    <div class="form-group row d-flex justify-content-end">
                         <div class="col-auto">
                             <a class="btn btn-primary" id="tombol_selesai"
                                 onclick="resetForm('Transaksi Selesai...!!!');">Selesai</a>

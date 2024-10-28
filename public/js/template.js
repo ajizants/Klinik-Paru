@@ -2,7 +2,6 @@ $(document).on("select2:open", () => {
     document.querySelector(".select2-search__field").focus();
 });
 
-var tglTransInput = document.getElementById("waktu");
 let tglnow = "";
 document.addEventListener("DOMContentLoaded", function () {
     function updateDateTime() {
@@ -14,17 +13,16 @@ document.addEventListener("DOMContentLoaded", function () {
             day: "2-digit",
             hour: "2-digit",
             minute: "2-digit",
-            second: "2-digit",
+            // second: "2-digit",
         };
-        // var formattedDate = now.toLocaleString("id-ID", options);
         let tglnow = now
             .toLocaleString("id-ID", options)
             .replace(
                 /(\d{4})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})/,
                 "$1-$2-$3 $4.$5.$6"
             );
-
-        tglTransInput.value = tglnow;
+        // document.getElementById("waktu").innerHTML = tglnow;
+        document.getElementById("waktu").textContent = tglnow;
     }
     setInterval(updateDateTime, 1000);
 

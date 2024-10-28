@@ -42,7 +42,7 @@
                 <div class="table-responsive pt-2 px-2">
                     <table id="dataAntrian" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
-                        <thead class="bg bg-warning">
+                        <thead class="bg bg-primary">
                             <tr>
                                 <th width="15px">Aksi</th>
                                 <th>status</th>
@@ -60,14 +60,12 @@
                     </table>
                 </div>
             </div>
-
-
             <div id="dBelum" class="card-body card-body-hidden p-2" style="display: none;">
                 <h5 class="mb-0 text-center"><b>Data Antrian Belum Upload Transaksi</b></h5>
                 <div class="table-responsive pt-2 px-2">
                     <table id="daftarUpload" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
-                        <thead class="bg bg-teal">
+                        <thead class="bg bg-warning">
                             <tr>
                                 <th width="15px">Aksi</th>
                                 <th width="15px">status</th>

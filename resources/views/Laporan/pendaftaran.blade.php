@@ -94,20 +94,20 @@
                 </div>
                 <div class="modal-body">
                     <form id="formSep">
-                        <div class="form-grup">
+                        <div class="form-group">
                             <label for="norm">No. RM</label>
                             <input type="text" class="form-control" id="norm" readonly>
                             <input type="text" class="form-control" id="notrans" readonly>
                         </div>
-                        <div class="form-grup">
+                        <div class="form-group">
                             <label for="nama">Nama</label>
                             <input type="text" class="form-control" id="nama" readonly>
                         </div>
-                        <div class="form-grup">
+                        <div class="form-group">
                             <label for="jaminan">Jaminan</label>
                             <input type="text" class="form-control" id="jaminan" readonly>
                         </div>
-                        <div class="form-grup">
+                        <div class="form-group">
                             <label for="noSep">No. SEP</label>
                             <input type="text" class="form-control" id="noSep" required onkeyup="checkEnter(event)">
                         </div>

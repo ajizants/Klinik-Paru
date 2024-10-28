@@ -20,7 +20,7 @@
                 <h5 class=""><b> Form Tambah Tindakan</b></h5>
             </div>
             <form class="p-2">
-                <div class="form-grup p-2">
+                <div class="form-group p-2">
                     <div class="form-group col-auto">
                         <input type="text" id="nmTindakan" class="form-control border border-primary"
                             placeholder="Nama Tindakan" required>
