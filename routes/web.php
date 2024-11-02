@@ -38,6 +38,7 @@ Route::get('verif/{id}', [HomeController::class, 'verif'])->name('verif');
 
 Route::get('displayAntrian', [HomeController::class, 'displayAntrian'])->name('displayAntrian');
 Route::get('display/loket', [DisplayController::class, 'loket'])->name('loket');
+Route::get('display/farmasi', [DisplayController::class, 'farmasi'])->name('farmasi');
 Route::get('display/tensi', [DisplayController::class, 'tensi'])->name('tensi');
 Route::get('display/lab', [DisplayController::class, 'lab'])->name('lab');
 Route::get('display/poli/{id}', [DisplayController::class, 'poli'])->name('poli');

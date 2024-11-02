@@ -7,6 +7,7 @@ use App\Models\LaboratoriumKunjunganModel;
 use App\Models\ROTransaksiHasilModel;
 use App\Models\ROTransaksiModel;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class DisplayController extends Controller
 {
@@ -21,6 +22,66 @@ class DisplayController extends Controller
         // return $jadwal;
 
         return view('Display.loket', compact('title', 'videos', 'jadwal'));
+    }
+    public function farmasi()
+    {
+        $title = 'Daftar Tunggu Loket';
+        // Akses video dari folder yang di-share di jaringan
+        $videos = null;
+        $client = new KominfoModel();
+        $params = [];
+        $jadwal = $client->jadwalPoli($params);
+        $listTunggu = $client->getTungguFaramsi();
+        $listTunggu = $listTunggu['data'];
+
+        foreach ($listTunggu as &$item) {
+            $now = Carbon::now();
+            $createdAtLog = Carbon::parse($item['created_at_log']);
+
+            // Tambahkan 30 menit ke waktu `created_at_log`
+            $createdAtPlus30 = $createdAtLog->addMinutes(30);
+
+            if ($createdAtPlus30 >= $now) {
+                $item['ket'] = 'Menunggu';
+            } else {
+                $item['ket'] = 'Selesai';
+            }
+            try {
+                switch ($item['keterangan']) {
+                    case 'SEDANG DIPANGGIL':
+                        $item['status'] = 'Belum';
+                        break;
+                    case 'SELESAI DIPANGGIL':
+                        $item['status'] = 'Antri';
+                        break;
+                    case 'PULANG':
+                        $item['status'] = 'Antri';
+                        break;
+                    default:
+                        $item['status'] = 'Unknown';
+                }
+            } catch (\Exception $e) {
+                Log::error('Database connection failed: ' . $e->getMessage());
+                $item['status'] = 'Database connection error';
+            }
+        }
+
+        // return $listTunggu;
+        $filteredData = array_filter(array_map(function ($d) {
+            $d['status'] = 'Antri';
+            return $d;
+        }, $listTunggu));
+
+        $listTunggu = array_filter($filteredData);
+        usort($listTunggu, function ($a, $b) {
+            return ($a['ket'] === 'Menunggu' ? 0 : 1) <=> ($b['ket'] === 'Menunggu' ? 0 : 1);
+        });
+        // Filter listTunggu untuk membuat dua daftar: Menunggu dan Selesai
+        $listMenunggu = array_filter($listTunggu, fn($item) => $item['ket'] === 'Menunggu');
+        $listSelesai = array_filter($listTunggu, fn($item) => $item['ket'] === 'Selesai');
+        // return $listTunggu;
+
+        return view('Display.farmasi', compact('title', 'videos', 'jadwal', 'listTunggu', 'listMenunggu', 'listSelesai'));
     }
 
     public function listTungguTensi()
@@ -38,6 +99,7 @@ class DisplayController extends Controller
             });
         }
         return $listTunggu;
+
     }
 
     public function tensi()
@@ -54,7 +116,7 @@ class DisplayController extends Controller
             $filteredData = array_filter(array_map(function ($d) {
                 $d['status'] = 'belum';
                 if (empty($d['laboratorium'])) {
-                    dd("kosong");
+                    // dd("kosong");
                     return null;
                 }
                 return $d;
