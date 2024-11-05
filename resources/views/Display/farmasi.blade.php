@@ -39,7 +39,8 @@
         }
 
         .table-container {
-            height: 47.4vh;
+            height: 100vh;
+            /* height: 47.4vh; */
             /* Set max height untuk auto scroll */
             overflow: hidden;
             /* Sembunyikan scroll bar */
@@ -48,7 +49,7 @@
         }
 
         .table-container3 {
-            height: 25vh;
+            height: 30vh;
             /* Set max height untuk auto scroll */
             overflow: hidden;
             /* Sembunyikan scroll bar */
@@ -160,6 +161,8 @@
                     @endif
                 </div>
             </div>
+        </div>
+        <div class="col mt-2">
             <div>
                 <h2 class="text-center">Daftar Selesai Farmasi</h2>
                 <div class="table-responsive">
@@ -201,9 +204,8 @@
                     @endif
                 </div>
             </div>
-        </div>
-        <div class="col mt-2">
-            <div class="col" id="player"></div>
+            {{-- </div>
+        <div class="col mt-2"> --}}
             <h2 class="text-center">Jadwal Praktek Dokter</h2>
             <div class="table-responsive">
                 <table class="table table-bordered table-striped table-hover mb-0" id="header" style="width:100%">
@@ -298,39 +300,98 @@
     <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap 4 -->
     <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script>
-        // Load YouTube IFrame API secara asinkron
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    <script type="text/javascript">
+        async function getList() {
+            const tableBody = document.querySelector("table tbody");
+            tableBody.innerHTML = "";
+            const norm = "";
+            try {
+                const response = await fetch("/api/list/tunggu/farmasi", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                const data = await response.json();
+                console.log("🚀 ~ getList ~ data:", data)
 
-        // Fungsi ini dipanggil setelah API YouTube dimuat
-        function onYouTubeIframeAPIReady() {
-            // Inisialisasi pemutar
-            var player = new YT.Player('player', {
-                height: '550', // tinggi iframe
-                // width: '640', // lebar iframe
-                playerVars: {
-                    listType: 'playlist',
-                    list: 'PLG70n9hvc5bRr5HFJ0mJ4FZZjymJhcrkt', // Ganti dengan ID playlist Anda
-                    autoplay: 1, // Mengaktifkan autoplay
-                    controls: 1, // Menampilkan kontrol pemutar
-                    loop: 1, // Mengulang playlist
-                    rel: 0, // Tidak menampilkan video terkait setelah selesai
-                    mute: 1
-                },
-                events: {
-                    'onReady': onPlayerReady
+                drawTable(data);
+            } catch (error) {
+                console.error("Terjadi kesalahan saat mencari data:", error);
+            }
+        }
+
+        function drawTable(data) {
+            console.log("🚀 ~ drawTable ~ data:", data);
+
+            // Select the table bodies for "Menunggu" and "Selesai"
+            const menungguTableBody = document.querySelector("#listMenunggu tbody");
+            const selesaiTableBody = document.querySelector("#listSelesai tbody");
+
+            // Clear previous contents in both tables
+            menungguTableBody.innerHTML = "";
+            selesaiTableBody.innerHTML = "";
+
+            if (data.length > 0) {
+                let menungguCount = 0; // Counter for "Menunggu" items
+                data.forEach(item => {
+                    const row = document.createElement("tr");
+
+                    const noRmCell = document.createElement("td");
+                    noRmCell.textContent = item.pasien_no_rm;
+                    noRmCell.classList.add("col-2");
+                    row.appendChild(noRmCell);
+
+                    const namaCell = document.createElement("td");
+                    namaCell.textContent = item.pasien_nama;
+                    namaCell.classList.add("col-3");
+                    row.appendChild(namaCell);
+
+                    const dokterCell = document.createElement("td");
+                    dokterCell.textContent = item.dokter_nama;
+                    row.appendChild(dokterCell);
+
+                    const ketCell = document.createElement("td");
+                    ketCell.textContent = item.ket;
+                    ketCell.classList.add("col-2");
+                    row.appendChild(ketCell);
+
+                    // Append the row to the appropriate table based on the "ket" value
+                    if (item.ket === "Menunggu") {
+                        menungguTableBody.appendChild(row);
+                        menungguCount++;
+                    } else if (item.ket === "Selesai") {
+                        selesaiTableBody.appendChild(row);
+                    }
+                });
+
+                // Check if scroll animation should be applied based on "Menunggu" count
+                if (menungguCount >= 10) {
+                    document.querySelector("#listMenunggu").style.animation = 'scroll 30s linear infinite';
+                } else {
+                    document.querySelector("#listMenunggu").style.animation = 'none';
                 }
-            });
+
+            } else {
+                // Handle empty case for both tables
+                const noDataRow = document.createElement("tr");
+                const noDataCell = document.createElement("td");
+                noDataCell.textContent = "Tidak ada antrian";
+                noDataCell.colSpan = 4;
+                noDataCell.classList.add("text-center");
+                noDataRow.appendChild(noDataCell);
+
+                menungguTableBody.appendChild(noDataRow.cloneNode(true));
+                selesaiTableBody.appendChild(noDataRow);
+            }
         }
 
-        // Fungsi ini dipanggil saat player siap
-        function onPlayerReady(event) {
-            event.target.mute(); // Mematikan suara
-            event.target.playVideo(); // Memulai video secara otomatis
-        }
+
+
+        setInterval(() => {
+            // Panggil fungsi untuk menggambar tabel
+            getList();
+        }, 20000);
     </script>
 </body>
 

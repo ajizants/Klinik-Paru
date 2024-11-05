@@ -19,10 +19,28 @@ class DisplayController extends Controller
         $client = new KominfoModel();
         $params = [];
         $jadwal = $client->jadwalPoli($params);
+        $listTunggu = $this->listTungguLoket();
+        // return $listTunggu;
         // return $jadwal;
 
-        return view('Display.loket', compact('title', 'videos', 'jadwal'));
+        return view('Display.loket', compact('title', 'videos', 'jadwal', 'listTunggu'));
     }
+
+    public function listTungguLoket()
+    {
+        $client = new KominfoModel();
+        $listTunggu = $client->getTungguLoket();
+        $listTunggu = $listTunggu['data'];
+        if (is_array($listTunggu) && !isset($listTunggu['error'])) {
+            // Filter to include only items with keterangan as "MENUNGGU DIPANGGIL" or "SKIP"
+            $listTunggu = array_filter($listTunggu, function ($item) {
+                return in_array($item['keterangan'], ['MENUNGGU DIPANGGIL', 'SKIP']);
+            });
+        }
+
+        return $listTunggu;
+    }
+
     public function farmasi()
     {
         $title = 'Daftar Tunggu Loket';
@@ -31,6 +49,29 @@ class DisplayController extends Controller
         $client = new KominfoModel();
         $params = [];
         $jadwal = $client->jadwalPoli($params);
+        $listTunggu = $this->listTungguFarmasi();
+
+        // return $listTunggu;
+        $filteredData = array_filter(array_map(function ($d) {
+            $d['status'] = 'Antri';
+            return $d;
+        }, $listTunggu));
+
+        $listTunggu = array_filter($filteredData);
+        usort($listTunggu, function ($a, $b) {
+            return ($a['ket'] === 'Menunggu' ? 0 : 1) <=> ($b['ket'] === 'Menunggu' ? 0 : 1);
+        });
+        // Filter listTunggu untuk membuat dua daftar: Menunggu dan Selesai
+        $listMenunggu = array_filter($listTunggu, fn($item) => $item['ket'] === 'Menunggu');
+        $listSelesai = array_filter($listTunggu, fn($item) => $item['ket'] === 'Selesai');
+        // return $listTunggu;
+
+        return view('Display.farmasi', compact('title', 'videos', 'jadwal', 'listTunggu', 'listMenunggu', 'listSelesai'));
+    }
+
+    public function listTungguFarmasi()
+    {
+        $client = new KominfoModel();
         $listTunggu = $client->getTungguFaramsi();
         $listTunggu = $listTunggu['data'];
 
@@ -66,22 +107,8 @@ class DisplayController extends Controller
             }
         }
 
-        // return $listTunggu;
-        $filteredData = array_filter(array_map(function ($d) {
-            $d['status'] = 'Antri';
-            return $d;
-        }, $listTunggu));
+        return $listTunggu;
 
-        $listTunggu = array_filter($filteredData);
-        usort($listTunggu, function ($a, $b) {
-            return ($a['ket'] === 'Menunggu' ? 0 : 1) <=> ($b['ket'] === 'Menunggu' ? 0 : 1);
-        });
-        // Filter listTunggu untuk membuat dua daftar: Menunggu dan Selesai
-        $listMenunggu = array_filter($listTunggu, fn($item) => $item['ket'] === 'Menunggu');
-        $listSelesai = array_filter($listTunggu, fn($item) => $item['ket'] === 'Selesai');
-        // return $listTunggu;
-
-        return view('Display.farmasi', compact('title', 'videos', 'jadwal', 'listTunggu', 'listMenunggu', 'listSelesai'));
     }
 
     public function listTungguTensi()

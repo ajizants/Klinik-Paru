@@ -13,6 +13,7 @@ use App\Models\ROTransaksiModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PasienKominfoController extends Controller
 {
@@ -262,8 +263,30 @@ class PasienKominfoController extends Controller
 
         return response()->json($res);
     }
+    private function generateQrCodeWithLogo($dokter, $no_rm, $nama)
+    {
+        // Data untuk QR Code (misalnya tanda tangan)
+        $data = 'Dokumen resume medis a.n' . $nama . '(' . $no_rm . ') telah di setujui dan di tandatangani oleh ' . $dokter;
 
-    // public function resumePasien(Request $request)
+        // $logoPath = public_path('img/LOGO_KKPM.png');
+        // $logoPath = str_replace('\\', '/', $logoPath);
+
+        // // dd("Jalur logo: " . $logoPath);
+        //         // Periksa apakah file logo ada
+        // if (!file_exists($logoPath)) {
+        //     dd("Logo tidak ditemukan di: " . $logoPath);
+        // }
+
+        // Buat QR Code dengan logo
+        $qrCode = QrCode::format('png')
+        //     ->merge($logoPath, 0.3) // 0.3 artinya logo 30% dari ukuran QR Code
+        //     ->size(300)
+        //     ->errorCorrection('H') // Tingkat toleransi tinggi agar QR Code tetap terbaca
+            ->generate($data);
+        // dd($qrCode);
+        return $qrCode;
+    }
+
     public function resumePasien($no_rm, $tgl)
     {
         // $title = 'Laporan Pendaftaran';
@@ -387,6 +410,8 @@ class PasienKominfoController extends Controller
             // return $tindakan;
             // $lab = [];
             // $ro = [];
+
+            $ttd = $this->generateQrCodeWithLogo($resumePasien->dokter_nama, $no_rm, $resumePasien->pasien_nama);
             return view('Laporan.resume', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan', 'obats'));
             // return view('Laporan.resume1', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan'));
 
@@ -672,6 +697,7 @@ class PasienKominfoController extends Controller
             'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
             'dr. SIGIT DWIYANTO' => '198903142022031005',
         ];
+        $tes = $filteredData;
 
         foreach ($filteredData as &$item) {
             $norm = $item['pasien_no_rm'];
@@ -732,6 +758,7 @@ class PasienKominfoController extends Controller
             ],
             'response' => [
                 'data' => $filteredData,
+                // 'data' => $tes,
             ],
         ]);
     }

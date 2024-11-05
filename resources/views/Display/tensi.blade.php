@@ -30,7 +30,7 @@
                 src="https://kkpm.banyumaskab.go.id/administrator/display_tv/ruang_tensi"></iframe>
         </div>
         <div class="col mt-2">
-            <div class="col p-0" id="player"></div>
+            {{-- <div class="col p-0" id="player"></div> --}}
             <h2 class="text-center">Daftar Tunggu Tensi</h2>
             <div class="table-responsive table-container">
                 <table class="table table-bordered table-striped table-hover" id="header" style="width:100%">
@@ -77,39 +77,39 @@
         var tungguTensi = @json($listTunggu);
         console.log("🚀 ~ tungguTensi:", tungguTensi)
 
-        // Load YouTube IFrame API secara asinkron
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        // // Load YouTube IFrame API secara asinkron
+        // var tag = document.createElement('script');
+        // tag.src = "https://www.youtube.com/iframe_api";
+        // var firstScriptTag = document.getElementsByTagName('script')[0];
+        // firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        // Fungsi ini dipanggil setelah API YouTube dimuat
-        function onYouTubeIframeAPIReady() {
-            // Inisialisasi pemutar
-            var player = new YT.Player('player', {
-                height: '500', // tinggi iframe
-                // width: '640', // lebar iframe
-                playerVars: {
-                    listType: 'playlist',
-                    list: 'PLG70n9hvc5bRr5HFJ0mJ4FZZjymJhcrkt',
-                    autoplay: 1,
-                    controls: 1,
-                    loop: 1,
-                    rel: 0,
-                    mute: 1
-                },
-                events: {
-                    'onReady': onPlayerReady
-                }
-            });
-        }
+        // // Fungsi ini dipanggil setelah API YouTube dimuat
+        // function onYouTubeIframeAPIReady() {
+        //     // Inisialisasi pemutar
+        //     var player = new YT.Player('player', {
+        //         height: '500', // tinggi iframe
+        //         // width: '640', // lebar iframe
+        //         playerVars: {
+        //             listType: 'playlist',
+        //             list: 'PLG70n9hvc5bRr5HFJ0mJ4FZZjymJhcrkt',
+        //             autoplay: 1,
+        //             controls: 1,
+        //             loop: 1,
+        //             rel: 0,
+        //             mute: 1
+        //         },
+        //         events: {
+        //             'onReady': onPlayerReady
+        //         }
+        //     });
+        // }
 
-        // Fungsi ini dipanggil saat player siap
-        function onPlayerReady(event) {
-            event.target.mute(); // Mematikan suara
-            event.target.playVideo(); // Memulai video secara otomatis
+        // // Fungsi ini dipanggil saat player siap
+        // function onPlayerReady(event) {
+        //     event.target.mute(); // Mematikan suara
+        //     event.target.playVideo(); // Memulai video secara otomatis
 
-        }
+        // }
     </script>
     <script type="text/javascript">
         async function getList() {

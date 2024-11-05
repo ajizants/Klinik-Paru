@@ -39,7 +39,7 @@
         }
 
         .table-container {
-            max-height: 250px;
+            height: 60vh;
             /* Set max height untuk auto scroll */
             overflow: hidden;
             /* Sembunyikan scroll bar */
@@ -99,15 +99,62 @@
 </head>
 
 <body>
-    <div class="container-fluid row">
+    <div class="container-fluid row px-2 mx-2">
         <div class="col mt-2">
             <iframe class="custom-iframe" scrolling="no"
                 src="https://kkpm.banyumaskab.go.id/administrator/display_tv/loket_pendaftaran"></iframe>
         </div>
         <div class="col mt-2">
-            <div class="col" id="player"></div>
-            <h2 class="text-center">Jadwal Praktek Dokter</h2>
+            {{-- <div class="col" id="player"></div> --}}
+            <h1 class="text-center font-weight-bold mt-4">Daftar Tunggu</h1>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover" id="header" style="width:100%">
+                    <thead class="bg bg-dark">
+                        <tr>
+                            <th class="col-3">No Antrean</th>
+                            <th class="col-3">Jaminan</th>
+                            <th class="col-3">Keterangan</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
             <div class="table-responsive table-container">
+                @php
+                    $scrol = isset($listTunggu) && count($listTunggu) > 12 ? 'table-auto' : '';
+                @endphp
+
+                <table class="table table-bordered table-striped table-hover {{ $scrol }}" id="tungguRo"
+                    style="width:100%">
+                    @if (empty($listTunggu))
+                        <tbody style="font-size: 20px">
+                            <tr>
+                                <td colspan="3" class="text-center">Tidak ada antrian</td>
+                            </tr>
+                        </tbody>
+                    @else
+                        <tbody style="font-size: 20px">
+                            @foreach ($listTunggu as $item)
+                                @if ($item['keterangan'] === 'SKIP')
+                                    @php
+                                        $bg = 'bg-warning';
+                                    @endphp
+                                @else
+                                    @php
+                                        $bg = 'bg-success';
+                                    @endphp
+                                @endif
+                                <tr>
+                                    <td class="col-3">{{ $item['antrean_angka'] }}</td>
+                                    <td class="col-3">{{ $item['penjamin_nama'] }}</td>
+                                    <td class="col-3 {{ $bg }}">{{ $item['keterangan'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    @endif
+                </table>
+            </div>
+            <h2 class="text-center">Jadwal Praktek Dokter</h2>
+            <div class="table-responsive">
                 <table class="table table-bordered table-striped table-hover mb-0" id="header" style="width:100%">
                     <thead class="bg bg-dark">
                         <tr>
@@ -119,35 +166,9 @@
                     </thead>
                 </table>
             </div>
-            <div class="table-responsive table-container">
+            <div class="table-responsive" style="height: 25vh; overflow-y: hidden">
                 <table class="table-auto table table-bordered table-striped table-hover" id="listTunggu"
                     style="width:100%">
-                    {{-- <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Senin s.d Sabtu</td>
-                            <td>08.00 - 14.15 WIB</td>
-                            <td>dr. Cempaka Nofa Intani, Sp.P. FISR. MM.</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Senin s.d Sabtu</td>
-                            <td>08.00 - 14.15 WIB</td>
-                            <td>dr. Agil Dananjaya, Sp.P.</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Senin s.d Sabtu</td>
-                            <td>08.00 - 14.15 WIB</td>
-                            <td>dr. Filly Ulfa Kusumawardani</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Senin s.d Sabtu</td>
-                            <td>08.00 - 14.15 WIB</td>
-                            <td>dr. Sigit Dwiyanto</td>
-                        </tr>
-                    </tbody> --}}
                     <tbody id="listJadwal">
                         @foreach ($jadwal as $item)
                             <td class="col-1">{{ $loop->iteration }}</td>
@@ -163,7 +184,7 @@
                     </tbody>
                 </table>
             </div>
-            <marquee class="marquee">
+            <marquee class="marquee mt-4">
                 "Kamu seorang pejuang. Lawan penyakit yang ada di tubuhmu dan semoga segera sembuh."
                 &nbsp;&nbsp;|&nbsp;&nbsp;
                 "Saya sangat menantikan kehadiranmu dengan penuh semangat. Segera sembuh, Sobat."
@@ -224,7 +245,7 @@
     <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap 4 -->
     <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script>
+    {{-- <script>
         // Load YouTube IFrame API secara asinkron
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
@@ -257,6 +278,84 @@
             event.target.mute(); // Mematikan suara
             event.target.playVideo(); // Memulai video secara otomatis
         }
+    </script> --}}
+    <script type="text/javascript">
+        async function getList() {
+            const tableBody = document.querySelector("#listTunggu tbody");
+            tableBody.innerHTML = "";
+            const norm = "";
+            try {
+                const response = await fetch("/api/list/tunggu/loket", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                const data = await response.json();
+                console.log("🚀 ~ getList ~ data:", data)
+
+                drawTable(data);
+            } catch (error) {
+                console.error("Terjadi kesalahan saat mencari data:", error);
+            }
+        }
+
+        function drawTable(data) {
+            console.log("🚀 ~ drawTable ~ data:", data)
+            if (data.length > 0) {
+
+
+                const tableBody = document.querySelector("table tbody");
+                tableBody.innerHTML = ""; // Bersihkan konten sebelumnya
+
+                data.forEach(item => {
+                    if (item.keterangan === 'SKIP') {
+                        bg = "bg-warning";
+                    } else {
+                        bg = "bg-success";
+                    }
+                    const row = document.createElement("tr");
+
+                    const noUrut = document.createElement("td");
+                    noUrut.textContent = item.antrean_angka;
+                    row.appendChild(noUrut);
+                    noUrut.classList.add("col-3");
+
+                    const penjamin = document.createElement("td");
+                    penjamin.textContent = item.penjamin_nama;
+                    row.appendChild(penjamin);
+                    penjamin.classList.add("col-3");
+
+                    const status = document.createElement("td");
+                    status.textContent = item.keterangan;
+                    row.appendChild(status);
+                    status.classList.add("col-3");
+                    status.classList.add(bg);
+
+                    tableBody.appendChild(row);
+                });
+
+                // Memastikan animasi berjalan
+                document.querySelector(".table-auto").style.animation = 'scroll 20s linear infinite';
+            } else {
+                //draw tabel "Tidak ada antrian" coll span 3
+                const tableBody = document.querySelector("table tbody");
+                tableBody.innerHTML = ""; // Bersihkan konten sebelumnya
+                const row = document.createElement("tr");
+                const noRmCell = document.createElement("td");
+                noRmCell.textContent = "Tidak ada antrian";
+                noRmCell.colSpan = 3;
+                //class text center
+                noRmCell.classList.add("text-center");
+                row.appendChild(noRmCell);
+                tableBody.appendChild(row);
+            }
+        }
+
+        setInterval(() => {
+            // Panggil fungsi untuk menggambar tabel
+            getList();
+        }, 20000);
     </script>
 </body>
 
