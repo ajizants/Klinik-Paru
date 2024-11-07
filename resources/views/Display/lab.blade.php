@@ -24,12 +24,17 @@
 </head>
 
 <body>
-    {{-- <div class="p-0" id="player"></div> --}}
-    <div class="container-fluid row">
+    <header class="container-fluid fixed-top bg-primary">
+        <div class="row mb-1 pt-2">
+            <div class="col text-center font-weight-bold" style="font-size:2.5rem;">DAFTAR TUNGGU RADIOLOGI</div>
+            <div class="col text-center font-weight-bold" style="font-size:2.5rem;">DAFTAR TUNGGU LABORATORIUM</div>
+        </div>
+    </header>
+    <div class="container-fluid row mt-4" style="font-size: 1.5rem !important;">
         <div class="col mt-2">
             <h2 class="text-center font-weight-bold">Daftar Tunggu Radiologi</h2>
-            <div class="table-responsive table-container2">
-                <table class="table table-bordered table-striped table-hover" id="header" style="width:100%">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover mb-0" id="header" style="width:100%">
                     <thead class="bg bg-dark">
                         <tr>
                             <th class="col-2">No RM</th>
@@ -49,13 +54,13 @@
                 <table class="table table-bordered table-striped table-hover {{ $scrol }}" id="tungguRo"
                     style="width:100%">
                     @if (empty($tungguRo))
-                        <tbody style="font-size: 20px">
+                        <tbody>
                             <tr>
                                 <td colspan="3" class="text-center">Tidak ada antrian</td>
                             </tr>
                         </tbody>
                     @else
-                        <tbody style="font-size: 20px">
+                        <tbody>
                             @foreach ($tungguRo as $item)
                                 @if ($item['status'] === 'Belum' || $item['status'] === 'Belum Selesai')
                                     @php
@@ -81,8 +86,8 @@
         </div>
         <div class="col mt-2">
             <h2 class="text-center font-weight-bold">Daftar Tunggu Laboratorium</h2>
-            <div class="table-responsive table-container2">
-                <table class="table table-bordered table-striped table-hover" id="header" style="width:100%">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover mb-0" id="header" style="width:100%">
                     <thead class="bg bg-dark">
                         <tr>
                             <th class="col-2">No RM</th>
@@ -101,7 +106,7 @@
 
                 <table class="table table-bordered table-striped table-hover {{ $scrol }}" id="tungguLab"
                     style="width:100%">
-                    <tbody style="font-size: 20px">
+                    <tbody>
                         @if (empty($tungguLab) || count($tungguLab) == 0)
                             <tr>
                                 <td colspan="3" class="text-center">Tidak ada antrian</td>
@@ -133,7 +138,7 @@
         </div>
     </div>
     <footer class="container-fluid fixed-bottom bg-primary">
-        <marquee class="marquee my-3" style="font-size: 45px !important; color: #ffffff">
+        <marquee class="marquee my-1" style="font-size: 2rem !important; color: #ffffff">
             "Kamu seorang pejuang. Lawan penyakit yang ada di tubuhmu dan semoga segera sembuh."
             &nbsp;&nbsp;|&nbsp;&nbsp;
             "Saya sangat menantikan kehadiranmu dengan penuh semangat. Segera sembuh, Sobat."
@@ -217,9 +222,7 @@
             console.log("🚀 ~ drawTable ~ ruang:", ruang)
             const tableBody = document.getElementById(ruang === "ro" ? "tungguRo" : "tungguLab");
             console.log("🚀 ~ drawTable ~ tableBody:", tableBody)
-            tableBody.innerHTML = ""; // Bersihkan konten sebelumnya
-            tableBody.style.fontSize = "20px";
-
+            tableBody.innerHTML = "";
             if (data.length > 0) {
                 data.forEach((item) => {
                     let bg;
@@ -260,7 +263,7 @@
                 });
 
                 // Memastikan animasi berjalan
-                if (data.length > 6) {
+                if (data.length >= 12) {
                     tableBody.classList.add("table-auto");
                     document.querySelector(".table-auto").style.animation = "scroll 30s linear infinite";
                 }

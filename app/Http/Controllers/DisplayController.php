@@ -43,7 +43,7 @@ class DisplayController extends Controller
 
     public function farmasi()
     {
-        $title = 'Daftar Tunggu Loket';
+        $title = 'Daftar Tunggu Farmasi';
         // Akses video dari folder yang di-share di jaringan
         $videos = null;
         $client = new KominfoModel();
@@ -117,6 +117,7 @@ class DisplayController extends Controller
 
         $client = new KominfoModel();
         $listTunggu = $client->getTungguTensi();
+
         // return $listTunggu;
         // Cek apakah $listTunggu adalah array dan tidak mengandung error
         if (is_array($listTunggu) && !isset($listTunggu['error'])) {
@@ -134,11 +135,8 @@ class DisplayController extends Controller
 
         $title = 'Daftar Tunggu Tensi';
         // Akses video dari folder yang di-share di jaringan
-        $videos = null;
-
         $listTunggu = $this->listTungguTensi();
         // return $data;
-
         if (isset($listTunggu['response']['data']) && is_array($listTunggu['response']['data'])) {
             $filteredData = array_filter(array_map(function ($d) {
                 $d['status'] = 'belum';
@@ -151,7 +149,11 @@ class DisplayController extends Controller
         }
         // return $data;
 
-        return view('Display.tensi', compact('title', 'listTunggu'));
+        $client = new KominfoModel();
+        $params = [];
+        $jadwal = $client->jadwalPoli($params);
+
+        return view('Display.tensi', compact('title', 'listTunggu', 'jadwal'));
     }
 
     public function tungguLab()
@@ -221,6 +223,10 @@ class DisplayController extends Controller
             ];
         }
 
+        usort($tungguLab, function ($a, $b) {
+            return ($a['status'] === 'Selesai' ? 0 : 1) <=> ($b['status'] === 'Selesai' ? 0 : 1);
+        });
+
         return $tungguLab;
     }
     public function tungguRo()
@@ -252,6 +258,9 @@ class DisplayController extends Controller
                 'status' => $status,
             ];
         }
+        usort($tungguRo, function ($a, $b) {
+            return ($a['status'] === 'Selesai' ? 0 : 1) <=> ($b['status'] === 'Selesai' ? 0 : 1);
+        });
 
         return $tungguRo;
     }

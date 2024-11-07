@@ -245,5 +245,7 @@ Route::post('ambil/no/kominfo', [PasienKominfoController::class, 'ambilAntrean']
 Route::post('list/tunggu/tensi', [DisplayController::class, 'listTungguTensi']);
 Route::get('list/tunggu/lab', [DisplayController::class, 'tungguLab']);
 Route::get('list/tunggu/ro', [DisplayController::class, 'tungguRo']);
+Route::get('list/tunggu/farmasi', [DisplayController::class, 'listTungguFarmasi']);
+Route::get('list/tunggu/loket', [DisplayController::class, 'listTungguLoket']);
 
 // });

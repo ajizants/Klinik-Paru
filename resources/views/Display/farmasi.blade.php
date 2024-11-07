@@ -39,13 +39,14 @@
         }
 
         .table-container {
-            height: 100vh;
+            min-height: 100vh;
             /* height: 47.4vh; */
             /* Set max height untuk auto scroll */
             overflow: hidden;
             /* Sembunyikan scroll bar */
             position: relative;
             /* Untuk posisi absolut */
+            font-size: 2rem;
         }
 
         .table-container3 {
@@ -55,6 +56,7 @@
             /* Sembunyikan scroll bar */
             position: relative;
             /* Untuk posisi absolut */
+            font-size: 2rem;
         }
 
         .table-container2 {
@@ -64,6 +66,7 @@
             /* Sembunyikan scroll bar */
             position: relative;
             /* Untuk posisi absolut */
+            font-size: 2rem;
         }
 
         .table-auto {
@@ -118,10 +121,16 @@
 </head>
 
 <body>
-    <div class="container-fluid row">
-        <div class="col mt-2">
-            <div>
-                <h2 class="text-center">Daftar Tunggu Farmasi</h2>
+    <header class="container-fluid fixed-top bg-primary">
+        <h1 class="font-weight-bold text-center" style="font-size: 3rem">LOKET FARMASI</h1>
+        <div class="row mb-1">
+            <div class="col text-center font-weight-bold" style="font-size:2.5rem;">DAFTAR TUNGGU</div>
+            <div class="col text-center font-weight-bold" style="font-size:2.5rem;">DAFTAR SELESAI</div>
+        </div>
+    </header>
+    <div class="container-fluid row mt-5">
+        <div class="col mt-5">
+            <div class="mt-5"">
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover" id="header" style="width:100%">
                         <thead class="bg bg-dark">
@@ -138,7 +147,7 @@
                     @if (empty($listMenunggu))
                         <table class="table table-bordered table-striped table-hover" id="listMenunggu"
                             style="width:100%">
-                            <tbody style="font-size: 20px">
+                            <tbody>
                                 <tr>
                                     <td colspan="3" class="text-center">Tidak ada antrian</td>
                                 </tr>
@@ -147,7 +156,7 @@
                     @else
                         <table class="table-auto table table-bordered table-striped table-hover" id="listMenunggu"
                             style="width:100%">
-                            <tbody style="font-size: 20px">
+                            <tbody>
                                 @foreach ($listMenunggu as $item)
                                     <tr>
                                         <td class="col-2">{{ $item['pasien_no_rm'] }}</td>
@@ -162,9 +171,8 @@
                 </div>
             </div>
         </div>
-        <div class="col mt-2">
-            <div>
-                <h2 class="text-center">Daftar Selesai Farmasi</h2>
+        <div class="col mt-5">
+            <div class="mt-5">
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover" id="header" style="width:100%">
                         <thead class="bg bg-dark">
@@ -204,30 +212,29 @@
                     @endif
                 </div>
             </div>
-            {{-- </div>
-        <div class="col mt-2"> --}}
-            <h2 class="text-center">Jadwal Praktek Dokter</h2>
+            <div class="bg-primary text-center">
+                <h2 class="text-center mt-2 mb-0">JADWAL PRAKTIK DOKTER</h2>
+            </div>
             <div class="table-responsive">
                 <table class="table table-bordered table-striped table-hover mb-0" id="header" style="width:100%">
                     <thead class="bg bg-dark">
                         <tr>
                             <th class="col-1">No</th>
                             <th class="col-2">Hari</th>
-                            <th>Waktu</th>
+                            <th class="col-2">Waktu</th>
                             <th class="col-5">Dokter</th>
                         </tr>
                     </thead>
                 </table>
             </div>
-            <div class="table-responsive table-container2">
-                <table class="table-auto table table-bordered table-striped table-hover" id="listTunggu"
+            <div class="table-responsive" style="min-height: 25vh; overflow-y: hidden; font-size: 1.5rem">
+                <table class="table-auto table table-bordered table-striped table-hover" id="listJadwal"
                     style="width:100%">
                     <tbody id="listJadwal">
                         @foreach ($jadwal as $item)
                             <td class="col-1">{{ $loop->iteration }}</td>
                             <td class="col-2">{{ $item['nama_hari'] }}</td>
-                            <td>
-                                <!-- Convert and display waktu_mulai_poli and waktu_selesai_poli -->
+                            <td class="col-2">
                                 {{ \Carbon\Carbon::createFromTimestamp($item['waktu_mulai_poli'])->format('H:i') }} -
                                 {{ \Carbon\Carbon::createFromTimestamp($item['waktu_selesai_poli'])->format('H:i') }}
                             </td>
@@ -240,7 +247,7 @@
         </div>
     </div>
     <footer class="container-fluid fixed-bottom bg-primary">
-        <marquee class="marquee my-3" style="font-size: 45px !important; color: #ffffff">
+        <marquee class="marquee my-1" style="font-size: 2rem !important; color: #ffffff">
             "Kamu seorang pejuang. Lawan penyakit yang ada di tubuhmu dan semoga segera sembuh."
             &nbsp;&nbsp;|&nbsp;&nbsp;
             "Saya sangat menantikan kehadiranmu dengan penuh semangat. Segera sembuh, Sobat."

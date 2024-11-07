@@ -24,44 +24,54 @@
 </head>
 
 <body>
-    <div class="container-fluid row">
-        <div class="col mt-2">
+    <header class="container-fluid fixed-top bg-primary">
+        <h1 class="font-weight-bold text-center" style="font-size: 3rem">RUANG POLI {{ $dokter }}</h1>
+        <div class="row mb-1 mt-3">
+            <div class="col text-center font-weight-bold" style="font-size:2.5rem;">SEDANG DIPANGGIL</div>
+            <div class="col text-center font-weight-bold" style="font-size:2.5rem;">DAFTAR TUNGGU
+            </div>
+        </div>
+    </header>
+    <aside class="bg-white main-sidebar" style="width: 20px;z-index: 2 !important;height: 5000px;"></aside>
+    <div class="container-fluid row mt-0">
+        <div class="col">
             <iframe class="custom-iframe" scrolling="no"
                 src="https://kkpm.banyumaskab.go.id/administrator/display_tv/ruang_poli"></iframe>
         </div>
-        <div class="col mt-2">
-            <div class="col p-0" id="player"></div>
-            <h2 class="text-center">Daftar Tunggu Pasien {{ $dokter }}</h2>
-            {{-- <button onclick="getList()"class="btn btn-primary">Refresh</button> --}}
-            <div class="table-responsive table-container">
-                <table class="table table-bordered table-striped table-hover" id="header" style="width:100%">
+        <div class="col mt-5 pt-5" style="font-size: 1.5rem;">
+            <div class="table-responsive mt-5">
+                <table class="table table-bordered table-striped table-hover mb-0" id="header" style="width:100%">
                     <thead class="bg bg-dark">
                         <tr>
                             <th class="col-2">No RM</th>
-                            <th class="col-3">Nama</th>
-                            <th>Dokter</th>
+                            <th class="col-4">Nama</th>
+                            <th class="col-4">Dokter</th>
                         </tr>
                     </thead>
                 </table>
             </div>
             <div class="table-responsive table-container">
+                @php
+                    $scrol = isset($listTunggu) && count($listTunggu) >= 11 ? 'table-auto' : '';
+                @endphp
+
                 @if (empty($listTunggu) && $listTunggu == null && $listTunggu == '[]')
                     <table class="table table-bordered table-striped table-hover" id="listTunggu" style="width:100%">
-                        <tbody style="font-size: 20px">
+                        <tbody>
                             <tr>
                                 <td colspan="3" class="text-center">Tidak ada antrian</td>
                             </tr>
                         </tbody>
                     </table>
                 @else
-                    <table class="table-auto table table-bordered table-striped table-hover" id="listTunggu"
+                    <table class="{{ $scrol }} table table-bordered table-striped table-hover" id="listTunggu"
                         style="width:100%">
-                        <tbody style="font-size: 20px">
+                        <tbody>
                             @foreach ($listTunggu as $item)
                                 <tr>
                                     <td class="col-2">{{ $item['pasien_no_rm'] }}</td>
-                                    <td class="col-3">{{ $item['pasien_nama'] }}</td>
-                                    <td>{{ $item['pasien_alamat_min'] }}</td>
+                                    <td class="col-4">{{ $item['pasien_nama'] }}</td>
+                                    <td class="col-4">{{ $item['pasien_alamat_min'] }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -70,43 +80,64 @@
             </div>
         </div>
     </div>
-    <script>
-        let lis = @json($listTunggu);
-        console.log("🚀 ~ lis:", lis)
-        // Load YouTube IFrame API secara asinkron
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    <footer class="container-fluid fixed-bottom bg-primary">
+        <marquee class="marquee my-1" style="font-size: 2rem !important; color: #ffffff">
+            "Kamu seorang pejuang. Lawan penyakit yang ada di tubuhmu dan semoga segera sembuh."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Saya sangat menantikan kehadiranmu dengan penuh semangat. Segera sembuh, Sobat."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Kita memiliki banyak impian untuk dicapai bersama dan kita memiliki lebih banyak hal untuk
+            dicapai
+            dalam hidup. Cepat sembuh, Sayang." &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Kamu pasti akan pulih karena saya tahu bahwa penyakitmu bisa dikalahkan dengan kekuatan dan
+            kemauanmu. Segera sembuh dan kembali lebih kuat." &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Saya tahu kamu akan kembali lebih kuat dan lebih sehat, tidak ada yang bisa memenangkan tekad
+            dan
+            kekuatanmu. Semoga cepat sembuh." &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Teman yang terkasih, percayalah semuanya akan baik-baik saja. Semoga cepat sembuh!"
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Jangan takut, Sahabatku, doamu didengar. Dia akan menaklukkanmu dan memberimu kemenangan. Cepat
+            Sembuh, Sob." &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Semua pasti ada hikmahnya, jangan larut dalam kesedihan. Bersemangatlah karena itu akan membuat
+            keadaan lebih baik." &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Semangat. Tak apa kamu sekarang terbujur lemas di ranjang rumah sakit ini. Aku yakin kamu bisa
+            melewati ini semua dan pulih seperti sedia kala." &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Hal terpenting adalah jangan pernah putus asa. Aku selalu berdoa, semoga kamu cepat sembuh."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Anda sedang melalui situasi yang sulit, tetapi saya tahu Anda memiliki kekuatan untuk muncul
+            dengan
+            penuh kemenangan. Jaga diri Anda baik-baik dan jangan pernah menyerah!"
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Saya sangat mengagumi keberanian Anda menghadapi situasi ini. Anda adalah orang yang sangat
+            pejuang
+            dan saya tahu bahwa Anda akan menang. Saya mengirimi Anda pelukan hangat dan harapan terbaik
+            saya."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Ingatlah suatu hari, tidak lama lagi, kamu akan benar-benar sehat dan tersenyum kembali."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Kesembuhan memang butuh waktu dan kerja keras, tapi kamu tidak sendiri. Kami selalu
+            memikirkanmu
+            dan berdoa untuk kesembuhanmu." &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Masa-masa sulit tidak bertahan lama, orang-orang tangguh melakukannya. Semoga cepat sembuh."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Percayalah bahwa setiap penyakit selalu ada obatnya. Kamu hanya perlu berpikir positif dan
+            bangkit
+            dari keputusasaan." &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Janganlah kamu takut dengan rasa sakit, sebab dengan semangatmu, itu akan hilang. Aku akan
+            menemanimu dan merawatmu sampai kamu pulih dan sembuh. Lekas pulih ya."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Optimistislah, mulailah berpikir bahwa semuanya akan terjadi dan Anda akan segera mendapatkan
+            kembali kesehatan Anda." &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Jadilah kuat karena segalanya akan menjadi lebih baik. Mungkin badai sekarang, tetapi tidak
+            pernah
+            hujan selamanya. Semoga cepat sembuh." &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Anda tidak tampak hebat saat sakit. Jadi cepatlah sembuh agar Anda terlihat menarik kembali.
+            Semoga
+            Anda cepat pulih." &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Rasa sakit itu nyata, tetapi begitu juga harapan. Semoga cepat sembuh."
+        </marquee>
+    </footer>
 
-        // Fungsi ini dipanggil setelah API YouTube dimuat
-        function onYouTubeIframeAPIReady() {
-            // Inisialisasi pemutar
-            var player = new YT.Player('player', {
-                height: '500', // tinggi iframe
-                // width: '640', // lebar iframe
-                playerVars: {
-                    listType: 'playlist',
-                    list: 'PLG70n9hvc5bRr5HFJ0mJ4FZZjymJhcrkt',
-                    autoplay: 1,
-                    controls: 1,
-                    loop: 1,
-                    rel: 0,
-                    mute: 1
-                },
-                events: {
-                    'onReady': onPlayerReady
-                }
-            });
-        }
-
-        // Fungsi ini dipanggil saat player siap
-        function onPlayerReady(event) {
-            event.target.mute(); // Mematikan suara
-            event.target.playVideo(); // Memulai video secara otomatis
-
-        }
-    </script>
     <script type="text/javascript">
         let dokter = @json($dokter)
 
@@ -138,6 +169,7 @@
 
         function drawTable(data) {
             console.log("🚀 ~ drawTable ~ data:", data)
+            console.log("🚀 ~ drawTable ~ data.length:", data.length)
             if (data.length > 0) {
 
 
@@ -150,20 +182,23 @@
                     const noRmCell = document.createElement("td");
                     noRmCell.textContent = item.pasien_no_rm;
                     row.appendChild(noRmCell);
+                    noRmCell.classList.add("col-2");
 
                     const namaCell = document.createElement("td");
                     namaCell.textContent = item.pasien_nama;
                     row.appendChild(namaCell);
+                    namaCell.classList.add("col-4");
 
-                    const alamatCell = document.createElement("td");
-                    alamatCell.textContent = item.dokter_nama;
-                    row.appendChild(alamatCell);
+                    const dokterCell = document.createElement("td");
+                    dokterCell.textContent = item.dokter_nama;
+                    row.appendChild(dokterCell);
+                    dokterCell.classList.add("col-4");
 
                     tableBody.appendChild(row);
                 });
 
                 // Memastikan animasi berjalan
-                document.querySelector(".table-auto").style.animation = 'scroll 20s linear infinite';
+                document.querySelector("#listTunggu").style.animation = 'scroll 20s linear infinite';
             } else {
                 //draw tabel "Tidak ada antrian" coll span 3
                 const tableBody = document.querySelector("table tbody");
@@ -177,7 +212,7 @@
                 row.appendChild(noRmCell);
                 tableBody.appendChild(row);
                 //tidak usah scroll
-                document.querySelector(".table-auto").style.animation = 'none';
+                document.querySelector("#listTunggu").style.animation = 'none';
             }
         }
 
