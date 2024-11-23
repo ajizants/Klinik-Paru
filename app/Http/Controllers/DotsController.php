@@ -192,7 +192,7 @@ class DotsController extends Controller
         $tanggal = Carbon::now()->format('Y-m-d');
 
         $data = DotsTransModel::with('pasien')
-        ->where('nxKontrol', $tanggal)
+            ->where('nxKontrol', $tanggal)
             ->get();
 
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
@@ -222,13 +222,20 @@ class DotsController extends Controller
                 $selisihHari = $terakhir_kontrol->diffInDays($now);
                 $dataDokter = PegawaiModel::with('biodata')->where('nip', $Pkontrol->dokter)->first();
                 $namaDokter = $dataDokter->gelar_d . " " . $dataDokter->biodata->nama . " " . $dataDokter->gelar_b;
+                if ($d->hasilBerobat == 93 || $d->hasilBerobat == 94 || $d->hasilBerobat == 95 || $d->hasilBerobat == 96 || $d->hasilBerobat == 97 || $d->hasilBerobat == 98) {
+                    // dd($d->hasilBerobat);
+                    $ket = DotsBlnModel::where('id', $d->hasilBerobat)->first();
+                    $d->status = $ket->nmBlnKe;
 
-                if ($selisihHari > 30) {
-                    $d->status = 'DO';
-                } elseif ($selisihHari > 7) {
-                    $d->status = 'Telat';
                 } else {
-                    $d->status = 'Tepat Waktu';
+
+                    if ($selisihHari > 30 || $d->hasilBerobat == 99) {
+                        $d->status = 'DO';
+                    } elseif ($selisihHari > 7) {
+                        $d->status = 'Telat';
+                    } else {
+                        $d->status = 'Tepat Waktu';
+                    }
                 }
 
                 $d->terakhir = $terakhir_kontrol->format('d-m-Y');
