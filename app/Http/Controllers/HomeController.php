@@ -251,6 +251,8 @@ class HomeController extends Controller
         foreach ($data as $d) {
             $layanan[] = [
                 'idLayanan' => $d->idLayanan,
+                'kdTind' => $d->kdTind,
+                'kdFoto' => $d->kdFoto,
                 'kelas' => $d->kelas,
                 'nmLayanan' => $d->nmLayanan,
                 'tarif' => $d->tarif,
