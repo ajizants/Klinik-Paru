@@ -46,6 +46,7 @@ Route::get('display/poli/{id}', [DisplayController::class, 'poli'])->name('poli'
 Route::middleware('auth')->group(function () {
     Route::get('report', [HomeController::class, 'report'])->name('report');
     Route::get('Laporan/Pendaftaran', [HomeController::class, 'laporanPendaftaran'])->name('laporanPendaftaran');
+    Route::get('pendaftaran', [HomeController::class, 'pendaftaran'])->name('pendaftaran');
     //farmasi
     Route::get('farmasi', [HomeController::class, 'farmasi'])->name('farmasi')->middleware('role:farmasi');
     Route::get('gudangFarmasi', [HomeController::class, 'gudangFarmasi'])->name('gudangFarmasi')->middleware('role:farmasi');

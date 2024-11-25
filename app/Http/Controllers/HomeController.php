@@ -20,7 +20,6 @@ use App\Models\ROJenisFoto;
 use App\Models\ROJenisKondisi;
 use App\Models\ROJenisMesin;
 use App\Models\RoProyeksiModel;
-use App\Models\TindakanModel;
 use Carbon\Carbon;
 
 class HomeController extends Controller
@@ -73,14 +72,24 @@ class HomeController extends Controller
         return view('Template.403')->with('title', $title);
     }
 
+    public function pendaftaran()
+    {
+        $title = 'PENDAFTARAN';
+        $admin = $this->pegawai([10, 15]);
+
+        $admin = array_map(function ($item) {
+            return (object) $item;
+        }, $admin);
+
+        return view('Pendaftaran.main', compact('admin'))->with('title', $title);
+    }
     public function igd()
     {
         $title = 'IGD';
         $dokter = $this->pegawai([1, 7, 8]);
         $perawat = $this->pegawai([10, 15]);
-        $tindakan = TindakanModel::all();
+        $tindakan = $this->layanan([2, 3, 5, 10]);
         $bmhp = BMHPModel::all();
-        // return $bmhp;
         $dxMed = DiagnosaModel::all();
 
         $dokter = array_map(function ($item) {
@@ -225,13 +234,16 @@ class HomeController extends Controller
     public function kasir()
     {
         $title = 'KASIR';
-        return view('Kasir.main')->with('title', $title);
+        $layanan = LayananModel::where('status', 'like', '%1%')->get();
+        // return $layanan;
+        return view('Kasir.main', compact('layanan'))->with('title', $title);
     }
 
     private function layanan($kelas)
     {
-        $data = LayananModel::where('kelas', 'like', '%' . $kelas . '%')
-            ->where('status', 'like', '%1%')
+        $data = LayananModel::where('status', "1")
+            ->whereIn('kelas', $kelas)
+        // ->whereIn('kelas', 'like', '%' . $kelas . '%')
             ->get();
 
         $layanan = [];
@@ -242,15 +254,20 @@ class HomeController extends Controller
                 'kelas' => $d->kelas,
                 'nmLayanan' => $d->nmLayanan,
                 'tarif' => $d->tarif,
+                'status' => $d->status,
             ];
         }
+        // dd($layanan);
+        $layanan = array_map(function ($item) {
+            return (object) $item;
+        }, $layanan);
 
         return $layanan;
     }
     public function lab()
     {
         $title = 'Pendaftaran Laboratorium';
-        $layananLab = $this->layanan(9);
+        $layananLab = $this->layanan([9]);
         // dd($layananLab);
         $dokter = $this->pegawai([1, 7, 8]);
         $analis = $this->pegawai([11]);

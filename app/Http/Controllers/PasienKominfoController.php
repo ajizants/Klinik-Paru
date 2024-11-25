@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DotsTransModel;
 use App\Models\FarmasiModel;
 use App\Models\IGDTransModel;
+use App\Models\KasirTransModel;
 use App\Models\KominfoModel;
 use App\Models\LaboratoriumHasilModel;
 use App\Models\LaboratoriumKunjunganModel;
@@ -739,6 +740,11 @@ class PasienKominfoController extends Controller
                             ->whereDate('created_at', $tanggal)->first();
                         $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
                         break;
+                    case 'kasir':
+                        $ts = KasirTransModel::where('norm', $norm)
+                            ->whereDate('created_at', $tanggal)->first();
+                        $item['status'] = !$ts ? 'Belum Input' : 'Sudah Selesai';
+                        break;
 
                     default:
                         $item['status'] = 'Unknown ruang';
@@ -890,6 +896,7 @@ class PasienKominfoController extends Controller
 
     public function pendaftaranFilter(Request $request)
     {
+        // dd($request->all());
         $norm = $request->input('norm');
         // Jika tgl tidak ada maka gunakan tgl saat ini
         $tanggal = $request->input('tanggal', Carbon::now()->format('Y-m-d'));
@@ -898,12 +905,12 @@ class PasienKominfoController extends Controller
             'tanggal_akhir' => $tanggal,
             'no_rm' => $norm ?? '',
         ];
-        // return $params;
+        // dd($params);
         $model = new KominfoModel();
         $data = $model->pendaftaranRequest($params);
-        // return $data;
+        dd($data);
 
-        // // Filter hasil yang normnya sama dengan $norm
+        // Filter hasil yang normnya sama dengan $norm
         if ($norm === "" || $norm === null) {
             $filteredData = array_filter($data, function ($message) {
                 return $message['status_pulang'] === "Belum Pulang";

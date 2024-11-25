@@ -352,7 +352,7 @@ function generateActionLink(item, ruang) {
 }
 
 function setTransaksi(button, ruang) {
-    console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi)
+    console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi);
     var norm = $(button).data("norm");
     var nama = $(button).data("nama");
     var dokter = $(button).data("kddokter");

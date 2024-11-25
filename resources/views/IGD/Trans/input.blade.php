@@ -98,8 +98,8 @@
                                                         <option value="">--Pilih Tindakan--</option>
                                                         @foreach (collect($tindakan)->sortBy('nama') as $item)
                                                             <!-- Convert to collection and sort by 'nama' -->
-                                                            <option value="{{ $item->kdTindakan }}">
-                                                                {{ $item->nmTindakan }}</option>
+                                                            <option value="{{ $item->kdTindakan ?? $item->idLayanan }}">
+                                                                {{ $item->nmTindakan ?? $item->nmLayanan }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>

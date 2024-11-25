@@ -104,6 +104,10 @@ Route::get('layanan', [KasirController::class, 'Layanan']);
 Route::post('layanan/update', [KasirController::class, 'updateLayanan']);
 Route::post('layanan/add', [KasirController::class, 'add']);
 Route::post('layanan/delete', [KasirController::class, 'delete']);
+Route::post('tagihan', [KasirController::class, 'tagihan']);
+Route::post('kasir/item/add', [KasirController::class, 'addTagihan']);
+Route::post('kasir/tagihan/order', [KasirController::class, 'order']);
+Route::post('kasir/transaksi', [KasirController::class, 'addTransaksi']);
 
 //laboratorium
 Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);

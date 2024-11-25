@@ -58,6 +58,7 @@ class KunjunganModel extends Model
     {
         return $this->hasOne(DotsModel::class, 'norm', 'norm');
     }
+
     public function riwayatFarmasi()
     {
         return $this->hasMany(FarmasiModel::class, 'notrans', 'notrans');
@@ -69,6 +70,10 @@ class KunjunganModel extends Model
     public function riwayatLab()
     {
         return $this->hasMany(LaboratoriumHasilModel::class, 'notrans', 'notrans');
+    }
+    public function riwayatRO()
+    {
+        return $this->hasMany(ROTransaksiModel::class, 'notrans', 'notrans');
     }
 
 }
