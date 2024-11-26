@@ -140,6 +140,7 @@ async function dataLab(pemeriksaan, notrans) {
         idLab: item.idLab,
         idLayanan: item.pemeriksaan.idLayanan,
         kelas: item.pemeriksaan.kelas,
+        kdTind: item.pemeriksaan.kdTind,
     }));
 
     const table = $("#inputHasil").DataTable({
@@ -179,7 +180,8 @@ async function dataLab(pemeriksaan, notrans) {
                 data: "hasiLab",
                 render: (data, type, row) => {
                     let hasilLabHtml = "";
-                    switch (row.kelas) {
+                    // switch (row.kelas) {
+                    switch (row.kdTind) {
                         case "94":
                             hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
                             hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
