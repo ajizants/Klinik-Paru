@@ -357,24 +357,44 @@ class KasirController extends Controller
         // return $data;
         return view('Laporan.sbs', compact('tanggal', 'data', 'totalTagihan'))->with('title', $title);
     }
-    public function cetakBAPH(Request $request)
+    public function cetakBAPH($tgl, $tahun)
     {
         $title = 'BAPH';
-        $data = [
-            [
-                "nomor" => "21./SBS/11/2024",
-                "tgl_nomor" => "27 November 2024",
-                "hari" => "Rabu, 27 November 2024",
-                "tgl_pendapatan" => "26 November 2024",
-                "tgl_setor" => "26 November 2024",
-                "jumlah" => "Rp. 99.000.000,00",
-                "jumlah2" => "Rp. 99.000.000,00",
-            ],
-        ];
-        // return $data;
+
+        // Fetch data and decode it
+        $datas = $this->getPendapatan($tahun);
+        // $datas = json_decode($datas, true);
+
+        // Check if decoding was successful
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            // Handle the error (for example, return a message)
+            return response()->json(['error' => 'Invalid JSON data']);
+        }
+
+        // Check if $datas is an array before filtering
+        if (is_array($datas)) {
+            // Filter the data based on the provided date ($tgl)
+            $data = array_filter($datas, function ($item) use ($tgl) {
+                return isset($item['tanggal']) && $item['tanggal'] === $tgl;
+            });
+        } else {
+            // If $datas is not an array, handle the case accordingly
+            $data = [];
+        }
+
+        // Return the view with the filtered data
         return view('Laporan.baph', compact('data'))->with('title', $title);
     }
+
     public function pendapatan($tahun)
+    {
+        // Ambil data pendapatan berdasarkan tahun
+        $data = $this->getPendapatan($tahun);
+        // Inisialisasi array kosong untuk pendapatan
+
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
+    private function getPendapatan($tahun)
     {
         // Ambil data pendapatan berdasarkan tahun
         $data = KasirTransModel::selectRaw('DATE(created_at) as tanggal, SUM(tagihan) as pendapatan')
@@ -413,15 +433,15 @@ class KasirController extends Controller
                 'tgl_nomor' => $tglNomor,
                 'tgl_pendapatan' => $tglNomor,
                 'tgl_setor' => $tglNomor,
-                'pendapatan' => $d->pendapatan,
+                'pendapatan' => 'Rp ' . number_format($d->pendapatan, 0, ',', '.') . ',00',
                 'jumlah' => $d->pendapatan,
-                'jumlah2' => $d->pendapatan,
-                'terbilang' => $terbilangPendapatan . " rupiah",
+                'terbilang' => ucfirst($terbilangPendapatan) . " rupiah.",
                 'kode_akun' => 102010041411,
                 'uraian' => 'Pendapatan Jasa Pelayanan Rawat Jalan 1',
             ];
         }
-        return response()->json($result, 200, [], JSON_PRETTY_PRINT);
+        return $result;
+        // return response()->json($result, 200, [], JSON_PRETTY_PRINT);
     }
 
     private function terbilang($angka)

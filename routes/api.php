@@ -111,7 +111,8 @@ Route::post('kasir/transaksi', [KasirController::class, 'addTransaksi']);
 Route::post('kasir/kunjungan', [KasirController::class, 'kunjungan']);
 Route::post('kasir/rekap', [KasirController::class, 'rekapKunjungan']);
 Route::get('cetakSBS/{id}', [KasirController::class, 'cetakSBS']);
-Route::post('cetakBAPH', [KasirController::class, 'cetakBAPH']);
+// Route::post('cetakBAPH', [KasirController::class, 'cetakBAPH']);
+Route::get('cetakBAPH/{tgl}/{tahun}', [KasirController::class, 'cetakBAPH']);
 Route::get('/pendapatan/{tahun}', [KasirController::class, 'pendapatan']);
 
 //laboratorium

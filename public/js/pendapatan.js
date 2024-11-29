@@ -20,8 +20,8 @@ function report() {
                     data-tgl_pendapatan="${item.tgl_pendapatan}"                                
                     data-tgl_setor="${item.tgl_setor}"                                
                     data-jumlah="${item.jumlah}"                                
-                    data-jumlah2="${item.jumlah2}"                                
-                    >Cetak Bukti Setoran</a>
+                    data-terbilang="${item.terbilang}"                                
+                   href="/api/cetakBAPH/${item.tanggal}/${tahun}" target="_blank">Cetak Bukti Setoran</a>
                 `;
                 item.no = index + 1;
             });
@@ -36,24 +36,24 @@ function report() {
                         { data: "nomor" },
                         { data: "kode_akun" },
                         { data: "uraian" },
+                        { data: "jumlah" },
                         { data: "pendapatan" },
-                        // { data: "pendapatan" },
-                        {
-                            data: "pendapatan",
-                            render: function (data, type, row) {
-                                var formattedTarif = parseInt(
-                                    data
-                                ).toLocaleString("id-ID", {
-                                    style: "currency",
-                                    currency: "IDR",
-                                    minimumFractionDigits: 0,
-                                });
-                                return `${formattedTarif}
-                                    
-                                    <input type="hidden" value="${data}">
-                                `;
-                            },
-                        },
+                        // {
+                        //     data: "pendapatan",
+                        //     render: function (data, type, row) {
+                        //         var formattedTarif = parseInt(
+                        //             data
+                        //         ).toLocaleString("id-ID", {
+                        //             style: "currency",
+                        //             currency: "IDR",
+                        //             minimumFractionDigits: 0,
+                        //         });
+                        //         return `${formattedTarif}
+
+                        //             <input type="hidden" value="${data}">
+                        //         `;
+                        //     },
+                        // },
                     ],
                     autoWidth: false,
                     order: [
@@ -87,17 +87,6 @@ function report() {
             });
         },
     });
-}
-
-function cetakBAPH() {
-    const tgl = new Date();
-    const tahun = tgl.getFullYear();
-    const bulan = String(tgl.getMonth() + 1).padStart(2, "0");
-    const tanggal = String(tgl.getDate()).padStart(2, "0");
-    const tglSBS = `${tanggal}-${bulan}-${tahun}`;
-    console.log("🚀 ~ cetakSBS ~ tglSBS:", tglSBS);
-
-    window.open("api/cetakSBS/" + tglSBS);
 }
 
 var tglAwal;

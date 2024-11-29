@@ -213,12 +213,6 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url('/kasir') }}">
-                                    <i class="fa-solid fa-cash-register nav-icon"></i>
-                                    <p>Kasir</p>
-                                </a>
-                            </li>
                             {{-- @endif --}}
 
                             {{-- LAPORAN --}}
