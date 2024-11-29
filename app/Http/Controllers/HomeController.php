@@ -238,6 +238,25 @@ class HomeController extends Controller
         // return $layanan;
         return view('Kasir.main', compact('layanan'))->with('title', $title);
     }
+    public function rekapKasir()
+    {
+        $title = 'LAPORAN KASIR';
+        return view('Laporan.kasir')->with('title', $title);
+    }
+    public function pendapatan()
+    {
+        $title = 'LAPORAN KASIR';
+        // Mendapatkan tahun sekarang
+        $currentYear = \Carbon\Carbon::now()->year;
+
+        // Membuat array tahun untuk 5 tahun terakhir
+        $listYear = [];
+        for ($i = 0; $i < 5; $i++) {
+            $listYear[] = $currentYear - $i;
+        }
+
+        return view('Laporan.pendapatan')->with('title', $title)->with('listYear', $listYear);
+    }
 
     private function layanan($kelas)
     {

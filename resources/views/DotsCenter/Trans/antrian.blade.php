@@ -66,7 +66,7 @@
                                     <th>Tanggal</th>
                                     <th>Urut</th>
                                     <th>Jaminan</th>
-                                    <th>No RM</th>
+                                    <th>NoRM</th>
                                     <th class="col-3">Nama Pasien</th>
                                     <th class="col-3">Dokter</th>
                                     <th>Poli</th>
@@ -88,7 +88,7 @@
                                     <th>Tanggal</th>
                                     <th>Urut</th>
                                     <th>Jaminan</th>
-                                    <th>No RM</th>
+                                    <th>NoRM</th>
                                     <th class="col-3">Nama Pasien</th>
                                     <th class="col-3">Dokter</th>
                                     <th>Poli</th>
@@ -111,7 +111,7 @@
                                     <th>Tanggal</th>
                                     <th>Urut</th>
                                     <th>Jaminan</th>
-                                    <th>No RM</th>
+                                    <th>NoRM</th>
                                     <th class="col-1">NIK</th>
                                     <th class="col-2">Nama Pasien</th>
                                     <th class="col-3">Dokter</th>
@@ -128,21 +128,9 @@
                     <div class="table-responsive pt-2 px-2">
                         <table id="Pkontrol" class="table table-striped table-hover pt-0 mt-0 fs-6"
                             style="width:100%" cellspacing="0">
-                            <thead class="bg bg-primary">
-                                {{-- <tr>
-                                    <th width="15px">Aksi</th>
-                                    <th>status</th>
-                                    <th>Tanggal</th>
-                                    <th>Urut</th>
-                                    <th>Jaminan</th>
-                                    <th>No RM</th>
-                                    <th class="col-1">Nama Pasien</th>
-                                    <th class="col-3">Dokter</th>
-                                    <th class="col-3">Diagnosa</th>
-                                </tr> --}}
+                            <thead class="bg bg-success">
                                 <tr>
                                     <th width="15px">Aksi</th>
-                                    {{-- <th width="35px">Telat</th> --}}
                                     <th width="35px">Rencana Kontrol</th>
                                     <th width="40px">Terakhir Kontrol</th>
                                     <th width="15px"class="text-center">No</th>
@@ -207,16 +195,18 @@
                             style="width:100%" cellspacing="0">
                             <thead class="bg bg-info">
                                 <tr>
-                                    <th width="15px">Aksi</th>
-                                    <th width="35px">Mulai</th>
-                                    <th width="15px"class="text-center">No</th>
-                                    <th width="15px" class="text-center">NoRM</th>
-                                    <th width="15px"class="text-center">No HP</th>
-                                    <th width="20px"class="text-center">NIK</th>
-                                    <th width="36px"class="text-center">Status</th>
-                                    <th width="">Nama</th>
-                                    <th width="">Alamat</th>
-                                    <th width="">Dokter</th>
+                                    <th>Aksi</th>
+                                    <th>Mulai</th>
+                                    <th class="text-center">No</th>
+                                    <th class="text-center">NoRM</th>
+                                    <th class="text-center">No HP</th>
+                                    <th class="text-center">NIK</th>
+                                    <th>Nama</th>
+                                    <th>Alamat</th>
+                                    <th>Dokter</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Diagnosa</th>
+                                    <th>Ket</th>
                                 </tr>
                             </thead>
                         </table>
@@ -233,7 +223,7 @@
                                     <th>Tanggal</th>
                                     <th>Urut</th>
                                     <th>Jaminan</th>
-                                    <th>No RM</th>
+                                    <th>NoRM</th>
                                     <th>NIK</th>
                                     <th class="col-3">Nama Pasien</th>
                                     <th class="col-3">Dokter</th>

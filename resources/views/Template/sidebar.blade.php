@@ -185,6 +185,35 @@
                             <!-- Kasir Section -->
                             {{-- @if (auth()->user()->role === 'kasir' || auth()->user()->role === 'admin') --}}
                             <li class="nav-item">
+                                <a href="" class="nav-link">
+                                    <i class="fa-solid fa-cash-register nav-icon"></i>
+                                    <p>
+                                        Kasir
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview" style="display: none;">
+                                    <li class="nav-item ml-4">
+                                        <a class="nav-link" href="{{ url('/kasir') }}">
+                                            <i class="fa-regular nav-icon fas fa-edit"></i>
+                                            <p>Transaksi Kasir</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item ml-4">
+                                        <a class="nav-link" href="{{ url('/kasir/report') }}">
+                                            <i class="fa-solid fa-database nav-icon"></i>
+                                            <p>Laporan Kunjungan</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item ml-4">
+                                        <a class="nav-link" href="{{ url('/kasir/pendapatan') }}">
+                                            <i class="fa-solid fa-database nav-icon"></i>
+                                            <p>Laporan Pendapatan</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ url('/kasir') }}">
                                     <i class="fa-solid fa-cash-register nav-icon"></i>
                                     <p>Kasir</p>

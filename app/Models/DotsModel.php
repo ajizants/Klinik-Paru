@@ -38,7 +38,7 @@ class DotsModel extends Model
     }
     public function diagnosa()
     {
-        return $this->hasOne(DiagnosaModel::class, 'kdDiag', 'kdDX');
+        return $this->hasOne(DiagnosaModel::class, 'kdDiag', 'kdDx');
     }
     public function dokter()
     {

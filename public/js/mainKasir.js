@@ -15,61 +15,68 @@ function validateAndSubmit() {
     ];
 
     var error = false;
-
-    inputsToValidate.forEach(function (inputId) {
-        console.log("🚀 ~ inputId:", inputId);
-        var inputElement = document.getElementById(inputId);
-        var inputValue = inputElement.value.trim();
-
-        if (inputValue === "") {
-            if ($(inputElement).hasClass("select2-hidden-accessible")) {
-                // Select2 element
-                $(inputElement)
-                    .next(".select2-container")
-                    .addClass("input-error");
-            } else {
-                // Regular input element
-                inputElement.classList.add("input-error");
-            }
-            error = true;
-        } else {
-            if ($(inputElement).hasClass("select2-hidden-accessible")) {
-                // Select2 element
-                $(inputElement)
-                    .next(".select2-container")
-                    .removeClass("input-error");
-            } else {
-                // Regular input element
-                inputElement.classList.remove("input-error");
-            }
-        }
-    });
-    if (error) {
-        var dataKurang = [];
-        var norm = $("#norm").val();
-        var notrans = $("#notrans").val();
-        var nama = $("#nama").val();
-        var jaminan = $("#layanan").val();
-        var alamat = $("#alamat").val();
-        var umur = $("#umur").val();
-        var petugas = $("#petugas").val();
-        if (!norm) dataKurang.push("No RM ");
-        if (!notrans) dataKurang.push("No Transaksi ");
-        if (!nama) dataKurang.push("Nama Pasien ");
-        if (!jaminan) dataKurang.push("Jaminan ");
-        if (!alamat) dataKurang.push("Alamat ");
-        if (!umur) dataKurang.push("Umur ");
-        if (!petugas) dataKurang.push("Petugas ");
-
+    const hargaObat = $("#harga_2").val();
+    if (hargaObat == 1) {
         Swal.fire({
             icon: "error",
-            title:
-                "Data Tidak Lengkap...!!! \n\n" +
-                dataKurang.join(", ") +
-                "Belum Diisi",
+            title: "Harga Obat belum diisi/salah",
         });
     } else {
-        simpan();
+        inputsToValidate.forEach(function (inputId) {
+            console.log("🚀 ~ inputId:", inputId);
+            var inputElement = document.getElementById(inputId);
+            var inputValue = inputElement.value.trim();
+
+            if (inputValue === "") {
+                if ($(inputElement).hasClass("select2-hidden-accessible")) {
+                    // Select2 element
+                    $(inputElement)
+                        .next(".select2-container")
+                        .addClass("input-error");
+                } else {
+                    // Regular input element
+                    inputElement.classList.add("input-error");
+                }
+                error = true;
+            } else {
+                if ($(inputElement).hasClass("select2-hidden-accessible")) {
+                    // Select2 element
+                    $(inputElement)
+                        .next(".select2-container")
+                        .removeClass("input-error");
+                } else {
+                    // Regular input element
+                    inputElement.classList.remove("input-error");
+                }
+            }
+        });
+        if (error) {
+            var dataKurang = [];
+            var norm = $("#norm").val();
+            var notrans = $("#notrans").val();
+            var nama = $("#nama").val();
+            var jaminan = $("#layanan").val();
+            var alamat = $("#alamat").val();
+            var umur = $("#umur").val();
+            var petugas = $("#petugas").val();
+            if (!norm) dataKurang.push("No RM ");
+            if (!notrans) dataKurang.push("No Transaksi ");
+            if (!nama) dataKurang.push("Nama Pasien ");
+            if (!jaminan) dataKurang.push("Jaminan ");
+            if (!alamat) dataKurang.push("Alamat ");
+            if (!umur) dataKurang.push("Umur ");
+            if (!petugas) dataKurang.push("Petugas ");
+
+            Swal.fire({
+                icon: "error",
+                title:
+                    "Data Tidak Lengkap...!!! \n\n" +
+                    dataKurang.join(", ") +
+                    "Belum Diisi",
+            });
+        } else {
+            simpan();
+        }
     }
 }
 function simpan() {
@@ -82,101 +89,203 @@ function simpan() {
     var umur = $("#umur").val();
     var jk = $("#jk").val();
 
+    // Validasi data input
     if (!norm || !notrans || !umur || !jk) {
         var dataKurang = [];
         if (!norm) dataKurang.push("No RM ");
         if (!notrans) dataKurang.push("Nomor Transaksi ");
-        if (!petugas) dataKurang.push("Petugas ");
         if (!umur) dataKurang.push("Umur ");
+        if (!jk) dataKurang.push("Jenis Kelamin ");
 
         Swal.fire({
             icon: "error",
-            title:
-                "Data Tidak Lengkap...!!! " +
-                dataKurang.join(", ") +
-                "Belum Diisi",
+            title: "Data Tidak Lengkap!",
+            text: dataKurang.join(", ") + " Belum Diisi.",
         });
+
         if (!norm) $("#norm").focus();
-        if (!notrans) $("#notrans").focus();
-        if (!umur) $("#umur").focus();
-        if (!jk) $("#jk").focus();
-    } else {
-        var pemeriksaan = $(".data-checkbox:checked");
+        else if (!notrans) $("#notrans").focus();
+        else if (!umur) $("#umur").focus();
+        else if (!jk) $("#jk").focus();
 
-        if (pemeriksaan.length === 0) {
-            Swal.fire({
-                icon: "error",
-                title: "Mohon pilih setidaknya satu layanan.",
-            });
-        } else {
-            dataTerpilih = pemeriksaan
-                .map(function () {
-                    var id = $(this).attr("id");
-                    return {
-                        idLayanan: id,
-                        norm: norm,
-                        notrans: notrans,
-                    };
-                })
-                .get();
+        return; // Hentikan fungsi
+    }
 
-            dataTerpilih = dataTerpilih.filter(function (item) {
-                return item !== null;
-            });
-        }
+    // Validasi checkbox pemeriksaan
+    var pemeriksaan = $(".data-checkbox:checked");
+    if (pemeriksaan.length === 0) {
+        Swal.fire({
+            icon: "error",
+            title: "Mohon pilih setidaknya satu layanan.",
+        });
+        return; // Hentikan fungsi
+    }
 
-        console.log(dataTerpilih);
-        fetch("/api/kasir/item/add", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                notrans: notrans,
-                norm: norm,
-                nama: nama,
-                umur: umur,
-                jk: jk,
-                alamat: alamat,
-                jaminan: jaminan,
-                dataTerpilih: dataTerpilih,
-            }),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    console.log("Response status:", response.status);
-                    console.log("Response status text:", response.message);
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-                var massage = data.message;
-                Swal.fire({
-                    icon: "success",
-                    title: massage,
-                });
-                var notrans = $("#notrans").val();
-                tampilkanOrder(notrans);
-                $('table thead input[type="checkbox"]').prop("checked", false);
-                $('table tbody input[type="checkbox"]').prop("checked", false);
-            })
-            .catch((error) => {
-                console.error(
-                    "There has been a problem with your fetch operation:",
-                    error
-                );
+    // Proses data checkbox
+    dataTerpilih = pemeriksaan
+        .map(function () {
+            var id = $(this).attr("id");
+            var qty = $("#qty_" + id).val();
+            var harga = $("#harga_" + id).val();
+
+            // Validasi harga untuk id tertentu
+            if (id == 2 && harga == 1) {
                 Swal.fire({
                     icon: "error",
-                    title:
-                        "There has been a problem with your fetch operation:" +
-                        error,
+                    title: "Harga Obat salah",
                 });
-            });
+                return null; // Abaikan item ini
+            }
+
+            return {
+                idLayanan: id,
+                norm: norm,
+                notrans: notrans,
+                qty: qty,
+                harga: harga,
+            };
+        })
+        .get();
+
+    // Filter data yang null
+    dataTerpilih = dataTerpilih.filter(function (item) {
+        return item !== null;
+    });
+
+    if (dataTerpilih.length === 0) {
+        Swal.fire({
+            icon: "error",
+            title: "Tidak ada data layanan yang valid.",
+        });
+        return; // Hentikan fungsi
     }
+
+    // Kirim data ke server
+    fetch("/api/kasir/item/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            notrans: notrans,
+            norm: norm,
+            nama: nama,
+            umur: umur,
+            jk: jk,
+            alamat: alamat,
+            jaminan: jaminan,
+            dataTerpilih: dataTerpilih,
+        }),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                console.log("Response status:", response.status);
+                console.log("Response status text:", response.message);
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data);
+            Swal.fire({
+                icon: "success",
+                title: data.message,
+            });
+            var notrans = $("#notrans").val();
+            tampilkanOrder(notrans);
+            $('table thead input[type="checkbox"]').prop("checked", false);
+            $('table tbody input[type="checkbox"]').prop("checked", false);
+        })
+        .catch((error) => {
+            console.error(
+                "There has been a problem with your fetch operation:",
+                error
+            );
+            Swal.fire({
+                icon: "error",
+                title: "Terjadi masalah: " + error.message,
+            });
+        });
 }
 
+// function tampilkanOrder(notrans, norm, tgltrans, dokter) {
+//     var notrans = notrans ? notrans : $("#notrans").val();
+//     var tgl = $("#tgltrans").val();
+//     $.ajax({
+//         url: "/api/kasir/tagihan/order",
+//         type: "post",
+//         data: { notrans: notrans, tgl: tgl },
+//         success: function (response) {
+//             if ($.fn.DataTable.isDataTable("#dataTagihan")) {
+//                 var table = $("#dataTagihan").DataTable();
+//                 table.destroy();
+//             }
+//             data = response.item;
+//             pasien = response;
+//             // console.log("🚀 ~ dataLab ~ data:", data);
+
+//             // Tambahkan kolom actions dan hitung total tarif
+//             let totalTarif = 0;
+//             data.forEach((item) => {
+//                 item.actions = `<a type="button" class="btn btn-danger btn-sm"
+//                                         data-id="${item.id}"
+//                                         data-layanan="${item.layanan.nmLayanan}"
+//                                         onclick="deletLab();"><i class="fas fa-trash"></i></a>`;
+//                 // Tambahkan tarif ke total
+//                 totalTarif += parseFloat(item.totalHarga) || 0;
+//             });
+//             if (pasien.tagihan == 0) {
+//                 $("#tagihan").val("Rp" + totalTarif.toLocaleString("id-ID"));
+//             } else {
+//                 $("#tagihan").val(
+//                     "Rp" + pasien.tagihan.toLocaleString("id-ID")
+//                 );
+//             }
+//             $("#kembali").val("Rp" + pasien.kembalian.toLocaleString("id-ID"));
+//             $("#bayar").val("Rp" + pasien.bayar.toLocaleString("id-ID"));
+//             $("#petugas").val(pasien.petugas);
+
+//             // Render DataTable
+//             $("#dataTagihan").DataTable({
+//                 data: data,
+//                 columns: [
+//                     { data: "actions" },
+//                     { data: "norm" },
+//                     { data: "layanan.nmLayanan" },
+//                     { data: "totalHarga" },
+//                 ],
+//                 order: [1, "asc"],
+//                 scrollY: "200px",
+//                 paging: false,
+//             });
+//         },
+//         error: function (xhr, status, error) {
+//             console.error("Error:", error);
+//             Swal.fire({
+//                 icon: "error",
+//                 title: "Belum ada Transaksi, Silahkan Lakukan Transaksi...!!!",
+//             });
+
+//             cariTagihan(norm, tgltrans);
+//             checkedPemeriksaan(1);
+//             checkedPemeriksaan(2);
+//             switch (dokter) {
+//                 case "dr. AGIL DANANJAYA, Sp.P":
+//                     checkedPemeriksaan(3);
+//                     break;
+//                 case "dr. Cempaka Nova Intani, Sp.P, FISR., MM.":
+//                     checkedPemeriksaan(3);
+//                     break;
+//                 case "dr. SIGIT DWIYANTO":
+//                     checkedPemeriksaan(4);
+//                     break;
+//                 case "dr. FILLY ULFA KUSUMAWARDANI":
+//                     checkedPemeriksaan(4);
+//                     break;
+//             }
+//         },
+//     });
+// }
 function tampilkanOrder(notrans, norm, tgltrans, dokter) {
     var notrans = notrans ? notrans : $("#notrans").val();
     var tgl = $("#tgltrans").val();
@@ -201,10 +310,8 @@ function tampilkanOrder(notrans, norm, tgltrans, dokter) {
                                         data-layanan="${item.layanan.nmLayanan}"
                                         onclick="deletLab();"><i class="fas fa-trash"></i></a>`;
                 // Tambahkan tarif ke total
-                totalTarif += parseFloat(item.layanan.tarif) || 0;
+                totalTarif += parseFloat(item.totalHarga) || 0;
             });
-            console.log("🚀 ~ data.forEach ~ totalTarif:", totalTarif);
-
             $("#tagihan").val("Rp" + totalTarif.toLocaleString("id-ID"));
 
             // Render DataTable
@@ -214,7 +321,7 @@ function tampilkanOrder(notrans, norm, tgltrans, dokter) {
                     { data: "actions" },
                     { data: "norm" },
                     { data: "layanan.nmLayanan" },
-                    { data: "layanan.tarif" },
+                    { data: "totalHarga" },
                 ],
                 order: [1, "asc"],
                 scrollY: "200px",
@@ -230,6 +337,84 @@ function tampilkanOrder(notrans, norm, tgltrans, dokter) {
 
             cariTagihan(norm, tgltrans);
             checkedPemeriksaan(1);
+            switch (dokter) {
+                case "dr. AGIL DANANJAYA, Sp.P":
+                    checkedPemeriksaan(3);
+                    break;
+                case "dr. Cempaka Nova Intani, Sp.P, FISR., MM.":
+                    checkedPemeriksaan(3);
+                    break;
+                case "dr. SIGIT DWIYANTO":
+                    checkedPemeriksaan(4);
+                    break;
+                case "dr. FILLY ULFA KUSUMAWARDANI":
+                    checkedPemeriksaan(4);
+                    break;
+            }
+        },
+    });
+}
+function riwayat(notrans, norm, tgltrans, dokter) {
+    var notrans = notrans ? notrans : $("#notrans").val();
+    var tgl = $("#tgltrans").val();
+    $.ajax({
+        url: "/api/kasir/kunjungan",
+        type: "post",
+        data: { notrans: notrans, tgl: tgl },
+        success: function (response) {
+            if ($.fn.DataTable.isDataTable("#dataTagihan")) {
+                var table = $("#dataTagihan").DataTable();
+                table.destroy();
+            }
+            data = response.item;
+            pasien = response;
+            // console.log("🚀 ~ dataLab ~ data:", data);
+
+            // Tambahkan kolom actions dan hitung total tarif
+            let totalTarif = 0;
+            data.forEach((item) => {
+                item.actions = `<a type="button" class="btn btn-danger btn-sm"
+                                        data-id="${item.id}"
+                                        data-layanan="${item.layanan.nmLayanan}"
+                                        onclick="deletLab();"><i class="fas fa-trash"></i></a>`;
+                // Tambahkan tarif ke total
+                totalTarif += parseFloat(item.totalHarga) || 0;
+            });
+            if (pasien.tagihan == 0) {
+                $("#tagihan").val("Rp" + totalTarif.toLocaleString("id-ID"));
+            } else {
+                $("#tagihan").val(
+                    "Rp" + pasien.tagihan.toLocaleString("id-ID")
+                );
+            }
+            $("#kembali").val("Rp" + pasien.kembalian.toLocaleString("id-ID"));
+            $("#bayar").val("Rp" + pasien.bayar.toLocaleString("id-ID"));
+            $("#petugas").val(pasien.petugas);
+
+            // Render DataTable
+            $("#dataTagihan").DataTable({
+                data: data,
+                columns: [
+                    { data: "actions" },
+                    { data: "norm" },
+                    { data: "layanan.nmLayanan" },
+                    { data: "totalHarga" },
+                ],
+                order: [1, "asc"],
+                scrollY: "200px",
+                paging: false,
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Belum ada Transaksi, Silahkan Lakukan Transaksi...!!!",
+            });
+
+            cariTagihan(norm, tgltrans);
+            checkedPemeriksaan(1);
+            checkedPemeriksaan(2);
             switch (dokter) {
                 case "dr. AGIL DANANJAYA, Sp.P":
                     checkedPemeriksaan(3);
@@ -344,6 +529,30 @@ function simpanTransaksi() {
             });
         },
     });
+}
+
+function resetForm(message) {
+    document.getElementById("form_identitas").reset();
+    document.getElementById("form_pembayaran").reset();
+    $("#harga_2").val(1);
+
+    if ($.fn.DataTable.isDataTable("#dataTagihan")) {
+        let tableTrans = $("#dataTagihan").DataTable();
+        tableTrans.clear().destroy();
+    }
+    $("#dataTagihan").DataTable({
+        scrollY: "200px",
+    });
+    Swal.fire({
+        icon: "info",
+        title: message + "\n Maturnuwun...!!!",
+    });
+
+    document.getElementById("tgltrans").value = new Date()
+        .toISOString()
+        .split("T")[0];
+    antrianKasir("kasir");
+    scrollToTop();
 }
 
 $(document).ready(function () {

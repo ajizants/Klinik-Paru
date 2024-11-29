@@ -29,8 +29,7 @@
                                                         <div class="col-sm-2 input-group input-group-sm">
                                                             <input type="text" id="modal-layanan"
                                                                 aria-describedby="inputGroup-sizing-sm"
-                                                                class="form-control bg-white" placeholder="Layanan"
-                                                                readonly />
+                                                                class="form-control bg-white" placeholder="Layanan" />
                                                         </div>
 
                                                         <label for="modal-nama"
@@ -40,10 +39,10 @@
                                                                 aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control bg-white" placeholder="Nama Pasien"
                                                                 readonly>
-                                                            <input type="text" id="modal-notrans"
+                                                            {{-- <input type="text" id="modal-notrans"
                                                                 aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control" placeholder="notrans Pasien"
-                                                                readonly hidden>
+                                                                readonly hidden> --}}
                                                         </div>
                                                     </div>
 
@@ -523,7 +522,8 @@
                                                     <div class="form-group row">
                                                         <div class="col">
                                                             <label for="modal-ket-update"
-                                                                class="col-form-label font-weight-bold">Keterangan Lain</label>
+                                                                class="col-form-label font-weight-bold">Keterangan
+                                                                Lain</label>
                                                             <input type="text" id="modal-ket-update"
                                                                 class="form-control form-control-sm border border-info"
                                                                 placeholder="Keterangan Lainnya" />

@@ -42,6 +42,7 @@ Route::get('display/farmasi', [DisplayController::class, 'farmasi'])->name('farm
 Route::get('display/tensi', [DisplayController::class, 'tensi'])->name('tensi');
 Route::get('display/lab', [DisplayController::class, 'lab'])->name('lab');
 Route::get('display/poli/{id}', [DisplayController::class, 'poli'])->name('poli');
+Route::get('grafik/dokter', [DisplayController::class, 'rme'])->name('rme');
 //menu
 Route::middleware('auth')->group(function () {
     Route::get('report', [HomeController::class, 'report'])->name('report');
@@ -58,6 +59,8 @@ Route::middleware('auth')->group(function () {
     Route::get('gudangIGD', [HomeController::class, 'gudangIGD'])->name('gudangIGD')->middleware('role:igd');
     //Kasir
     Route::get('kasir', [HomeController::class, 'kasir'])->name('kasir')->middleware('role:kasir');
+    Route::get('kasir/report', [HomeController::class, 'rekapKasir'])->name('rekapKasir')->middleware('role:kasir');
+    Route::get('kasir/pendapatan', [HomeController::class, 'pendapatan'])->name('rekapKasir')->middleware('role:kasir');
     Route::get('lte', [HomeController::class, 'lte'])->name('lte')->middleware('role:kasir');
     //Laborat
     Route::get('lab', [HomeController::class, 'lab'])->name('lab')->middleware('role:lab');

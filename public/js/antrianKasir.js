@@ -137,7 +137,7 @@ function setTransaksi(button, ruang) {
     var tgltrans = $(button).data("tgltrans");
     var umur = $(button).data("umur");
     jk = $(button).data("jk");
-    tampilkanOrder(notrans, norm, tgltrans, dokter);
+    riwayat(notrans, norm, tgltrans, dokter);
 
     $("#norm").val(norm);
     $("#nama").val(nama);
@@ -251,23 +251,52 @@ function antrianKasir(ruang) {
 }
 
 function tabelPemeriksaan(itemPemeriksaan, item, pilihSemuaId) {
+    // Hapus dan destroy tabel jika sudah diinisialisasi
     if ($.fn.DataTable.isDataTable("#tabelPemeriksaan")) {
-        table.clear().destroy();
+        $("#tabelPemeriksaan").DataTable().clear().destroy();
     }
 
-    table = $("#tabelPemeriksaan").DataTable({
+    // Inisialisasi DataTable
+    $("#tabelPemeriksaan").DataTable({
         data: itemPemeriksaan,
         columns: [
             {
                 data: null,
                 render: function (data, type, row) {
-                    return `<input type="checkbox" class="select-checkbox mt-2 data-checkbox ${item}" kdFoto="${row.kdFoto}" kdTInd="${row.kdTind}" id="${row.idLayanan}">`;
+                    return `
+                        <input 
+                            type="checkbox" 
+                            class="select-checkbox mt-2 data-checkbox ${item}" 
+                            kdFoto="${row.kdFoto}" 
+                            kdTInd="${row.kdTind}" 
+                            id="${row.idLayanan}">
+                    `;
                 },
             },
             {
                 data: "nmLayanan",
                 render: function (data, type, row) {
-                    return `<label type="text" class="form-check-label mt-1" for="${row.idLayanan}" style="font-size: medium;">${data}</label>`;
+                    return `
+                        <label 
+                            for="${row.idLayanan}" 
+                            class="form-check-label mt-1" 
+                            style="font-size: medium;">
+                            ${data}
+                        </label>
+                    `;
+                },
+            },
+            {
+                data: null, // Tidak langsung mengambil data dari source
+                render: function (data, type, row) {
+                    return `
+                        <input 
+                            type="number" 
+                            class="form-control mt-1 col-7" 
+                            id="qty_${row.idLayanan}" 
+                            style="font-size: medium;" 
+                            onchange="hitungTotal('${row.idLayanan}')" value="1">
+                    `;
                 },
             },
             {
@@ -281,24 +310,87 @@ function tabelPemeriksaan(itemPemeriksaan, item, pilihSemuaId) {
                             minimumFractionDigits: 0,
                         }
                     );
-                    return `<label type="text" class="form-check-label mt-1" for="${row.idLayanan}" style="font-size: medium;">${formattedTarif}</label>`;
+                    return `
+                        <label 
+                            for="${row.idLayanan}" 
+                            class="form-check-label mt-1" 
+                            style="font-size: medium;">
+                            ${formattedTarif}
+                        </label>
+                        <input type="hidden" id="tarif_${row.idLayanan}" value="${data}">
+                    `;
+                },
+            },
+            {
+                data: "tarif",
+                render: function (data, type, row) {
+                    return `
+                        <input 
+                            type="number" 
+                            class="form-control mt-1" 
+                            id="harga_${row.idLayanan}" 
+                            style="font-size: medium;" 
+                            value="${data}">
+                    `;
                 },
             },
         ],
-        // order: [1, "asc"],
         scrollY: "400px",
+        order: false,
         paging: false,
-        // responsive: true,
     });
+
+    // Inisialisasi handler pilih semua
+    handlePilihSemuaClick(pilihSemuaId, `data-checkbox ${item}`);
 }
 
 function handlePilihSemuaClick(pilihSemuaId, checkboxClass) {
     const pilihSemuaCheckbox = document.getElementById(pilihSemuaId);
 
-    pilihSemuaCheckbox.addEventListener("change", function () {
-        const isChecked = this.checked;
-        const checkboxes = $("." + checkboxClass);
+    if (pilihSemuaCheckbox) {
+        pilihSemuaCheckbox.addEventListener("change", function () {
+            const isChecked = this.checked;
+            const checkboxes = $("." + checkboxClass);
 
-        checkboxes.prop("checked", isChecked);
+            // Centang atau hapus centang semua checkbox
+            checkboxes.prop("checked", isChecked);
+
+            // Hitung total untuk semua checkbox yang dicentang
+            hitungTotalSemua(checkboxClass);
+        });
+    } else {
+        console.warn(`Checkbox dengan ID "${pilihSemuaId}" tidak ditemukan.`);
+    }
+}
+
+function hitungTotal(idLayanan) {
+    const qtyInput = document.getElementById(`qty_${idLayanan}`);
+    const tarifInput = document.getElementById(`tarif_${idLayanan}`);
+    const hargaInput = document.getElementById(`harga_${idLayanan}`);
+
+    if (qtyInput && tarifInput && hargaInput) {
+        const qty = parseFloat(qtyInput.value) || 0;
+        const tarif = parseFloat(tarifInput.value) || 0;
+        const total = qty * tarif;
+        hargaInput.value = total;
+        // hargaInput.value = total.toLocaleString("id-ID", {
+        //     style: "currency",
+        //     currency: "IDR",
+        //     minimumFractionDigits: 0,
+        // });
+    } else {
+        console.warn(
+            `Elemen input untuk idLayanan "${idLayanan}" tidak ditemukan.`
+        );
+    }
+}
+
+function hitungTotalSemua(checkboxClass) {
+    // Ambil semua checkbox yang dicentang
+    const checkboxes = $("." + checkboxClass + ":checked");
+
+    checkboxes.each(function () {
+        const idLayanan = $(this).attr("id"); // Ambil ID layanan dari checkbox
+        hitungTotal(idLayanan); // Panggil hitungTotal untuk setiap checkbox yang dicentang
     });
 }

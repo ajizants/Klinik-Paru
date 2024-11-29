@@ -1117,110 +1117,6 @@ class PasienKominfoController extends Controller
         }
     }
 
-    // private function calculateAverages($data)
-    // {
-    //     // dd($data);
-    //     // Initialize totals, max values, and counts
-    //     $totals = [
-    //         'tunggu_daftar' => 0,
-    //         'tunggu_rm' => 0,
-    //         'tunggu_lab' => 0,
-    //         'tunggu_hasil_lab' => 0,
-    //         'tunggu_hasil_ro' => 0,
-    //         'tunggu_ro' => 0,
-    //         'tunggu_poli' => 0,
-    //         'durasi_poli' => 0,
-    //         'durasi_poli_tanpa_penunjang' => 0,
-    //         'tunggu_tensi' => 0,
-    //         'tunggu_igd' => 0,
-    //         'tunggu_farmasi' => 0,
-    //         'tunggu_kasir' => 0,
-    //     ];
-
-    //     $maxValues = $totals;
-
-    //     $counts = [
-    //         'rm' => 0,
-    //         'ro' => 0,
-    //         'lab' => 0,
-    //         'igd' => 0,
-    //     ];
-
-    //     // Initialize counts for above and below 90 minutes
-    //     $above90 = $totals;
-    //     $below90 = $totals;
-
-    //     foreach ($data as $message) {
-    //         // Check for valid values and handle them properly
-    //         foreach ($totals as $key => &$total) {
-    //             $value = $message[$key] ?? 0;
-    //             if (is_array($value)) {
-    //                 $value = 0; // Handle array case as needed
-    //             }
-    //             $total += $value;
-    //             $maxValues[$key] = max($maxValues[$key], $value);
-
-    //             // Count values above and below 90 minutes
-    //             if ($value > 90) {
-    //                 $above90[$key]++;
-    //             } else {
-    //                 $below90[$key]++;
-    //             }
-    //         }
-
-    //         // Update counts for specific categories
-    //         $counts['rm'] += isset($message['rm']) && $message['rm'] === true ? 1 : 0;
-    //         $counts['ro'] += isset($message['rodata']) && $message['rodata'] === true ? 1 : 0;
-    //         $counts['lab'] += isset($message['labdata']) && $message['labdata'] === true ? 1 : 0;
-    //         $counts['igd'] += isset($message['igddata']) && $message['igddata'] === true ? 1 : 0;
-    //     }
-
-    //     // Calculate averages, maximum values, and percentages
-    //     $results = [];
-    //     foreach ($totals as $key => $total) {
-    //         if (stripos($key, 'lab') !== false) {
-    //             $jml = $counts['lab'] == 0 ? 1 : $counts['lab'];
-
-    //         } elseif (stripos($key, 'ro') !== false) {
-    //             $jml = $counts['ro'] == 0 ? 1 : $counts['ro'];
-
-    //             // $jml = $counts['ro'];
-    //         } elseif (stripos($key, 'igd') !== false) {
-    //             $jml = $counts['igd'] == 0 ? 1 : $counts['igd'];
-
-    //             // $jml = $counts['igd'];
-    //         } else {
-    //             $jml = count($data);
-    //         }
-    //         $results["avg_$key"] = round($total / $jml, 2);
-    //         $results["max_$key"] = $maxValues[$key];
-    //         $results["total_$key"] = round($total, 2);
-
-    //         $results["lebih_$key"] = $above90[$key];
-    //         $results["lebih_persen_$key"] = round(($above90[$key] / $jml) * 100, 2);
-
-    //         $results["kurang_$key"] = $below90[$key];
-    //         $results["kurang_persen_$key"] = round(($below90[$key] / $jml) * 100, 2);
-    //     }
-
-    //     // Special handling for cases where counts are zero
-    //     foreach ($counts as $key => $count) {
-    //         $results["avg_tunggu_{$key}"] = $count > 0 ? round($totals["tunggu_{$key}"] / $count, 2) : 0;
-    //     }
-
-    //     // Include total counts
-    //     $results = array_merge($results, [
-    //         'total_pasien' => count($data),
-    //         'total_ro' => $counts['ro'],
-    //         'total_lab' => $counts['lab'],
-    //         'total_igd' => $counts['igd'],
-    //         'total_tanpa_tambahan' => count(array_filter($data, fn($item) => isset($item['oke']) && $item['oke'] === false)),
-    //         'total_rm' => $counts['rm'],
-    //     ]);
-
-    //     return $results;
-    // }
-
     private function calculateAverages($data)
     {
         // Initialize totals, max values, and counts
@@ -1401,5 +1297,175 @@ class PasienKominfoController extends Controller
 
         return $results;
     }
+
+    public function grafikDokter(Request $request)
+    {
+        $params = $request->all();
+        $model = new KominfoModel();
+        $data = $model->getGrafikDokter($params)['data'];
+        // return $data;
+        $pasien = $this->filterData($model->getTungguPoli($params)['data']);
+        // return $pasien;
+
+        $formattedData = $this->filterData($data);
+        // return [
+        //     'data' => $formattedData,
+        //     'pasien' => $pasien];
+        $hasil = $this->calculatePercentage($formattedData, $pasien);
+
+        return response()->json($hasil, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    private function filterData(array $data)
+    {
+        // return $data;
+        // Daftar nama dokter yang ingin dihitung
+        $doctors = [
+            'dr. Cempaka Nova Intani, Sp.P, FISR., MM.',
+            'dr. AGIL DANANJAYA, Sp.P',
+            'dr. FILLY ULFA KUSUMAWARDANI',
+            'dr. SIGIT DWIYANTO',
+        ];
+
+        // Filter dan format ulang data
+        $result = [];
+        foreach ($data as $item) {
+            if (in_array($item['dokter_nama'], $doctors)) {
+                $tanggal = $item['tanggal'];
+                $dokter = $item['dokter_nama'];
+                $result[$tanggal][$dokter] = ($result[$tanggal][$dokter] ?? 0) + 1;
+            }
+        }
+
+        // Tambahkan dokter yang tidak memiliki data
+        foreach ($result as $tanggal => &$dokters) {
+            foreach ($doctors as $dokter) {
+                $dokters[$dokter] = $dokters[$dokter] ?? 0;
+            }
+        }
+
+        // Format ulang menjadi array terstruktur
+        $formattedResult = [];
+        foreach ($result as $tanggal => $dokters) {
+            foreach ($dokters as $dokter => $count) {
+                $formattedResult[] = [
+                    'tanggal' => $tanggal,
+                    'dokter_nama' => $dokter,
+                    'jumlah' => $count,
+                ];
+            }
+        }
+
+        // Urutkan berdasarkan tanggal
+        usort($formattedResult, fn($a, $b) => strtotime($a['tanggal']) - strtotime($b['tanggal']));
+
+        return $formattedResult;
+    }
+
+    private function calculatePercentage(array $data, array $pasien)
+    {
+        $hasil = [];
+        foreach ($data as $dataItem) {
+            foreach ($pasien as $pasienItem) {
+                if ($dataItem['dokter_nama'] === $pasienItem['dokter_nama'] && $dataItem['tanggal'] === $pasienItem['tanggal']) {
+                    $jumlahData = $dataItem['jumlah'];
+                    $jumlahPasien = $pasienItem['jumlah'];
+                    $percentage = $jumlahData > 0 ? ($jumlahData / $jumlahPasien) * 100 : 0;
+
+                    $hasil[] = [
+                        'tanggal' => $dataItem['tanggal'],
+                        'dokter_nama' => $dataItem['dokter_nama'],
+                        'jumlah_farmasi' => $jumlahData,
+                        'jumlah_pasien' => $jumlahPasien,
+                        'percentage' => round($percentage, 2),
+                    ];
+                }
+            }
+        }
+
+        return $hasil;
+    }
+
+    // public function grafikDokter(Request $request)
+    // {
+    //     $params = $request->all();
+    //     $model = new KominfoModel();
+    //     $data = $model->getGrafikDokter($params)['data'];
+    //     $pasien = $this->filterData($model->getTungguPoli($params)['data']);
+
+    //     $formattedData = $this->filterData($data);
+    //     $hasil = $this->calculatePercentage($formattedData, $pasien);
+
+    //     return response()->json($hasil, 200, [], JSON_PRETTY_PRINT);
+    // }
+
+    // private function filterData(array $data)
+    // {
+    //     // Daftar nama dokter yang ingin dihitung
+    //     $doctors = [
+    //         'dr. Cempaka Nova Intani, Sp.P, FISR., MM.',
+    //         'dr. AGIL DANANJAYA, Sp.P',
+    //         'dr. FILLY ULFA KUSUMAWARDANI',
+    //         'dr. SIGIT DWIYANTO',
+    //     ];
+
+    //     // Filter dan format ulang data
+    //     $result = [];
+    //     foreach ($data as $item) {
+    //         if (in_array($item['dokter_nama'], $doctors)) {
+    //             $tanggal = $item['tanggal'];
+    //             $dokter = $item['dokter_nama'];
+    //             $result[$tanggal][$dokter] = ($result[$tanggal][$dokter] ?? 0) + 1;
+    //         }
+    //     }
+
+    //     // Tambahkan dokter yang tidak memiliki data
+    //     foreach ($result as $tanggal => &$dokters) {
+    //         foreach ($doctors as $dokter) {
+    //             $dokters[$dokter] = $dokters[$dokter] ?? 0;
+    //         }
+    //     }
+
+    //     // Format ulang menjadi array terstruktur
+    //     $formattedResult = [];
+    //     foreach ($result as $tanggal => $dokters) {
+    //         foreach ($dokters as $dokter => $count) {
+    //             $formattedResult[] = [
+    //                 'tanggal' => $tanggal,
+    //                 'dokter_nama' => $dokter,
+    //                 'jumlah' => $count,
+    //             ];
+    //         }
+    //     }
+
+    //     // Urutkan berdasarkan tanggal
+    //     usort($formattedResult, fn($a, $b) => strtotime($a['tanggal']) - strtotime($b['tanggal']));
+
+    //     return $formattedResult;
+    // }
+
+    // private function calculatePercentage(array $data, array $pasien)
+    // {
+    //     $hasil = [];
+    //     foreach ($data as $dataItem) {
+    //         foreach ($pasien as $pasienItem) {
+    //             if ($dataItem['dokter_nama'] === $pasienItem['dokter_nama'] && $dataItem['tanggal'] === $pasienItem['tanggal']) {
+    //                 $jumlahData = $dataItem['jumlah'];
+    //                 $jumlahPasien = $pasienItem['jumlah'];
+    //                 $percentage = $jumlahData > 0 ? ($jumlahData / $jumlahPasien) * 100 : 0;
+
+    //                 $hasil[] = [
+    //                     'tanggal' => $dataItem['tanggal'],
+    //                     'dokter_nama' => $dataItem['dokter_nama'],
+    //                     'jumlah_farmasi' => $jumlahData,
+    //                     'jumlah_pasien' => $jumlahPasien,
+    //                     'percentage' => round($percentage, 2),
+    //                 ];
+    //             }
+    //         }
+    //     }
+
+    //     return $hasil;
+    // }
 
 }

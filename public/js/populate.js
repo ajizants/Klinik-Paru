@@ -580,7 +580,7 @@ function handleLab(cppt, pasien, pendaftaran) {
 }
 
 function isiIdentitas(pasien, pendaftaran, permintaan) {
-    console.log("🚀 ~ isiIdentitas ~ permintaan:", permintaan);
+    // console.log("🚀 ~ isiIdentitas ~ permintaan:", permintaan);
 
     // Set values for input fields
     $("#layanan").val(pendaftaran.penjamin_nama); // Trigger change event if needed

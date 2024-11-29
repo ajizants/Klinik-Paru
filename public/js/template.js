@@ -172,6 +172,9 @@ function enterCariRM(event, ruang) {
         }
     }
 }
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+});
 
 function selamatBertugas() {
     let synth = speechSynthesis;

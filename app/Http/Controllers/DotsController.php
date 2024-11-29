@@ -81,6 +81,7 @@ class DotsController extends Controller
                 ];
                 return response()->json($res, 200, [], JSON_PRETTY_PRINT);
             } else {
+
                 $kdDiag = $Ptb['kdDx'];
                 $no_rm = $Ptb['norm'];
 
@@ -92,6 +93,7 @@ class DotsController extends Controller
                     'no_rm' => $no_rm,
                 ];
                 $pendaftaran = $kominfo->waktuLayananRequest($params);
+                // dd($pendaftaran);
 
                 $filteredData = array_map(function ($d) {
                     $doctorNipMap = [
@@ -106,6 +108,31 @@ class DotsController extends Controller
 
                     return $d;
                 }, $pendaftaran);
+                // switch ($Ptb['hasilBerobat']) {
+                //     case 95:
+                //         $Ptb['statusPengobatan'] = "Pasien di Rujuk/Tidak OAT di KKPM";
+                //         break;
+                //     case 96:
+                //         $Ptb['statusPengobatan'] = "Pasien di Rujuk/Tidak OAT di KKPM";
+                //         break;
+                //     case 97:
+                //         $Ptb['statusPengobatan'] = "Pasien di Rujuk/Tidak OAT di KKPM";
+                //         break;
+                //     case 98:
+                //         $Ptb['statusPengobatan'] = "Pasien di Rujuk/Tidak OAT di KKPM";
+                //         break;
+                //     case 99:
+                //         $Ptb['statusPengobatan'] = "Pasien di Rujuk/Tidak OAT di KKPM";
+                //         break;
+                //     case null:
+                //         $Ptb['statusPengobatan'] = "Belum Ada Pengobatan";
+                //         break;
+                //     default:
+                //         $status = DotsBlnModel::where('id', $Ptb['hasilBerobat'])->first();
+                //         $Ptb['statusPengobatan'] = $status['nmBlnKe'];
+                //         break;
+                // }
+
                 if ($Ptb['hasilBerobat'] == null) {
                     $Ptb['statusPengobatan'] = "Belum Ada Pengobatan";
                 } else {
@@ -130,7 +157,7 @@ class DotsController extends Controller
                 return response()->json($res, 200, [], JSON_PRETTY_PRINT);
             }
         } else {
-            $Ptb = DotsModel::with('dokter.biodata')->get();
+            $Ptb = DotsModel::with('dokter.biodata', 'diagnosa')->get();
             $pasienTB = [];
             foreach ($Ptb as $d) {
                 $kdDiag = $d['kdDx'];
@@ -144,34 +171,6 @@ class DotsController extends Controller
                     $status = DotsBlnModel::where('id', $d['hasilBerobat'])->first();
                     $d['statusPengobatan'] = $status['nmBlnKe'];
                 }
-                // $pasien = $kominfo->pasienFilter($no_rm);
-                // $tanggal = $request->input('tanggal_awal');
-                // $params = [
-                //     'tanggal' => $tanggal,
-                //     'no_rm' => $no_rm,
-                // ];
-
-                // $pendaftaran = $kominfo->waktuLayananRequest($params);
-
-                // $filteredData = array_map(function ($d) {
-                //     $doctorNipMap = [
-                //         'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
-                //         'dr. AGIL DANANJAYA, Sp.P' => '9',
-                //         'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
-                //         'dr. SIGIT DWIYANTO' => '198903142022031005',
-                //     ];
-
-                //     $dokter_nama = $d['dokter_nama'];
-                //     $d['nip_dokter'] = $doctorNipMap[$dokter_nama] ?? 'Unknown';
-
-                //     return $d;
-                // }, $pendaftaran);
-
-                // $ptbData[] = [
-                //     'pasien' => $pasien,
-                //     'ptb' => $d,
-                //     // 'pendaftaran' => $filteredData,
-                // ];
                 $pasienTB[] = $d;
             }
 
@@ -187,16 +186,155 @@ class DotsController extends Controller
         }
     }
 
-    public function kontrol()
-    {
-        $tanggal = Carbon::now()->format('Y-m-d');
+    // public function kontrol()
+    // {
+    //     $tanggal = Carbon::now()->format('Y-m-d');
 
-        $data = DotsTransModel::with('pasien')
-            ->where('nxKontrol', $tanggal)
-            ->get();
+    //     $data = DotsTransModel::with('pasien')
+    //         ->where('nxKontrol', $tanggal)
+    //         ->get();
 
-        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
-    }
+    //     return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    // }
+
+    // public function telat()
+    // {
+    //     // Ambil semua data pasien dari DotsModel
+    //     $Ptb = DotsModel::all();
+    //     $pasien_telat = [];
+
+    //     foreach ($Ptb as $d) {
+    //         // Cari transaksi yang paling baru untuk pasien ini
+    //         $Pkontrol = DotsTransModel::with('bln')
+    //             ->where('norm', $d->norm)
+    //             ->latest('created_at')
+    //             ->first();
+
+    //         // Jika ada transaksi yang memenuhi kriteria
+    //         if ($Pkontrol) {
+    //             $now = Carbon::now();
+    //             $nxKontrolDate = Carbon::parse($Pkontrol->nxKontrol);
+    //             $terakhir_kontrol = $Pkontrol->created_at;
+
+    //             $kdBlnke = $Pkontrol->bln->id;
+    //             $blnke = $Pkontrol->bln->nmBlnKe;
+    //             $selisihHari = $terakhir_kontrol->diffInDays($now);
+    //             $dataDokter = PegawaiModel::with('biodata')->where('nip', $Pkontrol->dokter)->first();
+    //             $namaDokter = $dataDokter->gelar_d . " " . $dataDokter->biodata->nama . " " . $dataDokter->gelar_b;
+    //             if ($d->hasilBerobat == 93 || $d->hasilBerobat == 94 || $d->hasilBerobat == 95 || $d->hasilBerobat == 96 || $d->hasilBerobat == 97 || $d->hasilBerobat == 98) {
+    //                 // dd($d->hasilBerobat);
+    //                 $ket = DotsBlnModel::where('id', $d->hasilBerobat)->first();
+    //                 $d->status = $ket->nmBlnKe;
+
+    //             } else {
+
+    //                 if ($selisihHari > 30 || $d->hasilBerobat == 99) {
+    //                     $d->status = 'DO';
+    //                 } elseif ($selisihHari > 7) {
+    //                     $d->status = 'Telat';
+    //                 } else {
+    //                     $d->status = 'Tepat Waktu';
+    //                 }
+    //             }
+
+    //             $d->terakhir = $terakhir_kontrol->format('d-m-Y');
+    //             $d->selisih = $selisihHari;
+    //             $d->nxKontrol = $nxKontrolDate->format('d-m-Y');
+    //             $d->blnKe = $blnke;
+    //             $d->kdPengobatan = $kdBlnke;
+    //             $d->namaDokter = $namaDokter;
+
+    //             $pasien_telat[] = $d;
+    //         }
+    //     }
+
+    //     // Return atau lanjutkan proses sesuai kebutuhan
+    //     // Misalnya, mengembalikan hasil dalam JSON response
+    //     return response()->json([
+    //         'metadata' => [
+    //             'code' => 200,
+    //             'message' => 'Data Pasien Ditemukan...!!',
+    //         ],
+    //         'data' => $pasien_telat,
+    //     ], 200, [], JSON_PRETTY_PRINT);
+    // }
+    // public function telat()
+    // {
+    //     // Ambil semua data pasien dari DotsModel
+    //     $Ptb = DotsModel::all();
+    //     $pasien_telat = [];
+
+    //     foreach ($Ptb as $d) {
+    //         // Cari transaksi terakhir untuk pasien ini
+    //         $Pkontrol = DotsTransModel::with('bln')
+    //             ->where('norm', $d->norm)
+    //             ->latest('created_at')
+    //             ->first();
+
+    //         // Jika ada transaksi yang ditemukan
+    //         if ($Pkontrol) {
+    //             $now = Carbon::now();
+    //             $nxKontrolDate = Carbon::parse($Pkontrol->nxKontrol);
+    //             $terakhir_kontrol = Carbon::parse($Pkontrol->created_at);
+
+    //             $kdBlnke = $Pkontrol->bln->id ?? null; // Validasi null
+    //             $blnke = $Pkontrol->bln->nmBlnKe ?? '-'; // Fallback jika null
+    //             $selisihHari = $nxKontrolDate->diffInDays($now);
+
+    //             // Mengambil data dokter
+    //             $dataDokter = PegawaiModel::with('biodata')->where('nip', $Pkontrol->dokter)->first();
+    //             $namaDokter = $dataDokter
+    //             ? $dataDokter->gelar_d . " " . $dataDokter->biodata->nama . " " . $dataDokter->gelar_b
+    //             : 'Tidak Diketahui';
+
+    //             // Penentuan status berdasarkan hasil berobat dan nex kontrol
+    //             if (in_array($d->hasilBerobat, [93, 94, 95, 96, 97, 98])) {
+    //                 // Jika hasil berobat masuk ke dalam daftar status tertentu
+    //                 $ket = DotsBlnModel::where('id', $d->hasilBerobat)->first();
+    //                 $d->status = $ket->nmBlnKe ?? 'Status Tidak Diketahui';
+    //             } else {
+    //                 // Penentuan status berdasarkan nex kontrol
+    //                 if ($nxKontrolDate->lt($now)) {
+    //                     // Nex kontrol sudah lewat
+    //                     $daysLate = $nxKontrolDate->diffInDays($now); // Hitung selisih hari dari nex kontrol
+
+    //                     if ($daysLate > 30) {
+    //                         $d->status = 'DO'; // Telat lebih dari 30 hari
+    //                     } elseif ($daysLate > 7) {
+    //                         $d->status = 'Telat'; // Telat lebih dari 7 hari
+    //                     } else {
+    //                         $d->status = 'Tepat Waktu'; // Nex kontrol baru saja lewat
+    //                     }
+    //                 } elseif ($nxKontrolDate->lte($now->addDays(7))) {
+    //                     // Nex kontrol dalam waktu 7 hari
+    //                     $d->status = 'Tepat Waktu';
+    //                 } else {
+    //                     // Nex kontrol lebih dari 7 hari lagi
+    //                     $d->status = 'Belum Saatnya Kontrol';
+    //                 }
+    //             }
+
+    //             // Format tanggal dan tambahan data
+    //             $d->terakhir = $terakhir_kontrol->format('d-m-Y');
+    //             $d->selisih = $selisihHari;
+    //             $d->nxKontrol = $nxKontrolDate->format('d-m-Y');
+    //             $d->blnKe = $blnke;
+    //             $d->kdPengobatan = $kdBlnke;
+    //             $d->namaDokter = $namaDokter;
+
+    //             $pasien_telat[] = $d;
+    //         }
+    //     }
+
+    //     // Kembalikan data sebagai JSON response
+    //     return response()->json([
+    //         'metadata' => [
+    //             'code' => 200,
+    //             'message' => 'Data Pasien Ditemukan...!!',
+    //         ],
+    //         'data' => $pasien_telat,
+    //     ], 200, [], JSON_PRETTY_PRINT);
+    // }
 
     public function telat()
     {
@@ -205,52 +343,57 @@ class DotsController extends Controller
         $pasien_telat = [];
 
         foreach ($Ptb as $d) {
-            // Cari transaksi yang paling baru untuk pasien ini
+            // Cari transaksi terakhir untuk pasien ini
             $Pkontrol = DotsTransModel::with('bln')
                 ->where('norm', $d->norm)
                 ->latest('created_at')
                 ->first();
 
-            // Jika ada transaksi yang memenuhi kriteria
+            // Jika ada transaksi yang ditemukan
             if ($Pkontrol) {
                 $now = Carbon::now();
                 $nxKontrolDate = Carbon::parse($Pkontrol->nxKontrol);
-                $terakhir_kontrol = $Pkontrol->created_at;
+                $terakhir_kontrol = Carbon::parse($Pkontrol->created_at);
 
-                $kdBlnke = $Pkontrol->bln->id;
-                $blnke = $Pkontrol->bln->nmBlnKe;
-                $selisihHari = $terakhir_kontrol->diffInDays($now);
+                $kdBlnke = $Pkontrol->bln->id ?? null; // Validasi null
+                $blnke = $Pkontrol->bln->nmBlnKe ?? '-'; // Fallback jika null
+                $selisihHari = $nxKontrolDate->diffInDays($now, false); // Hitung selisih hari (bisa negatif jika sudah lewat)
+
+                // Mengambil data dokter
                 $dataDokter = PegawaiModel::with('biodata')->where('nip', $Pkontrol->dokter)->first();
-                $namaDokter = $dataDokter->gelar_d . " " . $dataDokter->biodata->nama . " " . $dataDokter->gelar_b;
-                if ($d->hasilBerobat == 93 || $d->hasilBerobat == 94 || $d->hasilBerobat == 95 || $d->hasilBerobat == 96 || $d->hasilBerobat == 97 || $d->hasilBerobat == 98) {
-                    // dd($d->hasilBerobat);
-                    $ket = DotsBlnModel::where('id', $d->hasilBerobat)->first();
-                    $d->status = $ket->nmBlnKe;
+                $namaDokter = $dataDokter
+                ? $dataDokter->gelar_d . " " . $dataDokter->biodata->nama . " " . $dataDokter->gelar_b
+                : 'Tidak Diketahui';
 
+                // Tentukan status pasien berdasarkan hasilBerobat dan selisih hari
+                if (in_array($Pkontrol->hasilBerobat, [93, 94, 95, 96, 97, 98])) {
+                    $status = 'Tidak Diketahui';
+                } elseif (abs($selisihHari) > 30) {
+                    $status = 'DO';
+                } elseif ($selisihHari > 0 && abs($selisihHari) <= 30) {
+                    $status = 'Telat';
+                } elseif ($selisihHari >= -7 && $selisihHari <= 0) {
+                    $status = 'Tepat Waktu';
+                } elseif ($selisihHari < -7) {
+                    $status = 'Belum Saatnya';
                 } else {
-
-                    if ($selisihHari > 30 || $d->hasilBerobat == 99) {
-                        $d->status = 'DO';
-                    } elseif ($selisihHari > 7) {
-                        $d->status = 'Telat';
-                    } else {
-                        $d->status = 'Tepat Waktu';
-                    }
+                    $status = 'Tidak Diketahui';
                 }
 
+                // Format tanggal dan tambahan data
                 $d->terakhir = $terakhir_kontrol->format('d-m-Y');
                 $d->selisih = $selisihHari;
                 $d->nxKontrol = $nxKontrolDate->format('d-m-Y');
                 $d->blnKe = $blnke;
                 $d->kdPengobatan = $kdBlnke;
                 $d->namaDokter = $namaDokter;
+                $d->status = $status;
 
                 $pasien_telat[] = $d;
             }
         }
 
-        // Return atau lanjutkan proses sesuai kebutuhan
-        // Misalnya, mengembalikan hasil dalam JSON response
+        // Kembalikan data sebagai JSON response
         return response()->json([
             'metadata' => [
                 'code' => 200,

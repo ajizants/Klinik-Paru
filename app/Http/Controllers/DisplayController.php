@@ -319,5 +319,12 @@ class DisplayController extends Controller
 
         return view('Display.poli', compact('title', 'videos', 'listTunggu', 'dokter'));
     }
+    public function rme()
+    {
+
+        $title = 'Grafik Penggunaan RME ';
+
+        return view('Laporan.dokter')->with('title', $title);
+    }
 
 }

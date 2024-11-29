@@ -108,6 +108,11 @@ Route::post('tagihan', [KasirController::class, 'tagihan']);
 Route::post('kasir/item/add', [KasirController::class, 'addTagihan']);
 Route::post('kasir/tagihan/order', [KasirController::class, 'order']);
 Route::post('kasir/transaksi', [KasirController::class, 'addTransaksi']);
+Route::post('kasir/kunjungan', [KasirController::class, 'kunjungan']);
+Route::post('kasir/rekap', [KasirController::class, 'rekapKunjungan']);
+Route::get('cetakSBS/{id}', [KasirController::class, 'cetakSBS']);
+Route::post('cetakBAPH', [KasirController::class, 'cetakBAPH']);
+Route::get('/pendapatan/{tahun}', [KasirController::class, 'pendapatan']);
 
 //laboratorium
 Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);
@@ -238,6 +243,7 @@ Route::post('kominfo/pendaftaran', [PasienKominfoController::class, 'pendaftaran
 Route::post('kominfo/pendaftaran/report', [PasienKominfoController::class, 'reportPendaftaran']);
 Route::get('resume/{no_rm}/{tgl}', [PasienKominfoController::class, 'resumePasien']);
 Route::post('kominfo/pendaftaran/resume', [PasienKominfoController::class, 'resumePasien']);
+Route::post('kominfo/report/dokter_rme', [PasienKominfoController::class, 'grafikDokter']);
 
 Route::post('verif/pendaftaran/fr', [VerifController::class, 'frista']);
 Route::post('verif/pendaftaran/fp', [VerifController::class, 'afterapp']);

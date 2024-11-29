@@ -10,7 +10,7 @@ class KasirTransModel extends Model
     use HasFactory;
 
     protected $table = ('t_kasir');
-    protected $primaryKey = 'notrans';
+    // protected $primaryKey = 'notrans';
 
     protected $fillable = [
         'notrans',

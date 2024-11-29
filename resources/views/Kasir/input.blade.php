@@ -16,8 +16,8 @@
                                     <!-- /.card-header -->
                                     <!-- form start -->
                                     @csrf
-                                    <form class="form-horizontal">
-                                        <div class="card-body" id="formIdentitas">
+                                    <form class="form-horizontal"id="form_identitas">
+                                        <div class="card-body">
                                             <div class="form-group row">
                                                 <label for="norm"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
@@ -37,11 +37,11 @@
                                                 <label for="nama"
                                                     class="col-sm-1 col-form-label font-weight-bold  mb-0">Nama
                                                     :</label>
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-3">
                                                     <input type="text" id="nama" class="form-control bg-white"
                                                         placeholder="Nama Pasien" readonly>
                                                 </div>
-                                                <div class="col-sm-1">
+                                                <div class="col-sm-2">
                                                     <Select type="text" id="jk" class="form-control bg-white"
                                                         placeholder="JK">
                                                         <option value="">--JK--</option>
@@ -68,11 +68,11 @@
                                                 <label for="alamat"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat
                                                     :</label>
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-3">
                                                     <input id="alamat" class="form-control bg-white"
                                                         placeholder="Alamat Pasien" readonly />
                                                 </div>
-                                                <div class="col-sm-1">
+                                                <div class="col-sm-2">
                                                     <input type="text" id="umur" class="form-control bg-white"
                                                         placeholder="Umur">
                                                 </div>
@@ -84,7 +84,7 @@
                             </div>
                             <div class="container-fluid" id="formLayanan">
                                 <div class="form-group row">
-                                    <div class="col-sm-5 p-0 card card-warning">
+                                    <div class="col-sm p-0 card card-warning">
                                         <div class="card-header">
                                             <h3 class="card-title">Input Layanan</h3>
                                         </div>
@@ -97,7 +97,9 @@
                                                         <tr>
                                                             <th><input type="checkbox" id="pilih-semua"></th>
                                                             <th>Item Pemeriksaan</th>
+                                                            <th>QTY</th>
                                                             <th>Harga</th>
+                                                            <th>Total</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -141,7 +143,7 @@
                                                 <h3 class="card-title">Pembayaran</h3>
                                             </div>
                                             <div class="card-body p-2">
-                                                <form action="#" class="form-group col">
+                                                <form action="#" class="form-group col" id="form_pembayaran">
                                                     <div class="form-group form-row">
                                                         <div class="col-sm">
                                                             <label for="tagihan">Tagihan:</label>
@@ -178,14 +180,17 @@
                                                         </div>
                                                     </div>
                                                     <script></script>
-                                                    <div class="form-group form-row">
-                                                        <div class="col-sm">
-                                                            <a type="button" id="btnSimpan" class="btn btn-primary"
-                                                                onclick="simpanTransaksi();">Simpan</a>
-                                                        </div>
-                                                    </div>
                                                 </form>
-
+                                                <div class="form-group form-row">
+                                                    <div class="col-sm">
+                                                        <a type="button" id="btnSimpan" class="btn btn-primary"
+                                                            onclick="simpanTransaksi();">Simpan</a>
+                                                        <a type="button" id="btnBatal" class="btn btn-danger"
+                                                            onclick="resetForm('Transaksi Dibatalkan');">Batal</a>
+                                                    </div>
+                                                    <div class="col-sm">
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
