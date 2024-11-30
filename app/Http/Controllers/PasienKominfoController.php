@@ -908,7 +908,7 @@ class PasienKominfoController extends Controller
         // dd($params);
         $model = new KominfoModel();
         $data = $model->pendaftaranRequest($params);
-        dd($data);
+        // dd($data);
 
         // Filter hasil yang normnya sama dengan $norm
         if ($norm === "" || $norm === null) {
