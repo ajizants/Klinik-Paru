@@ -10,18 +10,26 @@ function report() {
         type: "get",
         success: function (response) {
             Swal.close();
-            // Directly using response since it is already the array
             response.forEach(function (item, index) {
                 item.aksi = `
                     <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" placeholder="Resume"
-                    data-nomor="${item.nomor}"                                
-                    data-tgl_nomor="${item.tgl_nomor}"                                
-                    data-hari="${item.hari}"                                
-                    data-tgl_pendapatan="${item.tgl_pendapatan}"                                
-                    data-tgl_setor="${item.tgl_setor}"                                
-                    data-jumlah="${item.jumlah}"                                
-                    data-terbilang="${item.terbilang}"                                
-                   href="/api/cetakBAPH/${item.tanggal}/${tahun}" target="_blank">Cetak Bukti Setoran</a>
+                        data-nomor="${item.nomor}"                                
+                        data-tgl_nomor="${item.tgl_nomor}"                                
+                        data-hari="${item.hari}"                                
+                        data-tgl_pendapatan="${item.tgl_pendapatan}"                                
+                        data-tgl_setor="${item.tgl_setor}"                                
+                        data-jumlah="${item.jumlah}"                                
+                        data-terbilang="${item.terbilang}"                                
+                        href="/api/cetakBAPH/${item.tanggal}/${tahun}" target="_blank">Cetak BAPH</a>
+                    <a type="button" class="btn btn-sm btn-success mr-2 mb-2" placeholder="Resume"
+                        data-nomor="${item.nomor}"                                
+                        data-tgl_nomor="${item.tgl_nomor}"                                
+                        data-hari="${item.hari}"                                
+                        data-tgl_pendapatan="${item.tgl_pendapatan}"                                
+                        data-tgl_setor="${item.tgl_setor}"                                
+                        data-jumlah="${item.jumlah}"                                
+                        data-terbilang="${item.terbilang}"                                
+                        href="/api/cetakBAPH/${item.tanggal}/${tahun}" target="_blank">Cetak SBS</a>
                 `;
                 item.no = index + 1;
             });
@@ -38,22 +46,6 @@ function report() {
                         { data: "uraian" },
                         { data: "jumlah" },
                         { data: "pendapatan" },
-                        // {
-                        //     data: "pendapatan",
-                        //     render: function (data, type, row) {
-                        //         var formattedTarif = parseInt(
-                        //             data
-                        //         ).toLocaleString("id-ID", {
-                        //             style: "currency",
-                        //             currency: "IDR",
-                        //             minimumFractionDigits: 0,
-                        //         });
-                        //         return `${formattedTarif}
-
-                        //             <input type="hidden" value="${data}">
-                        //         `;
-                        //     },
-                        // },
                     ],
                     autoWidth: false,
                     order: [
@@ -64,7 +56,7 @@ function report() {
                             extend: "excelHtml5",
                             text: "Excel",
                             title: "Laporan Pendapatan Tahun: " + tahun,
-                            filename: "Laporan Pendaftaran Tanggal: " + tahun,
+                            filename: "Laporan Pendaftaran Tahun: " + tahun,
                         },
                         {
                             extend: "colvis",

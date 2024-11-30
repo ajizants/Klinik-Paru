@@ -15,6 +15,12 @@ class KasirTransModel extends Model
     protected $fillable = [
         'notrans',
         'norm',
+        'nama',
+        'umur',
+        'jk',
+        'alamat',
+        'jaminan',
+        'petugas',
         'tagihan',
         'bayar',
         'kembalian',

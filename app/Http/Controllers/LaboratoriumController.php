@@ -237,7 +237,6 @@ class LaboratoriumController extends Controller
                     ], 500);
                 }
             }
-            // dd($dataToInsert);
             // Simpan data permintaan laborat ke database
             LaboratoriumHasilModel::insert($dataToInsert);
             //tambahkan log data yang di simpan ke db
@@ -268,13 +267,13 @@ class LaboratoriumController extends Controller
                     $kunjunganLab->created_at = $tanggal;
                     $kunjunganLab->updated_at = $tanggal;
                     $kunjunganLab->save();
-                    return response()->json(['message' => 'Item Pemeriksaan berhasil ditambahkan...!!'], 200);
+                    return response()->json(['message' => 'Kunjungan berhasil ditambahkan...!!'], 200);
                 }
 
-                return response()->json(['message' => 'Pemeriksaan berhasil di update...!!'], 200);
+                return response()->json(['message' => 'Kunjungan berhasil di update...!!'], 200);
 
             } else {
-                return response()->json(['message' => 'No Pemeriksaan tidak valid'], 400);
+                return response()->json(['message' => 'No Transaksi tidak valid'], 400);
             }
         } catch (\Exception $e) {
             // Rollback transaksi database jika terjadi kesalahan

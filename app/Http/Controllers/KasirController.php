@@ -157,67 +157,77 @@ class KasirController extends Controller
 
     public function addTagihan(Request $request)
     {
-        // dd($request->all());
-        // Mendapatkan dataTerpilih dari permintaan
         $dataTerpilih = $request->input('dataTerpilih');
-        // Validasi bahwa dataTerpilih harus array dan tidak boleh kosong
-        if (!is_array($dataTerpilih) || empty($dataTerpilih)) {
-            return response()->json([
-                'message' => 'Data terpilih tidak valid atau kosong',
-            ], 400);
-        }
-        // $tglTrans = $request->input('tgltrans'); // Assuming tglTrans is in 'Y-m-d' format
-        // $currentDateTime = Carbon::now(); // Get current date and time
-        // $today = $currentDateTime->format('Y-m-d');
 
-        // // Check if today's date is not the same as tglTrans
-        // if ($today !== $tglTrans) {
-        //     // Create a Carbon instance using tglTrans and the current time
-        //     $tanggal = Carbon::createFromFormat('Y-m-d H:i:s', $tglTrans . ' ' . $currentDateTime->format('H:i:s'));
-        // } else {
-        //     // Use the current date and time
-        //     $tanggal = $currentDateTime;
-        // }
+        if (!is_array($dataTerpilih) || empty($dataTerpilih)) {
+            return response()->json(['message' => 'Data terpilih tidak valid atau kosong'], 400);
+        }
 
         try {
-            // Memulai transaksi database
             DB::beginTransaction();
 
-            // Membuat array untuk menyimpan data yang akan disimpan
-            $dataToInsert = [];
+            $dataToInsert = collect($dataTerpilih)
+                ->filter(fn($data) => isset($data['idLayanan'], $data['notrans']))
+                ->map(fn($data) => [
+                    'notrans' => $data['notrans'],
+                    'norm' => $data['norm'] ?? null,
+                    'idLayanan' => $data['idLayanan'],
+                    'qty' => $data['qty'] ?? 1,
+                    'totalHarga' => $data['harga'],
+                ])->toArray();
 
-            // Looping untuk mengolah dataTerpilih
-            foreach ($dataTerpilih as $data) {
-                // Validasi data yang diperlukan pada setiap elemen dataTerpilih
-                if (isset($data['idLayanan']) && isset($data['notrans'])) {
-                    $dataToInsert[] = [
-                        'notrans' => $data['notrans'],
-                        'norm' => $data['norm'],
-                        'idLayanan' => $data['idLayanan'],
-                        'qty' => $data['qty'],
-                        'totalHarga' => $data['harga'],
-                    ];
-                } else {
-                    return response()->json([
-                        'message' => 'Data tidak lengkap',
-                    ], 500);
-                }
+            if (empty($dataToInsert)) {
+                return response()->json(['message' => 'Data tidak lengkap'], 400);
             }
-            // dd($dataToInsert);
-            // Simpan data permintaan laborat ke database
+
             KasirAddModel::insert($dataToInsert);
-            //tambahkan log data yang di simpan ke db
+
+            if ($request->input('notrans')) {
+                $dataKunjungan = $this->saveOrUpdateKunjungan($request);
+                return response()->json(['message' => 'Kunjungan berhasil diproses...!!'], 200);
+            }
 
             DB::commit();
             Log::info('Transaksi berhasil disimpan: ' . json_encode($dataToInsert));
-            return response()->json(['message' => 'Transaksi berhasil disimpan'], 200);
 
+            return response()->json(['message' => 'Transaksi berhasil disimpan'], 200);
         } catch (\Exception $e) {
-            // Rollback transaksi database jika terjadi kesalahan
-            DB::rollback(); // Rollback transaksi jika terjadi kesalahan
-            Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
-            return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
+            DB::rollback();
+            Log::error('Terjadi kesalahan: ' . $e->getMessage());
+            return response()->json(['message' => 'Kesalahan: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function addTransaksi(Request $request)
+    {
+        if ($request->input('notrans')) {
+            $this->saveOrUpdateKunjungan($request);
+            return response()->json(['message' => 'Kunjungan berhasil diproses...!!'], 200);
+        }
+
+        return response()->json(['message' => 'No Transaksi tidak valid'], 400);
+    }
+
+    private function saveOrUpdateKunjungan(Request $request)
+    {
+        $notrans = $request->input('notrans');
+
+        $dataKunjungan = KasirTransModel::firstOrNew(['notrans' => $notrans]);
+        $dataKunjungan->fill([
+            'norm' => $request->input('norm'),
+            'nama' => $request->input('nama'),
+            'jk' => $request->input('jk'),
+            'umur' => $request->input('umur'),
+            'alamat' => $request->input('alamat'),
+            'jaminan' => $request->input('jaminan'),
+            'tagihan' => str_replace(['Rp', '.', ',', ' '], '', $request->input('tagihan')),
+            'bayar' => str_replace(['Rp', '.', ',', ' '], '', $request->input('bayar')),
+            'kembalian' => str_replace(['Rp', '.', ',', ' '], '', $request->input('kembalian')),
+            'petugas' => $request->input('petugas'),
+        ]);
+        $dataKunjungan->save();
+
+        return $dataKunjungan;
     }
 
     public function order(Request $request)
@@ -235,11 +245,7 @@ class KasirController extends Controller
     public function kunjungan(Request $request)
     {
         $notrans = $request->input('notrans');
-        // $data = KasirAddModel::with('layanan', 'transaksi')
-        //     ->where('notrans', $notrans)
-        //     ->get();
         $data = KasirTransModel::with(['item.layanan'])->where('notrans', $notrans)->first();
-        // dd($data);
         if ($data == null) {
             return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
@@ -257,44 +263,7 @@ class KasirController extends Controller
             return response()->json(['message' => 'Data berhasil dihapus'], 200);
         }
     }
-    public function addTransaksi(Request $request)
-    {
-        $notrans = $request->input('notrans');
-        $norm = $request->input('norm');
-        $nama = $request->input('nama');
-        $jk = $request->input('jk');
-        $tagihan = str_replace(['Rp', '.', ',', ' '], '', $request->input('tagihan'));
-        $bayar = str_replace(['Rp', '.', ',', ' '], '', $request->input('bayar'));
-        $kembalian = str_replace(['Rp', '.', ',', ' '], '', $request->input('kembalian'));
-        // dd($kembalian);
 
-        $umur = $request->input('umur');
-        $alamat = $request->input('alamat');
-        $jaminan = $request->input('jaminan');
-        $petugas = $request->input('petugas');
-        // Pastikan $kdTind memiliki nilai yang valid sebelum menyimpan data
-        if ($notrans !== null) {
-            $kunjunganLab = new KasirTransModel();
-            $kunjunganLab->notrans = $notrans;
-            $kunjunganLab->norm = $norm;
-            $kunjunganLab->nama = $nama;
-            $kunjunganLab->umur = $umur;
-            $kunjunganLab->jk = $jk;
-            $kunjunganLab->alamat = $alamat;
-            $kunjunganLab->jaminan = $jaminan;
-            $kunjunganLab->tagihan = $tagihan;
-            $kunjunganLab->bayar = $bayar;
-            $kunjunganLab->kembalian = $kembalian;
-            $kunjunganLab->petugas = $petugas;
-            $kunjunganLab->save();
-
-            // Respon sukses atau redirect ke halaman lain
-            return response()->json(['message' => 'Data berhasil disimpan...!!']);
-        } else {
-            // Handle case when $kdTind is null, misalnya kirim respon error
-            return response()->json(['message' => 'NO Trans tidak valid'], 400);
-        }
-    }
     public function rekapKunjungan(Request $request)
     {
         $norm = $request->input('norm');
