@@ -244,12 +244,22 @@ function updateStatus(id) {
     });
 }
 function riwayatKunjungan(norm) {
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencarikan data...!!! \n Pencarian dapat membutuhkan waktu lama, \n Mohon ditunggu...!!!",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
     console.log("🚀 ~ riwayatKunjungan ~ norm:", norm);
     $.ajax({
         url: "/api/kominfo/kunjungan/riwayat",
         type: "POST",
         data: { no_rm: norm },
         success: function (response) {
+            Swal.close();
             console.log("🚀 ~ riwayatKunjungan ~ response:", response);
             tabelRiwayatKunjungan(response); // Menampilkan tabel
             $("#historiKunjungan").modal("show"); // Menampilkan modal
