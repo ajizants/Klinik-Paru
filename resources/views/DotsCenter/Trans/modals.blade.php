@@ -347,11 +347,11 @@
                                                         style="width:100%" cellspacing="0">
                                                         <thead>
                                                             <tr>
-                                                                <th class="text-center">Tanggal</th>
-                                                                <th class="text-center">NoRM</th>
-                                                                <th class="text-center">Nama</th>
-                                                                <th class="text-center">Dokter</th>
-                                                                <th>Diagnosa</th>
+                                                                <th width="15px" class="text-center">Tanggal</th>
+                                                                <th width="15px" class="text-center">NoRM</th>
+                                                                <th class="col-2 text-center">Nama</th>
+                                                                <th class="col-2 text-center">Dokter</th>
+                                                                <th class="col-3">Diagnosa</th>
                                                                 <th>Anamnesa</th>
                                                             </tr>
                                                         </thead>

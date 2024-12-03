@@ -278,17 +278,23 @@ function riwayatKunjungan(norm) {
 function tabelRiwayatKunjungan(data) {
     data.forEach(function (item, index) {
         item.no = index + 1; // Nomor urut dimulai dari 1
-        item.diagnosa = `<div>
-                            <p><strong>Diagnosa 1:</strong> ${
-                                item.dx1 || "-"
-                            }</p>
-                            <p><strong>Diagnosa 2:</strong> ${
-                                item.dx2 || "-"
-                            }</p>
-                            <p><strong>Diagnosa 3:</strong> ${
-                                item.dx3 || "-"
-                            }</p>
-                        </div>`;
+        item.diagnosa = `
+                            <table>
+                                <tr>
+                                    <td><strong>DX 1 :</strong></td>
+                                    <td>${item.dx1 || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>DX 3 :</strong></td>
+                                    <td>${item.dx2 || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>DX 3 :</strong></td>
+                                    <td>${item.dx3 || "-"}</td>
+                                </tr>
+                            </table>
+
+                        `;
         item.anamnesa = `<div>
                             <p><strong>DS :</strong> ${item.ds || "-"}</p>
                             <p><strong>DO :</strong> ${item.do || "-"}</p>
@@ -328,11 +334,11 @@ function tabelRiwayatKunjungan(data) {
     $("#riwayatKunjungan").DataTable({
         data: data,
         columns: [
-            { data: "tanggal", className: "text-center" },
-            { data: "pasien_no_rm", className: "text-center" },
-            { data: "pasien_nama", className: "text-center" },
+            { data: "tanggal", className: "col-1 text-center" },
+            { data: "pasien_no_rm", className: "col-1 text-center" },
+            { data: "pasien_nama", className: " text-center" },
             { data: "dokter_nama", className: "text-center" },
-            { data: "diagnosa" },
+            { data: "diagnosa", className: "col-4" },
             { data: "anamnesa" },
         ],
         paging: true,
