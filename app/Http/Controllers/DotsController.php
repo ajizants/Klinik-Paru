@@ -343,14 +343,15 @@ class DotsController extends Controller
         $pasien_telat = [];
 
         foreach ($Ptb as $d) {
-            // Cari transaksi terakhir untuk pasien ini
+            // Ambil transaksi terakhir untuk pasien ini
             $Pkontrol = DotsTransModel::with('bln')
                 ->where('norm', $d->norm)
                 ->latest('created_at')
                 ->first();
 
-            // Jika ada transaksi yang ditemukan
+            // Pastikan $Pkontrol tidak null sebelum akses atribut
             if ($Pkontrol) {
+                $hasilBerobat = $d->hasilBerobat; // Ambil hasil berobat dari Ptb (DotsModel)
                 $now = Carbon::now();
                 $nxKontrolDate = Carbon::parse($Pkontrol->nxKontrol);
                 $terakhir_kontrol = Carbon::parse($Pkontrol->created_at);
@@ -366,7 +367,7 @@ class DotsController extends Controller
                 : 'Tidak Diketahui';
 
                 // Tentukan status pasien berdasarkan hasilBerobat dan selisih hari
-                if (in_array($Pkontrol->hasilBerobat, [93, 94, 95, 96, 97, 98])) {
+                if (in_array($hasilBerobat, ["93", "94", "95", "96", "97", "98"])) {
                     $status = 'Tidak Diketahui';
                 } elseif (abs($selisihHari) > 30) {
                     $status = 'DO';
