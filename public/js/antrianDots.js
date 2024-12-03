@@ -394,7 +394,20 @@ function generateTable(selector, data, title) {
     data.forEach((item, index) => {
         item.no = index + 1;
         item.aksi = `
-            <button class="editTB bg-danger" data-id="${item.id}" data-norm="${item.norm}" onclick="editPasienTB(this);">
+            <button class="editTB bg-danger"
+                    data-id="${item.id}"
+                    data-norm="${item.norm}"
+                    data-petugas="${item.petugas}"
+                    data-dokter="${item.dokter}"
+                    data-nama="${item.nama}"
+                    data-alamat="${item.alamat}"
+                    data-hasilBerobat="${item.hasilBerobat}"
+                    data-tcm="${item.tcm}"
+                    data-sample="${item.sample}"
+                    data-toggle="modal"
+                    data-target="#modal-update"
+                    data-toggle="tooltip" data-placement="right" title="Update Hasil Pengobatan dan TCM"
+                    onclick="editPasienTB(this);" placeholder="Update Hasil Pengobatan dan TCM">
                 <i class="fa-solid fa-file-pen"></i>
             </button>
             <br><br>
@@ -841,10 +854,21 @@ function creatTabelPTB(data, id) {
 
 function showRiwayatKunjungan(norm, modal) {
     if (norm == null) norm = $("#norm").val();
-    $("#loadingSpinner").show();
 
     // Pilih tabel yang akan digunakan berdasarkan kondisi modal
     var tableId = modal ? "#modal-kunjDots" : "#kunjDots";
+
+    if (modal === "modal") {
+        Swal.fire({
+            title: "Loading...",
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            willOpen: function () {
+                Swal.showLoading();
+            },
+        });
+        $("#modal-RiwayatKunjungan").modal("show");
+    }
 
     if ($.fn.DataTable.isDataTable(tableId)) {
         var table = $(tableId).DataTable();
@@ -858,7 +882,7 @@ function showRiwayatKunjungan(norm, modal) {
             norm: norm,
         },
         success: function (response) {
-            $("#loadingSpinner").hide();
+            Swal.close();
             response.forEach(function (item, index) {
                 item.actions = `<button class="editTB bg-danger"
                                 data-id="${item.id}"
