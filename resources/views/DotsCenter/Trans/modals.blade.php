@@ -327,11 +327,53 @@
                     </div>
                     <!-- /.modal-dialog -->
                 </div>
+                <div class="modal fade" id="historiKunjungan">
+                    <div class="modal-dialog modal-dialog-scrollable modal-xl-custom">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Histori Kunjungan Pasien</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="card-body p-2">
+                                    <div class="container-fluid">
+                                        <div class="card card-info">
+                                            <div class="card-header">
+                                                <h3 class="card-title">Riwayat Kunjungan Pasien Ke KKPM</h3>
+                                            </div>
+                                            <div class="card-body p-2">
+                                                <div class="table-responsive">
+                                                    <table id="riwayatKunjungan"
+                                                        class="table table-striped table-hover pt-0 mt-0 fs-6"
+                                                        style="width:100%" cellspacing="0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center">Tanggal</th>
+                                                                <th class="text-center">NoRM</th>
+                                                                <th class="text-center">Nama</th>
+                                                                <th class="text-center">Dokter</th>
+                                                                <th>Diagnosa</th>
+                                                                <th>Anamnesa</th>
+                                                            </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer justify-content-end">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Selesai</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="modal fade" id="modal-RiwayatKunjungan">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Riwayat Kunjungan Pasien TBC</h4>
+                                <h4 class="modal-title">Riwayat Kontrol Pasien TBC</h4>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>

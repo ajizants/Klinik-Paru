@@ -136,7 +136,6 @@ Route::post('addHasilLab', [LaboratoriumController::class, 'addHasil']);
 Route::post('cariRiwayatLab', [LaboratoriumController::class, 'riwayat']);
 
 //farmasi
-
 Route::get('stokbmhp', [StokController::class, 'stokbmhp']);
 Route::get('obat', [GudangFarmasiController::class, 'gudangFarmasiIn']);
 
@@ -200,6 +199,7 @@ Route::post('deletekondisiRo', [RoMasterController::class, 'deletekondisiRo']);
 Route::post('deleteproyeksiRo', [RoMasterController::class, 'deleteproyeksiRo']);
 
 Route::post('addTransaksiRo', [ROTransaksiController::class, 'addTransaksiRo']);
+Route::post('deleteTransaksiRo', [ROTransaksiController::class, 'deleteTransaksiRo']);
 Route::post('updateRo', [ROTransaksiController::class, 'updateGambar']);
 Route::post('deleteFotoPasien', [ROTransaksiController::class, 'deleteGambar']);
 Route::post('cariTsRO', [ROTransaksiController::class, 'cariTransaksiRo']);
@@ -236,6 +236,7 @@ Route::post('pasienKominfo', [PasienKominfoController::class, 'newPasien']);
 Route::post('dataPasien', [PasienKominfoController::class, 'dataPasien']);
 Route::post('cpptKominfo', [PasienKominfoController::class, 'newCpptRequest']);
 Route::post('antrian/kominfo', [PasienKominfoController::class, 'antrianAll']);
+Route::post('kominfo/kunjungan/riwayat', [PasienKominfoController::class, 'kunjungan']);
 Route::post('poin_kominfo', [PasienKominfoController::class, 'rekapPoin']);
 Route::post('poin_kominfo/pecah', [PasienKominfoController::class, 'rekapPoinPecah']);
 Route::post('kominfo/waktu_layanan', [PasienKominfoController::class, 'waktuLayanan']);

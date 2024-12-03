@@ -333,6 +333,60 @@ function deleteFoto(id) {
     });
 }
 
+function deleteTransaksi(button) {
+    console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi);
+    const notrans = $(button).data("notrans");
+    const nama = $(button).data("nama");
+    const tgltrans = $(button).data("tgltrans");
+
+    console.log("🚀 ~ deleteTransaksi ~ notrans:", notrans);
+    console.log("🚀 ~ deleteTransaksi ~ tgltrans:", tgltrans);
+    Swal.fire({
+        title: "Konfirmasi",
+        text:
+            "Apakah Anda yakin ingin menghapus transaksi atas nama: " +
+            nama +
+            "?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Hapus!",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "/api/deleteTransaksiRo",
+                type: "POST",
+                data: { notrans: notrans, tanggal: tgltrans },
+                success: function (response) {
+                    if (response.status === "success") {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Data Berhasil",
+                            text: "Data berhasil dihapus.",
+                        });
+                        removeRow(notrans);
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Terjadi Kesalahan",
+                            text: "Gagal menghapus data: " + response.message,
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Terjadi Kesalahan",
+                        text: "Gagal menghapus data: " + error,
+                    });
+                },
+            });
+        }
+    });
+}
+
 function removeRow(id) {
     const table = $("#tableRo").DataTable();
     const row = $(`#tableRo .btn-danger[data-id='${id}']`).closest("tr");

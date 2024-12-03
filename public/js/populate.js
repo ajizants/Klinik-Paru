@@ -302,7 +302,7 @@ function processResponse(response, ruang, statusFilter) {
     const data = response.response.data.map((item) => ({
         ...item,
         tgl: $("#tanggal").val(),
-        aksi: generateActionLink(item, ruang),
+        aksi: generateActionLink(item, ruang, statusFilter),
     }));
 
     const filteredData = data.filter((item) => item.status === statusFilter);
@@ -310,12 +310,14 @@ function processResponse(response, ruang, statusFilter) {
     return { data, filteredData };
 }
 
-function generateActionLink(item, ruang) {
+function generateActionLink(item, ruang, statusFilter) {
+    // console.log("🚀 ~ generateActionLink ~ statusFilter:", statusFilter);
     const today = new Date(2024, 9, 3); // October 3, 2024
     today.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
     // console.log("🚀 ~ generateActionLink ~ today:", today);
 
     let notrans; // Declare notrans outside of the if-else block
+    let actionLink;
 
     // Compare item.tanggal with today
     const date = new Date(item.tanggal);
@@ -343,16 +345,25 @@ function generateActionLink(item, ruang) {
     const links = {
         dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
         lab: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-        ro: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-        igd: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
-              <button type="button" ${commonAttributes} class="aksi-button btn-sm btn-${item.igd_selesai} py-md-0 py-1 mt-md-0 mt-2 icon-link icon-link-hover" onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this,'${ruang}')" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`,
+        ro:
+            item.status === "Sudah Selesai"
+                ? `<a type="button" ${commonAttributes} class="mr-2aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
+                    <a type="button" ${commonAttributes} class="aksi-button btn-sm btn-danger py-md-0 py-1 icon-link icon-link-hover" onclick="deleteTransaksi(this);"><i class="fas fa-trash"></i></a>`
+                : `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+        igd:
+            item.status === "Sudah Selesai"
+                ? `<a type="button" ${commonAttributes} class="mr-2 aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
+                    <button type="button" ${commonAttributes} class="aksi-button btn-sm btn-${item.igd_selesai} py-md-0 py-1 mt-md-0 mt-2 icon-link icon-link-hover" onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this,'${ruang}')" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`
+                : `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
         default: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1  icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
     };
+
+    // Mengembalikan tautan yang sesuai berdasarkan ruang dan statusFilter
     return links[ruang] || links.default;
 }
 
 function setTransaksi(button, ruang) {
-    console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi);
+    // console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi);
     var norm = $(button).data("norm");
     var nama = $(button).data("nama");
     var dokter = $(button).data("kddokter");
@@ -363,7 +374,7 @@ function setTransaksi(button, ruang) {
     var tgl = $(button).data("tgltrans");
     var asktind = $(button).data("asktind");
     jk = $(button).data("jk");
-    console.log("🚀 ~ setTransaksi ~ jk:", jk);
+    // console.log("🚀 ~ setTransaksi ~ jk:", jk);
     switch (ruang) {
         case "igd":
             cariTsIgd(notrans, norm, tgl, ruang);
@@ -420,10 +431,12 @@ function antrianAll(ruang) {
             "Belum Upload Foto Thorax"
         );
         const belumUpload = blmUpload.filteredData;
+        const antrian = processResponse(response, ruang, "Tidak Ada Transaksi");
+        const antrianAll = antrian.filteredData;
 
         initializeDataTable(
             "#antrianall",
-            data,
+            antrianAll,
             getColumnDefinitions("status_pulang", ruang)
         );
 
@@ -504,7 +517,7 @@ function handleMetadata(response, ruang) {
         });
         const pasien = response.response.pasien;
         const cppt = response.response.cppt ? response.response.cppt[0] : [];
-        console.log("🚀 ~ handleMetadata ~ cppt:", cppt);
+        // console.log("🚀 ~ handleMetadata ~ cppt:", cppt);
         const pendaftaran = response.response.pendaftaran[0];
         const dxMed = cppt.diagnosa[0];
         // console.log("🚀 ~ handleMetadata ~ dxMed:", dxMed);

@@ -245,3 +245,8 @@ input:checked + .slider:before {
     font-size: 14px;
     font-weight: bold;
 }
+
+.modal-xl-custom {
+    max-width: 90% !important; /* Sesuaikan lebar sesuai kebutuhan, misalnya 90% */
+    width: 90% !important; /* Gunakan 90% dari lebar layar */
+}

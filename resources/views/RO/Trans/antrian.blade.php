@@ -113,7 +113,7 @@
                         cellspacing="0">
                         <thead class="bg bg-secondary">
                             <tr>
-                                <th width="15px">Aksi</th>
+                                <th width="35px">Aksi</th>
                                 <th width="15px">status</th>
                                 <th>Tanggal</th>
                                 <th>Urut</th>

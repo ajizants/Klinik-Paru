@@ -269,6 +269,119 @@ class ROTransaksiController extends Controller
         }
     }
 
+    public function deleteTransaksiRo(Request $request)
+    {
+        $notrans = $request->input('notrans');
+        $tanggal = $request->input('tanggal');
+        return [
+            'notrans' => $notrans,
+            'tanggal' => $tanggal,
+        ];
+
+        try {
+            DB::beginTransaction();
+
+            // Ambil data transaksi
+            $transaksi = ROTransaksiModel::where('notrans', $notrans)
+                ->whereDate('tgltrans', $tanggal)
+                ->first();
+
+            if (!$transaksi) {
+                return response()->json(['message' => 'Data transaksi tidak ditemukan'], 404);
+            }
+
+            $norm = $transaksi->norm;
+            $tgl = $transaksi->tgltrans;
+
+            // Ambil data foto thorax
+            $hasilFoto = ROTransaksiHasilModel::where('norm', $norm)
+                ->whereDate('tanggal', $tgl)
+                ->get();
+
+            if ($hasilFoto->isEmpty()) {
+                return response()->json(['message' => 'Data foto thorax tidak ditemukan'], 404);
+            }
+
+            // Hapus semua foto yang terkait
+            foreach ($hasilFoto as $foto) {
+                $this->hapusGambar(['id' => $foto->id]);
+            }
+
+            // Hapus data transaksi
+            $transaksi->delete();
+
+            DB::commit();
+            return response()->json(['message' => 'Transaksi berhasil dihapus'], 200);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Kesalahan saat menghapus transaksi: ' . $e->getMessage());
+            return response()->json(['message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function deleteGambar(Request $request)
+    {
+        $idFoto = $request->input('id');
+        return $this->hapusGambar(['id' => $idFoto]);
+    }
+
+    private function hapusGambar(array $params)
+    {
+        $msg = [];
+        DB::beginTransaction();
+        $client = new Client();
+
+        try {
+            $gambar = ROTransaksiHasilModel::find($params['id']);
+
+            if (!$gambar) {
+                return response()->json([
+                    'metadata' => [
+                        'message' => 'Data gambar tidak ditemukan',
+                        'status' => 404,
+                    ],
+                ], 404);
+            }
+
+            // URL untuk menghapus gambar di server eksternal
+            $urlDelete = env('APP_URL_DELETE') . '?id=' . $params['id'];
+
+            // Kirim permintaan ke server eksternal
+            $response = $client->get($urlDelete);
+
+            if ($response->getStatusCode() !== 200) {
+                throw new \Exception('Gagal menghapus gambar dari server eksternal.');
+            }
+
+            $res = json_decode($response->getBody()->getContents(), true);
+
+            // Hapus data gambar dari database lokal
+            $gambar->delete();
+
+            $msg = [
+                'metadata' => [
+                    'message' => $res['message'] ?? 'Gambar berhasil dihapus',
+                    'status' => 200,
+                ],
+            ];
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Kesalahan saat menghapus gambar: ' . $e->getMessage());
+            $msg = [
+                'metadata' => [
+                    'message' => 'Terjadi kesalahan saat menghapus gambar: ' . $e->getMessage(),
+                    'status' => 500,
+                ],
+            ];
+        }
+
+        return response()->json($msg, 200, [], JSON_PRETTY_PRINT);
+    }
+
     public function updateGambar(Request $request)
     {
         // Sanitize the date by removing non-numeric characters
@@ -349,65 +462,6 @@ class ROTransaksiController extends Controller
             return response()->json(['message' => 'Data not found'], 404);
         }
 
-    }
-
-    public function deleteGambar(Request $request)
-    {
-        $msg = [];
-        DB::beginTransaction();
-        $client = new Client(); // Moved client instantiation outside try block
-
-        try {
-            $gambar = ROTransaksiHasilModel::find($request->input('id')); // Use find for better readability
-            // dd($gambar);
-            if (!$gambar) {
-                // Data not found
-                $msg = [
-                    'metadata' => [
-                        'message' => 'Data tidak ditemukan',
-                        'status' => 404,
-                    ],
-                ];
-                return response()->json($msg, 404); // Return response immediately
-            }
-
-            // Prepare for external deletion
-            $url = env('APP_URL_DELETE'); // Ensure this points to the correct URL of your PHP script on Server B
-            // dd($url);
-            $urlDelete = $url . '?id=' . $request->input('id');
-            // dd($urlDelete);
-
-            // Send request to delete the image from the external server
-            $response = $client->request('GET', $urlDelete);
-            if ($response->getStatusCode() !== 200) {
-                throw new \Exception('Gagal menghapus gambar di server eksternal.');
-            }
-
-            $res = json_decode($response->getBody()->getContents(), true);
-            // Delete the local image record
-            $gambar->delete();
-            $msg = [
-                'metadata' => [
-                    // 'message' => $res['message'],
-                    'message' => "Gambar berhasil di hapus",
-                    'DB_RO' => $res,
-                    'status' => 200,
-                ],
-            ];
-
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            Log::error('Terjadi kesalahan saat menghapus gambar: ' . $e->getMessage());
-            $msg = [
-                'metadata' => [
-                    'message' => 'Terjadi kesalahan saat menghapus gambar: ' . $e->getMessage(),
-                    'status' => 500,
-                ],
-            ];
-        }
-
-        return response()->json($msg, 200, [], JSON_PRETTY_PRINT);
     }
 
     public function hasilRo(Request $request)

@@ -712,21 +712,21 @@ class PasienKominfoController extends Controller
                         // $foto = ROTransaksiHasilModel::where('norm', $norm)
                         $foto = RoHasilModel::where('norm', $norm)
                             ->whereDate('tanggal', $tanggal)->first();
-                        $item['status'] = !$tsRo && !$foto ? 'Belum Ada Ts RO' :
+                        $item['status'] = !$tsRo && !$foto ? 'Tidak Ada Transaksi' :
                         ($tsRo && !$foto ? 'Belum Upload Foto Thorax' : 'Sudah Selesai');
                         break;
 
                     case 'igd':
                         $ts = IGDTransModel::with('transbmhp')->where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Tidak Ada Permintaan' :
+                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' :
                         ($ts->transbmhp == null ? 'Belum Ada Transaksi BMHP' : 'Sudah Selesai');
                         break;
 
                     case 'farmasi':
                         $ts = FarmasiModel::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Belum Ada Transaksi' : 'Sudah Selesai';
+                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
                         break;
 
                     case 'dots':
@@ -743,7 +743,7 @@ class PasienKominfoController extends Controller
                     case 'kasir':
                         $ts = KasirTransModel::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Belum Input' : 'Sudah Selesai';
+                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
                         break;
 
                     default:
@@ -930,6 +930,50 @@ class PasienKominfoController extends Controller
         return response()->json($result);
     }
 
+    public function kunjungan(Request $request)
+    {
+        // Ambil parameter dari req
+        $params = $request->only(['tanggal_awal', 'tanggal_akhir', 'no_rm']);
+        $model = new KominfoModel();
+        $data = $model->cpptRequest($params);
+        if (isset($data['response']['data']) && is_array($data['response']['data'])) {
+            // Filter data, jika tindakan kosong maka skip
+            $nowDate = Carbon::now()->format('Y-m-d');
+
+            $filteredData = array_filter($data['response']['data'], function ($item) use ($nowDate) {
+                return $item['tanggal'] < $nowDate;
+            });
+
+            // Update the 'data' key with the filtered data
+            $data = $filteredData;
+        } else {
+            // Handle the case where 'response' or 'data' key is not present
+            $data = [];
+        }
+        $riwayat = [];
+        foreach ($data as $item) {
+            $riwayat[] = [
+                'tanggal' => $item['tanggal'],
+                'dokter_nama' => $item['dokter_nama'],
+                'pasien_nama' => $item['pasien_nama'],
+                'pasien_no_rm' => $item['pasien_no_rm'],
+                'dx1' => $item['diagnosa'][0]['nama_diagnosa'] ?? '',
+                'dx2' => $item['diagnosa'][1]['nama_diagnosa'] ?? '',
+                'dx3' => $item['diagnosa'][2]['nama_diagnosa'] ?? '',
+                'ds' => $item['subjek'] ?? '',
+                'do' => $item['objek_data_objektif'] ?? '',
+                'td' => $item['objek_tekanan_darah'] ?? '',
+                'bb' => $item['objek_bb'] ?? '',
+                'nadi' => $item['objek_nadi'] ?? '',
+                'suhu' => $item['objek_suhu'] ?? '',
+                'rr' => $item['objek_rr'] ?? '',
+
+            ];
+        }
+
+        // return response()->json($data);
+        return response()->json($riwayat);
+    }
     public function newCpptRequest(Request $request)
     {
         // Ambil parameter dari req

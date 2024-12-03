@@ -243,98 +243,103 @@ function updateStatus(id) {
         },
     });
 }
-// function pasienKontrol() {
-//     var tanggal = $("#tanggal").val();
-//     $("#loadingSpinner").show();
-//     if ($.fn.DataTable.isDataTable("#Pkontrol")) {
-//         var table = $("#Pkontrol").DataTable();
-//         table.destroy();
-//     }
+function riwayatKunjungan(norm) {
+    console.log("🚀 ~ riwayatKunjungan ~ norm:", norm);
+    $.ajax({
+        url: "/api/kominfo/kunjungan/riwayat",
+        type: "POST",
+        data: { no_rm: norm },
+        success: function (response) {
+            console.log("🚀 ~ riwayatKunjungan ~ response:", response);
+            tabelRiwayatKunjungan(response); // Menampilkan tabel
+            $("#historiKunjungan").modal("show"); // Menampilkan modal
+        },
+        error: function (xhr) {
+            console.error("Error:", xhr.responseText);
+            Swal.fire({
+                icon: "error",
+                title: "Gagal Memuat Riwayat",
+                text: "Terjadi kesalahan, silakan coba lagi.",
+            });
+        },
+    });
+}
 
-//     $.ajax({
-//         url: "/api/pasien/TB/Kontrol",
-//         type: "GET",
-//         data: { tanggal: tanggal },
-//         success: function (response) {
-//             $("#loadingSpinner").hide();
-//             response.forEach(function (item, index) {
-//                 var alamat = `${item.kelurahan} ${item.rtrw} ${item.kecamatan}${item.kabupaten}`;
-//                 item.diagnosa = `${item.diagnosa1}, ${item.diagnosa2}, ${item.diagnosa3}`;
+function tabelRiwayatKunjungan(data) {
+    data.forEach(function (item, index) {
+        item.no = index + 1; // Nomor urut dimulai dari 1
+        item.diagnosa = `<div>
+                            <p><strong>Diagnosa 1:</strong> ${
+                                item.dx1 || "-"
+                            }</p>
+                            <p><strong>Diagnosa 2:</strong> ${
+                                item.dx2 || "-"
+                            }</p>
+                            <p><strong>Diagnosa 3:</strong> ${
+                                item.dx3 || "-"
+                            }</p>
+                        </div>`;
+        item.anamnesa = `<div>
+                            <p><strong>DS :</strong> ${item.ds || "-"}</p>
+                            <p><strong>DO :</strong> ${item.do || "-"}</p>
+                            <table>
+                                <tr>
+                                    <td><strong>TD :</strong> ${
+                                        item.td || "-"
+                                    } mmHg</td>
+                                    <td><strong>Nadi :</strong> ${
+                                        item.nadi || "-"
+                                    } X/mnt</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>BB :</strong> ${
+                                        item.bb || "-"
+                                    } Kg</td>
+                                    <td><strong>Suhu :</strong> ${
+                                        item.suhu || "-"
+                                    } °C</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>RR :</strong> ${
+                                        item.rr || "-"
+                                    } X/mnt</td>
+                                </tr>
+                            </table>
+                        </div>`;
+    });
 
-//                 item.pasien = `${item.namapasien}`;
-//                 item.actions = `<a href="#" class="edit"
-//                                 data-id="${item.id}"
-//                                 data-norm="${item.norm}"
-//                     data-nama="${item.namapasien}"
-//                     data-alamat="${alamat}"
-//                     data-layanan="${item.kelompok}"
-//                     data-notrans="${item.notrans}"
-//                     data-tgltrans="${item.tgltrans}"
-//                                 ><i class="fas fa-pen-to-square pr-3"></i></a>`;
-//                 item.no = index + 1;
-//                 if (item.idKunjunganDots !== null) {
-//                     item.status = "sudah";
-//                 } else {
-//                     item.status = "belum";
-//                 }
-//             });
+    // Hancurkan DataTable sebelumnya jika ada
+    const table = $("#riwayatKunjungan").DataTable();
+    if ($.fn.DataTable.isDataTable("#riwayatKunjungan")) {
+        table.destroy();
+    }
 
-//             $("#Pkontrol")
-//                 .DataTable({
-//                     data: response,
-//                     columns: [
-//                         { data: "actions", className: "col-1 text-center" },
-//                         {
-//                             data: "status",
-//                             name: "idKunjunganDots",
-//                             render: function (data, type, row) {
-//                                 var backgroundColor =
-//                                     data === "belum" ? "danger" : "success";
-//                                 return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-//                             },
-//                             className: "p-2",
-//                         },
-//                         { data: "nourut" },
-//                         { data: "norm" },
-//                         { data: "noktp" },
-//                         { data: "namapasien" },
-//                         { data: "dokterpoli" },
-//                         { data: "diagnosa" },
-//                     ],
-//                     order: [2, "asc"],
-//                     paging: true,
-//                     lengthMenu: [
-//                         [5, 10, 25, 50, -1],
-//                         [5, 10, 25, 50, "All"],
-//                     ],
-//                     pageLength: 5,
-//                     responsive: true,
-//                     lengthChange: false,
-//                     autoWidth: false,
-//                     buttons: ["copyHtml5", "excelHtml5", "pdfHtml5", "colvis"],
-//                 })
-//                 .buttons()
-//                 .container()
-//                 .appendTo("#Pkontrol_wrapper .col-md-6:eq(0)");
+    // Inisialisasi DataTable baru
+    $("#riwayatKunjungan").DataTable({
+        data: data,
+        columns: [
+            { data: "tanggal", className: "text-center" },
+            { data: "pasien_no_rm", className: "text-center" },
+            { data: "pasien_nama", className: "text-center" },
+            { data: "dokter_nama", className: "text-center" },
+            { data: "diagnosa" },
+            { data: "anamnesa" },
+        ],
+        paging: true,
+        order: [0, "desc"], // Mengurutkan berdasarkan tanggal
+        lengthMenu: [
+            [5, 10, 25, 50, -1],
+            [5, 10, 25, 50, "All"],
+        ],
+        pageLength: 5,
+        responsive: true,
+    });
+}
 
-//             // Menangani klik pada tombol edit
-//             $(".edit").on("click", function (e) {
-//                 e.preventDefault();
-//                 var norm = $(this).data("norm");
-//                 var date = $("#tanggal").val();
-//                 searchByRM(norm, date);
-//             });
-//         },
-//         error: function (xhr, status, error) {
-//             console.error("Error:", error);
-//         },
-//     });
-// }
 function pasienTelat() {
     $("#loadingSpinner").show();
     if ($.fn.DataTable.isDataTable("#Ptelat, #Pdo")) {
-        var table = $("#Ptelat, #Pdo").DataTable();
-        table.destroy();
+        $("#Ptelat, #Pdo").DataTable().destroy();
     }
 
     $.ajax({
@@ -342,30 +347,32 @@ function pasienTelat() {
         type: "GET",
         success: function (response) {
             $("#loadingSpinner").hide();
-            var data = response.data;
-            var pasienTelat = data.filter(function (item) {
-                // return item.status === "Telat";
-                //filter berdasarkan status telat dan blnKe bukan Selesai pengobatab
-                return (
+            const data = response.data;
+
+            const pasienTelat = data.filter(
+                (item) =>
                     item.status === "Telat" &&
                     item.blnKe !== "Selesai Pengobatan"
-                );
-            });
-            // console.log("🚀 ~ pasienTelat ~ pasienTelat:", pasienTelat);
-            var pasienDo = data.filter(function (item) {
-                // return item.status === "DO";
-                return (
+            );
+            const pasienDo = data.filter(
+                (item) =>
                     item.status === "DO" && item.blnKe !== "Selesai Pengobatan"
-                );
-            });
-            var pasienKontrol = data.filter(function (item) {
-                // return item.status === "Kontrol";
-                return item.status === "Tepat Waktu";
-            });
-            // console.log("🚀 ~ pasienKontrol ~ pasienKontrol:", pasienKontrol);
-            tabelTelat(pasienTelat);
-            tabelDo(pasienDo);
-            tabelKontrol(pasienKontrol);
+            );
+            const pasienKontrol = data.filter(
+                (item) => item.status === "Tepat Waktu"
+            );
+
+            generateTable(
+                "#Ptelat",
+                pasienTelat,
+                "Data Pasien TBC Telat di KKPM"
+            );
+            generateTable("#Pdo", pasienDo, "Data Pasien TBC DO di KKPM");
+            generateTable(
+                "#Pkontrol",
+                pasienKontrol,
+                "Data Pasien TBC Tepat Waktu di KKPM"
+            );
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
@@ -373,103 +380,26 @@ function pasienTelat() {
     });
 }
 
-function tabelKontrol(pasienKontrol) {
-    // console.log("🚀 ~ tabelKontrol ~ pasienKontrol:", pasienKontrol);
-    pasienKontrol.forEach(function (item, index) {
+function generateTable(selector, data, title) {
+    data.forEach((item, index) => {
         item.no = index + 1;
-        // item.aksi = `<a href="#" class="edit"
-        // data-id="${item.id}"
-        // data-norm="${item.norm}"
-        // onclick="showModal(${item.id})"><i class="fas fa-pen-to-square pr-3"></i></a>`;
-        item.aksi = `<button class="editTB bg-danger"
-                                    data-id="${item.id}"
-                                    data-norm="${item.norm}"
-                                    data-petugas="${item.petugas}"
-                                    data-dokter="${item.dokter}"
-                                    data-nama="${item.nama}"
-                                    data-alamat="${item.alamat}"
-                                    data-hasilBerobat="${item.hasilBerobat}"
-                                    data-tcm="${item.tcm}"
-                                    data-sample="${item.sample}"
-                                    data-toggle="modal"
-                                    data-target="#modal-update"
-                                    onclick="editPasienTB(this);"><i class="fa-solid fa-file-pen"></i></button>`;
+        item.aksi = `
+            <button class="editTB bg-danger" data-id="${item.id}" data-norm="${item.norm}" onclick="editPasienTB(this);">
+                <i class="fa-solid fa-file-pen"></i>
+            </button>
+            <br><br>
+            <button class="riwayat bg-green" onclick="riwayatKunjungan('${item.norm}','modal');">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-fill">
+                    <path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z"/>
+                </svg>
+            </button>`;
     });
-    $("#Pkontrol")
+
+    $(selector)
         .DataTable({
-            data: pasienKontrol,
+            data: data,
             columns: [
-                {
-                    data: "aksi",
-                },
-                // { data: "selisih" },
-                { data: "nxKontrol", className: "col-1" },
-                { data: "terakhir", className: "col-1" },
-                { data: "no" },
-                { data: "norm" },
-                { data: "noHP" },
-                { data: "blnKe" },
-                { data: "nama" },
-                { data: "alamat" },
-                { data: "namaDokter" },
-            ],
-            paging: true,
-            order: [1, "dsc"],
-            lengthMenu: [
-                [5, 10, 25, 50, -1],
-                [5, 10, 25, 50, "All"],
-            ],
-            pageLength: 5,
-            responsive: true,
-            lengthChange: false,
-            autoWidth: false,
-            buttons: [
-                {
-                    extend: "copyHtml5",
-                    text: "Salin",
-                },
-                {
-                    extend: "excelHtml5",
-                    text: "Excel",
-                    title: "Data Pasien TBC Telat Kontrol di KKPM",
-                    filename: "Data Pasien TBC Telat Kontrol di KKPM",
-                },
-                "colvis",
-            ],
-        })
-        .buttons()
-        .container()
-        .appendTo("#Pkontrol_wrapper .col-md-6:eq(0)");
-}
-function tabelTelat(pasienTelat) {
-    pasienTelat.forEach(function (item, index) {
-        item.no = index + 1;
-        // item.aksi = `<a href="#" class="edit"
-        // data-id="${item.id}"
-        // data-norm="${item.norm}"
-        // onclick="showModal(${item.id})"><i class="fas fa-pen-to-square pr-3"></i></a>`;
-        item.aksi = `<button class="editTB bg-danger"
-                                    data-id="${item.id}"
-                                    data-norm="${item.norm}"
-                                    data-petugas="${item.petugas}"
-                                    data-dokter="${item.dokter}"
-                                    data-nama="${item.nama}"
-                                    data-alamat="${item.alamat}"
-                                    data-hasilBerobat="${item.hasilBerobat}"
-                                    data-tcm="${item.tcm}"
-                                    data-sample="${item.sample}"
-                                    data-toggle="modal"
-                                    data-target="#modal-update"
-                                    data-toggle="tooltip" data-placement="right" title="Update Hasil Pengobatan dan TCM"
-                                    onclick="editPasienTB(this);"><i class="fa-solid fa-file-pen"></i></button>`;
-    });
-    $("#Ptelat")
-        .DataTable({
-            data: pasienTelat,
-            columns: [
-                {
-                    data: "aksi",
-                },
+                { data: "aksi" },
                 { data: "selisih" },
                 { data: "nxKontrol", className: "col-1" },
                 { data: "terakhir", className: "col-1" },
@@ -482,7 +412,7 @@ function tabelTelat(pasienTelat) {
                 { data: "namaDokter" },
             ],
             paging: true,
-            order: [1, "dsc"],
+            order: [1, "desc"],
             lengthMenu: [
                 [5, 10, 25, 50, -1],
                 [5, 10, 25, 50, "All"],
@@ -492,92 +422,295 @@ function tabelTelat(pasienTelat) {
             lengthChange: false,
             autoWidth: false,
             buttons: [
-                {
-                    extend: "copyHtml5",
-                    text: "Salin",
-                },
+                { extend: "copyHtml5", text: "Salin" },
                 {
                     extend: "excelHtml5",
                     text: "Excel",
-                    title: "Data Pasien TBC Telat Kontrol di KKPM",
-                    filename: "Data Pasien TBC Telat Kontrol di KKPM",
+                    title: title,
+                    filename: title,
                 },
                 "colvis",
             ],
         })
         .buttons()
         .container()
-        .appendTo("#Ptelat_wrapper .col-md-6:eq(0)");
+        .appendTo(`${selector}_wrapper .col-md-6:eq(0)`);
 }
-function tabelDo(pasienDo) {
-    pasienDo.forEach(function (item, index) {
-        item.no = index + 1;
-        // item.aksi = `<a href="#" class="edit"
-        // data-id="${item.id}"
-        // data-norm="${item.norm}"
-        // onclick="showModal(${item.id})"><i class="fas fa-pen-to-square pr-3"></i></a>`;
-        item.aksi = `<button class="editTB bg-danger"
-                                    data-id="${item.id}"
-                                    data-norm="${item.norm}"
-                                    data-petugas="${item.petugas}"
-                                    data-dokter="${item.dokter}"
-                                    data-nama="${item.nama}"
-                                    data-alamat="${item.alamat}"
-                                    data-hasilBerobat="${item.hasilBerobat}"
-                                    data-tcm="${item.tcm}"
-                                    data-sample="${item.sample}"
-                                    data-toggle="modal"
-                                    data-target="#modal-update"
-                                    data-toggle="tooltip" data-placement="right" title="Update Hasil Pengobatan dan TCM"
-                                    onclick="editPasienTB(this);" placeholder="Update Hasil Pengobatan dan TCM"><i class="fa-solid fa-file-pen"></i></button>`;
-    });
-    $("#Pdo")
-        .DataTable({
-            data: pasienDo,
-            columns: [
-                {
-                    data: "aksi",
-                },
-                { data: "selisih" },
-                { data: "nxKontrol", className: "col-1" },
-                { data: "terakhir", className: "col-1" },
-                { data: "no" },
-                { data: "norm" },
-                { data: "noHP" },
-                { data: "blnKe" },
-                { data: "nama" },
-                { data: "alamat" },
-                { data: "namaDokter" },
-            ],
-            paging: true,
-            order: [1, "dsc"],
-            lengthMenu: [
-                [5, 10, 25, 50, -1],
-                [5, 10, 25, 50, "All"],
-            ],
-            pageLength: 5,
-            responsive: true,
-            lengthChange: false,
-            autoWidth: false,
-            buttons: [
-                {
-                    extend: "copyHtml5",
-                    text: "Salin",
-                },
-                {
-                    extend: "excelHtml5",
-                    text: "Excel",
-                    title: "Data Pasien TBC Telat Lebih dari 30 hari di KKPM",
-                    filename:
-                        "Data Pasien TBC Telat Lebih dari 30 hari di KKPM",
-                },
-                "colvis",
-            ],
-        })
-        .buttons()
-        .container()
-        .appendTo("#Pdo_wrapper .col-md-6:eq(0)");
-}
+
+// function pasienTelat() {
+//     $("#loadingSpinner").show();
+//     if ($.fn.DataTable.isDataTable("#Ptelat, #Pdo")) {
+//         var table = $("#Ptelat, #Pdo").DataTable();
+//         table.destroy();
+//     }
+
+//     $.ajax({
+//         url: "/api/pasien/TB/Telat",
+//         type: "GET",
+//         success: function (response) {
+//             $("#loadingSpinner").hide();
+//             var data = response.data;
+//             var pasienTelat = data.filter(function (item) {
+//                 // return item.status === "Telat";
+//                 //filter berdasarkan status telat dan blnKe bukan Selesai pengobatab
+//                 return (
+//                     item.status === "Telat" &&
+//                     item.blnKe !== "Selesai Pengobatan"
+//                 );
+//             });
+//             // console.log("🚀 ~ pasienTelat ~ pasienTelat:", pasienTelat);
+//             var pasienDo = data.filter(function (item) {
+//                 // return item.status === "DO";
+//                 return (
+//                     item.status === "DO" && item.blnKe !== "Selesai Pengobatan"
+//                 );
+//             });
+//             var pasienKontrol = data.filter(function (item) {
+//                 // return item.status === "Kontrol";
+//                 return item.status === "Tepat Waktu";
+//             });
+//             // console.log("🚀 ~ pasienKontrol ~ pasienKontrol:", pasienKontrol);
+//             tabelTelat(pasienTelat);
+//             tabelDo(pasienDo);
+//             tabelKontrol(pasienKontrol);
+//         },
+//         error: function (xhr, status, error) {
+//             console.error("Error:", error);
+//         },
+//     });
+// }
+// function tabelKontrol(pasienKontrol) {
+//     // console.log("🚀 ~ tabelKontrol ~ pasienKontrol:", pasienKontrol);
+//     pasienKontrol.forEach(function (item, index) {
+//         item.no = index + 1;
+//         // item.aksi = `<a href="#" class="edit"
+//         // data-id="${item.id}"
+//         // data-norm="${item.norm}"
+//         // onclick="showModal(${item.id})"><i class="fas fa-pen-to-square pr-3"></i></a>`;
+//         item.aksi = `<button class="editTB bg-danger"
+//                                     data-id="${item.id}"
+//                                     data-norm="${item.norm}"
+//                                     data-petugas="${item.petugas}"
+//                                     data-dokter="${item.dokter}"
+//                                     data-nama="${item.nama}"
+//                                     data-alamat="${item.alamat}"
+//                                     data-hasilBerobat="${item.hasilBerobat}"
+//                                     data-tcm="${item.tcm}"
+//                                     data-sample="${item.sample}"
+//                                     data-toggle="modal"
+//                                     data-target="#modal-update"
+//                                     onclick="editPasienTB(this);"><i class="fa-solid fa-file-pen"></i></button>
+//                                     <br><br>
+//                     <button class="riwayat bg-green"
+//                                     data-id="${item.id}"
+//                                     data-toggle="tooltip" data-placement="right" title="Riwayat Kunjungan"
+//                                     onclick="riwayatKunjungan('${item.norm}','modal');" data-toggle="modal" data-target="#historiKunjungan">
+//                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-fill" viewBox="0 0 16 16">
+//                                     <path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z"/>
+//                                     </svg>
+//                                     </button>`;
+//     });
+//     $("#Pkontrol")
+//         .DataTable({
+//             data: pasienKontrol,
+//             columns: [
+//                 {
+//                     data: "aksi",
+//                 },
+//                 // { data: "selisih" },
+//                 { data: "nxKontrol", className: "col-1" },
+//                 { data: "terakhir", className: "col-1" },
+//                 { data: "no" },
+//                 { data: "norm" },
+//                 { data: "noHP" },
+//                 { data: "blnKe" },
+//                 { data: "nama" },
+//                 { data: "alamat" },
+//                 { data: "namaDokter" },
+//             ],
+//             paging: true,
+//             order: [1, "dsc"],
+//             lengthMenu: [
+//                 [5, 10, 25, 50, -1],
+//                 [5, 10, 25, 50, "All"],
+//             ],
+//             pageLength: 5,
+//             responsive: true,
+//             lengthChange: false,
+//             autoWidth: false,
+//             buttons: [
+//                 {
+//                     extend: "copyHtml5",
+//                     text: "Salin",
+//                 },
+//                 {
+//                     extend: "excelHtml5",
+//                     text: "Excel",
+//                     title: "Data Pasien TBC Telat Kontrol di KKPM",
+//                     filename: "Data Pasien TBC Telat Kontrol di KKPM",
+//                 },
+//                 "colvis",
+//             ],
+//         })
+//         .buttons()
+//         .container()
+//         .appendTo("#Pkontrol_wrapper .col-md-6:eq(0)");
+// }
+// function tabelTelat(pasienTelat) {
+//     pasienTelat.forEach(function (item, index) {
+//         item.no = index + 1;
+//         // item.aksi = `<a href="#" class="edit"
+//         // data-id="${item.id}"
+//         // data-norm="${item.norm}"
+//         // onclick="showModal(${item.id})"><i class="fas fa-pen-to-square pr-3"></i></a>`;
+//         item.aksi = `<button class="editTB bg-danger"
+//                                     data-id="${item.id}"
+//                                     data-norm="${item.norm}"
+//                                     data-petugas="${item.petugas}"
+//                                     data-dokter="${item.dokter}"
+//                                     data-nama="${item.nama}"
+//                                     data-alamat="${item.alamat}"
+//                                     data-hasilBerobat="${item.hasilBerobat}"
+//                                     data-tcm="${item.tcm}"
+//                                     data-sample="${item.sample}"
+//                                     data-toggle="modal"
+//                                     data-target="#modal-update"
+//                                     data-toggle="tooltip" data-placement="right" title="Update Hasil Pengobatan dan TCM"
+//                                     onclick="editPasienTB(this);"><i class="fa-solid fa-file-pen"></i></button>
+//                                     <br><br>
+//                         <button class="riwayat bg-green"
+//                                     data-id="${item.id}"
+//                                     data-toggle="tooltip" data-placement="right" title="Riwayat Kunjungan"
+//                                     onclick="riwayatKunjungan('${item.norm}','modal');" data-toggle="modal" data-target="#historiKunjungan">
+//                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-fill" viewBox="0 0 16 16">
+//                                     <path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z"/>
+//                                     </svg>
+//                                     </button>`;
+//     });
+//     $("#Ptelat")
+//         .DataTable({
+//             data: pasienTelat,
+//             columns: [
+//                 {
+//                     data: "aksi",
+//                 },
+//                 { data: "selisih" },
+//                 { data: "nxKontrol", className: "col-1" },
+//                 { data: "terakhir", className: "col-1" },
+//                 { data: "no" },
+//                 { data: "norm" },
+//                 { data: "noHP" },
+//                 { data: "blnKe" },
+//                 { data: "nama" },
+//                 { data: "alamat" },
+//                 { data: "namaDokter" },
+//             ],
+//             paging: true,
+//             order: [1, "dsc"],
+//             lengthMenu: [
+//                 [5, 10, 25, 50, -1],
+//                 [5, 10, 25, 50, "All"],
+//             ],
+//             pageLength: 5,
+//             responsive: true,
+//             lengthChange: false,
+//             autoWidth: false,
+//             buttons: [
+//                 {
+//                     extend: "copyHtml5",
+//                     text: "Salin",
+//                 },
+//                 {
+//                     extend: "excelHtml5",
+//                     text: "Excel",
+//                     title: "Data Pasien TBC Telat Kontrol di KKPM",
+//                     filename: "Data Pasien TBC Telat Kontrol di KKPM",
+//                 },
+//                 "colvis",
+//             ],
+//         })
+//         .buttons()
+//         .container()
+//         .appendTo("#Ptelat_wrapper .col-md-6:eq(0)");
+// }
+// function tabelDo(pasienDo) {
+//     pasienDo.forEach(function (item, index) {
+//         item.no = index + 1;
+//         // item.aksi = `<a href="#" class="edit"
+//         // data-id="${item.id}"
+//         // data-norm="${item.norm}"
+//         // onclick="showModal(${item.id})"><i class="fas fa-pen-to-square pr-3"></i></a>`;
+//         item.aksi = `<button class="editTB bg-danger"
+//                                     data-id="${item.id}"
+//                                     data-norm="${item.norm}"
+//                                     data-petugas="${item.petugas}"
+//                                     data-dokter="${item.dokter}"
+//                                     data-nama="${item.nama}"
+//                                     data-alamat="${item.alamat}"
+//                                     data-hasilBerobat="${item.hasilBerobat}"
+//                                     data-tcm="${item.tcm}"
+//                                     data-sample="${item.sample}"
+//                                     data-toggle="modal"
+//                                     data-target="#modal-update"
+//                                     data-toggle="tooltip" data-placement="right" title="Update Hasil Pengobatan dan TCM"
+//                                     onclick="editPasienTB(this);" placeholder="Update Hasil Pengobatan dan TCM"><i class="fa-solid fa-file-pen"></i></button>
+//                                     <br><br>
+//                     <button class="riwayat bg-green"
+//                                     data-id="${item.id}"
+//                                     data-toggle="tooltip" data-placement="right" title="Riwayat Kunjungan"
+//                                     onclick="riwayatKunjungan('${item.norm}','modal');" data-toggle="modal" data-target="#historiKunjungan">
+//                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-fill" viewBox="0 0 16 16">
+//                                     <path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z"/>
+//                                     </svg>
+//                                     </button>`;
+//     });
+//     $("#Pdo")
+//         .DataTable({
+//             data: pasienDo,
+//             columns: [
+//                 {
+//                     data: "aksi",
+//                 },
+//                 { data: "selisih" },
+//                 { data: "nxKontrol", className: "col-1" },
+//                 { data: "terakhir", className: "col-1" },
+//                 { data: "no" },
+//                 { data: "norm" },
+//                 { data: "noHP" },
+//                 { data: "blnKe" },
+//                 { data: "nama" },
+//                 { data: "alamat" },
+//                 { data: "namaDokter" },
+//             ],
+//             paging: true,
+//             order: [1, "dsc"],
+//             lengthMenu: [
+//                 [5, 10, 25, 50, -1],
+//                 [5, 10, 25, 50, "All"],
+//             ],
+//             pageLength: 5,
+//             responsive: true,
+//             lengthChange: false,
+//             autoWidth: false,
+//             buttons: [
+//                 {
+//                     extend: "copyHtml5",
+//                     text: "Salin",
+//                 },
+//                 {
+//                     extend: "excelHtml5",
+//                     text: "Excel",
+//                     title: "Data Pasien TBC Telat Lebih dari 30 hari di KKPM",
+//                     filename:
+//                         "Data Pasien TBC Telat Lebih dari 30 hari di KKPM",
+//                 },
+//                 "colvis",
+//             ],
+//         })
+//         .buttons()
+//         .container()
+//         .appendTo("#Pdo_wrapper .col-md-6:eq(0)");
+// }
 
 function pasienTB() {
     $("#loadingSpinner").show();
@@ -620,6 +753,9 @@ function pasienTB() {
                                     </button>`;
                 item.no = index + 1;
                 item.dokter = `${item.dokter.gelar_d} ${item.dokter.biodata.nama} ${item.dokter.gelar_b}`;
+                item.diagnosa = item.diagnosa
+                    ? item.diagnosa.diagnosa
+                    : "Diagnosa Belum diisi";
             });
 
             //filter dataArray, where created_at is today
@@ -661,7 +797,7 @@ function creatTabelPTB(data, id) {
                 { data: "alamat" },
                 { data: "dokter" },
                 { data: "statusPengobatan" },
-                { data: "diagnosa.diagnosa" },
+                { data: "diagnosa" },
                 { data: "ket" },
             ],
             order: [2, "dsc"],
