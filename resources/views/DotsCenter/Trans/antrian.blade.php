@@ -131,6 +131,7 @@
                             <thead class="bg bg-success">
                                 <tr>
                                     <th width="15px">Aksi</th>
+                                    <th width="35px">Hari</th>
                                     <th width="35px">Rencana Kontrol</th>
                                     <th width="40px">Terakhir Kontrol</th>
                                     <th width="15px"class="text-center">No</th>
