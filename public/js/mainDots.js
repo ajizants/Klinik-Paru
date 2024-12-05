@@ -118,7 +118,7 @@ function validasiDaftar() {
         "modal-norm",
         "modal-layanan",
         "modal-nama",
-        "modal-notrans",
+        // "modal-notrans",
         "modal-hp",
         "modal-nik",
         "modal-alamat",
