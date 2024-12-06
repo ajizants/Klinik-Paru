@@ -201,6 +201,77 @@ function reportPoin() {
         },
     });
 }
+function reportPoinDots() {
+    if ($.fn.DataTable.isDataTable("#reportDots")) {
+        var tabletindakan = $("#reportDots").DataTable();
+        tabletindakan.clear().destroy();
+    }
+
+    var mulaiTgl = $("#mulaiTglDots").val(); // Ambil nilai dari input tanggal mulai
+    var selesaiTgl = $("#selesaiTglDots").val(); // Ambil nilai dari input tanggal selesai
+    var tglA = formatDate(new Date(mulaiTgl));
+    var tglB = formatDate(new Date(selesaiTgl));
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"), // Mengirim token CSRF untuk perlindungan keamanan
+        },
+    });
+    const cookiestring = document.cookie.split("=");
+    $.ajax({
+        url: "/api/poinDots",
+        type: "post",
+        data: {
+            tglAwal: mulaiTgl,
+            tglAkhir: selesaiTgl,
+        },
+        success: function (response) {
+            response.forEach(function (item, index) {
+                item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
+            });
+
+            $("#reportDots")
+                .DataTable({
+                    data: response,
+                    columns: [
+                        { data: "no" },
+                        // { data: "nip" },
+                        { data: "nama" },
+                        { data: "jumlah" },
+                    ],
+                    order: [0, "asc"],
+                    lengthChange: false,
+                    autoWidth: false,
+                    buttons: [
+                        {
+                            extend: "copyHtml5",
+                            text: "Salin",
+                        },
+                        {
+                            extend: "excelHtml5",
+                            text: "Excel",
+                            title:
+                                "Report Petugas Dots Tanggal: \n" +
+                                tglA +
+                                " s.d. " +
+                                tglB,
+                            filename:
+                                "Report Petugas Dots Tanggal: " +
+                                tglA +
+                                "  s.d. " +
+                                tglB,
+                        },
+                        "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+                    ],
+                })
+                .buttons()
+                .container()
+                .appendTo("#reportDots_wrapper .col-md-6:eq(0)");
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        },
+    });
+}
 
 $(document).ready(function () {
     $("#cari").on("click", reportPoin);
@@ -213,10 +284,10 @@ $(document).ready(function () {
 
     var formattedDate = yyyy + "-" + mm + "-" + dd;
 
-    $("#mulaiTgl, #mulaiTglAll").val(formattedDate);
-    $("#selesaiTgl, #selesaiTglAll").val(formattedDate);
+    $("#mulaiTgl, #mulaiTglAll, #mulaiTglDots").val(formattedDate);
+    $("#selesaiTgl, #selesaiTglAll, #selesaiTglDots").val(formattedDate);
 
     reportPoin();
-    // reportPoinAll();
     reportPoinPetugas();
+    reportPoinDots();
 });

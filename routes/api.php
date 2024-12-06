@@ -98,6 +98,7 @@ Route::post('update/status/pengobatan', [DotsController::class, 'updatePengobata
 Route::post('simpan/kunjungan/dots', [DotsController::class, 'simpanKunjungan']);
 Route::get('deletePTB', [DotsController::class, 'deletePTB']);
 Route::get('editPTB', [DotsController::class, 'editPTB']);
+Route::post('poinDots', [DotsController::class, 'poinPetugas']);
 
 //Kasir
 Route::get('layanan', [KasirController::class, 'Layanan']);

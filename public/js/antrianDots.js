@@ -159,7 +159,7 @@ function isiBiodata(pasien, pendaftaran) {
     $("#norm").val(pasien.pasien_no_rm);
     $("#nama").val(pasien.pasien_nama);
     $("#alamat").val(pasien.pasien_alamat);
-    $("#notrans").val(pendaftaran.no_trans);
+    $("#notrans").val(pendaftaran.no_reg);
     $("#layanan").val(pendaftaran.penjamin_nama);
     $("#dokter").val(pendaftaran.nip_dokter).trigger("change");
 
@@ -174,7 +174,7 @@ function isiBiodataModal(norm, date, pasien, pendaftaran, dx) {
     const nik = pasien.pasien_nik || "";
     const nama = pasien.pasien_nama || "";
     const alamat = pasien.pasien_alamat || "";
-    const noTrans = pendaftaran.no_trans || "";
+    const noTrans = pendaftaran.no_reg || "";
     const layanan = pendaftaran.penjamin_nama || "";
     const dokter = pendaftaran.nip_dokter || "";
     const kdDx = dx[0] || "";
@@ -194,21 +194,41 @@ function editPasienTB(button) {
     console.log("🚀 ~ editPasienTB ~ editPasienTB:", editPasienTB);
     var id = button.getAttribute("data-id");
     var norm = button.getAttribute("data-norm");
+    var nik = button.getAttribute("data-nik");
     var nama = button.getAttribute("data-nama");
     var alamat = button.getAttribute("data-alamat");
-    var statusPengobatan = button.getAttribute("data-hasilBerobat");
+    var noHP = button.getAttribute("data-noHP");
     var tcm = button.getAttribute("data-tcm");
     var sample = button.getAttribute("data-sample");
+    var kdDx = button.getAttribute("data-kdDx");
+    var tglmulai = button.getAttribute("data-tglmulai");
+    var bb = button.getAttribute("data-bb");
+    var obat = button.getAttribute("data-obat");
+    var hiv = button.getAttribute("data-hiv");
+    var dm = button.getAttribute("data-dm");
     var ket = button.getAttribute("data-ket");
+    var statusPengobatan = button.getAttribute("data-hasilBerobat");
+    var petugas = button.getAttribute("data-petugas");
+    var dokter = button.getAttribute("data-dokter");
 
-    document.getElementById("status-id").value = id;
-    document.getElementById("status-norm").value = norm;
-    document.getElementById("status-nama").value = nama;
-    document.getElementById("status-alamat").value = alamat;
-    document.getElementById("modal-ket-update").value = ket;
-    $("#statusPengobatan").val(statusPengobatan).trigger("change");
-    $("#modal-tcm-update").val(tcm).trigger("change");
-    $("#modal-sample-update").val(sample).trigger("change");
+    $("#modal-update-id").val(id);
+    $("#modal-update-norm").val(norm);
+    $("#modal-update-nik").val(nik);
+    $("#modal-update-nama").val(nama);
+    $("#modal-update-alamat").val(alamat);
+    $("#modal-update-hp").val(noHP);
+    $("#modal-update-kdDx").val(kdDx).trigger("change");
+    $("#modal-update-tglmulai").val(tglmulai);
+    $("#modal-update-bb").val(bb);
+    $("#modal-update-obtDots").val(obat).trigger("change");
+    $("#modal-update-hiv").val(hiv).trigger("change");
+    $("#modal-update-dm").val(dm).trigger("change");
+    $("#modal-update-ket").val(ket);
+    $("#modal-update-blnKe").val(statusPengobatan).trigger("change");
+    $("#modal-update-tcm").val(tcm).trigger("change");
+    $("#modal-update-sample").val(sample).trigger("change");
+    $("#modal-update-dokter").val(dokter).trigger("change");
+    $("#modal-update-petugas").val(petugas).trigger("change");
 }
 
 function updateStatus(id) {
@@ -760,14 +780,22 @@ function pasienTB() {
                 item.actions = `<button class="editTB bg-danger"
                                    data-id="${item.id}"
                                     data-norm="${item.norm}"
-                                    data-petugas="${item.petugas}"
-                                    data-dokter="${item.dokter}"
+                                    data-nik="${item.nik}"
                                     data-nama="${item.nama}"
                                     data-alamat="${item.alamat}"
-                                    data-hasilBerobat="${item.hasilBerobat}"
+                                    data-noHP="${item.noHP}"
                                     data-tcm="${item.tcm}"
                                     data-sample="${item.sample}"
-                                    data-ket="${ket}"
+                                    data-kdDx="${item.kdDx}"
+                                    data-tglmulai="${item.tglmulai}"
+                                    data-bb="${item.bb}"
+                                    data-obat="${item.obat}"
+                                    data-hiv="${item.hiv}"
+                                    data-dm="${item.dm}"
+                                    data-ket="${item.ket}"
+                                    data-hasilBerobat="${item.hasilBerobat}"
+                                    data-petugas="${item.petugas}"
+                                    data-dokter="${item.dokter.nip}"
                                     data-toggle="modal"
                                     data-target="#modal-update"
                                     data-toggle="tooltip" data-placement="right" title="Update Hasil Pengobatan dan TCM"

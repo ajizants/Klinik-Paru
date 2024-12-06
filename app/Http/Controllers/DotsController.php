@@ -441,39 +441,63 @@ class DotsController extends Controller
         $dokter = $request->input('dokter');
 
         if ($norm !== null) {
-            // Membuat instance dari model KunjunganTindakan
-            $addPTB = new DotsTransModel();
-            // Mengatur nilai-nilai kolom
-            $addPTB->norm = $norm;
-            $addPTB->notrans = $notrans;
-            $addPTB->created_at = $tgltrans;
-            $addPTB->bta = $bta;
-            $addPTB->blnKe = $blnKe;
-            $addPTB->bb = $bb;
-            $addPTB->nxKontrol = $nxKontrol;
-            $addPTB->terapi = $terapi;
-            $addPTB->petugas = $petugas;
-            $addPTB->dokter = $dokter;
+            // Cek apakah data sudah ada berdasarkan notrans
+            $existingData = DotsTransModel::where('norm', $norm)->where('created_at', $tgltrans)->first();
 
-            // Simpan data ke dalam tabel
-            $addPTB->save();
+            if ($existingData) {
+                // Jika data ditemukan, lakukan update
+                $existingData->created_at = $tgltrans;
+                $existingData->bta = $bta;
+                $existingData->blnKe = $blnKe;
+                $existingData->bb = $bb;
+                $existingData->nxKontrol = $nxKontrol;
+                $existingData->terapi = $terapi;
+                $existingData->petugas = $petugas;
+                $existingData->dokter = $dokter;
 
+                // Simpan perubahan
+                $existingData->save();
+
+                $msg = "Data kunjungan dengan NoTrans: $notrans berhasil diupdate.";
+            } else {
+                // Jika data tidak ditemukan, lakukan insert
+                $addPTB = new DotsTransModel();
+                $addPTB->norm = $norm;
+                $addPTB->notrans = $notrans;
+                $addPTB->created_at = $tgltrans;
+                $addPTB->bta = $bta;
+                $addPTB->blnKe = $blnKe;
+                $addPTB->bb = $bb;
+                $addPTB->nxKontrol = $nxKontrol;
+                $addPTB->terapi = $terapi;
+                $addPTB->petugas = $petugas;
+                $addPTB->dokter = $dokter;
+
+                // Simpan data baru
+                $addPTB->save();
+
+                $msg = "Kunjungan pasien TBC berhasil disimpan.";
+            }
+
+            // Update data pada tabel DotsModel jika ditemukan
             $msgUpdate = "";
             $update = DotsModel::where('norm', $norm)->first();
-            //jika ditemukan data $update, lakukan update, jika tidak, jangan lakukan
             if ($update) {
                 $update->hasilBerobat = $blnKe;
                 $update->save();
-                $msgUpdate = ' Status Pengobatan berhasil di Update';
+                $msgUpdate = " Status Pengobatan berhasil diupdate.";
             }
 
-            $res = "Kunjungan pasien TBC Berhasil disimpan" . $msgUpdate;
-            // Respon sukses atau redirect ke halaman lain
+            // Gabungkan pesan respon
+            $res = $msg . $msgUpdate;
+
+            // Respon sukses
             return response()->json(['message' => $res]);
         } else {
-            // Handle case when $norm is null, misalnya kirim respon error
+            // Jika $norm null, kirim respon error
             return response()->json(['message' => 'Kode tidak valid'], 400);
         }
+
     }
 
     public function addPasienTb(Request $request)
@@ -561,4 +585,48 @@ class DotsController extends Controller
 
         return response()->json(['message' => 'Data berhasil diupdate']);
     }
+
+    // public function poinPetugas(Request $request)
+    // {
+    //     $mulaiTgl = $request->input('tglAwal', now()->toDateString());
+    //     $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
+    //     $data = DotsTransModel::with('petugas.biodata')
+    //         ->whereBetween('created_at', [$mulaiTgl, $selesaiTgl])
+    //         ->get();
+    //     return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    // }
+
+    public function poinPetugas(Request $request)
+    {
+        $mulaiTgl = $request->input('tglAwal', now()->toDateString());
+        $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
+
+        // Ambil data
+        $kunjungan = DotsTransModel::whereBetween('created_at', [$mulaiTgl, $selesaiTgl])
+            ->get();
+
+        $data = [];
+        foreach ($kunjungan as $d) {
+            $pegawai = PegawaiModel::with('biodata')->where('nip', $d->petugas)->first();
+            $data[] = [
+                "id" => $d->id,
+                "norm" => $d->norm,
+                "notrans" => $d->notrans,
+                'nip' => $d->petugas,
+                'nama' => $pegawai->biodata->nama ?? 'Tidak Diketahui',
+            ];
+        }
+
+        // Hitung jumlah kemunculan per NIP
+        $poin = collect($data)->groupBy('nip')->map(function ($group, $nip) {
+            return [
+                'nip' => $nip,
+                'nama' => $group->first()['nama'], // Nama pertama dari grup
+                'jumlah' => $group->count(), // Hitung jumlah kemunculan
+            ];
+        })->values(); // Reset indeks array
+
+        return response()->json($poin, 200, [], JSON_PRETTY_PRINT);
+    }
+
 }

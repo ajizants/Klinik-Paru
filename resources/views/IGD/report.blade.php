@@ -98,16 +98,58 @@
             </div>
         </div>
     </div>
+    <div class="card shadow mb-4">
+        <!-- Card Header - Accordion -->
+        <a href="#collapseCardPoin" class="d-block card-header py-1 bg bg-info" data-toggle="collapse" role="button"
+            aria-expanded="true" aria-controls="collapseCardPoin">
+            <h4 id="PoinSection" class="m-0 font-weight-bold text-dark text-center">REPORT PETUGAS DOTS CENTER
+            </h4>
+        </a>
+        <!-- Card Content - Collapse -->
+        <div class="collapse show" id="collapseCardPoin">
+            <div class="container">
+                <fieldset>
+                    <div class="form-group">
+                        @csrf
+                        <form class="form-inline d-flex justify-content-start p-2">
+                            <label for="mulaiTglDots"> <b>Tanggal Awal :</b></label>
+                            <input type="date" class="form-control bg bg-warning m-2" id="mulaiTglDots"
+                                value="{{ old('date') }}" required>
+                            <label for="selesaiTglDots" class="form-label"><b>Tanggal Akhir :</b></label>
+                            <input type="date" class="form-control bg bg-warning m-2" id="selesaiTglDots"
+                                value="{{ old('date') }}" required>
+                            <a type="button" class="btn btn-success d-flex justify-content-center mx-2"
+                                onclick="reportPoinDots();">Cari</a>
+                        </form>
+                        <div class="col  border border-3 border-info mt-2 p-4">
+                            <div class="table-responsive pt-2 px-2">
+                                <table id="reportDots" name="reportDots" class="table table-striped" style="width:100%"
+                                    cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="">No</th>
+                                            {{-- <th class="">NIP</th> --}}
+                                            <th class="">Nama</th>
+                                            <th class="col-3">Jumlah</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div id="loadingSpinner" style="display: none;">
+                                <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
 
+            </div>
+        </div>
     </div>
+
+    {{-- </div>
     </section>
-    <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
-
-    @include('Template.footer')
-
-    </div>
+    </div> --}}
     <!-- my script -->
     <script src="{{ asset('js/report.js') }}"></script>
 @endsection

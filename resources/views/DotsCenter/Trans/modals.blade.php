@@ -1,5 +1,5 @@
                 <div class="modal fade" id="modal-pasienTB">
-                    <div class="modal-dialog modal-dialog modal-dialog-scrollable modal-xl">
+                    <div class="modal-dialog modal-dialog modal-dialog-scrollable modal-xl-custom">
                         <div class="modal-content">
                             <div class="modal-body">
                                 <div class="card-body p-2">
@@ -39,10 +39,6 @@
                                                                 aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control bg-white" placeholder="Nama Pasien"
                                                                 readonly>
-                                                            {{-- <input type="text" id="modal-notrans"
-                                                                aria-describedby="inputGroup-sizing-sm"
-                                                                class="form-control" placeholder="notrans Pasien"
-                                                                readonly hidden> --}}
                                                         </div>
                                                     </div>
 
@@ -217,10 +213,14 @@
                                                         <label for="modal-tglmulai"
                                                             class="col-sm-1 col-form-label font-weight-bold">Tgl
                                                             Mulai</label>
-                                                        <div class="col-sm-3 input-group input-group-sm">
+                                                        <div class="col-sm-4 input-group input-group-sm">
                                                             <input id="modal-tglmulai" type="date"
                                                                 aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control border border-primary" />
+                                                            <input type="text" id="modal-notrans"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control" placeholder="notrans Pasien"
+                                                                readonly>
                                                         </div>
                                                         <div class="col-sm input-group input-group-sm">
                                                             <input type="text" id="modal-ket"
@@ -460,7 +460,7 @@
                     <!-- /.modal-dialog -->
                 </div>
                 <div class="modal fade" id="modal-update">
-                    <div class="modal-dialog modal-xl">
+                    <div class="modal-dialog modal-xl-custom">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">Update Status Pengobatan Pasien TBC</h4>
@@ -468,6 +468,241 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
+                            {{-- <div class="modal-body">
+                                <div class="card-body p-2">
+                                    <div class="container-fluid">
+                                        <div class="card card-black">
+                                            <!-- form start -->
+                                            @csrf
+                                            <form class="form-horizontal" id="updatePengobatanTB">
+                                                <!-- Row 1 -->
+                                                <div class="form-group row">
+                                                    <label for="modal-update-norm"
+                                                        class="col-sm-1 col-form-label font-weight-bold mb-0">No
+                                                        RM</label>
+                                                    <div class="col-sm-2 input-group input-group-sm">
+                                                        <input type="text" name="modal-update-id"
+                                                            id="modal-update-id" class="form-control"
+                                                            placeholder="No RM" maxlength="6" pattern="[0-9]{6}"
+                                                            required readonly />
+                                                        <input type="text" name="modal-update-norm"
+                                                            id="modal-update-norm" class="form-control"
+                                                            placeholder="No RM" maxlength="6" pattern="[0-9]{6}"
+                                                            required />
+                                                    </div>
+
+                                                    <label for="modal-update-nik"
+                                                        class="col-sm-1 col-form-label font-weight-bold mb-0">NIK</label>
+                                                    <div class="col-sm-2 input-group input-group-sm">
+                                                        <input type="text" id="modal-update-nik"
+                                                            class="form-control" placeholder="NIK" />
+                                                    </div>
+
+                                                    <label for="modal-update-nama"
+                                                        class="col-sm-1 col-form-label font-weight-bold mb-0">Nama</label>
+                                                    <div class="col-sm-5 input-group input-group-sm">
+                                                        <input type="text" id="modal-update-nama"
+                                                            class="form-control bg-white" placeholder="Nama Pasien"
+                                                            readonly />
+                                                    </div>
+                                                </div>
+
+                                                <!-- Row 2 -->
+                                                <div class="form-group row mt-3">
+                                                    <label for="modal-update-hp"
+                                                        class="col-sm-1 col-form-label font-weight-bold mb-0">No
+                                                        HP</label>
+                                                    <div class="col-sm-2 input-group input-group-sm">
+                                                        <input type="text" id="modal-update-hp"
+                                                            class="form-control bg-white" placeholder="No HP" />
+                                                    </div>
+
+                                                    <label for="modal-update-alamat"
+                                                        class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat</label>
+                                                    <div class="col-sm-5 input-group input-group-sm">
+                                                        <input id="modal-update-alamat" class="form-control bg-white"
+                                                            placeholder="Alamat Pasien" readonly />
+                                                    </div>
+                                                </div>
+
+                                                <!-- Row 3 -->
+                                                <div class="form-group row">
+                                                    <label for="modal-update-dokter"
+                                                        class="col-sm-1 col-form-label font-weight-bold">Dokter</label>
+                                                    <div class="col-sm-3">
+                                                        <select id="modal-update-dokter"
+                                                            class="form-control select2bs4 border border-primary">
+                                                            <option value="">--Pilih Dokter--</option>
+                                                            @foreach ($dokter as $item)
+                                                                <option value="{{ $item->nip }}">
+                                                                    {{ $item->gelar_d }} {{ $item->nama }}
+                                                                    {{ $item->gelar_b }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+
+                                                    <label for="modal-update-petugas"
+                                                        class="col-sm-1 col-form-label font-weight-bold">Petugas</label>
+                                                    <div class="col-sm-3">
+                                                        <select id="modal-update-petugas"
+                                                            class="form-control select2bs4 border border-primary">
+                                                            <option value="">--Pilih Petugas--</option>
+                                                            @foreach (collect($perawat)->sortBy('nama') as $item)
+                                                                <option value="{{ $item->nip }}">
+                                                                    {{ $item->gelar_d }} {{ $item->nama }}
+                                                                    {{ $item->gelar_b }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Row 4 -->
+                                                <div class="form-group row">
+                                                    <label for="modal-update-kdDx"
+                                                        class="col-sm-1 col-form-label font-weight-bold">DX
+                                                        Medis</label>
+                                                    <div class="col-sm-3">
+                                                        <select id="modal-update-kdDx"
+                                                            class="form-control select2bs4 border border-primary">
+                                                            <option value="">--Pilih Diagnosa--</option>
+                                                            @foreach ($dxMed as $item)
+                                                                <option value="{{ $item->kdDiag }}">
+                                                                    {{ $item->diagnosa }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+
+                                                    <label for="modal-update-obtDots"
+                                                        class="col-sm-1 col-form-label font-weight-bold">Obat</label>
+                                                    <div class="col-sm-3">
+                                                        <select id="modal-update-obtDots"
+                                                            class="form-control select2bs4 border border-info">
+                                                            <option value="">--Jenis Obat--</option>
+                                                            @foreach ($obat as $item)
+                                                                <option value="{{ $item->kd }}">
+                                                                    {{ $item->nmPengobatan }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Row 5 -->
+                                                <div class="form-group row">
+                                                    <label for="modal-update-bb"
+                                                        class="col-sm-1 col-form-label font-weight-bold">BB</label>
+                                                    <div class="col-sm-1">
+                                                        <input type="text" id="modal-update-bb"
+                                                            class="form-control form-control-sm border border-info"
+                                                            placeholder="BB" required />
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <select id="modal-update-sample"
+                                                            class="form-control select2bs4 border border-info">
+                                                            <option value="">--Sample TCM--</option>
+                                                            <option value="Sputum">Sputum</option>
+                                                            <option value="Cairan Pleura">Cairan Pleura</option>
+                                                            <option value="Jaringan Biopsi">Jaringan Biopsi</option>
+                                                            <option value="Cairan Lambung">Cairan Lambung</option>
+                                                            <option value="Lainnya">Lainnya, Tulis di keterangan
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <label for="modal-update-tcm"
+                                                        class="col-sm-1 col-form-label font-weight-bold">Hasil
+                                                        TCM</label>
+                                                    <div class="col-sm-3">
+                                                        <select id="modal-update-tcm"
+                                                            aria-describedby="inputGroup-sizing-sm"
+                                                            class="form-control select2bs4 border border-info">
+                                                            <option value="">--Pilih Hasil TCM--</option>
+                                                            <option value="Tidak Periksa">Tidak Periksa</option>
+                                                            <option value="Neg">Negatif</option>
+                                                            <option value="Low RifSen">MTB Det Low - RifSen
+                                                            </option>
+                                                            <option value="Low RifRes">MTB Det Low - RifRes
+                                                            </option>
+                                                            <option value="Medium RifSen">MTB Det Medium - RifSen
+                                                            </option>
+                                                            <option value="Medium RifRes">MTB Det Medium - RifRes
+                                                            </option>
+                                                            <option value="Hight RifSen">MTB Det Hight - RifSen
+                                                            </option>
+                                                            <option value="Hight RifRes">MTB Det Hight - RifRes
+                                                            </option>
+                                                            <option value="Trace RifSen">MTB Trace Det - RifSen
+                                                            </option>
+                                                            <option value="Trace Neg">MTB Trace Negatif
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <label for="modal-update-hiv"
+                                                        class="col-sm-1 col-form-label font-weight-bold">Hasil
+                                                        HIV</label>
+                                                    <div class="col-sm-3">
+                                                        <select id="modal-update-hiv"
+                                                            aria-describedby="inputGroup-sizing-sm"
+                                                            class="form-control select2bs4 border border-info">
+                                                            <option value="">--Pilih Status HIV--</option>
+                                                            <option value="Positif HIV">Positif</option>
+                                                            <option value="Negatif HIV">Negatif</option>
+                                                            <option value="Tidak Diketahui">Tidak Diketahui
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <label for="modal-update-dm"
+                                                        class="col-sm-1 col-form-label font-weight-bold">Hasil
+                                                        DM</label>
+                                                    <div class="col-sm-3">
+                                                        <select id="modal-update-dm"
+                                                            class="form-control select2bs4 border border-info">
+                                                            <option value="">--Pilih Status DM--</option>
+                                                            <option value="Positif DM">Positif</option>
+                                                            <option value="Negatif DM">Negatif</option>
+                                                            <option value="Tidak Diketahui">Tidak Diketahui
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row mt-3">
+                                                    <label for="modal-update-tglmulai"
+                                                        class="col-sm-1 col-form-label font-weight-bold">Tgl
+                                                        Mulai</label>
+                                                    <div class="col-sm-4 input-group input-group-sm">
+                                                        <input id="modal-update-tglmulai" type="date"
+                                                            aria-describedby="inputGroup-sizing-sm"
+                                                            class="form-control border border-primary" />
+                                                    </div>
+                                                    <label for="modal-update-tglmulai"
+                                                        class="col-sm-1 col-form-label font-weight-bold">Hasil
+                                                        Berobat</label>
+                                                    <div class="col-sm">
+                                                        <select id="statusPengobatan"
+                                                            class="form-control select2bs4 border border-primary">
+                                                            <option value="">--Pilih Kemajuan--</option>
+                                                            @foreach ($bulan as $item)
+                                                                <option nilai="{{ $item->nilai }}"
+                                                                    value="{{ $item->id }}">
+                                                                    {{ $item->nmBlnKe }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm input-group input-group-sm">
+                                                        <input type="text" id="modal-update-ket"
+                                                            aria-describedby="inputGroup-sizing-sm"
+                                                            class="form-control border border-info"
+                                                            placeholder="Keterangan Lain" />
+                                                    </div>
+                                                </div>
+                                                <!-- /.card-body -->
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> --}}
+
                             <div class="modal-body">
                                 <div class="card-body p-2">
                                     <div class="container-fluid">
@@ -476,35 +711,73 @@
                                             @csrf
                                             <form class="form-horizontal" id="updatePengobatanTB">
                                                 <div class="card-body">
+                                                    <div
+                                                        class="h5 pb-2 mb-4 text-danger border-bottom border-danger text-center">
+                                                        <b>Input Data Dasar Pasien TBC</b>
+                                                    </div>
                                                     <div class="form-group row">
-                                                        <div class="col-sm-1 row">
-                                                            <input type="number" name="status-norm" id="status-norm"
-                                                                class="form-control col p-0 text-center"
-                                                                placeholder=" No RM" maxlength="6"
-                                                                pattern="[0-9]{6}" readonly />
-                                                            <input type="number" name="status-id" id="status-id"
-                                                                class="form-control col" placeholder="ID"
-                                                                maxlength="6" pattern="[0-9]{6}" readonly
-                                                                style="display: none;" />
+                                                        <label for="modal-update-norm"
+                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">No
+                                                            RM</label>
+                                                        <div class="col-sm-2 input-group input-group-sm">
+                                                            <input type="text" name="modal-update-norm"
+                                                                id="modal-update-norm"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control" placeholder=" No RM"
+                                                                maxlength="6" pattern="[0-9]{6}" required />
+                                                            <label class="mx-1 col-form-label"
+                                                                for="modal-update-id">ID:</label>
+                                                            <input type="text" name="modal-update-id"
+                                                                id="modal-update-id" class="form-control"
+                                                                placeholder="id" pattern="[0-9]{6}" required
+                                                                readonly />
                                                         </div>
-                                                        <div class="col-sm-4">
-                                                            <input type="text" id="status-nama"
-                                                                class="form-control border border-white"
-                                                                placeholder="Nama Pasien" readonly>
+
+                                                        <label for="modal-update-nama"
+                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">Nama</label>
+                                                        <div class="col-sm-5 input-group input-group-sm">
+                                                            <input type="text" id="modal-update-nama"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control bg-white"
+                                                                placeholder="Nama Pasien">
                                                         </div>
-                                                        <div class="col-sm">
-                                                            <input id="status-alamat"
-                                                                class="form-control border border-white"
-                                                                placeholder="Alamat Pasien" readonly />
+
+                                                        <label for="modal-update-nik"
+                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">NIK</label>
+                                                        <div class="col-sm-2 input-group input-group-sm">
+                                                            <input type="text" id="modal-update-nik"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control" placeholder="NIK" />
                                                         </div>
+
                                                     </div>
 
-                                                    <div class="form-group row">
-                                                        <div class="col-sm">
-                                                            <label for="statusPengobatan"
-                                                                class="col-form-label font-weight-bold">Hasil
-                                                                Berobat</label>
-                                                            <select id="statusPengobatan"
+                                                    <div class="form-group row mt-3">
+                                                        <label for="modal-update-hp"
+                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">No
+                                                            HP</label>
+                                                        <div class="col-sm-2 input-group input-group-sm">
+                                                            <input type="text" id="modal-update-hp"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control bg-white" placeholder="No HP" />
+                                                        </div>
+
+                                                        <label for="modal-update-alamat"
+                                                            class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat</label>
+                                                        <div class="col-sm-5 input-group input-group-sm">
+                                                            <input id="modal-update-alamat"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control bg-white"
+                                                                placeholder="Alamat Pasien" />
+                                                        </div>
+
+                                                        <label for="modal-update-blnKe"
+                                                            class="col-sm-1 col-form-label font-weight-bold">
+                                                            Pengobatan
+                                                        </label>
+                                                        <div class="col-sm-2">
+                                                            <select id="modal-update-blnKe"
+                                                                onchange="setKontrol('modal-update-blnKe','modal-update-nxKontrol');"
                                                                 class="form-control select2bs4 border border-primary">
                                                                 <option value="">--Pilih Kemajuan--</option>
                                                                 @foreach ($bulan as $item)
@@ -514,13 +787,103 @@
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                        <div class="col-sm">
-                                                            <label for="modal-tcm-update"
-                                                                class="col-form-label font-weight-bold">Hasil
-                                                                TCM</label>
-                                                            <select id="modal-tcm-update"
+
+                                                    </div>
+
+                                                    <div class="form-group row">
+                                                        {{-- <label for="modal-update-dokter"
+                                                            class="col-sm-1 col-form-label font-weight-bold">Dokter</label> --}}
+                                                        <div class="col-sm-3">
+                                                            <select id="modal-update-dokter"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control select2bs4 mb-3 border border-primary">
+                                                                <option value="">--Pilih Dokter--</option>
+                                                                @foreach ($dokter as $item)
+                                                                    <option value="{{ $item->nip }}">
+                                                                        {{ $item->gelar_d }}
+                                                                        {{ $item->nama }} {{ $item->gelar_b }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+
+                                                        {{-- <label for="modal-update-petugas"
+                                                            class="col-sm-1 col-form-label font-weight-bold">Petugas</label> --}}
+                                                        <div class="col-sm-3">
+                                                            <select id="modal-update-petugas"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control select2bs4 border border-primary">
+                                                                <option value="">--Pilih Petugas--</option>
+                                                                @foreach (collect($perawat)->sortBy('nama') as $item)
+                                                                    <!-- Convert to collection and sort by 'nama' -->
+                                                                    <option value="{{ $item->nip }}">
+                                                                        {{ $item->gelar_d }} {{ $item->nama }}
+                                                                        {{ $item->gelar_b }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+
+                                                        {{-- <label for="modal-update-kdDx"
+                                                            class="col-sm-1 col-form-label font-weight-bold">DX
+                                                            Medis</label> --}}
+                                                        <div class="col-sm-3">
+                                                            <select id="modal-update-kdDx"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control select2bs4 mb-3 border border-primary">
+                                                                <option value="">--Pilih Diagnosa--</option>
+                                                                @foreach ($dxMed as $item)
+                                                                    <option value="{{ $item->kdDiag }}">
+                                                                        {{ $item->diagnosa }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+
+                                                        {{-- <label for="modal-update-obtDots"
+                                                            class="col-sm-1 col-form-label font-weight-bold">Obat</label> --}}
+                                                        <div class="col-sm-3">
+                                                            <select id="modal-update-obtDots"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control select2bs4 border border-info">
-                                                                <option value="">--Pilih Hasil--</option>
+                                                                <option value="">--Jenis Obat--</option>
+                                                                @foreach ($obat as $item)
+                                                                    <option value="{{ $item->kd }}">
+                                                                        {{ $item->nmPengobatan }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group row">
+                                                        {{-- <label for="modal-update-bb"
+                                                            class="col-sm-1 col-form-label font-weight-bold">BB</label> --}}
+                                                        <div class="col-sm-1">
+                                                            <input type="text" id="modal-update-bb"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control form-control-sm border border-info"
+                                                                placeholder="BB" required />
+                                                        </div>
+                                                        <div class="col-sm-2">
+                                                            <select name="Modal sample" id="modal-update-sample"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control select2bs4 border border-info">
+                                                                <option value="">--Sample TCM--</option>
+                                                                <option value="Sputum">Sputum</option>
+                                                                <option value="Cairan Pleura">Cairan Pleura</option>
+                                                                <option value="Jaringan Biopsi">Jaringan Biopsi
+                                                                </option>
+                                                                <option value="Cairan Lambung">Cairan Lambung</option>
+                                                                <option value="Lainnya">Lainnya, Tulis di keterangan
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        {{-- <label for="modal-update-tcm"
+                                                            class="col-sm-1 col-form-label font-weight-bold">Hasil
+                                                            TCM</label> --}}
+                                                        <div class="col-sm-3">
+                                                            <select id="modal-update-tcm"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control select2bs4 border border-info">
+                                                                <option value="">--Pilih Hasil TCM--</option>
                                                                 <option value="Tidak Periksa">Tidak Periksa</option>
                                                                 <option value="Neg">Negatif</option>
                                                                 <option value="Low RifSen">MTB Det Low - RifSen
@@ -541,34 +904,58 @@
                                                                 </option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-sm">
-                                                            <label for="modal-sample-update"
-                                                                class="col-form-label font-weight-bold">Sample
-                                                                TCM</label>
-                                                            {{-- <input type="text" id="modal-sample"
-                                                                    class="form-control form-control-sm border border-info"
-                                                                    placeholder="Sample" required /> --}}
-                                                            <select name="Modal sample" id="modal-sample-update"
+
+                                                        <div class="col-sm-3">
+                                                            <select id="modal-update-hiv"
+                                                                aria-describedby="inputGroup-sizing-sm"
                                                                 class="form-control select2bs4 border border-info">
-                                                                <option value="">--Sample TCM--</option>
-                                                                <option value="Sputum">Sputum</option>
-                                                                <option value="Cairan Pleura">Cairan Pleura</option>
-                                                                <option value="Jaringan Biopsi">Jaringan Biopsi
+                                                                <option value="">--Pilih Status HIV--</option>
+                                                                <option value="Positif HIV">Positif</option>
+                                                                <option value="Negatif HIV">Negatif</option>
+                                                                <option value="Tidak Diketahui">Tidak Diketahui
                                                                 </option>
-                                                                <option value="Cairan Lambung">Cairan Lambung</option>
-                                                                <option value="Lainnya">Lainnya, Tulis di keterangan
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-sm-3">
+                                                            <select id="modal-update-dm"
+                                                                class="form-control select2bs4 border border-info">
+                                                                <option value="">--Pilih Status DM--</option>
+                                                                <option value="Positif DM">Positif</option>
+                                                                <option value="Negatif DM">Negatif</option>
+                                                                <option value="Tidak Diketahui">Tidak Diketahui
                                                                 </option>
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group row">
-                                                        <div class="col">
-                                                            <label for="modal-ket-update"
-                                                                class="col-form-label font-weight-bold">Keterangan
-                                                                Lain</label>
-                                                            <input type="text" id="modal-ket-update"
-                                                                class="form-control form-control-sm border border-info"
-                                                                placeholder="Keterangan Lainnya" />
+
+                                                    <div class="form-group row mt-3">
+                                                        <label for="modal-update-tglmulai"
+                                                            class="col-sm-1 col-form-label font-weight-bold">Tgl
+                                                            Mulai</label>
+                                                        <div class="col-sm-4 input-group input-group-sm">
+                                                            <input id="modal-update-tglmulai" type="date"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control border border-primary" />
+                                                            <input type="text" id="modal-update-notrans"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control" placeholder="notrans Pasien"
+                                                                readonly>
+                                                        </div>
+                                                        <div class="col-sm input-group input-group-sm">
+                                                            <input type="text" id="modal-update-ket"
+                                                                aria-describedby="inputGroup-sizing-sm"
+                                                                class="form-control border border-info"
+                                                                placeholder="Keterangan Lain" />
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group row mt-3">
+                                                        <div class="col-sm-12">
+                                                            <a id="addPTB"
+                                                                class="btn btn-success d-flex justify-content-center"
+                                                                onclick="updateStatus();">Simpan
+                                                                Data Pasien</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -579,8 +966,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer justify-content-end">
-                                <button type="button" class="btn btn-primary" data-dismiss="modal"
-                                    onclick="updateStatus();">Simpan</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Selesai</button>
                             </div>
                         </div>
                         <!-- /.modal-content -->

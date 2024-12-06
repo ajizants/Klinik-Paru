@@ -340,7 +340,7 @@ function generateActionLink(item, ruang, statusFilter) {
         data-layanan="${item.penjamin_nama}"
         data-notrans="${notrans}"
         data-tgltrans="${item.tanggal}"
-        data
+        data-noreg="${item.no_reg}"
     `;
     const links = {
         dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
@@ -390,6 +390,7 @@ function setTransaksi(button, ruang) {
             cariTsRo(norm, tgl, ruang);
             break;
         case "dots":
+            notrans = $(button).data("no_reg");
             cariPasienTb(norm, tgl, ruang);
             break;
         default:
