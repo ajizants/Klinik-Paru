@@ -558,6 +558,7 @@ class DotsController extends Controller
 
     public function updatePengobatanPasien(Request $request)
     {
+        dd($request->all());
         $id = $request->input('id');
         $status = $request->input('status');
         $sample = $request->input('sample');

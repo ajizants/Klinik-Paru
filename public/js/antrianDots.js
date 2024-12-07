@@ -201,7 +201,9 @@ function editPasienTB(button) {
     var tcm = button.getAttribute("data-tcm");
     var sample = button.getAttribute("data-sample");
     var kdDx = button.getAttribute("data-kdDx");
-    var tglmulai = button.getAttribute("data-tglmulai");
+    var tgl = button.getAttribute("data-tglmulai");
+    console.log("🚀 ~ editPasienTB ~ tgl:", tgl);
+    var tglmulai = new Date(tgl).toISOString().split("T")[0];
     var bb = button.getAttribute("data-bb");
     var obat = button.getAttribute("data-obat");
     var hiv = button.getAttribute("data-hiv");
@@ -233,20 +235,46 @@ function editPasienTB(button) {
 
 function updateStatus(id) {
     console.log("🚀 ~ id:", id);
-    var id = document.getElementById("status-id").value;
-    var status = document.getElementById("statusPengobatan").value;
-    var tcm = document.getElementById("modal-tcm-update").value;
-    var sample = document.getElementById("modal-sample-update").value;
-    var ket = document.getElementById("modal-ket-update").value;
+    var id = $("#modal-update-id").val();
+    var norm = $("#modal-update-norm").val();
+    var nik = $("#modal-update-nik").val();
+    var nama = $("#modal-update-nama").val();
+    var alamat = $("#modal-update-alamat").val();
+    var noHP = $("#modal-update-hp").val();
+    var tcm = $("#modal-update-tcm").val();
+    var sample = $("#modal-update-sample").val();
+    var kdDx = $("#modal-update-kdDx").val();
+    var tglMulai = $("#modal-update-tglmulai").val();
+    var bb = $("#modal-update-bb").val();
+    var obat = $("#modal-update-obtDots").val();
+    var hiv = $("#modal-update-hiv").val();
+    var dm = $("#modal-update-dm").val();
+    var ket = $("#modal-update-ket").val();
+    var hasilBerobat = $("#modal-update-blnKe").val();
+    var petugas = $("#modal-update-petugas").val();
+    var dokter = $("#modal-update-dokter").val();
     $.ajax({
         url: "/api/update/status/pengobatan",
         type: "POST",
         data: {
             id: id,
-            status: status,
+            norm: norm,
+            nik: nik,
+            nama: nama,
+            alamat: alamat,
+            noHP: noHP,
             tcm: tcm,
             sample: sample,
+            kdDx: kdDx,
+            tglMulai: tglMulai,
+            bb: bb,
+            obat: obat,
+            hiv: hiv,
+            dm: dm,
             ket: ket,
+            hasilBerobat: hasilBerobat,
+            petugas: petugas,
+            dokter: dokter,
         },
         success: function (response) {
             console.log("🚀 ~ updateStatus ~ response:", response);
@@ -787,7 +815,7 @@ function pasienTB() {
                                     data-tcm="${item.tcm}"
                                     data-sample="${item.sample}"
                                     data-kdDx="${item.kdDx}"
-                                    data-tglmulai="${item.tglmulai}"
+                                    data-tglmulai="${item.tglMulai}"
                                     data-bb="${item.bb}"
                                     data-obat="${item.obat}"
                                     data-hiv="${item.hiv}"
