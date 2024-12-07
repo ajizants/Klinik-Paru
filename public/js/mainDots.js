@@ -14,6 +14,7 @@ async function addPasienTB() {
     var dm = $("#modal-dm").val();
     var ket = $("#modal-ket").val();
     var blnKe = $("#modal-pasienTB #modal-blnKe").val();
+    var status = $("#modal-pasienTB #modal-status").val();
     var petugas = $("#modal-petugas").val();
     var dokter = $("#modal-dokter").val();
 
@@ -38,6 +39,7 @@ async function addPasienTB() {
             petugas: petugas,
             dokter: dokter,
             hasilBerobat: blnKe,
+            status: status,
         },
         success: function (response) {
             Toast.fire({
@@ -132,6 +134,7 @@ function validasiDaftar() {
         "modal-obtDots",
         "modal-blnKe",
         "modal-nxKontrol",
+        "modal-status",
     ];
 
     var error = false;

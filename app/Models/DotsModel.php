@@ -14,8 +14,12 @@ class DotsModel extends Model
 
     protected $fillable = [
         'norm',
+        'nik',
+        'nama',
+        'alamat',
         'noHP',
-        'notrans',
+        'tcm',
+        'sample',
         'kdDx',
         'tglMulai',
         'bb',

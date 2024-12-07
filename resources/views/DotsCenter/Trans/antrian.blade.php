@@ -205,7 +205,8 @@
                                     <th>Nama</th>
                                     <th>Alamat</th>
                                     <th>Dokter</th>
-                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Status Pengobatan</th>
+                                    <th class="text-center">Hasil Pengobatan</th>
                                     <th class="text-center">Diagnosa</th>
                                     <th>Ket</th>
                                 </tr>

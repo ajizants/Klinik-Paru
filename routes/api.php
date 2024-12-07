@@ -94,7 +94,7 @@ Route::get('pasien/TB/Kontrol', [DotsController::class, 'kontrol']);
 Route::get('pasien/TB/Telat', [DotsController::class, 'telat']);
 //transaksi dots
 Route::post('tambah/pasien/TB', [DotsController::class, 'addPasienTb']);
-Route::post('update/status/pengobatan', [DotsController::class, 'updatePengobatanPasien']);
+Route::post('/pasien/TB_update', [DotsController::class, 'updatePasienTB']);
 Route::post('simpan/kunjungan/dots', [DotsController::class, 'simpanKunjungan']);
 Route::get('deletePTB', [DotsController::class, 'deletePTB']);
 Route::get('editPTB', [DotsController::class, 'editPTB']);
