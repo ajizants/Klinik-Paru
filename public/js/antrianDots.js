@@ -92,7 +92,8 @@ function cariPasienTb(norm, date, ruang) {
                 } else if (code === 200) {
                     var ptb = response.data[0].ptb;
                     console.log("🚀 ~ cariPasienTb ~ ptb:", ptb);
-                    const statusBerobat = ptb.hasilBerobat;
+                    const statusBerobat = ptb.statusPengobatan;
+                    const hasilBerobat = ptb.hasilBerobat;
                     console.log(
                         "🚀 ~ cariPasienTb ~ statusBerobat:",
                         statusBerobat
@@ -111,10 +112,14 @@ function cariPasienTb(norm, date, ruang) {
                     //         title: "Pasien Tidak Terdaftar di Pendaftaran Kunjungan Hari ini",
                     //     });
                     // } else {
-                    if (ptb.statusPengobatan === "Selesai Pengobatan") {
+                    if (["95", "96", "97", "98", "99"].includes(hasilBerobat)) {
+                        // if (["4", "5"].includes(hasilBerobat)) {
                         Swal.fire({
                             icon: "question",
-                            title: "Pasien Sudah Selesai Pengobatan, ingin melajutkan pendaftaran pasien?",
+                            title:
+                                "Pasien dinyatakan " +
+                                statusBerobat +
+                                ", ingin melajutkan pendaftaran pasien?",
                             showCancelButton: true,
                             confirmButtonColor: "#3085d6",
                             cancelButtonColor: "#d33",

@@ -225,14 +225,17 @@ class DotsController extends Controller
 
         // Cari pasien berdasarkan `norm`
         $Ptb = DotsModel::with('dokter.biodata')->where('norm', $norm)->first();
-
+        // dd($Ptb);
         if (!$Ptb) {
+            // dd("no pasian");
             // Jika pasien tidak ditemukan
             $pasien = $kominfo->pasienRequest($norm);
+            // dd($pasien);
             $params = ['tanggal_awal' => $tanggal, 'tanggal_akhir' => $tanggal, 'no_rm' => $norm];
 
             // Ambil data diagnosa dari CPPT
             $cppt = $kominfo->cpptRequest($params);
+            // dd($cppt);
             $kodeDiagnosa = !empty($cppt['response']['data'])
             ? array_column(array_merge(...array_column($cppt['response']['data'], 'diagnosa')), 'kode_diagnosa')
             : '';
@@ -245,8 +248,15 @@ class DotsController extends Controller
                 'pasien' => $pasien,
                 'diagnosa' => $kodeDiagnosa,
             ];
-
-            return $this->responseJson(false, 'Belum Terdaftar Sebagai Pasien TBC...!!', $ptbData, 204);
+            $res = [
+                'exist' => false,
+                'metadata' => [
+                    'code' => 204,
+                    'message' => 'Belum Terdaftar Sebagai Pasien TBC...!!',
+                ],
+                'data' => $ptbData,
+            ];
+            return response()->json($res, 200, [], JSON_PRETTY_PRINT);
         }
 
         // Jika pasien ditemukan

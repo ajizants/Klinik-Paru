@@ -159,6 +159,7 @@ class KominfoModel extends Model
     }
     public function cpptRequest(array $params)
     {
+        // dd($params);
         // Inisialisasi klien GuzzleHTTP
         $client = new Client();
 
@@ -181,6 +182,7 @@ class KominfoModel extends Model
 
             // Ambil body response
             $body = $response->getBody();
+            // dd($body);
 
             // Konversi response body ke array
             $data = json_decode($body, true);
@@ -197,6 +199,8 @@ class KominfoModel extends Model
                 // Handle the case where 'response' or 'data' key is not present
                 $data = [];
             }
+
+            // dd($data);
             return $data;
 
         } catch (\Exception $e) {
