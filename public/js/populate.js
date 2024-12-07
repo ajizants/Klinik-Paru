@@ -387,6 +387,7 @@ function setTransaksi(button, ruang) {
                 var tabel = $("#tableRo").DataTable();
                 tabel.clear().destroy();
             }
+            $("#tglRo").val(tgltrans);
             cariTsRo(norm, tgl, ruang);
             break;
         case "dots":
