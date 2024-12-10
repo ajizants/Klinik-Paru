@@ -193,8 +193,9 @@ class KominfoModel extends Model
                     return true;
                 });
 
-                // Update the 'data' key with the filtered data
                 $data['response']['data'] = $filteredData;
+
+                // Update the 'data' key with the filtered data
             } else {
                 // Handle the case where 'response' or 'data' key is not present
                 $data = [];

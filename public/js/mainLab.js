@@ -931,6 +931,7 @@ function askLab(button) {
     var asktind = $(button).data("asktind");
     var umur = $(button).data("umur");
     let jk = $(button).data("jk");
+    var tujuan = $(button).data("tujuan");
 
     $("#norm").val(norm);
     $("#nama").val(nama);
@@ -944,7 +945,13 @@ function askLab(button) {
     $("#jk").val(jk).trigger("change");
 
     // Memperbarui konten asktindContent
-    $("#permintaan").html(`<b>${asktind}</b>`);
+    $("#permintaan").html(`<b>${asktind}</b>
+    <br>
+    <br>
+    <br>    
+    <br>    
+    <br>    
+    <div class="font-weight-bold bg-warning rounded">${tujuan}</div>`);
     getNoSampel();
     if ($.fn.DataTable.isDataTable("#dataTrans")) {
         let tableTrans = $("#dataTrans").DataTable();
@@ -1492,11 +1499,13 @@ function ckelisPemeriksaan(data) {
 }
 
 function resetForm(message) {
+    antrian("lab");
     $('table thead input[type="checkbox"]').prop("checked", false);
     $('table tbody input[type="checkbox"]').prop("checked", false);
     document.getElementById("form_identitas").reset();
     document.getElementById("form_Petugas").reset();
     $("#permintaan").html("");
+    $("#tujuanLain").html("");
     $("#analis,#dokter,#tujuan").trigger("change");
     var btndelete = document.getElementById("delete_ts");
     btndelete.style.display =

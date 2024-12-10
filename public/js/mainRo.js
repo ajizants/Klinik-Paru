@@ -702,7 +702,8 @@ function rstForm() {
     $("#preview").hide();
     $("#formtrans select").trigger("change");
     $("#form_identitas select").trigger("change");
-    $("#asktindContent").html(`<b>Permintaan Pemeriksaan</b>`);
+    $("#permintaan").html("");
+    $("#tujuanLain").html("Penunjang Hari ini:");
     scrollToTop();
     setTglRo();
     setTodayDate();
@@ -717,6 +718,7 @@ function askRo(button) {
     var notrans = $(button).data("notrans");
     var tgltrans = $(button).data("tgltrans");
     var asktind = $(button).data("asktind");
+    var tujuan = $(button).data("tujuan");
     jk = $(button).data("jk");
 
     $("#norm").val(norm);
@@ -731,6 +733,9 @@ function askRo(button) {
 
     // Memperbarui konten asktindContent
     $("#permintaan").html(`<b>${asktind}</b>`);
+    $("#tujuanLain").html(
+        `<div class="font-weight-bold bg-warning rounded">${tujuan}</div>`
+    );
 
     scrollToInputSection();
 }

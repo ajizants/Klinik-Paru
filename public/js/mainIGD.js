@@ -300,6 +300,7 @@ function setTransaksi(button) {
     var tgltrans = $(button).data("tgltrans");
     var tgl = $(button).data("tgl");
     var asktind = $(button).data("asktind");
+    var tujuan = $(button).data("tujuan");
 
     $("#norm").val(norm);
     $("#nama").val(nama);
@@ -311,7 +312,10 @@ function setTransaksi(button) {
     $("#tgltrans").val(tgltrans);
     $("#tgltind").val(tgl);
     $("#asktind").val(asktind);
-    $("#permintaan").html(`<b>${asktind}</b>`);
+    $("#permintaan").html(`<b>${asktind}</b>
+        <br>
+        <br>
+    <div class="font-weight-bold bg-warning rounded">${tujuan}</div>`);
 
     // dataTindakan(notrans, norm);
     cariTsIgd(notrans, norm, tgl);

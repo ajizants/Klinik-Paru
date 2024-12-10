@@ -87,7 +87,7 @@
                                             @csrf
                                             <form class="form-group col">
                                                 <div class="card-body p-1 card-body table-responsive" id="permintaan"
-                                                    style="height: 8rem">
+                                                    style="height: 10rem">
                                                 </div>
                                                 {{-- <textarea id="asktind" class="form-control-plaintext border border-primary px-2 fs-6" style="height: 8rem"
                                                     placeholder="Permintaan Tindakan" readonly></textarea> --}}

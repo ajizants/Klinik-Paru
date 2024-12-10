@@ -7,6 +7,7 @@ use App\Models\FarmasiModel;
 use App\Models\IGDTransModel;
 use App\Models\KasirTransModel;
 use App\Models\KominfoModel;
+use App\Models\KunjunganWaktuSelesai;
 use App\Models\LaboratoriumHasilModel;
 use App\Models\LaboratoriumKunjunganModel;
 use App\Models\RoHasilModel;
@@ -988,6 +989,24 @@ class PasienKominfoController extends Controller
                 $d['status'] = 'belum';
 
                 if ($ruang === 'igd') {
+
+                    // $ts = IGDTransModel::with('transbmhp')->where('norm', $d['pasien_no_rm'])
+                    //     ->whereDate('created_at', $d['tanggal'])->first();
+                    // $d['status'] = !$ts ? 'belum' :
+                    // ($ts->transbmhp == null ? 'Belum Ada Transaksi BMHP' : 'sudah');
+
+                    // foreach ($filteredData as $d) {
+                    // dd($d);
+                    $check = KunjunganWaktuSelesai::where('notrans', $d['no_trans'])->first();
+                    // dd($check);
+                    // jika $check null
+                    $checkigd = $check->waktu_selesai_igd ?? null;
+                    // dd($igd);
+
+                    $d['igd_selesai'] = $checkigd == null ? 'danger' : 'success';
+                    // dd($d['igd_selesai']);
+                    // }
+
                     $igd = IGDTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
                     $d['status'] = $igd ? 'sudah' : 'belum';
                     if (empty($d['tindakan'])) {
@@ -1021,8 +1040,15 @@ class PasienKominfoController extends Controller
                     }
 
                 } elseif ($ruang === 'ro') {
-                    $ro = ROTransaksiModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
-                    $d['status'] = $ro ? 'sudah' : 'belum';
+                    $tsRo = ROTransaksiModel::where('norm', $d['pasien_no_rm'])
+                        ->whereDate('tgltrans', $d['tanggal'])->first();
+                    $foto = RoHasilModel::where('norm', $d['pasien_no_rm'])
+                        ->whereDate('tanggal', $d['tanggal'])->first();
+                    $d['status'] = !$tsRo && !$foto ? 'belum' :
+                    ($tsRo && !$foto ? 'Belum Upload Foto Thorax' : 'sudah');
+
+                    // $ro = ROTransaksiModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
+                    // $d['status'] = $ro ? 'sudah' : 'belum';
                     if (empty($d['radiologi'])) {
                         return null;
                     }

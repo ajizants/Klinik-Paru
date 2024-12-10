@@ -493,6 +493,41 @@
 
                 </tr>
                 <tr>
+                    <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
+                        <div
+                            style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                            Diagnosa Primer (A)
+                        </div>
+                    </td>
+                    <td style="padding-bottom:10px; text-align: left;">
+                        @if (empty($resumePasien->diagnosa) || count($resumePasien->diagnosa) == 0)
+                            -
+                        @else
+                            <li>{{ $resumePasien->diagnosa[0]['nama_diagnosa'] }}</li>
+                        @endif
+                    </td>
+                    <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
+                        <div
+                            style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                            Diagnosa Sekunder (A)
+                        </div>
+                    </td>
+                    <td style="padding-bottom:10px; text-align: left;">
+                        @if (count($resumePasien->diagnosa) < 2)
+                            -
+                        @else
+                            <ul>
+                                @foreach ($resumePasien->diagnosa as $index => $diagnosa)
+                                    @if ($index > 0)
+                                        {{-- Dimulai dari indeks ke-1 untuk diagnosa sekunder --}}
+                                        <li>{{ $diagnosa['nama_diagnosa'] }}</li>
+                                    @endif
+                                @endforeach
+                            </ul>
+                        @endif
+                    </td>
+                </tr>
+                {{-- <tr>
                     <td style=" font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
                         <div
                             style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
@@ -523,7 +558,7 @@
                             </li>
                         @endif
                     </td>
-                </tr>
+                </tr> --}}
             </tbody>
         </table>
 

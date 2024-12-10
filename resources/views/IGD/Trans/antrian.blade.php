@@ -34,7 +34,12 @@
                     </div>
                 </div>
             </ul>
-            <div id="dAntrian" class="card-body card-body-hidden p-2" style="display: none;">
+
+            @include('Template.Table.tunggu')
+            @include('Template.Table.belumUpload')
+            @include('Template.Table.selesai')
+            @include('Template.Table.all')
+            {{-- <div id="dAntrian" class="card-body card-body-hidden p-2" style="display: none;">
                 <div class="table-responsive pt-2 px-2">
                     <table id="antrianall" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
@@ -93,7 +98,7 @@
                         </thead>
                     </table>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>

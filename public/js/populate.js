@@ -14,40 +14,54 @@ function fetchDataAntrian(ruang, params, callback) {
         success: callback,
         error: function (xhr) {
             console.error("Error fetching data:", xhr);
-            //atasi jika 404
-            if (xhr.status == 404) {
+            if (xhr.status === 404) {
                 Toast.fire({
                     icon: "error",
                     title: "Data Tidak Ditemukan",
                 });
-                const dataArray = getNoDataMessage();
-                drawDataTable(dataArray, ruang);
+                handleNoData(ruang);
             }
         },
     });
 }
 
+function handleNoData(ruang) {
+    const dataArray = getNoDataMessage();
+    drawDataTable(dataArray, ruang, "#dataAntrian");
+    drawDataTable(dataArray, ruang, "#dataSelesai");
+    if (ruang === "ro") {
+        drawDataTable(dataArray, ruang, "#daftarUpload");
+    }
+}
+
 function initializeDataAntrian(response, ruang) {
     const data = response?.response?.data || [];
-    const filteredData = data.filter((item) => item.status === "belum");
-    // const dataArray = filteredData.length ? filteredData : getNoDataMessage();
+    updateTableData(data, ruang, "belum", "#dataAntrian");
+    updateTableData(data, ruang, "sudah", "#dataSelesai");
 
-    // processDataArray(dataArray, ruang);
-    // drawDataTable(dataArray, ruang);
-
-    if (filteredData.length) {
-        const dataArray = filteredData;
-        processDataArray(filteredData, ruang);
-        drawDataTable(dataArray, ruang);
-    } else {
-        const dataArray = getNoDataMessage();
-        drawDataTable(dataArray, ruang);
+    if (ruang === "ro") {
+        updateTableData(
+            data,
+            ruang,
+            "Belum Upload Foto Thorak",
+            "#daftarUpload"
+        );
     }
+}
+
+function updateTableData(data, ruang, status, tableId) {
+    const filteredData = data.filter((item) => item.status === status);
+    const dataArray = filteredData.length ? filteredData : getNoDataMessage();
+    const nama = dataArray[0]?.pasien_nama;
+    console.log("🚀 ~ updateTableData ~ nama:", nama);
+    if (nama !== "Belum ada data masuk") {
+        processDataArray(dataArray, ruang);
+    }
+    drawDataTable(dataArray, ruang, tableId);
 }
 
 function antrian(ruang) {
     $("#loadingSpinner").show();
-
     const params = {
         tanggal_awal: $("#tanggal").val(),
         tanggal_akhir: $("#tanggal").val(),
@@ -56,22 +70,32 @@ function antrian(ruang) {
 
     fetchDataAntrian(ruang, params, function (response) {
         $("#loadingSpinner").hide();
-
         if ($.fn.DataTable.isDataTable("#dataAntrian")) {
-            const table = $("#dataAntrian").DataTable();
-            const data = response?.response?.data || [];
-            const filteredData = data.filter((item) => item.status === "belum");
-            processDataArray(filteredData, ruang);
-            table
-                .clear()
-                .rows.add(
-                    filteredData.length ? filteredData : getNoDataMessage()
-                )
-                .draw();
+            updateExistingTables(response, ruang);
         } else {
             initializeDataAntrian(response, ruang);
         }
     });
+}
+
+function updateExistingTables(response, ruang) {
+    const data = response?.response?.data || [];
+    updateTable("#dataAntrian", data, ruang, "belum");
+    updateTable("#dataSelesai", data, ruang, "sudah");
+
+    if (ruang === "ro") {
+        updateTable("#daftarUpload", data, ruang, "Belum Upload Foto Thorax");
+    }
+}
+
+function updateTable(tableId, data, ruang, status) {
+    const filteredData = data.filter((item) => item.status === status);
+    const table = $(tableId).DataTable();
+    const dataArray = filteredData.length ? filteredData : getNoDataMessage();
+    const namaPasien = filteredData.length ? filteredData[0].pasien_nama : "";
+    console.log("🚀 ~ updateTable ~ namaPasien:", namaPasien);
+    processDataArray(dataArray, ruang);
+    table.clear().rows.add(dataArray).draw();
 }
 
 function processDataArray(dataArray, ruang) {
@@ -99,9 +123,9 @@ function processDataArray(dataArray, ruang) {
     });
 }
 
-function drawDataTable(dataArray, ruang) {
+function drawDataTable(dataArray, ruang, tableId) {
     const columns = getColumnsForRuang(ruang);
-    $("#dataAntrian").DataTable({
+    $(tableId).DataTable({
         data: dataArray,
         columns: columns,
         order: [
@@ -109,36 +133,20 @@ function drawDataTable(dataArray, ruang) {
             [2, "asc"],
         ],
         pageLength: ruang === "lab" ? 5 : 10,
+        destroy: true, // Allow table to reinitialize
     });
 }
 
 function generateActionButton(item, ruang) {
-    // console.log("🚀 ~ generateActionButton ~ item:", item);
-
-    const today = new Date(2024, 9, 3); // October 3, 2024
-    today.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
-
-    let notrans;
-
-    const date = new Date(item.tanggal);
-    date.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
-    if (date <= today) {
-        notrans = item.no_trans;
-    } else {
-        notrans = item.no_reg;
-    }
-
-    // Ensure asktind is properly trimmed and handled
-    const asktind =
-        item.asktind && item.asktind.trim() !== ""
-            ? item.asktind.trim()
-            : "No data";
+    const today = new Date(2024, 9, 3).setHours(0, 0, 0, 0);
+    const date = new Date(item.tanggal).setHours(0, 0, 0, 0);
+    const notrans = date <= today ? item.no_trans : item.no_reg;
 
     const commonAttributes = `
         data-norm="${item.pasien_no_rm}"
         data-nama="${item.pasien_nama}"
         data-dokter="${item.dokter_nama}"
-        data-asktind="${asktind}"   // Correct access to asktind
+        data-asktind="${item.asktind?.trim() || "No data"}"
         data-kddokter="${item.nip_dokter}"
         data-alamat="${getFormattedAddress(item)}"
         data-layanan="${item.penjamin_nama}"
@@ -146,21 +154,37 @@ function generateActionButton(item, ruang) {
         data-tgltrans="${item.tanggal}"
         data-umur="${item.umur}"
         data-jk="${item.jenis_kelamin_nama}"
+        data-tujuan="${getPenunjangText(item)}"
     `;
 
-    switch (ruang) {
-        case "dots":
-            return `<a type="button" class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
-                onclick="cariPasienTb('${item.pasien_no_rm}','${item.tanggal}');"><i class="fas fa-pen-to-square"></i></a>`;
-        case "ro":
-            return `<a type="button" class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
-                ${commonAttributes} onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
-        case "igd":
-            return `<a class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
-        ${commonAttributes} onclick="setTransaksi(this);"><i class="fas fa-pen-to-square"></i></a>`;
-        case "lab":
-            return `<a class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
-                ${commonAttributes} onclick="askLab(this);"><i class="fas fa-pen-to-square"></i></a>`;
+    const actionMap = {
+        dots: `cariPasienTb('${item.pasien_no_rm}','${item.tanggal}')`,
+        ro: `setTransaksi(this,'${ruang}')`,
+        igd: `setTransaksi(this,'${ruang}')`,
+        lab: `setTransaksi(this,'${ruang}')`,
+    };
+    // const actionMap = {
+    //     dots: `cariPasienTb('${item.pasien_no_rm}','${item.tanggal}')`,
+    //     ro: `askRo(this)`,
+    //     igd: `setTransaksi(this)`,
+    //     lab: `askLab(this)`,
+    // };
+    if (ruang === "igd") {
+        return `
+        <a type="button" class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
+            ${commonAttributes} onclick="${actionMap[ruang]}">
+            <i class="fas fa-pen-to-square"></i>
+        </a>
+        <button type="button" ${commonAttributes} class="aksi-button btn-sm btn-${item.igd_selesai} py-md-0 py-1 mt-md-0 mt-2 icon-link icon-link-hover" 
+            onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this,'${ruang}')" 
+            placeholder="Selesai"><i class="fa-regular fa-square-check"></i>
+        </button>`;
+    } else {
+        return `
+        <a type="button" class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
+            ${commonAttributes} onclick="${actionMap[ruang]}">
+            <i class="fas fa-pen-to-square"></i>
+        </a>`;
     }
 }
 
@@ -169,8 +193,7 @@ function getFormattedAddress(item) {
 }
 
 function generateAsktindString(data, addNewLine = false, isLab = false) {
-    if (!Array.isArray(data)) return ""; // Ensure data is an array
-
+    if (!Array.isArray(data)) return "";
     return data
         .map((item, index) => {
             const separator = isLab ? (index % 2 === 1 ? ",<br>" : ", ") : ", ";
@@ -184,15 +207,30 @@ function generateAsktindString(data, addNewLine = false, isLab = false) {
 
 function getColumnsForRuang(ruang) {
     const commonColumns = [
-        { data: "aksi", className: "text-center p-2" },
+        { data: "aksi", className: "col-1 text-center p-2" },
         {
             data: "status",
             className: "text-center p-2",
-            render: (data) =>
-                `<div class="badge badge-${
-                    data === "belum" ? "danger" : "success"
-                }">${data}</div>`,
+            render: function (data) {
+                const statusClasses = {
+                    belum: "danger",
+                    sudah: "success",
+                    "Belum Upload Foto Thorax": "warning",
+                    default: "secondary",
+                };
+                return `<div class="badge badge-${
+                    statusClasses[data] || statusClasses.default
+                }">${data}</div>`;
+            },
         },
+        // {
+        //     data: "status",
+        //     className: "text-center p-2",
+        //     render: (data) =>
+        //         `<div class="badge badge-${
+        //             data === "belum" ? "danger" : "success"
+        //         }">${data}</div>`,
+        // },
         { data: "tanggal", className: "text-center p-2 col-1" },
         { data: "antrean_nomor", className: "text-center p-2" },
         { data: "penjamin_nama", className: "text-center p-2" },
@@ -224,9 +262,261 @@ function getNoDataMessage() {
             dokter_nama: "",
             nmDiagnosa: "",
             asktind: "",
+            laboratorium: [],
+            tindakan: [],
+            radiologi: [],
         },
     ];
 }
+
+function getPenunjangText(item) {
+    console.log("🚀 ~ getPenunjangText ~ item:", item);
+
+    return `
+        <div>
+            <h6>Penunjang Hari ini:</h6>
+            ${item.laboratorium.length > 0 ? "Laboratorium, " : ""}
+            ${item.tindakan.length > 0 ? "IGD, " : ""}
+            ${item.radiologi.length > 0 ? "Radiologi, " : ""}
+        </div>`;
+}
+
+// function fetchDataAntrian(ruang, params, callback) {
+//     $.ajax({
+//         url: "/api/cpptKominfo",
+//         type: "POST",
+//         data: params,
+//         success: callback,
+//         error: function (xhr) {
+//             console.error("Error fetching data:", xhr);
+//             //atasi jika 404
+//             if (xhr.status == 404) {
+//                 Toast.fire({
+//                     icon: "error",
+//                     title: "Data Tidak Ditemukan",
+//                 });
+//                 const dataArray = getNoDataMessage();
+//                 drawDataTable(dataArray, ruang);
+//             }
+//         },
+//     });
+// }
+
+// function initializeDataAntrian(response, ruang) {
+//     const data = response?.response?.data || [];
+//     const filteredData = data.filter((item) => item.status === "belum");
+//     // const dataArray = filteredData.length ? filteredData : getNoDataMessage();
+
+//     // processDataArray(dataArray, ruang);
+//     // drawDataTable(dataArray, ruang);
+
+//     if (filteredData.length) {
+//         const dataArray = filteredData;
+//         processDataArray(filteredData, ruang);
+//         drawDataTable(dataArray, ruang);
+//     } else {
+//         const dataArray = getNoDataMessage();
+//         drawDataTable(dataArray, ruang);
+//     }
+// }
+
+// function antrian(ruang) {
+//     $("#loadingSpinner").show();
+
+//     const params = {
+//         tanggal_awal: $("#tanggal").val(),
+//         tanggal_akhir: $("#tanggal").val(),
+//         ruang: ruang,
+//     };
+
+//     fetchDataAntrian(ruang, params, function (response) {
+//         $("#loadingSpinner").hide();
+
+//         if ($.fn.DataTable.isDataTable("#dataAntrian")) {
+//             const table = $("#dataAntrian").DataTable();
+//             const data = response?.response?.data || [];
+//             const filteredData = data.filter((item) => item.status === "belum");
+//             const sudah = data.filter((item) => item.status === "sudah");
+//             processDataArray(filteredData, ruang);
+//             processDataArray(sudah, ruang);
+//             table
+//                 .clear()
+//                 .rows.add(
+//                     filteredData.length ? filteredData : getNoDataMessage()
+//                 )
+//                 .draw();
+//         } else {
+//             initializeDataAntrian(response, ruang);
+//         }
+//     });
+// }
+
+// function processDataArray(dataArray, ruang) {
+//     dataArray.forEach((item, index) => {
+//         item.index = index + 1;
+//         const tindakan = item.tindakan;
+//         const laborat = item.laboratorium;
+//         const radiologi = item.radiologi;
+//         switch (ruang) {
+//             case "dots":
+//                 item.nmDiagnosa = item.diagnosa[0]?.nama_diagnosa || "";
+//                 break;
+//             case "ro":
+//                 item.asktind = generateAsktindString(item.radiologi);
+//                 break;
+//             case "igd":
+//                 item.asktind = generateAsktindString(item.tindakan, true);
+//                 break;
+//             case "lab":
+//                 item.asktind = generateAsktindString(
+//                     item.laboratorium,
+//                     false,
+//                     true
+//                 );
+//                 break;
+//         }
+//         item.aksi = generateActionButton(item, ruang);
+//     });
+// }
+
+// function drawDataTable(dataArray, ruang) {
+//     const columns = getColumnsForRuang(ruang);
+//     $("#dataAntrian").DataTable({
+//         data: dataArray,
+//         columns: columns,
+//         order: [
+//             [1, "asc"],
+//             [2, "asc"],
+//         ],
+//         pageLength: ruang === "lab" ? 5 : 10,
+//     });
+// }
+
+// function generateActionButton(item, ruang) {
+//     console.log("🚀 ~ generateActionButton ~ item:", item);
+
+//     const today = new Date(2024, 9, 3); // October 3, 2024
+//     today.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
+
+//     let notrans;
+
+//     const date = new Date(item.tanggal);
+//     date.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
+//     if (date <= today) {
+//         notrans = item.no_trans;
+//     } else {
+//         notrans = item.no_reg;
+//     }
+
+//     // Ensure asktind is properly trimmed and handled
+//     const asktind =
+//         item.asktind && item.asktind.trim() !== ""
+//             ? item.asktind.trim()
+//             : "No data";
+//     const penunjangLain = `
+//     <div>
+//     <h6>Penunjang Hari ini:</h6>
+//     ${item.laboratorium.length > 0 ? "Laboratorium, " : ""}
+//     ${item.tindakan.length > 0 ? " IGD, " : ""}
+//     ${item.radiologi.length > 0 ? " Radiologi, " : ""}
+
+//     </div>
+//     `;
+
+//     const commonAttributes = `
+//         data-norm="${item.pasien_no_rm}"
+//         data-nama="${item.pasien_nama}"
+//         data-dokter="${item.dokter_nama}"
+//         data-asktind="${asktind}"   // Correct access to asktind
+//         data-kddokter="${item.nip_dokter}"
+//         data-alamat="${getFormattedAddress(item)}"
+//         data-layanan="${item.penjamin_nama}"
+//         data-notrans="${notrans}"
+//         data-tgltrans="${item.tanggal}"
+//         data-umur="${item.umur}"
+//         data-jk="${item.jenis_kelamin_nama}"
+//         data-tujuan="${penunjangLain}"
+//     `;
+
+//     switch (ruang) {
+//         case "dots":
+//             return `<a type="button" class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
+//                 onclick="cariPasienTb('${item.pasien_no_rm}','${item.tanggal}');"><i class="fas fa-pen-to-square"></i></a>`;
+//         case "ro":
+//             return `<a type="button" class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
+//                 ${commonAttributes} onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
+//         case "igd":
+//             return `<a class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
+//         ${commonAttributes} onclick="setTransaksi(this);"><i class="fas fa-pen-to-square"></i></a> `;
+//         case "lab":
+//             return `<a class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
+//                 ${commonAttributes} onclick="askLab(this);"><i class="fas fa-pen-to-square"></i></a>`;
+//     }
+// }
+
+// function getFormattedAddress(item) {
+//     return `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
+// }
+
+// function generateAsktindString(data, addNewLine = false, isLab = false) {
+//     if (!Array.isArray(data)) return ""; // Ensure data is an array
+
+//     return data
+//         .map((item, index) => {
+//             const separator = isLab ? (index % 2 === 1 ? ",<br>" : ", ") : ", ";
+//             return `${item.layanan || item.nama_tindakan} (${
+//                 item.keterangan || item.nama_obat || ""
+//             })${addNewLine ? "<br>" : separator}`;
+//         })
+//         .join("")
+//         .replace(/(,\s*<br>|,\s)$/, ""); // Remove trailing separator
+// }
+
+// function getColumnsForRuang(ruang) {
+//     const commonColumns = [
+//         { data: "aksi", className: "text-center p-2" },
+//         {
+//             data: "status",
+//             className: "text-center p-2",
+//             render: (data) =>
+//                 `<div class="badge badge-${
+//                     data === "belum" ? "danger" : "success"
+//                 }">${data}</div>`,
+//         },
+//         { data: "tanggal", className: "text-center p-2 col-1" },
+//         { data: "antrean_nomor", className: "text-center p-2" },
+//         { data: "penjamin_nama", className: "text-center p-2" },
+//         { data: "pasien_no_rm", className: "text-center p-2" },
+//         { data: "pasien_nama", className: "p-2 col-2" },
+//         { data: "dokter_nama", className: "p-2 col-3" },
+//     ];
+
+//     const extraColumns = {
+//         dots: [{ data: "nmDiagnosa", className: "p-2 col-4" }],
+//         ro: [{ data: "asktind", className: "p-2 col-3" }],
+//         igd: [{ data: "asktind", className: "p-2 col-4" }],
+//         lab: [{ data: "asktind", className: "p-2 col-4" }],
+//     };
+
+//     return commonColumns.concat(extraColumns[ruang] || []);
+// }
+
+// function getNoDataMessage() {
+//     return [
+//         {
+//             aksi: "",
+//             status: "",
+//             tanggal: "",
+//             antrean_nomor: "",
+//             pasien_no_rm: "",
+//             penjamin_nama: "",
+//             pasien_nama: "Belum ada data masuk",
+//             dokter_nama: "",
+//             nmDiagnosa: "",
+//             asktind: "",
+//         },
+//     ];
+// }
 
 //antrianall
 function fetchDataAntrianAll(tanggal, ruang, callback) {
@@ -373,6 +663,8 @@ function setTransaksi(button, ruang) {
     var tgltrans = $(button).data("tgltrans");
     var tgl = $(button).data("tgltrans");
     var asktind = $(button).data("asktind");
+    var tujuan = $(button).data("tujuan");
+    var umur = $(button).data("umur");
     jk = $(button).data("jk");
     // console.log("🚀 ~ setTransaksi ~ jk:", jk);
     switch (ruang) {
@@ -381,6 +673,8 @@ function setTransaksi(button, ruang) {
             break;
         case "lab":
             cariTsLab(norm, tgl, ruang);
+            $("#umur").val(umur);
+            getNoSampel();
             break;
         case "ro":
             if ($.fn.DataTable.isDataTable("#tableRo")) {
@@ -411,8 +705,21 @@ function setTransaksi(button, ruang) {
     $("#tgltrans").val(tgltrans);
     $("#tgltind").val(tgl);
     $("#asktind").val(asktind);
-    $("#permintaan").html(`<b>${asktind}</b>`);
-
+    // $("#permintaan").html(`<b>${asktind}</b>`);
+    if (ruang == "ro") {
+        $("#permintaan").html(`<b>${asktind}</b>`);
+        $("#tujuanLain").html(
+            `<div class="font-weight-bold bg-warning rounded">${tujuan}</div>`
+        );
+    } else {
+        $("#permintaan").html(`<b>${asktind}</b>
+        <br>
+        <br>
+        <br>    
+        <br>    
+        <br>    
+        <div class="font-weight-bold bg-warning rounded">${tujuan}</div>`);
+    }
     scrollToInputSection();
 }
 
@@ -434,7 +741,8 @@ function antrianAll(ruang) {
         );
         const belumUpload = blmUpload.filteredData;
         const antrian = processResponse(response, ruang, "Tidak Ada Transaksi");
-        const antrianAll = antrian.filteredData;
+        // const antrianAll = antrian.filteredData;
+        const antrianAll = antrian.data;
 
         initializeDataTable(
             "#antrianall",
@@ -442,25 +750,25 @@ function antrianAll(ruang) {
             getColumnDefinitions("status_pulang", ruang)
         );
 
-        if (ruang === "igd" || ruang === "lab" || ruang === "dots") {
-            initializeDataTable(
-                "#dataSelesai",
-                filteredData,
-                getColumnDefinitions("status")
-            );
-        }
-        if (ruang === "ro") {
-            initializeDataTable(
-                "#dataSelesai",
-                filteredData,
-                getColumnDefinitions("status")
-            );
-            initializeDataTable(
-                "#daftarUpload",
-                belumUpload,
-                getColumnDefinitions("status")
-            );
-        }
+        // if (ruang === "igd" || ruang === "lab" || ruang === "dots") {
+        //     initializeDataTable(
+        //         "#dataSelesai",
+        //         filteredData,
+        //         getColumnDefinitions("status")
+        //     );
+        // }
+        // if (ruang === "ro") {
+        //     initializeDataTable(
+        //         "#dataSelesai",
+        //         filteredData,
+        //         getColumnDefinitions("status")
+        //     );
+        //     initializeDataTable(
+        //         "#daftarUpload",
+        //         belumUpload,
+        //         getColumnDefinitions("status")
+        //     );
+        // }
     });
 }
 

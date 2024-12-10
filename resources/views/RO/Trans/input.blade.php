@@ -96,6 +96,19 @@
                                             <div class="card-body">
 
                                                 <div class="form-grup row">
+
+                                                    <div class="col-md border border-3 border-dark">
+                                                        <p class="font-weight-bold fs-3">Permintaan RO:</p>
+                                                        <p id="permintaan" class="fw-bold fs-3 ml-3"></p>
+                                                    </div>
+                                                    <div class="col-md-3"></div>
+                                                    <div id="tujuanLain"
+                                                        class="col-md border border-3 border-dark bg-warning">
+                                                        Penunjang Hari ini:
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-grup row">
                                                     <label class="col-sm-1 py-3 col-form-label" for="pasienRawat">Pasien
                                                         Rawat</label>
                                                     <div class="col-sm-3 py-3 mr-5">
@@ -110,14 +123,6 @@
                                                             / IRNA
                                                         </label>
                                                     </div>
-                                                    {{-- <input type="text" name="Permintaan RO" id="Permintaan_RO"
-                                                            class="form-control form-control p-4"
-                                                            placeholder="Permintaan RO"> --}}
-                                                    <div class="col-md-6 border border-3 border-dark"
-                                                        style="height: 47px;"">
-                                                        <p id="permintaan" class="fw-bold fs-3">Permintaan RO:</p>
-                                                    </div>
-
                                                 </div>
                                                 <div class="pl-5">
                                                     <div class="form-group row">
@@ -322,7 +327,8 @@
                                                 <div class="modal-body">
                                                     <form id="formUpdate">
                                                         <label for="idFoto"
-                                                            class=" col-form-label font-weight-bold mb-0 ">ID Foto
+                                                            class=" col-form-label font-weight-bold mb-0 ">ID
+                                                            Foto
                                                             :</label>
                                                         <div class=" input-group">
                                                             <input type="number" name="idFoto" id="idFoto"
@@ -330,7 +336,8 @@
                                                                 placeholder="ID Foto" />
                                                         </div>
                                                         <label for="nmFoto"
-                                                            class=" col-form-label font-weight-bold mb-0 ">Nama Foto
+                                                            class=" col-form-label font-weight-bold mb-0 ">Nama
+                                                            Foto
                                                             :</label>
                                                         <div class=" input-group">
                                                             <input type="text" name="nmFoto" id="nmFoto"
