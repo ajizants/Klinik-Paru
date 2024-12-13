@@ -63,41 +63,37 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade show" id="modalCreateSurat" data-backdrop="static" data-keyboard="false" tabindex="-1"
-        aria-labelledby="modalCreateSuratLabel" aria-hidden="true">
+    <div class="modal fade show" id="modalCreateSurat" tabindex="-1" aria-labelledby="modalCreateSuratLabel">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalCreateSuratLabel">Formulir Pembuatan Surat</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                 </div>
                 <div class="modal-body">
                     @csrf
                     <form class="form-horizontal" id="form_identitas">
                         <div class="card-body" id="inputSection">
                             <div class="row">
-                                <div class="form-grup col-6 col-md-3">
-                                    <label for="notrans" class="col-form-label font-weight-bold mb-0">NoTran
+                                <div class="form-grup col-6 col-md-2">
+                                    <label for="nik" class="col-form-label font-weight-bold mb-0">NIK
                                         :</label>
-                                    <input type="text" id="notrans" class="form-control bg-white"
+                                    <input type="text" id="nik" class="form-control bg-white"
                                         placeholder="Nomor Transaksi" readonly required />
                                 </div>
-                                <div class="form-grup col-6 col-md-3">
+                                <div class="form-grup col-6 col-md-2">
                                     <label for="norm" class="col-form-label font-weight-bold mb-0 ">No RM
                                         :</label>
                                     <input type="text" name="norm" id="norm" class="form-control"
                                         placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required readonly />
                                 </div>
-                                <div class="form-grup col-6 col-md-3">
+                                <div class="form-grup col-6 col-md-2">
                                     <label for="layanan" class="col-form-label font-weight-bold mb-0">Layanan
                                         :</label>
                                     <input type="text" id="layanan" class="form-control bg-white" placeholder="Layanan"
                                         readonly />
                                 </div>
 
-                                <div class="form-grup col-6 col-md-3">
+                                <div class="form-grup col-6 col-md-2">
                                     <label for="nama" class="col-form-label font-weight-bold  mb-0">Gender
                                         :</label>
                                     <Select type="text" id="jk" class="form-control bg-white" placeholder="JK">
@@ -106,41 +102,92 @@
                                         <option value="P">Perempuan</option>
                                     </Select>
                                 </div>
-                                <div class="form-grup col-6 col-md-3">
+                                <div class="form-grup col-6 col-md-2">
                                     <label for="nama" class="col-form-label font-weight-bold  mb-0">Umur
                                         :</label>
-                                    <input type="text" id="umur" class="form-control bg-white"
-                                        placeholder="Umur" readonly />
+                                    <input type="text" id="umur" class="form-control bg-white" placeholder="Umur"
+                                        readonly />
                                 </div>
-                                <div class="form-grup col-6 col-md-3">
+                                <div class="form-grup col-6 col-md-2">
                                     <label for="tglLahir" class="col-form-label font-weight-bold mb-0">Tgl Lahir
                                         :</label>
                                     <input type="date" id="tglLahir" class="form-control bg-white"
                                         placeholder="Tanggal Transaksi" />
                                 </div>
-                                <div class="form-grup col-12 col-md-6">
+                                <div class="form-grup col-12 col-md-4">
                                     <label for="nama" class="col-form-label font-weight-bold  mb-0">Nama
                                         :</label>
                                     <input type="text" id="nama" class="form-control bg-white"
                                         placeholder="Nama Pasien" readonly>
                                 </div>
-                                <div class="form-grup col-12 col-md-6">
+                                <div class="form-grup col-12 col-md-4">
                                     <label for="alamat" class="col-form-label font-weight-bold mb-0">Alamat
                                         :</label>
                                     <input id="alamat" class="form-control bg-white" placeholder="Alamat Pasien" />
                                 </div>
-
-                                {{-- <div class="form-grup col-12 col-md-12">
+                                <div class="form-group col-6 col-md-2">
+                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">TD
+                                        :</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="TD" id="td">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">mmHg</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-6 col-md-2">
+                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">BB
+                                        :</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="BB" id="bb">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">kg</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-6 col-md-2">
+                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">TB
+                                        :</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="TB" id="tb">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">cm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-6 col-md-2">
+                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Nadi
+                                        :</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Nadi" id="nadi">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">x/mnt</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-6 col-md-2">
+                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Hasil
+                                        :</label>
+                                    <div class="input-group">
+                                        <select id="hasil" class="form-control border border-primary">
+                                            <option value="">--Pilih Hasil--</option>
+                                            <option value="Sehat">Sehat</option>
+                                            <option value="Sakit">Sakit</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-grup col-12 col-md-6">
                                     <label for="keperluan"
                                         class="col-form-label font-weight-bold mb-0">Keterangan/Keperluan Surat
                                         :</label>
                                     <input id="keperluan" class="form-control bg-white"
                                         placeholder="Keterangan/Keperluan Surat" />
-                                </div> --}}
-                                <div class="form-group col-12 col-md-6">
+                                </div>
+                                {{-- <div class="form-group col-12 col-md-6">
                                     <label for="keperluan" class="col-form-label font-weight-bold mb-0">
                                         Keterangan/Keperluan Surat:
                                     </label>
+                                    <input type="text" id="keperluan" class="form-control bg-white"/>
                                     <select id="keperluan" class="form-control border border-primary">
                                         <option value="">Pilih Keterangan/Keperluan Surat...</option>
                                         <option value="KETERANGAN DIAGNOSA MEDIS">KETERANGAN DIAGNOSA MEDIS</option>
@@ -156,14 +203,13 @@
                                         <option value="PEMBUATAN SIP">PEMBUATAN SIP</option>
                                     </select>
 
-                                </div>
-
+                                </div> --}}
                             </div>
                             <div class="row">
                                 <div class="form-group col-12 col-md-2">
-                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Tanggal
+                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Tgl Surat
                                         :</label>
-                                    <input type="date" id="tgltrans" class="form-control bg-white"
+                                    <input type="date" id="tglTrans" class="form-control bg-white"
                                         placeholder="Tanggal Transaksi" />
                                 </div>
                                 <div class="form-group col-12 col-md-5">
@@ -188,13 +234,13 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <input type="text" id="noSurat">
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal"
-                        onclick="validateAndSubmit();">Simpan</button>
+                    <button type="button" class="btn btn-success" onclick="validateAndSubmit();">Simpan</button>
                     <button type="button" class="btn btn-danger"data-dismiss="modal">Batal</button>
                 </div>
             </div>
@@ -206,12 +252,13 @@
     <script src="{{ asset('js/populate.js') }}"></script>
     <script>
         const listSurat = @json($lists);
+        console.log("🚀 ~ listSurat:", listSurat)
         const pasien = @json($pasien);
         console.log("🚀 ~ pasien:", pasien)
         const dataPasien = pasien.original;
-        console.log("🚀 ~ dataPasien:", dataPasien)
+        // console.log("🚀 ~ dataPasien:", dataPasien)
         const jumlahSuratTahunIni = @json($jumlahSuratTahunIni);
-        console.log("🚀 ~ jumlahSuratTahunIni:", jumlahSuratTahunIni)
+        // console.log("🚀 ~ jumlahSuratTahunIni:", jumlahSuratTahunIni)
         let noSuratNext = "";
 
         $(document).ready(function() {
@@ -229,7 +276,8 @@
 
             noSuratNext = "440.6/" + jumlahSuratTahunIni + "/" + monthRomawi + "/" + year,
                 console.log("🚀 ~ $ ~ noSuratNext:", noSuratNext)
-            creatTableDataPemohon();
+            $("#noSurat").val(noSuratNext);
+            creatTableDataPemohon(listSurat);
             // antrianAll("surat");
             const antrian = processResponse(dataPasien, "surat", "Tidak Ada Transaksi");
             const antrianAll = antrian.data;
@@ -243,16 +291,17 @@
 
         });
 
-        function creatTableDataPemohon() {
-            listSurat.forEach(function(item, index) {
+        function creatTableDataPemohon(data) {
+            data.forEach(function(item, index) {
                 item.aksi = `
-                            <a type="button" class="btn btn-sm btn-warning mr-2 mb-2"
-                                    href="/api/cetak/surat/${item.id}" target="_blank">Cetak Surat</a>
-                            `;
+                        <a type="button" class="btn btn-sm btn-warning mr-2 mb-2"
+                                href="/api/surat/medis/${item.id}/${item.tanggal}" target="_blank">Cetak Surat</a>
+                        `;
             });
             $("#dataPemohon")
                 .DataTable({
-                    data: listSurat,
+                    data: data,
+                    destroy: true,
                     columns: [{
                             data: "id"
                         },
@@ -316,167 +365,190 @@
         }
 
         function validateAndSubmit() {
-            var inputsToValidate = [
-                "norm",
-                "layanan",
-                "nama",
-                "tglTrans",
-                "alamat",
-                "nik",
-                "tglLahir",
-                "dokter",
-                "keperluan",
+            var inputsToValidate = [{
+                    id: "norm",
+                    label: "No RM"
+                },
+                {
+                    id: "nama",
+                    label: "Nama"
+                },
+                {
+                    id: "tglTrans",
+                    label: "Tgl Surat"
+                },
+                {
+                    id: "alamat",
+                    label: "Alamat"
+                },
+                {
+                    id: "nik",
+                    label: "NIK"
+                },
+                {
+                    id: "tglLahir",
+                    label: "Tgl Lahir"
+                },
+                {
+                    id: "umur",
+                    label: "Umur"
+                },
+                {
+                    id: "petugas",
+                    label: "Petugas"
+                },
+                {
+                    id: "dokter",
+                    label: "Dokter"
+                },
+                {
+                    id: "keperluan",
+                    label: "Keperluan"
+                },
+                {
+                    id: "td",
+                    label: "Tensi Darah"
+                },
+                {
+                    id: "bb",
+                    label: "Berat Badan"
+                },
+                {
+                    id: "tb",
+                    label: "Tinggi Badan"
+                },
+                {
+                    id: "nadi",
+                    label: "Nadi"
+                },
+                {
+                    id: "noSurat",
+                    label: "No Surat"
+                },
             ];
 
             var error = false;
+            var dataKurang = [];
 
-            inputsToValidate.forEach(function(inputId) {
-                var inputElement = document.getElementById(inputId);
+            inputsToValidate.forEach(({
+                id,
+                label
+            }) => {
+                var inputElement = document.getElementById(id);
                 var inputValue = inputElement.value.trim();
 
                 if (inputValue === "") {
+                    // Tambahkan error styling
                     if ($(inputElement).hasClass("select2-hidden-accessible")) {
-                        // Select2 element
-                        $(inputElement)
-                            .next(".select2-container")
-                            .addClass("input-error");
+                        $(inputElement).next(".select2-container").addClass("input-error");
                     } else {
-                        // Regular input element
                         inputElement.classList.add("input-error");
                     }
+
                     error = true;
+                    dataKurang.push(label);
                 } else {
+                    // Hapus error styling
                     if ($(inputElement).hasClass("select2-hidden-accessible")) {
-                        // Select2 element
-                        $(inputElement)
-                            .next(".select2-container")
-                            .removeClass("input-error");
+                        $(inputElement).next(".select2-container").removeClass("input-error");
                     } else {
-                        // Regular input element
                         inputElement.classList.remove("input-error");
                     }
                 }
             });
-            if (error) {
-                var dataKurang = [];
-                var norm = $("#norm").val();
-                var notrans = $("#notrans").val();
-                var nama = $("#nama").val();
-                var jaminan = $("#layanan").val();
-                var alamat = $("#alamat").val();
-                var umur = $("#umur").val();
-                var petugas = $("#analis").val();
-                var dokter = $("#dokter").val();
-                var noSampel = $("#no_sampel").val();
-                if (!norm) dataKurang.push("No RM ");
-                if (!notrans) dataKurang.push("No Transaksi ");
-                if (!nama) dataKurang.push("Nama Pasien ");
-                if (!jaminan) dataKurang.push("Jaminan ");
-                if (!alamat) dataKurang.push("Alamat ");
-                if (!umur) dataKurang.push("Umur ");
-                if (!petugas) dataKurang.push("Petugas ");
-                if (!dokter) dataKurang.push("Dokter ");
-                if (!noSampel) dataKurang.push("No Sampel ");
 
+            if (error) {
                 Swal.fire({
                     icon: "error",
-                    title: "Data Tidak Lengkap...!!! \n\n" +
-                        dataKurang.join(", ") +
-                        "Belum Diisi",
+                    title: `Data Tidak Lengkap...!!!\n\n${dataKurang.join(", ")} Belum Diisi`,
                 });
             } else {
-                // Lakukan pengiriman data atau proses selanjutnya jika semua data valid
-                simpan(); // Contoh: Panggil fungsi simpan() jika semua data valid
+                simpan();
             }
         }
 
+
         function simpan() {
+            var tglTrans = $("#tglTrans").val();
+            var noSurat = $("#noSurat").val();
             var norm = $("#norm").val();
             var nama = $("#nama").val();
-            var alamat = $("#alamat").val();
-            var nik = $("#nik").val();
-            var jaminan = $("#layanan").val();
-            var dokter = $("#dokter").val();
             var tglLahir = $("#tglLahir").val();
-            var tanggal = $("#tgltrans").val();
-            var noSampel = $("#no_sampel").val();
             var umur = $("#umur").val();
-            var jk = $("#jk").val();
-
-            if (!norm || !dokter || !petugas || !noSampel || !umur || !jk) {
-                var dataKurang = [];
-                if (!norm) dataKurang.push("No RM ");
-                if (!notrans) dataKurang.push("Nomor Transaksi ");
-                if (!dokter) dataKurang.push("Dokter ");
-                if (!petugas) dataKurang.push("Petugas ");
-                if (!noSampel) dataKurang.push("No Sampel ");
-                if (!umur) dataKurang.push("Umur ");
-
-                Swal.fire({
-                    icon: "error",
-                    title: "Data Tidak Lengkap...!!! " +
-                        dataKurang.join(", ") +
-                        "Belum Diisi",
-                });
-                if (!norm) $("#norm").focus();
-                if (!notrans) $("#notrans").focus();
-                if (!dokter) $("#dokter").focus();
-                if (!petugas) $("#petugas").focus();
-                if (!noSampel) $("#no_sampel").focus();
-                if (!umur) $("#umur").focus();
-                if (!jk) $("#jk").focus();
-            } else {
-                fetch("/api/addTransaksiLab", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            tanggal: tanggal,
-                            norm: norm,
-                            nama: nama,
-                            tglLahir: tglLahir,
-                            nik: nik,
-                            alamat: alamat,
-                            keperluan: keperluan,
-                            noSurat: noSurat,
-                            jaminan: jaminan,
-                            petugas: petugas,
-                            dokter: dokter,
-                        }),
-                    })
-                    .then((response) => {
-                        if (!response.ok) {
-                            console.log("Response status:", response.status);
-                            console.log("Response status text:", response.message);
-                            throw new Error("Network response was not ok");
+            var nik = $("#nik").val();
+            var alamat = $("#alamat").val();
+            var hasil = $("#hasil").val();
+            var keperluan = $("#keperluan").val();
+            var petugas = $("#petugas").val();
+            var dokter = $("#dokter").val();
+            fetch("/api/surat/medis", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        tglTrans: tglTrans,
+                        noSurat: noSurat,
+                        norm: norm,
+                        nama: nama,
+                        tglLahir: tglLahir,
+                        umur: umur,
+                        nik: nik,
+                        alamat: alamat,
+                        hasil: hasil,
+                        keperluan: keperluan,
+                        petugas: petugas,
+                        dokter: dokter
+                    }),
+                })
+                .then((response) => {
+                    if (!response.ok) {
+                        // Pisahkan status berdasarkan kode HTTP
+                        if (response.status === 404) {
+                            throw {
+                                message: "404: Data tidak ditemukan",
+                                icon: "info"
+                            };
+                        } else if (response.status === 400) {
+                            throw {
+                                message: "400: Data Sudah Ada",
+                                icon: "info"
+                            };
+                        } else if (response.status === 500) {
+                            throw {
+                                message: "500: Kesalahan server internal",
+                                icon: "error"
+                            };
+                        } else {
+                            throw {
+                                message: `${response.status}: Terjadi kesalahan tidak diketahui`,
+                                icon: "error"
+                            };
                         }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        console.log(data);
-                        var massage = data.message;
-                        Swal.fire({
-                            icon: "success",
-                            title: massage,
-                        });
-                        var notrans = $("#notrans").val();
-                        tampilkanOrder(notrans);
-                        $('table thead input[type="checkbox"]').prop("checked", false);
-                        $('table tbody input[type="checkbox"]').prop("checked", false);
-                    })
-                    .catch((error) => {
-                        console.error(
-                            "There has been a problem with your fetch operation:",
-                            error
-                        );
-                        Swal.fire({
-                            icon: "error",
-                            title: "There has been a problem with your fetch operation:" +
-                                error,
-                        });
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // Status 200
+                    console.log(data);
+                    Swal.fire({
+                        icon: "success",
+                        title: "Berhasil",
+                        text: data.message, // Menampilkan pesan sukses
                     });
-            }
+                    closeSwalAfterDelay()
+                    var data = data.lists
+                    creatTableDataPemohon(data);
+                    $("#modalCreateSurat").modal("hide");
+                })
+                .catch((error) => {
+                    console.log("🚀 ~ Error:", error);
+                    Swal.fire({
+                        icon: error.icon || "error", // Gunakan ikon default jika tidak ada
+                        title: "Kesalahan",
+                        text: error.message || "Terjadi masalah yang tidak diketahui", // Pesan error
+                    });
+                });
         }
     </script>
 @endsection

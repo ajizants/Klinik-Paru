@@ -19,6 +19,7 @@ use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\RoMasterController;
 use App\Http\Controllers\ROTransaksiController;
 use App\Http\Controllers\StokController;
+use App\Http\Controllers\SuratController;
 use App\Http\Controllers\VerifController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -260,5 +261,7 @@ Route::get('list/tunggu/lab', [DisplayController::class, 'tungguLab']);
 Route::get('list/tunggu/ro', [DisplayController::class, 'tungguRo']);
 Route::get('list/tunggu/farmasi', [DisplayController::class, 'listTungguFarmasi']);
 Route::get('list/tunggu/loket', [DisplayController::class, 'listTungguLoket']);
+Route::get('surat/medis/{id}/{tgl}', [SuratController::class, 'cetakSM']);
+Route::post('surat/medis', [SuratController::class, 'store']);
 
 // });

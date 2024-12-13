@@ -46,7 +46,7 @@ Route::get('display/poli/{id}', [DisplayController::class, 'poli'])->name('poli'
 Route::get('grafik/dokter', [DisplayController::class, 'rme'])->name('rme');
 //menu
 Route::middleware('auth')->group(function () {
-    Route::get('surat/medis', [SuratController::class, 'listSM'])->name('suratMedis');
+    Route::get('surat/medis', [SuratController::class, 'index'])->name('suratMedis');
     //pendaftaran
     Route::get('report', [HomeController::class, 'report'])->name('report');
     Route::get('Laporan/Pendaftaran', [HomeController::class, 'laporanPendaftaran'])->name('laporanPendaftaran');

@@ -575,7 +575,7 @@ function fetchDataAntrianAll(tanggal, ruang, callback) {
 function initializeDataTable(selector, data, columns, ruang) {
     let order;
     if (ruang === "surat") {
-        order = [[2, "asc"]];
+        order = [[1, "asc"]];
     } else {
         order = [[1, "asc"]];
     }
@@ -815,6 +815,7 @@ function setTransaksi(button, ruang) {
     var tujuan = $(button).data("tujuan");
     var umur = $(button).data("umur");
     var tglLahir = $(button).data("tgllahir");
+    var nik = $(button).data("nik");
     jk = $(button).data("jk");
     // console.log("🚀 ~ setTransaksi ~ jk:", jk);
     switch (ruang) {
@@ -842,6 +843,8 @@ function setTransaksi(button, ruang) {
             $("#umur").val(umur);
             $("#tglLahir").val(tglLahir);
             $("#alamat").val(alamat);
+            $("#nik").val(nik);
+            $("#tglTrans").val(tgltrans);
             $("#modalCreateSurat").modal("show");
             break;
         default:
