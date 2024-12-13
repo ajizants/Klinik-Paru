@@ -435,6 +435,52 @@ class HomeController extends Controller
             'title' => $title,
         ]);
     }
+    public function ro2()
+    {
+        $title = 'Radiologi';
+        $appUrlRo = env('APP_URLRO');
+        $proyeksi = RoProyeksiModel::all();
+        $kondisi = ROJenisKondisi::all();
+        $mesin = ROJenisMesin::all();
+        $foto = ROJenisFoto::all();
+        $film = ROJenisFilm::all();
+        $dokter = $this->pegawai([1, 7, 8]);
+        $radiografer = $this->pegawai([12]);
+
+        $kv = array_filter($kondisi->toArray(), function ($p) {
+            return $p['grup'] === 'KV';
+        });
+
+        $ma = array_filter($kondisi->toArray(), function ($p) {
+            return $p['grup'] === 'mA';
+        });
+
+        $s = array_filter($kondisi->toArray(), function ($p) {
+            return $p['grup'] === 's';
+        });
+
+        $kv = array_map(function ($item) {
+            return (object) $item;
+        }, $kv);
+
+        $ma = array_map(function ($item) {
+            return (object) $item;
+        }, $ma);
+
+        $s = array_map(function ($item) {
+            return (object) $item;
+        }, $s);
+        $dokter = array_map(function ($item) {
+            return (object) $item;
+        }, $dokter);
+        $radiografer = array_map(function ($item) {
+            return (object) $item;
+        }, $radiografer);
+
+        return view('RO.Trans.main2', compact('appUrlRo', 'proyeksi', 'mesin', 'foto', 'film', 'kv', 'ma', 's', 'dokter', 'radiografer'))->with([
+            'title' => $title,
+        ]);
+    }
 
     public function riwayatRo()
     {

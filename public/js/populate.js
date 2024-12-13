@@ -40,10 +40,11 @@ function initializeDataAntrian(response, ruang) {
     updateTableData(data, ruang, "sudah", "#dataSelesai");
 
     if (ruang === "ro") {
+        console.log("🚀 ~ initializeDataAntrian ~ ro:", data);
         updateTableData(
             data,
             ruang,
-            "Belum Upload Foto Thorak",
+            "Belum Upload Foto Thorax",
             "#daftarUpload"
         );
     }
@@ -88,13 +89,35 @@ function updateExistingTables(response, ruang) {
     }
 }
 
+// function updateTable(tableId, data, ruang, status) {
+//     const filteredData = data.filter((item) => item.status === status);
+//     console.log("🚀 ~ updateTable ~ filteredData:", filteredData);
+//     const table = $(tableId).DataTable();
+//     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
+//     const namaPasien = filteredData.length ? filteredData[0].pasien_nama : "";
+//     console.log("🚀 ~ updateTable ~ namaPasien:", namaPasien);
+//     // processDataArray(dataArray, ruang);
+//     if (dataArray.length > 1 && namaPasien !== "Belum ada data masuk") {
+//         processDataArray(dataArray, ruang);
+//     }
+//     table.clear().rows.add(dataArray).draw();
+// }
+
 function updateTable(tableId, data, ruang, status) {
     const filteredData = data.filter((item) => item.status === status);
+    console.log("🚀 ~ updateTable ~ filteredData:", filteredData);
+
     const table = $(tableId).DataTable();
     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
-    const namaPasien = filteredData.length ? filteredData[0].pasien_nama : "";
-    console.log("🚀 ~ updateTable ~ namaPasien:", namaPasien);
-    processDataArray(dataArray, ruang);
+    const isNoDataMessage = dataArray.aksi === ""; // Periksa jika `getNoDataMessage` aktif
+
+    console.log("🚀 ~ updateTable ~ isNoDataMessage:", isNoDataMessage);
+    // Panggil `processDataArray` hanya jika bukan "No Data"
+    if (isNoDataMessage === false) {
+        console.log("🚀 ~ updateTable ~ prosessDataArray");
+        processDataArray(dataArray, ruang);
+    }
+
     table.clear().rows.add(dataArray).draw();
 }
 
@@ -132,7 +155,8 @@ function drawDataTable(dataArray, ruang, tableId) {
             [1, "asc"],
             [2, "asc"],
         ],
-        pageLength: ruang === "lab" ? 5 : 10,
+        pageLength: 5,
+        lengthMenu: [5, 10, 25, 50],
         destroy: true, // Allow table to reinitialize
     });
 }
@@ -163,29 +187,43 @@ function generateActionButton(item, ruang) {
         igd: `setTransaksi(this,'${ruang}')`,
         lab: `setTransaksi(this,'${ruang}')`,
     };
-    // const actionMap = {
-    //     dots: `cariPasienTb('${item.pasien_no_rm}','${item.tanggal}')`,
-    //     ro: `askRo(this)`,
-    //     igd: `setTransaksi(this)`,
-    //     lab: `askLab(this)`,
-    // };
-    if (ruang === "igd") {
-        return `
-        <a type="button" class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
-            ${commonAttributes} onclick="${actionMap[ruang]}">
-            <i class="fas fa-pen-to-square"></i>
-        </a>
-        <button type="button" ${commonAttributes} class="aksi-button btn-sm btn-${item.igd_selesai} py-md-0 py-1 mt-md-0 mt-2 icon-link icon-link-hover" 
-            onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this,'${ruang}')" 
-            placeholder="Selesai"><i class="fa-regular fa-square-check"></i>
-        </button>`;
-    } else {
-        return `
+
+    const editButton = `
         <a type="button" class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
             ${commonAttributes} onclick="${actionMap[ruang]}">
             <i class="fas fa-pen-to-square"></i>
         </a>`;
+
+    if (ruang === "igd") {
+        const checkOutButton = `
+            <button type="button" ${commonAttributes}
+                class="aksi-button btn-sm btn-${item.igd_selesai} py-md-0 py-1 mt-md-0 mt-2 icon-link icon-link-hover"
+                onclick="checkOut('${item.pasien_no_rm}', '${item.no_trans}', this, '${ruang}')"
+                placeholder="Selesai">
+                <i class="fa-regular fa-square-check"></i>
+            </button>`;
+        return `${editButton} ${checkOutButton}`;
     }
+
+    if (ruang === "ro") {
+        if (
+            item.status === "sudah" ||
+            item.status === "Belum Upload Foto Thorax"
+        ) {
+            const deleteButton = `
+                <a type="button" ${commonAttributes}
+                    class="aksi-button btn-sm btn-danger py-md-0 py-1 icon-link icon-link-hover"
+                    onclick="deleteTransaksi(this);">
+                    <i class="fas fa-trash"></i>
+                </a>`;
+            return `${editButton} ${deleteButton}`;
+        }
+
+        return editButton;
+    }
+
+    // Default case for other `ruang` values
+    return editButton;
 }
 
 function getFormattedAddress(item) {
@@ -223,14 +261,14 @@ function getColumnsForRuang(ruang) {
                 }">${data}</div>`;
             },
         },
-        // {
-        //     data: "status",
-        //     className: "text-center p-2",
-        //     render: (data) =>
-        //         `<div class="badge badge-${
-        //             data === "belum" ? "danger" : "success"
-        //         }">${data}</div>`,
-        // },
+        {
+            data: "status_obat",
+            className: "text-center p-2",
+            render: (data) =>
+                `<div class="badge badge-${
+                    data === "Obat Belum" ? "danger" : "success"
+                }">${data}</div>`,
+        },
         { data: "tanggal", className: "text-center p-2 col-1" },
         { data: "antrean_nomor", className: "text-center p-2" },
         { data: "penjamin_nama", className: "text-center p-2" },
@@ -254,6 +292,7 @@ function getNoDataMessage() {
         {
             aksi: "",
             status: "",
+            status_obat: "",
             tanggal: "",
             antrean_nomor: "",
             pasien_no_rm: "",
@@ -270,7 +309,7 @@ function getNoDataMessage() {
 }
 
 function getPenunjangText(item) {
-    console.log("🚀 ~ getPenunjangText ~ item:", item);
+    // console.log("🚀 ~ getPenunjangText ~ item:", item);
 
     return `
         <div>
@@ -533,21 +572,99 @@ function fetchDataAntrianAll(tanggal, ruang, callback) {
     });
 }
 
-function initializeDataTable(selector, data, columns, order = [1, "asc"]) {
+function initializeDataTable(selector, data, columns, ruang) {
+    let order;
+    if (ruang === "surat") {
+        order = [[2, "asc"]];
+    } else {
+        order = [[1, "asc"]];
+    }
     $(selector).DataTable({
         data,
         columns,
         order,
+        pageLength: 5,
+        lengthMenu: [5, 10, 25, 50],
         destroy: true,
     });
 }
 
+// function getColumnDefinitions(statusType = "status_pulang", ruang) {
+//     const baseColumns = [
+//         {
+//             data: "antrean_nomor",
+//             className: "font-weight-bold text-center p-2 col-1",
+//             title: "Urut",
+//         },
+//         {
+//             data: statusType,
+//             className: "text-center p-2",
+//             title: "Status",
+//             render: function (data) {
+//                 const statusClasses = {
+//                     "Belum Pulang": "danger",
+//                     "Sudah Pulang": "success",
+//                     "Tidak Ada Permintaan": "danger",
+//                     "Belum Ada Ts RO": "danger",
+//                     "Belum Upload Foto Thorax": "warning",
+//                     "Sudah Selesai": "success",
+//                     default: "secondary",
+//                 };
+//                 return `<div class="badge badge-${
+//                     statusClasses[data] || statusClasses.default
+//                 }">${data}</div>`;
+//             },
+//         },
+//         { data: "tanggal", className: "col-1 p-2", title: "Tanggal" },
+//         {
+//             data: "penjamin_nama",
+//             className: "text-center p-2",
+//             title: "Penjamin",
+//         },
+//         { data: "pasien_no_rm", className: "text-center p-2", title: "NoRM" },
+//     ];
+
+//     const extraColumns = [
+//         { data: "pasien_nik", className: "p-2 col-1", title: "NIK" },
+//     ];
+
+//     const commonColumns = [
+//         { data: "pasien_nama", className: "p-2 col-3", title: "Nama Dokter" },
+//         { data: "dokter_nama", className: "p-2 col-3", title: "Dokter" },
+//         { data: "poli_nama", className: "p-2", title: "Poli" },
+//     ];
+//     const aksiColumns = [
+//         { data: "aksi", className: "p-2 col-1", title: "aksi" },
+//     ];
+
+//     const full = [
+//         ...aksiColumns,
+//         ...baseColumns,
+//         ...extraColumns,
+//         ...commonColumns,
+//     ];
+//     const nikColom = [...baseColumns, ...extraColumns, ...commonColumns];
+//     const defCol = [...baseColumns, ...commonColumns];
+
+//     if (ruang === "surat") {
+//         return full;
+//     }
+//     if (ruang === "lab" || ruang === "dots") {
+//         return nikColom;
+//     }
+//     return defCol;
+// }
 function getColumnDefinitions(statusType = "status_pulang", ruang) {
     const baseColumns = [
-        { data: "aksi", className: "text-center p-2 col-1" },
+        {
+            data: "antrean_nomor",
+            className: "font-weight-bold text-center p-2 col-1",
+            title: "Urut",
+        },
         {
             data: statusType,
             className: "text-center p-2",
+            title: "Status",
             render: function (data) {
                 const statusClasses = {
                     "Belum Pulang": "danger",
@@ -563,24 +680,44 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
                 }">${data}</div>`;
             },
         },
-        { data: "tanggal", className: "col-1 p-2" },
-        { data: "antrean_nomor", className: "text-center p-2" },
-        { data: "penjamin_nama", className: "text-center p-2" },
-        { data: "pasien_no_rm", className: "text-center p-2" },
+        { data: "tanggal", className: "col-1 p-2", title: "Tanggal" },
+        {
+            data: "penjamin_nama",
+            className: "text-center p-2",
+            title: "Penjamin",
+        },
+        { data: "pasien_no_rm", className: "text-center p-2", title: "NoRM" },
     ];
 
-    const extraColumns =
-        ruang === "lab" || ruang === "dots"
-            ? [{ data: "pasien_nik", className: "p-2 col-1" }]
-            : [];
+    const extraColumns = [
+        { data: "pasien_nik", className: "p-2 col-1", title: "NIK" },
+    ];
 
     const commonColumns = [
-        { data: "pasien_nama", className: "p-2 col-3" },
-        { data: "dokter_nama", className: "p-2 col-3" },
-        { data: "poli_nama", className: "p-2" },
+        { data: "pasien_nama", className: "p-2 col-3", title: "Nama Pasien" },
+        { data: "dokter_nama", className: "p-2 col-3", title: "Dokter" },
+        { data: "poli_nama", className: "p-2", title: "Poli" },
     ];
 
-    return [...baseColumns, ...extraColumns, ...commonColumns];
+    const aksiColumns = [
+        { data: "aksi", className: "p-2 col-1", title: "Aksi" },
+    ];
+
+    // Konfigurasi kolom untuk setiap ruang
+    const columnConfig = {
+        surat: [
+            ...aksiColumns,
+            ...baseColumns,
+            ...extraColumns,
+            ...commonColumns,
+        ],
+        lab: [...baseColumns, ...extraColumns, ...commonColumns],
+        dots: [...baseColumns, ...extraColumns, ...commonColumns],
+        default: [...baseColumns, ...commonColumns],
+    };
+
+    // Return kolom sesuai ruang, atau gunakan default
+    return columnConfig[ruang] || columnConfig.default;
 }
 
 function processResponse(response, ruang, statusFilter) {
@@ -620,33 +757,45 @@ function generateActionLink(item, ruang, statusFilter) {
     }
     // console.log("🚀 ~ generateActionLink ~ notrans antrian cppt:", notrans);
     const commonAttributes = `
+        data-tgltrans="${item.tanggal}"
         data-norm="${item.pasien_no_rm}"
         data-nama="${item.pasien_nama}"
-        data-dokter="${item.dokter_nama}"
+        data-tglLahir="${item.pasien_tgl_lahir}"
+        data-nik="${item.pasien_nik || "-"}"
+        data-alamat="${item.pasien_alamat}"
         data-asktind="${item.asktind || ""}"
         data-jk="${item.jenis_kelamin_nama}"
+        data-umur="${item.pasien_umur}"
         data-kddokter="${item.nip_dokter}"
-        data-alamat="${item.pasien_alamat}"
         data-layanan="${item.penjamin_nama}"
         data-notrans="${notrans}"
-        data-tgltrans="${item.tanggal}"
         data-noreg="${item.no_reg}"
+        data-dokter="${item.dokter_nama}"
     `;
     const links = {
         dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-        lab: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+        surat: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
         ro:
             item.status === "Sudah Selesai"
-                ? `<a type="button" ${commonAttributes} class="mr-2aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
-                    <a type="button" ${commonAttributes} class="aksi-button btn-sm btn-danger py-md-0 py-1 icon-link icon-link-hover" onclick="deleteTransaksi(this);"><i class="fas fa-trash"></i></a>`
-                : `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-        igd:
-            item.status === "Sudah Selesai"
-                ? `<a type="button" ${commonAttributes} class="mr-2 aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
-                    <button type="button" ${commonAttributes} class="aksi-button btn-sm btn-${item.igd_selesai} py-md-0 py-1 mt-md-0 mt-2 icon-link icon-link-hover" onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this,'${ruang}')" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`
-                : `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+                ? `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-danger py-md-0 py-1 icon-link icon-link-hover" onclick="deleteTransaksi(this);"><i class="fas fa-trash"></i></a>`
+                : `<a></a>`,
         default: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1  icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
     };
+    // const links = {
+    //     dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    //     lab: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    //     ro:
+    //         item.status === "Sudah Selesai"
+    //             ? `<a type="button" ${commonAttributes} class="mr-2aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
+    //                 <a type="button" ${commonAttributes} class="aksi-button btn-sm btn-danger py-md-0 py-1 icon-link icon-link-hover" onclick="deleteTransaksi(this);"><i class="fas fa-trash"></i></a>`
+    //             : `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    //     igd:
+    //         item.status === "Sudah Selesai"
+    //             ? `<a type="button" ${commonAttributes} class="mr-2 aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
+    //                 <button type="button" ${commonAttributes} class="aksi-button btn-sm btn-${item.igd_selesai} py-md-0 py-1 mt-md-0 mt-2 icon-link icon-link-hover" onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this,'${ruang}')" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`
+    //             : `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    //     default: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1  icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    // };
 
     // Mengembalikan tautan yang sesuai berdasarkan ruang dan statusFilter
     return links[ruang] || links.default;
@@ -665,6 +814,7 @@ function setTransaksi(button, ruang) {
     var asktind = $(button).data("asktind");
     var tujuan = $(button).data("tujuan");
     var umur = $(button).data("umur");
+    var tglLahir = $(button).data("tgllahir");
     jk = $(button).data("jk");
     // console.log("🚀 ~ setTransaksi ~ jk:", jk);
     switch (ruang) {
@@ -687,6 +837,12 @@ function setTransaksi(button, ruang) {
         case "dots":
             notrans = $(button).data("no_reg");
             cariPasienTb(norm, tgl, ruang);
+            break;
+        case "surat":
+            $("#umur").val(umur);
+            $("#tglLahir").val(tglLahir);
+            $("#alamat").val(alamat);
+            $("#modalCreateSurat").modal("show");
             break;
         default:
             $("#igd").hide();
@@ -715,9 +871,9 @@ function setTransaksi(button, ruang) {
         $("#permintaan").html(`<b>${asktind}</b>
         <br>
         <br>
-        <br>    
-        <br>    
-        <br>    
+        <br>
+        <br>
+        <br>
         <div class="font-weight-bold bg-warning rounded">${tujuan}</div>`);
     }
     scrollToInputSection();
@@ -747,7 +903,8 @@ function antrianAll(ruang) {
         initializeDataTable(
             "#antrianall",
             antrianAll,
-            getColumnDefinitions("status_pulang", ruang)
+            getColumnDefinitions("status_pulang", ruang),
+            ruang
         );
 
         // if (ruang === "igd" || ruang === "lab" || ruang === "dots") {

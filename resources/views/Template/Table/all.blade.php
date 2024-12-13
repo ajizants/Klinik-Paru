@@ -4,25 +4,16 @@
         <table id="antrianall" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%" cellspacing="0">
             <thead class="bg bg-secondary">
                 <tr>
-                    {{-- <th width="35px">Aksi</th>
-                    <th width="15px">status</th>
-                    <th>Tanggal</th>
-                    <th>Urut</th>
-                    <th>Jaminan</th>
-                    <th>No RM</th>
-                    <th class="col-3">Nama Pasien</th>
-                    <th class="col-3">Dokter</th>
-                    <th>Poli</th> --}}
-                    <th>Aksi</th>
+                    {{-- <th class="" id="kolom_aksi" style="display: none;">Aksi</th> --}}
+                    {{-- <th class="col-1">Urut</th>
                     <th class="col-1">status</th>
                     <th>Tanggal</th>
-                    <th>Urut</th>
                     <th>Jaminan</th>
-                    <th>No RM</th>
-                    <th class="col-1">NIK</th>
+                    <th>NoRM</th>
+                    <th class="" id="kolom_NIK">NIK</th>
                     <th class="col-2">Nama Pasien</th>
                     <th class="col-3">Dokter</th>
-                    <th>Poli</th>
+                    <th>Poli</th> --}}
                 </tr>
             </thead>
             <tbody>

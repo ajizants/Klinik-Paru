@@ -102,7 +102,7 @@
                                 </ul>
                             </li>
                             <!-- Farmasi Section -->
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a href="" class="nav-link">
                                     <i class="fa-solid fa-pills nav-icon"></i>
                                     <p>
@@ -124,7 +124,7 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </li>
+                            </li> --}}
                             <!-- lab Section -->
                             <li class="nav-item">
                                 <a href="" class="nav-link">
@@ -217,6 +217,12 @@
 
                             {{-- LAPORAN --}}
                             <li class="nav-header">LAPORAN</li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/surat/medis') }}">
+                                    <i class="fa-solid fa-envelope nav-icon"></i>
+                                    <p>Surat Medis</p>
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url('/RO/Hasil') }}">
                                     <i class="fa-solid fa-x-ray nav-icon"></i>

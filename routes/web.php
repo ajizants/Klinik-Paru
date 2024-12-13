@@ -4,6 +4,7 @@ use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasienKominfoController;
+use App\Http\Controllers\SuratController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,6 +46,8 @@ Route::get('display/poli/{id}', [DisplayController::class, 'poli'])->name('poli'
 Route::get('grafik/dokter', [DisplayController::class, 'rme'])->name('rme');
 //menu
 Route::middleware('auth')->group(function () {
+    Route::get('surat/medis', [SuratController::class, 'listSM'])->name('suratMedis');
+    //pendaftaran
     Route::get('report', [HomeController::class, 'report'])->name('report');
     Route::get('Laporan/Pendaftaran', [HomeController::class, 'laporanPendaftaran'])->name('laporanPendaftaran');
     Route::get('pendaftaran', [HomeController::class, 'pendaftaran'])->name('pendaftaran');
@@ -69,6 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::get('masterLab', [HomeController::class, 'masterLab'])->name('masterLab')->middleware('role:lab');
     //RO
     Route::get('ro', [HomeController::class, 'ro'])->name('ro')->middleware('role:ro');
+    Route::get('ro2', [HomeController::class, 'ro2'])->name('ro')->middleware('role:ro');
     Route::get('masterRo', [HomeController::class, 'masterRo'])->name('masterRo')->middleware('role:ro');
     Route::get('riwayatRo', [HomeController::class, 'riwayatRo'])->name('hasilRo')->middleware('role:ro');
     Route::post('waktu_layanan', [PasienKominfoController::class, 'waktuLayanan']);

@@ -5,11 +5,12 @@
             <thead class="bg bg-primary">
                 <tr>
                     <th>Aksi</th>
-                    <th>status</th>
+                    <th width="15px">Status</th>
+                    <th width="20px">Obat</th>
                     <th>Tanggal</th>
                     <th>Urut</th>
                     <th>Jaminan</th>
-                    <th>No RM</th>
+                    <th>NoRM</th>
                     <th class="col-1">Nama Pasien</th>
                     <th class="col-3">Dokter</th>
                     <th class="col-3">Permintaan</th>

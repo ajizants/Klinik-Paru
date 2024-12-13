@@ -987,6 +987,7 @@ class PasienKominfoController extends Controller
         if (isset($data['response']['data']) && is_array($data['response']['data'])) {
             $filteredData = array_filter(array_map(function ($d) use ($ruang) {
                 $d['status'] = 'belum';
+                $d['status_obat'] = $d['resep_obat'] == [] ? 'Obat Belum' : 'Obat Sudah';
 
                 if ($ruang === 'igd') {
 

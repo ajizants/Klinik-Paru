@@ -96,6 +96,19 @@
                                             <div class="card-body">
 
                                                 <div class="form-grup row">
+
+                                                    <div class="col-md border border-3 border-dark">
+                                                        <p class="font-weight-bold fs-3">Permintaan RO:</p>
+                                                        <p id="permintaan" class="fw-bold fs-3 ml-3"></p>
+                                                    </div>
+                                                    <div class="col-md-3"></div>
+                                                    <div id="tujuanLain"
+                                                        class="col-md border border-3 border-dark bg-warning">
+                                                        Penunjang Hari ini:
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-grup row">
                                                     <label class="col-sm-1 py-3 col-form-label" for="pasienRawat">Pasien
                                                         Rawat</label>
                                                     <div class="col-sm-3 py-3 mr-5">
@@ -110,14 +123,6 @@
                                                             / IRNA
                                                         </label>
                                                     </div>
-                                                    {{-- <input type="text" name="Permintaan RO" id="Permintaan_RO"
-                                                            class="form-control form-control p-4"
-                                                            placeholder="Permintaan RO"> --}}
-                                                    <div class="col-md-6 border border-3 border-dark"
-                                                        style="height: 47px;"">
-                                                        <p id="permintaan" class="fw-bold fs-3">Permintaan RO:</p>
-                                                    </div>
-
                                                 </div>
                                                 <div class="pl-5">
                                                     <div class="form-group row">
@@ -126,7 +131,7 @@
                                                         <div class="col-sm-2">
                                                             <input type="text" name="noreg" maxlength="6"
                                                                 class="form-control form-control-sm" id="noreg"
-                                                                placeholder="NO. Reg." required>
+                                                                placeholder="NO. Reg." required="">
                                                         </div>
 
                                                         <label class="col-sm-1 col-form-label">Nama Foto</label>
@@ -252,52 +257,66 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group row" style="margin-right: 100px;">
-                                                        <label for="catatan" class="col-sm-1">Catatan</label>
-                                                        <div class="col-sm pr-0">
-                                                            <textarea name="catatan" id="catatan" class="form-control textarea"></textarea>
+                                                        <div class="col">
+                                                            <div class="form-group row">
+                                                                <label for="catatan" class="col-sm-2">Catatan</label>
+                                                                <div class="col-sm pr-0  ml-2">
+                                                                    <textarea name="catatan" id="catatan" class="form-control textarea"></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-form-label">Foto Rontgen</label>
+
+                                                                <div class="col-sm-auto ml-4">
+                                                                    <input type="file" name="gambar"
+                                                                        id="fileRo" class="form-control-sm col"
+                                                                        placeholder=" Pilih Foto" title="Foto Ro" />
+                                                                </div>
+                                                                <div class="col-sm-auto">
+                                                                    <input class="form-control form-control-sm col"
+                                                                        name="Ket Foto 1"
+                                                                        id="ket_foto"title="Nama Foto"
+                                                                        placeholder=" Nama Foto" />
+                                                                </div>
+                                                                <div class="form-group col-sm-auto"
+                                                                    style="display: none;">
+                                                                    <button type="button"
+                                                                        class="btn btn-primary btn-sm"
+                                                                        data-toggle="modal"
+                                                                        data-target="#staticBackdrop">
+                                                                        Upload Lebih dari 1 Foto Rontgen
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-group row"
+                                                                id="preview"style="display: none">
+                                                                <div class="col-12 table-responsive">
+                                                                    <table id="tableRo"
+                                                                        class="table table-striped table-hover table-bordered pt-0 mt-0 fs-6"
+                                                                        style="width: 100%">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <td class="col-2"
+                                                                                    style="width: 55px">Aksi
+                                                                                </td>
+                                                                                <td>ID</td>
+                                                                                <td>Foto Rontgen</td>
+                                                                                <td>Nama Foto</td>
+                                                                                <td>Tanggal</td>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
 
-                                                    <div class="form-group row">
-                                                        <label class="col-form-label">Foto Rontgen</label>
 
-                                                        <div class="col-sm-auto ml-2">
-                                                            <input type="file" name="gambar" id="fileRo"
-                                                                class="form-control-sm col" placeholder=" Pilih Foto"
-                                                                title="Foto Ro" />
-                                                        </div>
-                                                        <div class="col-sm-auto">
-                                                            <input class="form-control form-control-sm col"
-                                                                name="Ket Foto 1" id="ket_foto"title="Nama Foto"
-                                                                placeholder=" Nama Foto" />
-                                                        </div>
-                                                        <div class="form-group col-sm-auto" style="display: none;">
-                                                            <button type="button" class="btn btn-primary btn-sm"
-                                                                data-toggle="modal" data-target="#staticBackdrop">
-                                                                Upload Lebih dari 1 Foto Rontgen
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group row" id="preview"style="display: none">
-                                                        <div class="col-12 table-responsive">
-                                                            <table id="tableRo"
-                                                                class="table table-striped table-hover table-bordered pt-0 mt-0 fs-6"
-                                                                style="width: 100%">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <td class="col-2" style="width: 35px">Aksi
-                                                                        </td>
-                                                                        <td>ID</td>
-                                                                        <td>Foto Rontgen</td>
-                                                                        <td>Nama Foto</td>
-                                                                        <td>Tanggal</td>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -322,7 +341,8 @@
                                                 <div class="modal-body">
                                                     <form id="formUpdate">
                                                         <label for="idFoto"
-                                                            class=" col-form-label font-weight-bold mb-0 ">ID Foto
+                                                            class=" col-form-label font-weight-bold mb-0 ">ID
+                                                            Foto
                                                             :</label>
                                                         <div class=" input-group">
                                                             <input type="number" name="idFoto" id="idFoto"
@@ -330,7 +350,8 @@
                                                                 placeholder="ID Foto" />
                                                         </div>
                                                         <label for="nmFoto"
-                                                            class=" col-form-label font-weight-bold mb-0 ">Nama Foto
+                                                            class=" col-form-label font-weight-bold mb-0 ">Nama
+                                                            Foto
                                                             :</label>
                                                         <div class=" input-group">
                                                             <input type="text" name="nmFoto" id="nmFoto"

@@ -13,6 +13,103 @@ class KominfoModel extends Model
 {
     protected $table = 'm_pasien_kominfo';
 
+    public function antrianAll(array $params)
+    {
+        // return ($params);
+        $tanggal = $params['tanggal'];
+        $ruang = $params['ruang'];
+        $params = [
+            'tanggal_awal' => $tanggal,
+            'tanggal_akhir' => $tanggal,
+            'no_rm' => '',
+        ];
+        $data = $this->pendaftaranRequest($params);
+
+        if (!isset($data) || !is_array($data)) {
+            return response()->json(['error' => 'Invalid data format'], 500);
+        }
+
+        $filteredData = array_values(array_filter($data, function ($d) {
+            return $d['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
+        }));
+
+        $doctorNipMap = [
+            'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
+            'dr. AGIL DANANJAYA, Sp.P' => '9',
+            'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
+            'dr. SIGIT DWIYANTO' => '198903142022031005',
+        ];
+        $tes = $filteredData;
+
+        foreach ($filteredData as &$item) {
+            $norm = $item['pasien_no_rm'];
+            $dokter_nama = $item['dokter_nama'];
+
+            try {
+                switch ($ruang) {
+                    case 'ro':
+                        $tsRo = ROTransaksiModel::where('norm', $norm)
+                            ->whereDate('tgltrans', $tanggal)->first();
+                        // $foto = ROTransaksiHasilModel::where('norm', $norm)
+                        $foto = RoHasilModel::where('norm', $norm)
+                            ->whereDate('tanggal', $tanggal)->first();
+                        $item['status'] = !$tsRo && !$foto ? 'Tidak Ada Transaksi' :
+                        ($tsRo && !$foto ? 'Belum Upload Foto Thorax' : 'Sudah Selesai');
+                        break;
+
+                    case 'igd':
+                        $ts = IGDTransModel::with('transbmhp')->where('norm', $norm)
+                            ->whereDate('created_at', $tanggal)->first();
+                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' :
+                        ($ts->transbmhp == null ? 'Belum Ada Transaksi BMHP' : 'Sudah Selesai');
+                        break;
+
+                    case 'farmasi':
+                        $ts = FarmasiModel::where('norm', $norm)
+                            ->whereDate('created_at', $tanggal)->first();
+                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        break;
+
+                    case 'dots':
+                        $ts = DotsTransModel::where('norm', $norm)
+                            ->whereDate('created_at', $tanggal)->first();
+                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        break;
+
+                    case 'lab':
+                        $ts = LaboratoriumKunjunganModel::where('norm', $norm)
+                            ->whereDate('created_at', $tanggal)->first();
+                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        break;
+                    case 'kasir':
+                        $ts = KasirTransModel::where('norm', $norm)
+                            ->whereDate('created_at', $tanggal)->first();
+                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        break;
+
+                    default:
+                        $item['status'] = 'Unknown ruang';
+                }
+            } catch (\Exception $e) {
+                Log::error('Database connection failed: ' . $e->getMessage());
+                $item['status'] = 'Database connection error';
+            }
+
+            $item['nip_dokter'] = $doctorNipMap[$dokter_nama] ?? 'Unknown';
+        }
+
+        return response()->json([
+            'metadata' => [
+                'message' => 'Data Pasien Ditemukan',
+                'code' => 200,
+            ],
+            'response' => [
+                'data' => $filteredData,
+                // 'data' => $tes,
+            ],
+        ]);
+    }
+
     public function pendaftaranRequest(array $params)
     {
         // Inisialisasi klien GuzzleHTTP
