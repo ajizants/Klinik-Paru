@@ -106,6 +106,7 @@ class SuratController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         try {
             // Validasi input
             $validatedData = $request->validate([
@@ -167,6 +168,32 @@ class SuratController extends Controller
                 'message' => 'Terjadi kesalahan saat menyimpan data',
                 'error' => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    public function destroy(Request $request)
+    {
+        $id = $request->id;
+        try {
+            $noSurat = SuratMedis::findOrFail($id);
+            $namaPasien = $noSurat->nama;
+            $no = $noSurat->noSurat;
+            $noSurat->delete();
+            $data = $this->listSM(date('Y-m-d'));
+            $tgl = date('Y-m-d');
+            $data = $this->listSM($tgl);
+
+            $res = [
+                'noSurat' => $data['jumlahSuratTahunIni'],
+                'namaPasien' => $namaPasien,
+                "no" => $no,
+                'lists' => $data['lists'],
+            ];
+
+            return response()->json($res, 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Terjadi kesalahan saat menghapus data'], 500);
         }
     }
 

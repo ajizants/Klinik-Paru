@@ -165,17 +165,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group col-6 col-md-2">
-                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Hasil
-                                        :</label>
-                                    <div class="input-group">
-                                        <select id="hasil" class="form-control border border-primary">
-                                            <option value="">--Pilih Hasil--</option>
-                                            <option value="Sehat">Sehat</option>
-                                            <option value="Sakit">Sakit</option>
-                                        </select>
-                                    </div>
-                                </div>
+
                                 <div class="form-grup col-12 col-md-6">
                                     <label for="keperluan"
                                         class="col-form-label font-weight-bold mb-0">Keterangan/Keperluan Surat
@@ -204,9 +194,47 @@
                                     </select>
 
                                 </div> --}}
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-12 col-md-2">
+                                {{-- <div class="form-group col-6 col-md-2">
+                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Hasil
+                                        :</label>
+                                    <div class="input-group">
+                                        <select id="hasil" class="form-control border border-primary">
+                                            <option value="">--Pilih Hasil--</option>
+                                            <option value="Sehat">Sehat</option>
+                                            <option value="Sakit">Sakit</option>
+                                        </select>
+                                    </div>
+                                </div> --}}
+                                <div class="form-group col-6 col-md-2">
+                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Hasil
+                                        :</label>
+                                    <div class="row pt-2 ml-1">
+                                        <input type="radio" name="hasil" id="sehat" value="Sehat" checked>
+                                        <label for="sehat" class="mr-4 ml-2 col-form-label">Sehat
+                                        </label>
+                                        <input type="radio" name="hasil" id="sakit" value="Sakit">
+                                        <label for="sakit" class="ml-2 col-form-label">
+                                            Sakit
+                                        </label>
+                                    </div>
+                                    {{-- <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Sehat"
+                                            id="defaultCheck1" checked>
+                                        <label class="form-check-label" for="defaultCheck1">
+                                            Sehat
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Sakit"
+                                            id="defaultCheck2">
+                                        <label class="form-check-label" for="defaultCheck2">
+                                            Sakit
+                                        </label>
+                                    </div> --}}
+                                </div>
+                                {{-- </div>
+                            <div class="row"> --}}
+                                <div class="form-group col-6 col-md-2">
                                     <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Tgl Surat
                                         :</label>
                                     <input type="date" id="tglTrans" class="form-control bg-white"
@@ -257,21 +285,35 @@
         console.log("🚀 ~ pasien:", pasien)
         const dataPasien = pasien.original;
         // console.log("🚀 ~ dataPasien:", dataPasien)
-        const jumlahSuratTahunIni = @json($jumlahSuratTahunIni);
+        let jumlahSuratTahunIni = @json($jumlahSuratTahunIni);
         // console.log("🚀 ~ jumlahSuratTahunIni:", jumlahSuratTahunIni)
         let noSuratNext = "";
+        let date = "";
+        let year = "";
+        let month = "";
+        let day = "";
+        let romawi = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+        let monthRomawi = "";
+        let formattedDate = "";
+
+        function generateNoSurat() {
+            noSuratNext = "440.6/" + jumlahSuratTahunIni + "/" + monthRomawi + "/" + year,
+                console.log("🚀 ~ $ ~ noSuratNext:", noSuratNext)
+            $("#noSurat").val(noSuratNext);
+        }
 
         $(document).ready(function() {
-            const date = new Date();
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, "0");
-            const day = String(date.getDate()).padStart(2, "0");
-            const formattedDate = `${year}-${month}-${day}`;
+            date = new Date();
+            year = date.getFullYear();
+            month = String(date.getMonth() + 1).padStart(2, "0");
+            day = String(date.getDate()).padStart(2, "0");
+            formattedDate = `${year}-${month}-${day}`;
             $("#tanggal").val(formattedDate);
+            generateNoSurat();
 
-            //dubah month ke romawi
-            const romawi = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
-            const monthRomawi = romawi[date.getMonth()];
+            // //dubah month ke romawi
+            // romawi = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+            monthRomawi = romawi[date.getMonth()];
             $("#dAntrian").show();
 
             noSuratNext = "440.6/" + jumlahSuratTahunIni + "/" + monthRomawi + "/" + year,
@@ -295,15 +337,18 @@
             data.forEach(function(item, index) {
                 item.aksi = `
                         <a type="button" class="btn btn-sm btn-warning mr-2 mb-2"
-                                href="/api/surat/medis/${item.id}/${item.tanggal}" target="_blank">Cetak Surat</a>
+                                href="/api/surat/medis/${item.id}/${item.tanggal}" target="_blank">Cetak</a>
+                        <button type="button" class="btn btn-sm btn-danger mr-2 mb-2"
+                               onclick="deleteSM('${item.id}')">Hapus</button>
                         `;
+                item.no = index + 1;
             });
             $("#dataPemohon")
                 .DataTable({
                     data: data,
                     destroy: true,
                     columns: [{
-                            data: "id"
+                            data: "no"
                         },
                         {
                             data: "aksi"
@@ -477,10 +522,20 @@
             var umur = $("#umur").val();
             var nik = $("#nik").val();
             var alamat = $("#alamat").val();
-            var hasil = $("#hasil").val();
+            // var hasil = $("#hasil").val();
+            var hasil = document.querySelector(
+                'input[name="hasil"]:checked'
+            ).value;
             var keperluan = $("#keperluan").val();
             var petugas = $("#petugas").val();
             var dokter = $("#dokter").val();
+            Swal.fire({
+                icon: "info",
+                title: "Menyimpan Data",
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            })
             fetch("/api/surat/medis", {
                     method: "POST",
                     headers: {
@@ -536,9 +591,7 @@
                         title: "Berhasil",
                         text: data.message, // Menampilkan pesan sukses
                     });
-                    closeSwalAfterDelay()
-                    var data = data.lists
-                    creatTableDataPemohon(data);
+                    sukses(data);
                     $("#modalCreateSurat").modal("hide");
                 })
                 .catch((error) => {
@@ -549,6 +602,71 @@
                         text: error.message || "Terjadi masalah yang tidak diketahui", // Pesan error
                     });
                 });
+        }
+
+        function sukses(data) {
+            console.log("🚀 ~ sukses ~ data:", data)
+            var listSurat = data.lists
+            jumlahSuratTahunIni = data.noSurat
+            console.log("🚀 ~ .then ~ jumlahSuratTahunIni:", jumlahSuratTahunIni)
+            generateNoSurat();
+            creatTableDataPemohon(listSurat);
+        }
+
+        function deleteSM(id) {
+            Swal.fire({
+                icon: "question",
+                title: "Hapus Data?",
+                showCancelButton: true,
+                confirmButtonText: "Hapus",
+                cancelButtonText: "Batal",
+                customClass: {
+                    popup: 'swal-custom-popup', // Tambahkan class khusus untuk popup
+                    title: 'swal-custom-title', // Tambahkan class khusus untuk title
+                    icon: 'swal-custom-icon' // Tambahkan class khusus untuk icon
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: "info",
+                        title: "Menghapus Data",
+                        didOpen: () => {
+                            Swal.showLoading();
+                        },
+                    })
+                    fetch(`/api/surat/medis/delete`, {
+                            method: "post",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                id: id
+                            }),
+                        })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            console.log(data);
+                            let msg = data.namaPasien + "\nNo Surat : " + data.no;
+
+                            Swal.fire({
+                                icon: "success",
+                                title: "Berhasil menghapus data surat",
+                                text: msg, // Menampilkan pesan sukses
+                            });
+                            sukses(data);
+
+                        })
+                        .catch((error) => {
+                            console.log("🚀 ~ Error:", error);
+                            Swal.fire({
+                                icon: error.icon || "error", // Gunakan ikon default jika tidak ada
+                                title: "Kesalahan",
+                                text: error.message ||
+                                    "Terjadi masalah yang tidak diketahui", // Pesan error
+                            });
+                        });
+                }
+            })
         }
     </script>
 @endsection

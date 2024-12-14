@@ -261,7 +261,12 @@ Route::get('list/tunggu/lab', [DisplayController::class, 'tungguLab']);
 Route::get('list/tunggu/ro', [DisplayController::class, 'tungguRo']);
 Route::get('list/tunggu/farmasi', [DisplayController::class, 'listTungguFarmasi']);
 Route::get('list/tunggu/loket', [DisplayController::class, 'listTungguLoket']);
+
+//Surat Medis
 Route::get('surat/medis/{id}/{tgl}', [SuratController::class, 'cetakSM']);
 Route::post('surat/medis', [SuratController::class, 'store']);
+Route::post('surat/medis/update', [SuratController::class, 'update']);
+Route::post('surat/medis/delete', [SuratController::class, 'destroy']);
+Route::post('surat/medis/riwayat', [SuratController::class, 'riwayat']);
 
 // });
