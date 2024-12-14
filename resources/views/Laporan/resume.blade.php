@@ -596,14 +596,18 @@
                                 <br>
                                 <br>
                                 <br>
-                                {{ $resumePasien->dokter_nama }}
-                                <br>
                                 @if ($resumePasien->dokter_nama == 'dr. AGIL DANANJAYA, Sp.P')
+                                    {{ $resumePasien->dokter_nama }}
+                                    <br>
                                     SIP. 3302/53127/03/449.1/100/DS/B/IV/2023
                                 @elseif ($resumePasien->dokter_nama == 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.')
+                                    {{ $resumePasien->dokter_nama }}
+                                    <br>
                                     SIP. 3302/53127/01/449.1/292/DS/P/XI/2022
                                 @else
-                                    SIP.
+                                    dr. AGIL DANANJAYA, Sp.P
+                                    <br>
+                                    SIP. 3302/53127/03/449.1/100/DS/B/IV/2023
                                 @endif
                             </div>
                         </td>
