@@ -250,3 +250,19 @@ input:checked + .slider:before {
     max-width: 90% !important; /* Sesuaikan lebar sesuai kebutuhan, misalnya 90% */
     width: 90% !important; /* Gunakan 90% dari lebar layar */
 }
+
+@media (max-width: 700px) {
+    .mobile-navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 10;
+        background-color: #f5f5f5;
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .margin-top-navbar {
+        margin-top: 90px;
+    }
+}

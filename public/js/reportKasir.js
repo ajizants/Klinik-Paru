@@ -12,6 +12,82 @@ function checkEnter(event) {
     }
 }
 
+function reportPendapatanItem(tglAwal, tglAkhir) {
+    if ($.fn.DataTable.isDataTable("#tabelPerItem")) {
+        var tabel = $("#tabelPerItem").DataTable();
+        tabel.clear().destroy();
+    }
+    // var tglAwal = document.getElementById("tglAwal").value;
+    // var tglAkhir = document.getElementById("tglAkhir").value;
+
+    $.ajax({
+        url: "/api/pendapatan/item",
+        type: "post",
+        data: {
+            tglAwal: tglAwal,
+            tglAkhir: tglAkhir,
+        },
+        success: function (response) {
+            Swal.close();
+            response.forEach(function (item, index) {
+                item.no = index + 1;
+            });
+            $("#tabelPerItem")
+                .DataTable({
+                    data: response,
+                    columns: [
+                        { data: "no" },
+                        { data: "nmLayanan" },
+                        { data: "tanggal" },
+                        { data: "jumlah" },
+                        { data: "totalItem" },
+                    ],
+                    order: [0, "asc"],
+                    lengthChange: true,
+                    autoWidth: true,
+                    buttons: [
+                        {
+                            extend: "copyHtml5",
+                            text: "Salin",
+                        },
+                        {
+                            extend: "excel",
+                            text: "Export to Excel",
+                            title:
+                                "Laporan Hasil Pemeriksaan Lab " +
+                                tglAwal +
+                                " s.d. " +
+                                tglAkhir,
+                            filename:
+                                "Daftar Penjamin Laboratorium " +
+                                tglAwal +
+                                " s.d. " +
+                                tglAkhir,
+                        },
+                        "colvis", // Show/Hide Columns button
+                    ],
+                })
+                .buttons()
+                .container()
+                .appendTo("#tabelPerItem_wrapper .col-md-6:eq(0)");
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        },
+    });
+}
+
+function cetakSBS() {
+    const tgl = new Date();
+    const tahun = tgl.getFullYear();
+    const bulan = String(tgl.getMonth() + 1).padStart(2, "0");
+    const tanggal = String(tgl.getDate()).padStart(2, "0");
+    const tglSBS = `${tanggal}-${bulan}-${tahun}`;
+    console.log("🚀 ~ cetakSBS ~ tglSBS:", tglSBS);
+
+    window.open("api/cetakSBS/" + tglSBS);
+}
+
 function reportKunjungan(tglAwal, tglAkhir) {
     if ($.fn.DataTable.isDataTable("#reportKunjungan")) {
         var tabel = $("#reportKunjungan").DataTable();
@@ -147,17 +223,6 @@ function reportKunjungan(tglAwal, tglAkhir) {
     });
 }
 
-function cetakSBS() {
-    const tgl = new Date();
-    const tahun = tgl.getFullYear();
-    const bulan = String(tgl.getMonth() + 1).padStart(2, "0");
-    const tanggal = String(tgl.getDate()).padStart(2, "0");
-    const tglSBS = `${tanggal}-${bulan}-${tahun}`;
-    console.log("🚀 ~ cetakSBS ~ tglSBS:", tglSBS);
-
-    window.open("api/cetakSBS/" + tglSBS);
-}
-
 function isiForm(norm, nama, jaminan, notrans, nosep, btn) {
     $("#norm").val(norm);
     $("#nama").val(nama);
@@ -194,7 +259,6 @@ function cariJumlah() {
 }
 
 function reportPendaftaran(tglAwal, tglAkhir) {
-    reportKunjungan(tglAwal, tglAkhir);
     var tglA = formatDate(new Date(tglAwal));
     var tglB = formatDate(new Date(tglAkhir));
 
@@ -436,6 +500,8 @@ window.addEventListener("load", function () {
                 },
             });
             reportPendaftaran(tglAwal, tglAkhir);
+            reportPendapatanItem(tglAwal, tglAkhir);
+            reportKunjungan(tglAwal, tglAkhir);
         }
     );
     Swal.fire({
@@ -447,11 +513,38 @@ window.addEventListener("load", function () {
         },
     });
     reportPendaftaran(tglAwal, tglAkhir);
+    reportKunjungan(tglAwal, tglAkhir);
 
-    // setInterval(function () {
-    //     reportPendaftaran(tglAwal, tglAkhir);
-    // }, 60000);
     $("#modalSep").on("shown.bs.modal", function () {
         $("#noSep").focus();
     });
+
+    $("#tabelPerItem")
+        .DataTable({
+            destroy: true,
+            buttons: [
+                {
+                    extend: "excelHtml5",
+                    text: "Excel",
+                    title:
+                        "Laporan Pendapatan Per Item Tanggal: " +
+                        tglAwal +
+                        " s.d. " +
+                        tglAkhir,
+                    filename:
+                        "Laporan Pendapatan Per Item Tanggal: " +
+                        tglAwal +
+                        "  s.d. " +
+                        tglAkhir,
+                },
+                {
+                    extend: "colvis",
+                    text: "Tampilkan Kolom",
+                },
+                // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+            ],
+        })
+        .buttons()
+        .container()
+        .appendTo("#tabelPerItem_wrapper .col-md-6:eq(0)");
 });

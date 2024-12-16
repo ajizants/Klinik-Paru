@@ -1,11 +1,10 @@
 @extends('Template.lte')
 
 @section('content')
-    {{-- Data per pasien --}}
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
-        <div class="card-header py-3 d-flex flex-row align-items-center bg-primary justify-content-start">
-            <h6 class="m-0 font-weight-bold">Rekap Kunjungan Kasir</h6>
+        <div class="card-header  d-flex flex-row align-items-center bg-primary justify-content-center">
+            <h5 class="m-0 font-weight-bold text-center">Laporan Total Pendapatan Per Hari</h5>
         </div>
         <div class="card-body mb-2">
             <div class="row">
@@ -48,6 +47,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>

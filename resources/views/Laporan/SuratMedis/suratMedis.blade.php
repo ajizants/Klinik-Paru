@@ -77,15 +77,17 @@
                                     <td class="w-48">Pekerjaan</td>
                                     <td class="text-center w-2">:</td>
                                     <td>
-                                        <input type="text" name="pekerjaan" id="pekerjaan">
+                                        <input type="text" name="pekerjaan" id="pekerjaan"
+                                            value="{{ strtoupper($pasien['pekerjaan']) }}">
                                     </td>
                                 </tr>
+
                                 <tr>
                                     <td class="w-48 align-top">Alamat</td>
                                     <td class="text-center w-2 align-top">:</td>
                                     <td>
                                         <p type="text" class="w-2/4" rows="2" name="alamat" id="alamat">
-                                            {{ $pasien['alamat'] }}</p>
+                                            {{ strtoupper($pasien['alamat']) }}</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -96,28 +98,32 @@
                                     <td class="w-48">Tensi</td>
                                     <td class="text-center w-2">:</td>
                                     <td>
-                                        <input class="w-16" type="text" name="tensi" id="tensi"> mmHg
+                                        <input class="w-16" type="text" name="tensi" id="tensi"
+                                            value="{{ $pasien['td'] }}"> mmHg
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="w-48">Nadi</td>
                                     <td class="text-center w-2">:</td>
                                     <td>
-                                        <input class="w-16" type="text" name="nadi" id="nadi"> x/menit
+                                        <input class="w-16" type="text" name="nadi" id="nadi"
+                                            value="{{ $pasien['nadi'] }}"> x/menit
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="w-48">Berat Badan</td>
                                     <td class="text-center w-2">:</td>
                                     <td>
-                                        <input class="w-16" type="text" name="berat badan" id="bb"> kg
+                                        <input class="w-16" type="text" name="berat badan" id="bb"
+                                            value="{{ $pasien['bb'] }}"> kg
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="w-48">Tinggi Badan</td>
                                     <td class="text-center w-2">:</td>
                                     <td>
-                                        <input class="w-16" type="text" name="Tinggi Badan" id="tb"> cm
+                                        <input class="w-16" type="text" name="Tinggi Badan" id="tb"
+                                            value="{{ $pasien['tb'] }}"> cm
                                     </td>
                                 </tr>
                             </table>
@@ -146,8 +152,9 @@
                                 <p>Purwokerto, {{ date('d M Y') }}</p>
                                 <p>Dokter,</p>
                                 <div class="h-16"></div>
-                                <p><strong>{{ $pasien['dokter'] }}</strong></p>
-                                <p>196708081988032010</p>
+                                <p><strong>{{ $pasien->dok->gelar_d }} {{ $pasien->dok->biodata->nama }}
+                                        {{ $pasien->dok->gelar_b }}</strong></p>
+                                <p>SIP. {{ $pasien->dok->sip }}</p>
                             </div>
                         </div>
                     </td>

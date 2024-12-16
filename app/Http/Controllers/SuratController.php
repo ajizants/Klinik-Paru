@@ -116,11 +116,9 @@ class SuratController extends Controller
                 'nama' => 'required|string|max:255',
                 'tglLahir' => 'required|date',
                 'umur' => 'required|string|min:0',
-                'nik' => 'required|string|max:16',
                 'alamat' => 'required|string|max:500',
                 'hasil' => 'required|string|max:500',
                 'keperluan' => 'required|string|max:255',
-                'petugas' => 'required|string|max:100',
                 'dokter' => 'required|string|max:100',
             ]);
 
@@ -141,12 +139,17 @@ class SuratController extends Controller
             $noSurat->nama = $validatedData['nama'];
             $noSurat->tglLahir = $validatedData['tglLahir'];
             $noSurat->umur = $validatedData['umur'];
-            $noSurat->nik = $validatedData['nik'];
             $noSurat->alamat = $validatedData['alamat'];
             $noSurat->hasil = $validatedData['hasil'];
             $noSurat->keperluan = $validatedData['keperluan'];
-            $noSurat->petugas = $validatedData['petugas'];
             $noSurat->dokter = $validatedData['dokter'];
+            $noSurat->nik = $request->nik;
+            $noSurat->petugas = $request->petugas;
+            $noSurat->td = $request->td;
+            $noSurat->bb = $request->bb;
+            $noSurat->tb = $request->tb;
+            $noSurat->nadi = $request->nadi;
+            $noSurat->pekerjaan = $request->pekerjaan;
 
             // Simpan data ke dalam tabel
             $noSurat->save();
@@ -200,7 +203,14 @@ class SuratController extends Controller
     public function cetakSM($id, $tgl)
     {
         $title = 'SURAT MEDIS';
-        $pasien = SuratMedis::where('id', $id)->where('tanggal', $tgl)->first();
+        $pasien = SuratMedis::with('dok.biodata', 'adm.biodata')->where('id', $id)->where('tanggal', $tgl)->first();
+        // return $pasien;
+        // dd([
+        //     'dokter' => $pasien->dokter,
+        //     'dokter_biodata' => $pasien->dok->biodata ?? 'No biodata',
+        //     'petugas' => $pasien->petugas,
+        //     'petugas_biodata' => $pasien->adm->biodata ?? 'No biodata',
+        // ]);
 
         // Ubah setiap kata pada 'keperluan' menjadi huruf kapital di awal
         $pasien->keperluan = ucwords(strtolower($pasien['keperluan']));

@@ -11,6 +11,7 @@ use App\Models\DotsTransModel;
 use App\Models\GiziDxDomainModel;
 use App\Models\GiziDxKelasModel;
 use App\Models\GiziDxSubKelasModel;
+use App\Models\KasirAddModel;
 use App\Models\LaboratoriumHasilModel;
 use App\Models\LayananModel;
 use App\Models\PegawaiModel;
@@ -241,7 +242,25 @@ class HomeController extends Controller
     public function rekapKasir()
     {
         $title = 'LAPORAN KASIR';
-        return view('Laporan.kasir')->with('title', $title);
+        $date = date('Y-m-d');
+        // Mendapatkan tahun sekarang
+        $currentYear = \Carbon\Carbon::now()->year;
+
+        // Membuat array tahun untuk 5 tahun terakhir
+        $listYear = [];
+        for ($i = 0; $i < 5; $i++) {
+            $listYear[] = $currentYear - $i;
+        }
+
+        // dd($year);
+        $model = new KasirAddModel();
+        $params = [
+            'tglAwal' => $date,
+            'tglAkhir' => $date,
+        ];
+        $perItem = $model->pendapatanPerItem($params);
+
+        return view('Laporan.Kasir.rekap', compact('perItem', 'listYear', 'title'));
     }
     public function pendapatan()
     {
@@ -255,7 +274,7 @@ class HomeController extends Controller
             $listYear[] = $currentYear - $i;
         }
 
-        return view('Laporan.pendapatan')->with('title', $title)->with('listYear', $listYear);
+        return view('Laporan.Kasir.pendapatan')->with('title', $title)->with('listYear', $listYear);
     }
 
     private function layanan($kelas)

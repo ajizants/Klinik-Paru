@@ -116,6 +116,8 @@ Route::get('cetakSBS/{id}', [KasirController::class, 'cetakSBS']);
 // Route::post('cetakBAPH', [KasirController::class, 'cetakBAPH']);
 Route::get('cetakBAPH/{tgl}/{tahun}', [KasirController::class, 'cetakBAPH']);
 Route::get('/pendapatan/{tahun}', [KasirController::class, 'pendapatan']);
+Route::get('/pendapatan/item/{tahun}', [KasirController::class, 'pendapatanPerItem']);
+Route::post('/pendapatan/item', [KasirController::class, 'pendapatanPerItem']);
 
 //laboratorium
 Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);

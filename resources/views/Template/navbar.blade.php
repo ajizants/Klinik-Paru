@@ -1,21 +1,16 @@
-        <nav class="main-header navbar navbar-expand navbar-light font-weight-bold" style="background-color: #babcbf">
+        <nav class="main-header navbar navbar-expand navbar-light font-weight-bold mobile-navbar"
+            style="background-color: #babcbf">
             <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="home" class="nav-link" id="top">Home</a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
                     <a href="http://rsparu.kkpm.local" target="_blank"" class="nav-link">RS Paru</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="http://172.16.10.88/ro" target="_blank"" class="nav-link">Aplikasi Radiologi</a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="https://kkpm.banyumaskab.go.id/administrator/auth" target="_blank""
-                        class="nav-link">Aplikasi KOMINFO</a>
+                    <a href="https://kkpm.banyumaskab.go.id/administrator/auth" target="_blank"" class="nav-link">APPS
+                        KOMINFO</a>
                 </li>
             </ul>
 

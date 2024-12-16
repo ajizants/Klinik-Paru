@@ -28,6 +28,7 @@
             padding: 0;
         }
 
+
         .container2 {
             position: absolute;
             top: 45%;
@@ -35,6 +36,22 @@
             transform: translate(-50%, -50%);
             scale: 1.1;
         }
+
+        @media (max-width: 768px) {
+
+            /* Menargetkan layar mobile */
+            .container2 {
+                top: 50%;
+                /* Vertikal di tengah */
+                left: 50%;
+                /* Horizontal di tengah */
+                transform: translate(-50%, -50%);
+                /* Pusatkan secara sempurna */
+                scale: 1;
+                /* Sesuaikan skala jika perlu */
+            }
+        }
+
 
         .transparent {
             background-color: rgba(0, 0, 0, 0.5) !important;

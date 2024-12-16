@@ -183,7 +183,20 @@ class KasirController extends Controller
             KasirAddModel::insert($dataToInsert);
 
             if ($request->input('notrans')) {
-                $dataKunjungan = $this->saveOrUpdateKunjungan($request);
+                $req = [
+                    'notrans' => $request->input('notrans'),
+                    'norm' => $request->input('norm'),
+                    'nama' => $request->input('nama'),
+                    'jk' => $request->input('jk'),
+                    'umur' => $request->input('umur'),
+                    'alamat' => $request->input('alamat'),
+                    'jaminan' => $request->input('jaminan'),
+                    'tagihan' => $request->input('tagihan'),
+                    'bayar' => $request->input('bayar'),
+                    'kembalian' => $request->input('kembalian'),
+                    'petugas' => $request->input('petugas'),
+                ];
+                $dataKunjungan = $this->saveOrUpdateKunjungan($req);
                 return response()->json(['message' => 'Kunjungan berhasil diproses...!!'], 200);
             }
 
@@ -201,29 +214,43 @@ class KasirController extends Controller
     public function addTransaksi(Request $request)
     {
         if ($request->input('notrans')) {
-            $this->saveOrUpdateKunjungan($request);
+            $req = [
+                'notrans' => $request->input('notrans'),
+                'norm' => $request->input('norm'),
+                'nama' => $request->input('nama'),
+                'jk' => $request->input('jk'),
+                'umur' => $request->input('umur'),
+                'alamat' => $request->input('alamat'),
+                'jaminan' => $request->input('jaminan'),
+                'tagihan' => $request->input('tagihan'),
+                'bayar' => $request->input('bayar'),
+                'kembalian' => $request->input('kembalian'),
+                'petugas' => $request->input('petugas'),
+            ];
+            $this->saveOrUpdateKunjungan($req);
             return response()->json(['message' => 'Kunjungan berhasil diproses...!!'], 200);
         }
 
         return response()->json(['message' => 'No Transaksi tidak valid'], 400);
     }
 
-    private function saveOrUpdateKunjungan(Request $request)
+    private function saveOrUpdateKunjungan(array $request)
     {
-        $notrans = $request->input('notrans');
+        $notrans = $request['notrans'];
+        $tagihan = $request['tagihan'];
 
         $dataKunjungan = KasirTransModel::firstOrNew(['notrans' => $notrans]);
         $dataKunjungan->fill([
-            'norm' => $request->input('norm'),
-            'nama' => $request->input('nama'),
-            'jk' => $request->input('jk'),
-            'umur' => $request->input('umur'),
-            'alamat' => $request->input('alamat'),
-            'jaminan' => $request->input('jaminan'),
-            'tagihan' => str_replace(['Rp', '.', ',', ' '], '', $request->input('tagihan')),
-            'bayar' => str_replace(['Rp', '.', ',', ' '], '', $request->input('bayar')),
-            'kembalian' => str_replace(['Rp', '.', ',', ' '], '', $request->input('kembalian')),
-            'petugas' => $request->input('petugas'),
+            'norm' => $request['norm'],
+            'nama' => $request['nama'],
+            'jk' => $request['jk'],
+            'umur' => $request['umur'],
+            'alamat' => $request['alamat'],
+            'jaminan' => $request['jaminan'],
+            'tagihan' => str_replace(['Rp', '.', ',', ' '], '', $request['tagihan']),
+            'bayar' => str_replace(['Rp', '.', ',', ' '], '', $request['bayar']),
+            'kembalian' => str_replace(['Rp', '.', ',', ' '], '', $request['kembalian']),
+            'petugas' => $request['petugas'],
         ]);
         $dataKunjungan->save();
 
@@ -444,4 +471,57 @@ class KasirController extends Controller
         return trim($temp); // Pastikan hasil akhir tanpa spasi berlebih
     }
 
+    // public function pendapatanPerItem($tahun)
+    // {
+    //     $data = KasirAddModel::with('layanan') // Mengambil relasi 'layanan'
+    //         ->selectRaw('
+    //                         DATE(created_at) as tanggal,
+    //                         idLayanan,
+    //                         SUM(totalHarga) as jumlah,
+    //                         COUNT(*) as totalItem          -- Jumlah rekaman berdasarkan idLayanan
+    //                     ')
+    //         ->whereYear('created_at', $tahun) // Menggunakan parameter tahun secara langsung
+    //         ->groupBy('tanggal', 'idLayanan') // Kelompokkan berdasarkan tanggal dan idLayanan
+    //         ->orderBy('tanggal', 'asc') // Urutkan berdasarkan tanggal
+    //         ->get();
+
+    //     // return $data;
+
+    //     // Inisialisasi array kosong untuk pendapatan
+    //     $result = [];
+
+    //     // Periksa apakah data ada
+    //     if ($data->isEmpty()) {
+    //         return response()->json([
+    //             'message' => 'Tidak ada data pendapatan untuk tahun ' . $tahun,
+    //             'data' => [],
+    //         ], 200, [], JSON_PRETTY_PRINT);
+    //     }
+
+    //     // Looping data pendapatan
+    //     foreach ($data as $d) {
+
+    //         // Tambahkan ke array hasil
+    //         $result[] = [
+    //             'tanggal' => $d->tanggal,
+    //             'idLayanan' => $d->idLayanan,
+    //             'jumlah' => $d->jumlah,
+    //             'totalItem' => $d->totalItem,
+    //             'nmLayanan' => $d->layanan->nmLayanan,
+    //             'tarif' => $d->layanan->tarif,
+    //         ];
+    //     }
+
+    //     return $result;
+    // }
+
+    public function pendapatanPerItem(Request $request)
+    {
+        $model = new KasirAddModel();
+        $params = [
+            'tglAwal' => $request->input('tglAwal'),
+            'tglAkhir' => $request->input('tglAkhir'),
+        ];
+        return $model->pendapatanPerItem($params);
+    }
 }

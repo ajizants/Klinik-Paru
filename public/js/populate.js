@@ -89,37 +89,36 @@ function updateExistingTables(response, ruang) {
     }
 }
 
-// function updateTable(tableId, data, ruang, status) {
-//     const filteredData = data.filter((item) => item.status === status);
-//     console.log("🚀 ~ updateTable ~ filteredData:", filteredData);
-//     const table = $(tableId).DataTable();
-//     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
-//     const namaPasien = filteredData.length ? filteredData[0].pasien_nama : "";
-//     console.log("🚀 ~ updateTable ~ namaPasien:", namaPasien);
-//     // processDataArray(dataArray, ruang);
-//     if (dataArray.length > 1 && namaPasien !== "Belum ada data masuk") {
-//         processDataArray(dataArray, ruang);
-//     }
-//     table.clear().rows.add(dataArray).draw();
-// }
-
 function updateTable(tableId, data, ruang, status) {
     const filteredData = data.filter((item) => item.status === status);
     console.log("🚀 ~ updateTable ~ filteredData:", filteredData);
-
     const table = $(tableId).DataTable();
     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
-    const isNoDataMessage = dataArray.aksi === ""; // Periksa jika `getNoDataMessage` aktif
-
-    console.log("🚀 ~ updateTable ~ isNoDataMessage:", isNoDataMessage);
-    // Panggil `processDataArray` hanya jika bukan "No Data"
-    if (isNoDataMessage === false) {
-        console.log("🚀 ~ updateTable ~ prosessDataArray");
+    const nama = dataArray[0]?.pasien_nama;
+    console.log("🚀 ~ updateTableData ~ nama:", nama);
+    if (nama !== "Belum ada data masuk") {
         processDataArray(dataArray, ruang);
     }
-
     table.clear().rows.add(dataArray).draw();
 }
+
+// function updateTable(tableId, data, ruang, status) {
+//     const filteredData = data.filter((item) => item.status === status);
+//     console.log("🚀 ~ updateTable ~ filteredData:", filteredData);
+
+//     const table = $(tableId).DataTable();
+//     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
+//     const isNoDataMessage = dataArray.aksi === ""; // Periksa jika `getNoDataMessage` aktif
+
+//     console.log("🚀 ~ updateTable ~ isNoDataMessage:", isNoDataMessage);
+//     // Panggil `processDataArray` hanya jika bukan "No Data"
+//     if (isNoDataMessage === false) {
+//         console.log("🚀 ~ updateTable ~ prosessDataArray");
+//         processDataArray(dataArray, ruang);
+//     }
+
+//     table.clear().rows.add(dataArray).draw();
+// }
 
 function processDataArray(dataArray, ruang) {
     dataArray.forEach((item, index) => {
@@ -155,7 +154,7 @@ function drawDataTable(dataArray, ruang, tableId) {
             [1, "asc"],
             [2, "asc"],
         ],
-        pageLength: 5,
+        pageLength: 10,
         lengthMenu: [5, 10, 25, 50],
         destroy: true, // Allow table to reinitialize
     });
@@ -575,7 +574,7 @@ function fetchDataAntrianAll(tanggal, ruang, callback) {
 function initializeDataTable(selector, data, columns, ruang) {
     let order;
     if (ruang === "surat") {
-        order = [[1, "asc"]];
+        order = [[0, "dsc"]];
     } else {
         order = [[1, "asc"]];
     }
@@ -583,7 +582,7 @@ function initializeDataTable(selector, data, columns, ruang) {
         data,
         columns,
         order,
-        pageLength: 5,
+        pageLength: 10,
         lengthMenu: [5, 10, 25, 50],
         destroy: true,
     });

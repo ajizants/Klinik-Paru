@@ -166,12 +166,18 @@
                                     </div>
                                 </div>
 
-                                <div class="form-grup col-12 col-md-6">
+                                <div class="form-grup col-12 col-md-4">
                                     <label for="keperluan"
                                         class="col-form-label font-weight-bold mb-0">Keterangan/Keperluan Surat
                                         :</label>
                                     <input id="keperluan" class="form-control bg-white"
                                         placeholder="Keterangan/Keperluan Surat" />
+                                </div>
+                                <div class="form-group col-12 col-md-4">
+                                    <label for="pekerjaan" class="col-form-label font-weight-bold mb-0">Pekerjaan
+                                        :</label>
+                                    <input type="text" id="pekerjaan" class="form-control bg-white"
+                                        placeholder="Tanggal Transaksi" />
                                 </div>
                                 {{-- <div class="form-group col-12 col-md-6">
                                     <label for="keperluan" class="col-form-label font-weight-bold mb-0">
@@ -240,7 +246,7 @@
                                     <input type="date" id="tglTrans" class="form-control bg-white"
                                         placeholder="Tanggal Transaksi" />
                                 </div>
-                                <div class="form-group col-12 col-md-5">
+                                <div class="form-group col-12 col-md-4">
                                     <label for="petugas" class="col-form-label font-weight-bold">Admin
                                         :</label>
                                     <select id="petugas" class="form-control border border-primary" required>
@@ -251,7 +257,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="form-group col-12 col-md-5">
+                                <div class="form-group col-12 col-md-4">
                                     <label for="dokter" class="col-form-label font-weight-bold">Dokter
                                         :</label>
                                     <select id="dokter" class="form-control mb-3 border border-primary" required>
@@ -335,10 +341,11 @@
 
         function creatTableDataPemohon(data) {
             data.forEach(function(item, index) {
+                let statusCetak = item.tanggal < formattedDate ? "hidden" : "";
                 item.aksi = `
-                        <a type="button" class="btn btn-sm btn-warning mr-2 mb-2"
+                        <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" ${statusCetak}
                                 href="/api/surat/medis/${item.id}/${item.tanggal}" target="_blank">Cetak</a>
-                        <button type="button" class="btn btn-sm btn-danger mr-2 mb-2"
+                        <button type="button" class="btn btn-sm btn-danger mr-2 mb-2" ${statusCetak}
                                onclick="deleteSM('${item.id}')">Hapus</button>
                         `;
                 item.no = index + 1;
@@ -470,6 +477,10 @@
                     id: "noSurat",
                     label: "No Surat"
                 },
+                {
+                    id: "pekerjaan",
+                    label: "Pekerjaan"
+                },
             ];
 
             var error = false;
@@ -529,6 +540,12 @@
             var keperluan = $("#keperluan").val();
             var petugas = $("#petugas").val();
             var dokter = $("#dokter").val();
+            var td = $("#td").val();
+            var bb = $("#bb").val();
+            var tb = $("#tb").val();
+            var nadi = $("#nadi").val();
+            var pekerjaan = $("#pekerjaan").val();
+
             Swal.fire({
                 icon: "info",
                 title: "Menyimpan Data",
@@ -553,7 +570,12 @@
                         hasil: hasil,
                         keperluan: keperluan,
                         petugas: petugas,
-                        dokter: dokter
+                        dokter: dokter,
+                        td: td,
+                        bb: bb,
+                        tb: tb,
+                        nadi: nadi,
+                        pekerjaan: pekerjaan
                     }),
                 })
                 .then((response) => {

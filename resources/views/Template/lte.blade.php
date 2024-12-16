@@ -82,7 +82,7 @@
 
         @include('Template.sidebar')
 
-        <div class="content-wrapper" id="topSection">
+        <div class="content-wrapper margin-top-navbar" id="topSection">
             <div class="content-header py-0">
                 <div class="container-fluid">
                     <div class="row d-flex justify-content-end">
