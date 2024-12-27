@@ -171,6 +171,9 @@ function antrianFar() {
 
     fetchDataAntrianFar(tanggal, function (response) {
         $("#loadingSpinner").hide();
+        if (Swal.isVisible()) {
+            Swal.close();
+        }
 
         // Jika DataTable sudah ada, hanya update datanya
         if ($.fn.DataTable.isDataTable("#dataAntrian")) {

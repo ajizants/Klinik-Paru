@@ -779,6 +779,8 @@
                     Swal.fire({
                         icon: "success",
                         title: "Berhasil",
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
                     })
 
                     antrianFar();

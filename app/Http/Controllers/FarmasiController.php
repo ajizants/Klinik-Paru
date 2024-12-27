@@ -263,7 +263,7 @@ class FarmasiController extends Controller
 
             $now = date('Y-m-d H:i:s');
 
-            $msg = "Pasien No. RM: " . $norm . "Pulang: " . $now;
+            $msg = "Pasien No RM: " . $norm . "Berhasil dipulangkan pukul: " . $now;
 
             DB::commit();
 
