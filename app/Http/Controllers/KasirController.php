@@ -110,11 +110,12 @@ class KasirController extends Controller
 
     public function add(Request $request)
     {
+        // dd($request->all());
         // Validate the incoming request data
         $validatedData = $request->validate([
             'nmLayanan' => 'required|string|max:255',
             'tarif' => 'required|string|max:255',
-            'kelas' => 'required|string|max:255',
+            'kelas' => 'required|int|max:10',
             'status' => 'required',
         ]);
 
@@ -145,10 +146,18 @@ class KasirController extends Controller
     {
         try {
             $data = LayananModel::where('idLayanan', $request->input('id'))->firstOrFail();
+            // dd($data);
 
-            $data->update($request->only(['nmLayanan', 'tarif', 'kelas', 'status']));
+            $data->update($request->all());
 
-            return response()->json(['message' => 'Data layanan berhasil diperbarui']);
+            $hasilData = LayananModel::with('grup')->get();
+
+            return response()->json(
+                [
+                    'message' => 'Data layanan berhasil diperbarui',
+                    'data' => $hasilData,
+                ]
+            );
         } catch (\Exception $e) {
             Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
             return response()->json(['message' => 'Data layanan gagal diperbarui']);
@@ -174,6 +183,9 @@ class KasirController extends Controller
                     'idLayanan' => $data['idLayanan'],
                     'qty' => $data['qty'] ?? 1,
                     'totalHarga' => $data['harga'],
+                    'jaminan' => $data['jaminan'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ])->toArray();
 
             if (empty($dataToInsert)) {
@@ -191,13 +203,12 @@ class KasirController extends Controller
                     'umur' => $request->input('umur'),
                     'alamat' => $request->input('alamat'),
                     'jaminan' => $request->input('jaminan'),
-                    'tagihan' => $request->input('tagihan'),
-                    'bayar' => $request->input('bayar'),
-                    'kembalian' => $request->input('kembalian'),
-                    'petugas' => $request->input('petugas'),
+                    'tagihan' => 0,
+                    'bayar' => 0,
+                    'kembalian' => 0,
+                    'petugas' => "Nasirin",
                 ];
-                $dataKunjungan = $this->saveOrUpdateKunjungan($req);
-                return response()->json(['message' => 'Kunjungan berhasil diproses...!!'], 200);
+                $this->saveOrUpdateKunjungan($req);
             }
 
             DB::commit();
@@ -208,6 +219,46 @@ class KasirController extends Controller
             DB::rollback();
             Log::error('Terjadi kesalahan: ' . $e->getMessage());
             return response()->json(['message' => 'Kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function deleteTagihan(Request $request)
+    {
+        $id = $request->input('id');
+        $notrans = $request->input('notrans');
+        try {
+            $data = KasirAddModel::with('layanan')->where('id', $id)->first();
+            // $item = KasirAddModel::with('layanan')->where('notrans', $notrans)->get();
+
+            $dataDelete = [
+                'id' => $data->id,
+                'notrans' => $data->notrans,
+                'norm' => $data->norm,
+                'jaminan' => $data->jaminan,
+                'idLayanan' => $data->idLayanan,
+                'nmLayanan' => $data->layanan->nmLayanan,
+                'qty' => $data->qty,
+                'totalHarga' => $data->totalHarga,
+                'created_at' => $data->created_at,
+                'updated_at' => $data->updated_at,
+
+            ];
+
+            // return ['data' => $dataDelete, 'items' => $item];
+            if (!$data) {
+                return response()->json(['message' => 'Data layanan tidak ditemukan'], 404);
+            }
+            $data->delete();
+
+            $response = [
+                'message' => 'Data layanan berhasil dihapus',
+                'delete' => $dataDelete,
+                // 'items' => $items,
+            ];
+            return response()->json($response, 200);
+        } catch (\Exception $e) {
+            Log::error('Terjadi kesalahan saat menghapus data: ' . $e->getMessage());
+            return response()->json(['message' => 'Data layanan gagal dihapus']);
         }
     }
 
@@ -232,6 +283,45 @@ class KasirController extends Controller
         }
 
         return response()->json(['message' => 'No Transaksi tidak valid'], 400);
+    }
+    public function deleteTransaksi(Request $request)
+    {
+        $notrans = $request->input('notrans');
+
+        // Ambil kunjungan berdasarkan notrans
+        $dataKunjungan = KasirTransModel::where('notrans', $notrans)->first();
+        if (!$dataKunjungan) {
+            return response()->json(['message' => 'No Transaksi tidak valid'], 400);
+        }
+
+        // Ambil item terkait berdasarkan notrans
+        $dataItems = KasirAddModel::where('notrans', $notrans)->get();
+
+        // Mulai transaksi database untuk menjaga konsistensi
+        DB::beginTransaction();
+
+        try {
+            // Hapus semua item terkait
+            foreach ($dataItems as $item) {
+                $item->delete();
+            }
+
+            // Hapus kunjungan
+            $dataKunjungan->delete();
+
+            // Commit transaksi
+            DB::commit();
+
+            return response()->json(['message' => 'Kunjungan dan item berhasil dihapus'], 200);
+        } catch (\Exception $e) {
+            // Rollback jika terjadi kesalahan
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat menghapus data',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     private function saveOrUpdateKunjungan(array $request)
@@ -343,177 +433,89 @@ class KasirController extends Controller
         return response()->json($pasien, 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function cetakSBS($tanggal)
+    public function cetakSBS($tgl, $tahun, $jaminan)
     {
-        $title = 'LAPORAN KASIR';
-        $tgl = date('Y-m-d', strtotime($tanggal));
-        $data = KasirTransModel::where('created_at', 'like', '%' . $tgl . '%')->get();
-        $totalTagihan = $data->sum('tagihan');
-        // return $totalTagihan;
-        // return $data;
-        return view('Laporan.sbs', compact('tanggal', 'data', 'totalTagihan'))->with('title', $title);
+        $title = 'SBS';
+
+        // Fetch data from the model
+        $model = new KasirTransModel();
+        $datas = $model->pendapatan($tahun);
+
+        // If the data is not an array, return an error
+        if (!is_array($datas)) {
+            return response()->json(['error' => 'Invalid data format']);
+        }
+
+        // Ensure the jaminan key exists in the data and process it
+        if (isset($datas[$jaminan])) {
+            // Convert the data to an array if it's an object
+            $jaminanData = is_object($datas[$jaminan]) ? json_decode(json_encode($datas[$jaminan]), true) : $datas[$jaminan];
+
+            // Validate that $jaminanData is an array
+            if (!is_array($jaminanData)) {
+                return response()->json(['error' => 'Invalid jaminan data format']);
+            }
+
+            // Filter the data by the specified date
+            $filteredData = array_filter($jaminanData, function ($item) use ($tgl) {
+                return isset($item['tanggal']) && $item['tanggal'] === $tgl;
+            });
+
+            $doc = reset($filteredData);
+        } else {
+            // Handle the case where jaminan is not found
+            return response()->json(['error' => 'No data found for the specified jaminan']);
+        }
+
+        // return $doc;
+        // Pass the filtered data to the view
+        return view('Laporan.Kasir.sbs', compact('doc'))->with('title', $title);
     }
-    public function cetakBAPH($tgl, $tahun)
+
+    public function cetakBAPH($tgl, $tahun, $jaminan)
     {
         $title = 'BAPH';
 
-        // Fetch data and decode it
-        $datas = $this->getPendapatan($tahun);
-        // $datas = json_decode($datas, true);
+        // Fetch data from the model
+        $model = new KasirTransModel();
+        $datas = $model->pendapatan($tahun);
 
-        // Check if decoding was successful
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            // Handle the error (for example, return a message)
-            return response()->json(['error' => 'Invalid JSON data']);
+        // If the data is not an array, return an error
+        if (!is_array($datas)) {
+            return response()->json(['error' => 'Invalid data format']);
         }
 
-        // Check if $datas is an array before filtering
-        if (is_array($datas)) {
-            // Filter the data based on the provided date ($tgl)
-            $data = array_filter($datas, function ($item) use ($tgl) {
+        // Ensure the jaminan key exists in the data and process it
+        if (isset($datas[$jaminan])) {
+            // Convert the data to an array if it's an object
+            $jaminanData = is_object($datas[$jaminan]) ? json_decode(json_encode($datas[$jaminan]), true) : $datas[$jaminan];
+
+            // Validate that $jaminanData is an array
+            if (!is_array($jaminanData)) {
+                return response()->json(['error' => 'Invalid jaminan data format']);
+            }
+
+            // Filter the data by the specified date
+            $filteredData = array_filter($jaminanData, function ($item) use ($tgl) {
                 return isset($item['tanggal']) && $item['tanggal'] === $tgl;
             });
-        } else {
-            // If $datas is not an array, handle the case accordingly
-            $data = [];
-        }
 
+            $doc = reset($filteredData);
+        } else {
+            // Handle the case where jaminan is not found
+            return response()->json(['error' => 'No data found for the specified jaminan']);
+        }
         // Return the view with the filtered data
-        return view('Laporan.baph', compact('data'))->with('title', $title);
+        return view('Laporan.Kasir.baph', compact('doc'))->with('title', $title);
     }
 
     public function pendapatan($tahun)
     {
-        // Ambil data pendapatan berdasarkan tahun
-        $data = $this->getPendapatan($tahun);
-        // Inisialisasi array kosong untuk pendapatan
-
-        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+        $model = new KasirTransModel();
+        $res = $model->pendapatan($tahun);
+        // dd($res);
+        return response()->json($res, 200, [], JSON_PRETTY_PRINT);
     }
-    private function getPendapatan($tahun)
-    {
-        // Ambil data pendapatan berdasarkan tahun
-        $data = KasirTransModel::selectRaw('DATE(created_at) as tanggal, SUM(tagihan) as pendapatan')
-            ->whereYear('created_at', $tahun) // Filter berdasarkan tahun
-            ->groupBy('tanggal') // Kelompokkan berdasarkan tanggal
-            ->orderBy('tanggal', 'asc') // Urutkan berdasarkan tanggal
-            ->get();
-
-        // Inisialisasi array kosong untuk pendapatan
-        $result = [];
-
-        // Periksa apakah data ada
-        if ($data->isEmpty()) {
-            return response()->json([
-                'message' => 'Tidak ada data pendapatan untuk tahun ' . $tahun,
-                'data' => [],
-            ], 200, [], JSON_PRETTY_PRINT);
-        }
-
-        // Looping data pendapatan
-        foreach ($data as $d) {
-            $tanggal = \Carbon\Carbon::parse($d->tanggal); // Menggunakan Carbon
-            $formattedDate = $tanggal->format('d-m-Y');
-            $hari = $tanggal->locale('id')->isoFormat('dddd'); // Hari dalam bahasa Indonesia
-            $tglNomor = $tanggal->locale('id')->isoFormat('DD MMMM YYYY');
-            $terbilangPendapatan = $this->terbilang($d->pendapatan); // Konversi terbilang
-
-            // Format nomor
-            $nomor = $tanggal->format('d') . './SBS/01/' . $tanggal->format('Y');
-
-            // Tambahkan ke array hasil
-            $result[] = [
-                'nomor' => $nomor,
-                'tanggal' => $formattedDate,
-                'hari' => $hari,
-                'tgl_nomor' => $tglNomor,
-                'tgl_pendapatan' => $tglNomor,
-                'tgl_setor' => $tglNomor,
-                'pendapatan' => 'Rp ' . number_format($d->pendapatan, 0, ',', '.') . ',00',
-                'jumlah' => $d->pendapatan,
-                'terbilang' => ucfirst($terbilangPendapatan) . " rupiah.",
-                'kode_akun' => 102010041411,
-                'uraian' => 'Pendapatan Jasa Pelayanan Rawat Jalan 1',
-            ];
-        }
-        return $result;
-        // return response()->json($result, 200, [], JSON_PRETTY_PRINT);
-    }
-
-    private function terbilang($angka)
-    {
-        $angka = abs((int) $angka); // Pastikan angka dalam bentuk numerik
-        $huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
-        $temp = "";
-
-        if ($angka < 12) {
-            $temp = $huruf[$angka];
-        } elseif ($angka < 20) {
-            $temp = $huruf[$angka - 10] . " belas";
-        } elseif ($angka < 100) {
-            $temp = $this->terbilang((int) ($angka / 10)) . " puluh " . $this->terbilang($angka % 10);
-        } elseif ($angka < 200) {
-            $temp = "seratus " . $this->terbilang($angka - 100);
-        } elseif ($angka < 1000) {
-            $temp = $this->terbilang((int) ($angka / 100)) . " ratus " . $this->terbilang($angka % 100);
-        } elseif ($angka < 2000) {
-            $temp = "seribu " . $this->terbilang($angka - 1000);
-        } elseif ($angka < 1000000) {
-            $temp = $this->terbilang((int) ($angka / 1000)) . " ribu " . $this->terbilang($angka % 1000);
-        } elseif ($angka < 1000000000) {
-            $temp = $this->terbilang((int) ($angka / 1000000)) . " juta " . $this->terbilang($angka % 1000000);
-        } elseif ($angka < 1000000000000) {
-            $temp = $this->terbilang((int) ($angka / 1000000000)) . " milyar " . $this->terbilang(fmod($angka, 1000000000));
-        } elseif ($angka < 1000000000000000) {
-            $temp = $this->terbilang((int) ($angka / 1000000000000)) . " triliun " . $this->terbilang(fmod($angka, 1000000000000));
-        }
-
-        return trim($temp); // Pastikan hasil akhir tanpa spasi berlebih
-    }
-
-    // public function pendapatanPerItem($tahun)
-    // {
-    //     $data = KasirAddModel::with('layanan') // Mengambil relasi 'layanan'
-    //         ->selectRaw('
-    //                         DATE(created_at) as tanggal,
-    //                         idLayanan,
-    //                         SUM(totalHarga) as jumlah,
-    //                         COUNT(*) as totalItem          -- Jumlah rekaman berdasarkan idLayanan
-    //                     ')
-    //         ->whereYear('created_at', $tahun) // Menggunakan parameter tahun secara langsung
-    //         ->groupBy('tanggal', 'idLayanan') // Kelompokkan berdasarkan tanggal dan idLayanan
-    //         ->orderBy('tanggal', 'asc') // Urutkan berdasarkan tanggal
-    //         ->get();
-
-    //     // return $data;
-
-    //     // Inisialisasi array kosong untuk pendapatan
-    //     $result = [];
-
-    //     // Periksa apakah data ada
-    //     if ($data->isEmpty()) {
-    //         return response()->json([
-    //             'message' => 'Tidak ada data pendapatan untuk tahun ' . $tahun,
-    //             'data' => [],
-    //         ], 200, [], JSON_PRETTY_PRINT);
-    //     }
-
-    //     // Looping data pendapatan
-    //     foreach ($data as $d) {
-
-    //         // Tambahkan ke array hasil
-    //         $result[] = [
-    //             'tanggal' => $d->tanggal,
-    //             'idLayanan' => $d->idLayanan,
-    //             'jumlah' => $d->jumlah,
-    //             'totalItem' => $d->totalItem,
-    //             'nmLayanan' => $d->layanan->nmLayanan,
-    //             'tarif' => $d->layanan->tarif,
-    //         ];
-    //     }
-
-    //     return $result;
-    // }
 
     public function pendapatanPerItem(Request $request)
     {
@@ -523,5 +525,14 @@ class KasirController extends Controller
             'tglAkhir' => $request->input('tglAkhir'),
         ];
         return $model->pendapatanPerItem($params);
+    }
+    public function pendapatanPerRuang(Request $request)
+    {
+        $model = new KasirAddModel();
+        $params = [
+            'tglAwal' => $request->input('tglAwal'),
+            'tglAkhir' => $request->input('tglAkhir'),
+        ];
+        return $model->pendapatanPerRuang($params);
     }
 }

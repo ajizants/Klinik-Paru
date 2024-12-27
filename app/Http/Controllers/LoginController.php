@@ -32,13 +32,38 @@ class LoginController extends Controller
         if (Auth::attempt($data)) {
             // Ambil email dari input request
             $email = $request->input('email');
-
-            // Cek apakah email sama dengan 'nurse@rsparu.com'
-            if ($email == 'nurse@rsparu.com' || $email == 'nurse') {
-                // dd($email);
-                return redirect('/surat/medis');
+            if (!str_ends_with($email, '@rsparu.com')) {
+                $email .= '@rsparu.com';
             }
-            return redirect('home');
+            // Cek apakah email sama dengan 'nurse@rsparu.com'
+
+            switch ($email) {
+                case 'nurse@rsparu.com':
+                    return redirect('/surat/medis');
+                    break;
+                case 'tindakan@rsparu.com':
+                    return redirect('/idg');
+                    break;
+                case 'kasir@rsparu.com':
+                    return redirect('/kasir');
+                    break;
+                case 'radiologi@rsparu.com':
+                    return redirect('/ro');
+                    break;
+                case 'dots@rsparu.com':
+                    return redirect('/dots');
+                    break;
+                case 'lab@rsparu.com':
+                    return redirect('/lab');
+                    break;
+                default:
+                    return redirect('/home');
+            }
+            // if ($email == 'nurse@rsparu.com' || $email == 'nurse') {
+            //     // dd($email);
+            //     return redirect('/surat/medis');
+            // }
+            // return redirect('home');
         } else {
             session()->flash('error', 'Email atau Password Salah');
 

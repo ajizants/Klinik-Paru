@@ -1,4 +1,4 @@
-<div class="card shadow mb-4">
+<div class="card shadow mb-4" id="top">
     <!-- Card Header - Accordion -->
     <a href="#collapseCardAntrian" class="d-block card-header py-1 bg bg-info" data-toggle="collapse" role="button"
         aria-expanded="true" aria-controls="collapseCardExample">
@@ -27,10 +27,10 @@
                 </li>
                 <div class="input-group col d-flex justify-content-start ml-5">
                     <input type="date" class="form-control col-sm-2 bg bg-warning" id="tanggal"
-                        value="{{ old('date') }}" required onchange=" antrianKasir('kasir');">
+                        value="{{ old('date') }}" required onchange=" antrianAll('kasir');">
                     <div class="input-group-addon btn btn-danger">
                         <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top"
-                            title="Update Pasien Hari ini" id="cariantrian" onclick=" antrianKasir('kasir');"></span>
+                            title="Update Pasien Hari ini" id="cariantrian" onclick=" antrianAll('kasir');"></span>
                     </div>
                 </div>
             </ul>
@@ -39,37 +39,15 @@
                     <table id="antrianall" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
                         <thead class="bg bg-warning">
-                            <tr>
-                                <th width="15px">Aksi</th>
-                                <th width="25px">Status</th>
-                                <th>Tanggal</th>
-                                <th>Urut</th>
-                                <th>Jaminan</th>
-                                <th>No RM</th>
-                                <th class="col-3">Nama Pasien</th>
-                                <th>Poli</th>
-                                <th class="col-3">Dokter</th>
-                            </tr>
                         </thead>
                     </table>
                 </div>
             </div>
             <div id="dTunggu" class="card-body card-body-hidden p-2">
                 <div class="table-responsive pt-2 px-2">
-                    <table id="dataAntrian" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
+                    <table id="dataTunggu" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
                         <thead class="bg bg-teal">
-                            <tr>
-                                <th width="15px">Aksi</th>
-                                <th>status</th>
-                                <th>Tanggal</th>
-                                <th>Urut</th>
-                                <th>Jaminan</th>
-                                <th>No RM</th>
-                                <th class="col-1">Nama Pasien</th>
-                                <th class="col-3">Dokter</th>
-                                <th class="col-3">Permintaan</th>
-                            </tr>
                         </thead>
                     </table>
                 </div>
@@ -79,17 +57,6 @@
                     <table id="dataSelesai" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
                         cellspacing="0">
                         <thead class="bg bg-teal">
-                            <tr>
-                                <th width="15px">Aksi</th>
-                                <th width="25px">Status</th>
-                                <th>Tanggal</th>
-                                <th>Urut</th>
-                                <th>Jaminan</th>
-                                <th>No RM</th>
-                                <th class="col-3">Nama Pasien</th>
-                                <th>Poli</th>
-                                <th class="col-3">Dokter</th>
-                            </tr>
                         </thead>
                     </table>
                 </div>

@@ -323,7 +323,6 @@ function selesai() {
 }
 
 $(document).ready(function () {
-    scrollToAntrianSection();
     $("#norm").focus();
     var idAptk;
     var prod_id;
@@ -341,32 +340,16 @@ $(document).ready(function () {
 
     loadFarmasi();
     setTodayDate();
-    populateDokterOptions();
-    populateApotekerOptions();
-    populateObatOptions();
-    antrianAll();
+    antrianAll("farmasi");
 
     setInterval(function () {
-        antrianAll();
+        antrianAll("farmasi");
     }, 60000);
 
     $("#jual").on("input", function (e) {
         hitungTotalHarga();
     });
     $("#modal-xl").modal("show");
-
-    $("#dataAntrian").on("click", ".panggil", function (e) {
-        e.preventDefault();
-
-        let panggilData = $(this).data("panggil");
-        // panggilData = "coba panggil imam aji santoso";
-        console.log(
-            "🚀 ~ file: mainFarmasi.js:478 ~ panggilData:",
-            panggilData
-        );
-
-        panggilPasien(panggilData);
-    });
 
     $("#dataFarmasi").on("click", ".delete", function (e) {
         e.preventDefault();

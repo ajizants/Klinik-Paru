@@ -5,16 +5,370 @@ namespace App\Http\Controllers;
 use App\Models\FarmasiModel;
 use App\Models\GudangFarmasiInStokModel;
 use App\Models\GudangFarmasiModel;
+use App\Models\IGDTransModel;
+use App\Models\KasirTransModel;
+use App\Models\KominfoModel;
 use App\Models\KunjunganModel;
+use App\Models\KunjunganWaktuSelesai;
 use App\Models\LogGudangFarmasiModel;
 use App\Models\TransaksiBMHPModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class FarmasiController extends Controller
 {
-    //fungsi Farmasi
+
+    public function obats(Request $request)
+    {
+        $norm = $request->input('norm');
+        $tanggal = $request->input('tanggal');
+        return $this->cariObats($norm, $tanggal);
+    }
+    public function cetakObat($norm, $tanggal)
+    {
+        // Fetch the response data from the API
+        $data = $this->cariObats($norm, $tanggal);
+
+        // Decode the JSON response to an array if it's a JsonResponse
+        $dataArray = json_decode($data->getContent(), true);
+
+        // return $dataArray;
+        // Extract 'obats' and 'tindakanList' from the decoded array
+        $obats = $dataArray['obats'] ?? []; // Ensure it's set as an empty array if not available
+        $tindakanList = $dataArray['tindakan'] ?? [];
+        // return $tindakanList;
+        $cppt = $dataArray['cppt'] ?? [];
+        // return $cppt;
+        // Pass the data to the view
+        return view('Laporan.obat', compact('tindakanList', 'obats', 'cppt'))->with([
+            'title' => "Obat Terpakai",
+        ]);
+    }
+
+    private function cariObats($norm, $tanggal)
+    {
+
+        $params = [
+            'tanggal_awal' => $tanggal,
+            'tanggal_akhir' => $tanggal,
+            'no_rm' => $norm ?? '',
+        ];
+        $model = new KominfoModel();
+        $data = $model->cpptRequest($params);
+
+        // Pastikan data CPPT tersedia
+        $cppt = $data['response']['data'][0] ?? null;
+        // Periksa resep obat dari CPPT
+        $obats = [];
+        $dObats = [];
+        if (is_array($cppt) && isset($cppt['resep_obat'])) {
+            $dObats = $cppt['resep_obat'];
+        } elseif (is_object($cppt) && isset($cppt->resep_obat)) {
+            $dObats = $cppt->resep_obat;
+        }
+        // return $dObats;
+        foreach ($dObats as $obat) {
+            $obats[] = [
+                'no_resep' => $obat['no_resep'],
+                'jumlah_puyer' => $obat['jumlah_puyer'],
+                'signa' => $obat['signa_1'] . ' X ' . $obat['signa_2'] . ' ' . $obat['aturan_pakai'],
+                'nmObat' => $obat['resep_obat_detail'][0]['nama_obat'],
+                'jumlah' => $obat['resep_obat_detail'][0]['jumlah_obat'],
+            ];
+        }
+
+        if (!$cppt || !isset($cppt['no_reg'])) {
+            return response()->json(['error' => 'Data CPPT tidak ditemukan atau tidak valid'], 404);
+        }
+
+        $noReg = $cppt['no_reg'];
+        // dd($noReg);
+
+        // Fetch tindakan dari model
+        $tindakans = IGDTransModel::with(['tindakan', 'transbmhp.bmhp'])
+            ->where('notrans', $noReg)
+        // ->whereDate('created_at', $tanggal)
+            ->get();
+        // return $tindakans;
+
+        $tindakanList = [];
+        foreach ($tindakans as $item) {
+            $bmhps = [];
+            foreach ($item->transbmhp as $trans) {
+                $bmhps[] = [
+                    'kdBmhp' => $trans->kdBmhp,
+                    'qty' => $trans->jml,
+                    'bmhp' => $trans->bmhp->nmObat ?? '',
+                ];
+            }
+
+            $tindakanList[] = [
+                'id' => $item->id,
+                'notrans' => $item->notrans,
+                'norm' => $item->norm,
+                'kdTind' => $item->kdTind,
+                'tindakan' => $item->tindakan->nmTindakan ?? '',
+                'bmhps' => $bmhps,
+            ];
+        }
+
+        return response()->json([
+            'tindakan' => $tindakanList,
+            'obats' => $obats,
+            'cppt' => $cppt,
+        ]);
+    }
+
+    public function panggil(Request $request)
+    {
+        $log_id = $request->input('log_id');
+        $norm = $request->input('norm');
+        $notrans = $request->input('notrans');
+        // session()->forget('cookie_farmasi');
+        $cookie = session('cookie_farmasi'); // Retrieve the cookie from the session
+        // dd($cookie);
+
+        if (!$cookie) {
+            $cookie = $this->loginAndStoreCookie();
+            if (!$cookie) {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+        // dd($cookie);
+
+        $url = env('BASR_URL_KOMINFO', '') . '/loket_farmasi/panggil';
+
+        try {
+            $panggil = $this->sendRequest($url, $cookie, ['log_id' => $log_id]);
+            // atasi jika eror
+            if ($panggil->getStatusCode() !== 200) {
+                return response()->json(['message' => 'Request gagal'], 500);
+            }
+
+            $antrian = $this->antrianFarmasi(now()->toDateString(), $norm, $cookie);
+            $log_id = $antrian['log_id'] ?? null;
+            if ($antrian === null || $antrian['log_id'] === null) {
+                return response()->json(['message' => 'Tidak Ada Antrian di tanggal ' . now()->toDateString()], 404);
+            }
+            // dd($log_id);
+            $pulangkan = $this->pulangkan($log_id, $cookie);
+            // dd($pulangkan);
+            if ($pulangkan->getStatusCode() !== 200) {
+                return response()->json(['message' => 'Request gagal'], 500);
+            }
+            $waktu = $this->selesaiFarmasi($norm, $notrans);
+            return response()->json(['message' => $waktu], 200);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            return response()->json([
+                'message' => 'Request gagal',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function panggil2(Request $request)
+    {
+        $log_id = $request->input('log_id');
+        $norm = $request->input('norm');
+        $cookie = session('cookie_farmasi'); // Retrieve the cookie from the session
+        // dd($cookie);
+
+        if (!$cookie) {
+            $cookie = $this->loginAndStoreCookie();
+            if (!$cookie) {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+        // dd($cookie);
+
+        $url = env('BASR_URL_KOMINFO', '') . '/loket_farmasi/panggil';
+
+        try {
+            $panggil = $this->sendRequest($url, $cookie, ['log_id' => $log_id]);
+            // atasi jika eror
+            if ($panggil->getStatusCode() !== 200) {
+                return response()->json(['message' => 'Request gagal'], 500);
+            }
+
+            $antrian = $this->antrianFarmasi(now()->toDateString(), $norm, $cookie);
+            if ($antrian === [] || $antrian === null || $antrian['log_id'] === null) {
+                return response()->json(['message' => 'Tidak Ada Antrian di tanggal ' . now()->toDateString()], 404);
+            }
+            $lists = $antrian['data'];
+
+            foreach ($lists as &$list) {
+                $norm = $list['pasien_no_rm'];
+                $tanggal = $list['tanggal'];
+                $kasir = KasirTransModel::where('norm', $norm)
+                    ->whereDate('created_at', $tanggal)->first();
+                $list['status_kasir'] = !$kasir ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                $pulang = KunjunganWaktuSelesai::where('notrans', $list['no_reg'])->first();
+                $list['status_pulang'] = !$pulang['waktu_selesai_farmasi'] ? 'Belum Pulang' : 'Sudah Pulang';
+            }
+
+            // Sort by created_at_log from oldest to newest
+            usort($lists, function ($a, $b) {
+                $dateA = strtotime($a['created_at_log']);
+                $dateB = strtotime($b['created_at_log']);
+                return $dateA - $dateB; // Ascending order (oldest first)
+            });
+
+            if ($lists === []) {
+                return response()->json(['message' => 'Tidak Ada Antrian di tanggal '], 404);
+            }
+
+            Log::info('Final List:', $lists); // Debugging log
+
+            return response()->json($lists, 200, [], JSON_PRETTY_PRINT);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            return response()->json([
+                'message' => 'Request gagal',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function pulangkan2(Request $request)
+    {
+        $cookie = session('cookie_farmasi'); // Retrieve the cookie from the session
+        // dd($cookie);
+        $log_id = $request->input('log_id');
+        $norm = $request->input('norm');
+        $notrans = $request->input('notrans');
+
+        if (!$cookie) {
+            $cookie = $this->loginAndStoreCookie();
+            if (!$cookie) {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+        $url = env('BASR_URL_KOMINFO', '') . '/loket_farmasi/selesai';
+
+        try {
+            $response = $this->sendRequest($url, $cookie, [
+                'log_id' => $log_id,
+                'ruang_id_selanjutnya' => 'Pulang',
+            ]);
+            $log_id2 = $antrian['log_id'] ?? null;
+            // dd($log_id);
+            if ($log_id2 === $log_id) {
+                return response()->json(['message' => 'Eror, Log Id Sama'], 500);
+            }
+            $pulangkan = $this->pulangkan($log_id2, $cookie);
+            // dd($pulangkan);
+            if ($pulangkan->getStatusCode() !== 200) {
+                return response()->json(['message' => 'Request gagal'], 500);
+            }
+            $waktu = $this->selesaiFarmasi($norm, $notrans);
+            return response()->json(json_decode($response->getBody(), true));
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            return response()->json([
+                'message' => 'Request gagal',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    private function pulangkan($log_id, $cookie)
+    {
+        $url = env('BASR_URL_KOMINFO', '') . '/loket_farmasi/selesai';
+
+        try {
+            $response = $this->sendRequest($url, $cookie, [
+                'log_id' => $log_id,
+                'ruang_id_selanjutnya' => 'Pulang',
+            ]);
+
+            return response()->json(json_decode($response->getBody(), true));
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            return response()->json([
+                'message' => 'Request gagal',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    private function selesaiFarmasi($norm, $notrans)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Cari entri dengan notrans yang diberikan
+            $data = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
+
+            if ($data) {
+                // Jika entri sudah ada, perbarui kolom updated_at
+                $data->waktu_selesai_farmasi = now();
+            } else {
+                // Jika entri belum ada, buat entri baru
+                $data = new KunjunganWaktuSelesai;
+                $data->norm = $norm;
+                $data->notrans = $notrans;
+                $data->waktu_selesai_farmasi = now();
+
+            }
+
+            $data->save();
+
+            $now = date('Y-m-d H:i:s');
+
+            $msg = "Pasien No. RM: " . $norm . "Pulang: " . $now;
+
+            DB::commit();
+
+            return $msg;
+        } catch (\Exception $e) {
+            DB::rollback(); // Rollback transaksi jika terjadi kesalahan
+            Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
+            return response()->json(['message' => 'Terjadi kesalahan saat memulangkan pasien. Data: ' . $e->getMessage()], 500);
+        }
+    }
+
+    private function antrianFarmasi($tgl, $norm = null, $cookie = null)
+    {
+        $tgl = $tgl ?? now()->toDateString();
+        $model = new KominfoModel();
+
+        $daftarTunggu = $model->getTungguFaramsi($tgl, $cookie);
+        $lists = $daftarTunggu['data'];
+
+        if (empty($lists)) {
+            return response()->json(['message' => 'Tidak Ada Antrian di tanggal ' . $tgl], 404);
+        }
+
+        $pasien = array_filter($lists, function ($list) use ($norm) {
+            return $list['pasien_no_rm'] === $norm;
+        });
+
+        return array_values($pasien)[0] ?? null;
+    }
+
+    private function loginAndStoreCookie()
+    {
+        $model = new KominfoModel();
+        $loginResponse = $model->login(197609262011012003, env('PASSWORD_KOMINFO', ''));
+
+        $cookieFar = $loginResponse['cookies'][0] ?? null;
+        if ($cookieFar) {
+            session(['cookie_farmasi' => $cookieFar]);
+        }
+
+        return $cookieFar;
+    }
+
+    private function sendRequest($url, $cookie, $params)
+    {
+        $client = new \GuzzleHttp\Client();
+
+        return $client->request('POST', $url, [
+            'form_params' => $params,
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+                'Cookie' => $cookie,
+            ],
+        ]);
+    }
 
     public function riwayatFarmasi(Request $request)
     {

@@ -1,25 +1,8 @@
-function cetak(norm) {
-    console.log("🚀 ~ cetak ~ norm:", norm);
-    // window.open("http://rsparu.kkpm.local/Cetak/RM/norm/" + norm);
-    // window.open("http://rsparu.kkpm.local/Cetak/Kartu/norm/" + norm);
-    // window.open("http://rsparu.kkpm.local/Cetak/Label/norm/" + norm);
-    window.open("http://rsparu.kkpm.local/Cetak/Label3/norm/" + norm);
-}
-
-function checkEnter(event) {
-    if (event.key === "Enter" || event.keyCode === 13) {
-        selesai(); // Call the selesai function when Enter key is pressed
-    }
-}
-
 function reportPendapatanItem(tglAwal, tglAkhir) {
-    if ($.fn.DataTable.isDataTable("#tabelPerItem")) {
-        var tabel = $("#tabelPerItem").DataTable();
+    if ($.fn.DataTable.isDataTable("#tabelPerItemUMUM,#tabelPerItemBPJS")) {
+        var tabel = $("#tabelPerItemUMUM,#tabelPerItemBPJS").DataTable();
         tabel.clear().destroy();
     }
-    // var tglAwal = document.getElementById("tglAwal").value;
-    // var tglAkhir = document.getElementById("tglAkhir").value;
-
     $.ajax({
         url: "/api/pendapatan/item",
         type: "post",
@@ -29,52 +12,280 @@ function reportPendapatanItem(tglAwal, tglAkhir) {
         },
         success: function (response) {
             Swal.close();
-            response.forEach(function (item, index) {
-                item.no = index + 1;
-            });
-            $("#tabelPerItem")
-                .DataTable({
-                    data: response,
-                    columns: [
-                        { data: "no" },
-                        { data: "nmLayanan" },
-                        { data: "tanggal" },
-                        { data: "jumlah" },
-                        { data: "totalItem" },
-                    ],
-                    order: [0, "asc"],
-                    lengthChange: true,
-                    autoWidth: true,
-                    buttons: [
-                        {
-                            extend: "copyHtml5",
-                            text: "Salin",
-                        },
-                        {
-                            extend: "excel",
-                            text: "Export to Excel",
-                            title:
-                                "Laporan Hasil Pemeriksaan Lab " +
-                                tglAwal +
-                                " s.d. " +
-                                tglAkhir,
-                            filename:
-                                "Daftar Penjamin Laboratorium " +
-                                tglAwal +
-                                " s.d. " +
-                                tglAkhir,
-                        },
-                        "colvis", // Show/Hide Columns button
-                    ],
-                })
-                .buttons()
-                .container()
-                .appendTo("#tabelPerItem_wrapper .col-md-6:eq(0)");
+            const dataUmum = response.umum;
+            const dataBpjs = response.bpjs;
+            console.log("🚀 ~ reportPendapatanItem ~ dataUmum:", dataUmum);
+            isiTabelPendapatanItem(dataUmum, "#tabelPerItemUMUM");
+            isiTabelPendapatanItem(dataBpjs, "#tabelPerItemBPJS");
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
         },
     });
+}
+function isiTabelPendapatanItem(data, id) {
+    data.forEach(function (item, index) {
+        item.no = index + 1;
+    });
+    $(id)
+        .DataTable({
+            data: data,
+            columns: [
+                { data: "no" },
+                { data: "nmLayanan" },
+                {
+                    data: "tanggal",
+                    className: "col-2",
+                    render: function (data) {
+                        // Format the date using JavaScript
+                        const formattedDate = new Date(data).toLocaleString(
+                            "id-ID",
+                            {
+                                year: "numeric",
+                                month: "numeric",
+                                day: "numeric",
+                            }
+                        );
+                        return formattedDate;
+                    },
+                },
+                {
+                    data: "jumlah",
+                    render: function (data, type, row) {
+                        var formattedTarif = parseInt(data).toLocaleString(
+                            "id-ID",
+                            {
+                                style: "currency",
+                                currency: "IDR",
+                                minimumFractionDigits: 0,
+                            }
+                        );
+                        return `${formattedTarif}`;
+                    },
+                },
+                { data: "totalItem" },
+            ],
+            order: [0, "asc"],
+            lengthChange: true,
+            autoWidth: true,
+            buttons: [
+                {
+                    extend: "excelHtml5",
+                    text: "Download",
+                    title:
+                        "Laporan Pendapatan Per Item Tanggal: " +
+                        tglAwal +
+                        " s.d. " +
+                        tglAkhir,
+                    filename:
+                        "Laporan Pendapatan Per Item Tanggal: " +
+                        tglAwal +
+                        "  s.d. " +
+                        tglAkhir,
+                },
+            ],
+        })
+        .buttons()
+        .container()
+        .appendTo(id + "_wrapper .col-md-6:eq(0)");
+}
+
+function reportPendapatanRuang(tglAwal, tglAkhir) {
+    if ($.fn.DataTable.isDataTable("#tabelPerRuangUMUM,#tabelPerRuangBPJS")) {
+        var tabel = $("#tabelPerRuangUMUM,#tabelPerRuangBPJS").DataTable();
+        tabel.clear().destroy();
+    }
+    // var tglAwal = document.getElementById("tglAwal").value;
+    // var tglAkhir = document.getElementById("tglAkhir").value;
+
+    $.ajax({
+        url: "/api/pendapatan/ruang",
+        type: "post",
+        data: {
+            tglAwal: tglAwal,
+            tglAkhir: tglAkhir,
+        },
+        success: function (response) {
+            Swal.close();
+            const dataUmum = response.umum;
+            const dataBpjs = response.bpjs;
+            console.log("🚀 ~ reportPendapatanRuang ~ dataUmum:", dataUmum);
+            isiTabelPendapatanRuang(dataUmum, "#tabelPerRuangUMUM");
+            isiTabelPendapatanRuang(dataBpjs, "#tabelPerRuangBPJS");
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        },
+    });
+}
+
+function isiTabelPendapatanRuang(data, id) {
+    data.forEach(function (item, index) {
+        item.no = index + 1;
+    });
+    $(id)
+        .DataTable({
+            data: data,
+            columns: [
+                { data: "no" },
+                { data: "nmKelas" },
+                {
+                    data: "tanggal",
+                    render: function (data) {
+                        // Format the date using JavaScript
+                        const formattedDate = new Date(data).toLocaleString(
+                            "id-ID",
+                            {
+                                year: "numeric",
+                                month: "numeric",
+                                day: "numeric",
+                            }
+                        );
+                        return formattedDate;
+                    },
+                },
+                {
+                    data: "jumlah",
+                    render: function (data, type, row) {
+                        var formattedTarif = parseInt(data).toLocaleString(
+                            "id-ID",
+                            {
+                                style: "currency",
+                                currency: "IDR",
+                                minimumFractionDigits: 0,
+                            }
+                        );
+                        return `${formattedTarif}`;
+                    },
+                },
+                { data: "totalItem" },
+            ],
+            order: [0, "asc"],
+            lengthChange: true,
+            autoWidth: true,
+            buttons: [
+                {
+                    extend: "excelHtml5",
+                    text: "Download",
+                    title:
+                        "Laporan Pendapatan Per Ruang Tanggal: " +
+                        tglAwal +
+                        " s.d. " +
+                        tglAkhir,
+                    filename:
+                        "Laporan Pendapatan Per Ruang Tanggal: " +
+                        tglAwal +
+                        "  s.d. " +
+                        tglAkhir,
+                },
+            ],
+        })
+        .buttons()
+        .container()
+        .appendTo(id + "_wrapper .col-md-6:eq(0)");
+}
+
+function reportPendapatanTotalPerHari(tahun) {
+    // Destroy existing DataTables if they exist
+    const tableIds = [
+        "#tabelPendapatanTotalPerHariUMUM",
+        "#tabelPendapatanTotalPerHariBPJS",
+    ];
+
+    tableIds.forEach((tableId) => {
+        if ($.fn.DataTable.isDataTable(tableId)) {
+            $(tableId).DataTable().clear().destroy();
+        }
+    });
+
+    console.log("🚀 ~ reportPendapatanTotalPerHari ~ tahun:", tahun);
+
+    // Fetch data via AJAX
+    $.ajax({
+        url: `/api/pendapatan/${tahun}`,
+        type: "GET",
+        success: function (response) {
+            Swal.close();
+
+            // Initialize DataTables for each dataset
+            isiTabelPendapatanTotalPerHari(
+                response.umum,
+                "#tabelPendapatanTotalPerHariUMUM",
+                tahun,
+                "umum"
+            );
+            isiTabelPendapatanTotalPerHari(
+                response.bpjs,
+                "#tabelPendapatanTotalPerHariBPJS",
+                tahun,
+                "bpjs"
+            );
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Terjadi kesalahan!",
+                text: `Gagal mengambil data: ${error}`,
+            });
+        },
+    });
+}
+
+function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
+    console.log("🚀 ~ isiTabelPendapatanTotalPerHari ~ tableId:", tableId);
+    console.log("🚀 ~ isiTabelPendapatanTotalPerHari ~ data:", data);
+    console.log("🚀 ~ isiTabelPendapatanTotalPerHari ~ selector:", selector);
+
+    // Enrich data for rendering
+    data.forEach((item, index) => {
+        item.no = index + 1;
+        item.aksi = `
+            <a class="btn btn-sm btn-warning mr-2 mb-2"
+                href="/api/cetakBAPH/${item.tanggal}/${tahun}/${selector}"
+                target="_blank">
+                Cetak BAPH ${selector}
+            </a>
+            <a class="btn btn-sm btn-success mr-2 mb-2"
+                href="/api/cetakSBS/${item.tanggal}/${tahun}/${selector}"
+                target="_blank">
+                Cetak SBS ${selector}
+            </a>
+        `;
+    });
+
+    // Initialize DataTable
+    $(tableId)
+        .DataTable({
+            data: data,
+            columns: [
+                { data: "aksi", className: "text-center col-4" },
+                { data: "no", className: "text-center" },
+                { data: "tanggal", className: "text-center" },
+                { data: "nomor", className: "text-center" },
+                { data: "kode_akun" },
+                { data: "uraian" },
+                { data: "jumlah", className: "text-right" },
+                { data: "pendapatan", className: "text-right" },
+            ],
+            autoWidth: false,
+            order: [[1, "asc"]],
+            buttons: [
+                {
+                    extend: "excelHtml5",
+                    text: "Excel",
+                    title: `Laporan Pendapatan Tahun: ${tahun}`,
+                    filename: `Laporan Pendapatan Tahun ${tahun}`,
+                },
+                {
+                    extend: "colvis",
+                    text: "Tampilkan Kolom",
+                },
+            ],
+        })
+        .buttons()
+        .container()
+        .appendTo(`${tableId}_wrapper .col-md-6:eq(0)`);
 }
 
 function cetakSBS() {
@@ -156,14 +367,50 @@ function reportKunjungan(tglAwal, tglAkhir) {
                 {
                     data: "tagihan",
                     title: "Tagihan",
+
+                    render: function (data, type, row) {
+                        var formattedTarif = parseInt(data).toLocaleString(
+                            "id-ID",
+                            {
+                                style: "currency",
+                                currency: "IDR",
+                                minimumFractionDigits: 0,
+                            }
+                        );
+                        return `${formattedTarif}`;
+                    },
                 },
                 {
                     data: "bayar",
                     title: "Bayar",
+
+                    render: function (data, type, row) {
+                        var formattedTarif = parseInt(data).toLocaleString(
+                            "id-ID",
+                            {
+                                style: "currency",
+                                currency: "IDR",
+                                minimumFractionDigits: 0,
+                            }
+                        );
+                        return `${formattedTarif}`;
+                    },
                 },
                 {
                     data: "kembalian",
                     title: "Kembalian",
+
+                    render: function (data, type, row) {
+                        var formattedTarif = parseInt(data).toLocaleString(
+                            "id-ID",
+                            {
+                                style: "currency",
+                                currency: "IDR",
+                                minimumFractionDigits: 0,
+                            }
+                        );
+                        return `${formattedTarif}`;
+                    },
                 },
             ];
 
@@ -181,31 +428,31 @@ function reportKunjungan(tglAwal, tglAkhir) {
                 .DataTable({
                     data: dataTableData,
                     columns: columns,
-                    order: [0, "asc"],
+                    order: [0, "dsc"],
                     lengthChange: true,
+                    paging: true,
+                    lengthMenu: [
+                        [5, 10, 25, 50],
+                        [5, 10, 25, 50],
+                    ],
+                    pageLength: 5,
                     autoWidth: true,
                     buttons: [
                         {
-                            extend: "copyHtml5",
-                            text: "Salin",
-                        },
-                        {
                             extend: "excel",
-                            text: "Export to Excel",
+                            text: "Download",
                             title:
-                                "Laporan Hasil Pemeriksaan Lab " +
+                                "Laporan Kunjungan Kasir " +
                                 tglAwal +
                                 " s.d. " +
                                 tglAkhir,
                             filename:
-                                "Daftar Penjamin Laboratorium " +
+                                "Daftar Kunjungan Kasir " +
                                 tglAwal +
                                 " s.d. " +
                                 tglAkhir,
                         },
-                        "colvis", // Show/Hide Columns button
                     ],
-                    // Add border style to DataTable
                     initComplete: function () {
                         this.api()
                             .table()
@@ -221,41 +468,6 @@ function reportKunjungan(tglAwal, tglAkhir) {
             console.error("Error:", error);
         },
     });
-}
-
-function isiForm(norm, nama, jaminan, notrans, nosep, btn) {
-    $("#norm").val(norm);
-    $("#nama").val(nama);
-    $("#jaminan").val(jaminan);
-    $("#notrans").val(notrans);
-    $("#noSep").val(nosep);
-    btn.classList.remove("btn-danger");
-    btn.classList.add("btn-success");
-}
-
-function segarkan() {
-    Swal.fire({
-        icon: "info",
-        title: "Sedang mencarikan data...!!!\n Proses lama jika mencari lebih dari 10 hari",
-        showConfirmButton: true,
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        },
-    });
-    reportPendaftaran(tglAwal, tglAkhir);
-}
-function cariJumlah() {
-    Swal.fire({
-        icon: "info",
-        title: "Sedang mencarikan data...!!!\n Proses lama jika mencari lebih dari 10 hari",
-        showConfirmButton: true,
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        },
-    });
-    reportJumlah(tglAwal, tglAkhir);
 }
 
 function reportPendaftaran(tglAwal, tglAkhir) {
@@ -454,18 +666,78 @@ function formatDate(date) {
     return `${day}-${month}-${year}`;
 }
 
-var tglAwal;
-var tglAkhir;
+let tglAwal;
+let tglAkhir;
+
+let tahun = $("#tahun").val();
+function updateData() {
+    reportPendaftaran(tglAwal, tglAkhir);
+    reportPendapatanItem(tglAwal, tglAkhir);
+    reportKunjungan(tglAwal, tglAkhir);
+    reportPendapatanRuang(tglAwal, tglAkhir);
+    reportPendapatanTotalPerHari();
+}
+
+// function initializeDataTable(selector, titlePrefix, tglAwal, tglAkhir) {
+//     $(selector)
+//         .DataTable({
+//             destroy: true,
+//             buttons: [
+//                 {
+//                     extend: "excelHtml5",
+//                     text: "Download",
+//                     title: `${titlePrefix} Tanggal: ${tglAwal} s.d. ${tglAkhir}`,
+//                     filename: `${titlePrefix} Tanggal: ${tglAwal} s.d. ${tglAkhir}`,
+//                 },
+//             ],
+//         })
+//         .buttons()
+//         .container()
+//         .appendTo(`${selector}_wrapper .col-md-6:eq(0)`);
+// }
+function initializeDataTable(selector, titlePrefix, tglAwal, tglAkhir) {
+    if ($.fn.DataTable.isDataTable(selector)) {
+        $(selector).DataTable().destroy();
+    }
+
+    $(selector)
+        .DataTable({
+            destroy: true,
+            dom: "Bfrtip",
+            buttons: [
+                {
+                    extend: "excelHtml5",
+                    text: "Download",
+                    title: `${titlePrefix} Tanggal: ${tglAwal} s.d. ${tglAkhir}`,
+                    filename: `${titlePrefix} Tanggal: ${tglAwal} s.d. ${tglAkhir}`,
+                },
+            ],
+        })
+        .buttons()
+        .container()
+        .appendTo(`${selector}_wrapper .col-md-6:eq(0)`);
+}
 
 window.addEventListener("load", function () {
     setTodayDate();
     var today = new Date().toISOString().split("T")[0];
     $("#tanggal").val(today);
 
-    // Inisialisasi tglAwal dan tglAkhir sebagai objek Moment.js
-    // tglAwal = moment().subtract(30, "days").format("YYYY-MM-DD");
     tglAwal = moment().subtract(0, "days").format("YYYY-MM-DD");
     tglAkhir = moment().subtract(0, "days").format("YYYY-MM-DD");
+
+    isiTabelPendapatanTotalPerHari(
+        dataSBSU,
+        "#tabelPendapatanTotalPerHariUMUM",
+        tahun,
+        "umum"
+    );
+    isiTabelPendapatanTotalPerHari(
+        dataSBSB,
+        "#tabelPendapatanTotalPerHariBPJS",
+        tahun,
+        "bpjs"
+    );
 
     // Menetapkan nilai ke input tanggal
     $("#reservation, #tglJumlah").val(tglAwal + " to " + tglAkhir);
@@ -499,9 +771,7 @@ window.addEventListener("load", function () {
                     Swal.showLoading();
                 },
             });
-            reportPendaftaran(tglAwal, tglAkhir);
-            reportPendapatanItem(tglAwal, tglAkhir);
-            reportKunjungan(tglAwal, tglAkhir);
+            updateData();
         }
     );
     Swal.fire({
@@ -515,36 +785,42 @@ window.addEventListener("load", function () {
     reportPendaftaran(tglAwal, tglAkhir);
     reportKunjungan(tglAwal, tglAkhir);
 
-    $("#modalSep").on("shown.bs.modal", function () {
-        $("#noSep").focus();
-    });
+    initializeDataTable(
+        "#tabelPerItemUMUM",
+        "Laporan Pendapatan Per Item UMUM",
+        tglAwal,
+        tglAkhir
+    );
+    initializeDataTable(
+        "#tabelPerItemBPJS",
+        "Laporan Pendapatan Per Item BPJS",
+        tglAwal,
+        tglAkhir
+    );
 
-    $("#tabelPerItem")
-        .DataTable({
-            destroy: true,
-            buttons: [
-                {
-                    extend: "excelHtml5",
-                    text: "Excel",
-                    title:
-                        "Laporan Pendapatan Per Item Tanggal: " +
-                        tglAwal +
-                        " s.d. " +
-                        tglAkhir,
-                    filename:
-                        "Laporan Pendapatan Per Item Tanggal: " +
-                        tglAwal +
-                        "  s.d. " +
-                        tglAkhir,
-                },
-                {
-                    extend: "colvis",
-                    text: "Tampilkan Kolom",
-                },
-                // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
-            ],
-        })
-        .buttons()
-        .container()
-        .appendTo("#tabelPerItem_wrapper .col-md-6:eq(0)");
+    initializeDataTable(
+        "#tabelPerRuangBPJS",
+        "Laporan Pendapatan Per Ruang BPJS",
+        tglAwal,
+        tglAkhir
+    );
+    initializeDataTable(
+        "#tabelPerRuangUMUM",
+        "Laporan Pendapatan Per Ruang UMUM",
+        tglAwal,
+        tglAkhir
+    );
+
+    initializeDataTable(
+        "#tabelPendapatanTotalPerHariUMUM",
+        "Laporan Pendapatan Total UMUM",
+        tglAwal,
+        tglAkhir
+    );
+    initializeDataTable(
+        "#tabelPendapatanTotalPerHariBPJS",
+        "Laporan Pendapatan Total BPJS",
+        tglAwal,
+        tglAkhir
+    );
 });

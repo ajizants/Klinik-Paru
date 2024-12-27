@@ -295,6 +295,18 @@
                 $("#reportKunjungan tbody").remove();
             }
 
+            const identitas = `
+                                <div class="col-4">
+                                <p><strong>NO RM:</strong> ${hasilLab[0].norm}</p>
+                                <p><strong>Nama:</strong> ${hasilLab[0].pasien.nama}</p>
+                                </div>
+                                <div class="col-4">
+                                <p><strong>Alamat:</strong> ${hasilLab[0].pasien.alamat}</p>
+                                <p><strong>Jaminan:</strong> ${hasilLab[0].pasien.layanan}</p>
+                                </div>
+                            `;
+            $("#identitas").html(identitas);
+
             // Format date to dd-mm-yyyy
             function formatDate(dateStr) {
                 var date = new Date(dateStr);
@@ -334,44 +346,49 @@
                 pemeriksaanKetMap[item.pemeriksaan.nmLayanan] = keterangan; // Store ket for each pemeriksaan
             });
 
+
+
             // Create DataTable columns dynamically
             var columns = [{
                     data: null,
                     title: "No",
+                    className: "col-1",
                     render: function(data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     },
-                },
-                {
-                    data: "created_at",
-                    title: "Tanggal"
-                },
-                {
-                    data: "norm",
-                    title: "Nomor Rekam Medis"
-                },
-                {
-                    data: "pasien.layanan",
-                    title: "Jaminan"
-                },
-                {
-                    data: "pasien.nama",
-                    title: "Nama",
-                    className: "col-2",
-                    render: function(data, type, row) {
-                        return data.toUpperCase();
-                    },
-                },
-                {
-                    data: "pasien.alamat",
-                    title: "Alamat",
-                    className: "col-3"
                 },
                 {
                     data: "dokter.biodata.nama",
                     title: "Nama Dokter",
                     className: "col-3"
                 },
+                {
+                    data: "created_at",
+                    title: "Tanggal",
+                    className: "col-1"
+                },
+                // {
+                //     data: "norm",
+                //     title: "noRm"
+                // },
+                // {
+                //     data: "pasien.layanan",
+                //     title: "Jaminan"
+                // },
+                // {
+                //     data: "pasien.nama",
+                //     title: "Nama",
+                //     className: "col-2",
+                //     render: function(data, type, row) {
+                //         return data.toUpperCase();
+                //     },
+                // },
+                // {
+                //     data: "pasien.alamat",
+                //     title: "Alamat",
+                //     className: "col-3"
+                // },
+
             ];
 
             // Add each unique pemeriksaan as a column with its name as title

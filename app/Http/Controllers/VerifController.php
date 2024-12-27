@@ -305,7 +305,7 @@ class VerifController extends Controller
 
         if (!$cookie) {
             // Jika cookie tidak ada, lakukan login
-            $loginResponse = $client->login();
+            $loginResponse = $client->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
             $cookie = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
@@ -356,7 +356,7 @@ class VerifController extends Controller
 
         // Memanggil pasien jika perlu
         if ($keterangan == "MENUNGGU DIPANGGIL LOKET PENDAFTARAN" || $keterangan == "SKIP LOKET PENDAFTARAN") {
-            $panggil = $client->panggil(['cookie' => $cookie], $log_id);
+            $panggil = $client->panggil(['cookie' => $cookie], $log_id, $request->input('loket'));
             $antrian = $client->get_data_antrian(['cookie' => $cookie], $request->input('noAntri'));
             $log_id = $antrian['data'][0]['log_id'] ?? null; // Memastikan ada data
         }

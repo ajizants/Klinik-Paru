@@ -1220,12 +1220,12 @@ function ratawaktulayanan(tglAwal, tglAkhir, tanggal, tglA, tglB) {
             });
         },
         error: function (err, response) {
-            console.error("Error fetching data:", err);
-            console.log("🚀 ~ ratawaktulayanan ~ response:", response);
+            console.error("Error fetching data:", err.responseText);
+            console.log("🚀 ~ ratawaktulayanan ~ response:", response.error);
             Swal.fire({
                 icon: "error",
-                title: "Oops...",
-                text: "Terjadi kesalahan, silahkan coba lagi!",
+                title: "Oops...Terjadi kesalahan, silahkan coba lagi!",
+                text: err.responseText,
             });
         },
     });

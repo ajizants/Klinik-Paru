@@ -11,11 +11,11 @@ class LayananModel extends Model
     protected $table = 'kasir_m_layanan';
     protected $primaryKey = 'idLayanan';
     protected $fillable = [
-        'nmLayanan', 'tarif', 'kelas', 'status',
+        'nmLayanan', 'tarif', 'kelas', 'status', 'kdTind', 'kdFoto', 'satuan', 'normal',
     ];
 
-    public function kelas()
+    public function grup()
     {
-        return $this->belongsTo(LayananKelasModel::class, 'idKelas', 'id');
+        return $this->belongsTo(LayananKelasModel::class, 'kelas', 'kelas');
     }
 }

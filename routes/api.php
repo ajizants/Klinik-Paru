@@ -50,6 +50,7 @@ Route::get('dxMedis', [InputController::class, 'dxMedis']);
 Route::get('jaminan', [InputController::class, 'jaminan']);
 Route::get('tujuan', [InputController::class, 'tujuan']);
 Route::post('waktuLayanan', [InputController::class, 'waktuLayanan']);
+Route::get('tes', [InputController::class, 'tes']);
 
 Route::get('bmhp', [InputController::class, 'bmhp']);
 Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);
@@ -108,16 +109,20 @@ Route::post('layanan/add', [KasirController::class, 'add']);
 Route::post('layanan/delete', [KasirController::class, 'delete']);
 Route::post('tagihan', [KasirController::class, 'tagihan']);
 Route::post('kasir/item/add', [KasirController::class, 'addTagihan']);
+Route::post('kasir/item/delete', [KasirController::class, 'deleteTagihan']);
 Route::post('kasir/tagihan/order', [KasirController::class, 'order']);
 Route::post('kasir/transaksi', [KasirController::class, 'addTransaksi']);
+Route::post('kasir/transaksi/delete', [KasirController::class, 'deleteTransaksi']);
 Route::post('kasir/kunjungan', [KasirController::class, 'kunjungan']);
 Route::post('kasir/rekap', [KasirController::class, 'rekapKunjungan']);
-Route::get('cetakSBS/{id}', [KasirController::class, 'cetakSBS']);
+// Route::get('cetakSBS/{id}', [KasirController::class, 'cetakSBS']);
 // Route::post('cetakBAPH', [KasirController::class, 'cetakBAPH']);
-Route::get('cetakBAPH/{tgl}/{tahun}', [KasirController::class, 'cetakBAPH']);
+Route::get('cetakSBS/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakSBS']);
+Route::get('cetakBAPH/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakBAPH']);
 Route::get('/pendapatan/{tahun}', [KasirController::class, 'pendapatan']);
 Route::get('/pendapatan/item/{tahun}', [KasirController::class, 'pendapatanPerItem']);
 Route::post('/pendapatan/item', [KasirController::class, 'pendapatanPerItem']);
+Route::post('/pendapatan/ruang', [KasirController::class, 'pendapatanPerRuang']);
 
 //laboratorium
 Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);
@@ -143,7 +148,12 @@ Route::post('cariRiwayatLab', [LaboratoriumController::class, 'riwayat']);
 Route::get('stokbmhp', [StokController::class, 'stokbmhp']);
 Route::get('obat', [GudangFarmasiController::class, 'gudangFarmasiIn']);
 
-//transaksi apotik
+//transaksi apotok
+Route::post('lists/obat', [FarmasiController::class, 'obats']);
+Route::get('resep/{norm}/{tgl}', [FarmasiController::class, 'cetakObat']);
+Route::post('farmasi/panggil', [FarmasiController::class, 'panggil']);
+Route::post('pendaftaran/pulang', [FarmasiController::class, 'selesaiFarmasi']);
+
 Route::post('simpanFarmasi', [FarmasiController::class, 'simpanFarmasi']);
 Route::post('deleteFarmasi', [FarmasiController::class, 'deleteFarmasi']);
 Route::post('editFarmasi', [FarmasiController::class, 'editFarmasi']);
@@ -250,6 +260,7 @@ Route::post('kominfo/pendaftaran/report', [PasienKominfoController::class, 'repo
 Route::get('resume/{no_rm}/{tgl}', [PasienKominfoController::class, 'resumePasien']);
 Route::post('kominfo/pendaftaran/resume', [PasienKominfoController::class, 'resumePasien']);
 Route::post('kominfo/report/dokter_rme', [PasienKominfoController::class, 'grafikDokter']);
+Route::post('kominfo/antrian/log', [PasienKominfoController::class, 'logAntrian']);
 
 Route::post('verif/pendaftaran/fr', [VerifController::class, 'frista']);
 Route::post('verif/pendaftaran/fp', [VerifController::class, 'afterapp']);

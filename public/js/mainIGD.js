@@ -168,6 +168,7 @@ function batal() {
 
     $("#dokter, #petugas, #tindakan, #bmhp, #qty").trigger("change");
 
+    $("#permintaan").html("");
     var tabletindakan = $("#dataTindakan").DataTable();
     tabletindakan.clear().destroy();
     var tablebmhp = $("#transaksiBMHP").DataTable();

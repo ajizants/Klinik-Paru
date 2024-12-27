@@ -6,6 +6,7 @@ use App\Models\BMHPModel;
 use App\Models\DiagnosaModel;
 use App\Models\GudangFarmasiModel;
 use App\Models\KelompokModel;
+use App\Models\KominfoModel;
 use App\Models\KunjunganModel;
 use App\Models\TindakanModel;
 use App\Models\TujuanModel;
@@ -14,6 +15,16 @@ use Illuminate\Support\Facades\DB;
 
 class InputController extends Controller
 {
+
+    public function tes(Request $request)
+    {
+
+        $model = new KominfoModel();
+        $cookie = null;
+        $tgl = 2024 - 12 - 25;
+        $data = $model->getTungguFaramsi($tgl, $cookie);
+        return response()->json($data);
+    }
     public function jaminan()
     {
 

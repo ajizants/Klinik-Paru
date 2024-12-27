@@ -12,7 +12,9 @@ use App\Models\GiziDxDomainModel;
 use App\Models\GiziDxKelasModel;
 use App\Models\GiziDxSubKelasModel;
 use App\Models\KasirAddModel;
+use App\Models\KasirTransModel;
 use App\Models\LaboratoriumHasilModel;
+use App\Models\LayananKelasModel;
 use App\Models\LayananModel;
 use App\Models\PegawaiModel;
 use App\Models\RoHasilModel;
@@ -89,7 +91,7 @@ class HomeController extends Controller
         $title = 'IGD';
         $dokter = $this->pegawai([1, 7, 8]);
         $perawat = $this->pegawai([10, 15]);
-        $tindakan = $this->layanan([2, 3, 5, 10]);
+        $tindakan = $this->layanan([2, 3, 5, 6, 10]);
         $bmhp = BMHPModel::all();
         $dxMed = DiagnosaModel::all();
 
@@ -239,6 +241,15 @@ class HomeController extends Controller
         // return $layanan;
         return view('Kasir.main', compact('layanan'))->with('title', $title);
     }
+    public function masterKasir()
+    {
+        $title = 'Master Kasir';
+        // $layanan = LayananModel::with('grup')->where('status', 'like', '%1%')->get();
+        $layanan = LayananModel::with('grup')->get();
+        $kelas = LayananKelasModel::get();
+        // return $layanan;
+        return view('Kasir.Master.main', compact('layanan', 'kelas'))->with('title', $title);
+    }
     public function rekapKasir()
     {
         $title = 'LAPORAN KASIR';
@@ -259,9 +270,21 @@ class HomeController extends Controller
             'tglAkhir' => $date,
         ];
         $perItem = $model->pendapatanPerItem($params);
+        // $perItem = array_map(function ($item) {
+        //     return (object) $item;
+        // }, $perItem);
+        // return $perItem;
+        $perRuang = $model->pendapatanPerRuang($params);
+        // $perRuang = array_map(function ($item) {
+        //     return (object) $item;
+        // }, $perRuang);
 
-        return view('Laporan.Kasir.rekap', compact('perItem', 'listYear', 'title'));
+        $kasir = new KasirTransModel();
+        $pendapatanTotal = $kasir->pendapatan($currentYear);
+        // return $pendapatanTotal;
+        return view('Laporan.Kasir.rekap', compact('perItem', 'perRuang', 'listYear', 'pendapatanTotal', 'title'));
     }
+
     public function pendapatan()
     {
         $title = 'LAPORAN KASIR';
@@ -509,7 +532,7 @@ class HomeController extends Controller
     }
     public function rontgenHasil($id)
     {
-        $title = 'Hasil Rontgen';
+        $title = 'Hasil Penunjang';
         $appUrlRo = env('APP_URLRO');
         $norm = str_pad($id, 6, '0', STR_PAD_LEFT); // Normalize ID to 6 digits
 
@@ -555,7 +578,7 @@ class HomeController extends Controller
 
     public function roHasil()
     {
-        $title = 'Hasil Rontgen';
+        $title = 'Hasil Penunjang';
         $appUrlRo = env('APP_URLRO');
         $hasilRo = "Silahkan Ketikan No RM dan tekan Enter/Klik Tombol Cari";
         $hasilLab = "Silahkan Ketikan No RM dan tekan Enter/Klik Tombol Cari";

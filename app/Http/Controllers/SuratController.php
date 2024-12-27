@@ -58,7 +58,7 @@ class SuratController extends Controller
     {
         try {
             // Ambil semua data Surat Medis
-            $lists = SuratMedis::all();
+            $lists = SuratMedis::with('dok.biodata', 'adm.biodata')->get();
 
             // Panggil model KominfoModel untuk mendapatkan antrian
             $kominfoController = new KominfoModel();

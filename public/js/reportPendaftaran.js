@@ -119,7 +119,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                             <button type="button" class="btn btn-sm btn-primary mr-2 mb-2"
                                     onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak">Label</button>
                             <button type="button" class="btn btn-sm btn-${item.check_in} mr-2 mb-2" id="checkin" placeholder="Selesai" data-toggle="modal"
-                                    data-target="#modalSep" onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}','${item.penjamin_nama}','${item.no_trans}','${item.no_sep}',this)">
+                                    data-target="#modalSep" onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}','${item.penjamin_nama}','${item.no_reg}','${item.no_sep}',this)">
                                     <i class="fa-regular fa-square-check"></i></button>
                             <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" placeholder="Resume"
                                     href="/api/resume/${item.pasien_no_rm}/${item.tanggal}" target="_blank">Resume</a>
@@ -205,6 +205,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                         },
                         { data: "jumlah_nomor_skip", className: "text-center" },
                         { data: "jumlah_BPJS", className: "text-center" },
+                        { data: "jumlah_BPJS_2", className: "text-center" },
                         { data: "jumlah_UMUM", className: "text-center" },
                         {
                             data: "jumlah_pasien_LAMA",

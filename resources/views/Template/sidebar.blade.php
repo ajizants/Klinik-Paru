@@ -102,7 +102,7 @@
                                 </ul>
                             </li>
                             <!-- Farmasi Section -->
-                            {{-- <li class="nav-item">
+                            <li class="nav-item">
                                 <a href="" class="nav-link">
                                     <i class="fa-solid fa-pills nav-icon"></i>
                                     <p>
@@ -117,14 +117,14 @@
                                             <p>Input Farmasi</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item ml-4">
+                                    {{-- <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/gudangFarmasi') }}">
                                             <i class="fa-solid fa-database nav-icon"></i>
                                             <p>Master Farmasi</p>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                 </ul>
-                            </li> --}}
+                            </li>
                             <!-- lab Section -->
                             <li class="nav-item">
                                 <a href="" class="nav-link">
@@ -206,9 +206,9 @@
                                         </a>
                                     </li>
                                     <li class="nav-item ml-4">
-                                        <a class="nav-link" href="{{ url('/kasir/pendapatan') }}">
+                                        <a class="nav-link" href="{{ url('/kasir/master') }}">
                                             <i class="fa-solid fa-database nav-icon"></i>
-                                            <p>Laporan Pendapatan</p>
+                                            <p>Master Data Layanan</p>
                                         </a>
                                     </li>
                                 </ul>
@@ -226,7 +226,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url('/RO/Hasil') }}">
                                     <i class="fa-solid fa-x-ray nav-icon"></i>
-                                    <p>Hasil RO</p>
+                                    <p>Hasil Penunjang</p>
                                 </a>
                             </li>
                             <li class="nav-item">

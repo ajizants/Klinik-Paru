@@ -340,8 +340,9 @@
         });
 
         function creatTableDataPemohon(data) {
+            const batas = '2024-12-14'
             data.forEach(function(item, index) {
-                let statusCetak = item.tanggal < formattedDate ? "hidden" : "";
+                let statusCetak = item.tanggal < batas ? "hidden" : "";
                 item.aksi = `
                         <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" ${statusCetak}
                                 href="/api/surat/medis/${item.id}/${item.tanggal}" target="_blank">Cetak</a>
@@ -349,6 +350,8 @@
                                onclick="deleteSM('${item.id}')">Hapus</button>
                         `;
                 item.no = index + 1;
+                item.nama_dokter = item.dok === [] || item.dok === null ? item.dokter : item.dok.gelar_d + " " +
+                    item.dok.biodata.nama + " " + item.dok.gelar_b;
             });
             $("#dataPemohon")
                 .DataTable({
@@ -387,7 +390,7 @@
                             data: "keperluan"
                         },
                         {
-                            data: "dokter"
+                            data: "nama_dokter"
                         },
                     ],
                     lengthMenu: [

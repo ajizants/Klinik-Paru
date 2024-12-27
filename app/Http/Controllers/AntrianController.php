@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KasirTransModel;
+use App\Models\KominfoModel;
 use App\Models\KunjunganModel;
 use App\Models\KunjunganWaktuSelesai;
 use App\Models\PasienModel;
@@ -209,115 +211,79 @@ class AntrianController extends Controller
         return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
         // return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
+    // public function antrianFarmasi(Request $request)
+    // {
+    //     $tgl = $request->input('tgl') ?? now()->toDateString();
+    //     // dd($tgl);
+    //     $model = new KominfoModel();
+    //     $loginResponse = $model->login(197609262011012003, env('PASSWORD_KOMINFO', ''));
+    //     $cookie = $loginResponse['cookies'][0] ?? null;
+    //     if (!$cookie) {
+    //         return response()->json(['message' => 'Login gagal'], 401);
+    //     }
+    //     $daftarTunggu = $model->getTungguFaramsi($tgl, $cookie);
+
+    //     $lists = $daftarTunggu['data'];
+
+    //     foreach ($lists as &$list) {
+    //         $norm = $list['pasien_no_rm'];
+    //         $tanggal = $list['tanggal'];
+    //         $kasir = KasirTransModel::where('norm', $norm)
+    //             ->whereDate('created_at', $tanggal)->first();
+    //         $list['status_kasir'] = !$kasir ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+    //     }
+    //     // unset($list);
+
+    //     if ($lists === []) {
+    //         return response()->json(['message' => 'Tidak Ada Antrian di tanggal ' . $tgl], 404);
+    //     }
+
+    //     Log::info('Final List:', $lists); // Debugging log
+
+    //     return response()->json($lists, 200, [], JSON_PRETTY_PRINT);
+    // }
+
     public function antrianFarmasi(Request $request)
     {
-        $date = $request->input('date', Carbon::now()->toDateString());
+        $tgl = $request->input('tgl') ?? now()->toDateString();
+        // dd($tgl);
+        $model = new KominfoModel();
+        $loginResponse = $model->login(197609262011012003, env('PASSWORD_KOMINFO', ''));
 
-        $data = KunjunganModel::with(['biodata', 'kelompok', 'poli', 'tindakan', 'farmasi', 'petugas.pegawai.biodata'])
-            ->whereDate('tgltrans', $date)
-            ->whereHas('poli', function ($query) {
-                $query->whereNotNull('notrans');
-            })
-            ->get();
-        $formattedData = [];
-        foreach ($data as $transaksi) {
+        $cookie = $loginResponse['cookies'][0] ?? null;
+        if (!$cookie) {
+            return response()->json(['message' => 'Login gagal'], 401);
+        }
+        $daftarTunggu = $model->getTungguFaramsi($tgl, $cookie);
 
-            if (isset($transaksi["farmasi"]) && isset($transaksi["farmasi"]["idAptk"]) && $transaksi["farmasi"]["idAptk"] !== null) {
-                $status = "sudah";
-            } else {
-                $status = "belum";
-            }
+        $lists = $daftarTunggu['data'];
 
-            if ($transaksi["umurthn"] <= 15) {
-                $pang = "anak";
-            } elseif ($transaksi["umurthn"] >= 16 && $transaksi["umurthn"] <= 30) {
-                if ($transaksi["biodata"]["jeniskel"] == "Laki-Laki") {
-                    $pang = "saudara";
-                } else {
-                    $pang = "nona";
-                }
-            } elseif ($transaksi["umurthn"] >= 31) {
-                if ($transaksi["biodata"]["jeniskel"] == "Laki-Laki") {
-                    $pang = "bapak";
-                } else {
-                    $pang = "ibu";
-                }
-            }
-            if (
-                isset($transaksi["petugas"]) &&
-                is_array($transaksi["petugas"]) &&
-                isset($transaksi["petugas"]["p_dokter_poli_konsul"]) &&
-                $transaksi["petugas"]["p_dokter_poli_konsul"] !== null
-            ) {
-                $dokter = $transaksi["petugas"]["p_dokter_poli_konsul"];
-            } else {
-                $dokter = isset($transaksi["petugas"]["p_dokter_poli"]) ? $transaksi["petugas"]["p_dokter_poli"] : null;
-            }
-
-            $transaksi["status"] = $status;
-
-            $formattedData[] = [
-                "notrans" => $transaksi["notrans"] ?? "null",
-                "norm" => $transaksi["norm"] ?? "null",
-                "nourut" => $transaksi["nourut"] ?? "null",
-                "noasuransi" => $transaksi["noasuransi"] ?? "null",
-                "layanan" => $transaksi["kelompok"]["kelompok"] ?? "null",
-                "biaya" => $transaksi["kelompok"]["biaya"] ?? "null",
-                "noktp" => $transaksi["biodata"]["noktp"] ?? "null",
-                "pang" => $pang ?? "null",
-                "namapasien" => $transaksi["biodata"]["nama"] ?? "null",
-                "alamatpasien" => $transaksi["biodata"]["alamat"] ?? "null",
-                "rtrwpasien" => $transaksi["biodata"]["rtrw"] ?? "null",
-                "kelaminpasien" => $transaksi["biodata"]["jeniskel"] ?? "null",
-                "tgllahir" => $transaksi["biodata"]["tgllahir"] ?? "null",
-                "umurpasien" => $transaksi["biodata"]["umur"] ?? "null",
-                "nohppasien" => $transaksi["biodata"]["nohp"] ?? "null",
-                "provinsi" => $transaksi["biodata"]["provinsi"] ?? "null",
-                "kabupaten" => $transaksi["biodata"]["kabupaten"] ?? "null",
-                "kecamatan" => $transaksi["biodata"]["kecamatan"] ?? "null",
-                "kelurahan" => $transaksi["biodata"]["kelurahan"] ?? "null",
-                "rtrw" => $transaksi["biodata"]["rtrw"] ?? "null",
-                "agama" => $transaksi["biodata"]["agama"] ?? "null",
-                "pendidikan" => $transaksi["biodata"]["pendidikan"] ?? "null",
-
-                "status" => $status,
-
-                "tgltrans" => $transaksi["poli"]["tgltrans"] ?? "null",
-                "rontgen" => $transaksi["poli"]["rontgen"] ?? "null",
-                "konsul" => $transaksi["poli"]["konsul"] ?? "null",
-                "tcm" => $transaksi["poli"]["tcm"] ?? "null",
-                "bta" => $transaksi["poli"]["bta"] ?? "null",
-                "hematologi" => $transaksi["poli"]["hematologi"] ?? "null",
-                "kimiaDarah" => $transaksi["poli"]["kimiaDarah"] ?? "null",
-                "imunoSerologi" => $transaksi["poli"]["imunoSerologi"] ?? "null",
-                "mantoux" => $transaksi["poli"]["mantoux"] ?? "null",
-                "ekg" => $transaksi["poli"]["ekg"] ?? "null",
-                "mikroCo" => $transaksi["poli"]["mikroCo"] ?? "null",
-                "spirometri" => $transaksi["poli"]["spirometri"] ?? "null",
-                "spo2" => $transaksi["poli"]["spo2"] ?? "null",
-                "diagnosa1" => $transaksi["poli"]["diagnosa1"] ?? "null",
-                "diagnosa2" => $transaksi["poli"]["diagnosa2"] ?? "null",
-                "diagnosa3" => $transaksi["poli"]["diagnosa3"] ?? "null",
-                "nebulizer" => $transaksi["poli"]["nebulizer"] ?? "null",
-                "infus" => $transaksi["poli"]["infus"] ?? "null",
-                "oksigenasi" => $transaksi["poli"]["oksigenasi"] ?? "null",
-                "injeksi" => $transaksi["poli"]["injeksi"] ?? "null",
-                "terapi" => $transaksi["poli"]["terapi"] ?? "null",
-                "dokterpoli" => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? "null") . ' ' . ($transaksi["petugas"]["pegawai"]["biodata"]["nama"] ?? "null") . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? "null"),
-                "kddokter" => $dokter ?? "null",
-                "idtindakan" => $transaksi["tindakan"]["id"] ?? "null",
-                "kdTind" => $transaksi["tindakan"]["kdTind"] ?? "null",
-                "petugastindakan" => $transaksi["tindakan"]["petugas"] ?? "null",
-                "doktertindakan" => $transaksi["tindakan"]["dokter"] ?? "null",
-                "jabatan" => $transaksi["petugas"]["pegawai"]["nm_jabatan"] ?? "null",
-                "farmasi" => $transaksi["farmasi"] ?? "null",
-
-            ];
+        foreach ($lists as &$list) {
+            $norm = $list['pasien_no_rm'];
+            $tanggal = $list['tanggal'];
+            $kasir = KasirTransModel::where('norm', $norm)
+                ->whereDate('created_at', $tanggal)->first();
+            $list['status_kasir'] = !$kasir ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+            $pulang = KunjunganWaktuSelesai::where('notrans', $list['no_reg'])->first();
+            $list['status_pulang'] = !$pulang['waktu_selesai_farmasi'] ? 'Belum Pulang' : 'Sudah Pulang';
         }
 
-        return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT);
-        // return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+        // Sort by created_at_log from oldest to newest
+        usort($lists, function ($a, $b) {
+            $dateA = strtotime($a['created_at_log']);
+            $dateB = strtotime($b['created_at_log']);
+            return $dateA - $dateB; // Ascending order (oldest first)
+        });
+
+        if ($lists === []) {
+            return response()->json(['message' => 'Tidak Ada Antrian di tanggal ' . $tgl], 404);
+        }
+
+        Log::info('Final List:', $lists); // Debugging log
+
+        return response()->json($lists, 200, [], JSON_PRETTY_PRINT);
     }
+
     public function antrianKasir(Request $request)
     {
         $date = $request->input('date', Carbon::now()->toDateString());
@@ -477,7 +443,7 @@ class AntrianController extends Controller
     {
         $norm = $request->input('norm');
         $notrans = $request->input('notrans');
-        $nosep= $request->input('nosep');
+        $nosep = $request->input('nosep');
 
         try {
             DB::beginTransaction();
@@ -512,7 +478,7 @@ class AntrianController extends Controller
         } catch (\Exception $e) {
             DB::rollback(); // Rollback transaksi jika terjadi kesalahan
             Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
-            return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Terjadi kesalahan saat CheckOut data: ' . $e->getMessage()], 500);
         }
     }
     public function selesaiIGD(Request $request)
@@ -534,6 +500,7 @@ class AntrianController extends Controller
                 $data = new KunjunganWaktuSelesai;
                 $data->norm = $norm;
                 $data->notrans = $notrans;
+                $data->waktu_selesai_igd = now();
             }
 
             $data->save();
@@ -550,7 +517,7 @@ class AntrianController extends Controller
         } catch (\Exception $e) {
             DB::rollback(); // Rollback transaksi jika terjadi kesalahan
             Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
-            return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Terjadi kesalahan saat checkOut data: ' . $e->getMessage()], 500);
         }
     }
 

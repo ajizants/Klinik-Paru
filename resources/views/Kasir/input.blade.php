@@ -185,10 +185,12 @@
                                                     <div class="col-sm">
                                                         <a type="button" id="btnSimpan" class="btn btn-primary"
                                                             onclick="simpanTransaksi();">Simpan</a>
-                                                        <a type="button" id="btnBatal" class="btn btn-danger"
-                                                            onclick="resetForm('Transaksi Dibatalkan');">Batal</a>
+                                                        <a type="button" id="btnBatal" class="btn btn-secondary"
+                                                            onclick="resetForm('Transaksi Dibatalkan');">Selesai/Batal</a>
                                                     </div>
-                                                    <div class="col-sm">
+                                                    <div class="col-sm" id="divPanggil">
+                                                    </div>
+                                                    <div class="col-sm" id="divHapus">
                                                     </div>
                                                 </div>
                                             </div>

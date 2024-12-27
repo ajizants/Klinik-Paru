@@ -182,14 +182,15 @@ function validasiDaftar() {
 
 async function simpanKunjungan() {
     try {
+        var norm = $("#norm").val();
         var notrans = $("#notrans").val();
         var tgltrans = $("#tglKunj").val();
-        var nxKontrol = $("#nxKontrol").val();
-        var norm = $("#norm").val();
         var bta = $("#bta").val();
+        var blnKe = $("#blnKe").val();
+        var nxKontrol = $("#nxKontrol").val();
         var bb = $("#bb").val();
         var terapi = $("#obatDots").val();
-        var blnKe = $("#blnKe").val();
+        var ket = $("#ket").val();
         var petugas = $("#petugas").val();
         var dokter = $("#dokter").val();
         // Membuat objek FormData untuk mengirim data dengan file
@@ -202,6 +203,7 @@ async function simpanKunjungan() {
         formData.append("blnKe", blnKe);
         formData.append("nxKontrol", nxKontrol);
         formData.append("terapi", terapi);
+        formData.append("ket", ket);
         formData.append("petugas", petugas);
         formData.append("dokter", dokter);
         // console.log("🚀 ~ simpanKunjungan ~ formData:", formData);
@@ -250,6 +252,7 @@ async function simpanKunjungan2() {
         var bb = $("#modal-pasienTB #modal-bb").val();
         var terapi = $("#modal-pasienTB #modal-obtDots").val();
         var blnKe = $("#modal-pasienTB #modal-blnKe").val();
+        var ket = $("#modal-pasienTB #modal-ket").val();
         var petugas = $("#modal-pasienTB #modal-petugas").val();
         var dokter = $("#modal-pasienTB #modal-dokter").val();
         // Membuat objek FormData untuk mengirim data dengan file
@@ -262,6 +265,7 @@ async function simpanKunjungan2() {
         formData.append("blnKe", blnKe);
         formData.append("nxKontrol", nxKontrol);
         formData.append("terapi", terapi);
+        formData.append("ket", ket);
         formData.append("petugas", petugas);
         formData.append("dokter", dokter);
         // console.log("🚀 ~ simpanKunjungan2 ~ formData:", formData);

@@ -13,22 +13,22 @@ function report() {
             response.forEach(function (item, index) {
                 item.aksi = `
                     <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" placeholder="Resume"
-                        data-nomor="${item.nomor}"                                
-                        data-tgl_nomor="${item.tgl_nomor}"                                
-                        data-hari="${item.hari}"                                
-                        data-tgl_pendapatan="${item.tgl_pendapatan}"                                
-                        data-tgl_setor="${item.tgl_setor}"                                
-                        data-jumlah="${item.jumlah}"                                
-                        data-terbilang="${item.terbilang}"                                
+                        data-nomor="${item.nomor}"
+                        data-tgl_nomor="${item.tgl_nomor}"
+                        data-hari="${item.hari}"
+                        data-tgl_pendapatan="${item.tgl_pendapatan}"
+                        data-tgl_setor="${item.tgl_setor}"
+                        data-jumlah="${item.jumlah}"
+                        data-terbilang="${item.terbilang}"
                         href="/api/cetakBAPH/${item.tanggal}/${tahun}" target="_blank">Cetak BAPH</a>
                     <a type="button" class="btn btn-sm btn-success mr-2 mb-2" placeholder="Resume"
-                        data-nomor="${item.nomor}"                                
-                        data-tgl_nomor="${item.tgl_nomor}"                                
-                        data-hari="${item.hari}"                                
-                        data-tgl_pendapatan="${item.tgl_pendapatan}"                                
-                        data-tgl_setor="${item.tgl_setor}"                                
-                        data-jumlah="${item.jumlah}"                                
-                        data-terbilang="${item.terbilang}"                                
+                        data-nomor="${item.nomor}"
+                        data-tgl_nomor="${item.tgl_nomor}"
+                        data-hari="${item.hari}"
+                        data-tgl_pendapatan="${item.tgl_pendapatan}"
+                        data-tgl_setor="${item.tgl_setor}"
+                        data-jumlah="${item.jumlah}"
+                        data-terbilang="${item.terbilang}"
                         href="/api/cetakBAPH/${item.tanggal}/${tahun}" target="_blank">Cetak SBS</a>
                 `;
                 item.no = index + 1;

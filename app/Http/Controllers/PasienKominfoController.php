@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\DotsTransModel;
-use App\Models\FarmasiModel;
 use App\Models\IGDTransModel;
 use App\Models\KasirTransModel;
 use App\Models\KominfoModel;
@@ -212,6 +211,9 @@ class PasienKominfoController extends Controller
         $jumlahBPJS = count(array_filter($filteredData, function ($item) {
             return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
         }));
+        $jumlahBPJS2 = count(array_filter($filteredData, function ($item) {
+            return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
+        }));
         $jumlahUMUM = count(array_filter($filteredData, function ($item) {
             return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
         }));
@@ -249,6 +251,7 @@ class PasienKominfoController extends Controller
             'jumlah_pasien_batal' => (int) $jumlahBatal,
             'jumlah_nomor_skip' => (int) $jumlahSkip,
             'jumlah_BPJS' => (int) $jumlahBPJS,
+            'jumlah_BPJS_2' => (int) $jumlahBPJS2,
             'jumlah_UMUM' => (int) $jumlahUMUM,
             'jumlah_pasien_LAMA' => (int) $jumlahLama,
             'jumlah_pasien_BARU' => (int) $jumlahBaru,
@@ -268,25 +271,17 @@ class PasienKominfoController extends Controller
     private function generateQrCodeWithLogo($dokter, $no_rm, $nama)
     {
         // Data untuk QR Code (misalnya tanda tangan)
-        $data = 'Dokumen resume medis a.n' . $nama . '(' . $no_rm . ') telah di setujui dan di tandatangani oleh ' . $dokter;
-
-        // $logoPath = public_path('img/LOGO_KKPM.png');
-        // $logoPath = str_replace('\\', '/', $logoPath);
-
-        // // dd("Jalur logo: " . $logoPath);
-        //         // Periksa apakah file logo ada
-        // if (!file_exists($logoPath)) {
-        //     dd("Logo tidak ditemukan di: " . $logoPath);
-        // }
+        // $data = 'Dokumen resume medis a.n' . $nama . ' (' . $no_rm . ') telah di tandatangani oleh ' . $dokter.'. pada ';
+        $data = 'Saya, ' . $dokter . ' telah menandatangani resume medis pasien a.n ' . $nama . ' (' . $no_rm . ') pada ';
 
         // Buat QR Code dengan logo
         $qrCode = QrCode::format('png')
-        //     ->merge($logoPath, 0.3) // 0.3 artinya logo 30% dari ukuran QR Code
-        //     ->size(300)
-        //     ->errorCorrection('H') // Tingkat toleransi tinggi agar QR Code tetap terbaca
+            ->size(300)
+            ->errorCorrection('H') // Tingkat toleransi tinggi agar QR Code tetap terbaca
             ->generate($data);
         // dd($qrCode);
-        return $qrCode;
+        $base64QrCode = base64_encode($qrCode);
+        return $base64QrCode;
     }
 
     public function resumePasien($no_rm, $tgl)
@@ -304,10 +299,11 @@ class PasienKominfoController extends Controller
         try {
             $data = $client->cpptRequest($params);
             $resumePasienArray = $data['response']['data'];
-
             // Cek jika $resumePasienArray adalah array
-            if (is_array($resumePasienArray) && count($resumePasienArray) > 0) {
+            if (is_array($resumePasienArray) && count($resumePasienArray) > 0 && $resumePasienArray[0]['id_cppt'] == null) {
                 // Ambil objek pertama dari array
+                $resumePasien = (object) $resumePasienArray[1];
+            } elseif (is_array($resumePasienArray) && count($resumePasienArray) > 0) {
                 $resumePasien = (object) $resumePasienArray[0];
             } else {
                 // Jika tidak ada data, kembalikan sebagai objek kosong
@@ -414,7 +410,7 @@ class PasienKominfoController extends Controller
             // $ro = [];
 
             $ttd = $this->generateQrCodeWithLogo($resumePasien->dokter_nama, $no_rm, $resumePasien->pasien_nama);
-            return view('Laporan.resume', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan', 'obats'));
+            return view('Laporan.resume', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan', 'obats', 'ttd'));
             // return view('Laporan.resume1', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan'));
 
         } catch (\Exception $e) {
@@ -668,6 +664,15 @@ class PasienKominfoController extends Controller
         ];
     }
 
+    public function logAntrian(Request $request)
+    {
+        $id = $request->input('id');
+        $model = new KominfoModel();
+        $data = $model->getLogAntrian($id);
+
+        return response()->json($data);
+    }
+
     public function antrianAll(Request $request)
     {
         if (!$request->has('tanggal')) {
@@ -689,8 +694,14 @@ class PasienKominfoController extends Controller
             return response()->json(['error' => 'Invalid data format'], 500);
         }
 
+        if (isset($request['tes'])) {
+            return response()->json($data);
+        }
+
         $filteredData = array_values(array_filter($data, function ($d) {
-            return $d['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
+            // return $d['pasien_nama'] !== 0;
+            return $d['no_trans'] !== 0;
+            //     return $d['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
         }));
 
         $doctorNipMap = [
@@ -724,12 +735,6 @@ class PasienKominfoController extends Controller
                         ($ts->transbmhp == null ? 'Belum Ada Transaksi BMHP' : 'Sudah Selesai');
                         break;
 
-                    case 'farmasi':
-                        $ts = FarmasiModel::where('norm', $norm)
-                            ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
-                        break;
-
                     case 'dots':
                         $ts = DotsTransModel::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
@@ -745,6 +750,14 @@ class PasienKominfoController extends Controller
                         $ts = KasirTransModel::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
                         $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        break;
+                    case 'farmasi':
+                        $ts = KasirTransModel::where('norm', $norm)
+                            ->whereDate('created_at', $tanggal)->first();
+                        $pulang = KunjunganWaktuSelesai::where('norm', $norm)
+                            ->whereDate('created_at', $tanggal)->first();
+                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        $item['button'] = $pulang->waktu_selesai_farmasi !== null ? 'success' : 'warning';
                         break;
 
                     default:
@@ -998,7 +1011,8 @@ class PasienKominfoController extends Controller
 
                     // foreach ($filteredData as $d) {
                     // dd($d);
-                    $check = KunjunganWaktuSelesai::where('notrans', $d['no_trans'])->first();
+                    $notrans = $d['tanggal'] < date('Y-m-d') ? $d['no_trans'] : $d['no_reg'];
+                    $check = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
                     // dd($check);
                     // jika $check null
                     $checkigd = $check->waktu_selesai_igd ?? null;
@@ -1168,6 +1182,9 @@ class PasienKominfoController extends Controller
 
             // Ambil data dari model menggunakan metode waktuLayananRequest
             $data = $model->waktuLayananRequest($params);
+            if (empty($data)) {
+                return response()->json(['error' => 'Data Tidak Ditemukan'], 404);
+            }
             // $data=[
             //     "error" => "cURL error 7: Failed to connect to kkpm.banyumaskab.go.id port 443 after 4399 ms: No route to host (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://kkpm.banyumaskab.go.id/api_kkpm/v1/pendaftaran/data_pendaftaran"
             //     ];

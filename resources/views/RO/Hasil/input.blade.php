@@ -8,6 +8,8 @@
                                 <button type="button" class="mx-2 btn btn-primary col-sm-auto"
                                     onclick="cari();cariLab()">Cari</button>
                             </div>
+                            <div class="container-fluid row d-flex justify-content-center" id="identitas">
+                            </div>
 
 
                             <div class="card shadow mb-4">
@@ -44,6 +46,7 @@
                                 <!-- Card Content - Collapse -->
                                 <div class="collapse show" id="cardHasilLab">
                                     <div class="card-body p-2" ">
+
                                         <div class="container-fluid">
                                             <div id="previewLab" class="row"></div>
 

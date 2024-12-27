@@ -145,7 +145,8 @@ class KominfoModel extends Model
             }
 
             $res = array_map(function ($d) {
-                $statusPulang = !is_null($d["ruang_poli_selesai_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
+                $statusPulang = !is_null($d["loket_farmasi_menunggu_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
+                // $statusPulang = !is_null($d["ruang_poli_selesai_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
                 $alamat = $d['kelurahan_nama'] . ', ' .
                     $d['pasien_rt'] . '/' .
                     $d['pasien_rw'] . ', ' .
@@ -153,7 +154,10 @@ class KominfoModel extends Model
                     $d['kabupaten_nama'];
                 $alamatMin = $d['kelurahan_nama'] . ', ' .
                     $d['kecamatan_nama'];
-                $check = KunjunganWaktuSelesai::where('notrans', $d['no_trans'])->first();
+                $alamatPang = 'Desa ' . $d['kelurahan_nama'] . ', Kecamatan ' .
+                    $d['kecamatan_nama'];
+                $notrans = $d['tanggal'] < '2024-12-19' ? $d['no_trans'] : $d['no_reg'];
+                $check = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
                 // jika $check null
                 $checkRm = $check->waktu_selesai_rm ?? null;
                 $igd = $check->waktu_selesai_igd ?? null;
@@ -199,6 +203,7 @@ class KominfoModel extends Model
                     "pasien_umur_hari" => $d["pasien_umur_hari"] ?? 0,
                     "pasien_alamat" => $alamat ?? 0,
                     "pasien_alamat_min" => $alamatMin ?? 0,
+                    "pasien_alamat_pang" => $alamatPang ?? 0,
                 ];
             }, $data['response']['data']);
 
@@ -865,10 +870,10 @@ class KominfoModel extends Model
         ];
     }
 
-    public function login()
+    public function login($username = null, $password = null)
     {
         // dd("masuk");
-        $username = env('USERNAME_KOMINFO', '');
+        $username = $username ?? env('USERNAME_KOMINFO', '');
         $password = env('PASSWORD_KOMINFO', '');
         $client = new Client();
         $url = env('BASR_URL_KOMINFO', '') . '/auth/login';
@@ -962,10 +967,10 @@ class KominfoModel extends Model
     //     return $data;
     // }
 
-    public function panggil(array $data, $log_id = null)
+    public function panggil(array $data, $log_id = null, $loket)
     {
         $client = new Client();
-        $url = env('BASR_URL_KOMINFO', '') . '/loket_pendaftaran/panggil';
+        $url = env('BASR_URL_KOMINFO', '') . '/' . $loket . '/panggil';
 
         $response = $client->request('POST', $url, [
             'form_params' => [
@@ -1064,7 +1069,7 @@ class KominfoModel extends Model
 
         if (!$cookie) {
             // Authenticate if no cookie is found
-            $loginResponse = $this->login();
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
             $cookie = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
@@ -1109,26 +1114,24 @@ class KominfoModel extends Model
             return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
         }
     }
-    public function getTungguFaramsi()
+    public function getTungguFaramsi($tanggal, $cookie)
     {
         $client = new Client();
-        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
-        $tgl = date('Y-m-d');
+        $tgl = $tanggal ?? date('Y-m-d');
         $tanggal = $tgl . ' - ' . $tgl;
 
         if (!$cookie) {
-            // Authenticate if no cookie is found
-            $loginResponse = $this->login();
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
             $cookie = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
-                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/");
             } else {
                 return response()->json(['message' => 'Login gagal'], 401);
             }
         }
 
-        $url = env('BASR_URL_KOMINFO', '') . '/ruang_poli/get_data?poli_sub_id=1';
+        $url = env('BASR_URL_KOMINFO', '') . '/loket_farmasi/get_data';
 
         try {
             $response = $client->request('POST', $url, [
@@ -1141,9 +1144,7 @@ class KominfoModel extends Model
                     'Cookie' => $cookie,
                 ],
             ]);
-            // dd($response);
 
-            // Check if the response status is 200
             if ($response->getStatusCode() !== 200) {
                 Log::error('Error response body: ' . (string) $response->getBody());
                 return response()->json(['error' => 'Internal Server Error'], 500);
@@ -1155,15 +1156,70 @@ class KominfoModel extends Model
             return $data;
 
         } catch (\GuzzleHttp\Exception\RequestException $e) {
-            // Handle network or request errors
             Log::error('Request Error: ' . $e->getMessage());
             return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
         } catch (\Exception $e) {
-            // Handle unexpected errors
             Log::error('Unexpected Error: ' . $e->getMessage());
             return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
         }
     }
+
+    // public function getTungguFaramsi($tanggal, $cookie)
+    // {
+    //     $client = new Client();
+    //     // $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+    //     $tgl = $tanggal ?? date('Y-m-d');
+    //     $tanggal = $tgl . ' - ' . $tgl;
+    //     // dd($tanggal);
+
+    //     if (!$cookie) {
+    //         // Authenticate if no cookie is found
+    //         $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+    //         $cookie = $loginResponse['cookies'][0] ?? null;
+
+    //         if ($cookie) {
+    //             setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+    //         } else {
+    //             return response()->json(['message' => 'Login gagal'], 401);
+    //         }
+    //     }
+
+    //     $url = env('BASR_URL_KOMINFO', '') . '/loket_farmasi/get_data';
+
+    //     try {
+    //         $response = $client->request('POST', $url, [
+    //             'form_data' => [
+    //                 'tanggal' => $tanggal,
+    //                 'length' => 1000,
+    //             ],
+    //             'headers' => [
+    //                 'Content-Type' => 'application/x-www-form-urlencoded',
+    //                 'Cookie' => $cookie,
+    //             ],
+    //         ]);
+    //         // dd($response);
+
+    //         // Check if the response status is 200
+    //         if ($response->getStatusCode() !== 200) {
+    //             Log::error('Error response body: ' . (string) $response->getBody());
+    //             return response()->json(['error' => 'Internal Server Error'], 500);
+    //         }
+
+    //         $body = (string) $response->getBody();
+    //         $data = json_decode($body, true);
+
+    //         return $data;
+
+    //     } catch (\GuzzleHttp\Exception\RequestException $e) {
+    //         // Handle network or request errors
+    //         Log::error('Request Error: ' . $e->getMessage());
+    //         return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
+    //     } catch (\Exception $e) {
+    //         // Handle unexpected errors
+    //         Log::error('Unexpected Error: ' . $e->getMessage());
+    //         return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
+    //     }
+    // }
     public function getTungguLoket()
     {
         $client = new Client();
@@ -1173,7 +1229,7 @@ class KominfoModel extends Model
 
         if (!$cookie) {
             // Authenticate if no cookie is found
-            $loginResponse = $this->login();
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
             $cookie = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
@@ -1944,7 +2000,7 @@ class KominfoModel extends Model
 
         if (!$cookie) {
             // Authenticate if no cookie is found
-            $loginResponse = $this->login();
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
             $cookie = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
@@ -2007,7 +2063,7 @@ class KominfoModel extends Model
 
         if (!$cookie) {
             // Authenticate if no cookie is found
-            $loginResponse = $this->login();
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
             $cookie = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
@@ -2042,6 +2098,68 @@ class KominfoModel extends Model
             $data = json_decode($body, true);
 
             return $data;
+
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            // Handle network or request errors
+            Log::error('Request Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
+        } catch (\Exception $e) {
+            // Handle unexpected errors
+            Log::error('Unexpected Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
+        }
+    }
+    public function getLogAntrian($id)
+    {
+        // return $params;
+        $client = new Client();
+        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+        if (!$id) {
+            return null;
+        }
+        // return $tanggal;
+
+        if (!$cookie) {
+            // Authenticate if no cookie is found
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+            $cookie = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+
+        $url = env('BASR_URL_KOMINFO', '') . '/loket_pendaftaran/get_log_antrean?pendaftaran_id=' . $id;
+
+        try {
+            $response = $client->request('POST', $url, [
+                'form_params' => [
+                    'pendaftaran_id' => $id,
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Cookie' => $cookie,
+                ],
+            ]);
+
+            // Check if the response status is 200
+            if ($response->getStatusCode() !== 200) {
+                Log::error('Error response body: ' . (string) $response->getBody());
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
+
+            $body = (string) $response->getBody();
+            $data = json_decode($body, true);
+            // return $data;
+            // Pastikan 'data' adalah array dan ambil elemen terakhir
+            if (isset($data['data']) && is_array($data['data'])) {
+                $lastEntry = end($data['data']);
+                return $lastEntry;
+            }
+
+            return null; // Kembalikan null jika data tidak v
 
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             // Handle network or request errors

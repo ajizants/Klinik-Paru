@@ -67,6 +67,7 @@
                             <th class="text-center">Pasien Batal</th>
                             <th class="text-center">Pasien Skip</th>
                             <th class="text-center">Pasien BPJS</th>
+                            <th class="text-center">Pasien BPJS Per 2</th>
                             <th class="text-center">Pasien UMUM</th>
                             <th class="text-center">Pasien LAMA</th>
                             <th class="text-center">Pasien BARU</th>

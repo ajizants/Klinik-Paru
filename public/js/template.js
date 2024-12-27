@@ -84,6 +84,48 @@ function panggilPasien(text) {
     synth.speak(utterance);
 }
 
+function panggil(pesan) {
+    //     console.log("🚀 ~ panggil ~ pesan:", pesan);
+
+    // Cek daftar suara yang tersedia
+    const voices = speechSynthesis.getVoices();
+
+    // Cari suara VE Damayanti (atau yang mendukung id-ID)
+    const damayantiVoice = voices.find(
+        (voice) => voice.name.includes("Damayanti") || voice.lang === "id-ID"
+    );
+
+    const utterance = new SpeechSynthesisUtterance(pesan);
+    utterance.lang = "id-ID"; // Bahasa Indonesia
+
+    // Gunakan VE Damayanti jika ditemukan
+    if (damayantiVoice) {
+        utterance.voice = damayantiVoice;
+    } else {
+        console.warn(
+            "VE Damayanti tidak ditemukan, menggunakan suara default."
+        );
+    }
+
+    // Setel kecepatan dan nada suara jika diperlukan
+    utterance.rate = 0.6; // Turunkan sedikit kecepatannya
+    utterance.pitch = 1.0; // Nada normal
+
+    // Tambahkan dingdong sebelum panggilan
+    const dingdong = new Audio("/audio/dingdong.mp3");
+    dingdong
+        .play()
+        .then(() => {
+            setTimeout(() => {
+                speechSynthesis.speak(utterance);
+            }, 1000);
+        })
+        .catch((error) => {
+            console.error("Gagal memutar audio:", error);
+            speechSynthesis.speak(utterance); // Tetap lanjutkan ucapan
+        });
+}
+
 function setTodayDate() {
     var today = new Date().toISOString().split("T")[0];
     $("#tanggal").val(today);
@@ -226,6 +268,8 @@ function selamatBertugas() {
             }, 3000);
         });
 }
+
+$(".select2bs4").select2({ theme: "bootstrap4" });
 
 function showModalUniversal(data) {
     // Buat modal dengan data yang diberikan

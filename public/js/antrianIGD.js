@@ -141,13 +141,13 @@ function dataTindakan(notrans, norm) {
                 var dokter = `${item.dokter.gelar_d} ${item.dokter.biodata.nama} ${item.dokter.gelar_b}`;
                 var petugas = `${item.petugas.gelar_d} ${item.petugas.biodata.nama} ${item.petugas.gelar_b}`;
                 var tindakan = `${item.tindakan.nmTindakan}`;
-                item.actions = `<a type="button" class="edit btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
+                item.actions = `<a type="button" class="mr-2 edit btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
                                     data-id="${item.id}"
                                     data-kdtind="${item.kdTind}"
                                     data-tindakan="${tindakan}"
                                     data-norm="${item.norm}"
                                     data-petugas="${petugas}"
-                                    data-dokter="${dokter}"><i class="fas fa-pen-to-square pr-3"></i></a>
+                                    data-dokter="${dokter}"><i class="fas fa-pen-to-square"></i></a>
                                 <a type="button" class="delete btn-sm btn-danger py-md-0 py-1 icon-link icon-link-hover"
                                     data-id="${item.id}"
                                     data-kdTind="${item.kdTind}"

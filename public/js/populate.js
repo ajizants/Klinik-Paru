@@ -197,7 +197,7 @@ function generateActionButton(item, ruang) {
         const checkOutButton = `
             <button type="button" ${commonAttributes}
                 class="aksi-button btn-sm btn-${item.igd_selesai} py-md-0 py-1 mt-md-0 mt-2 icon-link icon-link-hover"
-                onclick="checkOut('${item.pasien_no_rm}', '${item.no_trans}', this, '${ruang}')"
+                onclick="checkOut('${item.pasien_no_rm}', '${notrans}', this, '${ruang}')"
                 placeholder="Selesai">
                 <i class="fa-regular fa-square-check"></i>
             </button>`;
@@ -277,7 +277,9 @@ function getColumnsForRuang(ruang) {
     ];
 
     const extraColumns = {
-        dots: [{ data: "nmDiagnosa", className: "p-2 col-4" }],
+        dots: [
+            { data: "nmDiagnosa", className: "p-2 col-4", title: "Diagnosa" },
+        ],
         ro: [{ data: "asktind", className: "p-2 col-3" }],
         igd: [{ data: "asktind", className: "p-2 col-4" }],
         lab: [{ data: "asktind", className: "p-2 col-4" }],
@@ -319,243 +321,6 @@ function getPenunjangText(item) {
         </div>`;
 }
 
-// function fetchDataAntrian(ruang, params, callback) {
-//     $.ajax({
-//         url: "/api/cpptKominfo",
-//         type: "POST",
-//         data: params,
-//         success: callback,
-//         error: function (xhr) {
-//             console.error("Error fetching data:", xhr);
-//             //atasi jika 404
-//             if (xhr.status == 404) {
-//                 Toast.fire({
-//                     icon: "error",
-//                     title: "Data Tidak Ditemukan",
-//                 });
-//                 const dataArray = getNoDataMessage();
-//                 drawDataTable(dataArray, ruang);
-//             }
-//         },
-//     });
-// }
-
-// function initializeDataAntrian(response, ruang) {
-//     const data = response?.response?.data || [];
-//     const filteredData = data.filter((item) => item.status === "belum");
-//     // const dataArray = filteredData.length ? filteredData : getNoDataMessage();
-
-//     // processDataArray(dataArray, ruang);
-//     // drawDataTable(dataArray, ruang);
-
-//     if (filteredData.length) {
-//         const dataArray = filteredData;
-//         processDataArray(filteredData, ruang);
-//         drawDataTable(dataArray, ruang);
-//     } else {
-//         const dataArray = getNoDataMessage();
-//         drawDataTable(dataArray, ruang);
-//     }
-// }
-
-// function antrian(ruang) {
-//     $("#loadingSpinner").show();
-
-//     const params = {
-//         tanggal_awal: $("#tanggal").val(),
-//         tanggal_akhir: $("#tanggal").val(),
-//         ruang: ruang,
-//     };
-
-//     fetchDataAntrian(ruang, params, function (response) {
-//         $("#loadingSpinner").hide();
-
-//         if ($.fn.DataTable.isDataTable("#dataAntrian")) {
-//             const table = $("#dataAntrian").DataTable();
-//             const data = response?.response?.data || [];
-//             const filteredData = data.filter((item) => item.status === "belum");
-//             const sudah = data.filter((item) => item.status === "sudah");
-//             processDataArray(filteredData, ruang);
-//             processDataArray(sudah, ruang);
-//             table
-//                 .clear()
-//                 .rows.add(
-//                     filteredData.length ? filteredData : getNoDataMessage()
-//                 )
-//                 .draw();
-//         } else {
-//             initializeDataAntrian(response, ruang);
-//         }
-//     });
-// }
-
-// function processDataArray(dataArray, ruang) {
-//     dataArray.forEach((item, index) => {
-//         item.index = index + 1;
-//         const tindakan = item.tindakan;
-//         const laborat = item.laboratorium;
-//         const radiologi = item.radiologi;
-//         switch (ruang) {
-//             case "dots":
-//                 item.nmDiagnosa = item.diagnosa[0]?.nama_diagnosa || "";
-//                 break;
-//             case "ro":
-//                 item.asktind = generateAsktindString(item.radiologi);
-//                 break;
-//             case "igd":
-//                 item.asktind = generateAsktindString(item.tindakan, true);
-//                 break;
-//             case "lab":
-//                 item.asktind = generateAsktindString(
-//                     item.laboratorium,
-//                     false,
-//                     true
-//                 );
-//                 break;
-//         }
-//         item.aksi = generateActionButton(item, ruang);
-//     });
-// }
-
-// function drawDataTable(dataArray, ruang) {
-//     const columns = getColumnsForRuang(ruang);
-//     $("#dataAntrian").DataTable({
-//         data: dataArray,
-//         columns: columns,
-//         order: [
-//             [1, "asc"],
-//             [2, "asc"],
-//         ],
-//         pageLength: ruang === "lab" ? 5 : 10,
-//     });
-// }
-
-// function generateActionButton(item, ruang) {
-//     console.log("🚀 ~ generateActionButton ~ item:", item);
-
-//     const today = new Date(2024, 9, 3); // October 3, 2024
-//     today.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
-
-//     let notrans;
-
-//     const date = new Date(item.tanggal);
-//     date.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
-//     if (date <= today) {
-//         notrans = item.no_trans;
-//     } else {
-//         notrans = item.no_reg;
-//     }
-
-//     // Ensure asktind is properly trimmed and handled
-//     const asktind =
-//         item.asktind && item.asktind.trim() !== ""
-//             ? item.asktind.trim()
-//             : "No data";
-//     const penunjangLain = `
-//     <div>
-//     <h6>Penunjang Hari ini:</h6>
-//     ${item.laboratorium.length > 0 ? "Laboratorium, " : ""}
-//     ${item.tindakan.length > 0 ? " IGD, " : ""}
-//     ${item.radiologi.length > 0 ? " Radiologi, " : ""}
-
-//     </div>
-//     `;
-
-//     const commonAttributes = `
-//         data-norm="${item.pasien_no_rm}"
-//         data-nama="${item.pasien_nama}"
-//         data-dokter="${item.dokter_nama}"
-//         data-asktind="${asktind}"   // Correct access to asktind
-//         data-kddokter="${item.nip_dokter}"
-//         data-alamat="${getFormattedAddress(item)}"
-//         data-layanan="${item.penjamin_nama}"
-//         data-notrans="${notrans}"
-//         data-tgltrans="${item.tanggal}"
-//         data-umur="${item.umur}"
-//         data-jk="${item.jenis_kelamin_nama}"
-//         data-tujuan="${penunjangLain}"
-//     `;
-
-//     switch (ruang) {
-//         case "dots":
-//             return `<a type="button" class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
-//                 onclick="cariPasienTb('${item.pasien_no_rm}','${item.tanggal}');"><i class="fas fa-pen-to-square"></i></a>`;
-//         case "ro":
-//             return `<a type="button" class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
-//                 ${commonAttributes} onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
-//         case "igd":
-//             return `<a class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
-//         ${commonAttributes} onclick="setTransaksi(this);"><i class="fas fa-pen-to-square"></i></a> `;
-//         case "lab":
-//             return `<a class="aksi-button btn-sm btn-primary  py-md-0 py-1 icon-link icon-link-hover"
-//                 ${commonAttributes} onclick="askLab(this);"><i class="fas fa-pen-to-square"></i></a>`;
-//     }
-// }
-
-// function getFormattedAddress(item) {
-//     return `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-// }
-
-// function generateAsktindString(data, addNewLine = false, isLab = false) {
-//     if (!Array.isArray(data)) return ""; // Ensure data is an array
-
-//     return data
-//         .map((item, index) => {
-//             const separator = isLab ? (index % 2 === 1 ? ",<br>" : ", ") : ", ";
-//             return `${item.layanan || item.nama_tindakan} (${
-//                 item.keterangan || item.nama_obat || ""
-//             })${addNewLine ? "<br>" : separator}`;
-//         })
-//         .join("")
-//         .replace(/(,\s*<br>|,\s)$/, ""); // Remove trailing separator
-// }
-
-// function getColumnsForRuang(ruang) {
-//     const commonColumns = [
-//         { data: "aksi", className: "text-center p-2" },
-//         {
-//             data: "status",
-//             className: "text-center p-2",
-//             render: (data) =>
-//                 `<div class="badge badge-${
-//                     data === "belum" ? "danger" : "success"
-//                 }">${data}</div>`,
-//         },
-//         { data: "tanggal", className: "text-center p-2 col-1" },
-//         { data: "antrean_nomor", className: "text-center p-2" },
-//         { data: "penjamin_nama", className: "text-center p-2" },
-//         { data: "pasien_no_rm", className: "text-center p-2" },
-//         { data: "pasien_nama", className: "p-2 col-2" },
-//         { data: "dokter_nama", className: "p-2 col-3" },
-//     ];
-
-//     const extraColumns = {
-//         dots: [{ data: "nmDiagnosa", className: "p-2 col-4" }],
-//         ro: [{ data: "asktind", className: "p-2 col-3" }],
-//         igd: [{ data: "asktind", className: "p-2 col-4" }],
-//         lab: [{ data: "asktind", className: "p-2 col-4" }],
-//     };
-
-//     return commonColumns.concat(extraColumns[ruang] || []);
-// }
-
-// function getNoDataMessage() {
-//     return [
-//         {
-//             aksi: "",
-//             status: "",
-//             tanggal: "",
-//             antrean_nomor: "",
-//             pasien_no_rm: "",
-//             penjamin_nama: "",
-//             pasien_nama: "Belum ada data masuk",
-//             dokter_nama: "",
-//             nmDiagnosa: "",
-//             asktind: "",
-//         },
-//     ];
-// }
-
 //antrianall
 function fetchDataAntrianAll(tanggal, ruang, callback) {
     $.ajax({
@@ -575,8 +340,10 @@ function initializeDataTable(selector, data, columns, ruang) {
     let order;
     if (ruang === "surat") {
         order = [[0, "dsc"]];
-    } else {
+    } else if (ruang === "farmasi") {
         order = [[1, "asc"]];
+    } else {
+        order = [[2, "asc"]];
     }
     $(selector).DataTable({
         data,
@@ -588,72 +355,8 @@ function initializeDataTable(selector, data, columns, ruang) {
     });
 }
 
-// function getColumnDefinitions(statusType = "status_pulang", ruang) {
-//     const baseColumns = [
-//         {
-//             data: "antrean_nomor",
-//             className: "font-weight-bold text-center p-2 col-1",
-//             title: "Urut",
-//         },
-//         {
-//             data: statusType,
-//             className: "text-center p-2",
-//             title: "Status",
-//             render: function (data) {
-//                 const statusClasses = {
-//                     "Belum Pulang": "danger",
-//                     "Sudah Pulang": "success",
-//                     "Tidak Ada Permintaan": "danger",
-//                     "Belum Ada Ts RO": "danger",
-//                     "Belum Upload Foto Thorax": "warning",
-//                     "Sudah Selesai": "success",
-//                     default: "secondary",
-//                 };
-//                 return `<div class="badge badge-${
-//                     statusClasses[data] || statusClasses.default
-//                 }">${data}</div>`;
-//             },
-//         },
-//         { data: "tanggal", className: "col-1 p-2", title: "Tanggal" },
-//         {
-//             data: "penjamin_nama",
-//             className: "text-center p-2",
-//             title: "Penjamin",
-//         },
-//         { data: "pasien_no_rm", className: "text-center p-2", title: "NoRM" },
-//     ];
-
-//     const extraColumns = [
-//         { data: "pasien_nik", className: "p-2 col-1", title: "NIK" },
-//     ];
-
-//     const commonColumns = [
-//         { data: "pasien_nama", className: "p-2 col-3", title: "Nama Dokter" },
-//         { data: "dokter_nama", className: "p-2 col-3", title: "Dokter" },
-//         { data: "poli_nama", className: "p-2", title: "Poli" },
-//     ];
-//     const aksiColumns = [
-//         { data: "aksi", className: "p-2 col-1", title: "aksi" },
-//     ];
-
-//     const full = [
-//         ...aksiColumns,
-//         ...baseColumns,
-//         ...extraColumns,
-//         ...commonColumns,
-//     ];
-//     const nikColom = [...baseColumns, ...extraColumns, ...commonColumns];
-//     const defCol = [...baseColumns, ...commonColumns];
-
-//     if (ruang === "surat") {
-//         return full;
-//     }
-//     if (ruang === "lab" || ruang === "dots") {
-//         return nikColom;
-//     }
-//     return defCol;
-// }
 function getColumnDefinitions(statusType = "status_pulang", ruang) {
+    // console.log("🚀 ~ getColumnDefinitions ~ ruang:", ruang);
     const baseColumns = [
         {
             data: "antrean_nomor",
@@ -663,7 +366,7 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
         {
             data: statusType,
             className: "text-center p-2",
-            title: "Status",
+            title: "Status Pulang",
             render: function (data) {
                 const statusClasses = {
                     "Belum Pulang": "danger",
@@ -699,9 +402,29 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
     ];
 
     const aksiColumns = [
-        { data: "aksi", className: "p-2 col-1", title: "Aksi" },
+        { data: "aksi", className: "p-2 col-2", title: "Aksi" },
     ];
-
+    const ketColumns = [
+        {
+            data: "status",
+            className: "text-center p-2",
+            title: "Status Tindakan",
+            render: function (data) {
+                const statusClasses = {
+                    "Belum Pulang": "danger",
+                    "Sudah Pulang": "success",
+                    "Tidak Ada Permintaan": "danger",
+                    "Belum Ada Ts RO": "danger",
+                    "Belum Upload Foto Thorax": "warning",
+                    "Sudah Selesai": "success",
+                    default: "secondary",
+                };
+                return `<div class="badge badge-${
+                    statusClasses[data] || statusClasses.default
+                }">${data}</div>`;
+            },
+        },
+    ];
     // Konfigurasi kolom untuk setiap ruang
     const columnConfig = {
         surat: [
@@ -710,9 +433,20 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
             ...extraColumns,
             ...commonColumns,
         ],
-        lab: [...baseColumns, ...extraColumns, ...commonColumns],
-        dots: [...baseColumns, ...extraColumns, ...commonColumns],
-        default: [...baseColumns, ...commonColumns],
+        lab: [
+            ...aksiColumns,
+            ...baseColumns,
+            ...extraColumns,
+            ...commonColumns,
+        ],
+        dots: [
+            ...aksiColumns,
+            ...baseColumns,
+            ...extraColumns,
+            ...commonColumns,
+        ],
+        igd: [...aksiColumns, ...baseColumns, ...commonColumns, ...ketColumns],
+        default: [...aksiColumns, ...baseColumns, ...commonColumns],
     };
 
     // Return kolom sesuai ruang, atau gunakan default
@@ -720,6 +454,9 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
 }
 
 function processResponse(response, ruang, statusFilter) {
+    // console.log("🚀 ~ processResponse ~ statusFilter:", statusFilter);
+    // console.log("🚀 ~ processResponse ~ ruang:", ruang);
+    // console.log("🚀 ~ processResponse ~ response:", response);
     if (!response || !response.response || !response.response.data) {
         console.error("Invalid response format:", response);
         return;
@@ -731,9 +468,14 @@ function processResponse(response, ruang, statusFilter) {
         aksi: generateActionLink(item, ruang, statusFilter),
     }));
 
-    const filteredData = data.filter((item) => item.status === statusFilter);
+    const dataSelesai = data.filter((item) => item.status === statusFilter);
+    const daftarTunggu = data.filter(
+        (item) =>
+            item.status === "Tidak Ada Transaksi" &&
+            item.status_pulang === "Sudah Pulang"
+    );
 
-    return { data, filteredData };
+    return { data, dataSelesai, daftarTunggu };
 }
 
 function generateActionLink(item, ruang, statusFilter) {
@@ -770,34 +512,245 @@ function generateActionLink(item, ruang, statusFilter) {
         data-notrans="${notrans}"
         data-noreg="${item.no_reg}"
         data-dokter="${item.dokter_nama}"
+        data-alamatPang="${item.pasien_alamat_pang}"
+        data-umurPang="${item.pasien_umur_tahun}"
     `;
-    const links = {
-        dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-        surat: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-        ro:
-            item.status === "Sudah Selesai"
-                ? `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-danger py-md-0 py-1 icon-link icon-link-hover" onclick="deleteTransaksi(this);"><i class="fas fa-trash"></i></a>`
-                : `<a></a>`,
-        default: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1  icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-    };
     // const links = {
-    //     dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-    //     lab: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    //     dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
+    //             onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    //     surat: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
+    //             onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    //     kasir:
+    //         item.status === "Sudah Selesai"
+    //             ? `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
+    //             onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
+    //                 <a type="button" ${commonAttributes} class="ml-3 aksi-button btn-sm btn-warning py-md-0 py-1 icon-link icon-link-hover"
+    //                 onclick="celuk(this,'${ruang}');"><i class="fa-solid fa-volume-high"></a>`
+    //             : item.status === "Tidak Ada Transaksi"
+    //             ? `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
+    //             onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`
+    //             : `<a></a>`,
+    //     farmasi:
+    //         item.status === "Sudah Selesai"
+    //             ? `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
+    //             onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
+    //                 <a type="button" ${commonAttributes} class="ml-3 aksi-button btn-sm btn-warning py-md-0 py-1 icon-link icon-link-hover"
+    //                 onclick="celuk(this,'${ruang}');"><i class="fa-solid fa-volume-high"></a>`
+    //             : item.status === "Tidak Ada Transaksi"
+    //             ? `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
+    //             onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`
+    //             : `<a></a>`,
     //     ro:
     //         item.status === "Sudah Selesai"
-    //             ? `<a type="button" ${commonAttributes} class="mr-2aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
-    //                 <a type="button" ${commonAttributes} class="aksi-button btn-sm btn-danger py-md-0 py-1 icon-link icon-link-hover" onclick="deleteTransaksi(this);"><i class="fas fa-trash"></i></a>`
-    //             : `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-    //     igd:
-    //         item.status === "Sudah Selesai"
-    //             ? `<a type="button" ${commonAttributes} class="mr-2 aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
-    //                 <button type="button" ${commonAttributes} class="aksi-button btn-sm btn-${item.igd_selesai} py-md-0 py-1 mt-md-0 mt-2 icon-link icon-link-hover" onclick="checkOut('${item.pasien_no_rm}','${item.no_trans}', this,'${ruang}')" placeholder="Selesai"><i class="fa-regular fa-square-check"></i></button>`
-    //             : `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-    //     default: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1  icon-link icon-link-hover" onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
+    //             ? `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-danger py-md-0 py-1 icon-link icon-link-hover"
+    //             onclick="deleteTransaksi(this);"><i class="fas fa-trash"></i></a>`
+    //             : `<a></a>`,
+    //     default: `<a type="button" class="aksi-button btn-sm btn-primary py-md-0 py-1  icon-link icon-link-hover"
+    //             onclick="cariLog('${item.id}');"> Log
+    //             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="ml-2 bi bi-folder-fill" viewBox="0 0 16 16">
+    //             <path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z"></path>
+    //             </svg></a>`,
     // };
+    const createLink = (
+        iconClass,
+        action,
+        ruang,
+        extraClass = "",
+        extraAttributes = "",
+        text = ""
+    ) => `${text}
+            <a type="button" ${commonAttributes}
+            class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover ${extraClass}"
+            onclick="${action}(this,'${ruang}');" ${extraAttributes}>
+                <i class="${iconClass}"></i>
+            </a>
+        `;
+
+    const linkLog = `<a type="button" class="aksi-button btn-sm btn-warning py-md-0 py-1 icon-link icon-link-hover"
+                    onclick="cariLog('${item.id}');">
+                    Posisi
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="ml-2 bi bi-folder-fill" viewBox="0 0 16 16">
+                        <path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z"></path>
+                    </svg>
+                </a>`;
+    const buttonColor = item.button;
+    let panggilan;
+    if (buttonColor === "warning") {
+        let txPanggilan = "Belum";
+        panggilan = `<div class="badge badge-${buttonColor}">${txPanggilan}</div>`;
+    } else {
+        let txPanggilan = "Sudah";
+        panggilan = `<div class="badge badge-${buttonColor}">${txPanggilan}</div>`;
+    }
+    const links = {
+        dots:
+            createLink("fas fa-pen-to-square", "setTransaksi", ruang) + linkLog,
+        surat:
+            createLink("fas fa-pen-to-square", "setTransaksi", ruang) + linkLog,
+        kasir:
+            item.status === "Sudah Selesai"
+                ? createLink("fas fa-pen-to-square", "setTransaksi", ruang) +
+                  createLink(
+                      "fa-solid fa-volume-high",
+                      "celuk",
+                      ruang,
+                      "ml-3 btn-warning"
+                  )
+                : item.status === "Tidak Ada Transaksi"
+                ? createLink("fas fa-pen-to-square", "setTransaksi", ruang)
+                : `<a></a>`,
+        farmasi:
+            item.status === "Sudah Selesai"
+                ? createLink(
+                      "fa-solid fa-volume-high",
+                      "celuk",
+                      ruang,
+                      "ml-3 btn-" + buttonColor,
+                      "",
+                      panggilan
+                  )
+                : item.status === "Tidak Ada Transaksi"
+                ? createLink("fas fa-pen-to-square", "setTransaksi", ruang)
+                : `<a></a>`,
+        default: linkLog,
+    };
 
     // Mengembalikan tautan yang sesuai berdasarkan ruang dan statusFilter
     return links[ruang] || links.default;
+}
+
+function cariLog(id) {
+    // console.log("🚀 ~ cariLog ~ id:", id);
+    Swal.fire({
+        title: "Loading...",
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+    $.ajax({
+        url: "/api/kominfo/antrian/log",
+        method: "POST",
+        data: { id: id },
+        success: function (response) {
+            console.log("🚀 ~ cariLog ~ response:", response);
+            //tangani jika 404 kirim swal
+            if (response.status === 404) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Data Tidak Ditemukan",
+                });
+                return;
+            }
+
+            // Format data ke HTML
+            let formattedResponse = `
+                                        <div>
+                                            <p><strong>Ruang:</strong> ${
+                                                response.ruang_nama
+                                            }</p>
+                                            <p><strong>Keterangan:</strong> ${
+                                                response.keterangan
+                                            }</p>
+                                            <p><strong>Waktu:</strong> ${
+                                                response.created_at
+                                            }</p>
+                                            <p><strong>Pengirim:</strong> ${
+                                                response.created_by ?? "-"
+                                            }</p>
+                                            <a href="https://kkpm.banyumaskab.go.id/administrator/loket_farmasi/cetak_resep?pendaftaran_id=${id}"
+                                            target="_blank" class="btn btn-success" style="margin-top: 10px;">
+                                                Cetak Resep
+                                            </a>
+                                        </div>
+                                    `;
+
+            // Tampilkan di SweetAlert
+            Swal.fire({
+                icon: "info",
+                title: "Posisi Antrian",
+                html: formattedResponse,
+            });
+        },
+    });
+}
+function celuk(button, ruang) {
+    const nama = $(button).data("nama");
+    const alamat = $(button).data("alamatpang");
+    const umur = $(button).data("umurpang");
+    const jk = $(button).data("jk");
+    var sebutan = "";
+    if (umur <= 14) {
+        sebutan = "Anak ";
+    } else if (umur > 14 && umur <= 30) {
+        if (jk == "L") {
+            sebutan = "Saudara ";
+        } else {
+            sebutan = "Nona ";
+        }
+    } else if (umur > 30) {
+        if (jk == "L") {
+            sebutan = "Bapak ";
+        } else {
+            sebutan = "Ibu ";
+        }
+    }
+    const text = `${sebutan} ${nama} dari ${alamat}, silahkan menuju ke loket ${ruang}`;
+    console.log("🚀 ~ celuk ~ text:", text);
+    if (ruang === "farmasi") {
+        pasienPulang(button, text);
+    } else {
+        panggil(text);
+    }
+}
+
+function pasienPulang(button, text) {
+    console.log("🚀 ~ pasienPulang ~ pasienPulang:", pasienPulang);
+    var norm = $(button).data("norm");
+    var notrans = $(button).data("notrans");
+    var tgltrans = $(button).data("tgltrans");
+    try {
+        $.ajax({
+            url: "api/pendaftaran/pulang",
+            method: "POST",
+            data: {
+                norm: norm,
+                notrans: notrans,
+                tgltrans: tgltrans,
+            },
+            success: function (response) {
+                console.log("🚀 ~ pasienPulang ~ response:", response);
+                //jika respon 500 swal fire eror
+                Swal.fire({
+                    icon: "success",
+                    title: response.message,
+                    confirmButtonText: "OK",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        antrianAll("farmasi");
+                        panggil(text);
+                    }
+                });
+            },
+            error: function (xhr) {
+                console.log("🚀 ~ pasienPulang ~ xhr:", xhr);
+                let response = xhr.responseJSON || {
+                    message: "Terjadi kesalahan.",
+                    status: 500,
+                };
+                Swal.fire({
+                    icon: "error",
+                    title: response.message,
+                });
+            },
+        });
+    } catch (error) {
+        console.log("🚀 ~ pasienPulang ~ error:", error);
+        Swal.fire({
+            icon: "error",
+            title: error,
+        });
+    }
 }
 
 function setTransaksi(button, ruang) {
@@ -883,51 +836,53 @@ function setTransaksi(button, ruang) {
 
 function antrianAll(ruang) {
     $("#loadingSpinner").show();
-    const tanggal = $("#tanggal").val();
+    const tanggal =
+        $("#tanggal").val() || new Date().toISOString().slice(0, 10);
 
     fetchDataAntrianAll(tanggal, ruang, function (response) {
         $("#loadingSpinner").hide();
-        const { data, filteredData } = processResponse(
+        const { data, dataSelesai, daftarTunggu } = processResponse(
             response,
             ruang,
             "Sudah Selesai"
         );
-        const blmUpload = processResponse(
-            response,
-            ruang,
-            "Belum Upload Foto Thorax"
-        );
-        const belumUpload = blmUpload.filteredData;
-        const antrian = processResponse(response, ruang, "Tidak Ada Transaksi");
-        // const antrianAll = antrian.filteredData;
-        const antrianAll = antrian.data;
+        // console.log("🚀 ~ daftarTunggu:", daftarTunggu);
+        // console.log("🚀 ~ dataSelesai:", dataSelesai);
+        // console.log("🚀 ~ data:", data);
 
-        initializeDataTable(
-            "#antrianall",
-            antrianAll,
-            getColumnDefinitions("status_pulang", ruang),
-            ruang
-        );
-
-        // if (ruang === "igd" || ruang === "lab" || ruang === "dots") {
-        //     initializeDataTable(
-        //         "#dataSelesai",
-        //         filteredData,
-        //         getColumnDefinitions("status")
-        //     );
-        // }
-        // if (ruang === "ro") {
-        //     initializeDataTable(
-        //         "#dataSelesai",
-        //         filteredData,
-        //         getColumnDefinitions("status")
-        //     );
-        //     initializeDataTable(
-        //         "#daftarUpload",
-        //         belumUpload,
-        //         getColumnDefinitions("status")
-        //     );
-        // }
+        if (ruang === "kasir") {
+            initializeDataTable(
+                "#dataSelesai",
+                dataSelesai,
+                getColumnDefinitions("status", ruang),
+                ruang
+            );
+            initializeDataTable(
+                "#antrianall",
+                data,
+                getColumnDefinitions("status_pulang")
+            );
+            initializeDataTable(
+                "#dataTunggu",
+                daftarTunggu,
+                getColumnDefinitions("status", ruang),
+                ruang
+            );
+        } else if (ruang === "farmasi") {
+            initializeDataTable(
+                "#antrianall",
+                dataSelesai,
+                getColumnDefinitions("status", ruang),
+                ruang
+            );
+        } else {
+            initializeDataTable(
+                "#antrianall",
+                data,
+                getColumnDefinitions("status_pulang", ruang),
+                ruang
+            );
+        }
     });
 }
 

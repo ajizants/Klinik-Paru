@@ -1,89 +1,134 @@
-function fetchDataAntrian(tanggal, callback) {
+function fetchDataAntrianFar(tanggal, callback) {
     $.ajax({
         url: "/api/antrianFarmasi",
         type: "POST",
-        data: {
-            date: tanggal,
-        },
+        data: { tgl: tanggal },
         success: function (response) {
-            callback(response);
+            if (typeof callback === "function") {
+                callback(response);
+            }
         },
-        error: function (xhr) {},
+        error: function (xhr) {
+            console.error("Error fetching data:", xhr.status, xhr.statusText);
+            $("#loadingSpinner").hide();
+            alert("Terjadi kesalahan saat mengambil data. Silakan coba lagi.");
+        },
     });
 }
 
-function initializeDataAntrian(response) {
+function processResponseFar(response) {
     response.forEach(function (item) {
-        var alamat = `${item.kelurahan}, ${item.rtrwpasien}, ${item.kecamatan}, ${item.kabupaten}`;
-        var alamat2 = `${item.kelurahan} , ${item.kecamatan}`;
-        item.aksi = `<a href="#" class="aksi-button px-2 btn btn-sm btn-danger"
-                data-norm="${item.norm}"
-                data-nama="${item.namapasien}"
-                data-dokter="${item.dokterpoli}"
-                data-kddokter="${item.kddokter}"
-                data-alamat="${alamat}"
-                data-layanan="${item.layanan}"
-                data-notrans="${item.notrans}"
-                data-tgltran="${item.tgltran}"><i class="fas fa-pen-to-square"></i></a>
-            <a href="#" class="panggil px-2 btn btn-sm btn-success"
-                data-panggil="${item.pang} ${item.namapasien} dari ${alamat2}, silahkan menuju ke loket farmasi">
-                <i class="fa-solid fa-volume-high"></i></a>`;
+        let pulang = "Sudah Pulang";
+        if (
+            item.status_pulang == "Belum Pulang" &&
+            item.keterangan !== "Pulang"
+        ) {
+            pulang = "Belum Pulang";
+        }
+        item.pulang = pulang;
+        item.aksi = `
+            <a class="panggil px-4 btn btn-sm btn-success"
+            data-notrans="${item.no_reg}"
+                data-norm="${item.pasien_no_rm}"
+                data-log_id="${item.log_id}"
+               data-tgl="${item.tanggal}" onclick="cariResepLocal(this)">
+               <i class="fa-solid fa-arrow-up-from-bracket"></i>
+            </a>`;
     });
+}
 
-    $("#dataAntrian").DataTable({
-        data: response,
+function initializeDataAntrianFar(response) {
+    // Proses data sebelum inisialisasi
+    processResponseFar(response);
+
+    const dataSelesai = response.filter((item) => item.keterangan === "PULANG");
+    console.log("🚀 ~ initializeDataAntrianFar ~ dataSelesai:", dataSelesai);
+    const daftarTunggu = response.filter(
+        (item) => item.keterangan !== "PULANG"
+    );
+    console.log("🚀 ~ initializeDataAntrianFar ~ daftarTunggu:", daftarTunggu);
+    // Inisialisasi DataTable
+    dwrawTableFar(dataSelesai, "#dataSelesai");
+    dwrawTableFar(daftarTunggu, "#dataAntrian");
+}
+
+function dwrawTableFar(data, idTable) {
+    if ($.fn.DataTable.isDataTable(idTable)) {
+        $(idTable).DataTable().destroy();
+    }
+    $(idTable).DataTable({
+        data: data,
+        destroy: true, // Otomatis hancurkan instance sebelumnya jika ada
         columns: [
-            { data: "aksi", className: "text-center p-2 col-1" },
+            { data: "aksi", className: "text-center p-2 col-1", title: "Aksi" },
             {
-                data: "status",
-                name: "status",
-                render: function (data, type, row) {
-                    var backgroundColor =
-                        data === "belum" ? "danger" : "success";
+                data: "status_pulang",
+                render: function (data) {
+                    const backgroundColor =
+                        data === "Belum Pulang" ? "danger" : "success";
                     return `<div class="badge badge-${backgroundColor}">${data}</div>`;
                 },
                 className: "p-2",
+                title: "Status Pulang",
             },
-            { data: "nourut", className: "p-2" },
-            { data: "norm", className: "p-2" },
-            { data: "layanan", className: "p-2" },
-            { data: "namapasien", className: "p-2" },
-            { data: "dokterpoli", className: "p-2" },
+            { data: "keterangan", className: "p-2", title: "Status Kominfo" },
+            { data: "antrean_nomor", className: "p-2", title: "Urut" },
+            {
+                data: "created_at_log",
+                className: "p-2 col-2",
+                title: "Waktu Masuk",
+            },
+            { data: "pasien_no_rm", className: "p-2", title: "NoRM" },
+            { data: "penjamin_nama", className: "p-2", title: "Penjamin" },
+            { data: "pasien_nama", className: "p-2 col-2", title: "Pasien" },
+            { data: "dokter_nama", className: "p-2 col-3", title: "Dokter" },
+            {
+                data: "status_kasir",
+                render: function (data) {
+                    const backgroundColor =
+                        data === "Tidak Ada Transaksi" ? "danger" : "success";
+                    return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                },
+                className: "p-2",
+                title: "Status Kasir",
+            },
         ],
         order: [
             [1, "asc"],
             [2, "asc"],
+            [4, "asc"],
         ],
     });
 }
-function antrian() {
-    $("#loadingSpinner").show();
-    var tanggal = $("#tanggal").val();
 
-    fetchDataAntrian(tanggal, function (response) {
+function updateTableFar(idTable, data) {
+    const table = $(idTable).DataTable();
+    processResponseFar(data);
+    table.clear().rows.add(data).draw();
+}
+
+function antrianFar() {
+    $("#loadingSpinner").show();
+    const tanggal = $("#tanggal").val();
+
+    fetchDataAntrianFar(tanggal, function (response) {
         $("#loadingSpinner").hide();
+
+        // Jika DataTable sudah ada, hanya update datanya
         if ($.fn.DataTable.isDataTable("#dataAntrian")) {
-            var table = $("#dataAntrian").DataTable();
-            response.forEach(function (item) {
-                var alamat = `${item.kelurahan}, ${item.rtrwpasien}, ${item.kecamatan}, ${item.kabupaten}`;
-                var alamat2 = `${item.kelurahan} , ${item.kecamatan}`;
-                item.aksi = `<a href="#" class="aksi-button px-2 btn btn-sm btn-danger"
-                                    data-norm="${item.norm}"
-                                    data-nama="${item.namapasien}"
-                                    data-dokter="${item.dokterpoli}"
-                                    data-kddokter="${item.kddokter}"
-                                    data-alamat="${alamat}"
-                                    data-layanan="${item.layanan}"
-                                    data-notrans="${item.notrans}"
-                                    data-tgltran="${item.tgltran}"
-                                    ><i class="fas fa-pen-to-square"></i></a>
-                                <a href="#" class="panggil px-2 btn btn-sm btn-success"
-                                    data-panggil="${item.pang} ${item.namapasien} dari ${alamat2}, silahkan menuju ke loket farmasi">
-                                    <i class="fa-solid fa-volume-high"></i></a>`;
-            });
-            table.clear().rows.add(response).draw();
+            // const table = $("#dataAntrian").DataTable();
+            // processResponseFar(response);
+            // table.clear().rows.add(response).draw();
+            const dataSelesai = response.filter(
+                (item) => item.keterangan === "PULANG"
+            );
+            const daftarTunggu = response.filter(
+                (item) => item.keterangan !== "PULANG"
+            );
+            updateTableFar("#dataAntrian", daftarTunggu);
+            updateTableFar("#dataSelesai", dataSelesai);
         } else {
-            initializeDataAntrian(response);
+            initializeDataAntrianFar(response);
         }
     });
 }

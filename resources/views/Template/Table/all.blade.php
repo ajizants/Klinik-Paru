@@ -3,18 +3,18 @@
     <div class="table-responsive pt-2 px-2">
         <table id="antrianall" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%" cellspacing="0">
             <thead class="bg bg-secondary">
-                <tr>
-                    {{-- <th class="" id="kolom_aksi" style="display: none;">Aksi</th> --}}
-                    {{-- <th class="col-1">Urut</th>
-                    <th class="col-1">status</th>
+                {{-- <tr>
+                    <th>Aksi</th>
+                    <th>Urut</th>
+                    <th>status</th>
                     <th>Tanggal</th>
                     <th>Jaminan</th>
                     <th>NoRM</th>
-                    <th class="" id="kolom_NIK">NIK</th>
-                    <th class="col-2">Nama Pasien</th>
-                    <th class="col-3">Dokter</th>
-                    <th>Poli</th> --}}
-                </tr>
+                    <th>NIK</th>
+                    <th>Nama Pasien</th>
+                    <th>Dokter</th>
+                    <th>Poli</th>
+                </tr> --}}
             </thead>
             <tbody>
             </tbody>

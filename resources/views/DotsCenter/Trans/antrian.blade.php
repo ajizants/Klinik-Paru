@@ -1,4 +1,4 @@
-<div class="card shadow mb-4">
+<div class="card shadow mb-4" id="top">
     <!-- Card Header - Accordion -->
     <a href="#collapseCardAntrian" class="d-block card-header py-1 bg bg-info" data-toggle="collapse" role="button"
         aria-expanded="true" aria-controls="collapseCardExample">
@@ -55,7 +55,7 @@
                     </li>
 
                 </ul>
-                <div id="dTunggu" class="card-body card-body-hidden p-2">
+                {{-- <div id="dTunggu" class="card-body card-body-hidden p-2">
                     <h5 class="mb-0 text-center"><b>Daftar Tunggu</b></h5>
                     <div class="table-responsive pt-2 px-2">
                         <table id="dataAntrian" class="table table-striped table-hover pt-0 mt-0 fs-6"
@@ -101,8 +101,10 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> --}}
 
+                @include('Template.Table.tunggu')
+                @include('Template.Table.selesai')
                 @include('Template.Table.all')
 
                 <div id="dKontrol" class="card-body card-body-hidden p-2" style="display: none;">
@@ -129,8 +131,8 @@
                 </div>
                 <div id="dTelat" class="card-body card-body-hidden p-2" style="display: none;">
                     <div class="table-responsive pt-2 px-2">
-                        <table id="Ptelat" class="table table-striped table-hover pt-0 mt-0 fs-6"
-                            style="width:100%" cellspacing="0">
+                        <table id="Ptelat" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
+                            cellspacing="0">
                             <thead class="bg bg-warning">
                                 <tr>
                                     <th width="15px">Aksi</th>
