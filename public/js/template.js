@@ -161,6 +161,7 @@ function toggleSections(sectionToShow) {
         "#dTelat",
         "#dDo",
         "#dTb",
+        "#dSkip",
         "#key_pad",
 
         "#hasilPemeriksaan",

@@ -217,7 +217,20 @@ class HomeController extends Controller
     public function farmasi()
     {
         $title = 'FARMASI';
-        return view('Farmasi.Transaksi.main')->with('title', $title);
+        $dokter = $this->pegawai([1, 7, 8]);
+        $perawat = $this->pegawai([10, 15]);
+        $tindakan = $this->layanan([2, 3, 5, 6, 10]);
+        $bmhp = BMHPModel::all();
+        $dxMed = DiagnosaModel::all();
+
+        $dokter = array_map(function ($item) {
+            return (object) $item;
+        }, $dokter);
+        $perawat = array_map(function ($item) {
+            return (object) $item;
+        }, $perawat);
+
+        return view('Farmasi.Transaksi.main', compact('tindakan', 'bmhp', 'dxMed', 'dokter', 'perawat'))->with('title', $title);
     }
     public function logFarmasi()
     {

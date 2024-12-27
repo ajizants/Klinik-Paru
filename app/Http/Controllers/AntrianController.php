@@ -256,8 +256,9 @@ class AntrianController extends Controller
         }
         $daftarTunggu = $model->getTungguFaramsi($tgl, $cookie);
 
-        $lists = $daftarTunggu['data'];
+        // dd($daftarTunggu);
 
+        $lists = $daftarTunggu['data'];
         foreach ($lists as &$list) {
             $norm = $list['pasien_no_rm'];
             $tanggal = $list['tanggal'];
@@ -265,8 +266,10 @@ class AntrianController extends Controller
                 ->whereDate('created_at', $tanggal)->first();
             $list['status_kasir'] = !$kasir ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
             $pulang = KunjunganWaktuSelesai::where('notrans', $list['no_reg'])->first();
-            $list['status_pulang'] = !$pulang['waktu_selesai_farmasi'] ? 'Belum Pulang' : 'Sudah Pulang';
+            // dd($pulang);
+            $list['status_pulang'] = !$pulang || !$pulang['waktu_selesai_farmasi'] ? 'Belum Pulang' : 'Sudah Pulang';
         }
+        // dd($lists);
 
         // Sort by created_at_log from oldest to newest
         usort($lists, function ($a, $b) {

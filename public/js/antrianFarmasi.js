@@ -18,22 +18,74 @@ function fetchDataAntrianFar(tanggal, callback) {
 
 function processResponseFar(response) {
     response.forEach(function (item) {
-        let pulang = "Sudah Pulang";
-        if (
-            item.status_pulang == "Belum Pulang" &&
-            item.keterangan !== "Pulang"
-        ) {
-            pulang = "Belum Pulang";
-        }
-        item.pulang = pulang;
-        item.aksi = `
-            <a class="panggil px-4 btn btn-sm btn-success"
-            data-notrans="${item.no_reg}"
+        const commonAttributes = `
+        data-norm="${item.pasien_no_rm}"
+        data-nama="${item.pasien_nama}"
+        data-kddokter="${item.nip_dokter}"
+        data-alamat="${item.pasien_alamat}"
+        data-tgltrans="${item.tanggal}"
+        data-asktind="${item.asktind || ""}"
+        data-umur="${item.pasien_umur}"
+        data-layanan="${item.penjamin_nama}"
+        data-notrans="${item.no_reg}"
+        data-tujuan="${item.tujuan || ""}"
+    `;
+
+        const inputBtn = `
+                <a type="button" ${commonAttributes} 
+                    class="btn btn-primary "
+                    onclick="setTransaksi(this,'igd');"
+                     data-toggle="tooltip" data-placement="top" title="Tambah Tindakan">
+                    <i class="fas fa-pen-to-square"></i>
+                </a>
+                `;
+        const ctkRspBtn = `
+            <a class="panggil btn btn-success"
+                data-notrans="${item.no_reg}"
                 data-norm="${item.pasien_no_rm}"
                 data-log_id="${item.log_id}"
-               data-tgl="${item.tanggal}" onclick="cariResepLocal(this)">
-               <i class="fa-solid fa-arrow-up-from-bracket"></i>
-            </a>`;
+                data-tgl="${item.tanggal}" onclick="cariResepLocal(this)">
+                <i class="fa-regular fa-folder-open"></i>
+            </a>
+            `;
+        const plgBtn = `
+            <a type="button" onclick="pulangkan('${item.pasien_no_rm}', '${item.log_id}', '${item.no_reg}')"
+                class="btn btn-warning" 
+                data-toggle="tooltip" data-placement="top" title="Pulangkan">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+            `;
+
+        const panggilBtn = `<a class="panggil btn btn-success" 
+                onclick="panggil('${item.log_id}')"
+                data-toggle="tooltip" data-placement="top" title="Panggil">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-volume-up-fill" viewBox="0 0 16 16">
+                    <path d="M11.536 14.01A8.47 8.47 0 0 0 14.026 8a8.47 8.47 0 0 0-2.49-6.01l-.708.707A7.48 7.48 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303z"/>
+                    <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.48 5.48 0 0 1 11.025 8a5.48 5.48 0 0 1-1.61 3.89z"/>
+                    <path d="M8.707 11.182A4.5 4.5 0 0 0 10.025 8a4.5 4.5 0 0 0-1.318-3.182L8 5.525A3.5 3.5 0 0 1 9.025 8 3.5 3.5 0 0 1 8 10.475zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06"/>
+                </svg>
+            </a>
+            `;
+
+        if (item.keterangan === "PULANG") {
+            item.aksi = `
+             ${inputBtn}
+             ${ctkRspBtn}
+            `;
+        } else if (item.keterangan === "SEDANG DIPANGGIL") {
+            item.aksi = `
+             ${inputBtn}
+             ${plgBtn}
+             ${ctkRspBtn}
+            
+            `;
+        } else {
+            item.aksi = `
+            ${inputBtn}
+            ${panggilBtn}
+            ${ctkRspBtn}
+            `;
+        }
     });
 }
 
@@ -42,14 +94,14 @@ function initializeDataAntrianFar(response) {
     processResponseFar(response);
 
     const dataSelesai = response.filter((item) => item.keterangan === "PULANG");
-    console.log("🚀 ~ initializeDataAntrianFar ~ dataSelesai:", dataSelesai);
     const daftarTunggu = response.filter(
-        (item) => item.keterangan !== "PULANG"
+        (item) => item.keterangan !== "PULANG" && item.keterangan !== "SKIP"
     );
-    console.log("🚀 ~ initializeDataAntrianFar ~ daftarTunggu:", daftarTunggu);
+    const dataSkip = response.filter((item) => item.keterangan === "SKIP");
     // Inisialisasi DataTable
     dwrawTableFar(dataSelesai, "#dataSelesai");
     dwrawTableFar(daftarTunggu, "#dataAntrian");
+    dwrawTableFar(dataSkip, "#dataSkip");
 }
 
 function dwrawTableFar(data, idTable) {
@@ -58,20 +110,27 @@ function dwrawTableFar(data, idTable) {
     }
     $(idTable).DataTable({
         data: data,
-        destroy: true, // Otomatis hancurkan instance sebelumnya jika ada
+        destroy: true,
         columns: [
-            { data: "aksi", className: "text-center p-2 col-1", title: "Aksi" },
+            { data: "aksi", className: "text-center p-2 col-2", title: "Aksi" },
             {
-                data: "status_pulang",
-                render: function (data) {
-                    const backgroundColor =
-                        data === "Belum Pulang" ? "danger" : "success";
-                    return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-                },
+                data: "keterangan",
                 className: "p-2",
                 title: "Status Pulang",
+                render: function (data) {
+                    const statusClasses = {
+                        "MENUNGGU DIPANGGIL": "danger",
+                        "SEDANG DIPANGGIL": "success",
+                        PULANG: "success",
+                        SKIP: "warning",
+                        default: "secondary",
+                    };
+                    return `<div class="badge badge-${
+                        statusClasses[data] || statusClasses.default
+                    }">${data}</div>`;
+                },
             },
-            { data: "keterangan", className: "p-2", title: "Status Kominfo" },
+            // { data: "keterangan", className: "p-2", title: "Status Kominfo" },
             { data: "antrean_nomor", className: "p-2", title: "Urut" },
             {
                 data: "created_at_log",
@@ -94,9 +153,8 @@ function dwrawTableFar(data, idTable) {
             },
         ],
         order: [
-            [1, "asc"],
-            [2, "asc"],
-            [4, "asc"],
+            [1, "dsc"],
+            [3, "asc"],
         ],
     });
 }
@@ -123,10 +181,16 @@ function antrianFar() {
                 (item) => item.keterangan === "PULANG"
             );
             const daftarTunggu = response.filter(
-                (item) => item.keterangan !== "PULANG"
+                (item) =>
+                    item.keterangan === "SEDANG DIPANGGIL" ||
+                    item.keterangan === "MENUNGGU DIPANGGIL"
+            );
+            const dataSkip = response.filter(
+                (item) => item.keterangan === "SKIP"
             );
             updateTableFar("#dataAntrian", daftarTunggu);
             updateTableFar("#dataSelesai", dataSelesai);
+            updateTableFar("#dataSkip", dataSkip);
         } else {
             initializeDataAntrianFar(response);
         }

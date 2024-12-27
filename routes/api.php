@@ -152,7 +152,8 @@ Route::get('obat', [GudangFarmasiController::class, 'gudangFarmasiIn']);
 Route::post('lists/obat', [FarmasiController::class, 'obats']);
 Route::get('resep/{norm}/{tgl}', [FarmasiController::class, 'cetakObat']);
 Route::post('farmasi/panggil', [FarmasiController::class, 'panggil']);
-Route::post('pendaftaran/pulang', [FarmasiController::class, 'selesaiFarmasi']);
+// Route::post('farmasi/panggil', [FarmasiController::class, 'panggil2']);
+Route::post('farmasi/pulangkan', [FarmasiController::class, 'pulangkan']);
 
 Route::post('simpanFarmasi', [FarmasiController::class, 'simpanFarmasi']);
 Route::post('deleteFarmasi', [FarmasiController::class, 'deleteFarmasi']);
