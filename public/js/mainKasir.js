@@ -467,9 +467,10 @@ const tagihan = document.getElementById("tagihan");
 
 // Fungsi untuk menambahkan titik pemisah ribuan
 function formatNumber(value) {
-    return value
-        .replace(/\D/g, "") // Hapus karakter non-angka
-        .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Tambahkan titik setiap 3 digit
+    return value.replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Tambahkan titik setiap 3 digit
+    // return value
+    //     .replace(/\D/g, "") // Hapus karakter non-angka
+    //     .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Tambahkan titik setiap 3 digit
 }
 
 // Fungsi untuk menghapus format dan mendapatkan nilai asli
@@ -510,9 +511,26 @@ bayar.addEventListener("input", function () {
 
     // Format hasil perhitungan dan tampilkan
     kembali.value =
-        kembaliValue >= 0 ? formatRupiah(String(kembaliValue)) : "Rp 0";
+        kembaliValue != "" ? formatRupiah(String(kembaliValue)) : "Rp 0";
+    // kembali.value =
+    //     kembaliValue >= 0 ? formatRupiah(String(kembaliValue)) : "Rp 0";
 });
+let noTransObat;
+let number = 0;
+function obatSajaIdentitas() {
+    var today = new Date().toISOString().split("T")[0];
+    //hilangkan - atau / di today
+    let idTrans = today.replace(/-/g, "").replace(/\//g, "");
+    number++;
+    noTransObat = idTrans + number;
 
+    $("#layanan").val("UMUM"); // Trigger change event if needed
+    $("#norm").val("");
+    $("#nama").val("");
+    $("#alamat").val("KKPM");
+    $("#tgltrans").val(today);
+    $("#notrans").val(noTransObat);
+}
 function simpanTransaksi() {
     var norm = $("#norm").val();
     var nama = $("#nama").val();

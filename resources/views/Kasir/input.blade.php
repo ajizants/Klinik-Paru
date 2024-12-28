@@ -26,20 +26,22 @@
                                                     <input type="text" name="norm" id="norm"
                                                         class="form-control" placeholder="No RM" maxlength="6"
                                                         pattern="[0-9]{6}" required />
+                                                    <button class="btn btn-warning"
+                                                        onclick="obatSajaIdentitas()">Obat</button>
                                                 </div>
                                                 <label for="layanan"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
                                                     :</label>
                                                 <div class="col-sm-2">
                                                     <input type="text" id="layanan" class="form-control bg-white"
-                                                        placeholder="Layanan" readonly />
+                                                        placeholder="Layanan" />
                                                 </div>
                                                 <label for="nama"
                                                     class="col-sm-1 col-form-label font-weight-bold  mb-0">Nama
                                                     :</label>
                                                 <div class="col-sm-3">
                                                     <input type="text" id="nama" class="form-control bg-white"
-                                                        placeholder="Nama Pasien" readonly>
+                                                        placeholder="Nama Pasien">
                                                 </div>
                                                 <div class="col-sm-2">
                                                     <Select type="text" id="jk" class="form-control bg-white"
@@ -63,14 +65,14 @@
                                                     :</label>
                                                 <div class="col-sm-2">
                                                     <input type="text" id="notrans" class="form-control bg-white"
-                                                        placeholder="Nomor Transaksi" readonly required />
+                                                        placeholder="Nomor Transaksi" required />
                                                 </div>
                                                 <label for="alamat"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat
                                                     :</label>
                                                 <div class="col-sm-3">
                                                     <input id="alamat" class="form-control bg-white"
-                                                        placeholder="Alamat Pasien" readonly />
+                                                        placeholder="Alamat Pasien" />
                                                 </div>
                                                 <div class="col-sm-2">
                                                     <input type="text" id="umur" class="form-control bg-white"
