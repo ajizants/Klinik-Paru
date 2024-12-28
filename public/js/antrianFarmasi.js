@@ -25,6 +25,13 @@ function antrianNull() {
 function processResponseFar(response) {
     response.forEach(function (item) {
         item.nip_dokter = getNipByDoctorName(item.dokter_nama);
+        if (item.keterangan === "SEDANG DIPANGGIL") {
+            console.log("Ada item yang sedang dipanggil.");
+            sedangMemanggil = true;
+        } else {
+            console.log("Tidak ada item yang sedang dipanggil.");
+            sedangMemanggil = false;
+        }
         const commonAttributes = `
         data-norm="${item.pasien_no_rm}"
         data-nama="${item.pasien_nama}"
@@ -37,16 +44,6 @@ function processResponseFar(response) {
         data-notrans="${item.no_reg}"
         data-tujuan="${item.tujuan || ""}"
     `;
-
-        // const inputBtn = ``;
-        // const inputBtn = `
-        //         <a type="button" ${commonAttributes}
-        //             class="btn btn-primary "
-        //             onclick="setTransaksi1(this,'igd');"
-        //              data-toggle="tooltip" data-placement="top" title="Tambah Tindakan">
-        //             <i class="fas fa-pen-to-square"></i>
-        //         </a>
-        //         `;
         const inputBtn = `
                 <a type="button" ${commonAttributes}
                     class="btn btn-primary "
@@ -55,15 +52,20 @@ function processResponseFar(response) {
                     <i class="fas fa-pen-to-square"></i>
                 </a>
                 `;
+        // const ctkRspBtn = `
+        //     <a class="btn btn-secondary"
+        //         data-notrans="${item.no_reg}"
+        //         data-norm="${item.pasien_no_rm}"
+        //         data-log_id="${item.log_id}"
+        //         data-tgl="${item.tanggal}" onclick="cetakResep(norm, tgl)">
+        //         <i class="fa-regular fa-folder-open"></i>
+        //     </a>
+        //     `;
         const ctkRspBtn = `
-            <a class="btn btn-secondary"
-                data-notrans="${item.no_reg}"
-                data-norm="${item.pasien_no_rm}"
-                data-log_id="${item.log_id}"
-                data-tgl="${item.tanggal}" onclick="cariResepLocal(this)">
+            <a class="btn btn-secondary" 
+                onclick="cetakResep('${item.pasien_no_rm}', '${item.tanggal}')">
                 <i class="fa-regular fa-folder-open"></i>
-            </a>
-            `;
+            </a>`;
         const plgBtn = `
             <a type="button" onclick="pulangkan('${item.pasien_no_rm}', '${item.log_id}', '${item.no_reg}')"
                 class="btn btn-warning"
@@ -89,7 +91,6 @@ function processResponseFar(response) {
              ${ctkRspBtn}
             `;
         } else if (item.keterangan === "SEDANG DIPANGGIL") {
-            sedangMemanggil = true;
             item.aksi = `
              ${inputBtn}
              ${plgBtn}

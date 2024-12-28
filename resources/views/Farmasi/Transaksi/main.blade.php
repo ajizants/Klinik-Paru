@@ -666,7 +666,7 @@
                         allowOutsideClick: false,
                         showConfirmButton: false,
                     })
-                    cetakResep(norm, tgl)
+                    // cetakResep(norm, tgl)
                     antrianFar();
                 })
                 .catch((error) => console.error("Error fetching data:", error));
