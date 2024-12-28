@@ -65,7 +65,7 @@ function processResponseFar(response) {
         //     `;
         const ctkRspBtn = `
             <a class="btn btn-${warnaBtn}"
-                onclick="cetakResep('${item.pasien_no_rm}', '${item.tanggal}')">
+                onclick="cetakResep('${item.pasien_no_rm}', '${item.tanggal}',this)">
                 <i class="fa-regular fa-folder-open"></i>
             </a>`;
         const plgBtn = `

@@ -672,7 +672,9 @@
                 .catch((error) => console.error("Error fetching data:", error));
         }
 
-        function cetakResep(norm, tgl) {
+        function cetakResep(norm, tgl, btn) {
+            btn.classList.remove("btn-secondary");
+            btn.classList.add("btn-danger");
             const url = "/api/resep/" + norm + "/" + tgl;
             console.log("🚀 ~ cetakResep ~ url:", url)
             window.open(url, "_blank");
