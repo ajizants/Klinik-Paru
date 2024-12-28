@@ -210,7 +210,7 @@
             tabletindakan.clear().destroy();
             var tablebmhp = $("#transaksiBMHP").DataTable();
             tablebmhp.clear().destroy();
-            updateAntrian();
+            antrianFar();
             quantity = 0;
             scrollToTop();
             $("#formbmhp").hide();
@@ -242,7 +242,7 @@
                 var tablebmhp = $("#transaksiBMHP").DataTable();
                 tablebmhp.clear().destroy();
                 quantity = 0;
-                updateAntrian();
+                antrianFar();
                 scrollToTop();
                 $("#formbmhp").hide();
                 $("#formtind").show();

@@ -188,19 +188,19 @@ function generateActionButton(item, ruang) {
     };
 
     const editButton = `
-        <a type="button" class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
+        <a type="button" class="aksi-button btn-sm btn-primary icon-link icon-link-hover"
             ${commonAttributes} onclick="${actionMap[ruang]}">
             <i class="fas fa-pen-to-square"></i>
         </a>`;
 
     if (ruang === "igd") {
         const checkOutButton = `
-            <button type="button" ${commonAttributes}
-                class="aksi-button btn-sm btn-${item.igd_selesai} py-md-0 py-1 mt-md-0 mt-2 icon-link icon-link-hover"
+            <a type="button" ${commonAttributes}
+                class="aksi-button btn-sm btn-${item.igd_selesai} mt-md-0 mt-2 icon-link icon-link-hover"
                 onclick="checkOut('${item.pasien_no_rm}', '${notrans}', this, '${ruang}')"
                 placeholder="Selesai">
                 <i class="fa-regular fa-square-check"></i>
-            </button>`;
+            </a>`;
         return `${editButton} ${checkOutButton}`;
     }
 
@@ -211,7 +211,7 @@ function generateActionButton(item, ruang) {
         ) {
             const deleteButton = `
                 <a type="button" ${commonAttributes}
-                    class="aksi-button btn-sm btn-danger py-md-0 py-1 icon-link icon-link-hover"
+                    class="aksi-button btn-sm btn-danger icon-link icon-link-hover"
                     onclick="deleteTransaksi(this);">
                     <i class="fas fa-trash"></i>
                 </a>`;
