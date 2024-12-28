@@ -26,12 +26,6 @@
                                                     <input type="text" name="norm" id="norm"
                                                         class="form-control" placeholder="No RM" maxlength="6"
                                                         pattern="[0-9]{6}" required />
-                                                    <div class="input-group-addon btn btn-danger">
-                                                        <span class="fa-solid fa-magnifying-glass"
-                                                            onclick="searchRMObat();" data-toggle="tooltip"
-                                                            data-placement="top"
-                                                            title="Pasien a.n Bagus, untuk karyawan yang tidak mendaftar"></span>
-                                                    </div>
                                                 </div>
                                                 <label for="layanan"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan

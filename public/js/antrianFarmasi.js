@@ -24,6 +24,7 @@ function antrianNull() {
 
 function processResponseFar(response) {
     response.forEach(function (item) {
+        item.nip_dokter = getNipByDoctorName(item.dokter_nama);
         const commonAttributes = `
         data-norm="${item.pasien_no_rm}"
         data-nama="${item.pasien_nama}"
@@ -37,17 +38,25 @@ function processResponseFar(response) {
         data-tujuan="${item.tujuan || ""}"
     `;
 
-        const inputBtn = ``;
+        // const inputBtn = ``;
         // const inputBtn = `
         //         <a type="button" ${commonAttributes}
         //             class="btn btn-primary "
-        //             onclick="setTransaksi(this,'igd');"
+        //             onclick="setTransaksi1(this,'igd');"
         //              data-toggle="tooltip" data-placement="top" title="Tambah Tindakan">
         //             <i class="fas fa-pen-to-square"></i>
         //         </a>
         //         `;
+        const inputBtn = `
+                <a type="button" ${commonAttributes}
+                    class="btn btn-primary "
+                    onclick="cariKominfo('${item.pasien_no_rm}', '${item.tanggal}', 'igd');"
+                     data-toggle="tooltip" data-placement="top" title="Tambah Tindakan">
+                    <i class="fas fa-pen-to-square"></i>
+                </a>
+                `;
         const ctkRspBtn = `
-            <a class="panggil btn btn-secondary"
+            <a class="btn btn-secondary"
                 data-notrans="${item.no_reg}"
                 data-norm="${item.pasien_no_rm}"
                 data-log_id="${item.log_id}"
@@ -63,7 +72,7 @@ function processResponseFar(response) {
             </a>
             `;
 
-        const panggilBtn = `<a class="panggil btn btn-success"
+        const panggilBtn = `<button class="panggil btn btn-success"
                 onclick="panggil('${item.log_id}','${item.pasien_no_rm}', '${item.tanggal}')"
                 data-toggle="tooltip" data-placement="top" title="Panggil">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-volume-up-fill" viewBox="0 0 16 16">
@@ -71,7 +80,7 @@ function processResponseFar(response) {
                     <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.48 5.48 0 0 1 11.025 8a5.48 5.48 0 0 1-1.61 3.89z"/>
                     <path d="M8.707 11.182A4.5 4.5 0 0 0 10.025 8a4.5 4.5 0 0 0-1.318-3.182L8 5.525A3.5 3.5 0 0 1 9.025 8 3.5 3.5 0 0 1 8 10.475zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06"/>
                 </svg>
-            </a>
+            </button>
             `;
 
         if (item.keterangan === "PULANG") {
@@ -80,6 +89,7 @@ function processResponseFar(response) {
              ${ctkRspBtn}
             `;
         } else if (item.keterangan === "SEDANG DIPANGGIL") {
+            sedangMemanggil = true;
             item.aksi = `
              ${inputBtn}
              ${plgBtn}
@@ -205,8 +215,25 @@ function antrianFar() {
         } else {
             initializeDataAntrianFar(response);
         }
+
+        btnPanggil = document.querySelectorAll(".panggil");
+        if (sedangMemanggil === true) {
+            btnPanggil.forEach((btn, index) => {
+                btn.disabled = true;
+            });
+        }
     });
 }
+
+function getNipByDoctorName(doctorName) {
+    return doctorNipMap[doctorName] || null; // Mengembalikan null jika nama dokter tidak ditemukan
+}
+const doctorNipMap = {
+    "dr. Cempaka Nova Intani, Sp.P, FISR., MM.": "198311142011012002",
+    "dr. AGIL DANANJAYA, Sp.P": "9",
+    "dr. FILLY ULFA KUSUMAWARDANI": "198907252019022004",
+    "dr. SIGIT DWIYANTO": "198903142022031005",
+};
 
 function searchByRM(norm) {
     $.ajax({
@@ -352,7 +379,6 @@ function dataFarmasi() {
                     ],
                     order: [2, "asc"],
                 });
-                tagihan();
             },
             error: function (xhr, status, error) {
                 console.error("Error:", error);
@@ -364,8 +390,8 @@ function dataFarmasi() {
 function dataBMHP() {
     var notrans = $("#notrans").val();
     if (notrans !== "") {
-        if ($.fn.DataTable.isDataTable("#dataIGD")) {
-            var tabletindakan = $("#dataIGD").DataTable();
+        if ($.fn.DataTable.isDataTable("#transaksiBMHP")) {
+            var tabletindakan = $("#transaksiBMHP").DataTable();
             tabletindakan.clear().destroy();
         }
 
@@ -387,7 +413,7 @@ function dataBMHP() {
                     item.biaya = `${item.biaya.toLocaleString()}`;
                 });
 
-                $("#dataIGD").DataTable({
+                $("#transaksiBMHP").DataTable({
                     data: response,
                     columns: [
                         { data: "actions", className: "text-center" },
@@ -401,11 +427,54 @@ function dataBMHP() {
                     paging: true,
                     pageLength: 5,
                 });
-                tagihan();
             },
             error: function (xhr, status, error) {
                 console.error("Error:", error);
             },
         });
     }
+}
+
+function dataBMHP() {
+    var idTind = $("#modalidTind").val();
+    if ($.fn.DataTable.isDataTable("#transaksiBMHP")) {
+        var tabletindakan = $("#transaksiBMHP").DataTable();
+        tabletindakan.clear().destroy();
+    }
+
+    $.ajax({
+        url: "/api/cariTransaksiBmhp",
+        type: "post",
+        data: { idTind: idTind },
+        success: function (response) {
+            response.forEach(function (item, index) {
+                item.actions = `<a href="" class="delete btn-sm btn-danger icon-link icon-link-hover"
+                                    data-id="${item.id}"
+                                    data-idTind="${item.idTind}"
+                                    data-kdtind="${item.kdTind}"
+                                    data-bmhp="${item.bmhp.nmObat}"
+                                    data-kdBmhp="${item.kdBmhp}"
+                                    data-jumlah="${item.jumlah}">
+                                    <i class="fas fa-trash"></i></a>`;
+                item.no = index + 1;
+            });
+
+            $("#transaksiBMHP").DataTable({
+                data: response,
+                columns: [
+                    { data: "actions", className: "text-center" },
+                    { data: "no" },
+                    { data: "bmhp.nmObat" },
+                    { data: "jml" },
+                    { data: "biaya" },
+                ],
+                order: [2, "asc"],
+                paging: true,
+                pageLength: 5,
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        },
+    });
 }

@@ -4,7 +4,7 @@
     @include('Farmasi.Transaksi.antrian')
     {{-- @include('Farmasi.Transaksi.input2') --}}
 
-    {{-- @include('IGD.Trans.input') --}}
+    @include('IGD.Trans.input')
 
 
 
@@ -12,7 +12,10 @@
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/antrianFarmasi.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
-    {{-- <script>
+    <script>
+        let sedangMemanggil = false;
+        console.log("🚀 ~ sedangMemanggil:", sedangMemanggil)
+
         function scrollToInputBMHPSection() {
             $("html, body").animate({
                 scrollTop: $("#formbmhp").offset().top
@@ -34,165 +37,37 @@
             $("#total").val(totalharga);
         }
 
-        async function searchRMObat() {
-            let currentDate = new Date();
-
-            // Mendapatkan nilai tahun, bulan, hari, jam, menit, dan detik
-            let year = currentDate.getFullYear();
-            let month = String(currentDate.getMonth() + 1).padStart(2,
-                "0"); // Perhatikan bahwa getMonth() mengembalikan nilai mulai dari 0
-            let day = String(currentDate.getDate()).padStart(2, "0");
-            let hours = String(currentDate.getHours()).padStart(2, "0");
-            let minutes = String(currentDate.getMinutes()).padStart(2, "0");
-            let seconds = String(currentDate.getSeconds()).padStart(2, "0");
-
-            // Menggabungkan nilai-nilai tersebut menjadi format yang diinginkan
-            let formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-            console.log(formattedDate);
-
-            Swal.fire({
-                icon: "info",
-                title: "Sedang mencari data...!!!",
-                allowOutsideClick: false,
-                showConfirmButton: false,
-            });
-            var norm = "000001";
-            try {
-                const response = await $.ajax({
-                    url: "/api/cariRMObat",
-                    type: "post",
-                    data: {
-                        norm: norm
-                    },
-                });
-
-                if (response.length > 0) {
-                    Swal.fire({
-                        icon: "success",
-                        title: "Data pasien ditemukan, lanjutkan transaksi...!!!",
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        timer: 1500,
-                    });
-
-                    // Extracting data from the JSON response
-                    var noRM = response[0].norm;
-                    var nama = response[0].nama;
-                    var notrans = response[0].notrans;
-                    var alamat =
-                        `${response[0].kelurahan}, ${response[0].rtrw}, ${response[0].kecamatan}, ${response[0].kabupaten}`;
-
-                    // Updating HTML elements with the extracted data
-                    $("#norm").val(noRM);
-                    $("#nama").val(nama);
-                    $("#alamat").val(alamat);
-                    $("#notrans").val(notrans);
-                    $("#tgltrans").val(formattedDate);
-                    $("#layanan").val("UMUM");
-                    $("#dokter").val("198907252019022004").trigger("change");
-                    $("#apoteker").val("197609262011012003").trigger("change");
-
-                    // Additional function calls as needed
-                    dataTindakan();
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Data pasien tidak ditemukan...!!!",
-                    });
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                // Handling error if the API request fails
-                Swal.fire({
-                    icon: "error",
-                    title: "Terjadi kesalahan saat mengambil data pasien...!!!",
-                });
-            }
-        }
-
-        async function cariTsIgd(notrans, norm, tgl, ruang) {
-            console.log("🚀 ~ cariTsIgd ~ cariTsIgd:", cariTsIgd);
-            norm = norm || formatNorm($("#norm").val()); // Tambahkan kurung untuk memanggil val()
-            tgl = tgl || $("#tanggal").val();
-            notrans = notrans || $("#notrans").val();
-            var requestData = {
-                notrans: notrans,
-                norm: norm,
-                tgl: tgl
-            };
-
-            Swal.fire({
-                icon: "info",
-                title: "Sedang mencarikan data pasien...!!!",
-                showConfirmButton: false,
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-            });
+        function dataTindakan(notrans, norm) {
+            console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
+            var notrans = notrans ? notrans : $("#notrans").val();
+            console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
 
             if ($.fn.DataTable.isDataTable("#dataTindakan")) {
                 var tabletindakan = $("#dataTindakan").DataTable();
-                tabletindakan.clear().destroy(); // Kosongkan tabel sebelum menghancurkannya
+                tabletindakan.destroy();
             }
 
-            try {
-                const response = await fetch("/api/cariDataTindakan", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(requestData),
-                });
-
-                if (!response.ok) {
-                    Swal.close();
-                    if (response.status == 404) {
-                        $("#dataTindakan").DataTable({
-                            data: [{
-                                ket: "Belum Ada Transaksi",
-                            }, ],
-                            columns: [{
-                                data: "ket",
-                                createdCell: function(td) {
-                                    $(td)
-                                        .attr("colspan", 6)
-                                        .addClass("bg-warning text-center");
-                                },
-                            }, ],
-                            paging: false,
-                            searching: false,
-                            ordering: false,
-                            info: false,
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Terjadi kesalahan saat mengambil data pasien...!!!",
-                        });
-                        throw new Error(
-                            `Network response was not ok. Status: ${response.status}`
-                        );
-                    }
-                } else {
-                    const data = await response.json();
-                    console.log("🚀 ~ cariDataTindakan ~ data:", data);
-
-                    data.forEach(function(item, index) {
+            $.ajax({
+                url: "/api/cariDataTindakan",
+                type: "post",
+                data: {
+                    notrans: notrans
+                },
+                success: function(response) {
+                    response.forEach(function(item, index) {
                         var dokter =
                             `${item.dokter.gelar_d} ${item.dokter.biodata.nama} ${item.dokter.gelar_b}`;
                         var petugas =
                             `${item.petugas.gelar_d} ${item.petugas.biodata.nama} ${item.petugas.gelar_b}`;
-                        var tindakan = item.tindakan.nmTindakan;
-                        item.actions = `<a type="button" class="edit btn-sm btn-primary icon-link icon-link-hover"
+                        var tindakan = `${item.tindakan.nmTindakan}`;
+                        item.actions = `<a type="button" class="mr-2 edit btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
                                     data-id="${item.id}"
                                     data-kdtind="${item.kdTind}"
                                     data-tindakan="${tindakan}"
                                     data-norm="${item.norm}"
                                     data-petugas="${petugas}"
                                     data-dokter="${dokter}"><i class="fas fa-pen-to-square"></i></a>
-                                <a type="button" class="delete btn-sm btn-danger icon-link icon-link-hover"
+                                <a type="button" class="delete btn-sm btn-danger py-md-0 py-1 icon-link icon-link-hover"
                                     data-id="${item.id}"
                                     data-kdTind="${item.kdTind}"
                                     data-tindakan="${tindakan}"
@@ -200,11 +75,15 @@
                                     data-petugas="${petugas}"
                                     data-dokter="${dokter}"><i class="fas fa-trash"></i></a>`;
                         item.no = index + 1;
-                        item.status = item.transbmhp.length > 0 ? "sudah" : "belum";
+                        if (item.transbmhp.length > 0) {
+                            item.status = "sudah";
+                        } else {
+                            item.status = "belum";
+                        }
                     });
 
                     $("#dataTindakan").DataTable({
-                        data: data,
+                        data: response,
                         columns: [{
                                 data: "actions",
                                 className: "text-center col-1 p-2"
@@ -212,7 +91,7 @@
                             {
                                 data: "status",
                                 name: "kdTind",
-                                render: function(data) {
+                                render: function(data, type, row) {
                                     var backgroundColor =
                                         data === "belum" ? "danger" : "success";
                                     return `<div class="badge badge-${backgroundColor}">${data}</div>`;
@@ -238,17 +117,11 @@
                         ],
                         order: [2, "asc"],
                     });
-
-                    scrollToInputSection();
-                    Swal.close();
-                }
-            } catch (error) {
-                console.error("Terjadi kesalahan saat mencari data:", error);
-                Swal.fire({
-                    icon: "error",
-                    title: `Terjadi kesalahan saat mencari data...!!!\n${error.message}`,
-                });
-            }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                },
+            });
         }
 
         function addBmhp() {
@@ -716,7 +589,7 @@
         $(document).on("select2:open", () => {
             document.querySelector(".select2-search__field").focus();
         });
-    </script> --}}
+    </script>
     <script>
         $(document).ready(function() {
             var today = new Date().toISOString().split("T")[0];
@@ -729,6 +602,9 @@
             setInterval(function() {
                 antrianAll();
             }, 180000);
+
+            let btnPanggil;
+            console.log("🚀 ~ $ ~ btnPanggil:", btnPanggil)
         });
 
         function panggilFarmasi(button) {
@@ -743,11 +619,17 @@
             cariResepLocal(tgl, norm, log_id, notrans);
         }
 
+
+
         function panggil(log_id, norm, tgl) {
             console.log("🚀 ~ panggil ~ tgl:", tgl)
             console.log("🚀 ~ panggil ~ norm:", norm)
             console.log("🚀 ~ panggil ~ log_id:", log_id)
+            // Mendapatkan tombol dengan class 'panggil'
+            sedangMemanggil = true;
 
+            // antrianFar()
+            // return;
             const apiUrl = "/api/farmasi/panggil";
 
             // Data yang akan dikirim melalui POST
@@ -801,6 +683,10 @@
             console.log("🚀 ~ panggil ~ norm:", norm)
             console.log("🚀 ~ panggil ~ notrans:", notrans)
 
+            sedangMemanggil = false;
+            // antrianFar();
+            // return;
+
             const apiUrl = "/api/farmasi/pulangkan";
 
             // Data yang akan dikirim melalui POST
@@ -838,8 +724,10 @@
                             "\n \n" +
                             "\n\nKeterangan: " +
                             data.data.message,
-
                     })
+                    btnPanggil.forEach((btn, index) => {
+                        btn.disabled = true;
+                    });
                     antrianFar();
                 })
                 .catch((error) => console.error("Error fetching data:", error));
