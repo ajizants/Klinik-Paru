@@ -4,7 +4,7 @@
     @include('Farmasi.Transaksi.antrian')
     {{-- @include('Farmasi.Transaksi.input2') --}}
 
-    @include('IGD.Trans.input')
+    {{-- @include('IGD.Trans.input') --}}
 
 
 
@@ -12,7 +12,7 @@
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/antrianFarmasi.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
-    <script>
+    {{-- <script>
         function scrollToInputBMHPSection() {
             $("html, body").animate({
                 scrollTop: $("#formbmhp").offset().top
@@ -716,7 +716,7 @@
         $(document).on("select2:open", () => {
             document.querySelector(".select2-search__field").focus();
         });
-    </script>
+    </script> --}}
     <script>
         $(document).ready(function() {
             var today = new Date().toISOString().split("T")[0];
@@ -743,7 +743,9 @@
             cariResepLocal(tgl, norm, log_id, notrans);
         }
 
-        function panggil(log_id) {
+        function panggil(log_id, norm, tgl) {
+            console.log("🚀 ~ panggil ~ tgl:", tgl)
+            console.log("🚀 ~ panggil ~ norm:", norm)
             console.log("🚀 ~ panggil ~ log_id:", log_id)
 
             const apiUrl = "/api/farmasi/panggil";
@@ -782,10 +784,16 @@
                         allowOutsideClick: false,
                         showConfirmButton: false,
                     })
-
+                    cetakResep(norm, tgl)
                     antrianFar();
                 })
                 .catch((error) => console.error("Error fetching data:", error));
+        }
+
+        function cetakResep(norm, tgl) {
+            const url = "/api/resep/" + norm + "/" + tgl;
+            console.log("🚀 ~ cetakResep ~ url:", url)
+            window.open(url, "_blank");
         }
 
         function pulangkan(norm, log_id, notrans) {
@@ -803,7 +811,7 @@
             };
             Swal.fire({
                 icon: "info",
-                title: "Sedang mencarikan data pasien...!!!",
+                title: "Sedang memulangkan pasien...!!!",
                 didOpen: () => {
                     Swal.showLoading();
                 },

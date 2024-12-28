@@ -11,9 +11,15 @@ function fetchDataAntrianFar(tanggal, callback) {
         error: function (xhr) {
             console.error("Error fetching data:", xhr.status, xhr.statusText);
             $("#loadingSpinner").hide();
-            alert("Terjadi kesalahan saat mengambil data. Silakan coba lagi.");
+            // alert("Terjadi kesalahan saat mengambil data. Silakan coba lagi.");
+            callback([]);
         },
     });
+}
+
+function antrianNull() {
+    $("#loadingSpinner").hide();
+    $("#tableAntrian").html("");
 }
 
 function processResponseFar(response) {
@@ -31,16 +37,17 @@ function processResponseFar(response) {
         data-tujuan="${item.tujuan || ""}"
     `;
 
-        const inputBtn = `
-                <a type="button" ${commonAttributes} 
-                    class="btn btn-primary "
-                    onclick="setTransaksi(this,'igd');"
-                     data-toggle="tooltip" data-placement="top" title="Tambah Tindakan">
-                    <i class="fas fa-pen-to-square"></i>
-                </a>
-                `;
+        const inputBtn = ``;
+        // const inputBtn = `
+        //         <a type="button" ${commonAttributes}
+        //             class="btn btn-primary "
+        //             onclick="setTransaksi(this,'igd');"
+        //              data-toggle="tooltip" data-placement="top" title="Tambah Tindakan">
+        //             <i class="fas fa-pen-to-square"></i>
+        //         </a>
+        //         `;
         const ctkRspBtn = `
-            <a class="panggil btn btn-success"
+            <a class="panggil btn btn-secondary"
                 data-notrans="${item.no_reg}"
                 data-norm="${item.pasien_no_rm}"
                 data-log_id="${item.log_id}"
@@ -50,14 +57,14 @@ function processResponseFar(response) {
             `;
         const plgBtn = `
             <a type="button" onclick="pulangkan('${item.pasien_no_rm}', '${item.log_id}', '${item.no_reg}')"
-                class="btn btn-warning" 
+                class="btn btn-warning"
                 data-toggle="tooltip" data-placement="top" title="Pulangkan">
                 <i class="fa-solid fa-right-from-bracket"></i>
             </a>
             `;
 
-        const panggilBtn = `<a class="panggil btn btn-success" 
-                onclick="panggil('${item.log_id}')"
+        const panggilBtn = `<a class="panggil btn btn-success"
+                onclick="panggil('${item.log_id}','${item.pasien_no_rm}', '${item.tanggal}')"
                 data-toggle="tooltip" data-placement="top" title="Panggil">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-volume-up-fill" viewBox="0 0 16 16">
                     <path d="M11.536 14.01A8.47 8.47 0 0 0 14.026 8a8.47 8.47 0 0 0-2.49-6.01l-.708.707A7.48 7.48 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303z"/>
@@ -77,7 +84,7 @@ function processResponseFar(response) {
              ${inputBtn}
              ${plgBtn}
              ${ctkRspBtn}
-            
+
             `;
         } else {
             item.aksi = `
@@ -91,6 +98,7 @@ function processResponseFar(response) {
 
 function initializeDataAntrianFar(response) {
     // Proses data sebelum inisialisasi
+
     processResponseFar(response);
 
     const dataSelesai = response.filter((item) => item.keterangan === "PULANG");
