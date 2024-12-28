@@ -32,6 +32,8 @@ function processResponseFar(response) {
             console.log("Tidak ada item yang sedang dipanggil.");
             sedangMemanggil = false;
         }
+        let warnaBtn =
+            item.status_pulang === "Sudah Pulang" ? "danger" : "secondary";
         const commonAttributes = `
         data-norm="${item.pasien_no_rm}"
         data-nama="${item.pasien_nama}"
@@ -62,7 +64,7 @@ function processResponseFar(response) {
         //     </a>
         //     `;
         const ctkRspBtn = `
-            <a class="btn btn-secondary" 
+            <a class="btn btn-${warnaBtn}"
                 onclick="cetakResep('${item.pasien_no_rm}', '${item.tanggal}')">
                 <i class="fa-regular fa-folder-open"></i>
             </a>`;

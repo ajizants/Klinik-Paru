@@ -40,6 +40,9 @@ class FarmasiController extends Controller
         // return $tindakanList;
         $cppt = $dataArray['cppt'] ?? [];
         // return $cppt;
+        $notrans = $cppt['no_reg'];
+        // return $notrans;
+        $waktu = $this->selesaiFarmasi($norm, $notrans);
         // Pass the data to the view
         return view('Laporan.obat', compact('tindakanList', 'obats', 'cppt'))->with([
             'title' => "Obat Terpakai",

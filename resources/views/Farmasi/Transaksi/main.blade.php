@@ -676,6 +676,7 @@
             const url = "/api/resep/" + norm + "/" + tgl;
             console.log("🚀 ~ cetakResep ~ url:", url)
             window.open(url, "_blank");
+
         }
 
         function pulangkan(norm, log_id, notrans) {
