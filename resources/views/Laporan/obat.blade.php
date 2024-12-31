@@ -44,7 +44,8 @@
                                 <tr>
                                     <td class="px-2">No RM</td>
                                     <td class="px-2">:</td>
-                                    <td class="px-2">{{ $cppt['pasien_no_rm'] }} / {{ $cppt['penjamin_nama'] }}
+                                    <td class="px-2">{{ $cppt['pasien_no_rm'] }} / {{ $cppt['penjamin_nama'] }} /
+                                        {{ $cppt['antrean_nomor'] }}
                                     </td>
                                     <td class="px-2"></td>
                                     <td class="px-2">Tanggal</td>
