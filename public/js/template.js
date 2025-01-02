@@ -152,6 +152,7 @@ var Toast = Swal.mixin({
 });
 
 function toggleSections(sectionToShow) {
+    // console.log("🚀 ~ toggleSections ~ sectionToShow:", sectionToShow);
     var sections = [
         "#dAntrian",
         "#dSelesai",
@@ -159,6 +160,7 @@ function toggleSections(sectionToShow) {
         "#dTunggu",
         "#dKontrol",
         "#dTelat",
+        "#dKonsul",
         "#dDo",
         "#dTb",
         "#dSkip",
