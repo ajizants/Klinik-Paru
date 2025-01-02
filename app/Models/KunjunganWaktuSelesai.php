@@ -18,6 +18,8 @@ class KunjunganWaktuSelesai extends Model
         'no_sep',
         'waktu_selesai_rm',
         'waktu_selesai_igd',
+        'waktu_selesai_farmasi',
+        'konsul_ro',
         'created_at',
         'updated_at',
     ];
