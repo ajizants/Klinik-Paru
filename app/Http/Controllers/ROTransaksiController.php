@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KunjunganWaktuSelesai;
 use App\Models\PasienModel;
 use App\Models\RoHasilModel;
 use App\Models\ROJenisKondisi;
@@ -777,5 +778,45 @@ class ROTransaksiController extends Controller
         ];
 
         return response()->json($response, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function konsulRo(Request $request)
+    {
+        $notrans = $request->input('notrans');
+
+        try {
+            DB::beginTransaction();
+            $data = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
+            if ($data) {
+                $data->update([
+                    'konsul_ro' => 1,
+                ]);
+                DB::commit();
+                return response()->json([
+                    'metadata' => [
+                        'message' => 'Pasien a.n.' . $request->input('nama') . ' - ' . $request->input('norm') . ' berhasil di konsulkan ke dokter Sp. Rad.',
+                        'status' => 200,
+                    ],
+                ], 200, [], JSON_PRETTY_PRINT);
+            }
+            DB::rollBack();
+            return response()->json([
+                'metadata' => [
+                    'message' => 'Data transaksi tidak ditemukan',
+                    'status' => 404,
+                ],
+            ], 404, [], JSON_PRETTY_PRINT);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollBack();
+            return response()->json([
+                'metadata' => [
+                    'message' => 'Terjadi kesalahan pada koneksi database',
+                    'status' => 500,
+                    'error' => $th->getMessage(),
+                ],
+            ], 500, [], JSON_PRETTY_PRINT);
+        }
     }
 }
