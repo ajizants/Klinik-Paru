@@ -11,6 +11,7 @@ use App\Http\Controllers\GudangFarmasiController;
 use App\Http\Controllers\IgdController;
 use App\Http\Controllers\InputController;
 use App\Http\Controllers\KasirController;
+use App\Http\Controllers\KasirLapController;
 use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\NoAntrianController;
 use App\Http\Controllers\PasienKominfoController;
@@ -117,13 +118,17 @@ Route::post('kasir/kunjungan', [KasirController::class, 'kunjungan']);
 Route::post('kasir/rekap', [KasirController::class, 'rekapKunjungan']);
 // Route::get('cetakSBS/{id}', [KasirController::class, 'cetakSBS']);
 // Route::post('cetakBAPH', [KasirController::class, 'cetakBAPH']);
-Route::get('cetakSBS/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakSBS']);
-Route::get('cetakBAPH/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakBAPH']);
 Route::get('/pendapatan/{tahun}', [KasirController::class, 'pendapatan']);
 Route::get('/pendapatan/item/{tahun}', [KasirController::class, 'pendapatanPerItem']);
 Route::post('/pendapatan/item', [KasirController::class, 'pendapatanPerItem']);
 Route::post('/pendapatan/ruang', [KasirController::class, 'pendapatanPerRuang']);
 
+Route::get('cetakSBS/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakSBS']);
+Route::get('cetakBAPH/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakBAPH']);
+// Laporan Ksir
+Route::get('stsBruto/{bln}/{tahun}/{jaminan}', [KasirLapController::class, 'stsBruto']);
+Route::get('stpbBruto/{bln}/{tahun}/{jaminan}', [KasirLapController::class, 'stpbBruto']);
+Route::get('rekapBulanan/{tahun}/{jaminan}', [KasirLapController::class, 'rekapBulanan']);
 //laboratorium
 Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);
 Route::post('layananlab', [LaboratoriumController::class, 'layananlab']);
@@ -144,7 +149,7 @@ Route::post('rekap/lab/waktu_pemeriksaan', [LaboratoriumController::class, 'wakt
 Route::post('addHasilLab', [LaboratoriumController::class, 'addHasil']);
 Route::post('cariRiwayatLab', [LaboratoriumController::class, 'riwayat']);
 
-//farmasi
+//farmasi0
 Route::get('stokbmhp', [StokController::class, 'stokbmhp']);
 Route::get('obat', [GudangFarmasiController::class, 'gudangFarmasiIn']);
 
@@ -221,6 +226,7 @@ Route::post('cariTsRO', [ROTransaksiController::class, 'cariTransaksiRo']);
 Route::post('dataTransaksiRo', [ROTransaksiController::class, 'dataTransaksiRo']);
 Route::post('hasilRo', [ROTransaksiController::class, 'hasilRo']);
 Route::post('logBook', [ROTransaksiController::class, 'logBook']);
+Route::post('ro/konsul', [ROTransaksiController::class, 'konsulRo']);
 
 //Gizi
 Route::post('gizi/asesmenAwal', [GiziAsesmenAwalController::class, 'search']);

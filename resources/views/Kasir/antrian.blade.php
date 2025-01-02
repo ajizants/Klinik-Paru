@@ -1,11 +1,11 @@
-<div class="card shadow mb-4" id="top">
+<div class="card shadow mb-4">
     <!-- Card Header - Accordion -->
     <a href="#collapseCardAntrian" class="d-block card-header py-1 bg bg-info" data-toggle="collapse" role="button"
         aria-expanded="true" aria-controls="collapseCardExample">
         <h4 class="m-0 font-weight-bold text-dark text-center">Antrian</h4>
     </a>
     <!-- Card Content - Collapse -->
-    <div class="collapse show collapse show card-body p-0" id="collapseCardAntrian">
+    <div class="collapse show card-body p-0" id="collapseCardAntrian">
         <div class="col-6 d-flex justify-content-center z-3 position-absolute">
         </div>
         <div class="mt-3">

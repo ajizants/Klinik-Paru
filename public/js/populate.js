@@ -31,6 +31,7 @@ function handleNoData(ruang) {
     drawDataTable(dataArray, ruang, "#dataSelesai");
     if (ruang === "ro") {
         drawDataTable(dataArray, ruang, "#daftarUpload");
+        drawDataTable(dataArray, ruang, "#dataKonsul");
     }
 }
 
@@ -47,16 +48,29 @@ function initializeDataAntrian(response, ruang) {
             "Belum Upload Foto Thorax",
             "#daftarUpload"
         );
+        updateTableDataKonsul(data, ruang, true, "#dataKonsul");
     }
 }
-
 function updateTableData(data, ruang, status, tableId) {
     const filteredData = data.filter((item) => item.status === status);
     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
     const nama = dataArray[0]?.pasien_nama;
     console.log("🚀 ~ updateTableData ~ nama:", nama);
     if (nama !== "Belum ada data masuk") {
-        processDataArray(dataArray, ruang);
+        processDataArray(dataArray, ruang, false);
+    }
+    drawDataTable(dataArray, ruang, tableId);
+}
+function updateTableDataKonsul(data, ruang, status, tableId) {
+    const filteredData = data.filter(
+        (item) => item.permintaan_konsul === status
+    );
+    const dataArray = filteredData.length ? filteredData : getNoDataMessage();
+    console.log("🚀 ~ updateTableDataKonsul ~ a:", dataArray);
+    const nama = dataArray[0]?.pasien_nama;
+    console.log("🚀 ~ updateTableData ~ nama:", nama);
+    if (nama !== "Belum ada data masuk") {
+        processDataArray(dataArray, ruang, true);
     }
     drawDataTable(dataArray, ruang, tableId);
 }
@@ -68,6 +82,11 @@ function antrian(ruang) {
         tanggal_akhir: $("#tanggal").val(),
         ruang: ruang,
     };
+    // const params = {
+    //     tanggal_awal: "2024-12-27",
+    //     tanggal_akhir: "2024-12-27",
+    //     ruang: ruang,
+    // };
 
     fetchDataAntrian(ruang, params, function (response) {
         $("#loadingSpinner").hide();
@@ -86,6 +105,7 @@ function updateExistingTables(response, ruang) {
 
     if (ruang === "ro") {
         updateTable("#daftarUpload", data, ruang, "Belum Upload Foto Thorax");
+        updateTableKonsul("#dataKonsul", data, ruang, true);
     }
 }
 
@@ -97,30 +117,26 @@ function updateTable(tableId, data, ruang, status) {
     const nama = dataArray[0]?.pasien_nama;
     console.log("🚀 ~ updateTableData ~ nama:", nama);
     if (nama !== "Belum ada data masuk") {
-        processDataArray(dataArray, ruang);
+        processDataArray(dataArray, ruang, false);
+    }
+    table.clear().rows.add(dataArray).draw();
+}
+function updateTableKonsul(tableId, data, ruang, status) {
+    const filteredData = data.filter(
+        (item) => item.permintaan_konsul === status
+    );
+    console.log("🚀 ~ updateTableKonsul ~ filteredData:", filteredData);
+    const table = $(tableId).DataTable();
+    const dataArray = filteredData.length ? filteredData : getNoDataMessage();
+    const nama = dataArray[0]?.pasien_nama;
+    console.log("🚀 ~ updateTableData ~ nama:", nama);
+    if (nama !== "Belum ada data masuk") {
+        processDataArray(dataArray, ruang, true);
     }
     table.clear().rows.add(dataArray).draw();
 }
 
-// function updateTable(tableId, data, ruang, status) {
-//     const filteredData = data.filter((item) => item.status === status);
-//     console.log("🚀 ~ updateTable ~ filteredData:", filteredData);
-
-//     const table = $(tableId).DataTable();
-//     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
-//     const isNoDataMessage = dataArray.aksi === ""; // Periksa jika `getNoDataMessage` aktif
-
-//     console.log("🚀 ~ updateTable ~ isNoDataMessage:", isNoDataMessage);
-//     // Panggil `processDataArray` hanya jika bukan "No Data"
-//     if (isNoDataMessage === false) {
-//         console.log("🚀 ~ updateTable ~ prosessDataArray");
-//         processDataArray(dataArray, ruang);
-//     }
-
-//     table.clear().rows.add(dataArray).draw();
-// }
-
-function processDataArray(dataArray, ruang) {
+function processDataArray(dataArray, ruang, tableId) {
     dataArray.forEach((item, index) => {
         item.index = index + 1;
         switch (ruang) {
@@ -141,12 +157,81 @@ function processDataArray(dataArray, ruang) {
                 );
                 break;
         }
-        item.aksi = generateActionButton(item, ruang);
+        item.aksi = generateActionButton(item, ruang, tableId);
+        let btn = item.status_konsul === "belum" ? "btn-danger" : "btn-success";
+        const today = new Date(2024, 9, 3).setHours(0, 0, 0, 0);
+        const date = new Date(item.tanggal).setHours(0, 0, 0, 0);
+        const notrans = date <= today ? item.no_trans : item.no_reg;
+        item.aksiKonsul = `
+                                <a type="button" 
+                                    data-toggle="tooltip" data-placement="right" title="Transaksi Konsul ${
+                                        item.status_konsul
+                                    }"
+                                    data-norm="${item.pasien_no_rm}"
+                                    data-nama="${item.pasien_nama}"
+                                    data-dokter="${item.dokter_nama}"
+                                    data-asktind="${
+                                        item.asktind?.trim() || "No data"
+                                    }"
+                                    data-kddokter="${item.nip_dokter}"
+                                    data-alamat="${getFormattedAddress(item)}"
+                                    data-layanan="${item.penjamin_nama}"
+                                    data-notrans="${notrans}"
+                                    data-tgltrans="${item.tanggal}"
+                                    data-umur="${item.umur}"
+                                    data-jk="${item.jenis_kelamin_nama}"
+                                    class="aksi-button btn-sm ${btn} icon-link icon-link-hover"
+                                    onclick="setKonsul(this)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+                                    <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                                    </svg>
+                                </a>
+                            `;
+    });
+}
+
+function setKonsul(button) {
+    Swal.fire({
+        icon: "info",
+        title: "Sedang megnirim data konsul...!!!",
+        showConfirmButton: true,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+    $.ajax({
+        url: "/api/ro/konsul",
+        type: "post",
+        data: {
+            notrans: $(button).data("notrans"),
+            nama: $(button).data("nama"),
+            norm: $(button).data("norm"),
+        },
+        success: function (response) {
+            console.log("🚀 ~ setKonsul ~ response:", response);
+            Swal.fire({
+                icon: "success",
+                title: response.metadata.message,
+            });
+            button.classList.remove("btn-danger");
+            button.classList.add("btn-success");
+        },
+        error: function (xhr, status, error) {
+            console.log(error);
+            Swal.fire({
+                icon: "error",
+                title: "Terjadi Kesalahan",
+                text: "Gagal mengirm konsul, data: " + error,
+            });
+        },
     });
 }
 
 function drawDataTable(dataArray, ruang, tableId) {
-    const columns = getColumnsForRuang(ruang);
+    const columns = getColumnsForRuang(ruang, tableId);
+
     $(tableId).DataTable({
         data: dataArray,
         columns: columns,
@@ -160,7 +245,7 @@ function drawDataTable(dataArray, ruang, tableId) {
     });
 }
 
-function generateActionButton(item, ruang) {
+function generateActionButton(item, ruang, konsul) {
     const today = new Date(2024, 9, 3).setHours(0, 0, 0, 0);
     const date = new Date(item.tanggal).setHours(0, 0, 0, 0);
     const notrans = date <= today ? item.no_trans : item.no_reg;
@@ -205,16 +290,17 @@ function generateActionButton(item, ruang) {
     }
 
     if (ruang === "ro") {
+        const deleteButton = `
+            <a type="button" ${commonAttributes}
+                class="aksi-button btn-sm btn-danger icon-link icon-link-hover"
+                onclick="deleteTransaksi(this);">
+                <i class="fas fa-trash"></i>
+            </a>`;
+
         if (
             item.status === "sudah" ||
             item.status === "Belum Upload Foto Thorax"
         ) {
-            const deleteButton = `
-                <a type="button" ${commonAttributes}
-                    class="aksi-button btn-sm btn-danger icon-link icon-link-hover"
-                    onclick="deleteTransaksi(this);">
-                    <i class="fas fa-trash"></i>
-                </a>`;
             return `${editButton} ${deleteButton}`;
         }
 
@@ -242,9 +328,15 @@ function generateAsktindString(data, addNewLine = false, isLab = false) {
         .replace(/(,\s*<br>|,\s)$/, ""); // Remove trailing separator
 }
 
-function getColumnsForRuang(ruang) {
+function getColumnsForRuang(ruang, tableId) {
+    // Tentukan kolom aksi berdasarkan tableId
+    const aksiColumns =
+        tableId === "#dataKonsul"
+            ? [{ data: "aksiKonsul", className: "col-1 text-center p-2" }]
+            : [{ data: "aksi", className: "col-1 text-center p-2" }];
+
+    // Kolom umum untuk semua ruang
     const commonColumns = [
-        { data: "aksi", className: "col-1 text-center p-2" },
         {
             data: "status",
             className: "text-center p-2",
@@ -269,13 +361,17 @@ function getColumnsForRuang(ruang) {
                 }">${data}</div>`,
         },
         { data: "tanggal", className: "text-center p-2 col-1" },
-        { data: "antrean_nomor", className: "text-center p-2" },
+        {
+            data: "antrean_nomor",
+            className: "font-weight-bold text-center p-2",
+        },
         { data: "penjamin_nama", className: "text-center p-2" },
         { data: "pasien_no_rm", className: "text-center p-2" },
         { data: "pasien_nama", className: "p-2 col-2" },
         { data: "dokter_nama", className: "p-2 col-3" },
     ];
 
+    // Kolom tambahan berdasarkan ruang
     const extraColumns = {
         dots: [
             { data: "nmDiagnosa", className: "p-2 col-4", title: "Diagnosa" },
@@ -285,13 +381,15 @@ function getColumnsForRuang(ruang) {
         lab: [{ data: "asktind", className: "p-2 col-4" }],
     };
 
-    return commonColumns.concat(extraColumns[ruang] || []);
+    // Gabungkan semua kolom dan kembalikan hasilnya
+    return [...aksiColumns, ...commonColumns, ...(extraColumns[ruang] || [])];
 }
 
 function getNoDataMessage() {
     return [
         {
             aksi: "",
+            aksiKonsul: "",
             status: "",
             status_obat: "",
             tanggal: "",
@@ -400,10 +498,16 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
         { data: "dokter_nama", className: "p-2 col-3", title: "Dokter" },
         { data: "poli_nama", className: "p-2", title: "Poli" },
     ];
-
-    const aksiColumns = [
-        { data: "aksi", className: "p-2 col-2", title: "Aksi" },
-    ];
+    let aksiColumns;
+    if (ruang === "surat") {
+        aksiColumns = [
+            { data: "aksi", className: "p-2 col-2 text-center", title: "Aksi" },
+        ];
+    } else {
+        aksiColumns = [
+            { data: "aksi", className: "p-2 col-1 text-center", title: "Aksi" },
+        ];
+    }
     const ketColumns = [
         {
             data: "status",
@@ -515,42 +619,6 @@ function generateActionLink(item, ruang, statusFilter) {
         data-alamatPang="${item.pasien_alamat_pang}"
         data-umurPang="${item.pasien_umur_tahun}"
     `;
-    // const links = {
-    //     dots: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
-    //             onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-    //     surat: `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
-    //             onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`,
-    //     kasir:
-    //         item.status === "Sudah Selesai"
-    //             ? `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
-    //             onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
-    //                 <a type="button" ${commonAttributes} class="ml-3 aksi-button btn-sm btn-warning py-md-0 py-1 icon-link icon-link-hover"
-    //                 onclick="celuk(this,'${ruang}');"><i class="fa-solid fa-volume-high"></a>`
-    //             : item.status === "Tidak Ada Transaksi"
-    //             ? `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
-    //             onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`
-    //             : `<a></a>`,
-    //     farmasi:
-    //         item.status === "Sudah Selesai"
-    //             ? `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
-    //             onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>
-    //                 <a type="button" ${commonAttributes} class="ml-3 aksi-button btn-sm btn-warning py-md-0 py-1 icon-link icon-link-hover"
-    //                 onclick="celuk(this,'${ruang}');"><i class="fa-solid fa-volume-high"></a>`
-    //             : item.status === "Tidak Ada Transaksi"
-    //             ? `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-primary py-md-0 py-1 icon-link icon-link-hover"
-    //             onclick="setTransaksi(this,'${ruang}');"><i class="fas fa-pen-to-square"></i></a>`
-    //             : `<a></a>`,
-    //     ro:
-    //         item.status === "Sudah Selesai"
-    //             ? `<a type="button" ${commonAttributes} class="aksi-button btn-sm btn-danger py-md-0 py-1 icon-link icon-link-hover"
-    //             onclick="deleteTransaksi(this);"><i class="fas fa-trash"></i></a>`
-    //             : `<a></a>`,
-    //     default: `<a type="button" class="aksi-button btn-sm btn-primary py-md-0 py-1  icon-link icon-link-hover"
-    //             onclick="cariLog('${item.id}');"> Log
-    //             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="ml-2 bi bi-folder-fill" viewBox="0 0 16 16">
-    //             <path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z"></path>
-    //             </svg></a>`,
-    // };
     const createLink = (
         iconClass,
         action,
@@ -566,7 +634,7 @@ function generateActionLink(item, ruang, statusFilter) {
             </a>
         `;
 
-    const linkLog = `<a type="button" class="aksi-button btn-sm btn-warning py-md-0 py-1 icon-link icon-link-hover"
+    const linkLog = `<a type="button" class="aksi-button btn-sm btn-warning py-md-0 py-1 mx-2 icon-link icon-link-hover"
                     onclick="cariLog('${item.id}');">
                     Posisi
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"

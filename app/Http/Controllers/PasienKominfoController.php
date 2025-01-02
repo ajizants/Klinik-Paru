@@ -1061,9 +1061,20 @@ class PasienKominfoController extends Controller
                         ->whereDate('tanggal', $d['tanggal'])->first();
                     $d['status'] = !$tsRo && !$foto ? 'belum' :
                     ($tsRo && !$foto ? 'Belum Upload Foto Thorax' : 'sudah');
+                    // Cek di $d['radiologi'] apakah ada layanan "Konsultasi dokter Radiologi"
+                    $d['permintaan_konsul'] = false;
+                    if (!empty($d['radiologi'])) {
+                        foreach ($d['radiologi'] as $radiologi) {
+                            if (isset($radiologi['layanan']) && $radiologi['layanan'] === 'Konsultasi dokter Radiologi') {
+                                $d['permintaan_konsul'] = true;
+                                break;
+                            }
+                        }
+                    }
+                    $status_konsul = KunjunganWaktuSelesai::where('notrans', $d['no_reg'])->first();
 
-                    // $ro = ROTransaksiModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
-                    // $d['status'] = $ro ? 'sudah' : 'belum';
+                    $d['status_konsul'] = $status_konsul && $status_konsul->konsul_ro ? 'sudah' : 'belum';
+
                     if (empty($d['radiologi'])) {
                         return null;
                     }

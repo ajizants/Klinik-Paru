@@ -1,11 +1,11 @@
-<div class="card shadow mb-4" id="top">
+<div class="card shadow mb-4">
     <!-- Card Header - Accordion -->
     <a href="#collapseCardAntrian" class="d-block card-header py-1 bg bg-info" data-toggle="collapse" role="button"
         aria-expanded="true" aria-controls="collapseCardExample">
         <h4 id="antrianSection" class="m-0 font-weight-bold text-dark text-center">Antrian</h4>
     </a>
     <!-- Card Content - Collapse -->
-    <div class="collapse show collapse show card-body p-0" id="collapseCardAntrian">
+    <div class="collapse show card-body p-0" id="collapseCardAntrian">
         <div class="col-sm-4 d-flex justify-content-center position-absolute">
             <div class="input-group col d-flex justify-content-center">
                 <input type="date" class="form-control col-sm-4 bg bg-warning" id="tanggal"
@@ -53,55 +53,7 @@
                         <a type="button" class="nav-link" id="itb" onclick="toggleSections('#dTb');"><b>Pasien
                                 TB</b></a>
                     </li>
-
                 </ul>
-                {{-- <div id="dTunggu" class="card-body card-body-hidden p-2">
-                    <h5 class="mb-0 text-center"><b>Daftar Tunggu</b></h5>
-                    <div class="table-responsive pt-2 px-2">
-                        <table id="dataAntrian" class="table table-striped table-hover pt-0 mt-0 fs-6"
-                            style="width:100%" cellspacing="0">
-                            <thead class="bg bg-primary">
-                                <tr>
-                                    <th>Aksi</th>
-                                    <th>status</th>
-                                    <th>Tanggal</th>
-                                    <th>Urut</th>
-                                    <th>Jaminan</th>
-                                    <th>NoRM</th>
-                                    <th class="col-1">Nama Pasien</th>
-                                    <th class="col-3">Dokter</th>
-                                    <th>DX Medis</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div id="dSelesai" class="card-body card-body-hidden p-2" style="display: none;">
-                    <h5 class="mb-0 text-center"><b>Data Antrian Selesai Transaksi</b></h5>
-                    <div class="table-responsive pt-2 px-2">
-                        <table id="dataSelesai" class="table table-striped table-hover pt-0 mt-0 fs-6"
-                            style="width:100%" cellspacing="0">
-                            <thead class="bg bg-teal">
-                                <tr>
-                                    <th width="15px">Aksi</th>
-                                    <th width="15px">status</th>
-                                    <th>Tanggal</th>
-                                    <th>Urut</th>
-                                    <th>Jaminan</th>
-                                    <th>NoRM</th>
-                                    <th class="col-3">Nama Pasien</th>
-                                    <th class="col-3">Dokter</th>
-                                    <th>DX Medis</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                </div> --}}
 
                 @include('Template.Table.tunggu')
                 @include('Template.Table.selesai')
