@@ -25,11 +25,16 @@
     <link rel="stylesheet" href="{{ asset('vendor/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/plugins/daterangepicker/daterangepicker.css') }}">
+
+    <!-- summernote -->
+    <link rel="stylesheet" href="{{ asset('vendor/plugins/summernote/summernote-bs4.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
     <link type="text/css" rel="stylesheet" href="{{ asset('css/mystyle.css') }}">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/panzoom/panzoom.css" />
+
+
     {{-- Scripting --}}
     <!-- jQuery -->
     <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
@@ -57,20 +62,34 @@
     <script src="{{ asset('vendor/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
     <script src="{{ asset('vendor/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
     <script src="{{ asset('vendor/plugins/daterangepicker/daterangepicker.js') }}"></script>
+    <!-- Summernote -->
+    <script src="{{ asset('vendor/plugins/summernote/summernote-bs4.min.js') }}"></script>
     {{-- confetti --}}
     <script src="{{ asset('vendor/plugins/confetti/confetti.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
+    <script>
+        $(function() {
+            // Summernote
+            $('#summernote').summernote()
+
+            //   // CodeMirror
+            //   CodeMirror.fromTextArea(document.getElementById("codeMirrorDemo"), {
+            //     mode: "htmlmixed",
+            //     theme: "monokai"
+            //   });
+        })
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/panzoom/panzoom.umd.js"></script>
 
     {{-- <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script> --}}
 
-
+    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
 </head>
 
 <body class="sidebar-mini layout-fixed control-sidebar-slide-open sidebar-collapse text-sm">
-    <div class="wrapper">
+    <div class="wrapper" id="top">
 
         <div class="preloader flex-column justify-content-center align-items-center">
             <img class="animation__shake" src="{{ asset('img/LOGO_KKPM.png') }}" alt="KKPM-Logo" height="200"
@@ -104,6 +123,18 @@
                     @yield('content')
                 </div>
             </section>
+        </div>
+        <div class="fixed-bottom left-0 m-3">
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-dark opacity-50" onclick="scrollToTop()" type="button" data-toggle="tooltip"
+                    data-placement="left" title="Kembali Ke Atas">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                        <path
+                            d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+                    </svg>
+                </button>
+            </div>
         </div>
         @include('Template.footer')
 

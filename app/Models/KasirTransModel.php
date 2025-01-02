@@ -48,7 +48,9 @@ class KasirTransModel extends Model
             ->groupBy('tanggal') // Kelompokkan berdasarkan tanggal
             ->orderBy('tanggal', 'asc') // Urutkan berdasarkan tanggal
             ->get();
-
+        if ($dataUMUM->isEmpty() && $dataBPJS->isEmpty()) {
+            return [];
+        }
         $res = [
             'umum' => $this->getPendapatan($dataUMUM, $tahun),
             'bpjs' => $this->getPendapatan($dataBPJS, $tahun),
@@ -63,10 +65,11 @@ class KasirTransModel extends Model
 
         // Periksa apakah data ada
         if ($data->isEmpty()) {
-            return response()->json([
-                'message' => 'Tidak ada data pendapatan untuk tahun ' . $tahun,
-                'data' => [],
-            ], 200, [], JSON_PRETTY_PRINT);
+            // return response()->json([
+            //     'message' => 'Tidak ada data pendapatan untuk tahun ' . $tahun,
+            //     'data' => [],
+            // ], 200, [], JSON_PRETTY_PRINT);
+            return [];
         }
 
         // Looping data pendapatan
@@ -74,27 +77,26 @@ class KasirTransModel extends Model
             $tanggal = \Carbon\Carbon::parse($d->tanggal); // Menggunakan Carbon
             $formattedDate = $tanggal->format('d-m-Y');
             $hari = $tanggal->locale('id')->isoFormat('dddd'); // Hari dalam bahasa Indonesia
+            $bulan = $tanggal->locale('id')->isoFormat('MMMM');
+            $blnNumber = $tanggal->format('m');
             $tglNomor = $tanggal->locale('id')->isoFormat('DD MMMM YYYY');
             $terbilangPendapatan = $this->terbilang($d->pendapatan); // Konversi terbilang
+            $tgl = $tanggal->locale('id')->isoFormat('DD MMM YYYY');
 
             // Format nomor
-            $nomor = $tanggal->format('d') . './SBS/01/' . $tanggal->format('Y');
-
-            $aksi = '<a type="button" class="btn btn-sm btn-warning mr-2 mb-2"
-            data-nomor="' . $nomor . '"
-            data-tgl_nomor="' . $tglNomor . '"
-            data-hari="' . $hari . '"
-            data-tgl_pendapatan="' . $tglNomor . '"
-            data-tgl_setor="' . $tglNomor . '"
-            data-jumlah="' . $d->pendapatan . '"
-            data-terbilang="' . ucfirst($terbilangPendapatan) . " rupiah." . '"
-            href="/api/cetakBAPH/' . $formattedDate . '/' . $tahun . '" target="_blank">Cetak BAPH</a>';
+            $nomor = $tanggal->format('d') . '/SBS/01/' . $tanggal->format('Y');
+            $nomor_sts = $tanggal->format('d') . '/KKPM/' . $tanggal->locale('id')->isoFormat('MMM') . '/' . $tanggal->format('Y');
 
             // Tambahkan ke array hasil
             $result[] = [
                 'nomor' => $nomor,
+                'nomor_sts' => $nomor_sts,
                 'tanggal' => $formattedDate,
+                'tgl' => $tgl,
                 'hari' => $hari,
+                'bulan' => $bulan,
+                'tahun' => $tahun,
+                'bln_number' => $blnNumber,
                 'tgl_nomor' => $tglNomor,
                 'tgl_pendapatan' => $tglNomor,
                 'tgl_setor' => $tglNomor,
@@ -102,8 +104,10 @@ class KasirTransModel extends Model
                 'jumlah' => $d->pendapatan,
                 'terbilang' => ucfirst($terbilangPendapatan) . " rupiah.",
                 'kode_akun' => 102010041411,
+                'kode_rek' => "3.003.25581.5",
+                'asal_pendapatan' => "-",
+                'bank' => "BPD",
                 'uraian' => 'Pendapatan Jasa Pelayanan Rawat Jalan 1',
-                // 'aksi' => $aksi,
             ];
 
         }
@@ -111,7 +115,7 @@ class KasirTransModel extends Model
         // return response()->json($result, 200, [], JSON_PRETTY_PRINT);
     }
 
-    private function terbilang($angka)
+    public function terbilang($angka)
     {
         $angka = abs((int) $angka); // Pastikan angka dalam bentuk numerik
         $huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");

@@ -186,6 +186,7 @@ function isiTabelPendapatanRuang(data, id) {
 }
 
 function reportPendapatanTotalPerHari(tahun) {
+    tahun === undefined ? $("#tahun").val() : tahun;
     // Destroy existing DataTables if they exist
     const tableIds = [
         "#tabelPendapatanTotalPerHariUMUM",
@@ -244,12 +245,12 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
             <a class="btn btn-sm btn-warning mr-2 mb-2"
                 href="/api/cetakBAPH/${item.tanggal}/${tahun}/${selector}"
                 target="_blank">
-                Cetak BAPH ${selector}
+                BAPH ${selector}
             </a>
             <a class="btn btn-sm btn-success mr-2 mb-2"
                 href="/api/cetakSBS/${item.tanggal}/${tahun}/${selector}"
                 target="_blank">
-                Cetak SBS ${selector}
+                SBS ${selector}
             </a>
         `;
     });
@@ -259,7 +260,7 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
         .DataTable({
             data: data,
             columns: [
-                { data: "aksi", className: "text-center col-4" },
+                { data: "aksi", className: "text-center col-3" },
                 { data: "no", className: "text-center" },
                 { data: "tanggal", className: "text-center" },
                 { data: "nomor", className: "text-center" },
@@ -470,183 +471,97 @@ function reportKunjungan(tglAwal, tglAkhir) {
     });
 }
 
-function reportPendaftaran(tglAwal, tglAkhir) {
-    var tglA = formatDate(new Date(tglAwal));
-    var tglB = formatDate(new Date(tglAkhir));
+async function reportPendaftaran(tglAwal, tglAkhir) {
+    const formattedTglAwal = formatDate(new Date(tglAwal));
+    const formattedTglAkhir = formatDate(new Date(tglAkhir));
 
-    if ($.fn.DataTable.isDataTable("#report, #total")) {
-        var tabletindakan = $("#report, #total").DataTable();
-        tabletindakan.destroy();
+    // Destroy existing DataTable if initialized
+    if ($.fn.DataTable.isDataTable("#report")) {
+        $("#report").DataTable().destroy();
+    }
+    if ($.fn.DataTable.isDataTable("#total")) {
+        $("#total").DataTable().destroy();
     }
 
-    $.ajax({
-        url: "/api/kominfo/pendaftaran/report",
-        type: "post",
-        data: {
-            tanggal_awal: tglAwal,
-            tanggal_akhir: tglAkhir,
-            no_rm: "",
-        },
-        success: function (response) {
-            var pendaftaran = response["data"];
-            var total = response["total"];
-            // console.log("🚀 ~ reportPendaftaran ~ total:", total);
-            // console.log("🚀 ~ reportPendaftaran ~ $data:", pendaftaran);
+    try {
+        const response = await $.ajax({
+            url: "/api/kominfo/pendaftaran/report",
+            type: "POST",
+            data: {
+                tanggal_awal: tglAwal,
+                tanggal_akhir: tglAkhir,
+                no_rm: "",
+            },
+        });
 
-            pendaftaran.forEach(function (item, index) {
-                var nama_pasien = item.pasien_nama.replace(/'/g, "\\'");
-                let resume;
-                if (item.penjamin_nama == "BPJS") {
-                    resume = "";
-                } else {
-                    resume = "hidden";
-                }
-                item.aksi = `
+        const { data: pendaftaran, total } = response;
 
-                            <button type="button" class="btn btn-sm btn-primary mr-2 mb-2"
-                                    onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak">Label</button>
-                            <button type="button" class="btn btn-sm btn-${item.check_in} mr-2 mb-2" id="checkin" placeholder="Selesai" data-toggle="modal"
-                                    data-target="#modalSep" onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}','${item.penjamin_nama}','${item.no_trans}','${item.no_sep}',this)">
-                                    <i class="fa-regular fa-square-check"></i></button>
-                            <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" placeholder="Resume"
-                                    href="/api/resume/${item.pasien_no_rm}/${item.tanggal}" target="_blank">Resume</a>
-                            `;
-                if (item.check_in == "danger") {
-                    item.status = "Belum";
-                } else {
-                    item.status = "Selesai";
-                }
-            });
+        // Process pendaftaran data
+        pendaftaran.forEach((item) => {
+            const nama_pasien = item.pasien_nama.replace(/'/g, "\\'");
+            const isBPJS = item.penjamin_nama === "BPJS";
 
-            // $("#report")
-            //     .DataTable({
-            //         data: pendaftaran,
-            //         columns: [
-            //             { data: "aksi", className: "col-3" },
-            //             { data: "antrean_nomor" },
-            //             { data: "tanggal" },
-            //             { data: "no_sep" },
-            //             { data: "penjamin_nama" },
-            //             { data: "daftar_by" },
-            //             { data: "pasien_lama_baru" },
-            //             { data: "pasien_no_rm" },
-            //             { data: "pasien_nama", className: "col-2" },
-            //             { data: "jenis_kelamin_nama" },
-            //             { data: "pasien_umur" },
-            //             { data: "pasien_alamat", className: "col-2" },
-            //             { data: "poli_nama" },
-            //             { data: "dokter_nama", className: "col-2" },
-            //             {
-            //                 data: "status",
-            //                 render: function (data) {
-            //                     const statusClasses = {
-            //                         Belum: "danger",
-            //                         Selesai: "success",
-            //                         default: "secondary",
-            //                     };
-            //                     return `<div class="badge badge-${
-            //                         statusClasses[data] || statusClasses.default
-            //                     }">${data}</div>`;
-            //                 },
-            //             },
-            //         ],
-            //         autoWidth: false,
-            //         order: [
-            //             [14, "asc"],
-            //             [1, "asc"],
-            //         ],
-            //         buttons: [
-            //             {
-            //                 extend: "excelHtml5",
-            //                 text: "Excel",
-            //                 title:
-            //                     "Laporan Pendaftaran Tanggal: " +
-            //                     tglA +
-            //                     " s.d. " +
-            //                     tglB,
-            //                 filename:
-            //                     "Laporan Pendaftaran Tanggal: " +
-            //                     tglA +
-            //                     "  s.d. " +
-            //                     tglB,
-            //             },
-            //             {
-            //                 extend: "colvis",
-            //                 text: "Tampilkan Kolom",
-            //             },
-            //             // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
-            //         ],
-            //     })
-            //     .buttons()
-            //     .container()
-            //     .appendTo("#report_wrapper .col-md-6:eq(0)");
-            $("#total")
-                .DataTable({
-                    data: [total],
-                    columns: [
-                        { data: "jumlah_no_antrian", className: "text-center" },
-                        { data: "jumlah_pasien", className: "text-center" },
-                        {
-                            data: "jumlah_pasien_batal",
-                            className: "text-center",
-                        },
-                        { data: "jumlah_nomor_skip", className: "text-center" },
-                        { data: "jumlah_BPJS", className: "text-center" },
-                        { data: "jumlah_UMUM", className: "text-center" },
-                        {
-                            data: "jumlah_pasien_LAMA",
-                            className: "text-center",
-                        },
-                        {
-                            data: "jumlah_pasien_BARU",
-                            className: "text-center",
-                        },
-                        { data: "jumlah_daftar_OTS", className: "text-center" },
-                        { data: "jumlah_daftar_JKN", className: "text-center" },
-                    ],
-                    autoWidth: false,
-                    ordering: false,
-                    paging: true,
-                    searching: false,
-                    lengthChange: false,
-                    buttons: [
-                        {
-                            extend: "excelHtml5",
-                            text: "Excel",
-                            title:
-                                "Laporan Pendaftaran Tanggal: " +
-                                tglA +
-                                " s.d. " +
-                                tglB,
-                            filename:
-                                "Laporan Pendaftaran Tanggal: " +
-                                tglA +
-                                "  s.d. " +
-                                tglB,
-                        },
-                        {
-                            extend: "colvis",
-                            text: "Tampilkan Kolom",
-                        },
-                        // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
-                    ],
-                })
-                .buttons()
-                .container()
-                .appendTo("#total_wrapper .col-md-6:eq(0)");
-            Swal.close();
-        },
+            item.aksi = `
+                <button type="button" class="btn btn-sm btn-primary mr-2 mb-2"
+                        onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak">Label</button>
+                <button type="button" class="btn btn-sm btn-${item.check_in} mr-2 mb-2" id="checkin" placeholder="Selesai" 
+                        data-toggle="modal" data-target="#modalSep" 
+                        onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}', '${item.penjamin_nama}', '${item.no_trans}', '${item.no_sep}', this)">
+                        <i class="fa-regular fa-square-check"></i></button>
+                <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" placeholder="Resume"
+                   href="/api/resume/${item.pasien_no_rm}/${item.tanggal}" target="_blank">Resume</a>
+            `;
 
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-            Swal.fire({
-                icon: "error",
-                title:
-                    "Terjadi kesalahan saat mengambil data pasien...!!!\n" +
-                    error,
-            });
-        },
-    });
+            item.status = item.check_in === "danger" ? "Belum" : "Selesai";
+        });
+
+        // Initialize DataTable for #total
+        $("#total")
+            .DataTable({
+                data: [total],
+                columns: [
+                    { data: "jumlah_no_antrian", className: "text-center" },
+                    { data: "jumlah_pasien", className: "text-center" },
+                    { data: "jumlah_pasien_batal", className: "text-center" },
+                    { data: "jumlah_nomor_skip", className: "text-center" },
+                    { data: "jumlah_BPJS", className: "text-center" },
+                    { data: "jumlah_UMUM", className: "text-center" },
+                    { data: "jumlah_pasien_LAMA", className: "text-center" },
+                    { data: "jumlah_pasien_BARU", className: "text-center" },
+                    { data: "jumlah_daftar_OTS", className: "text-center" },
+                    { data: "jumlah_daftar_JKN", className: "text-center" },
+                ],
+                autoWidth: false,
+                ordering: false,
+                paging: true,
+                searching: false,
+                lengthChange: false,
+                buttons: [
+                    {
+                        extend: "excelHtml5",
+                        text: "Excel",
+                        title: `Laporan Pendaftaran Tanggal: ${formattedTglAwal} s.d. ${formattedTglAkhir}`,
+                        filename: `Laporan_Pendaftaran_${formattedTglAwal}_sd_${formattedTglAkhir}`,
+                    },
+                    {
+                        extend: "colvis",
+                        text: "Tampilkan Kolom",
+                    },
+                ],
+            })
+            .buttons()
+            .container()
+            .appendTo("#total_wrapper .col-md-6:eq(0)");
+
+        Swal.close();
+    } catch (error) {
+        console.error("Error:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Terjadi kesalahan saat mengambil data",
+            text: error.responseJSON?.message || error.statusText,
+        });
+    }
 }
 
 function formatDate(date) {
@@ -670,12 +585,13 @@ let tglAwal;
 let tglAkhir;
 
 let tahun = $("#tahun").val();
+console.log("🚀 ~ tahun:", tahun);
 function updateData() {
-    reportPendaftaran(tglAwal, tglAkhir);
+    // reportPendaftaran(tglAwal, tglAkhir);
     reportPendapatanItem(tglAwal, tglAkhir);
     reportKunjungan(tglAwal, tglAkhir);
     reportPendapatanRuang(tglAwal, tglAkhir);
-    reportPendapatanTotalPerHari();
+    reportPendapatanTotalPerHari(tahun);
 }
 
 // function initializeDataTable(selector, titlePrefix, tglAwal, tglAkhir) {
@@ -725,19 +641,6 @@ window.addEventListener("load", function () {
 
     tglAwal = moment().subtract(0, "days").format("YYYY-MM-DD");
     tglAkhir = moment().subtract(0, "days").format("YYYY-MM-DD");
-
-    isiTabelPendapatanTotalPerHari(
-        dataSBSU,
-        "#tabelPendapatanTotalPerHariUMUM",
-        tahun,
-        "umum"
-    );
-    isiTabelPendapatanTotalPerHari(
-        dataSBSB,
-        "#tabelPendapatanTotalPerHariBPJS",
-        tahun,
-        "bpjs"
-    );
 
     // Menetapkan nilai ke input tanggal
     $("#reservation, #tglJumlah").val(tglAwal + " to " + tglAkhir);
@@ -822,5 +725,28 @@ window.addEventListener("load", function () {
         "Laporan Pendapatan Total BPJS",
         tglAwal,
         tglAkhir
+    );
+    const tableIds = [
+        "#tabelPendapatanTotalPerHariUMUM",
+        "#tabelPendapatanTotalPerHariBPJS",
+    ];
+
+    tableIds.forEach((tableId) => {
+        if ($.fn.DataTable.isDataTable(tableId)) {
+            $(tableId).DataTable().clear().destroy();
+        }
+    });
+
+    isiTabelPendapatanTotalPerHari(
+        dataSBSU,
+        "#tabelPendapatanTotalPerHariUMUM",
+        tahun,
+        "umum"
+    );
+    isiTabelPendapatanTotalPerHari(
+        dataSBSB,
+        "#tabelPendapatanTotalPerHariBPJS",
+        tahun,
+        "bpjs"
     );
 });
