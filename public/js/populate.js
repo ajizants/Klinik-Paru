@@ -703,8 +703,8 @@ function generateActionLink(item, ruang, statusFilter) {
 }
 
 function riwayatKunjungan(norm, nama) {
-    $("#namaPasien").text(nama);
-    $("#norm").text(norm);
+    $("#nama_pasien").text(nama);
+    $("#no_rm").text(norm);
     Swal.fire({
         icon: "info",
         title: "Sedang mencarikan data...!!! \n Pencarian dapat membutuhkan waktu lama, \n Mohon ditunggu...!!!",

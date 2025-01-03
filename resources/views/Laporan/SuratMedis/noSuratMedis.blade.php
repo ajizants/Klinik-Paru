@@ -285,8 +285,8 @@
         <div class="modal-dialog modal-dialog-scrollable modal-xl-custom">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Histori Kunjungan Pasien: <span id="namaPasien"></span> - <span
-                            id="noRm"></span></h4>
+                    <h4 class="modal-title">Histori Kunjungan Pasien: <span id="nama_pasien"></span> - <span
+                            id="no_rm"></span></h4>
                 </div>
                 <div class="modal-body">
                     <div class="card-body p-2">
