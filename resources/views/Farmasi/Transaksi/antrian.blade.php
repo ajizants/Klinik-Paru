@@ -5,12 +5,14 @@
         <h4 id="antrianSection" class="m-0 font-weight-bold text-dark text-center">Antrian</h4>
     </a>
     <!-- Card Content - Collapse -->
-    <div class="collapse show collapse show card-body p-0" id="collapseCardAntrian">
-        <div class="table-responsive">
-            <div id="loadingSpinner" style="display: none;"
+    <div class="collapse show card-body p-0" id="collapseCardAntrian">
+        <div class="row d-flex justify-content-center">
+            <div id="loadingSpinner" style="display: none; scale: 2;"
                 class="badge bg-primary text-wrap text-center z-3 position-absolute mt-5">
                 <i class="fa fa-spinner fa-spin"> </i>Sedang Mencari data...
             </div>
+        </div>
+        <div class="table-responsive">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a type="button" class="nav-link active bg-blue"
