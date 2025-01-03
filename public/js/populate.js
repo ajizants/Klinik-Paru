@@ -163,7 +163,7 @@ function processDataArray(dataArray, ruang, tableId) {
         const date = new Date(item.tanggal).setHours(0, 0, 0, 0);
         const notrans = date <= today ? item.no_trans : item.no_reg;
         item.aksiKonsul = `
-                                <a type="button" 
+                                <a type="button"
                                     data-toggle="tooltip" data-placement="right" title="Transaksi Konsul ${
                                         item.status_konsul
                                     }"
@@ -578,8 +578,14 @@ function processResponse(response, ruang, statusFilter) {
             item.status === "Tidak Ada Transaksi" &&
             item.status_pulang === "Sudah Pulang"
     );
+    const daftarTungguUmum = data.filter(
+        (item) =>
+            item.status === "Tidak Ada Transaksi" &&
+            item.status_pulang === "Sudah Pulang" &&
+            item.penjamin_nama === "UMUM"
+    );
 
-    return { data, dataSelesai, daftarTunggu };
+    return { data, dataSelesai, daftarTunggu, daftarTungguUmum };
 }
 
 function generateActionLink(item, ruang, statusFilter) {
@@ -909,11 +915,8 @@ function antrianAll(ruang) {
 
     fetchDataAntrianAll(tanggal, ruang, function (response) {
         $("#loadingSpinner").hide();
-        const { data, dataSelesai, daftarTunggu } = processResponse(
-            response,
-            ruang,
-            "Sudah Selesai"
-        );
+        const { data, dataSelesai, daftarTunggu, daftarTungguUmum } =
+            processResponse(response, ruang, "Sudah Selesai");
         // console.log("🚀 ~ daftarTunggu:", daftarTunggu);
         // console.log("🚀 ~ dataSelesai:", dataSelesai);
         // console.log("🚀 ~ data:", data);
@@ -932,10 +935,16 @@ function antrianAll(ruang) {
             );
             initializeDataTable(
                 "#dataTunggu",
-                daftarTunggu,
+                daftarTungguUmum,
                 getColumnDefinitions("status", ruang),
                 ruang
             );
+            // initializeDataTable(
+            //     "#dataTunggu",
+            //     daftarTunggu,
+            //     getColumnDefinitions("status", ruang),
+            //     ruang
+            // );
         } else if (ruang === "farmasi") {
             initializeDataTable(
                 "#antrianall",
@@ -994,6 +1003,7 @@ function cariKominfo(norm, tgl, ruang) {
 }
 
 function handleMetadata(response, ruang) {
+    console.log("🚀 ~ handleMetadata ~ response:", response);
     const code = response.metadata.code;
     const message = response.metadata.message;
 
@@ -1011,16 +1021,18 @@ function handleMetadata(response, ruang) {
         const cppt = response.response.cppt ? response.response.cppt[0] : [];
         // console.log("🚀 ~ handleMetadata ~ cppt:", cppt);
         const pendaftaran = response.response.pendaftaran[0];
+        console.log("🚀 ~ handleMetadata ~ pendaftaran:", pendaftaran.no_reg);
         const dxMed = cppt.diagnosa[0];
         // console.log("🚀 ~ handleMetadata ~ dxMed:", dxMed);
 
         switch (ruang) {
             case "igd":
                 handleIgd(cppt, pasien, pendaftaran);
-                dataTindakan(pendaftaran.no_trans);
+                dataTindakan(pendaftaran.no_reg);
                 break;
             case "farmasi":
                 dataFarmasi();
+                dataTindakan(pendaftaran.no_reg);
                 isiIdentitas(pasien, pendaftaran);
                 break;
             case "ro":
@@ -1092,7 +1104,7 @@ function isiIdentitas(pasien, pendaftaran, permintaan) {
     $("#norm").val(pasien.pasien_no_rm);
     $("#nama").val(pasien.pasien_nama);
     $("#alamat").val(pasien.pasien_alamat);
-    $("#notrans").val(pendaftaran.no_trans);
+    $("#notrans").val(pendaftaran.no_reg);
     $("#dokter").val(pendaftaran.nip_dokter).trigger("change");
 
     // Handle specific fields for different sections
