@@ -966,6 +966,15 @@ class PasienKominfoController extends Controller
         }
         $riwayat = [];
         foreach ($data as $item) {
+            $dataLab = LaboratoriumHasilModel::with('pemeriksaan')->where('notrans', $item['no_reg'])->get();
+            $hasilLab = [];
+            foreach ($dataLab as $lab) {
+                $hasilLab[] = [
+                    'pemeriksaan' => $lab->pemeriksaan->nmLayanan,
+                    'nilaiNormal' => $lab->pemeriksaan->normal,
+                    'hasil' => $lab->hasil,
+                ];
+            };
 
             $riwayat[] = [
                 'tanggal' => $item['tanggal'],
@@ -985,7 +994,8 @@ class PasienKominfoController extends Controller
                 'tindakan' => $item['tindakan'],
                 'radiologi' => $item['radiologi'],
                 'obat' => $item['resep_obat'],
-                'lab' => $item['laboratorium'],
+                'laboratorium' => $item['laboratorium'],
+                'hasilLab' => $hasilLab,
             ];
         }
 

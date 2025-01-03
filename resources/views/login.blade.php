@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -18,7 +17,6 @@
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    {{-- <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet"> --}}
     <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
     <style>
         body {
@@ -28,30 +26,36 @@
             padding: 0;
         }
 
-
         .container2 {
             position: absolute;
-            top: 45%;
-            left: 27%;
+            top: 50%;
+            left: 30%;
             transform: translate(-50%, -50%);
-            scale: 1.1;
+            width: 100%;
+            max-width: 400px;
+            /* Set max-width for better mobile support */
         }
 
         @media (max-width: 768px) {
-
-            /* Menargetkan layar mobile */
             .container2 {
-                top: 50%;
-                /* Vertikal di tengah */
+                top: 38%;
                 left: 50%;
-                /* Horizontal di tengah */
                 transform: translate(-50%, -50%);
-                /* Pusatkan secara sempurna */
                 scale: 1;
-                /* Sesuaikan skala jika perlu */
+            }
+
+            .circle {
+                width: 100px;
+                height: 100px;
+                background-color: white;
+                border-radius: 50%;
+                border: 3px solid black;
+                padding: 10px;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             }
         }
-
 
         .transparent {
             background-color: rgba(0, 0, 0, 0.5) !important;
@@ -69,19 +73,27 @@
             justify-content: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
+        .form-control {
+            margin-bottom: 1rem;
+        }
+
+        button[type="submit"] {
+            margin-top: 1rem;
+        }
     </style>
 
 </head>
 
 <body>
-    <div class="container" style="height: 100vh">
+    <div class="container">
         <div class="container2">
-            <div class="card border-primary shadow-lg my-5 transparent" style="width: 30rem;">
-                <div class="card-body ">
+            <div class="card border-primary shadow-lg my-5 transparent">
+                <div class="card-body">
                     <div class="p-3">
                         <div class="text-center">
                             <div class="row d-flex align-items-center justify-content-center">
-                                <div class="circle ">
+                                <div class="circle">
                                     <img class="mt-1" src="{{ asset('img/LOGO_KKPM.png') }}" alt="Logo KKPM"
                                         width="80">
                                 </div>
@@ -100,11 +112,11 @@
                             <div class="form-group">
                                 <input type="text" name="email" class="form-control form-control-user"
                                     id="exampleInputEmail" aria-describedby="emailHelp"
-                                    placeholder="Enter Email Address..."required="">
+                                    placeholder="Enter Email Address..." required>
                             </div>
                             <div class="form-group">
                                 <input type="password" name="password" class="form-control form-control-user"
-                                    id="exampleInputPassword" placeholder="Password" required="">
+                                    id="exampleInputPassword" placeholder="Password" required>
                             </div>
                             <div class="form-group">
                                 <div class="custom-control custom-checkbox small">
@@ -115,13 +127,6 @@
                             <button type="submit" class="btn bg-gradient-primary btn-block">Masuk</button>
                             <hr>
                         </form>
-                        {{-- <hr>
-                        <div class="text-center">
-                            <a class="small" href="forgot-password.html">Forgot Password?</a>
-                        </div>
-                        <div class="text-center">
-                            <a class="small" href="register.html">Create an Account!</a>
-                        </div> --}}
                     </div>
                 </div>
             </div>

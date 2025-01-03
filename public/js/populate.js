@@ -320,9 +320,11 @@ function generateAsktindString(data, addNewLine = false, isLab = false) {
     return data
         .map((item, index) => {
             const separator = isLab ? (index % 2 === 1 ? ",<br>" : ", ") : ", ";
-            return `${item.layanan || item.nama_tindakan} (${
-                item.keterangan || item.nama_obat || ""
-            })${addNewLine ? "<br>" : separator}`;
+            return `${
+                item.layanan || item.nama_tindakan || item.pemeriksaan
+            } (${item.keterangan || item.nama_obat || ""}) ${
+                "Hasil: " + item.hasil || ""
+            } ${addNewLine ? "<br>" : separator}`;
         })
         .join("")
         .replace(/(,\s*<br>|,\s)$/, ""); // Remove trailing separator
@@ -499,7 +501,11 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
     let aksiColumns;
     if (ruang === "surat") {
         aksiColumns = [
-            { data: "aksi", className: "p-2 col-4 text-center", title: "Aksi" },
+            {
+                data: "aksi",
+                className: "p-2 col text-center",
+                title: "Aksi",
+            },
         ];
     } else {
         aksiColumns = [
@@ -638,7 +644,7 @@ function generateActionLink(item, ruang, statusFilter) {
             </a>
         `;
 
-    const linkLog = `<a type="button" class="aksi-button btn-sm btn-warning py-md-0 py-1 mx-2 icon-link icon-link-hover"
+    const linkLog = `<a type="button" class="my-2 my-md-0 aksi-button btn-sm btn-warning py-md-0 py-1 mx-2 icon-link icon-link-hover"
                     onclick="cariLog('${item.id}');">
                     Posisi
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -787,6 +793,7 @@ function tabelRiwayatKunjungan(data) {
         item.ro = generateAsktindString(item.radiologi);
         item.igd = generateAsktindString(item.tindakan, true);
         item.lab = generateAsktindString(item.laboratorium, false, true);
+        item.hasilLab = generateAsktindString(item.hasilLab, false, true);
     });
 
     // Hancurkan DataTable sebelumnya jika ada
@@ -806,7 +813,7 @@ function tabelRiwayatKunjungan(data) {
             { data: "diagnosa", className: "col-4" },
             { data: "anamnesa" },
             { data: "igd", title: "Tindakan" },
-            { data: "lab", title: "Laboratorium" },
+            { data: "hasilLab", title: "Laboratorium" },
             { data: "ro", title: "Radiologi" },
         ],
         paging: true,

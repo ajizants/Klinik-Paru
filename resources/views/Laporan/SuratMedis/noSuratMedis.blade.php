@@ -7,15 +7,14 @@
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
             <h6 class="m-0 font-weight-bold text-primary">Daftar Surat Keterangan Medis</h6>
         </div>
-        <div class="card-body mb-2">
-            <div class="row">
+        <div class="card-body mb-2 px-1">
+            <div class="form-row mx-autow ">
                 <label class="col-form-label">Tanggal :</label>
-                <div class="form-group col-2">
+                <div class="form-group col-6 col-md-2">
                     <input type="date" id="tanggal" class="form-control bg-white" placeholder="Tanggal" />
                 </div>
-                <div class="col">
+                <div class="col col-md">
                     <button type="button" class="btn btn-success" onclick="antrianAll('surat');">
-                        Segarkan
                         <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top" title="Update Data"
                             id="cariantrian"></span>
                     </button>
@@ -23,9 +22,9 @@
 
             </div>
             <div class="card card-warning">
-                <div class="card-header">
+                {{-- <div class="card-header">
                     <h3 class="card-title"><b>Daftar Pasien Hari ini</b></h3>
-                </div>
+                </div> --}}
                 <div class="card-body p-2">
                     @include('Template.Table.all')
                 </div>
