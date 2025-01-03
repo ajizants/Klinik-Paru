@@ -428,8 +428,6 @@ function fetchDataAntrianAll(tanggal, ruang, callback) {
         success: callback,
         error: function (xhr) {
             console.error("Error fetching data:", xhr);
-            // Uncomment below to retry on error
-            // fetchDataAntrianAll(tanggal, ruang, callback);
         },
     });
 }
@@ -501,7 +499,7 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
     let aksiColumns;
     if (ruang === "surat") {
         aksiColumns = [
-            { data: "aksi", className: "p-2 col-2 text-center", title: "Aksi" },
+            { data: "aksi", className: "p-2 col-4 text-center", title: "Aksi" },
         ];
     } else {
         aksiColumns = [
@@ -648,6 +646,14 @@ function generateActionLink(item, ruang, statusFilter) {
                         <path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z"></path>
                     </svg>
                 </a>`;
+    const linkCppt = `<a type="button" class="aksi-button btn-sm btn-success py-md-0 py-1 mx-2 icon-link icon-link-hover"
+                    onclick="riwayatKunjungan('${item.pasien_no_rm}','${item.pasien_nama}');">
+                    Cppt
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="ml-2 bi bi-folder-fill" viewBox="0 0 16 16">
+                        <path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z"></path>
+                    </svg>
+                </a>`;
     const buttonColor = item.button;
     let panggilan;
     if (buttonColor === "warning") {
@@ -661,7 +667,9 @@ function generateActionLink(item, ruang, statusFilter) {
         dots:
             createLink("fas fa-pen-to-square", "setTransaksi", ruang) + linkLog,
         surat:
-            createLink("fas fa-pen-to-square", "setTransaksi", ruang) + linkLog,
+            createLink("fas fa-pen-to-square", "setTransaksi", ruang) +
+            linkLog +
+            linkCppt,
         kasir:
             item.status === "Sudah Selesai"
                 ? createLink("fas fa-pen-to-square", "setTransaksi", ruang) +
@@ -692,6 +700,124 @@ function generateActionLink(item, ruang, statusFilter) {
 
     // Mengembalikan tautan yang sesuai berdasarkan ruang dan statusFilter
     return links[ruang] || links.default;
+}
+
+function riwayatKunjungan(norm, nama) {
+    $("#namaPasien").text(nama);
+    $("#norm").text(norm);
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencarikan data...!!! \n Pencarian dapat membutuhkan waktu lama, \n Mohon ditunggu...!!!",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+    console.log("🚀 ~ riwayatKunjungan ~ norm:", norm);
+    $.ajax({
+        url: "/api/kominfo/kunjungan/riwayat",
+        type: "POST",
+        data: { no_rm: norm },
+        success: function (response) {
+            Swal.close();
+            console.log("🚀 ~ riwayatKunjungan ~ response:", response);
+            tabelRiwayatKunjungan(response); // Menampilkan tabel
+            $("#historiKunjungan").modal("show"); // Menampilkan modal
+        },
+        error: function (xhr) {
+            console.error("Error:", xhr.responseText);
+            Swal.fire({
+                icon: "error",
+                title: "Gagal Memuat Riwayat",
+                text: "Terjadi kesalahan, silakan coba lagi.",
+            });
+        },
+    });
+}
+
+function tabelRiwayatKunjungan(data) {
+    data.forEach(function (item, index) {
+        item.no = index + 1; // Nomor urut dimulai dari 1
+        item.diagnosa = `
+                            <table>
+                                <tr>
+                                    <td><strong>DX 1 :</strong></td>
+                                    <td>${item.dx1 || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>DX 3 :</strong></td>
+                                    <td>${item.dx2 || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>DX 3 :</strong></td>
+                                    <td>${item.dx3 || "-"}</td>
+                                </tr>
+                            </table>
+
+                        `;
+        item.anamnesa = `<div>
+                            <p><strong>DS :</strong> ${item.ds || "-"}</p>
+                            <p><strong>DO :</strong> ${item.do || "-"}</p>
+                            <table>
+                                <tr>
+                                    <td><strong>TD :</strong> ${
+                                        item.td || "-"
+                                    } mmHg</td>
+                                    <td><strong>Nadi :</strong> ${
+                                        item.nadi || "-"
+                                    } X/mnt</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>BB :</strong> ${
+                                        item.bb || "-"
+                                    } Kg</td>
+                                    <td><strong>Suhu :</strong> ${
+                                        item.suhu || "-"
+                                    } °C</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>RR :</strong> ${
+                                        item.rr || "-"
+                                    } X/mnt</td>
+                                </tr>
+                            </table>
+                        </div>`;
+
+        item.ro = generateAsktindString(item.radiologi);
+        item.igd = generateAsktindString(item.tindakan, true);
+        item.lab = generateAsktindString(item.laboratorium, false, true);
+    });
+
+    // Hancurkan DataTable sebelumnya jika ada
+    const table = $("#riwayatKunjungan").DataTable();
+    if ($.fn.DataTable.isDataTable("#riwayatKunjungan")) {
+        table.destroy();
+    }
+
+    // Inisialisasi DataTable baru
+    $("#riwayatKunjungan").DataTable({
+        data: data,
+        columns: [
+            { data: "tanggal", className: "col-1 text-center" },
+            // { data: "pasien_no_rm", className: "col-1 text-center" },
+            // { data: "pasien_nama", className: " text-center" },
+            { data: "dokter_nama", className: "text-center" },
+            { data: "diagnosa", className: "col-4" },
+            { data: "anamnesa" },
+            { data: "igd", title: "Tindakan" },
+            { data: "lab", title: "Laboratorium" },
+            { data: "ro", title: "Radiologi" },
+        ],
+        paging: true,
+        order: [0, "desc"], // Mengurutkan berdasarkan tanggal
+        lengthMenu: [
+            [5, 10, 25, 50, -1],
+            [5, 10, 25, 50, "All"],
+        ],
+        pageLength: 5,
+        responsive: true,
+    });
 }
 
 function cariLog(id) {

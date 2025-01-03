@@ -966,6 +966,7 @@ class PasienKominfoController extends Controller
         }
         $riwayat = [];
         foreach ($data as $item) {
+
             $riwayat[] = [
                 'tanggal' => $item['tanggal'],
                 'dokter_nama' => $item['dokter_nama'],
@@ -981,7 +982,10 @@ class PasienKominfoController extends Controller
                 'nadi' => $item['objek_nadi'] ?? '',
                 'suhu' => $item['objek_suhu'] ?? '',
                 'rr' => $item['objek_rr'] ?? '',
-
+                'tindakan' => $item['tindakan'],
+                'radiologi' => $item['radiologi'],
+                'obat' => $item['resep_obat'],
+                'lab' => $item['laboratorium'],
             ];
         }
 

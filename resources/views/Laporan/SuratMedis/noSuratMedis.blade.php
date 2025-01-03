@@ -281,6 +281,50 @@
         </div>
     </div>
 
+    <div class="modal fade" id="historiKunjungan">
+        <div class="modal-dialog modal-dialog-scrollable modal-xl-custom">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Histori Kunjungan Pasien: <span id="namaPasien"></span> - <span
+                            id="noRm"></span></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body p-2">
+                        <div class="container-fluid">
+                            <div class="card card-info">
+                                <div class="card-body p-2">
+
+                                    <div class="table-responsive">
+                                        <table id="riwayatKunjungan"
+                                            class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
+                                            cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th width="15px" class="text-center">Tanggal</th>
+                                                    {{-- <th width="15px" class="text-center">NoRM</th>
+                                                    <th class="col-2 text-center">Nama</th> --}}
+                                                    <th class="col-2 text-center">Dokter</th>
+                                                    <th class="col-3">Diagnosa</th>
+                                                    <th>Anamnesa</th>
+                                                    <th>Anamnesa</th>
+                                                    <th>Anamnesa</th>
+                                                    <th>Anamnesa</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Selesai</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
