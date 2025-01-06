@@ -308,3 +308,14 @@ function showModalUniversal(data) {
         $(this).remove();
     });
 }
+
+var socketIO = io.connect("wss://kkpm.banyumaskab.go.id:3131/", {
+    // path: '/socket.io',
+    transports: ["websocket", "polling", "flashsocket"],
+});
+
+socketIO.on("connectParu", () => {
+    const sessionID = socketIO.id;
+    $("#socket-id").html(sessionID);
+    console.log("Socket ID : " + sessionID);
+});

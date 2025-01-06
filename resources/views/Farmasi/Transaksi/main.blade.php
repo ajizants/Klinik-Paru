@@ -596,12 +596,12 @@
             $("#tanggal").val(today);
             antrianAll();
             antrianFar();
-            setInterval(function() {
-                antrianFar();
-            }, 60000);
-            setInterval(function() {
-                antrianAll();
-            }, 180000);
+            // setInterval(function() {
+            //     antrianFar();
+            // }, 60000);
+            // setInterval(function() {
+            //     antrianAll();
+            // }, 180000);
 
             let btnPanggil;
             console.log("🚀 ~ $ ~ btnPanggil:", btnPanggil)
@@ -833,33 +833,37 @@
                 .catch((error) => console.error("Error fetching data:", error));
         }
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js "
-        integrity="sha512-eVL5Lb9al9FzgR63gDs1MxcDS2wFu3loYAgjIH0+Hg38tCS8Ag62dwKyH+wzDb+QauDpEZjXbMn11blw8cbTJQ=="
-        crossorigin=" anonymous"></script>
-    <script>
-        var socketIO = io.connect("wss://kkpm.banyumaskab.go.id:3131/", {
-            // path: '/socket.io',
-            transports: ["websocket", "polling", "flashsocket"],
-        });
 
-        socketIO.on("connectParu", () => {
-            const sessionID = socketIO.id;
-            $("#socket-id").html(sessionID);
-            console.log("Socket ID : " + sessionID);
-        });
+    <script>
+        // var socketIO = io.connect("wss://kkpm.banyumaskab.go.id:3131/", {
+        //     // path: '/socket.io',
+        //     transports: ["websocket", "polling", "flashsocket"],
+        // });
+
+        // socketIO.on("connectParu", () => {
+        //     const sessionID = socketIO.id;
+        //     $("#socket-id").html(sessionID);
+        //     console.log("Socket ID : " + sessionID);
+        // });
+
 
         socketIO.on("reload", (msg) => {
             if (msg == "paru_loket_farmasi") {
-                // antrianAll();
                 antrianFar();
             }
             if (msg == "paru_notifikasi_loket_farmasi") {
-                let suara = new Audio("https://kkpm.banyumaskab.go.id/assets/bell_ringing.mp3");
-                suara.load();
-                suara.play();
-                // antrianAll();
+                const notif = new Audio("/audio/dingdong.mp3");
+                notif.load();
+                notif.play();
                 antrianFar();
             }
+            if (msg == "paru_notifikasi_ruang_tensi_1") {
+                const notif = new Audio("/audio/dingdong.mp3");
+                notif.load();
+                notif.play();
+                antrianAll();
+            }
+
         });
     </script>
 

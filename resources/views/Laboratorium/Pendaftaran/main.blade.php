@@ -14,6 +14,25 @@
     <script>
         const itemPemeriksaan = @json($layananLab);
         console.log("🚀 ~ layanan:", itemPemeriksaan)
+
+        socketIO.on("reload", (msg) => {
+            if (msg == "paru_loket_laboratorium") {
+                antrian("lab");
+
+            }
+            if (msg == "paru_notifikasi_ruang_laboratorium") {
+                const notif = new Audio("/audio/dingdong.mp3");
+                notif.load();
+                notif.play();
+                antrian("lab");
+            }
+            if (msg == "paru_notifikasi_ruang_tensi_1") {
+                const notif = new Audio("/audio/dingdong.mp3");
+                notif.load();
+                notif.play();
+                antrianAll("lab");
+            }
+        });
     </script>
 
 
