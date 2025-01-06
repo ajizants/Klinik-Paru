@@ -1114,7 +1114,7 @@ class KominfoModel extends Model
             return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
         }
     }
-    public function getTungguFaramsi($tanggal, $cookie)
+    public function getTungguFaramsi($tanggal = null, $cookie = null)
     {
         $client = new Client();
         $tgl = $tanggal ?? date('Y-m-d');
