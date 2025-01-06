@@ -23,4 +23,14 @@ class KunjunganWaktuSelesai extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function layanan()
+    {
+        // Mengecek apakah no_sep bernilai null atau tidak
+        if ($this->no_sep === null) {
+            return 'UMUM'; // Jika no_sep null, maka layanan adalah UMUM
+        } else {
+            return 'BPJS'; // Jika no_sep tidak null, maka layanan adalah BPJS
+        }
+    }
 }

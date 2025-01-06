@@ -159,26 +159,38 @@ class DisplayController extends Controller
     public function tungguLab()
     {
         $tgl = date('Y-m-d');
-        // $tgl = '2024-10-19';
+        // $tgl = '2024-10-19'; // Bisa digunakan untuk tanggal tertentu
         $dataLab = LaboratoriumKunjunganModel::with('pemeriksaan.pemeriksaan')
             ->where('created_at', 'like', '%' . $tgl . '%')
             ->get();
 
         $tungguLab = []; // Inisialisasi array
-        $estimasiCounts = []; // Untuk menghitung frekuensi estimasi
 
         foreach ($dataLab as $d) {
+            $estimasi = 10; // Nilai default estimasi
             $pemeriksaan = $d->pemeriksaan;
             $nonNullHasilCount = 0;
+            $params = ['BTA 1', 'BTA 2', 'Ureum darah', 'Creatinin darah', 'Asam Urat', 'SGOT', 'SGPT', 'Dlukosa darah', 'Trigliserid'];
 
             foreach ($pemeriksaan as $periksa) {
+                // Mengecek apakah hasil pemeriksaan tidak null
                 if (!is_null($periksa->hasil)) {
                     $nonNullHasilCount++;
+                }
+
+                // Menambahkan nama pemeriksaan dari relasi nmLayanan
+                $periksa->nmPemeriksaan = $periksa->pemeriksaan->nmLayanan;
+                $estimasiLayanan = $periksa->pemeriksaan->estimasi;
+
+                // Mengecek apakah nmPemeriksaan ada dalam array params
+                if (in_array($periksa->nmPemeriksaan, $params)) {
+                    $estimasi = 60; // Mengubah estimasi menjadi 60 jika nmPemeriksaan ditemukan dalam params
                 }
             }
 
             $jmlh = $pemeriksaan->count();
 
+            // Menentukan status
             if ($nonNullHasilCount == 0) {
                 $status = 'Belum';
             } else if ($nonNullHasilCount < $jmlh) {
@@ -187,48 +199,28 @@ class DisplayController extends Controller
                 $status = 'Selesai';
             }
 
-            // Cek apakah 'pemeriksaan' dan 'pemeriksaan' di dalamnya tersedia
-            if (!empty($d->pemeriksaan)) {
-                foreach ($d->pemeriksaan as $pemeriksaan) {
-                    if (isset($pemeriksaan->pemeriksaan)) {
-                        $estimasi = $pemeriksaan->pemeriksaan->estimasi;
-
-                        // Hitung frekuensi kemunculan estimasi
-                        if (isset($estimasiCounts[$estimasi])) {
-                            $estimasiCounts[$estimasi]++;
-                        } else {
-                            $estimasiCounts[$estimasi] = 1;
-                        }
-                    }
-                }
-            }
-
-            // Dapatkan estimasi dengan frekuensi tertinggi
-            $estimasiTerbanyak = !empty($estimasiCounts)
-            ? array_search(max($estimasiCounts), $estimasiCounts)
-            : null;
-
             $jam_masuk = Carbon::parse($d->created_at)->format('H:i');
 
+            // Menambahkan data tungguLab
             $tungguLab[] = [
                 'id' => $d->id,
                 'norm' => $d->norm,
                 'nama' => $d->nama,
                 'alamat' => $d->alamat,
                 'jam_masuk' => $jam_masuk,
-                'satuan' => $pemeriksaan->pemeriksaan->satuan ?? null,
-                'normal' => $pemeriksaan->pemeriksaan->normal ?? null,
-                'estimasi' => $estimasiTerbanyak,
+                'estimasi' => $estimasi,
                 'status' => $status,
             ];
         }
 
+        // Mengurutkan berdasarkan status
         usort($tungguLab, function ($a, $b) {
-            return ($a['status'] === 'Selesai' ? 0 : 1) <=> ($b['status'] === 'Selesai' ? 0 : 1);
+            return ($a['status'] === 'Belum' ? -1 : 1) <=> ($b['status'] === 'Belum' ? -1 : 1);
         });
 
         return $tungguLab;
     }
+
     public function tungguRo()
     {
         $tgl = date('Y-m-d');
@@ -269,6 +261,7 @@ class DisplayController extends Controller
 
         $title = 'Daftar Tunggu';
         $tungguLab = $this->tungguLab();
+        // return $tungguLab;
         $tungguRo = $this->tungguRo();
 
         return view('Display.lab', compact('title', 'tungguLab', 'tungguRo'));

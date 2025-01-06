@@ -307,6 +307,10 @@
     <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap 4 -->
     <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js "
+        integrity="sha512-eVL5Lb9al9FzgR63gDs1MxcDS2wFu3loYAgjIH0+Hg38tCS8Ag62dwKyH+wzDb+QauDpEZjXbMn11blw8cbTJQ=="
+        crossorigin=" anonymous"></script>
+
     <script type="text/javascript">
         async function getList() {
             const tableBody = document.querySelector("table tbody");
@@ -395,11 +399,37 @@
 
 
 
-        setInterval(() => {
-            // Panggil fungsi untuk menggambar tabel
-            getList();
-        }, 20000);
+        var socketIO = io.connect("wss://kkpm.banyumaskab.go.id:3131/", {
+            // path: '/socket.io',
+            transports: ["websocket", "polling", "flashsocket"],
+        });
+
+        socketIO.on("connectParu", () => {
+            const sessionID = socketIO.id;
+            $("#socket-id").html(sessionID);
+            console.log("Socket ID : " + sessionID);
+        });
+
+        socketIO.on("reload", (msg) => {
+            if (msg == "paru_ruang_poli") {
+                getList()
+            }
+            if (msg == "paru_notifikasi_ruang_poli") {
+                const notif = new Audio("/audio/dingdong.mp3");
+                notif.load();
+                notif.play();
+                getList()
+            }
+            if (msg == "paru_notifikasi_ruang_tensi_1") {
+                const notif = new Audio("/audio/dingdong.mp3");
+                notif.load();
+                notif.play();
+                getList()
+            }
+
+        });
     </script>
+
 </body>
 
 </html>

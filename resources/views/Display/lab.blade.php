@@ -264,8 +264,10 @@
 
                 // Memastikan animasi berjalan
                 if (data.length >= 12) {
+                    // tableBody.classList.remove("table-auto");
+                    // setTimeout(() => {
                     tableBody.classList.add("table-auto");
-                    document.querySelector(".table-auto").style.animation = "scroll 30s linear infinite";
+                    // }, 3000);
                 }
             } else {
                 const row = document.createElement("tr");

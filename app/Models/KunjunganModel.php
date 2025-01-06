@@ -10,6 +10,8 @@ class KunjunganModel extends Model
     use HasFactory;
     protected $table = 't_kunjungan';
     public $timestamps = false;
+    public $incrementing = false; // Karena menggunakan kombinasi kunci
+    protected $primaryKey = null; // Tidak ada kunci utama tunggal
     public function poli()
     {
         return $this->hasOne(PoliModel::class, 'notrans', 'notrans');

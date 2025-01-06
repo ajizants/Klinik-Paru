@@ -30,19 +30,23 @@ body {
 }
 
 .table-auto {
-    animation: scroll 30s linear infinite;
-    -webkit-animation: scroll 30s linear infinite;
+    animation: scroll 45s linear infinite;
+    -webkit-animation: scroll 45s linear infinite;
+    animation-delay: 5s;
 }
 
 @keyframes scroll {
-    from {
+    0% {
         transform: translateY(0);
-        /* Mulai dari atas */
     }
-
-    to {
+    85% {
         transform: translateY(-100%);
-        /* Scroll ke atas sepenuhnya */
+    }
+    86% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(0);
     }
 }
 
