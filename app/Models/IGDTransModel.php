@@ -31,6 +31,10 @@ class IGDTransModel extends Model
     {
         return $this->belongsTo(PegawaiModel::class, 'dokter', 'nip');
     }
+    public function kunjungan()
+    {
+        return $this->belongsTo(KunjunganWaktuSelesai::class, 'notrans', 'notrans');
+    }
 
     protected $fillable = [
         'norm',
@@ -39,6 +43,6 @@ class IGDTransModel extends Model
         'petugas',
         'dokter',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 }

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\BMHPIGDInStokModel;
 use App\Models\BMHPModel;
 use App\Models\IGDTransModel;
+use App\Models\KunjunganWaktuSelesai;
 use App\Models\TransaksiBMHPModel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,6 +15,15 @@ class IgdController extends Controller
 {
 
     public function chart(Request $request)
+    {
+        $year = $request->input('year');
+        if ($year <= 2024) {
+            return $this->chart2024($request);
+        } else {
+            return $this->chart2025($request);
+        }
+    }
+    public function chart2024(Request $request)
     {
         $year = $request->input('year'); // Mendapatkan tahun dari permintaan
 
@@ -29,7 +40,59 @@ class IgdController extends Controller
             ->whereYear('t_kunjungan_tindakan.created_at', $year) // Filter berdasarkan tahun
             ->groupBy(DB::raw('MONTH(t_kunjungan_tindakan.created_at)'), 'm_kelompok.kelompok')
             ->get();
+        return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
+    }
 
+    public function chart2025(Request $request)
+    {
+        $year = $request->input('year');
+
+        // Ambil data IGD berdasarkan tahun
+        $dataIGD = IGDTransModel::whereYear('created_at', $year)->get();
+
+        // Proses setiap item
+        foreach ($dataIGD as $item) {
+            // Cari data kunjungan berdasarkan tgltrans dan norm
+            $kunjungan = KunjunganWaktuSelesai::where('notrans', $item->notrans)->first();
+
+            // Tentukan kelompok berdasarkan no_sep
+            if (isset($kunjungan) && $kunjungan->no_sep != null) {
+                $item->kelompok = "BPJS";
+            } else if (isset($kunjungan) && $kunjungan->no_sep == null) {
+                $item->kelompok = "UMUM";
+            } else {
+                $item->kelompok = "mbuh";
+            }
+
+            // Set no_sep dan format bulan dalam bahasa Indonesia
+            $item->no_sep = $kunjungan->no_sep ?? '';
+
+            // $item->bulan= ambil bulan dati creted at mm
+            $item->bulan = Carbon::parse($item->created_at)->format('m');
+
+        }
+
+        // Rubah menjadi array
+        $data = $dataIGD->toArray();
+
+        // Kelompokkan data berdasarkan bulan dan kelompok
+        $chart = collect($data)
+            ->groupBy(function ($item) {
+                return $item['bulan'] . '|' . $item['kelompok']; // Gabungkan bulan dan kelompok menjadi satu kunci
+            })
+            ->map(function ($group, $key) {
+                list($bulan, $kelompok) = explode('|', $key); // Pisahkan bulan dan kelompok
+
+                return [
+                    'bulan' => $bulan,
+                    'nmBulan' => Carbon::createFromFormat('m', $bulan)->locale('id')->translatedFormat('F'),
+                    'kelompok' => $kelompok,
+                    'jumlah' => $group->count(),
+                ];
+            })
+            ->values();
+
+        // Return hasil dalam bentuk JSON
         return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
     }
 
