@@ -473,14 +473,13 @@ class KasirController extends Controller
 
             foreach ($d['item'] as $item) {
                 $serviceName = $item['layanan']['nmLayanan'] ?? 'Unknown Service';
-                $serviceId = $item['layanan']['idLayanan'] ?? 0; // Ambil ID Layanan
                 $qty = $item['totalHarga'] ?? 0;
 
-                // Kumpulkan layanan unik dengan ID-nya
-                $uniqueServices[$serviceId] = $serviceName;
+                // Kumpulkan layanan unik
+                $uniqueServices[$serviceName] = true;
 
                 // Tambahkan qty ke baris
-                $row[$serviceName] = $qty;
+                $row[$serviceName] = number_format($qty, 0, ',', '.');
 
                 // Akumulasi total layanan
                 if (!isset($total[$serviceName])) {
@@ -497,16 +496,19 @@ class KasirController extends Controller
             $result[] = $row;
         }
 
-        // Urutkan layanan berdasarkan idLayanan (key array)
-        ksort($uniqueServices);
-
-        // Tambahkan kolom dengan nilai "-" untuk layanan yang tidak ada di transaksi tertentu
+        // Tambahkan kolom dengan nilai 0 untuk layanan yang tidak ada
         foreach ($result as &$row) {
-            foreach (array_keys($uniqueServices) as $serviceId) {
-                $serviceName = $uniqueServices[$serviceId]; // Ambil nama layanan berdasarkan ID
-                if (!array_key_exists($serviceName, $row)) {
-                    $row[$serviceName] = 0; // Berikan nilai 0 jika tidak ada layanan
+            foreach (array_keys($uniqueServices) as $service) {
+                if (!array_key_exists($service, $row)) {
+                    $row[$service] = "-"; // Berikan nilai 0 jika tidak ada layanan
                 }
+            }
+        }
+
+        // Pastikan total untuk semua layanan
+        foreach (array_keys($uniqueServices) as $service) {
+            if (!isset($total[$service])) {
+                $total[$service] = "-";
             }
         }
 
@@ -514,13 +516,8 @@ class KasirController extends Controller
         $total['Tagihan'] = number_format($total['Tagihan'], 0, ',', '.');
         $total['Bayar'] = number_format($total['Bayar'], 0, ',', '.');
         $total['Kembalian'] = number_format($total['Kembalian'], 0, ',', '.');
-
-        // Tambahkan baris total ke hasil
-        foreach (array_keys($uniqueServices) as $serviceId) {
-            $serviceName = $uniqueServices[$serviceId];
-            if (!isset($total[$serviceName])) {
-                $total[$serviceName] = 0;
-            }
+        foreach ($uniqueServices as $service => $value) {
+            $total[$service] = number_format($total[$service], 0, ',', '.');
         }
 
         $result[] = $total;
@@ -721,7 +718,7 @@ class KasirController extends Controller
             foreach (array_keys($uniqueServices) as $serviceId) {
                 $serviceName = $uniqueServices[$serviceId]; // Ambil nama layanan berdasarkan ID
                 if (!array_key_exists($serviceName, $row)) {
-                    $row[$serviceName] = 0; // Berikan nilai 0 jika tidak ada layanan
+                    $row[$serviceName] = "-"; // Berikan nilai 0 jika tidak ada layanan
                 }
             }
         }
@@ -735,7 +732,7 @@ class KasirController extends Controller
         foreach (array_keys($uniqueServices) as $serviceId) {
             $serviceName = $uniqueServices[$serviceId];
             if (!isset($total[$serviceName])) {
-                $total[$serviceName] = 0;
+                $total[$serviceName] = "-";
             }
         }
 

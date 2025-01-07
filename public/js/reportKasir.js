@@ -572,14 +572,6 @@ function drawTableReport(data, columns, idTable) {
         idTable == "#reportKunjungan"
             ? "Laporan Kunjungan Kasir"
             : "Laporan Kunjungan Kasir Report";
-    data = data.map((row) => {
-        Object.keys(row).forEach((key) => {
-            if (row[key] === 0) {
-                row[key] = "-"; // Ganti nilai 0 dengan tanda '-'
-            }
-        });
-        return row;
-    });
     // Initialize DataTable with dynamic columns
     $(idTable)
         .DataTable({
@@ -617,7 +609,7 @@ function drawTableReport(data, columns, idTable) {
         .appendTo(idTable + "_wrapper .col-md-6:eq(0)");
 }
 
-function reportKunjungan(tglAwal, tglAkhir) {
+async function reportKunjungan(tglAwal, tglAkhir) {
     // Hapus tabel DataTable jika sudah ada
     if ($.fn.DataTable.isDataTable("#reportKunjungan")) {
         $("#reportKunjungan").DataTable().clear().destroy();
@@ -626,7 +618,7 @@ function reportKunjungan(tglAwal, tglAkhir) {
     }
 
     // Fetch data dari API
-    fetch("/api/kasir/rekap", {
+    await fetch("/api/kasir/rekap", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
