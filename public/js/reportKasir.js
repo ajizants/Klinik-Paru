@@ -583,12 +583,26 @@ function drawTableReport(data, columns, idTable) {
             autoWidth: false,
             buttons: [
                 {
-                    extend: "excel",
+                    extend: "colvis", // Tombol untuk mengatur visibilitas kolom
+                    text: "Pilih Kolom",
+                },
+                {
+                    extend: "excel", // Tombol ekspor ke Excel
                     text: "Download",
                     title: judul + tglAwal + " s.d. " + tglAkhir,
                     filename: judul + tglAwal + " s.d. " + tglAkhir,
+                    exportOptions: {
+                        columns: ":visible", // Hanya ekspor kolom yang terlihat
+                    },
                 },
             ],
+            initComplete: function () {
+                // Sembunyikan kolom berdasarkan indeks
+                var table = $(idTable).DataTable();
+                table.column(5).visible(false);
+                table.column(7).visible(false);
+                table.column(8).visible(false);
+            },
         })
         .buttons()
         .container()
