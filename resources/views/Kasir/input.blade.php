@@ -188,7 +188,7 @@
                                                         <a type="button" id="btnSimpan" class="btn btn-primary"
                                                             onclick="simpanTransaksi();">Simpan</a>
                                                         <a type="button" id="btnBatal" class="btn btn-secondary"
-                                                            onclick="resetForm('Transaksi Dibatalkan');">Selesai/Batal</a>
+                                                            onclick="resetForm('Berhasil..!!');">Selesai/Batal</a>
                                                     </div>
                                                     <div class="col-sm" id="divPanggil">
                                                     </div>

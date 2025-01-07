@@ -472,6 +472,11 @@ function formatNumber(value) {
     //     .replace(/\D/g, "") // Hapus karakter non-angka
     //     .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Tambahkan titik setiap 3 digit
 }
+function formatNumber2(value) {
+    return value
+        .replace(/\D/g, "") // Hapus karakter non-angka
+        .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Tambahkan titik setiap 3 digit
+}
 
 // Fungsi untuk menghapus format dan mendapatkan nilai asli
 function parseNumber(value) {
@@ -488,7 +493,7 @@ function formatRupiah(value) {
 [tagihan, bayar].forEach((input) => {
     input.addEventListener("input", function () {
         const cursorPosition = input.selectionStart; // Simpan posisi kursor
-        input.value = formatNumber(input.value); // Format angka dengan titik
+        input.value = formatNumber2(input.value); // Format angka dengan titik
         input.setSelectionRange(cursorPosition, cursorPosition); // Kembalikan posisi kursor
     });
 

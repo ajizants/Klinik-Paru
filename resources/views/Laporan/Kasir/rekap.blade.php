@@ -293,11 +293,29 @@
         </div>
         <div class="card-body mb-2">
             <div class="table-responsive">
-                <table class="table table-bordered table-hover" id="reportKunjungan" cellspacing="0">
-                    <thead class="bg bg-teal table-bordered border-warning">
+                <table class="table table-sm table-bordered table-hover table-striped" id="reportKunjungan"
+                    cellspacing="0">
+                    <thead class="bg bg-orange">
+                        <tr id="headerRow"></tr>
                     </thead>
-                    <tbody class="table-bordered border-warning">
+                    <tbody class=" ">
                     </tbody>
+                    <tfoot>
+                        <tr id="footerRow"></tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover table-striped" id="reportKunjunganRp"
+                    cellspacing="0">
+                    <thead class="bg bg-info">
+                        <tr id="headerRow"></tr>
+                    </thead>
+                    <tbody class=" ">
+                    </tbody>
+                    <tfoot>
+                        <tr id="footerRow"></tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
