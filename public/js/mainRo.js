@@ -168,13 +168,23 @@ async function simpan() {
         Swal.fire({
             icon: "success",
             title:
-                "Data berhasil disimpan,\n \n" +
-                "Maturnuwun...!!" +
-                "\n\nKeterangan: " +
+                "Data berhasil disimpan,\n\n" +
+                "Maturnuwun...!!\n\nKeterangan: " +
                 $msgTrans +
                 ", " +
                 $msgThorax,
+            allowOutsideClick: false,
+        }).then((result) => {
+            if (result.isConfirmed && msgSelesai != undefined) {
+                Swal.fire({
+                    icon: "info",
+                    title: msgSelesai,
+                    allowOutsideClick: false,
+                });
+            }
         });
+
+        console.log("🚀 ~ msgSelesai:", msgSelesai);
 
         // rstForm();
         updateHasilro(norm, tgltrans);
@@ -707,6 +717,14 @@ function rstForm() {
     scrollToTop();
     setTglRo();
     setTodayDate();
+    console.log("🚀 ~ msgSelesai:", msgSelesai);
+    if (msgSelesai != undefined)
+        Swal.fire({
+            icon: "info",
+            title: msgSelesai,
+            allowOutsideClick: false,
+        });
+    msgSelesai = undefined;
 }
 
 function askRo(button) {

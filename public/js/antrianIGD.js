@@ -33,25 +33,29 @@ async function cariTsIgd(notrans, norm, tgl, ruang) {
             Swal.close();
             if (response.status == 404) {
                 $("#dataTindakan").DataTable({
-                    data: [
-                        {
-                            ket: "Belum Ada Transaksi",
-                        },
-                    ],
+                    data: [], // Data kosong
                     columns: [
-                        {
-                            data: "ket",
-                            createdCell: function (td) {
-                                $(td)
-                                    .attr("colspan", 6)
-                                    .addClass("bg-warning text-center");
-                            },
-                        },
+                        { title: "Aksi" },
+                        { title: "Status" },
+                        { title: "No RM" },
+                        { title: "Tindakan" },
+                        { title: "Petugas" },
+                        { title: "dokter" },
                     ],
-                    paging: false,
-                    searching: false,
+                    language: {
+                        emptyTable: "Belum Ada Transaksi",
+                    },
                     ordering: false,
-                    info: false,
+                    initComplete: function () {
+                        // Menambahkan CSS kustom untuk memberi background kuning
+                        $("#dataTrans_wrapper .dataTables_empty").css({
+                            "background-color": "yellow",
+                            color: "black", // Mengubah warna teks agar tetap terlihat
+                            "font-weight": "bold",
+                            "text-align": "center",
+                            padding: "20px",
+                        });
+                    },
                 });
             } else {
                 Swal.fire({

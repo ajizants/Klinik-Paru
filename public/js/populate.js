@@ -138,6 +138,9 @@ function updateTableKonsul(tableId, data, ruang, status) {
 
 function processDataArray(dataArray, ruang, tableId) {
     dataArray.forEach((item, index) => {
+        item.cekRo = item.radiologi.length > 0 ? true : false;
+        item.cekLab = item.laboratorium.length > 0 ? true : false;
+        item.cekIgd = item.tindakan.length > 0 ? true : false;
         item.index = index + 1;
         switch (ruang) {
             case "dots":
@@ -263,6 +266,9 @@ function generateActionButton(item, ruang, konsul) {
         data-umur="${item.umur}"
         data-jk="${item.jenis_kelamin_nama}"
         data-tujuan="${getPenunjangText(item)}"
+        data-ro="${item.cekRo}"
+        data-igd="${item.cekIgd}"
+        data-lab="${item.cekLab}"
     `;
 
     const actionMap = {
@@ -975,6 +981,9 @@ function setTransaksi(button, ruang) {
     var umur = $(button).data("umur");
     var tglLahir = $(button).data("tgllahir");
     var nik = $(button).data("nik");
+    var cekRo = $(button).data("ro");
+    var cekIgd = $(button).data("igd");
+    var cekLab = $(button).data("lab");
     jk = $(button).data("jk");
     // console.log("🚀 ~ setTransaksi ~ jk:", jk);
     switch (ruang) {
@@ -985,6 +994,9 @@ function setTransaksi(button, ruang) {
             cariTsLab(norm, tgl, ruang);
             $("#umur").val(umur);
             getNoSampel();
+            if (cekIgd == true) {
+                cekTransLain(notrans);
+            }
             break;
         case "ro":
             if ($.fn.DataTable.isDataTable("#tableRo")) {
@@ -993,6 +1005,9 @@ function setTransaksi(button, ruang) {
             }
             $("#tglRo").val(tgltrans);
             cariTsRo(norm, tgl, ruang);
+            if (cekIgd == true) {
+                cekTransLain(notrans);
+            }
             break;
         case "dots":
             notrans = $(button).data("no_reg");
@@ -1039,6 +1054,32 @@ function setTransaksi(button, ruang) {
         <div class="font-weight-bold bg-warning rounded">${tujuan}</div>`);
     }
     scrollToInputSection();
+}
+
+let msgSelesai;
+async function cekTransLain(notrans) {
+    try {
+        await fetch(`/api/cariDataTindakan`, {
+            method: "POST",
+            body: JSON.stringify({ notrans: notrans }),
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        }).then((response) => {
+            response.json(console.log("🚀 ~ response:", response));
+            if (response.status == 404) {
+                msgSelesai =
+                    "Belum ada transaksi IGD, silahkan di arahkan ke IGD";
+            } else {
+                msgSelesai =
+                    "Transaksi IGD sudah, silahkan di arahkan menunggu hasil";
+            }
+            console.log("🚀 ~ msgSelesai:", msgSelesai);
+        });
+    } catch (error) {
+        console.log("error++", error);
+    }
 }
 
 function antrianAll(ruang) {
