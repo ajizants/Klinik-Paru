@@ -292,6 +292,7 @@
             <h6 class="m-0 font-weight-bold">Rekap Kunjungan Kasir</h6>
         </div>
         <div class="card-body mb-2">
+            <h3 class="text-center text-primary">Jumlah</h3>
             <div class="table-responsive">
                 <table class="table table-sm table-bordered table-hover table-striped" id="reportKunjungan"
                     cellspacing="0">
@@ -305,6 +306,7 @@
                     </tfoot>
                 </table>
             </div>
+            <h3 class="text-center text-primary">Rupiah</h3>
             <div class="table-responsive">
                 <table class="table table-sm table-bordered table-hover table-striped" id="reportKunjunganRp"
                     cellspacing="0">

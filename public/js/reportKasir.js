@@ -462,122 +462,130 @@ function cetakSBS() {
 //     });
 // }
 
-function olahDataRupiah(response) {
-    if ($.fn.DataTable.isDataTable("#reportKunjunganRp")) {
-        var tabel = $("#reportKunjunganRp").DataTable();
-        tabel.clear().destroy();
-        $("#reportKunjunganRp thead").remove();
-        $("#reportKunjunganRp tbody").remove();
-    }
+// function olahDataRupiah(response) {
+//     if ($.fn.DataTable.isDataTable("#reportKunjunganRp")) {
+//         var tabel = $("#reportKunjunganRp").DataTable();
+//         tabel.clear().destroy();
+//         $("#reportKunjunganRp thead").remove();
+//         $("#reportKunjunganRp tbody").remove();
+//     }
 
-    var dataTableData = response.map(function (item) {
-        // Clone the item to avoid modifying the original object
-        var clonedItem = Object.assign({}, item);
+//     var dataTableData = response.map(function (item) {
+//         // Clone the item to avoid modifying the original object
+//         var clonedItem = Object.assign({}, item);
 
-        // Transform pemeriksaan into an object with key-value pairs
-        var pemeriksaanObj = {};
-        item.pemeriksaan.forEach(function (pemeriksaan) {
-            // Assign hasil to the respective pemeriksaan name
-            pemeriksaanObj[pemeriksaan.nmLayanan] = pemeriksaan.totalHarga;
-        });
+//         // Transform pemeriksaan into an object with key-value pairs
+//         var pemeriksaanObj = {};
+//         item.pemeriksaan.forEach(function (pemeriksaan) {
+//             // Assign hasil to the respective pemeriksaan name
+//             pemeriksaanObj[pemeriksaan.nmLayanan] = pemeriksaan.totalHarga;
+//         });
 
-        // Add the transformed pemeriksaan object to clonedItem
-        clonedItem.pemeriksaan = pemeriksaanObj;
+//         // Add the transformed pemeriksaan object to clonedItem
+//         clonedItem.pemeriksaan = pemeriksaanObj;
 
-        return clonedItem;
-    });
+//         return clonedItem;
+//     });
 
-    // Extract all unique pemeriksaan types from the response
-    var uniquePemeriksaan = new Set();
-    response.forEach(function (item) {
-        item.pemeriksaan.forEach(function (pemeriksaan) {
-            uniquePemeriksaan.add(pemeriksaan.nmLayanan);
-        });
-    });
-    // Create DataTable columns dynamically
-    var columns = [
-        {
-            data: null,
-            title: "No",
-            render: function (data, type, row, meta) {
-                return meta.row + meta.settings._iDisplayStart + 1;
-            },
-        },
-        { data: "tgl", title: "Tanggal" },
-        { data: "norm", title: "NoRM" },
-        { data: "jaminan", title: "Jaminan" },
-        {
-            data: "nama",
-            title: "Nama",
-            className: "col-2", // Set custom class for width
-            render: function (data, type, row) {
-                return data.toUpperCase();
-            },
-        },
-        { data: "alamat", title: "Alamat", className: "col-3" }, // Set custom class for width
-        {
-            data: "tagihan",
-            title: "Tagihan",
+//     // Extract all unique pemeriksaan types from the response
+//     var uniquePemeriksaan = new Set();
+//     response.forEach(function (item) {
+//         item.pemeriksaan.forEach(function (pemeriksaan) {
+//             uniquePemeriksaan.add(pemeriksaan.nmLayanan);
+//         });
+//     });
+//     // Create DataTable columns dynamically
+//     var columns = [
+//         {
+//             data: null,
+//             title: "No",
+//             render: function (data, type, row, meta) {
+//                 return meta.row + meta.settings._iDisplayStart + 1;
+//             },
+//         },
+//         { data: "tgl", title: "Tanggal" },
+//         { data: "norm", title: "NoRM" },
+//         { data: "jaminan", title: "Jaminan" },
+//         {
+//             data: "nama",
+//             title: "Nama",
+//             className: "col-2", // Set custom class for width
+//             render: function (data, type, row) {
+//                 return data.toUpperCase();
+//             },
+//         },
+//         { data: "alamat", title: "Alamat", className: "col-3" }, // Set custom class for width
+//         {
+//             data: "tagihan",
+//             title: "Tagihan",
 
-            render: function (data, type, row) {
-                var formattedTarif = parseInt(data).toLocaleString("id-ID", {
-                    style: "currency",
-                    currency: "IDR",
-                    minimumFractionDigits: 0,
-                });
-                return `${formattedTarif}`;
-            },
-        },
-        {
-            data: "bayar",
-            title: "Bayar",
+//             render: function (data, type, row) {
+//                 var formattedTarif = parseInt(data).toLocaleString("id-ID", {
+//                     style: "currency",
+//                     currency: "IDR",
+//                     minimumFractionDigits: 0,
+//                 });
+//                 return `${formattedTarif}`;
+//             },
+//         },
+//         {
+//             data: "bayar",
+//             title: "Bayar",
 
-            render: function (data, type, row) {
-                var formattedTarif = parseInt(data).toLocaleString("id-ID", {
-                    style: "currency",
-                    currency: "IDR",
-                    minimumFractionDigits: 0,
-                });
-                return `${formattedTarif}`;
-            },
-        },
-        {
-            data: "kembalian",
-            title: "Kembalian",
+//             render: function (data, type, row) {
+//                 var formattedTarif = parseInt(data).toLocaleString("id-ID", {
+//                     style: "currency",
+//                     currency: "IDR",
+//                     minimumFractionDigits: 0,
+//                 });
+//                 return `${formattedTarif}`;
+//             },
+//         },
+//         {
+//             data: "kembalian",
+//             title: "Kembalian",
 
-            render: function (data, type, row) {
-                var formattedTarif = parseInt(data).toLocaleString("id-ID", {
-                    style: "currency",
-                    currency: "IDR",
-                    minimumFractionDigits: 0,
-                });
-                return `${formattedTarif}`;
-            },
-        },
-    ];
+//             render: function (data, type, row) {
+//                 var formattedTarif = parseInt(data).toLocaleString("id-ID", {
+//                     style: "currency",
+//                     currency: "IDR",
+//                     minimumFractionDigits: 0,
+//                 });
+//                 return `${formattedTarif}`;
+//             },
+//         },
+//     ];
 
-    // Add each unique pemeriksaan as a column with its name as title
-    uniquePemeriksaan.forEach(function (pemeriksaan) {
-        columns.push({
-            data: "pemeriksaan." + pemeriksaan,
-            title: pemeriksaan, // Use pemeriksaan name as column title
-            defaultContent: "-",
-        });
-    });
+//     // Add each unique pemeriksaan as a column with its name as title
+//     uniquePemeriksaan.forEach(function (pemeriksaan) {
+//         columns.push({
+//             data: "pemeriksaan." + pemeriksaan,
+//             title: pemeriksaan, // Use pemeriksaan name as column title
+//             defaultContent: "-",
+//         });
+//     });
 
-    drawTableReport(dataTableData, columns, "#reportKunjunganRp");
-}
+//     drawTableReport(dataTableData, columns, "#reportKunjunganRp");
+// }
 function drawTableReport(data, columns, idTable) {
     const judul =
         idTable == "#reportKunjungan"
             ? "Laporan Kunjungan Kasir"
             : "Laporan Kunjungan Kasir Report";
+    data = data.map((row) => {
+        Object.keys(row).forEach((key) => {
+            if (row[key] === 0) {
+                row[key] = "-"; // Ganti nilai 0 dengan tanda '-'
+            }
+        });
+        return row;
+    });
     // Initialize DataTable with dynamic columns
     $(idTable)
         .DataTable({
             columns: columns,
             data: data,
-            paging: false, // Matikan paging jika tidak diperlukan
+            // paging: false, // Matikan paging jika tidak diperlukan
             ordering: false, // Aktifkan atau matikan pengurutan sesuai kebutuhan
             scrollX: true, // Aktifkan scroll horizontal jika kolom banyak
             autoWidth: false,
@@ -592,7 +600,7 @@ function drawTableReport(data, columns, idTable) {
                     title: judul + tglAwal + " s.d. " + tglAkhir,
                     filename: judul + tglAwal + " s.d. " + tglAkhir,
                     exportOptions: {
-                        columns: ":visible", // Hanya ekspor kolom yang terlihat
+                        columns: ":visible",
                     },
                 },
             ],

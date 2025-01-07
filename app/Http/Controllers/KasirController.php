@@ -473,13 +473,14 @@ class KasirController extends Controller
 
             foreach ($d['item'] as $item) {
                 $serviceName = $item['layanan']['nmLayanan'] ?? 'Unknown Service';
+                $serviceId = $item['layanan']['idLayanan'] ?? 0; // Ambil ID Layanan
                 $qty = $item['totalHarga'] ?? 0;
 
-                // Kumpulkan layanan unik
-                $uniqueServices[$serviceName] = true;
+                // Kumpulkan layanan unik dengan ID-nya
+                $uniqueServices[$serviceId] = $serviceName;
 
                 // Tambahkan qty ke baris
-                $row[$serviceName] = number_format($qty, 0, ',', '.');
+                $row[$serviceName] = $qty;
 
                 // Akumulasi total layanan
                 if (!isset($total[$serviceName])) {
@@ -496,19 +497,16 @@ class KasirController extends Controller
             $result[] = $row;
         }
 
-        // Tambahkan kolom dengan nilai 0 untuk layanan yang tidak ada
-        foreach ($result as &$row) {
-            foreach (array_keys($uniqueServices) as $service) {
-                if (!array_key_exists($service, $row)) {
-                    $row[$service] = 0; // Berikan nilai 0 jika tidak ada layanan
-                }
-            }
-        }
+        // Urutkan layanan berdasarkan idLayanan (key array)
+        ksort($uniqueServices);
 
-        // Pastikan total untuk semua layanan
-        foreach (array_keys($uniqueServices) as $service) {
-            if (!isset($total[$service])) {
-                $total[$service] = 0;
+        // Tambahkan kolom dengan nilai "-" untuk layanan yang tidak ada di transaksi tertentu
+        foreach ($result as &$row) {
+            foreach (array_keys($uniqueServices) as $serviceId) {
+                $serviceName = $uniqueServices[$serviceId]; // Ambil nama layanan berdasarkan ID
+                if (!array_key_exists($serviceName, $row)) {
+                    $row[$serviceName] = 0; // Berikan nilai 0 jika tidak ada layanan
+                }
             }
         }
 
@@ -516,8 +514,13 @@ class KasirController extends Controller
         $total['Tagihan'] = number_format($total['Tagihan'], 0, ',', '.');
         $total['Bayar'] = number_format($total['Bayar'], 0, ',', '.');
         $total['Kembalian'] = number_format($total['Kembalian'], 0, ',', '.');
-        foreach ($uniqueServices as $service => $value) {
-            $total[$service] = number_format($total[$service], 0, ',', '.');
+
+        // Tambahkan baris total ke hasil
+        foreach (array_keys($uniqueServices) as $serviceId) {
+            $serviceName = $uniqueServices[$serviceId];
+            if (!isset($total[$serviceName])) {
+                $total[$serviceName] = 0;
+            }
         }
 
         $result[] = $total;
@@ -525,6 +528,110 @@ class KasirController extends Controller
         return $result;
     }
 
+    // public function rekapKunjungan(Request $request)
+    // {
+    //     $norm = $request->input('norm');
+    //     $tglAwal = $request->input('tglAwal', now()->toDateString());
+    //     $tglAkhir = $request->input('tglAkhir', now()->toDateString());
+
+    //     $data = KasirTransModel::with('item.layanan')
+    //         ->where('norm', 'like', '%' . $norm . '%')
+    //         ->whereBetween('created_at', [
+    //             \Carbon\Carbon::parse($tglAwal)->startOfDay(),
+    //             \Carbon\Carbon::parse($tglAkhir)->endOfDay(),
+    //         ])
+    //         ->get();
+    //     // return $data;
+
+    //     $dataRupiah = $this->prosesDataRupiah($data);
+    //     // return $dataRupiah;
+
+    //     $dataKasir = json_decode($data, true);
+
+    //     $result = [];
+    //     $uniqueServices = [];
+
+    //     // Inisialisasi array total
+    //     $total = [
+    //         'NO' => 'Total',
+    //         'ID' => '-',
+    //         'Tanggal' => '-',
+    //         'NoRM' => '-',
+    //         'Nama' => '-',
+    //         'Jaminan' => '-',
+    //         'Tagihan' => 0,
+    //         'Bayar' => 0,
+    //         'Kembalian' => 0,
+    //     ];
+
+    //     foreach ($dataKasir as $index => $d) {
+    //         $row = [
+    //             'NO' => $index + 1,
+    //             'ID' => $d['id'] ?? '-',
+    //             'Tanggal' => isset($d['created_at']) ? Carbon::parse($d['created_at'])->format('d-m-Y') : '-',
+    //             'NoRM' => $d['norm'] ?? '-',
+    //             'Nama' => $d['nama'] ?? '-',
+    //             'Jaminan' => $d['jaminan'] ?? '-',
+    //             'Tagihan' => $d['tagihan'] ?? 0,
+    //             'Bayar' => $d['bayar'] ?? 0,
+    //             'Kembalian' => $d['kembalian'] ?? 0,
+    //         ];
+
+    //         // Akumulasi total tagihan, bayar, dan kembalian
+    //         $total['Tagihan'] += $row['Tagihan'];
+    //         $total['Bayar'] += $row['Bayar'];
+    //         $total['Kembalian'] += $row['Kembalian'];
+
+    //         foreach ($d['item'] as $item) {
+    //             $serviceName = $item['layanan']['nmLayanan'] ?? 'Unknown Service';
+    //             $qty = $item['qty'] ?? 0;
+
+    //             // Kumpulkan layanan unik
+    //             $uniqueServices[$serviceName] = true;
+
+    //             // Tambahkan qty ke baris
+    //             $row[$serviceName] = $qty;
+
+    //             // Akumulasi total layanan
+    //             if (!isset($total[$serviceName])) {
+    //                 $total[$serviceName] = 0;
+    //             }
+    //             $total[$serviceName] += $qty;
+    //         }
+    //         // Format nilai uang dalam baris
+    //         $row['Tagihan'] = number_format($row['Tagihan'], 0, ',', '.');
+    //         $row['Bayar'] = number_format($row['Bayar'], 0, ',', '.');
+    //         $row['Kembalian'] = number_format($row['Kembalian'], 0, ',', '.');
+
+    //         $result[] = $row;
+    //     }
+
+    //     foreach ($result as &$row) {
+    //         foreach (array_keys($uniqueServices) as $service) {
+    //             if (!array_key_exists($service, $row)) {
+    //                 $row[$service] = 0; // Berikan nilai 0 jika tidak ada layanan
+    //             }
+    //         }
+    //     }
+    //     // Format nilai uang dalam total
+    //     $total['Tagihan'] = number_format($total['Tagihan'], 0, ',', '.');
+    //     $total['Bayar'] = number_format($total['Bayar'], 0, ',', '.');
+    //     $total['Kembalian'] = number_format($total['Kembalian'], 0, ',', '.');
+    //     foreach (array_keys($uniqueServices) as $service) {
+    //         if (!isset($total[$service])) {
+    //             $total[$service] = 0;
+    //         }
+    //     }
+
+    //     $result[] = $total;
+
+    //     return response()->json([
+    //         'data' => $result,
+    //         'dataRupiah' => $dataRupiah,
+    //         'columns' => array_merge(['NO', 'ID', 'Tanggal', 'NoRM', 'Nama', 'Jaminan', 'Tagihan', 'Bayar', 'Kembalian'], array_keys($uniqueServices)),
+    //     ], 200, [], JSON_PRETTY_PRINT);
+
+    // }
     public function rekapKunjungan(Request $request)
     {
         $norm = $request->input('norm');
@@ -538,6 +645,7 @@ class KasirController extends Controller
                 \Carbon\Carbon::parse($tglAkhir)->endOfDay(),
             ])
             ->get();
+        // return $data;
 
         $dataRupiah = $this->prosesDataRupiah($data);
         // return $dataRupiah;
@@ -560,7 +668,7 @@ class KasirController extends Controller
             'Kembalian' => 0,
         ];
 
-// Looping untuk mengumpulkan data dan layanan unik
+        // Looping untuk mengumpulkan data dan layanan unik
         foreach ($dataKasir as $index => $d) {
             $row = [
                 'NO' => $index + 1,
@@ -581,10 +689,11 @@ class KasirController extends Controller
 
             foreach ($d['item'] as $item) {
                 $serviceName = $item['layanan']['nmLayanan'] ?? 'Unknown Service';
+                $serviceId = $item['layanan']['idLayanan'] ?? 0; // Ambil ID Layanan
                 $qty = $item['qty'] ?? 0;
 
-                // Kumpulkan layanan unik
-                $uniqueServices[$serviceName] = true;
+                // Kumpulkan layanan unik dengan ID-nya
+                $uniqueServices[$serviceId] = $serviceName;
 
                 // Tambahkan qty ke baris
                 $row[$serviceName] = $qty;
@@ -595,6 +704,7 @@ class KasirController extends Controller
                 }
                 $total[$serviceName] += $qty;
             }
+
             // Format nilai uang dalam baris
             $row['Tagihan'] = number_format($row['Tagihan'], 0, ',', '.');
             $row['Bayar'] = number_format($row['Bayar'], 0, ',', '.');
@@ -603,32 +713,39 @@ class KasirController extends Controller
             $result[] = $row;
         }
 
-// Tambahkan kolom dengan nilai "-" untuk layanan yang tidak ada di transaksi tertentu
+        // Urutkan layanan berdasarkan idLayanan (key array)
+        ksort($uniqueServices);
+
+        // Tambahkan kolom dengan nilai "-" untuk layanan yang tidak ada di transaksi tertentu
         foreach ($result as &$row) {
-            foreach (array_keys($uniqueServices) as $service) {
-                if (!array_key_exists($service, $row)) {
-                    $row[$service] = 0; // Berikan nilai 0 jika tidak ada layanan
+            foreach (array_keys($uniqueServices) as $serviceId) {
+                $serviceName = $uniqueServices[$serviceId]; // Ambil nama layanan berdasarkan ID
+                if (!array_key_exists($serviceName, $row)) {
+                    $row[$serviceName] = 0; // Berikan nilai 0 jika tidak ada layanan
                 }
             }
         }
+
         // Format nilai uang dalam total
         $total['Tagihan'] = number_format($total['Tagihan'], 0, ',', '.');
         $total['Bayar'] = number_format($total['Bayar'], 0, ',', '.');
         $total['Kembalian'] = number_format($total['Kembalian'], 0, ',', '.');
-        foreach (array_keys($uniqueServices) as $service) {
-            if (!isset($total[$service])) {
-                $total[$service] = 0;
+
+        // Tambahkan baris total ke hasil
+        foreach (array_keys($uniqueServices) as $serviceId) {
+            $serviceName = $uniqueServices[$serviceId];
+            if (!isset($total[$serviceName])) {
+                $total[$serviceName] = 0;
             }
         }
 
-// Tambahkan baris total ke hasil
         $result[] = $total;
 
-// Kembalikan respons JSON
+        // Kembalikan respons JSON
         return response()->json([
             'data' => $result,
             'dataRupiah' => $dataRupiah,
-            'columns' => array_merge(['NO', 'ID', 'Tanggal', 'NoRM', 'Nama', 'Jaminan', 'Tagihan', 'Bayar', 'Kembalian'], array_keys($uniqueServices)),
+            'columns' => array_merge(['NO', 'ID', 'Tanggal', 'NoRM', 'Nama', 'Jaminan', 'Tagihan', 'Bayar', 'Kembalian'], array_values($uniqueServices)),
         ], 200, [], JSON_PRETTY_PRINT);
 
     }
