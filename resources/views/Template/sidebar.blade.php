@@ -200,6 +200,12 @@
                                         </a>
                                     </li>
                                     <li class="nav-item ml-4">
+                                        <a class="nav-link" href="{{ url('/kasir/pendapatan/lain') }}">
+                                            <i class="fa-regular nav-icon fas fa-edit"></i>
+                                            <p>Transaksi Lain</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item ml-4">
                                         <a class="nav-link" href="{{ url('/kasir/report') }}">
                                             <i class="fa-solid fa-database nav-icon"></i>
                                             <p>Laporan Kunjungan</p>
