@@ -120,6 +120,12 @@ Route::get('/pendapatan/{tahun}', [KasirController::class, 'pendapatan']);
 Route::get('/pendapatan/item/{tahun}', [KasirController::class, 'pendapatanPerItem']);
 Route::post('/pendapatan/item', [KasirController::class, 'pendapatanPerItem']);
 Route::post('/pendapatan/ruang', [KasirController::class, 'pendapatanPerRuang']);
+
+//Pendapatan Lain Kasir
+Route::post('pendapatanLain/simpan', [KasirController::class, 'pendapatanLainSimpan']);
+Route::put('pendapatanLain/ubah/{id}', [KasirController::class, 'pendapatanLainUpdate']);
+Route::delete('pendapatanLain/delete/{id}', [KasirController::class, 'pendapatanLainDelete']);
+
 // Laporan Ksir
 Route::get('cetakSBS/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakSBS']);
 Route::get('cetakBAPH/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakBAPH']);

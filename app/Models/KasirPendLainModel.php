@@ -13,10 +13,13 @@ class KasirPendLainModel extends Model
 
     protected $fillable = [
         'tanggal',
-        'Jumlah',
+        'jumlah',
         'penyetor',
         'asal_pendapatan',
-        'created_at',
-        'updated_at',
     ];
+
+    public function pendapatanLainSimpan($params)
+    {
+        return $this->create($params);
+    }
 }

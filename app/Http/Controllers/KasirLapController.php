@@ -21,8 +21,11 @@ class KasirLapController extends Controller
 
         $doc = array_filter($data[$jaminan], function ($item) use ($bulan) {
             return $item['bln_number'] == $bulan;
-            $totalPendapatanRajal += $d['jumlah'];
         });
+
+        foreach ($doc as $d) {
+            $totalPendapatanRajal += $d['jumlah'];
+        }
         //tanggal like $param PendLain
 
         $pendapatanLain = KasirPendLainModel::where('tanggal', 'like', '%' . $paramPendLain . '%')->get();
@@ -330,6 +333,7 @@ class KasirLapController extends Controller
         $title = 'STS Bruto';
 
         $compact = $this->data($bulan, $tahun, $jaminan);
+        // return $compact;
 
         return view('Laporan.Kasir.stsBruto')->with('title', $title)->with($compact);
     }

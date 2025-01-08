@@ -21,10 +21,21 @@ class Role
     // }
     public function handle($request, Closure $next, ...$roles)
     {
-        if (!in_array(auth()->user()->role, $roles)) {
-            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        // Periksa apakah pengguna adalah admin
+        if (auth()->user()->role === 'admin') {
+            // Jika admin, langsung lanjutkan ke permintaan berikutnya
+            return $next($request);
         }
 
+        // Periksa apakah pengguna memiliki salah satu peran yang diizinkan
+        if (!in_array(auth()->user()->role, $roles)) {
+            // Jika tidak, arahkan ke halaman larangan akses
+            $previousUrl = url()->previous();
+            session()->flash('previous_url', $previousUrl);
+            return redirect()->route('forbidden')->with('previous_url', $previousUrl);
+        }
+
+        // Jika peran sesuai, lanjutkan permintaan
         return $next($request);
     }
 

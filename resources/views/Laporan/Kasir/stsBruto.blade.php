@@ -60,7 +60,7 @@
                     </tr>
                 @endforeach
                 <tr>
-                    <td class="px-1 border border-black text-center font-bold" colspan="4">Jumlah</td>
+                    <td class="px-1 border border-black text-center font-bold" colspan="5">Jumlah</td>
                     <td class="px-1 border border-black text-right font-bold">
                         {{ 'Rp ' . number_format($totalPendapatan, 0, ',', '.') . ',00' }}
                     </td>

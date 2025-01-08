@@ -316,9 +316,18 @@ class HomeController extends Controller
     public function pendapatanLain()
     {
         $title = 'PENDAPATAN LAIN';
-        $data = KasirPendLainModel::all();
+        // Mendapatkan tahun sekarang
+        $currentYear = \Carbon\Carbon::now()->year;
+        // $currentYear = 2024;
 
-        return view('Kasir.PendapatanLain.main', compact('data'))->with('title', $title);
+        // Membuat array tahun untuk 5 tahun terakhir
+        $listYear = [];
+        for ($i = 0; $i < 5; $i++) {
+            $listYear[] = $currentYear - $i;
+        }
+        $data = KasirPendLainModel::where('tanggal', 'like', '%' . $currentYear . '%')->get();
+
+        return view('Kasir.PendapatanLain.main', compact('data', 'listYear'))->with('title', $title);
     }
 
     private function layanan($kelas)

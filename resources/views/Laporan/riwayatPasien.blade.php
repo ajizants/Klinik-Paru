@@ -19,7 +19,7 @@
                             Diagnosa</b></a>
                 </li>
             </ul>
-            <div class="card shadow mb-4" id="dTunggu"><!-- Card Header - Dropdown -->
+            <div class="card shadow mb-4" id="dTunggu">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-start">
                     <h6 class="font-weight-bold ">Riwayat Kunjungan Pasien</h6>
                 </div>
