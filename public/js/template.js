@@ -319,3 +319,18 @@ socketIO.on("connectParu", () => {
     $("#socket-id").html(sessionID);
     console.log("Socket ID : " + sessionID);
 });
+
+function generateAsktindString(data, addNewLine = false, isLab = false) {
+    if (!Array.isArray(data)) return "";
+    return data
+        .map((item, index) => {
+            const separator = isLab ? (index % 2 === 1 ? ",<br>" : ", ") : ", ";
+            return `${
+                item.layanan || item.nama_tindakan || item.pemeriksaan
+            } (${item.keterangan || item.nama_obat || ""}) ${
+                "Hasil: " + item.hasil || ""
+            } ${addNewLine ? "<br>" : separator}`;
+        })
+        .join("")
+        .replace(/(,\s*<br>|,\s)$/, ""); // Remove trailing separator
+}

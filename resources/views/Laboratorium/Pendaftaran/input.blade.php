@@ -153,7 +153,7 @@
                             <h4 class="card-title">Pemeriksaan yang dilakukan</h4>
                         </div>
                         <div class="card-body p-1" style="height: 390px">
-                            <table id="dataTrans" class="table table table-tight table-hover">
+                            <table id="dataTrans" class="table table-tight table-hover">
                                 <thead>
                                     <tr>
                                         <th class="no-total" width="35px">Aksi</th>

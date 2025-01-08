@@ -321,21 +321,6 @@ function getFormattedAddress(item) {
     return `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
 }
 
-function generateAsktindString(data, addNewLine = false, isLab = false) {
-    if (!Array.isArray(data)) return "";
-    return data
-        .map((item, index) => {
-            const separator = isLab ? (index % 2 === 1 ? ",<br>" : ", ") : ", ";
-            return `${
-                item.layanan || item.nama_tindakan || item.pemeriksaan
-            } (${item.keterangan || item.nama_obat || ""}) ${
-                "Hasil: " + item.hasil || ""
-            } ${addNewLine ? "<br>" : separator}`;
-        })
-        .join("")
-        .replace(/(,\s*<br>|,\s)$/, ""); // Remove trailing separator
-}
-
 function getColumnsForRuang(ruang, tableId) {
     // Tentukan kolom aksi berdasarkan tableId
     const aksiColumns =

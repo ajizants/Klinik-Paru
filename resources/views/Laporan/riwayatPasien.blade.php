@@ -1,108 +1,178 @@
 @extends('Template.lte')
 
 @section('content')
-    <div class="card shadow mb-4">
-        <!-- Card Header - Dropdown -->
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
-            <h6 class="m-0 font-weight-bold text-primary">Rekap Diagnosa Kunjungan</h6>
-        </div>
-        <div class="card-body mb-2">
-            <div class="row">
-                <label class="col-form-label">Rentang Tanggal :</label>
-                <div class="form-group col-3">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="far fa-calendar-alt"></i>
-                            </span>
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="form-row">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a type="button" class="nav-link active bg-blue" onclick=" toggleSections('#dTunggu')"><b>Riwayat
+                                Kunjungan</b></a>
+                    </li>
+                    <li class="nav-item">
+                        <a type="button" class="nav-link" onclick=" toggleSections('#dSelesai')"><b>Rekap Diagnosa</b></a>
+                    </li>
+                    <li class="nav-item">
+                        <a type="button" class="nav-link" onclick=" toggleSections('#dAntrian')"><b>Rekap Jumlah
+                                Diagnosa</b></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card shadow mb-4" id="dTunggu"><!-- Card Header - Dropdown -->
+                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-start">
+                    <h6 class="font-weight-bold ">Riwayat Kunjungan Pasien</h6>
+                </div>
+                <div class="card-body mb-2">
+                    @csrf
+                    <form id="form_cari_riwayat">
+                        <div class="form-row mx-autow ">
+                            <label class="col-form-label">NO RM :</label>
+                            <div class="form-group col-6 col-md-2">
+                                <input type="text" id="no_rm" class="form-control" placeholder="No RM" maxlength="6"
+                                    pattern="[0-9]{6}" required />
+                            </div>
+                            <div class="col col-md">
+                                <button type="button" class="btn btn-success" onclick="cariRiwayatKunjunganPasien();">
+                                    Cari Data
+                                </button>
+                            </div>
                         </div>
-                        <input type="text" class="form-control float-right" id="reservation">
+                    </form>
+                    <div class="container-fluid">
+                        <div class="card card-info">
+                            <div class="card-body p-2">
+                                <div class="container-fluid row d-flex justify-content-center" id="identitas">
+                                </div>
+                                <div style="display: block; overflow-x: auto; white-space: nowrap;">
+                                    {{-- <div class="table-responsive"> --}}
+                                    <table id="riwayatKunjungan" class="table table-striped table-hover pt-0 mt-0 fs-6"
+                                        style="width:100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th width="15px" class="text-center">Antrian</th>
+                                                <th width="15px" class="text-center">Tanggal</th>
+                                                <th width="15px" class="text-center">Jaminan</th>
+                                                <th class="col-2 text-center">Dokter</th>
+                                                <th class="col-3">Diagnosa</th>
+                                                <th>Anamnesa</th>
+                                                <th>Tindakan</th>
+                                                <th>Laborat</th>
+                                                <th>Radiologi</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-3">
-                    <button type="button" class="btn btn-success" onclick="cariRiwayat(tglAwal,tglAkhir);">
-                        Cari
-                        <span class="fa-solid fa-rotate ml-1" data-toggle="tooltip" data-placement="top" title="Update Data"
-                            id="cariantrian"></span>
-                    </button>
+            </div>
+            <div class="card shadow mb-4" id="dSelesai" style="display: none">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-start">
+                    <h6 class="font-weight-bold ">Rekap Diagnosa Kunjungan</h6>
                 </div>
-
-            </div>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover dataTable dtr-inline" id="report" cellspacing="0">
-                    <thead class="bg bg-teal table-bordered border-warning">
-                        <tr>
-                            <th>Urut</th>
-                            <th>Tanggal</th>
-                            <th>Penjamin</th>
-                            <th>No. RM</th>
-                            <th class="col-2">Nama Pasien</th>
-                            <th>Desa</th>
-                            <th>RT/RW</th>
-                            <th>Kecamatan</th>
-                            <th>Kabupaten</th>
-                            <th>ICD X 1</th>
-                            <th>Diagnosa 1</th>
-                            <th>ICD X 2</th>
-                            <th>Diagnosa 2</th>
-                            <th>ICD X 3</th>
-                            <th>Diagnosa 3</th>
-                            <th class="col-3">Dokter</th>
-                            {{-- <th class="px-0 col-3">Aksi</th> --}}
-                        </tr>
-                    </thead>
-                    <tbody class="table-bordered border-warning">
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
-    </div>
-    <div class="card shadow mb-4">
-        <!-- Card Header - Dropdown -->
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
-            <h6 class="m-0 font-weight-bold text-primary">Rekap Jumlah Diagnosa Kunjungan</h6>
-        </div>
-        <div class="card-body mb-2">
-            <div class="row">
-                <label class="col-form-label">Rentang Tanggal :</label>
-                <div class="form-group col-3">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="far fa-calendar-alt"></i>
-                            </span>
+                <div class="card-body mb-2">
+                    <div class="row">
+                        <label class="col-form-label">Rentang Tanggal :</label>
+                        <div class="form-group col-3">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="far fa-calendar-alt"></i>
+                                    </span>
+                                </div>
+                                <input type="text" class="form-control float-right" id="reservation">
+                            </div>
                         </div>
-                        <input type="text" class="form-control float-right" id="reservation2">
+                        <div class="col-3">
+                            <button type="button" class="btn btn-success" onclick="cariRiwayat(tglAwal,tglAkhir);">
+                                Cari
+                                <span class="fa-solid fa-rotate ml-1" data-toggle="tooltip" data-placement="top"
+                                    title="Update Data" id="cariantrian"></span>
+                            </button>
+                        </div>
+
                     </div>
-                </div>
-                <div class="col-3">
-                    <button type="button" class="btn btn-success" onclick="cariJumlah(tglAwal,tglAkhir);">
-                        Cari
-                        <span class="fa-solid fa-rotate ml-1" data-toggle="tooltip" data-placement="top" title="Update Data"
-                            id="cariantrian"></span>
-                    </button>
-                </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover dataTable dtr-inline" id="report" cellspacing="0">
+                            <thead class="bg bg-teal table-bordered border-warning">
+                                <tr>
+                                    <th>Urut</th>
+                                    <th>Tanggal</th>
+                                    <th>Penjamin</th>
+                                    <th>No. RM</th>
+                                    <th class="col-2">Nama Pasien</th>
+                                    <th>Desa</th>
+                                    <th>RT/RW</th>
+                                    <th>Kecamatan</th>
+                                    <th>Kabupaten</th>
+                                    <th>ICD X 1</th>
+                                    <th>Diagnosa 1</th>
+                                    <th>ICD X 2</th>
+                                    <th>Diagnosa 2</th>
+                                    <th>ICD X 3</th>
+                                    <th>Diagnosa 3</th>
+                                    <th class="col-3">Dokter</th>
+                                    {{-- <th class="px-0 col-3">Aksi</th> --}}
+                                </tr>
+                            </thead>
+                            <tbody class="table-bordered border-warning">
+                            </tbody>
+                        </table>
+                    </div>
 
+                </div>
             </div>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover dataTable dtr-inline" id="diagnosisTable" cellspacing="0">
-                    <thead class="bg bg-teal table-bordered border-warning">
-                        <tr>
-                            <th>Diagnosa</th>
-                            <th>Kode Dx</th>
-                            <th>Jumlah Total</th>
-                            <th>Jumlah UMUM</th>
-                            <th>Jumlah BPJS</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-bordered border-warning">
-                    </tbody>
-                </table>
-            </div>
+            <div class="card shadow mb-4" id="dAntrian" style="display: none">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-start">
+                    <h6 class="font-weight-bold ">Rekap Jumlah Diagnosa Kunjungan</h6>
+                </div>
+                <div class="card-body mb-2">
+                    <div class="row">
+                        <label class="col-form-label">Rentang Tanggal :</label>
+                        <div class="form-group col-3">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="far fa-calendar-alt"></i>
+                                    </span>
+                                </div>
+                                <input type="text" class="form-control float-right" id="reservation2">
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <button type="button" class="btn btn-success" onclick="cariJumlah(tglAwal,tglAkhir);">
+                                Cari
+                                <span class="fa-solid fa-rotate ml-1" data-toggle="tooltip" data-placement="top"
+                                    title="Update Data" id="cariantrian"></span>
+                            </button>
+                        </div>
 
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover dataTable dtr-inline" id="diagnosisTable"
+                            cellspacing="0">
+                            <thead class="bg bg-teal table-bordered border-warning">
+                                <tr>
+                                    <th>Diagnosa</th>
+                                    <th>Kode Dx</th>
+                                    <th>Jumlah Total</th>
+                                    <th>Jumlah UMUM</th>
+                                    <th>Jumlah BPJS</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-bordered border-warning">
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
+
 
 
 
@@ -323,7 +393,11 @@
                     }).buttons().container().appendTo("#report_wrapper .col-md-6:eq(0)");
 
 
-                    Swal.close();
+                    Swal.fire({
+                        icon: "success",
+                        title: "Berhasil mengambil data pasien...!!!",
+                        timer: 1500
+                    })
                 },
 
                 error: function(xhr, status, error) {
@@ -357,7 +431,11 @@
                     tanggal_akhir: tglAkhir
                 },
                 success: function(response) {
-                    Swal.close();
+                    Swal.fire({
+                        icon: "success",
+                        title: "Berhasil mengambil data pasien...!!!",
+                        timer: 1500
+                    })
                     const diagnosisCounts = response.diagnosis_counts;
                     const data = [];
                     const addedDiagnoses = new Set(); // Track added diagnoses
@@ -431,6 +509,229 @@
             });
         }
 
+        function cariRiwayatKunjunganPasien() {
+            let no_rm = ($("#no_rm").val()).padStart(6, "0");
+
+            Swal.fire({
+                icon: "info",
+                title: "Sedang mencarikan data...!!! \n Pencarian dapat membutuhkan waktu lama, \n Mohon ditunggu...!!!",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+            $.ajax({
+                url: "/api/kominfo/kunjungan/riwayat",
+                type: "POST",
+                data: {
+                    no_rm
+                },
+                success: function(response) {
+                    Swal.close();
+                    console.log("🚀 ~ riwayatKunjungan ~ response:", response);
+                    tabelRiwayatKunjungan(response); // Menampilkan tabel
+                },
+                error: function(xhr) {
+                    console.error("Error:", xhr.responseText);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Gagal Memuat Riwayat",
+                        text: "Terjadi kesalahan, silakan coba lagi.",
+                    });
+                },
+            });
+        }
+
+        function tabelRiwayatKunjungan(data) {
+            data.forEach(function(item, index) {
+                item.no = index + 1; // Nomor urut dimulai dari 1
+                item.diagnosa = `
+                                <div class="form-row">
+                                    
+                                        <p><strong>DX 1 :</strong></p>
+                                        <p>${item.dx1 || "-"}</p><br>
+                                        <p><strong>DX 2 :</strong></p>
+                                        <p>${item.dx2 || "-"}</p><br>
+                                        <p><strong>DX 3 :</strong></p>                                   
+                                        <p>${item.dx2 || "-"}</p>
+                                    </div>
+                                </div>
+                        `;
+                item.anamnesa = `<div>
+                            <p><strong>DS :</strong> ${item.ds || "-"}</p>
+                            <p><strong>DO :</strong> ${item.do || "-"}</p>
+                            <table>
+                                <tr>
+                                    <td><strong>TD :</strong> ${
+                                        item.td || "-"
+                                    } mmHg</td>
+                                    <td><strong>Nadi :</strong> ${
+                                        item.nadi || "-"
+                                    } X/mnt</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>BB :</strong> ${
+                                        item.bb || "-"
+                                    } Kg</td>
+                                    <td><strong>Suhu :</strong> ${
+                                        item.suhu || "-"
+                                    } °C</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>RR :</strong> ${
+                                        item.rr || "-"
+                                    } X/mnt</td>
+                                </tr>
+                            </table>
+                        </div>`;
+                const identitas = `
+                                <div class="col-1">
+                                <p><strong>NO RM:</strong></p>
+                                <p><strong>Nama:</strong></p>
+                                </div>
+                                <div class="col-3">
+                                <p>${item.pasien_no_rm}</p>
+                                <p>${item.pasien_nama}</p>
+                                </div>
+                                <div class="col-1">
+                                    <p><strong>Tgl Lahir:</strong></p>
+                                    <p><strong>Umur:</strong></p>
+                                </div>
+                                <div class="col-2">
+                                    <p>${item.pasien_tgl_lahir}</p>
+                                    <p>${item.umur}</p>
+                                </div>
+                                <div class="col-1">
+                                    <p><strong>Kelamin:</strong></p>
+                                    <p><strong>Alamat:</strong></p>
+                                </div>
+                                <div class="col-4">
+                                    <p>${item.jenis_kelamin_nama}</p>
+                                    <p>${item.alamat}</p>
+                                </div>
+                            `;
+                $("#identitas").html(identitas);
+                item.ro = generateAsktindString(item.radiologi);
+                item.igd = generateAsktindString(item.tindakan, true);
+                item.lab = generateAsktindString(item.laboratorium, false, true);
+                item.hasilLab = generateAsktindString(item.hasilLab, false, true);
+            });
+
+            // Hancurkan DataTable sebelumnya jika ada
+            const table = $("#riwayatKunjungan").DataTable();
+            if ($.fn.DataTable.isDataTable("#riwayatKunjungan")) {
+                table.destroy();
+            }
+
+            // Inisialisasi DataTable baru
+            $("#riwayatKunjungan").DataTable({
+                data: data,
+                // columns: [{
+                //         data: "antrean_nomor",
+                //         className: "text-center"
+                //     },
+                //     {
+                //         data: "tanggal",
+                //         className: "col-1 text-center"
+                //     },
+                //     {
+                //         data: "penjamin_nama",
+                //         className: "text-center"
+                //     },
+                //     {
+                //         data: "dokter_nama",
+                //         className: "text-center"
+                //     },
+                //     {
+                //         data: "diagnosa",
+                //         className: "col-2"
+                //     },
+                //     {
+                //         data: "anamnesa",
+                //         className: "col-3"
+                //     },
+                //     {
+                //         data: "igd",
+                //         title: "Tindakan",
+                //         className: "col-4"
+                //     },
+                //     {
+                //         data: "hasilLab",
+                //         title: "Laboratorium",
+                //         className: "col-4"
+                //     },
+                //     {
+                //         data: "ro",
+                //         title: "Radiologi",
+                //         className: "col-4"
+                //     },
+                // ],
+                columns: [{
+                        data: "antrean_nomor",
+                        className: "text-center"
+                    },
+                    {
+                        data: "tanggal",
+                        className: "text-center"
+                    },
+                    {
+                        data: "penjamin_nama",
+                        className: "text-center"
+                    },
+                    {
+                        data: "dokter_nama",
+                        className: "text-center text-wrap"
+                    },
+                    {
+                        data: "diagnosa",
+                        className: "text-wrap"
+                    },
+                    {
+                        data: "anamnesa",
+                        className: "text-wrap"
+                    },
+                    {
+                        data: "igd",
+                        title: "Tindakan",
+                    },
+                    {
+                        data: "hasilLab",
+                        title: "Laboratorium",
+                    },
+                    {
+                        data: "ro",
+                        title: "Radiologi",
+                    },
+                ],
+
+                paging: true,
+                order: [1, "desc"], // Mengurutkan berdasarkan tanggal
+                lengthMenu: [
+                    [5, 10, 25, 50, -1],
+                    [5, 10, 25, 50, "All"],
+                ],
+                pageLength: 5,
+                responsive: true,
+                autoWidth: false,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data",
+                    zeroRecords: "Tidak ada data yang cocok",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    infoEmpty: "Tidak ada data yang tersedia",
+                    infoFiltered: "(difilter dari _MAX_ total data)",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Selanjutnya",
+                        previous: "Sebelumnya"
+                    }
+                },
+                scrollX: true,
+            });
+        }
+
         var tglAwal;
         var tglAkhir;
 
@@ -438,6 +739,12 @@
             setTodayDate();
             var today = new Date().toISOString().split("T")[0];
             $("#tanggal").val(today);
+            $("#no_rm").on("keyup", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    cariRiwayatKunjunganPasien();
+                }
+            });
 
             // Inisialisasi tglAwal dan tglAkhir sebagai objek Moment.js
             // tglAwal = moment().subtract(30, "days").format("YYYY-MM-DD");
@@ -480,8 +787,8 @@
                 }
             );
 
-            reportPasien(tglAwal, tglAkhir);
-            getDiagnosisCounts(tglAwal, tglAkhir);
+            // reportPasien(tglAwal, tglAkhir);
+            // getDiagnosisCounts(tglAwal, tglAkhir);
 
         });
     </script>

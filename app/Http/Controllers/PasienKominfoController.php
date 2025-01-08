@@ -964,6 +964,8 @@ class PasienKominfoController extends Controller
             // Handle the case where 'response' or 'data' key is not present
             $data = [];
         }
+
+        // return $data;
         $riwayat = [];
         foreach ($data as $item) {
             $dataLab = LaboratoriumHasilModel::with('pemeriksaan')->where('notrans', $item['no_reg'])->get();
@@ -975,12 +977,19 @@ class PasienKominfoController extends Controller
                     'hasil' => $lab->hasil,
                 ];
             };
+            $alamat = $item['kelurahan_nama'] . ', ' . $item['pasien_rt'] . '/' . $item['pasien_rw'] . ', ' . $item['kecamatan_nama'] . ', ' . $item['kabupaten_nama'] . ', ' . $item['provinsi_nama'];
 
             $riwayat[] = [
                 'tanggal' => $item['tanggal'],
                 'dokter_nama' => $item['dokter_nama'],
                 'pasien_nama' => $item['pasien_nama'],
                 'pasien_no_rm' => $item['pasien_no_rm'],
+                'pasien_tgl_lahir' => $item['pasien_tgl_lahir'],
+                'umur' => $item['umur'],
+                'antrean_nomor' => $item['antrean_nomor'],
+                'penjamin_nama' => $item['penjamin_nama'],
+                'jenis_kelamin_nama' => $item['jenis_kelamin_nama'],
+                'alamat' => $alamat,
                 'dx1' => $item['diagnosa'][0]['nama_diagnosa'] ?? '',
                 'dx2' => $item['diagnosa'][1]['nama_diagnosa'] ?? '',
                 'dx3' => $item['diagnosa'][2]['nama_diagnosa'] ?? '',

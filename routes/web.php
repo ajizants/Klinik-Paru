@@ -65,6 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::get('kasir/master', [HomeController::class, 'masterKasir'])->name('kasir')->middleware('role:kasir');
     Route::get('kasir/report', [HomeController::class, 'rekapKasir'])->name('rekapKasir')->middleware('role:kasir');
     Route::get('kasir/pendapatan', [HomeController::class, 'pendapatan'])->name('rekapKasir')->middleware('role:kasir');
+    Route::get('kasir/pendapatan/lain', [HomeController::class, 'pendapatanLain'])->name('rekapKasir')->middleware('role:kasir');
     Route::get('lte', [HomeController::class, 'lte'])->name('lte')->middleware('role:kasir');
     //Laborat
     Route::get('lab', [HomeController::class, 'lab'])->name('lab')->middleware('role:lab');

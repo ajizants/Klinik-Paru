@@ -12,6 +12,7 @@ use App\Models\GiziDxDomainModel;
 use App\Models\GiziDxKelasModel;
 use App\Models\GiziDxSubKelasModel;
 use App\Models\KasirAddModel;
+use App\Models\KasirPendLainModel;
 use App\Models\KasirTransModel;
 use App\Models\LaboratoriumHasilModel;
 use App\Models\LayananKelasModel;
@@ -311,6 +312,13 @@ class HomeController extends Controller
         }
 
         return view('Laporan.Kasir.pendapatan')->with('title', $title)->with('listYear', $listYear);
+    }
+    public function pendapatanLain()
+    {
+        $title = 'PENDAPATAN LAIN';
+        $data = KasirPendLainModel::all();
+
+        return view('Kasir.PendapatanLain.main', compact('data'))->with('title', $title);
     }
 
     private function layanan($kelas)
