@@ -42,6 +42,30 @@
                         <div class="card card-info">
                             <div class="card-body p-2">
                                 <div class="container-fluid row d-flex justify-content-center" id="identitas">
+                                    <div class="col-1">
+                                        <p><strong>NO RM:</strong></p>
+                                        <p><strong>Nama:</strong></p>
+                                    </div>
+                                    <div class="col-3">
+                                        <p>-</p>
+                                        <p>-</p>
+                                    </div>
+                                    <div class="col-1">
+                                        <p><strong>Tgl Lahir:</strong></p>
+                                        <p><strong>Umur:</strong></p>
+                                    </div>
+                                    <div class="col-2">
+                                        <p>-</p>
+                                        <p>-</p>
+                                    </div>
+                                    <div class="col-1">
+                                        <p><strong>Kelamin:</strong></p>
+                                        <p><strong>Alamat:</strong></p>
+                                    </div>
+                                    <div class="col-4">
+                                        <p>-</p>
+                                        <p>-</p>
+                                    </div>
                                 </div>
                                 <div style="display: block; overflow-x: auto; white-space: nowrap;">
                                     {{-- <div class="table-responsive"> --}}
@@ -510,6 +534,33 @@
         }
 
         function cariRiwayatKunjunganPasien() {
+            let identitas = `
+                                <div class="col-1">
+                                <p><strong>NO RM:</strong></p>
+                                <p><strong>Nama:</strong></p>
+                                </div>
+                                <div class="col-3">
+                                <p>-</p>
+                                <p>-</p>
+                                </div>
+                                <div class="col-1">
+                                    <p><strong>Tgl Lahir:</strong></p>
+                                    <p><strong>Umur:</strong></p>
+                                </div>
+                                <div class="col-2">
+                                    <p>-</p>
+                                    <p>-</p>
+                                </div>
+                                <div class="col-1">
+                                    <p><strong>Kelamin:</strong></p>
+                                    <p><strong>Alamat:</strong></p>
+                                </div>
+                                <div class="col-4">
+                                    <p>-</p>
+                                    <p>-</p>
+                                </div>
+                            `;
+            $("#identitas").html(identitas);
             let no_rm = ($("#no_rm").val()).padStart(6, "0");
 
             Swal.fire({
@@ -585,7 +636,7 @@
                                 </tr>
                             </table>
                         </div>`;
-                const identitas = `
+                let identitas = `
                                 <div class="col-1">
                                 <p><strong>NO RM:</strong></p>
                                 <p><strong>Nama:</strong></p>
