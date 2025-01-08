@@ -3,26 +3,27 @@
 @section('content')
     <div class="card shadow">
         <div class="card-body">
-            <div class="form-row">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a type="button" class="nav-link active bg-blue" onclick=" toggleSections('#dTunggu')"><b>Riwayat
-                                Kunjungan</b></a>
-                    </li>
-                    <li class="nav-item">
-                        <a type="button" class="nav-link" onclick=" toggleSections('#dSelesai')"><b>Rekap Diagnosa</b></a>
-                    </li>
-                    <li class="nav-item">
-                        <a type="button" class="nav-link" onclick=" toggleSections('#dAntrian')"><b>Rekap Jumlah
-                                Diagnosa</b></a>
-                    </li>
-                </ul>
-            </div>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a type="button" class="nav-link border border-primary active bg-blue"
+                        onclick=" toggleSections('#dTunggu')"><b>Riwayat
+                            Kunjungan</b></a>
+                </li>
+                <li class="nav-item">
+                    <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#dSelesai')"><b>Rekap
+                            Diagnosa</b></a>
+                </li>
+                <li class="nav-item">
+                    <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#dAntrian')"><b>Rekap
+                            Jumlah
+                            Diagnosa</b></a>
+                </li>
+            </ul>
             <div class="card shadow mb-4" id="dTunggu"><!-- Card Header - Dropdown -->
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-start">
                     <h6 class="font-weight-bold ">Riwayat Kunjungan Pasien</h6>
                 </div>
-                <div class="card-body mb-2">
+                <div class="card-body">
                     @csrf
                     <form id="form_cari_riwayat">
                         <div class="form-row mx-autow ">
@@ -31,17 +32,24 @@
                                 <input type="text" id="no_rm" class="form-control" placeholder="No RM" maxlength="6"
                                     pattern="[0-9]{6}" required />
                             </div>
-                            <div class="col col-md">
+                            <div class="col-1">
                                 <button type="button" class="btn btn-success" onclick="cariRiwayatKunjunganPasien();">
                                     Cari Data
                                 </button>
                             </div>
+                            <div class="col col-md ">
+                                <P class="font-weight-bold text-danger mt-2 fs-3"
+                                    style="animation: blink 3s infinite; font-size: 15px">
+                                    <= Untuk Mencari data, silahkan ketikan NO RM lalu tekan enter atau klik tombol cari</P>
+                            </div>
+
                         </div>
                     </form>
                     <div class="container-fluid">
                         <div class="card card-info">
                             <div class="card-body p-2">
-                                <div class="container-fluid row d-flex justify-content-center" id="identitas">
+                                <div class="container-fluid d-flex justify-content-center bg-secondary p-2 pt-4 fs-3"
+                                    id="identitas">
                                     <div class="col-1">
                                         <p><strong>NO RM:</strong></p>
                                         <p><strong>Nama:</strong></p>
@@ -68,7 +76,6 @@
                                     </div>
                                 </div>
                                 <div style="display: block; overflow-x: auto; white-space: nowrap;">
-                                    {{-- <div class="table-responsive"> --}}
                                     <table id="riwayatKunjungan" class="table table-striped table-hover pt-0 mt-0 fs-6"
                                         style="width:100%" cellspacing="0">
                                         <thead>
@@ -76,8 +83,8 @@
                                                 <th width="15px" class="text-center">Antrian</th>
                                                 <th width="15px" class="text-center">Tanggal</th>
                                                 <th width="15px" class="text-center">Jaminan</th>
-                                                <th class="col-2 text-center">Dokter</th>
-                                                <th class="col-3">Diagnosa</th>
+                                                <th class="text-center">Dokter</th>
+                                                <th>Diagnosa</th>
                                                 <th>Anamnesa</th>
                                                 <th>Tindakan</th>
                                                 <th>Laborat</th>
@@ -599,13 +606,18 @@
                 item.no = index + 1; // Nomor urut dimulai dari 1
                 item.diagnosa = `
                                 <div class="form-row">
-                                    
+                                    <div>
                                         <p><strong>DX 1 :</strong></p>
-                                        <p>${item.dx1 || "-"}</p><br>
+                                        <p>${item.dx1 || "-"}</p>
+                                    </div>                                    
+                                    <div>
                                         <p><strong>DX 2 :</strong></p>
-                                        <p>${item.dx2 || "-"}</p><br>
+                                        <p>${item.dx2 || "-"}</p>
+                                    </div>                                    
+                                    <div>
                                         <p><strong>DX 3 :</strong></p>                                   
                                         <p>${item.dx2 || "-"}</p>
+                                    </div>                                    
                                     </div>
                                 </div>
                         `;
@@ -678,46 +690,6 @@
             // Inisialisasi DataTable baru
             $("#riwayatKunjungan").DataTable({
                 data: data,
-                // columns: [{
-                //         data: "antrean_nomor",
-                //         className: "text-center"
-                //     },
-                //     {
-                //         data: "tanggal",
-                //         className: "col-1 text-center"
-                //     },
-                //     {
-                //         data: "penjamin_nama",
-                //         className: "text-center"
-                //     },
-                //     {
-                //         data: "dokter_nama",
-                //         className: "text-center"
-                //     },
-                //     {
-                //         data: "diagnosa",
-                //         className: "col-2"
-                //     },
-                //     {
-                //         data: "anamnesa",
-                //         className: "col-3"
-                //     },
-                //     {
-                //         data: "igd",
-                //         title: "Tindakan",
-                //         className: "col-4"
-                //     },
-                //     {
-                //         data: "hasilLab",
-                //         title: "Laboratorium",
-                //         className: "col-4"
-                //     },
-                //     {
-                //         data: "ro",
-                //         title: "Radiologi",
-                //         className: "col-4"
-                //     },
-                // ],
                 columns: [{
                         data: "antrean_nomor",
                         className: "text-center"
@@ -739,8 +711,7 @@
                         className: "text-wrap"
                     },
                     {
-                        data: "anamnesa",
-                        className: "text-wrap"
+                        data: "anamnesa"
                     },
                     {
                         data: "igd",
@@ -762,23 +733,9 @@
                     [5, 10, 25, 50, -1],
                     [5, 10, 25, 50, "All"],
                 ],
-                pageLength: 5,
+                pageLength: 3,
                 responsive: true,
                 autoWidth: false,
-                language: {
-                    search: "Cari:",
-                    lengthMenu: "Tampilkan _MENU_ data",
-                    zeroRecords: "Tidak ada data yang cocok",
-                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-                    infoEmpty: "Tidak ada data yang tersedia",
-                    infoFiltered: "(difilter dari _MAX_ total data)",
-                    paginate: {
-                        first: "Pertama",
-                        last: "Terakhir",
-                        next: "Selanjutnya",
-                        previous: "Sebelumnya"
-                    }
-                },
                 scrollX: true,
             });
         }

@@ -334,3 +334,20 @@ function generateAsktindString(data, addNewLine = false, isLab = false) {
         .join("")
         .replace(/(,\s*<br>|,\s)$/, ""); // Remove trailing separator
 }
+
+$.extend(true, $.fn.dataTable.defaults, {
+    language: {
+        search: "Cari:",
+        lengthMenu: "Lihat _MENU_ data",
+        zeroRecords: "Tidak ada data yang cocok",
+        info: "Menampilkan _START_ s.d. _END_ dari _TOTAL_ data",
+        infoEmpty: "Tidak ada data yang tersedia",
+        infoFiltered: "(difilter dari _MAX_ total data)",
+        paginate: {
+            first: "Pertama",
+            last: "Terakhir",
+            next: "Selanjutnya",
+            previous: "Sebelumnya",
+        },
+    },
+});
