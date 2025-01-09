@@ -325,11 +325,15 @@ function generateAsktindString(data, addNewLine = false, isLab = false) {
     return data
         .map((item, index) => {
             const separator = isLab ? (index % 2 === 1 ? ",<br>" : ", ") : ", ";
+            const hasil = " - Hasil: " + item.hasil || "";
+            const ket =
+                item.keterangan || item.nama_obat
+                    ? ` - ${item.keterangan || item.nama_obat}`
+                    : "";
+            const hasilLab = isLab ? hasil : "";
             return `${
                 item.layanan || item.nama_tindakan || item.pemeriksaan
-            } (${item.keterangan || item.nama_obat || ""}) ${
-                "Hasil: " + item.hasil || ""
-            } ${addNewLine ? "<br>" : separator}`;
+            } ${ket} ${hasilLab} ${addNewLine ? "<br>" : separator}`;
         })
         .join("")
         .replace(/(,\s*<br>|,\s)$/, ""); // Remove trailing separator

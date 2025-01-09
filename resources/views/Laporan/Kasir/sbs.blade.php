@@ -118,18 +118,18 @@
                         <!-- Tanda Tangan -->
                         <div class="flex justify-between">
                             <div class="w-1/2 text-center">
-                                <p>Yang menyerahkan,</p>
-                                <p>Bendahara Penerimaan / Kasir</p>
-                                <div class="h-16"></div>
-                                <p>NASIRIN</p>
-                                <p>196906022007011039</p>
-                            </div>
-                            <div class="w-1/2 text-center">
-                                <p>Yang menerima,</p>
+                                <p>Menyetujui,</p>
                                 <p>Pejabat Keuangan</p>
                                 <div class="h-16"></div>
                                 <p>SITI ASMINATUN JARIAH, SE</p>
                                 <p>196708081988032010</p>
+                            </div>
+                            <div class="w-1/2 text-center">
+                                <p>Disetorkan oleh,</p>
+                                <p>Bendahara Penerimaan</p>
+                                <div class="h-16"></div>
+                                <p>NASIRIN</p>
+                                <p>196906022007011039</p>
                             </div>
                         </div>
                     </td>

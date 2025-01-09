@@ -490,75 +490,151 @@
                             </div>
                         @endif
                     </td>
-
                 </tr>
-                <tr>
-                    <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
-                        <div
-                            style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Diagnosa Primer (A)
-                        </div>
-                    </td>
-                    <td style="padding-bottom:10px; text-align: left;">
-                        @if (empty($resumePasien->diagnosa) || count($resumePasien->diagnosa) == 0)
-                            -
-                        @else
-                            <li>{{ $resumePasien->diagnosa[0]['nama_diagnosa'] }}</li>
-                        @endif
-                    </td>
-                    <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
-                        <div
-                            style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Diagnosa Sekunder (A)
-                        </div>
-                    </td>
-                    <td style="padding-bottom:10px; text-align: left;">
-                        @if (count($resumePasien->diagnosa) < 2)
-                            -
-                        @else
-                            <ul>
-                                @foreach ($resumePasien->diagnosa as $index => $diagnosa)
-                                    @if ($index > 0)
-                                        {{-- Dimulai dari indeks ke-1 untuk diagnosa sekunder --}}
-                                        <li>{{ $diagnosa['nama_diagnosa'] }}</li>
-                                    @endif
-                                @endforeach
-                            </ul>
-                        @endif
-                    </td>
-                </tr>
-                {{-- <tr>
-                    <td style=" font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
-                        <div
-                            style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Diagnosa Primer (A)</div>
-                    </td>
-                    <td style=" padding-bottom:10px; text-align: left;">
-                        @if ($resumePasien->diagnosa == null || $resumePasien->diagnosa == '' || $resumePasien->diagnosa == '[]')
-                            -
-                        @else
-                            <li>{{ $resumePasien->diagnosa[0]['nama_diagnosa'] }}</li>
-                        @endif
-                    </td>
-                    <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
-                        <div
-                            style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
-                            Diagnosa Sekunder (A)</div>
-                    </td>
-                    <td style=" padding-bottom:10px; text-align: left;">
-                        @if (count($resumePasien->diagnosa) < 2)
-                            -
-                        @elseif (count($resumePasien->diagnosa) < 3)
-                            <li>
-                                {{ $resumePasien->diagnosa[1]['nama_diagnosa'] }}
-                            </li>
-                        @else
-                            <li>
-                                {{ $resumePasien->diagnosa[2]['nama_diagnosa'] ?? '' }}
-                            </li>
-                        @endif
-                    </td>
-                </tr> --}}
+                @if ($dxs[0]['kode_diagnosa'] == 'Z09.8')
+                    <tr>
+                        <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
+                            <div
+                                style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                                Diagnosa Primer (A)
+                            </div>
+                        </td>
+                        <td style="padding-bottom:10px; text-align: left;">
+                            @if (empty($dxs) || count($dxs) == 0)
+                                -
+                            @else
+                                <li>{{ $dxs[1]['nmDx'] }}</li>
+                            @endif
+                        </td>
+                        <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
+                            <div
+                                style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                                Diagnosa Sekunder (A)
+                            </div>
+                        </td>
+                        <td style="padding-bottom:10px; text-align: left;">
+                            @if (count($dxs) < 2)
+                                -
+                            @else
+                                <ul>
+                                    @foreach ($dxs as $index => $diagnosa)
+                                        @if ($index > 1)
+                                            {{-- Dimulai dari indeks ke-1 untuk diagnosa sekunder --}}
+                                            <li>{{ $diagnosa['nmDx'] }}</li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </td>
+                    </tr>
+                @else
+                    <tr>
+                        <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
+                            <div
+                                style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                                Diagnosa Primer (A)
+                            </div>
+                        </td>
+                        <td style="padding-bottom:10px; text-align: left;">
+                            @if (empty($dxs) || count($dxs) == 0)
+                                -
+                            @else
+                                <li>{{ $dxs[0]['nmDx'] }}</li>
+                            @endif
+                        </td>
+                        <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
+                            <div
+                                style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                                Diagnosa Sekunder (A)
+                            </div>
+                        </td>
+                        <td style="padding-bottom:10px; text-align: left;">
+                            @if (count($dxs) < 2)
+                                -
+                            @else
+                                <ul>
+                                    @foreach ($dxs as $index => $diagnosa)
+                                        @if ($index > 0)
+                                            {{-- Dimulai dari indeks ke-1 untuk diagnosa sekunder --}}
+                                            <li>{{ $diagnosa['nmDx'] }}</li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </td>
+                    </tr>
+                @endif
+                {{-- @if ($resumePasien->diagnosa[0]['kode_diagnosa'] == 'Z09.8')
+                    <tr>
+                        <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
+                            <div
+                                style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                                Diagnosa Primer (A)
+                            </div>
+                        </td>
+                        <td style="padding-bottom:10px; text-align: left;">
+                            @if (empty($resumePasien->diagnosa) || count($resumePasien->diagnosa) == 0)
+                                -
+                            @else
+                                <li>{{ $resumePasien->diagnosa[1]['nama_diagnosa'] }}</li>
+                            @endif
+                        </td>
+                        <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
+                            <div
+                                style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                                Diagnosa Sekunder (A)
+                            </div>
+                        </td>
+                        <td style="padding-bottom:10px; text-align: left;">
+                            @if (count($resumePasien->diagnosa) < 2)
+                                -
+                            @else
+                                <ul>
+                                    @foreach ($resumePasien->diagnosa as $index => $diagnosa)
+                                        @if ($index > 1)
+                                            <li>{{ $diagnosa['nama_diagnosa'] }}</li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </td>
+                    </tr>
+                @else
+                    <tr>
+                        <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
+                            <div
+                                style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                                Diagnosa Primer (A)
+                            </div>
+                        </td>
+                        <td style="padding-bottom:10px; text-align: left;">
+                            @if (empty($resumePasien->diagnosa) || count($resumePasien->diagnosa) == 0)
+                                -
+                            @else
+                                <li>{{ $resumePasien->diagnosa[0]['nama_diagnosa'] }}</li>
+                            @endif
+                        </td>
+                        <td style="font-weight: bold; padding-bottom:10px; text-align: left; width: 20%;">
+                            <div
+                                style="min-height:50px; font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
+                                Diagnosa Sekunder (A)
+                            </div>
+                        </td>
+                        <td style="padding-bottom:10px; text-align: left;">
+                            @if (count($resumePasien->diagnosa) < 2)
+                                -
+                            @else
+                                <ul>
+                                    @foreach ($resumePasien->diagnosa as $index => $diagnosa)
+                                        @if ($index > 0)
+                                            <li>{{ $diagnosa['nama_diagnosa'] }}</li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </td>
+                    </tr>
+                @endif --}}
             </tbody>
         </table>
 

@@ -11,7 +11,7 @@ use App\Http\Controllers\GudangFarmasiController;
 use App\Http\Controllers\IgdController;
 use App\Http\Controllers\InputController;
 use App\Http\Controllers\KasirController;
-use App\Http\Controllers\KasirLapController;
+use App\Http\Controllers\KasirSetoranController;
 use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\NoAntrianController;
 use App\Http\Controllers\PasienKominfoController;
@@ -114,24 +114,25 @@ Route::post('kasir/item/delete', [KasirController::class, 'deleteTagihan']);
 Route::post('kasir/tagihan/order', [KasirController::class, 'order']);
 Route::post('kasir/transaksi', [KasirController::class, 'addTransaksi']);
 Route::post('kasir/transaksi/delete', [KasirController::class, 'deleteTransaksi']);
+
+//Setoran Kasir
+Route::post('kasir/setorkan', [KasirSetoranController::class, 'setorkan']);
+Route::post('pendapatanLain/simpan', [KasirSetoranController::class, 'setoranSimpan']);
+Route::put('pendapatanLain/ubah/{id}', [KasirSetoranController::class, 'setoranUpdate']);
+Route::post('pendapatanLain/delete', [KasirSetoranController::class, 'setoranDelete']);
+
+// Laporan Ksirs
 Route::post('kasir/kunjungan', [KasirController::class, 'kunjungan']);
 Route::post('kasir/rekap', [KasirController::class, 'rekapKunjungan']);
 Route::get('/pendapatan/{tahun}', [KasirController::class, 'pendapatan']);
 Route::get('/pendapatan/item/{tahun}', [KasirController::class, 'pendapatanPerItem']);
 Route::post('/pendapatan/item', [KasirController::class, 'pendapatanPerItem']);
 Route::post('/pendapatan/ruang', [KasirController::class, 'pendapatanPerRuang']);
-
-//Pendapatan Lain Kasir
-Route::post('pendapatanLain/simpan', [KasirController::class, 'pendapatanLainSimpan']);
-Route::put('pendapatanLain/ubah/{id}', [KasirController::class, 'pendapatanLainUpdate']);
-Route::delete('pendapatanLain/delete/{id}', [KasirController::class, 'pendapatanLainDelete']);
-
-// Laporan Ksir
 Route::get('cetakSBS/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakSBS']);
 Route::get('cetakBAPH/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakBAPH']);
-Route::get('stsBruto/{bln}/{tahun}/{jaminan}', [KasirLapController::class, 'stsBruto']);
-Route::get('stpbBruto/{bln}/{tahun}/{jaminan}', [KasirLapController::class, 'stpbBruto']);
-Route::get('rekapBulanan/{tahun}/{jaminan}', [KasirLapController::class, 'rekapBulanan']);
+Route::get('stsBruto/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'stsBruto']);
+Route::get('stpbBruto/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'stpbBruto']);
+Route::get('rekapBulanan/{tahun}/{jaminan}', [KasirSetoranController::class, 'rekapBulanan']);
 
 //laboratorium
 Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);

@@ -137,7 +137,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/api/pendapatanlain/delete',
+                        url: '/api/pendapatanLain/delete',
                         type: 'POST',
                         data: {
                             id: id,

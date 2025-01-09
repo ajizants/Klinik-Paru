@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\IGDTransModel;
 use App\Models\KasirAddModel;
-use App\Models\KasirPendLainModel;
 use App\Models\KasirTransModel;
 use App\Models\KominfoModel;
 use App\Models\LaboratoriumHasilModel;
@@ -849,93 +848,6 @@ class KasirController extends Controller
             'tglAkhir' => $request->input('tglAkhir'),
         ];
         return $model->pendapatanPerRuang($params);
-    }
-
-    public function pendapatanLain($tahun)
-    {
-        $currentYear = $tahun ?? \Carbon\Carbon::now()->year;
-
-        // Membuat array tahun untuk 5 tahun terakhir
-        $listYear = [];
-        for ($i = 0; $i < 5; $i++) {
-            $listYear[] = $currentYear - $i;
-        }
-        $data = KasirPendLainModel::where('tanggal', 'like', '%' . $currentYear . '%')->get();
-        return $data;
-    }
-
-    public function pendapatanLainSimpan(Request $request)
-    {
-        // Validasi data
-        $validated = $request->validate([
-            'asal_pendapatan' => 'required|string|max:255',
-            'jumlah' => 'required|min:0',
-            'tanggal' => 'required|date',
-            'penyetor' => 'required|string|max:255',
-        ]);
-
-        // Simpan data ke database
-        $pendapatanLain = KasirPendLainModel::create($validated);
-        $data = $this->pendapatanLain(\Carbon\Carbon::now()->year);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data pendapatan lain berhasil disimpan.',
-            'data' => $data,
-        ]);
-    }
-
-    public function pendapatanLainUpdate(Request $request, $id)
-    {
-        // Validasi data
-        $validated = $request->validate([
-            'asal_pendapatan' => 'required|string|max:255',
-            'jumlah' => 'required|min:0',
-            'tanggal' => 'required|date',
-            'penyetor' => 'required|string|max:255',
-        ]);
-
-        // Cari data berdasarkan ID
-        $pendapatanLain = KasirPendLainModel::find($id);
-
-        if (!$pendapatanLain) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Data pendapatan lain tidak ditemukan.',
-            ], 404);
-        }
-
-        // Update data
-        $pendapatanLain->update($validated);
-
-        $data = $this->pendapatanLain(\Carbon\Carbon::now()->year);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data pendapatan lain berhasil diperbarui.',
-            'data' => $data,
-        ]);
-    }
-
-    public function pendapatanLainDelete($id)
-    {
-        // Cari data berdasarkan ID
-        $pendapatanLain = KasirPendLainModel::find($id);
-
-        if (!$pendapatanLain) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Data pendapatan lain tidak ditemukan.',
-            ], 404);
-        }
-
-        // Hapus data
-        $pendapatanLain->delete();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data pendapatan lain berhasil dihapus.',
-        ]);
     }
 
 }

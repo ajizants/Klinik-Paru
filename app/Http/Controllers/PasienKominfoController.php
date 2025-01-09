@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DiagnosaMapModel;
 use App\Models\DotsTransModel;
 use App\Models\IGDTransModel;
 use App\Models\KasirTransModel;
@@ -316,6 +317,7 @@ class PasienKominfoController extends Controller
             // return $dataObats;
 
             foreach ($dataObats as $obat) {
+
                 $obats[] = [
                     'no_resep' => $obat['no_resep'],
                     'aturan' => $obat['signa_1'] . ' X ' . $obat['signa_2'] . ' ' . $obat['aturan_pakai'],
@@ -324,8 +326,23 @@ class PasienKominfoController extends Controller
             }
 
             // return $obats;
+            $dataDx = $resumePasien->diagnosa;
+            $dxs = [];
+            // return $dataDx;
 
-            // $alamat = $resumePasien->kelurahan_nama . ', ' . $resumePasien->pasien_rt . '/' . $resumePasien->pasien_rw . ', ' . $resumePasien->kecamatan_nama . ', ' . $resumePasien->kabupaten_nama . ', ' . $resumePasien->provinsi_nama;
+            foreach ($dataDx as $dx) {
+                $kdDx = $dx['kode_diagnosa'];
+                $dxMap = DiagnosaMapModel::where('kdDx', $kdDx)->first();
+                $nmDX = $dxMap->mapping;
+                $dxs[] = [
+                    'kode_diagnosa' => $dx['kode_diagnosa'],
+                    'nama_diagnosa' => $dx['nama_diagnosa'],
+                    'nmDx' => $nmDX,
+                ];
+            }
+
+            // return $dxs;
+
             $alamat = ucwords(strtolower($resumePasien->kelurahan_nama)) . ', ' .
             $resumePasien->pasien_rt . '/' . $resumePasien->pasien_rw . ', ' .
             ucwords(strtolower($resumePasien->kecamatan_nama)) . ', ' .
@@ -409,8 +426,8 @@ class PasienKominfoController extends Controller
             // $lab = [];
             // $ro = [];
 
-            $ttd = $this->generateQrCodeWithLogo($resumePasien->dokter_nama, $no_rm, $resumePasien->pasien_nama);
-            return view('Laporan.resume', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan', 'obats', 'ttd'));
+            return view('Laporan.resume', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan', 'obats', 'dxs'));
+            // $ttd = $this->generateQrCodeWithLogo($resumePasien->dokter_nama, $no_rm, $resumePasien->pasien_nama);
             // return view('Laporan.resume1', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan'));
 
         } catch (\Exception $e) {

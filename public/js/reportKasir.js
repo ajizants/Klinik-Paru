@@ -252,6 +252,13 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
                 target="_blank">
                 SBS ${selector}
             </a>
+            <a class="btn btn-sm btn-danger mr-2 mb-2"
+            data-tgl="${item.tanggal}"
+            data-jumlah="${item.jumlah}"
+            data-terbilang="${item.terbilang}"
+            data-asal_pendapatan="3.003.25581.5"
+            onclick="setorkan(this)">Setorkan
+            </a>
         `;
     });
 
@@ -298,6 +305,65 @@ function cetakSBS() {
     console.log("🚀 ~ cetakSBS ~ tglSBS:", tglSBS);
 
     window.open("api/cetakSBS/" + tglSBS);
+}
+
+function setorkan(button) {
+    console.log("🚀 ~ setorkan ~ button:", button);
+    const tgl = $(button).data("tgl");
+    const jumlah = $(button).data("terbilang");
+    const asalPendapatan = $(button).data("asal_pendapatan");
+    const penyetor = "Nasirin";
+
+    Swal.fire({
+        title: "Setorkan Pendapatan",
+        text: `Apakah anda yakin ingin setorkan pendapatan tanggal ${tgl}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya",
+        cancelButtonText: "Tidak",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "/api/kasir/setorkan",
+                type: "post",
+                data: {
+                    tgl: tgl,
+                    jumlah: jumlah,
+                    asal_pendapatan: asalPendapatan,
+                    penyetor: penyetor,
+                },
+                success: function (response) {
+                    console.log("🚀 ~ setorkan ~ response:", response);
+                    if (response.status == "success") {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Setorkan pendapatan berhasil",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Setorkan pendapatan gagal",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log("🚀 ~ setorkan ~ xhr:", xhr);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Setorkan pendapatan gagal",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                },
+            });
+        }
+    });
 }
 
 // function reportKunjungan(tglAwal, tglAkhir) {

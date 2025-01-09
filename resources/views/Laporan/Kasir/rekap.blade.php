@@ -111,39 +111,54 @@
                             </Select>
                         </div>
                     </div>
+                    <div class="form-group col-2">
+                        <button type="button" class="btn btn-danger" onclick="updateData();">
+                            Perbarui Data
+                        </button>
+                    </div>
                 </div>
-                <button type="button" class="my-1 btn btn-outline-primary" onclick="tampilkan('#cardRekapJumlahPasien')">
-                    Rekap Jumlah Pasien
-                </button>
-                <button type="button" class="my-1 btn btn-outline-secondary" onclick="tampilkan('#cardRekapKunjungan')">
-                    Rekap Kunjungan
-                </button>
-                <button type="button" class="my-1 btn btn-outline-success" onclick="tampilkan('#cardTotalPendapatanUmum')">
-                    Rekap Total Pendapatan Harian Umum
-                </button>
-                <button type="button" class="my-1 btn btn-outline-info"
-                    onclick="tampilkan('#cardPendapatanItemPerhariUmum')">
-                    Pendapatan Item Per Hari Umum
-                </button>
-                <button type="button" class="my-1 btn btn-outline-danger" onclick="tampilkan('#cardTotalPendapatanBPJS')">
-                    Rekap Total Pendapatan Harian BPJS
-                </button>
-                <button type="button" class="my-1 btn btn-outline-dark"
-                    onclick="tampilkan('#cardPendapatanItemPerhariBpjs')">
-                    Pendapatan Item Per Hari BPJS
-                </button>
-                <button type="button" class="my-1 btn btn-warning" onclick="cetakBruto('stpb');">
-                    Cetak STPB Bruto
-                </button>
-                <button type="button" class="my-1 btn btn-info" onclick="cetakBruto('sts');">
-                    Cetak STS Bruto
-                </button>
-                <button type="button" class="my-1 btn btn-primary" onclick="cetakBruto('rekapBulanan');">
-                    Cetak Rekap Bulanan
-                </button>
-                <button type="button" class="btn btn-danger" onclick="updateData();">
-                    Perbarui Data
-                </button>
+                <h4>Menu Cetak Data:</h4>
+                <div class="row">
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-info" onclick="cetakBruto('sts');">
+                        Cetak STS Bruto
+                    </button>
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-warning" onclick="cetakBruto('stpb');">
+                        Cetak STPB Bruto
+                    </button>
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-primary"
+                        onclick="cetakBruto('rekapBulanan');">
+                        Cetak Rekap Bulanan
+                    </button>
+                </div>
+                <h4>Menu Menampilkan Data:</h4>
+                <div class="row">
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-outline-primary"
+                        onclick="tampilkan('#cardRekapJumlahPasien')">
+                        Rekap Jumlah Pasien
+                    </button>
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-outline-secondary"
+                        onclick="tampilkan('#cardRekapKunjungan')">
+                        Rekap Kunjungan
+                    </button>
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-outline-success"
+                        onclick="tampilkan('#cardTotalPendapatanUmum')">
+                        Rekap Total Pendapatan Harian Umum
+                    </button>
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-outline-info"
+                        onclick="tampilkan('#cardPendapatanItemPerhariUmum')">
+                        Pendapatan Item Per Hari Umum
+                    </button>
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-outline-danger"
+                        onclick="tampilkan('#cardTotalPendapatanBPJS')">
+                        Rekap Total Pendapatan Harian BPJS
+                    </button>
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-outline-dark"
+                        onclick="tampilkan('#cardPendapatanItemPerhariBpjs')">
+                        Pendapatan Item Per Hari BPJS
+                    </button>
+                </div>
+
+
 
                 <script type="text/javascript">
                     function cetakBruto(tipe) {

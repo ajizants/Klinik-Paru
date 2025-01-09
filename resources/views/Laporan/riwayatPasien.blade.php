@@ -24,8 +24,7 @@
                     <h6 class="font-weight-bold ">Riwayat Kunjungan Pasien</h6>
                 </div>
                 <div class="card-body">
-                    @csrf
-                    <form id="form_cari_riwayat">
+                    <div id="form_cari_riwayat">
                         <div class="form-row mx-autow ">
                             <label class="col-form-label">NO RM :</label>
                             <div class="form-group col-6 col-md-2">
@@ -44,7 +43,7 @@
                             </div>
 
                         </div>
-                    </form>
+                    </div>
                     <div class="container-fluid">
                         <div class="card card-info">
                             <div class="card-body p-2">
@@ -118,7 +117,7 @@
                         </div>
                         <div class="col-3">
                             <button type="button" class="btn btn-success" onclick="cariRiwayat(tglAwal,tglAkhir);">
-                                Cari
+                                Refresh
                                 <span class="fa-solid fa-rotate ml-1" data-toggle="tooltip" data-placement="top"
                                     title="Update Data" id="cariantrian"></span>
                             </button>
@@ -175,7 +174,7 @@
                         </div>
                         <div class="col-3">
                             <button type="button" class="btn btn-success" onclick="cariJumlah(tglAwal,tglAkhir);">
-                                Cari
+                                Refresh
                                 <span class="fa-solid fa-rotate ml-1" data-toggle="tooltip" data-placement="top"
                                     title="Update Data" id="cariantrian"></span>
                             </button>
@@ -282,9 +281,10 @@
                     dataPasien.forEach(function(item, index) {
                         // Menambahkan tombol aksi
                         item.aksi =
-                            `<button type="button" class="btn btn-primary mr-2"
-                                    onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak">
-                                    <i class="fa-solid fa-print"></i>
+                            `<p>${item.pasien_no_rm}</p>
+                            <button type="button" class="btn btn-primary mr-2"
+                                    onclick="cariDataPasien('${item.pasien_no_rm}')" placeholder="Lihat">
+                                    Rincian
                             </button>`;
 
                         item.rtrw = item.pasien_rt + "/" + item.pasien_rw;
@@ -303,7 +303,7 @@
                                 data: "penjamin_nama"
                             },
                             {
-                                data: "pasien_no_rm"
+                                data: "aksi"
                             },
                             {
                                 data: "pasien_nama",
@@ -540,6 +540,12 @@
             });
         }
 
+        function cariDataPasien(no_rm) {
+            $("#no_rm").val(no_rm);
+            cariRiwayatKunjunganPasien();
+            toggleSections('#dTunggu')
+        }
+
         function cariRiwayatKunjunganPasien() {
             let identitas = `
                                 <div class="col-1">
@@ -604,8 +610,24 @@
         function tabelRiwayatKunjungan(data) {
             data.forEach(function(item, index) {
                 item.no = index + 1; // Nomor urut dimulai dari 1
+                item.antrean = `
+                                <div>
+                                    <div>
+                                        ${item.antrean_nomor}
+                                    </div>                                    
+                                    <div>
+                                        <br>
+                                        <br>
+                                        <br>
+                                    </div>                                    
+                                    <div>
+                                        <p>Untuk melihat hasil RO, Lab Dan Tindakan klik tolbol <strong>+</strong></p>
+                                    </div>                                    
+                                    </div>
+                                </div>
+                        `;
                 item.diagnosa = `
-                                <div class="form-row">
+                                <div>
                                     <div>
                                         <p><strong>DX 1 :</strong></p>
                                         <p>${item.dx1 || "-"}</p>
@@ -616,7 +638,7 @@
                                     </div>                                    
                                     <div>
                                         <p><strong>DX 3 :</strong></p>                                   
-                                        <p>${item.dx2 || "-"}</p>
+                                        <p>${item.dx3 || "-"}</p>
                                     </div>                                    
                                     </div>
                                 </div>
@@ -691,8 +713,8 @@
             $("#riwayatKunjungan").DataTable({
                 data: data,
                 columns: [{
-                        data: "antrean_nomor",
-                        className: "text-center"
+                        data: "antrean",
+                        className: "text-wrap"
                     },
                     {
                         data: "tanggal",

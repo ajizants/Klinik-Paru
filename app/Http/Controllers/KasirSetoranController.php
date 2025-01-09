@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KasirPendLainModel;
+use App\Models\KasirSetoranModel;
 use App\Models\KasirTransModel;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
-class KasirLapController extends Controller
+class KasirSetoranController extends Controller
 {
     private function data($bulan, $tahun, $jaminan)
     {
@@ -28,7 +29,7 @@ class KasirLapController extends Controller
         }
         //tanggal like $param PendLain
 
-        $pendapatanLain = KasirPendLainModel::where('tanggal', 'like', '%' . $paramPendLain . '%')->get();
+        $pendapatanLain = KasirSetoranModel::where('tanggal', 'like', '%' . $paramPendLain . '%')->get();
         // return $pendapatanLain;
         $docLain = [];
         $totalPendapatanLain = 0;
@@ -87,132 +88,6 @@ class KasirLapController extends Controller
 
         return compact('doc', 'totalPendapatan', 'totalPendapatanRajal', 'totalPendapatanLain', 'tglAkhir', 'blnTahun');
     }
-    // public function rekapBulanan($tahun, $jaminan)
-    // {
-    //     $title = 'Rekap Bulanan';
-    //     $doc = [];
-    //     $bulanPendapatan = [];
-    //     $totalPendapatan = 0;
-    //     $totalSetoran = 0;
-    //     $saldo = 0;
-    //     $target = 6957500000;
-
-    //     $model = new KasirTransModel();
-    //     $data = $model->pendapatan($tahun);
-    //     // return $data;
-    //     if ($data === []) {
-    //         // return "kosong";
-    //         for ($i = 1; $i <= 12; $i++) {
-    //             $bulanPendapatan[$i] = [
-    //                 'bulan' => Carbon::createFromFormat('m', $i)->locale('id')->isoFormat('MMMM'),
-    //                 'bln_number' => $i,
-    //                 'penerimaan' => 0,
-    //                 'setoran' => 0,
-    //             ];
-    //         }
-    //         $doc[] = [
-    //             'bulan' => 'Rp.0,00',
-    //             'bln_number' => 'Rp.0,00',
-    //             'penerimaan' => 'Rp.0,00',
-    //             'setoran' => 'Rp.0,00',
-    //             'saldo' => 'Rp.0,00',
-    //         ];
-    //         $totalSaldo = $totalPendapatan - $totalSetoran;
-    //         $totalPendapatanFormatted = 'Rp ' . number_format($totalPendapatan, 0, ',', '.') . ',00';
-    //         $totalSetoranFormatted = 'Rp ' . number_format($totalSetoran, 0, ',', '.') . ',00';
-    //         $totalSaldoFormatted = 'Rp ' . number_format($totalSaldo, 0, ',', '.') . ',00';
-
-    //         return view('Laporan.Kasir.rekapBulanan', compact(
-    //             'doc',
-    //             'totalPendapatanFormatted',
-    //             'totalSetoranFormatted',
-    //             'totalSaldoFormatted',
-    //             'target',
-    //             'title',
-    //             'tahun'
-    //         ));
-    //     }
-    //     $dataPendapatanLain = KasirPendLainModel::where('tanggal', 'like', '%' . $tahun . '%')->get();
-
-    //     // Proses pendapatan lain
-    //     foreach ($dataPendapatanLain as $d) {
-    //         $date = Carbon::parse($d->tanggal);
-    //         $bulan = $date->locale('id')->isoFormat('MMMM');
-    //         $blnNumber = (int) $date->format('m'); // Nomor bulan sebagai integer
-
-    //         if (!isset($bulanPendapatan[$blnNumber])) {
-    //             $bulanPendapatan[$blnNumber] = [
-    //                 'bulan' => $bulan,
-    //                 'bln_number' => $blnNumber,
-    //                 'penerimaan' => 0,
-    //                 'setoran' => 0,
-    //             ];
-    //         }
-
-    //         if ($d->asal_pendapatan === 'setoran') {
-    //             $bulanPendapatan[$blnNumber]['setoran'] += $d->jumlah;
-    //         } else {
-    //             $bulanPendapatan[$blnNumber]['penerimaan'] += $d->jumlah;
-    //         }
-    //     }
-
-    //     // Proses pendapatan rawat jalan (rajal)
-    //     foreach ($data[$jaminan] as $d) {
-    //         $date = Carbon::parse($d['tanggal']);
-    //         $bulan = $date->locale('id')->isoFormat('MMMM');
-    //         $blnNumber = (int) $date->format('m'); // Nomor bulan sebagai integer
-
-    //         if (!isset($bulanPendapatan[$blnNumber])) {
-    //             $bulanPendapatan[$blnNumber] = [
-    //                 'bulan' => $bulan,
-    //                 'bln_number' => $blnNumber,
-    //                 'penerimaan' => 0,
-    //                 'setoran' => 0,
-    //             ];
-    //         }
-
-    //         $bulanPendapatan[$blnNumber]['penerimaan'] += $d['jumlah'];
-    //     }
-
-    //     // Urutkan berdasarkan nomor bulan
-    //     ksort($bulanPendapatan);
-
-    //     // Format data menjadi array yang sesuai untuk $doc
-    //     foreach ($bulanPendapatan as $item) {
-    //         $saldo += $item['penerimaan'] - $item['setoran'];
-    //         $doc[] = [
-    //             'bulan' => $item['bulan'],
-    //             'bln_number' => $item['bln_number'],
-    //             'penerimaan' => $item['penerimaan'],
-    //             'setoran' => $item['setoran'],
-    //             'saldo' => $saldo,
-    //         ];
-    //         $totalPendapatan += $item['penerimaan'];
-    //         $totalSetoran += $item['setoran'];
-    //     }
-
-    //     // Konversi format ke dalam rupiah di akhir untuk menjaga akurasi
-    //     foreach ($doc as &$d) {
-    //         $d['penerimaan'] = 'Rp ' . number_format($d['penerimaan'], 0, ',', '.') . ',00';
-    //         $d['setoran'] = 'Rp ' . number_format($d['setoran'], 0, ',', '.') . ',00';
-    //         $d['saldo'] = 'Rp ' . number_format($d['saldo'], 0, ',', '.') . ',00';
-    //     }
-
-    //     $totalSaldo = $totalPendapatan - $totalSetoran;
-    //     $totalPendapatanFormatted = 'Rp ' . number_format($totalPendapatan, 0, ',', '.') . ',00';
-    //     $totalSetoranFormatted = 'Rp ' . number_format($totalSetoran, 0, ',', '.') . ',00';
-    //     $totalSaldoFormatted = 'Rp ' . number_format($totalSaldo, 0, ',', '.') . ',00';
-
-    //     return view('Laporan.Kasir.rekapBulanan', compact(
-    //         'doc',
-    //         'totalPendapatanFormatted',
-    //         'totalSetoranFormatted',
-    //         'totalSaldoFormatted',
-    //         'target',
-    //         'title',
-    //         'tahun'
-    //     ));
-    // }
 
     public function rekapBulanan($tahun, $jaminan)
     {
@@ -277,7 +152,7 @@ class KasirLapController extends Controller
             ));
         }
 
-        $dataPendapatanLain = KasirPendLainModel::where('tanggal', 'like', '%' . $tahun . '%')->get();
+        $dataPendapatanLain = KasirSetoranModel::where('tanggal', 'like', '%' . $tahun . '%')->get();
 
         // Proses pendapatan lain
         foreach ($dataPendapatanLain as $d) {
@@ -332,7 +207,8 @@ class KasirLapController extends Controller
     {
         $title = 'STS Bruto';
 
-        $compact = $this->data($bulan, $tahun, $jaminan);
+        $model = new KasirSetoranModel();
+        $compact = $model->data($bulan, $tahun, $jaminan);
         // return $compact;
 
         return view('Laporan.Kasir.stsBruto')->with('title', $title)->with($compact);
@@ -343,6 +219,119 @@ class KasirLapController extends Controller
         $compact = $this->data($bulan, $tahun, $jaminan);
 
         return view('Laporan.Kasir.stpbBruto')->with('title', $title)->with($compact);
+    }
+
+    public function setorkan(Request $request)
+    {
+        $tanggal = $request->input['tanggal'];
+        $jumlah = $request->input['jumlah'];
+        $asalPendapatan = $request->input['asal_pendapatan'];
+        $penyetor = $request->input['penyetor'];
+        $bulan = Carbon::parse($tanggal)->month; // Mendapatkan bulan dari tanggal
+        $tahun = Carbon::parse($tanggal)->year; // Mendapatkan tahun dari tanggal
+// 1/KKPM/Nov/2024
+        $jumlahData = KasirSetoranModel::whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
+            ->count();
+        $no = $jumlahData + 1;
+        $nomor = $no . "/KKPM/" . $bulan . "/" . $tahun;
+        return $nomor;
+
+        $pendapatanLain = KasirSetoranModel::create([
+            'nomor' => $nomor,
+            'tanggal' => $tanggal,
+            'jumlah' => $jumlah,
+            'asal_pendapatan' => $asalPendapatan,
+            'penyetor' => $penyetor,
+        ]);
+    }
+
+    public function setoran($tahun)
+    {
+        $currentYear = $tahun ?? \Carbon\Carbon::now()->year;
+
+        // Membuat array tahun untuk 5 tahun terakhir
+        $listYear = [];
+        for ($i = 0; $i < 5; $i++) {
+            $listYear[] = $currentYear - $i;
+        }
+        $data = KasirSetoranModel::where('tanggal', 'like', '%' . $currentYear . '%')->get();
+        return $data;
+    }
+
+    public function setoranSimpan(Request $request)
+    {
+        // Validasi data
+        $validated = $request->validate([
+            'asal_pendapatan' => 'required|string|max:255',
+            'jumlah' => 'required|min:0',
+            'tanggal' => 'required|date',
+            'penyetor' => 'required|string|max:255',
+        ]);
+
+        // Simpan data ke database
+        $pendapatanLain = KasirSetoranModel::create($validated);
+        $data = $this->pendapatanLain(\Carbon\Carbon::now()->year);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data pendapatan lain berhasil disimpan.',
+            'data' => $data,
+        ]);
+    }
+
+    public function setoranUpdate(Request $request, $id)
+    {
+        // Validasi data
+        $validated = $request->validate([
+            'asal_pendapatan' => 'required|string|max:255',
+            'jumlah' => 'required|min:0',
+            'tanggal' => 'required|date',
+            'penyetor' => 'required|string|max:255',
+        ]);
+
+        // Cari data berdasarkan ID
+        $pendapatanLain = KasirSetoranModel::find($id);
+
+        if (!$pendapatanLain) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data pendapatan lain tidak ditemukan.',
+            ], 404);
+        }
+
+        // Update data
+        $pendapatanLain->update($validated);
+
+        $data = $this->pendapatanLain(\Carbon\Carbon::now()->year);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data pendapatan lain berhasil diperbarui.',
+            'data' => $data,
+        ]);
+    }
+
+    public function setoranDelete(Request $request)
+    {
+        $id = $request->input('id');
+        // Cari data berdasarkan ID
+        $pendapatanLain = KasirSetoranModel::find($id);
+
+        if (!$pendapatanLain) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data pendapatan lain tidak ditemukan.',
+            ], 404);
+        }
+
+        // Hapus data
+        $pendapatanLain->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data pendapatan lain berhasil dihapus.',
+        ]);
     }
 
 }
