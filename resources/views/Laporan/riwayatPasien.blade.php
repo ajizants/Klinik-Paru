@@ -41,7 +41,6 @@
                                     style="animation: blink 3s infinite; font-size: 15px">
                                     <= Untuk Mencari data, silahkan ketikan NO RM lalu tekan enter atau klik tombol cari</P>
                             </div>
-
                         </div>
                     </div>
                     <div class="container-fluid">
