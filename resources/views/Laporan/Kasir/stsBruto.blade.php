@@ -45,18 +45,20 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($doc as $item)
+                @foreach ($data as $item)
                     <tr>
                         <td class="px-1 border border-black text-center">{{ $loop->iteration }}</td>
-                        <td class="px-1 border border-black text-center">{{ $item['nomor_sts'] }}</td>
-                        <td class="px-1 border border-black text-center">{{ $item['tgl'] }}</td>
+                        <td class="px-1 border border-black text-center">{{ $item['nomor'] }}</td>
                         <td class="px-1 border border-black text-center">
-                            {{ $item['asal_pendapatan'] === '-' ? $item['kode_rek'] : $item['asal_pendapatan'] }}
+                            {{ \Carbon\Carbon::parse($item['tanggal'])->locale('id')->isoFormat('DD MMMM YYYY') }}</td>
+                        <td class="px-1 border border-black text-center">
+                            {{ $item['asal_pendapatan'] === '3.003.25581.5' ? '3.003.25581.5' : $item['asal_pendapatan'] }}
                         </td>
                         <td class="px-1 border border-black text-center"></td>
-                        <td class="px-1 border border-black text-right">{{ $item['pendapatan'] }}</td>
+                        <td class="px-1 border border-black text-right">
+                            {{ 'Rp ' . number_format($item['setoran'], 0, ',', '.') . ',00' }}</td>
                         <td class="px-1 border border-black text-center">Nasirin</td>
-                        <td class="px-1 border border-black text-center">{{ $item['bank'] }}</td>
+                        <td class="px-1 border border-black text-center">BPD</td>
                     </tr>
                 @endforeach
                 <tr>
@@ -85,6 +87,13 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            alert(
+                "Sebelum mencetak, jangan melakukan koreksi data terlebih dahulu."
+            );
+        })
+    </script>
 </body>
 
 </html>

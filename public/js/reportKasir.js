@@ -241,6 +241,25 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
     // Enrich data for rendering
     data.forEach((item, index) => {
         item.no = index + 1;
+        const today = new Date().toISOString().split("T")[0];
+        const atrb = item.tanggal === today ? "" : "disabled";
+        const blmSetor = ` <button class="btn btn-danger btn-sm mr-2 mb-2"
+            data-tgl="${item.tanggal}"
+            data-jumlah="${item.jumlah}"
+            data-asal_pendapatan="3.003.25581.5"
+            data-noSbs="${item.nomor}"
+            onclick="setorkan(this)"
+            ${atrb}
+            >Setorkan
+            </button>`;
+        const sdhSetor = ` <button class="btn btn-info btn-sm mr-2 mb-2"
+            data-tgl="${item.tanggal}"
+            data-jumlah="${item.jumlah}"
+            data-asal_pendapatan="3.003.25581.5"
+            data-nosbs="${item.nomor}">Sduah Disetorkan
+            </button>`;
+        const btnSetorkan =
+            item.btnColor === "btn btn-danger" ? blmSetor : sdhSetor;
         item.aksi = `
             <a class="btn btn-sm btn-warning mr-2 mb-2"
                 href="/api/cetakBAPH/${item.tanggal}/${tahun}/${selector}"
@@ -252,13 +271,7 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
                 target="_blank">
                 SBS ${selector}
             </a>
-            <a class="btn btn-sm btn-danger mr-2 mb-2"
-            data-tgl="${item.tanggal}"
-            data-jumlah="${item.jumlah}"
-            data-terbilang="${item.terbilang}"
-            data-asal_pendapatan="3.003.25581.5"
-            onclick="setorkan(this)">Setorkan
-            </a>
+           ${btnSetorkan}
         `;
     });
 
@@ -310,27 +323,53 @@ function cetakSBS() {
 function setorkan(button) {
     console.log("🚀 ~ setorkan ~ button:", button);
     const tgl = $(button).data("tgl");
-    const jumlah = $(button).data("terbilang");
+    const pendapatan = $(button).data("jumlah");
     const asalPendapatan = $(button).data("asal_pendapatan");
     const penyetor = "Nasirin";
+    const noSbs = $(button).data("nosbs");
+    console.log("🚀 ~ setorkan ~ noSbs:", noSbs);
+    const rupiah = pendapatan.toLocaleString("id-ID", {
+        style: "currency",
+        currency: "IDR",
+    });
 
     Swal.fire({
         title: "Setorkan Pendapatan",
-        text: `Apakah anda yakin ingin setorkan pendapatan tanggal ${tgl}?`,
+        text: `Jumlah pendapatan tanggal ${tgl}:\n${rupiah}.\nBerapa yang akan di setorkan?`,
         icon: "warning",
+        input: "number", // Input field untuk nilai setoran
+        inputLabel: "Masukkan nilai setoran",
+        inputPlaceholder: "Contoh: 50000",
+        inputValue: pendapatan,
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Ya",
         cancelButtonText: "Tidak",
+        preConfirm: (setoran) => {
+            if (!setoran || setoran <= 0) {
+                Swal.showValidationMessage("Nilai setoran harus lebih dari 0");
+            } else if (setoran > pendapatan) {
+                Swal.showValidationMessage(
+                    "Nilai setoran tidak boleh lebih besar dari pendapatan"
+                );
+            }
+            return setoran;
+        },
     }).then((result) => {
         if (result.isConfirmed) {
+            const setoran = result.value; // Nilai input dari pengguna
+            console.log("🚀 ~ setorkan ~ setoran:", setoran);
+
+            // Kirim data melalui AJAX
             $.ajax({
                 url: "/api/kasir/setorkan",
                 type: "post",
                 data: {
+                    noSbs: noSbs,
                     tgl: tgl,
-                    jumlah: jumlah,
+                    pendapatan: pendapatan,
+                    setoran: setoran,
                     asal_pendapatan: asalPendapatan,
                     penyetor: penyetor,
                 },
@@ -343,6 +382,11 @@ function setorkan(button) {
                             showConfirmButton: false,
                             timer: 1500,
                         });
+                        $(button).removeClass("bg-danger");
+                        $(button).addClass("bg-info");
+                        $(button).text("Sudah Disetorkan");
+                        //remove onclick
+                        $(button).attr("onclick", "");
                     } else {
                         Swal.fire({
                             icon: "error",

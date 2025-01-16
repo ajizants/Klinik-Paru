@@ -11,6 +11,7 @@ use App\Http\Controllers\GudangFarmasiController;
 use App\Http\Controllers\IgdController;
 use App\Http\Controllers\InputController;
 use App\Http\Controllers\KasirController;
+use App\Http\Controllers\KasirPenutupanKasController;
 use App\Http\Controllers\KasirSetoranController;
 use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\NoAntrianController;
@@ -117,6 +118,7 @@ Route::post('kasir/transaksi/delete', [KasirController::class, 'deleteTransaksi'
 
 //Setoran Kasir
 Route::post('kasir/setorkan', [KasirSetoranController::class, 'setorkan']);
+Route::get('kasir/setoran/{thn}', [KasirSetoranController::class, 'setoran']);
 Route::post('pendapatanLain/simpan', [KasirSetoranController::class, 'setoranSimpan']);
 Route::put('pendapatanLain/ubah/{id}', [KasirSetoranController::class, 'setoranUpdate']);
 Route::post('pendapatanLain/delete', [KasirSetoranController::class, 'setoranDelete']);
@@ -133,6 +135,14 @@ Route::get('cetakBAPH/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakB
 Route::get('stsBruto/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'stsBruto']);
 Route::get('stpbBruto/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'stpbBruto']);
 Route::get('rekapBulanan/{tahun}/{jaminan}', [KasirSetoranController::class, 'rekapBulanan']);
+Route::get('bkuBruto/{bln}/{tahun}', [KasirSetoranController::class, 'bkuBruto']);
+Route::get('retriBruto/{bln}/{tahun}', [KasirSetoranController::class, 'retriBruto']);
+
+//kasir penutupan kasir
+Route::post('/kasir/penutupanKas', [KasirPenutupanKasController::class, 'data']);
+Route::post('/kasir/penutupanKas/simpan', [KasirPenutupanKasController::class, 'store']);
+Route::post('/kasir/penutupanKas/ubah', [KasirPenutupanKasController::class, 'update']);
+Route::delete('/kasir/penutupanKas/delete', [KasirPenutupanKasController::class, 'destroy']);
 
 //laboratorium
 Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);

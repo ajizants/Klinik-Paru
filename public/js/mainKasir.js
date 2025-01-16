@@ -472,39 +472,48 @@ function formatNumber(value) {
     //     .replace(/\D/g, "") // Hapus karakter non-angka
     //     .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Tambahkan titik setiap 3 digit
 }
+// Fungsi untuk memformat angka dengan titik setiap 3 digit
 function formatNumber2(value) {
     return value
         .replace(/\D/g, "") // Hapus karakter non-angka
         .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Tambahkan titik setiap 3 digit
 }
 
-// Fungsi untuk menghapus format dan mendapatkan nilai asli
+// Fungsi untuk menghapus format dan mendapatkan nilai asli (numerik)
 function parseNumber(value) {
     return parseFloat(value.replace(/[^\d]/g, "")) || 0;
 }
 
 // Fungsi untuk menambahkan format Rupiah
 function formatRupiah(value) {
-    console.log("🚀 ~ formatRupiah ~ value:", value);
-    return `Rp ${formatNumber(value)}`;
+    const formattedNumber = formatNumber2(value.replace(/\D/g, "")); // Format angka dengan titik
+    return `Rp ${formattedNumber}`; // Tambahkan "Rp " di depan angka
+}
+
+// Fungsi untuk menjaga posisi kursor setelah memformat angka
+function setCursorPosition(input, oldValue, cursorPosition) {
+    const diff = input.value.length - oldValue.length;
+    input.setSelectionRange(cursorPosition + diff, cursorPosition + diff);
 }
 
 // Event untuk memformat input saat mengetik
 [tagihan, bayar].forEach((input) => {
     input.addEventListener("input", function () {
+        const oldValue = input.value; // Simpan nilai lama
         const cursorPosition = input.selectionStart; // Simpan posisi kursor
+
         input.value = formatNumber2(input.value); // Format angka dengan titik
-        input.setSelectionRange(cursorPosition, cursorPosition); // Kembalikan posisi kursor
+        setCursorPosition(input, oldValue, cursorPosition); // Kembalikan posisi kursor
     });
 
     input.addEventListener("blur", function () {
         // Tambahkan format Rupiah saat blur
-        input.value = formatRupiah(input.value.replace(/\D/g, ""));
+        input.value = formatRupiah(input.value); // Format ke Rupiah
     });
 
     input.addEventListener("focus", function () {
         // Hapus format Rupiah saat fokus untuk mempermudah pengeditan
-        input.value = input.value.replace(/[^\d]/g, "");
+        input.value = input.value.replace(/[^\d]/g, ""); // Hanya angka
     });
 });
 

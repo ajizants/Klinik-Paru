@@ -126,8 +126,8 @@
                 </div>
             </section>
         </div>
-        <div class="fixed-bottom left-0 m-3">
-            <div class="d-flex justify-content-end mb-5">
+        <div class="fixed-bottom left-0 m-3" style="pointer-events: none;">
+            <div class="input-group col d-flex justify-content-end">
                 <button class="btn btn-dark opacity-50" onclick="scrollToTop()" type="button" data-toggle="tooltip"
                     data-placement="left" title="Kembali Ke Atas">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"

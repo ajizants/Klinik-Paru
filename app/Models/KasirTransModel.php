@@ -86,6 +86,8 @@ class KasirTransModel extends Model
             // Format nomor
             $nomor = $tanggal->format('d') . '/SBS/01/' . $tanggal->format('Y');
             $nomor_sts = $tanggal->format('d') . '/KKPM/' . $tanggal->locale('id')->isoFormat('MMM') . '/' . $tanggal->format('Y');
+            $dataSetoran = KasirSetoranModel::where('noSbs', $nomor)->first();
+            $btnColor = $dataSetoran !== null ? 'btn btn-info' : 'btn btn-danger';
 
             // Tambahkan ke array hasil
             $result[] = [
@@ -108,6 +110,7 @@ class KasirTransModel extends Model
                 'asal_pendapatan' => "-",
                 'bank' => "BPD",
                 'uraian' => 'Pendapatan Jasa Pelayanan Rawat Jalan 1',
+                'btnColor' => $btnColor,
             ];
 
         }

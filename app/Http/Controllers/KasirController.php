@@ -827,7 +827,6 @@ class KasirController extends Controller
     {
         $model = new KasirTransModel();
         $res = $model->pendapatan($tahun);
-        // dd($res);
         return response()->json($res, 200, [], JSON_PRETTY_PRINT);
     }
 

@@ -45,14 +45,30 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($doc as $item)
+                @foreach ($data as $item)
+                    @if (
+                        $item['asal_pendapatan'] == 'Klaim BPJS' ||
+                            $item['asal_pendapatan'] == 'SALDO' ||
+                            $item['asal_pendapatan'] == 'Bunga' ||
+                            $item['asal_pendapatan'] == 'Bunga Bank' ||
+                            $item['asal_pendapatan'] == 'TCM')
+                        @php
+                            $pengepul = $item['asal_pendapatan'];
+                        @endphp
+                    @else
+                        @php
+                            $pengepul = '-';
+                        @endphp
+                    @endif
                     <tr>
                         <td class="px-1 border border-black text-center">{{ $loop->iteration }}</td>
-                        <td class="px-1 border border-black text-center">{{ $item['nomor_sts'] }}</td>
-                        <td class="px-1 border border-black text-center">{{ $item['tgl'] }}</td>
-                        <td class="px-1 border border-black text-center">{{ $item['kode_rek'] }}</td>
-                        <td class="px-1 border border-black text-right">{{ $item['pendapatan'] }}</td>
-                        <td class="px-1 border border-black text-center">{{ $item['asal_pendapatan'] }}</td>
+                        <td class="px-1 border border-black text-center">{{ $item['nomor'] }}</td>
+                        <td class="px-1 border border-black text-center">
+                            {{ \Carbon\Carbon::parse($item['tanggal'])->locale('id')->isoFormat('DD MMMM YYYY') }}</td>
+                        <td class="px-1 border border-black text-center">3.003.25581.5</td>
+                        <td class="px-1 border border-black text-right">
+                            {{ 'Rp ' . number_format($item['pendapatan'], 0, ',', '.') . ',00' }}</td>
+                        <td class="px-1 border border-black text-center">{{ $pengepul }}</td>
                     </tr>
                 @endforeach
                 <tr>
@@ -81,6 +97,13 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            alert(
+                "Sebelum mencetak, jangan melakukan koreksi data terlebih dahulu."
+            );
+        })
+    </script>
 </body>
 
 </html>

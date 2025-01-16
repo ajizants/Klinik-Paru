@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
-    @vite('resources/css/app.css')
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    {{-- @vite('resources/css/app.css') --}}
 </head>
 
 <body class="text-black">
@@ -14,8 +16,28 @@
         <h1 class="text-center font-bold text-sm">BLUD PELAYANAN KESEHATAN</h1>
         <h1 class="text-center font-bold text-sm">TAHUN {{ $tahun }}</h1>
         <h2 class="text-center font-bold text-xs my-6">Klinik Utama Kesehatan Paru Masyarakat Kelas A</h2>
-        <h3 class="my-4 ml-10 font-bold text-sm">Usulan target tahun {{ $tahun }}:
-            {{ 'Rp. ' . number_format($target, 0, ',', '.') . ',00' }}</h3>
+        <div class="my-4 ml-10">
+            <label for="target" class="font-bold text-sm">Usulan target tahun {{ $tahun }}:</label>
+            <input type="text" id="target" name="target" value="{{ $target }}" class="font-bold text-sm"
+                oninput="formatCurrency(this)" />
+            <script type="text/javascript">
+                function formatCurrency(input) {
+                    // Ambil nilai tanpa format
+                    let value = input.value.replace(/[^\d]/g, "");
+
+                    // Ubah ke format ribuan
+                    value = new Intl.NumberFormat("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                        minimumFractionDigits: 2
+                    }).format(value / 100);
+
+                    // Tampilkan kembali
+                    input.value = value.replace("Rp", "").trim(); // Hilangkan label "Rp"
+                }
+            </script>
+        </div>
+
         <table class="w-full text-xs table-auto border border-black mb-8">
             <thead>
                 <tr class="bg-gray-100">
@@ -40,21 +62,27 @@
                     <tr>
                         <td class="px-1 border border-black text-center">{{ $loop->iteration }}</td>
                         <td class="px-1 border border-black text-center">{{ $item['bulan'] }}</td>
-                        <td class="px-1 border border-black text-right">{{ $item['penerimaan'] }}</td>
-                        <td class="px-1 border border-black text-right">{{ $item['setoran'] }}</td>
-                        <td class="px-1 border border-black text-right">{{ $item['saldo'] }}</td>
+                        <td class="px-1 border border-black text-right">{{ $item['penerimaanRp'] }}</td>
+                        <td class="px-1 border border-black text-right">{{ $item['setoranRp'] }}</td>
+                        <td class="px-1 border border-black text-right">
+                            @if ($item['sisa'] < 0)
+                                {{ 'Rp 0,00' }}
+                            @else
+                                {{ $item['sisaRp'] }}
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
                 <tr>
                     <td class="px-1 border border-black text-center font-bold" colspan="2">Jumlah</td>
                     <td class="px-1 border border-black text-right font-bold">
-                        {{ $totalPendapatanFormatted }}
+                        {{ $totalPendapatanRp }}
                     </td>
                     <td class="px-1 border border-black text-right font-bold">
-                        {{ $totalSetoranFormatted }}
+                        {{ $totalSetoranRp }}
                     </td>
                     <td class="px-1 border border-black text-right font-bold">
-                        {{ $totalSaldoFormatted }}
+                        {{ $totalSaldoRp }}
                     </td>
                 </tr>
             </tbody>

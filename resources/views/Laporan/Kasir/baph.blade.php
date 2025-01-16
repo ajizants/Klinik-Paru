@@ -137,6 +137,14 @@
             </tbody>
         </table>
     </div>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            alert(
+                "Sebelum mencetak, jangan melakukan koreksi data terlebih dahulu."
+            );
+        })
+    </script>
 </body>
 
 </html>

@@ -129,6 +129,17 @@
                         onclick="cetakBruto('rekapBulanan');">
                         Cetak Rekap Bulanan
                     </button>
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-success" onclick="cetakBruto('bku');">
+                        Cetak BKU Bruto
+                    </button>
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-secondary"
+                        onclick="cetakBruto('retri');">
+                        Cetak Lap. Retribusi Bruto
+                    </button>
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-secondary"
+                        onclick="cetakBruto('tutupKas');">
+                        Register Penutupan Kas
+                    </button>
                 </div>
                 <h4>Menu Menampilkan Data:</h4>
                 <div class="row">
@@ -182,6 +193,8 @@
                         }
                         if (tipe == 'rekapBulanan') {
                             var url = `/api/rekapBulanan/${tahun}/umum`;
+                        } else if (tipe == 'bku' || tipe == 'retri') {
+                            var url = `/api/${tipe}Bruto/${bulan}/${tahun}`;
                         } else {
                             var url = `/api/${tipe}Bruto/${bulan}/${tahun}/umum`;
                         }

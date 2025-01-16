@@ -320,6 +320,37 @@ socketIO.on("connectParu", () => {
     console.log("Socket ID : " + sessionID);
 });
 
+function tampilkanLoading() {
+    Swal.fire({
+        icon: "info",
+        title: "Sedang memproses data...!!!",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+}
+
+function tampilkanEror(msg = "") {
+    Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: msg,
+        showConfirmButton: true,
+        allowOutsideClick: false,
+    });
+}
+
+function tampilkanSuccess(msg = "") {
+    Swal.fire({
+        icon: "success",
+        title: msg,
+        showConfirmButton: true,
+        allowOutsideClick: false,
+    });
+}
+
 function generateAsktindString(data, addNewLine = false, isLab = false) {
     if (!Array.isArray(data)) return "";
     return data

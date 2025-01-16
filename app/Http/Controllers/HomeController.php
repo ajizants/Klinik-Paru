@@ -12,7 +12,7 @@ use App\Models\GiziDxDomainModel;
 use App\Models\GiziDxKelasModel;
 use App\Models\GiziDxSubKelasModel;
 use App\Models\KasirAddModel;
-use App\Models\KasirPendLainModel;
+use App\Models\KasirSetoranModel;
 use App\Models\KasirTransModel;
 use App\Models\LaboratoriumHasilModel;
 use App\Models\LayananKelasModel;
@@ -325,7 +325,7 @@ class HomeController extends Controller
         for ($i = 0; $i < 5; $i++) {
             $listYear[] = $currentYear - $i;
         }
-        $data = KasirPendLainModel::where('tanggal', 'like', '%' . $currentYear . '%')->get();
+        $data = KasirSetoranModel::where('tanggal', 'like', '%' . $currentYear . '%')->get();
 
         return view('Kasir.PendapatanLain.main', compact('data', 'listYear'))->with('title', $title);
     }
