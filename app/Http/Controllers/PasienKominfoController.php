@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\DiagnosaMapModel;
@@ -22,7 +21,7 @@ class PasienKominfoController extends Controller
     public function ambilAntrean(Request $request)
     {
         $penjamin_id = $request->input('penjamin_id');
-        $koneksi = new KominfoModel();
+        $koneksi     = new KominfoModel();
 
         $noAtian = $koneksi->ambilNoRequest($penjamin_id);
         // dd($noAtian);
@@ -32,7 +31,7 @@ class PasienKominfoController extends Controller
     {
         if ($request->has('no_rm')) {
             $uname = $request->input('username', '3301010509940003');
-            $pass = $request->input('password', 'banyumas');
+            $pass  = $request->input('password', 'banyumas');
             // $uname = $request->input('username');
             // $pass = $request->input('password');
             $no_rm = $request->input('no_rm');
@@ -43,7 +42,7 @@ class PasienKominfoController extends Controller
                 [
                     'username' => $uname,
                     'password' => $pass,
-                    'no_rm' => $no_rm,
+                    'no_rm'    => $no_rm,
                 ]
             );
 
@@ -68,41 +67,41 @@ class PasienKominfoController extends Controller
             foreach ($dataPendaftaranResponse['response']['response']['data'] as $data) {
                 if ($data['pasien_no_rm'] == $no_rm) {
                     $pendaftaranData[] = [
-                        'id' => $data['id'],
-                        'no_reg' => $data['no_reg'],
-                        'no_trans' => $data['no_trans'],
-                        'antrean_nomor' => $data['antrean_nomor'],
-                        'tanggal' => $data['tanggal'],
-                        'penjamin_nama' => $data['penjamin_nama'],
-                        'jenis_kunjungan_nama' => $data['jenis_kunjungan_nama'],
-                        'pasien_no_rm' => $data['pasien_no_rm'],
-                        'pasien_lama_baru' => $data['pasien_lama_baru'],
+                        'id'                       => $data['id'],
+                        'no_reg'                   => $data['no_reg'],
+                        'no_trans'                 => $data['no_trans'],
+                        'antrean_nomor'            => $data['antrean_nomor'],
+                        'tanggal'                  => $data['tanggal'],
+                        'penjamin_nama'            => $data['penjamin_nama'],
+                        'jenis_kunjungan_nama'     => $data['jenis_kunjungan_nama'],
+                        'pasien_no_rm'             => $data['pasien_no_rm'],
+                        'pasien_lama_baru'         => $data['pasien_lama_baru'],
                         'rs_paru_pasien_lama_baru' => $data['rs_paru_pasien_lama_baru'],
-                        'poli_nama' => $data['poli_nama'],
-                        'poli_sub_nama' => $data['poli_sub_nama'],
-                        'dokter_nama' => $data['dokter_nama'],
-                        'waktu_daftar' => $data['waktu_daftar'],
-                        'waktu_verifikasi' => $data['waktu_verifikasi'],
-                        'admin_pendaftaran' => $data['admin_pendaftaran'],
-                        'log_id' => $data['log_id'],
-                        'keterangan_urutan' => $data['keterangan_urutan'],
-                        'pasien_umur' => $data['pasien_umur_tahun'] . ' Tahun ' . $data['pasien_umur_bulan'] . ' Bulan ' . $data['pasien_umur_hari'] . ' Hari',
+                        'poli_nama'                => $data['poli_nama'],
+                        'poli_sub_nama'            => $data['poli_sub_nama'],
+                        'dokter_nama'              => $data['dokter_nama'],
+                        'waktu_daftar'             => $data['waktu_daftar'],
+                        'waktu_verifikasi'         => $data['waktu_verifikasi'],
+                        'admin_pendaftaran'        => $data['admin_pendaftaran'],
+                        'log_id'                   => $data['log_id'],
+                        'keterangan_urutan'        => $data['keterangan_urutan'],
+                        'pasien_umur'              => $data['pasien_umur_tahun'] . ' Tahun ' . $data['pasien_umur_bulan'] . ' Bulan ' . $data['pasien_umur_hari'] . ' Hari',
 
-                        'pasien_nik' => $dataPasienResponse['response']['response']['data']['pasien_nik'],
-                        'pasien_nama' => $dataPasienResponse['response']['response']['data']['pasien_nama'],
-                        'pasien_no_rm' => $dataPasienResponse['response']['response']['data']['pasien_no_rm'],
-                        'jenis_kelamin_nama' => $dataPasienResponse['response']['response']['data']['jenis_kelamin_nama'],
-                        'pasien_tempat_lahir' => $dataPasienResponse['response']['response']['data']['pasien_tempat_lahir'],
-                        'pasien_tgl_lahir' => $dataPasienResponse['response']['response']['data']['pasien_tgl_lahir'],
-                        'pasien_no_hp' => $dataPasienResponse['response']['response']['data']['pasien_no_hp'],
-                        'pasien_domisili' => $dataPasienResponse['response']['response']['data']['pasien_alamat'],
-                        'pasien_alamat' => 'DS. ' . $dataPasienResponse['response']['response']['data']['kelurahan_nama'] . ', ' . $dataPasienResponse['response']['response']['data']['pasien_rt'] . '/' . $dataPasienResponse['response']['response']['data']['pasien_rw'] . ', KEC.' . $dataPasienResponse['response']['response']['data']['kecamatan_nama'] . ', KAB.' . $dataPasienResponse['response']['response']['data']['kabupaten_nama'],
-                        'provinsi_id' => $dataPasienResponse['response']['response']['data']['provinsi_id'],
-                        'kabupaten_id' => $dataPasienResponse['response']['response']['data']['kabupaten_id'],
-                        'kecamatan_id' => $dataPasienResponse['response']['response']['data']['kecamatan_id'],
-                        'kelurahan_id' => $dataPasienResponse['response']['response']['data']['kelurahan_id'],
-                        'pasien_rt' => $dataPasienResponse['response']['response']['data']['pasien_rt'],
-                        'pasien_rw' => $dataPasienResponse['response']['response']['data']['pasien_rw'],
+                        'pasien_nik'               => $dataPasienResponse['response']['response']['data']['pasien_nik'],
+                        'pasien_nama'              => $dataPasienResponse['response']['response']['data']['pasien_nama'],
+                        'pasien_no_rm'             => $dataPasienResponse['response']['response']['data']['pasien_no_rm'],
+                        'jenis_kelamin_nama'       => $dataPasienResponse['response']['response']['data']['jenis_kelamin_nama'],
+                        'pasien_tempat_lahir'      => $dataPasienResponse['response']['response']['data']['pasien_tempat_lahir'],
+                        'pasien_tgl_lahir'         => $dataPasienResponse['response']['response']['data']['pasien_tgl_lahir'],
+                        'pasien_no_hp'             => $dataPasienResponse['response']['response']['data']['pasien_no_hp'],
+                        'pasien_domisili'          => $dataPasienResponse['response']['response']['data']['pasien_alamat'],
+                        'pasien_alamat'            => 'DS. ' . $dataPasienResponse['response']['response']['data']['kelurahan_nama'] . ', ' . $dataPasienResponse['response']['response']['data']['pasien_rt'] . '/' . $dataPasienResponse['response']['response']['data']['pasien_rw'] . ', KEC.' . $dataPasienResponse['response']['response']['data']['kecamatan_nama'] . ', KAB.' . $dataPasienResponse['response']['response']['data']['kabupaten_nama'],
+                        'provinsi_id'              => $dataPasienResponse['response']['response']['data']['provinsi_id'],
+                        'kabupaten_id'             => $dataPasienResponse['response']['response']['data']['kabupaten_id'],
+                        'kecamatan_id'             => $dataPasienResponse['response']['response']['data']['kecamatan_id'],
+                        'kelurahan_id'             => $dataPasienResponse['response']['response']['data']['kelurahan_id'],
+                        'pasien_rt'                => $dataPasienResponse['response']['response']['data']['pasien_rt'],
+                        'pasien_rw'                => $dataPasienResponse['response']['response']['data']['pasien_rw'],
                     ];
                 }
             }
@@ -111,7 +110,7 @@ class PasienKominfoController extends Controller
                 return response()->json([
                     'metadata' => [
                         'message' => 'Data Pasien Tidak Ditemukan Pada Kunjungan Hari Ini',
-                        'code' => 404, // Not Found
+                        'code'    => 404, // Not Found
                     ],
                     'response' => null,
                 ]);
@@ -121,7 +120,7 @@ class PasienKominfoController extends Controller
             $response = [
                 'metadata' => [
                     'message' => 'Data Pasien Ditemukan',
-                    'code' => 200,
+                    'code'    => 200,
                 ],
                 'response' => [
                     'data' => $pendaftaranData,
@@ -138,48 +137,48 @@ class PasienKominfoController extends Controller
     public function reportPendaftaran1(Request $request)
     {
         // $limit = 10; // Set the limit to 5
-        $params = $request->all();
-        $tglAwal = $request->input('tanggal_awal');
+        $params   = $request->all();
+        $tglAwal  = $request->input('tanggal_awal');
         $tglAkhir = $request->input('tanggal_akhir');
 
-        $kominfo = new KominfoModel();
+        $kominfo                 = new KominfoModel();
         $dataPendaftaranResponse = $kominfo->pendaftaranRequest($params);
 
         // Build response
         $res = $dataPendaftaranResponse;
 
         $res = [
-            "status_pulang" => "Belum Pulang",
-            "no_reg" => "2024072000001",
-            "id" => "105052",
-            "no_trans" => 0,
-            "antrean_nomor" => "001",
-            "tanggal" => "2024-07-20",
-            "penjamin_nama" => "BPJS",
-            "penjamin_nomor" => "0002056884254",
-            "jenis_kunjungan_nama" => "Kontrol",
-            "nomor_referensi" => "1111R0020624K000343",
-            "pasien_nik" => "3302155506160001",
-            "pasien_nama" => "ALMIRA KHALIQA RAMADHANI",
-            "pasien_no_rm" => "024797",
-            "pasien_tgl_lahir" => "2016-06-15",
-            "jenis_kelamin_nama" => "P",
-            "pasien_lama_baru" => "LAMA",
+            "status_pulang"            => "Belum Pulang",
+            "no_reg"                   => "2024072000001",
+            "id"                       => "105052",
+            "no_trans"                 => 0,
+            "antrean_nomor"            => "001",
+            "tanggal"                  => "2024-07-20",
+            "penjamin_nama"            => "BPJS",
+            "penjamin_nomor"           => "0002056884254",
+            "jenis_kunjungan_nama"     => "Kontrol",
+            "nomor_referensi"          => "1111R0020624K000343",
+            "pasien_nik"               => "3302155506160001",
+            "pasien_nama"              => "ALMIRA KHALIQA RAMADHANI",
+            "pasien_no_rm"             => "024797",
+            "pasien_tgl_lahir"         => "2016-06-15",
+            "jenis_kelamin_nama"       => "P",
+            "pasien_lama_baru"         => "LAMA",
             "rs_paru_pasien_lama_baru" => "L",
-            "poli_nama" => "PARU",
-            "poli_sub_nama" => "PARU",
-            "dokter_nama" => "dr. AGIL DANANJAYA, Sp.P",
-            "daftar_by" => "JKN",
-            "waktu_daftar" => "2024-06-23 14=>12=>23",
-            "waktu_verifikasi" => "2024-07-20 07=>44=>24",
-            "admin_pendaftaran" => "MUTMAINAH,A.Md.Kes",
-            "log_id" => "204706",
-            "keterangan" => "SKIP LOKET PENDAFTARAN",
-            "keterangan_urutan" => "3",
-            "pasien_umur" => "8 Tahun 1 Bulan ",
-            "pasien_umur_tahun" => "8",
-            "pasien_umur_bulan" => "1",
-            "pasien_umur_hari" => "5",
+            "poli_nama"                => "PARU",
+            "poli_sub_nama"            => "PARU",
+            "dokter_nama"              => "dr. AGIL DANANJAYA, Sp.P",
+            "daftar_by"                => "JKN",
+            "waktu_daftar"             => "2024-06-23 14=>12=>23",
+            "waktu_verifikasi"         => "2024-07-20 07=>44=>24",
+            "admin_pendaftaran"        => "MUTMAINAH,A.Md.Kes",
+            "log_id"                   => "204706",
+            "keterangan"               => "SKIP LOKET PENDAFTARAN",
+            "keterangan_urutan"        => "3",
+            "pasien_umur"              => "8 Tahun 1 Bulan ",
+            "pasien_umur_tahun"        => "8",
+            "pasien_umur_bulan"        => "1",
+            "pasien_umur_hari"         => "5",
         ];
         return response()->json($res);
 
@@ -190,10 +189,10 @@ class PasienKominfoController extends Controller
         // ini_set('memory_limit', '512M');
         $params = $request->all();
         // dd($params);
-        $tglAwal = $request->input('tanggal_awal');
+        $tglAwal  = $request->input('tanggal_awal');
         $tglAkhir = $request->input('tanggal_akhir');
 
-        $kominfo = new KominfoModel();
+        $kominfo                 = new KominfoModel();
         $dataPendaftaranResponse = $kominfo->pendaftaranRequest($params);
 
         // Debugging: print the data received
@@ -246,25 +245,25 @@ class PasienKominfoController extends Controller
 
         // Build response
         $jumlah = [
-            'jumlah_no_antrian' => (int) count($dataPendaftaranResponse),
-            'jumlah_no_menunggu' => (int) $jumlahTunggu,
-            'jumlah_pasien' => (int) count($filteredData),
+            'jumlah_no_antrian'   => (int) count($dataPendaftaranResponse),
+            'jumlah_no_menunggu'  => (int) $jumlahTunggu,
+            'jumlah_pasien'       => (int) count($filteredData),
             'jumlah_pasien_batal' => (int) $jumlahBatal,
-            'jumlah_nomor_skip' => (int) $jumlahSkip,
-            'jumlah_BPJS' => (int) $jumlahBPJS,
-            'jumlah_BPJS_2' => (int) $jumlahBPJS2,
-            'jumlah_UMUM' => (int) $jumlahUMUM,
-            'jumlah_pasien_LAMA' => (int) $jumlahLama,
-            'jumlah_pasien_BARU' => (int) $jumlahBaru,
-            'jumlah_daftar_OTS' => (int) $jumlahOTS,
-            'jumlah_daftar_JKN' => (int) $jumlahJKN,
+            'jumlah_nomor_skip'   => (int) $jumlahSkip,
+            'jumlah_BPJS'         => (int) $jumlahBPJS,
+            'jumlah_BPJS_2'       => (int) $jumlahBPJS2,
+            'jumlah_UMUM'         => (int) $jumlahUMUM,
+            'jumlah_pasien_LAMA'  => (int) $jumlahLama,
+            'jumlah_pasien_BARU'  => (int) $jumlahBaru,
+            'jumlah_daftar_OTS'   => (int) $jumlahOTS,
+            'jumlah_daftar_JKN'   => (int) $jumlahJKN,
         ];
 
         $data = array_values($filteredData);
 
         $res = [
             "total" => $jumlah,
-            "data" => $data,
+            "data"  => $data,
         ];
 
         return response()->json($res);
@@ -292,14 +291,15 @@ class PasienKominfoController extends Controller
         // return view('Template.newPage')->with('title', $title);
         // $params = $request->all();
         $params = [
-            'no_rm' => $no_rm,
-            'tanggal_awal' => $tgl,
+            'no_rm'         => $no_rm,
+            'tanggal_awal'  => $tgl,
             'tanggal_akhir' => $tgl,
         ];
         $client = new KominfoModel();
         try {
-            $data = $client->cpptRequest($params);
+            $data              = $client->cpptRequest($params);
             $resumePasienArray = $data['response']['data'];
+            // return ($resumePasienArray);
             // Cek jika $resumePasienArray adalah array
             if (is_array($resumePasienArray) && count($resumePasienArray) > 0 && $resumePasienArray[0]['id_cppt'] == null) {
                 // Ambil objek pertama dari array
@@ -313,31 +313,31 @@ class PasienKominfoController extends Controller
 
             // return $resumePasien; // Mengembalikan objek $resumePasien
             $dataObats = $resumePasien->resep_obat;
-            $obats = [];
+            $obats     = [];
             // return $dataObats;
 
             foreach ($dataObats as $obat) {
 
                 $obats[] = [
                     'no_resep' => $obat['no_resep'],
-                    'aturan' => $obat['signa_1'] . ' X ' . $obat['signa_2'] . ' ' . $obat['aturan_pakai'],
-                    'nm_obat' => $obat['resep_obat_detail'],
+                    'aturan'   => $obat['signa_1'] . ' X ' . $obat['signa_2'] . ' ' . $obat['aturan_pakai'],
+                    'nm_obat'  => $obat['resep_obat_detail'],
                 ];
             }
 
             // return $obats;
             $dataDx = $resumePasien->diagnosa;
-            $dxs = [];
+            $dxs    = [];
             // return $dataDx;
 
             foreach ($dataDx as $dx) {
-                $kdDx = $dx['kode_diagnosa'];
+                $kdDx  = $dx['kode_diagnosa'];
                 $dxMap = DiagnosaMapModel::where('kdDx', $kdDx)->first();
-                $nmDX = $dxMap->mapping;
+                $nmDX  = $dxMap != null ? $dxMap->mapping : $dx['nama_diagnosa'];
                 $dxs[] = [
                     'kode_diagnosa' => $dx['kode_diagnosa'],
                     'nama_diagnosa' => $dx['nama_diagnosa'],
-                    'nmDx' => $nmDX,
+                    'nmDx'          => $nmDX,
                 ];
             }
 
@@ -348,7 +348,7 @@ class PasienKominfoController extends Controller
             ucwords(strtolower($resumePasien->kecamatan_nama)) . ', ' .
             ucwords(strtolower($resumePasien->kabupaten_nama)) . ', ' .
             ucwords(strtolower($resumePasien->provinsi_nama));
-            $norm = $no_rm;
+            $norm    = $no_rm;
             $tanggal = $tgl;
             // $norm = '027820';
             // $tanggal = '2024-10-05';
@@ -359,14 +359,14 @@ class PasienKominfoController extends Controller
                 ->where('tgltrans', $tanggal)
                 ->first();
             // dd($dataRo);
-            if (!$dataRo) {
+            if (! $dataRo) {
                 $ro = [];
             } else {
                 $ro = [
-                    'noReg' => $dataRo->noreg,
-                    'tglRo' => Carbon::parse($dataRo->tgltrans)->format('d-m-Y'),
+                    'noReg'     => $dataRo->noreg,
+                    'tglRo'     => Carbon::parse($dataRo->tgltrans)->format('d-m-Y'),
                     'jenisFoto' => $dataRo->foto->nmFoto,
-                    'proyeksi' => $dataRo->proyeksi->proyeksi,
+                    'proyeksi'  => $dataRo->proyeksi->proyeksi,
                 ];
             }
             // return $ro;
@@ -376,21 +376,21 @@ class PasienKominfoController extends Controller
                 ->where('norm', $norm)
                 ->where('created_at', 'like', '%' . Carbon::parse($tanggal)->format('Y-m-d') . '%')->get();
             // return $dataLab;
-            if (!$dataLab) {
+            if (! $dataLab) {
                 $lab = [];
             } else {
                 $lab = [];
                 foreach ($dataLab as $item) {
                     $lab[] = [
-                        'idLab' => $item->idLab,
-                        'idLayanan' => $item->idLayanan,
-                        'tanggal' => Carbon::parse($item->created_at)->format('d-m-Y'),
-                        'hasil' => $item->hasil,
+                        'idLab'       => $item->idLab,
+                        'idLayanan'   => $item->idLayanan,
+                        'tanggal'     => Carbon::parse($item->created_at)->format('d-m-Y'),
+                        'hasil'       => $item->hasil,
                         // Menghapus (stik) dari nama pemeriksaan
                         'pemeriksaan' => str_replace(' (Stik)', '', $item->pemeriksaan->nmLayanan),
-                        'satuan' => $item->pemeriksaan->satuan,
-                        'normal' => $item->pemeriksaan->normal,
-                        'totalItem' => count($dataLab),
+                        'satuan'      => $item->pemeriksaan->satuan,
+                        'normal'      => $item->pemeriksaan->normal,
+                        'totalItem'   => count($dataLab),
                     ];
                 }
             }
@@ -407,18 +407,18 @@ class PasienKominfoController extends Controller
                 $bmhp = [];
                 foreach ($item->transbmhp as $key) {
                     $bmhp[] = [
-                        'jumlah' => $key->jml,
-                        'nmBmhp' => $key->bmhp->nmObat,
+                        'jumlah'  => $key->jml,
+                        'nmBmhp'  => $key->bmhp->nmObat,
                         'sediaan' => $key->sediaan,
                     ];
                 }
                 $tindakan[] = [
-                    'id' => $item->id,
-                    'kdTind' => $item->kdTind,
-                    'tanggal' => Carbon::parse($item->created_at)->format('d-m-Y'),
+                    'id'        => $item->id,
+                    'kdTind'    => $item->kdTind,
+                    'tanggal'   => Carbon::parse($item->created_at)->format('d-m-Y'),
                     // 'tindakan' => $item->tindakan->nmTindakan,
-                    'tindakan' => preg_replace('/\s?\(.*?\)/', '', $item->tindakan->nmTindakan),
-                    'bmhp' => $bmhp,
+                    'tindakan'  => preg_replace('/\s?\(.*?\)/', '', $item->tindakan->nmTindakan),
+                    'bmhp'      => $bmhp,
                     'totalItem' => count($dataTindakan),
                 ];
             }
@@ -438,10 +438,10 @@ class PasienKominfoController extends Controller
 
     public function pendaftaran2(Request $request)
     {
-        $limit = 10; // Set the limit to 5
+        $limit  = 10; // Set the limit to 5
         $params = $request->all();
 
-        $kominfo = new KominfoModel();
+        $kominfo                 = new KominfoModel();
         $dataPendaftaranResponse = $kominfo->pendaftaranRequest($params);
 
         // Process data pendaftaran
@@ -465,43 +465,43 @@ class PasienKominfoController extends Controller
 
             // Combine pendaftaran data and pasien data
             $antrian[] = [
-                'id' => $data['id'],
-                'no_reg' => $data['no_reg'],
-                'no_trans' => $data['no_trans'],
-                'antrean_nomor' => $data['antrean_nomor'],
-                'tanggal' => $data['tanggal'],
-                'penjamin_nama' => $data['penjamin_nama'],
-                'jenis_kunjungan_nama' => $data['jenis_kunjungan_nama'],
-                "penjamin_nomor" => $data['penjamin_nomor'],
-                "jenis_kunjungan_nama" => $data['jenis_kunjungan_nama'],
-                "nomor_referensi" => $data['nomor_referensi'],
-                'pasien_no_rm' => $data['pasien_no_rm'],
-                'pasien_lama_baru' => $data['pasien_lama_baru'],
+                'id'                       => $data['id'],
+                'no_reg'                   => $data['no_reg'],
+                'no_trans'                 => $data['no_trans'],
+                'antrean_nomor'            => $data['antrean_nomor'],
+                'tanggal'                  => $data['tanggal'],
+                'penjamin_nama'            => $data['penjamin_nama'],
+                'jenis_kunjungan_nama'     => $data['jenis_kunjungan_nama'],
+                "penjamin_nomor"           => $data['penjamin_nomor'],
+                "jenis_kunjungan_nama"     => $data['jenis_kunjungan_nama'],
+                "nomor_referensi"          => $data['nomor_referensi'],
+                'pasien_no_rm'             => $data['pasien_no_rm'],
+                'pasien_lama_baru'         => $data['pasien_lama_baru'],
                 'rs_paru_pasien_lama_baru' => $data['rs_paru_pasien_lama_baru'],
-                'poli_nama' => $data['poli_nama'],
-                'poli_sub_nama' => $data['poli_sub_nama'],
-                'dokter_nama' => $data['dokter_nama'],
-                'waktu_daftar' => $data['waktu_daftar'],
-                'waktu_verifikasi' => $data['waktu_verifikasi'],
-                'admin_pendaftaran' => $data['admin_pendaftaran'],
-                'log_id' => $data['log_id'],
-                'keterangan_urutan' => $data['keterangan_urutan'],
-                'pasien_umur' => $data['pasien_umur_tahun'] . ' Thn ' . $data['pasien_umur_bulan'] . ' Bln ',
+                'poli_nama'                => $data['poli_nama'],
+                'poli_sub_nama'            => $data['poli_sub_nama'],
+                'dokter_nama'              => $data['dokter_nama'],
+                'waktu_daftar'             => $data['waktu_daftar'],
+                'waktu_verifikasi'         => $data['waktu_verifikasi'],
+                'admin_pendaftaran'        => $data['admin_pendaftaran'],
+                'log_id'                   => $data['log_id'],
+                'keterangan_urutan'        => $data['keterangan_urutan'],
+                'pasien_umur'              => $data['pasien_umur_tahun'] . ' Thn ' . $data['pasien_umur_bulan'] . ' Bln ',
 
                 // Data pasien tambahan dari API kedua
-                'pasien_nik' => $pasienData['pasien_nik'] ?? null,
-                'pasien_nama' => $pasienData['pasien_nama'] ?? null,
-                'jenis_kelamin_nama' => $pasienData['jenis_kelamin_nama'] ?? null,
-                'pasien_tempat_lahir' => $pasienData['pasien_tempat_lahir'] ?? null,
-                'pasien_tgl_lahir' => $pasienData['pasien_tgl_lahir'] ?? null,
-                'pasien_no_hp' => $pasienData['pasien_no_hp'] ?? null,
-                'pasien_alamat' => $pasienData['pasien_alamat'] ?? null,
-                'provinsi_id' => $pasienData['provinsi_id'] ?? null,
-                'kabupaten_id' => $pasienData['kabupaten_id'] ?? null,
-                'kecamatan_id' => $pasienData['kecamatan_id'] ?? null,
-                'kelurahan_id' => $pasienData['kelurahan_id'] ?? null,
-                'pasien_rt' => $pasienData['pasien_rt'] ?? null,
-                'pasien_rw' => $pasienData['pasien_rw'] ?? null,
+                'pasien_nik'               => $pasienData['pasien_nik'] ?? null,
+                'pasien_nama'              => $pasienData['pasien_nama'] ?? null,
+                'jenis_kelamin_nama'       => $pasienData['jenis_kelamin_nama'] ?? null,
+                'pasien_tempat_lahir'      => $pasienData['pasien_tempat_lahir'] ?? null,
+                'pasien_tgl_lahir'         => $pasienData['pasien_tgl_lahir'] ?? null,
+                'pasien_no_hp'             => $pasienData['pasien_no_hp'] ?? null,
+                'pasien_alamat'            => $pasienData['pasien_alamat'] ?? null,
+                'provinsi_id'              => $pasienData['provinsi_id'] ?? null,
+                'kabupaten_id'             => $pasienData['kabupaten_id'] ?? null,
+                'kecamatan_id'             => $pasienData['kecamatan_id'] ?? null,
+                'kelurahan_id'             => $pasienData['kelurahan_id'] ?? null,
+                'pasien_rt'                => $pasienData['pasien_rt'] ?? null,
+                'pasien_rw'                => $pasienData['pasien_rw'] ?? null,
             ];
 
             $counter++;
@@ -512,7 +512,7 @@ class PasienKominfoController extends Controller
             return response()->json([
                 'metadata' => [
                     'message' => 'Data Pasien Tidak Ditemukan Pada Kunjungan Hari Ini',
-                    'code' => 404,
+                    'code'    => 404,
                 ],
                 'response' => null,
             ]);
@@ -522,7 +522,7 @@ class PasienKominfoController extends Controller
         $res = [
             'metadata' => [
                 'message' => 'Data Pendaftaran Ditemukan',
-                'code' => 200,
+                'code'    => 200,
             ],
             'response' => [
                 'data' => $antrian,
@@ -536,8 +536,8 @@ class PasienKominfoController extends Controller
     {
         if ($request->has('tanggal')) {
             // Default username and password, can be overridden by request input
-            $uname = $request->input('username', '3301010509940003');
-            $pass = $request->input('password', 'banyumas');
+            $uname   = $request->input('username', '3301010509940003');
+            $pass    = $request->input('password', 'banyumas');
             $tanggal = $request->input('tanggal');
 
             // Fetch data pendaftaran from API
@@ -546,7 +546,7 @@ class PasienKominfoController extends Controller
                 [
                     'username' => $uname,
                     'password' => $pass,
-                    'tanggal' => $tanggal,
+                    'tanggal'  => $tanggal,
                 ]
             );
 
@@ -565,27 +565,27 @@ class PasienKominfoController extends Controller
 
                 // Combine pendaftaran data and pasien data
                 $antrian[] = [
-                    'id' => $data['id'],
-                    'no_reg' => $data['no_reg'],
-                    'no_trans' => $data['no_trans'],
-                    'antrean_nomor' => $data['antrean_nomor'],
-                    'tanggal' => $data['tanggal'],
-                    'penjamin_nama' => $data['penjamin_nama'],
-                    'jenis_kunjungan_nama' => $data['jenis_kunjungan_nama'],
-                    'pasien_no_rm' => $data['pasien_no_rm'],
-                    'pasien_nama' => $data['pasien_nama'],
-                    'pasien_nik' => $data['pasien_nik'],
-                    'pasien_lama_baru' => $data['pasien_lama_baru'],
+                    'id'                       => $data['id'],
+                    'no_reg'                   => $data['no_reg'],
+                    'no_trans'                 => $data['no_trans'],
+                    'antrean_nomor'            => $data['antrean_nomor'],
+                    'tanggal'                  => $data['tanggal'],
+                    'penjamin_nama'            => $data['penjamin_nama'],
+                    'jenis_kunjungan_nama'     => $data['jenis_kunjungan_nama'],
+                    'pasien_no_rm'             => $data['pasien_no_rm'],
+                    'pasien_nama'              => $data['pasien_nama'],
+                    'pasien_nik'               => $data['pasien_nik'],
+                    'pasien_lama_baru'         => $data['pasien_lama_baru'],
                     'rs_paru_pasien_lama_baru' => $data['rs_paru_pasien_lama_baru'],
-                    'poli_nama' => $data['poli_nama'],
-                    'poli_sub_nama' => $data['poli_sub_nama'],
-                    'dokter_nama' => $data['dokter_nama'],
-                    'waktu_daftar' => $data['waktu_daftar'],
-                    'waktu_verifikasi' => $data['waktu_verifikasi'],
-                    'admin_pendaftaran' => $data['admin_pendaftaran'],
-                    'log_id' => $data['log_id'],
-                    'keterangan_urutan' => $data['keterangan_urutan'],
-                    'pasien_umur' => $data['pasien_umur_tahun'] . ' Tahun ' . $data['pasien_umur_bulan'] . ' Bulan ' . $data['pasien_umur_hari'] . ' Hari',
+                    'poli_nama'                => $data['poli_nama'],
+                    'poli_sub_nama'            => $data['poli_sub_nama'],
+                    'dokter_nama'              => $data['dokter_nama'],
+                    'waktu_daftar'             => $data['waktu_daftar'],
+                    'waktu_verifikasi'         => $data['waktu_verifikasi'],
+                    'admin_pendaftaran'        => $data['admin_pendaftaran'],
+                    'log_id'                   => $data['log_id'],
+                    'keterangan_urutan'        => $data['keterangan_urutan'],
+                    'pasien_umur'              => $data['pasien_umur_tahun'] . ' Tahun ' . $data['pasien_umur_bulan'] . ' Bulan ' . $data['pasien_umur_hari'] . ' Hari',
                 ];
             }
 
@@ -593,7 +593,7 @@ class PasienKominfoController extends Controller
                 return response()->json([
                     'metadata' => [
                         'message' => 'Data Pasien Tidak Ditemukan Pada Kunjungan Hari Ini',
-                        'code' => 404,
+                        'code'    => 404,
                     ],
                     'response' => null,
                 ]);
@@ -603,7 +603,7 @@ class PasienKominfoController extends Controller
             $response = [
                 'metadata' => [
                     'message' => 'Data Pasien Ditemukan',
-                    'code' => 200,
+                    'code'    => 200,
                 ],
                 'response' => [
                     'data' => $antrian,
@@ -637,7 +637,7 @@ class PasienKominfoController extends Controller
             return [
                 'metadata' => [
                     'message' => 'Failed to fetch data from external URL',
-                    'code' => 500,
+                    'code'    => 500,
                 ],
                 'response' => null,
             ];
@@ -649,7 +649,7 @@ class PasienKominfoController extends Controller
             return [
                 'metadata' => [
                     'message' => 'Failed to fetch data',
-                    'code' => $httpCode,
+                    'code'    => $httpCode,
                 ],
                 'response' => null,
             ];
@@ -666,7 +666,7 @@ class PasienKominfoController extends Controller
             return [
                 'metadata' => [
                     'message' => 'Invalid JSON response',
-                    'code' => 500,
+                    'code'    => 500,
                 ],
                 'response' => null,
             ];
@@ -675,7 +675,7 @@ class PasienKominfoController extends Controller
         return [
             'metadata' => [
                 'message' => 'Data found',
-                'code' => 200,
+                'code'    => 200,
             ],
             'response' => $responseData,
         ];
@@ -683,31 +683,31 @@ class PasienKominfoController extends Controller
 
     public function logAntrian(Request $request)
     {
-        $id = $request->input('id');
+        $id    = $request->input('id');
         $model = new KominfoModel();
-        $data = $model->getLogAntrian($id);
+        $data  = $model->getLogAntrian($id);
 
         return response()->json($data);
     }
 
     public function antrianAll(Request $request)
     {
-        if (!$request->has('tanggal')) {
+        if (! $request->has('tanggal')) {
             return response()->json(['error' => 'Tanggal Belum Di Isi'], 400);
         }
 
         $tanggal = $request->input('tanggal', date('Y-m-d'));
-        $ruang = $request->input('ruang');
-        $params = [
-            'tanggal_awal' => $tanggal,
+        $ruang   = $request->input('ruang');
+        $params  = [
+            'tanggal_awal'  => $tanggal,
             'tanggal_akhir' => $tanggal,
-            'no_rm' => '',
+            'no_rm'         => '',
         ];
         $model = new KominfoModel();
-        $data = $model->pendaftaranRequest($params);
+        $data  = $model->pendaftaranRequest($params);
         // dd($data);
 
-        if (!isset($data) || !is_array($data)) {
+        if (! isset($data) || ! is_array($data)) {
             return response()->json(['error' => 'Invalid data format'], 500);
         }
 
@@ -723,14 +723,14 @@ class PasienKominfoController extends Controller
 
         $doctorNipMap = [
             'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
-            'dr. AGIL DANANJAYA, Sp.P' => '9',
-            'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
-            'dr. SIGIT DWIYANTO' => '198903142022031005',
+            'dr. AGIL DANANJAYA, Sp.P'                  => '9',
+            'dr. FILLY ULFA KUSUMAWARDANI'              => '198907252019022004',
+            'dr. SIGIT DWIYANTO'                        => '198903142022031005',
         ];
         $tes = $filteredData;
 
         foreach ($filteredData as &$item) {
-            $norm = $item['pasien_no_rm'];
+            $norm        = $item['pasien_no_rm'];
             $dokter_nama = $item['dokter_nama'];
 
             try {
@@ -741,39 +741,39 @@ class PasienKominfoController extends Controller
                         // $foto = ROTransaksiHasilModel::where('norm', $norm)
                         $foto = RoHasilModel::where('norm', $norm)
                             ->whereDate('tanggal', $tanggal)->first();
-                        $item['status'] = !$tsRo && !$foto ? 'Tidak Ada Transaksi' :
-                        ($tsRo && !$foto ? 'Belum Upload Foto Thorax' : 'Sudah Selesai');
+                        $item['status'] = ! $tsRo && ! $foto ? 'Tidak Ada Transaksi' :
+                        ($tsRo && ! $foto ? 'Belum Upload Foto Thorax' : 'Sudah Selesai');
                         break;
 
                     case 'igd':
                         $ts = IGDTransModel::with('transbmhp')->where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' :
+                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' :
                         ($ts->transbmhp == null ? 'Belum Ada Transaksi BMHP' : 'Sudah Selesai');
                         break;
 
                     case 'dots':
                         $ts = DotsTransModel::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
                         break;
 
                     case 'lab':
                         $ts = LaboratoriumKunjunganModel::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
                         break;
                     case 'kasir':
                         $ts = KasirTransModel::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
                         break;
                     case 'farmasi':
                         $ts = KasirTransModel::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
                         $pulang = KunjunganWaktuSelesai::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
                         $item['button'] = $pulang->waktu_selesai_farmasi !== null ? 'success' : 'warning';
                         break;
 
@@ -791,7 +791,7 @@ class PasienKominfoController extends Controller
         return response()->json([
             'metadata' => [
                 'message' => 'Data Pasien Ditemukan',
-                'code' => 200,
+                'code'    => 200,
             ],
             'response' => [
                 'data' => $filteredData,
@@ -819,13 +819,13 @@ class PasienKominfoController extends Controller
     public function dataPasien(Request $request)
     {
         if ($request->has('no_rm') && $request->has('tanggal')) {
-            $no_rm = $request->input('no_rm');
+            $no_rm   = $request->input('no_rm');
             $tanggal = $request->input('tanggal', Carbon::now()->format('Y-m-d'));
-            $model = new KominfoModel();
-            $params = [
-                'tanggal_awal' => $tanggal,
+            $model   = new KominfoModel();
+            $params  = [
+                'tanggal_awal'  => $tanggal,
                 'tanggal_akhir' => $tanggal,
-                'no_rm' => $no_rm,
+                'no_rm'         => $no_rm,
             ];
 
             // Panggil metode untuk melakukan request pasien
@@ -835,36 +835,36 @@ class PasienKominfoController extends Controller
                 $response = [
                     'metadata' => [
                         'message' => 'Pasien dengan No. RM ' . $no_rm . ' tidak ditemukan',
-                        'code' => 204,
+                        'code'    => 204,
                     ],
                 ];
                 return response()->json($response);
             } else {
                 // $pasienData = $res_pasien;
                 $pasien = [
-                    "pasien_nik" => $res_pasien['pasien_nik'] ?? null,
-                    "pasien_no_kk" => $res_pasien['pasien_no_kk'] ?? null,
-                    "pasien_nama" => $res_pasien['pasien_nama'] ?? null,
-                    "pasien_no_rm" => $res_pasien['pasien_no_rm'] ?? null,
-                    "jenis_kelamin_id" => $res_pasien['jenis_kelamin_id'] ?? null,
-                    "jenis_kelamin_nama" => $res_pasien['jenis_kelamin_nama'] ?? null,
+                    "pasien_nik"          => $res_pasien['pasien_nik'] ?? null,
+                    "pasien_no_kk"        => $res_pasien['pasien_no_kk'] ?? null,
+                    "pasien_nama"         => $res_pasien['pasien_nama'] ?? null,
+                    "pasien_no_rm"        => $res_pasien['pasien_no_rm'] ?? null,
+                    "jenis_kelamin_id"    => $res_pasien['jenis_kelamin_id'] ?? null,
+                    "jenis_kelamin_nama"  => $res_pasien['jenis_kelamin_nama'] ?? null,
                     "pasien_tempat_lahir" => $res_pasien['pasien_tempat_lahir'] ?? null,
-                    "pasien_tgl_lahir" => $res_pasien['pasien_tgl_lahir'] ?? null,
-                    "pasien_no_hp" => $res_pasien['pasien_no_hp'] ?? null,
-                    "pasien_domisili" => $res_pasien['pasien_alamat'] ?? null,
-                    "pasien_alamat" => $res_pasien['pasien_alamat'] ?? null,
-                    "provinsi_nama" => $res_pasien['provinsi_nama'] ?? null,
-                    "kabupaten_nama" => $res_pasien['kabupaten_nama'] ?? null,
-                    "kecamatan_nama" => $res_pasien['kecamatan_nama'] ?? null,
-                    "kelurahan_nama" => $res_pasien['kelurahan_nama'] ?? null,
-                    "pasien_rt" => $res_pasien['pasien_rt'] ?? null,
-                    "pasien_rw" => $res_pasien['pasien_rw'] ?? null,
-                    "penjamin_nama" => $res_pasien['penjamin_nama'] ?? null,
+                    "pasien_tgl_lahir"    => $res_pasien['pasien_tgl_lahir'] ?? null,
+                    "pasien_no_hp"        => $res_pasien['pasien_no_hp'] ?? null,
+                    "pasien_domisili"     => $res_pasien['pasien_alamat'] ?? null,
+                    "pasien_alamat"       => $res_pasien['pasien_alamat'] ?? null,
+                    "provinsi_nama"       => $res_pasien['provinsi_nama'] ?? null,
+                    "kabupaten_nama"      => $res_pasien['kabupaten_nama'] ?? null,
+                    "kecamatan_nama"      => $res_pasien['kecamatan_nama'] ?? null,
+                    "kelurahan_nama"      => $res_pasien['kelurahan_nama'] ?? null,
+                    "pasien_rt"           => $res_pasien['pasien_rt'] ?? null,
+                    "pasien_rw"           => $res_pasien['pasien_rw'] ?? null,
+                    "penjamin_nama"       => $res_pasien['penjamin_nama'] ?? null,
                 ];
 
                 // Panggil metode untuk melakukan request pendaftaran
                 $cpptRes = $model->cpptRequest($params);
-                if (!isset($cpptRes['response']['data'])) {
+                if (! isset($cpptRes['response']['data'])) {
                     $cppt = null;
                 } else {
                     $cppt = $cpptRes['response']['data'];
@@ -881,27 +881,27 @@ class PasienKominfoController extends Controller
 
                     $doctorNipMap = [
                         'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
-                        'dr. AGIL DANANJAYA, Sp.P' => '9',
-                        'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
-                        'dr. SIGIT DWIYANTO' => '198903142022031005',
+                        'dr. AGIL DANANJAYA, Sp.P'                  => '9',
+                        'dr. FILLY ULFA KUSUMAWARDANI'              => '198907252019022004',
+                        'dr. SIGIT DWIYANTO'                        => '198903142022031005',
                     ];
 
                     // Iterate over filtered data and add nip
                     foreach ($filteredData as &$item) {
-                        $dokter_nama = $item['dokter_nama'];
+                        $dokter_nama        = $item['dokter_nama'];
                         $item['nip_dokter'] = $doctorNipMap[$dokter_nama] ?? 'Unknown';
                     }
 
-                    if (!empty($filteredData)) {
+                    if (! empty($filteredData)) {
                         $response = [
                             'metadata' => [
                                 'message' => 'Data Pasien Ditemukan',
-                                'code' => 200,
+                                'code'    => 200,
                             ],
                             'response' => [
                                 'pendaftaran' => $filteredData,
-                                'pasien' => $pasien,
-                                'cppt' => $cppt,
+                                'pasien'      => $pasien,
+                                'cppt'        => $cppt,
                             ],
                         ];
                         // Mengembalikan respons dengan kode 200
@@ -910,7 +910,7 @@ class PasienKominfoController extends Controller
                         $response = [
                             'metadata' => [
                                 'message' => 'Pasien tidak mendaftar pada hari ini',
-                                'code' => 204,
+                                'code'    => 204,
                             ],
                         ];
                         // Mengembalikan respons dengan kode 200
@@ -931,14 +931,14 @@ class PasienKominfoController extends Controller
         $norm = $request->input('norm');
         // Jika tgl tidak ada maka gunakan tgl saat ini
         $tanggal = $request->input('tanggal', Carbon::now()->format('Y-m-d'));
-        $params = [
-            'tanggal_awal' => $tanggal,
+        $params  = [
+            'tanggal_awal'  => $tanggal,
             'tanggal_akhir' => $tanggal,
-            'no_rm' => $norm ?? '',
+            'no_rm'         => $norm ?? '',
         ];
         // dd($params);
         $model = new KominfoModel();
-        $data = $model->pendaftaranRequest($params);
+        $data  = $model->pendaftaranRequest($params);
         // dd($data);
 
         // Filter hasil yang normnya sama dengan $norm
@@ -965,8 +965,8 @@ class PasienKominfoController extends Controller
     {
         // Ambil parameter dari req
         $params = $request->only(['tanggal_awal', 'tanggal_akhir', 'no_rm']);
-        $model = new KominfoModel();
-        $data = $model->cpptRequest($params);
+        $model  = new KominfoModel();
+        $data   = $model->cpptRequest($params);
         if (isset($data['response']['data']) && is_array($data['response']['data'])) {
             // Filter data, jika tindakan kosong maka skip
             $nowDate = Carbon::now()->format('Y-m-d');
@@ -985,43 +985,43 @@ class PasienKominfoController extends Controller
         // return $data;
         $riwayat = [];
         foreach ($data as $item) {
-            $dataLab = LaboratoriumHasilModel::with('pemeriksaan')->where('notrans', $item['no_reg'])->get();
+            $dataLab  = LaboratoriumHasilModel::with('pemeriksaan')->where('notrans', $item['no_reg'])->get();
             $hasilLab = [];
             foreach ($dataLab as $lab) {
                 $hasilLab[] = [
                     'pemeriksaan' => $lab->pemeriksaan->nmLayanan,
                     'nilaiNormal' => $lab->pemeriksaan->normal,
-                    'hasil' => $lab->hasil,
+                    'hasil'       => $lab->hasil,
                 ];
-            };
+            }
             $alamat = $item['kelurahan_nama'] . ', ' . $item['pasien_rt'] . '/' . $item['pasien_rw'] . ', ' . $item['kecamatan_nama'] . ', ' . $item['kabupaten_nama'] . ', ' . $item['provinsi_nama'];
 
             $riwayat[] = [
-                'tanggal' => $item['tanggal'],
-                'dokter_nama' => $item['dokter_nama'],
-                'pasien_nama' => $item['pasien_nama'],
-                'pasien_no_rm' => $item['pasien_no_rm'],
-                'pasien_tgl_lahir' => $item['pasien_tgl_lahir'],
-                'umur' => $item['umur'],
-                'antrean_nomor' => $item['antrean_nomor'],
-                'penjamin_nama' => $item['penjamin_nama'],
+                'tanggal'            => $item['tanggal'],
+                'dokter_nama'        => $item['dokter_nama'],
+                'pasien_nama'        => $item['pasien_nama'],
+                'pasien_no_rm'       => $item['pasien_no_rm'],
+                'pasien_tgl_lahir'   => $item['pasien_tgl_lahir'],
+                'umur'               => $item['umur'],
+                'antrean_nomor'      => $item['antrean_nomor'],
+                'penjamin_nama'      => $item['penjamin_nama'],
                 'jenis_kelamin_nama' => $item['jenis_kelamin_nama'],
-                'alamat' => $alamat,
-                'dx1' => $item['diagnosa'][0]['nama_diagnosa'] ?? '',
-                'dx2' => $item['diagnosa'][1]['nama_diagnosa'] ?? '',
-                'dx3' => $item['diagnosa'][2]['nama_diagnosa'] ?? '',
-                'ds' => $item['subjek'] ?? '',
-                'do' => $item['objek_data_objektif'] ?? '',
-                'td' => $item['objek_tekanan_darah'] ?? '',
-                'bb' => $item['objek_bb'] ?? '',
-                'nadi' => $item['objek_nadi'] ?? '',
-                'suhu' => $item['objek_suhu'] ?? '',
-                'rr' => $item['objek_rr'] ?? '',
-                'tindakan' => $item['tindakan'],
-                'radiologi' => $item['radiologi'],
-                'obat' => $item['resep_obat'],
-                'laboratorium' => $item['laboratorium'],
-                'hasilLab' => $hasilLab,
+                'alamat'             => $alamat,
+                'dx1'                => $item['diagnosa'][0]['nama_diagnosa'] ?? '',
+                'dx2'                => $item['diagnosa'][1]['nama_diagnosa'] ?? '',
+                'dx3'                => $item['diagnosa'][2]['nama_diagnosa'] ?? '',
+                'ds'                 => $item['subjek'] ?? '',
+                'do'                 => $item['objek_data_objektif'] ?? '',
+                'td'                 => $item['objek_tekanan_darah'] ?? '',
+                'bb'                 => $item['objek_bb'] ?? '',
+                'nadi'               => $item['objek_nadi'] ?? '',
+                'suhu'               => $item['objek_suhu'] ?? '',
+                'rr'                 => $item['objek_rr'] ?? '',
+                'tindakan'           => $item['tindakan'],
+                'radiologi'          => $item['radiologi'],
+                'obat'               => $item['resep_obat'],
+                'laboratorium'       => $item['laboratorium'],
+                'hasilLab'           => $hasilLab,
             ];
         }
 
@@ -1032,14 +1032,14 @@ class PasienKominfoController extends Controller
     {
         // Ambil parameter dari req
         $params = $request->only(['tanggal_awal', 'tanggal_akhir', 'no_rm', 'ruang']);
-        $ruang = $params['ruang'] ?? '';
+        $ruang  = $params['ruang'] ?? '';
 
         $model = new KominfoModel();
-        $data = $model->cpptRequest($params);
+        $data  = $model->cpptRequest($params);
 
         if (isset($data['response']['data']) && is_array($data['response']['data'])) {
             $filteredData = array_filter(array_map(function ($d) use ($ruang) {
-                $d['status'] = 'belum';
+                $d['status']      = 'belum';
                 $d['status_obat'] = $d['resep_obat'] == [] ? 'Obat Belum' : 'Obat Sudah';
 
                 if ($ruang === 'igd') {
@@ -1052,7 +1052,7 @@ class PasienKominfoController extends Controller
                     // foreach ($filteredData as $d) {
                     // dd($d);
                     $notrans = $d['tanggal'] < date('Y-m-d') ? $d['no_trans'] : $d['no_reg'];
-                    $check = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
+                    $check   = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
                     // dd($check);
                     // jika $check null
                     $checkigd = $check->waktu_selesai_igd ?? null;
@@ -1062,15 +1062,15 @@ class PasienKominfoController extends Controller
                     // dd($d['igd_selesai']);
                     // }
 
-                    $igd = IGDTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
+                    $igd         = IGDTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
                     $d['status'] = $igd ? 'sudah' : 'belum';
                     if (empty($d['tindakan'])) {
                         return null;
                     }
 
                 } elseif ($ruang === 'dots') {
-                    $dots = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
-                    $d['status'] = $dots ? 'sudah' : 'belum';
+                    $dots            = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
+                    $d['status']     = $dots ? 'sudah' : 'belum';
                     $hasTuberculosis = false;
                     if (isset($d['diagnosa'][0])) {
                         $dx1 = $d['diagnosa'][0];
@@ -1082,11 +1082,11 @@ class PasienKominfoController extends Controller
                             $hasTuberculosis = true;
                         }
 
-                        if (!$hasTuberculosis) {
+                        if (! $hasTuberculosis) {
                             return null;
                         }
 
-                        $tb = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
+                        $tb          = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
                         $d['status'] = $tb ? 'sudah' : 'belum';
 
                     } else {
@@ -1099,11 +1099,11 @@ class PasienKominfoController extends Controller
                         ->whereDate('tgltrans', $d['tanggal'])->first();
                     $foto = RoHasilModel::where('norm', $d['pasien_no_rm'])
                         ->whereDate('tanggal', $d['tanggal'])->first();
-                    $d['status'] = !$tsRo && !$foto ? 'belum' :
-                    ($tsRo && !$foto ? 'Belum Upload Foto Thorax' : 'sudah');
+                    $d['status'] = ! $tsRo && ! $foto ? 'belum' :
+                    ($tsRo && ! $foto ? 'Belum Upload Foto Thorax' : 'sudah');
                     // Cek di $d['radiologi'] apakah ada layanan "Konsultasi dokter Radiologi"
                     $d['permintaan_konsul'] = false;
-                    if (!empty($d['radiologi'])) {
+                    if (! empty($d['radiologi'])) {
                         foreach ($d['radiologi'] as $radiologi) {
                             if (isset($radiologi['layanan']) && $radiologi['layanan'] === 'Konsultasi dokter Radiologi') {
                                 $d['permintaan_konsul'] = true;
@@ -1120,7 +1120,7 @@ class PasienKominfoController extends Controller
                     }
 
                 } elseif ($ruang === 'lab') {
-                    $lab = LaboratoriumKunjunganModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
+                    $lab         = LaboratoriumKunjunganModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
                     $d['status'] = $lab ? 'sudah' : 'belum';
                     if (empty($d['laboratorium'])) {
                         return null;
@@ -1130,9 +1130,9 @@ class PasienKominfoController extends Controller
 
                 $doctorNipMap = [
                     'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
-                    'dr. AGIL DANANJAYA, Sp.P' => '9',
-                    'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
-                    'dr. SIGIT DWIYANTO' => '198903142022031005',
+                    'dr. AGIL DANANJAYA, Sp.P'                  => '9',
+                    'dr. FILLY ULFA KUSUMAWARDANI'              => '198907252019022004',
+                    'dr. SIGIT DWIYANTO'                        => '198903142022031005',
                 ];
 
                 $d['nip_dokter'] = $doctorNipMap[$d['dokter_nama']] ?? 'Unknown';
@@ -1140,11 +1140,11 @@ class PasienKominfoController extends Controller
                 return $d;
             }, $data['response']['data']));
 
-            if (!empty($filteredData)) {
+            if (! empty($filteredData)) {
                 return response()->json([
                     'metadata' => [
                         'message' => 'Data Pasien Ditemukan',
-                        'code' => 200,
+                        'code'    => 200,
                     ],
                     'response' => [
                         'data' => array_values($filteredData),
@@ -1154,7 +1154,7 @@ class PasienKominfoController extends Controller
                 $errorMessages = [
                     'IGD' => 'Tidak ada data permintaan Tindakan',
                     'lab' => 'Tidak ada data permintaan Laboratorium',
-                    'ro' => 'Tidak ada data permintaan Radiologi',
+                    'ro'  => 'Tidak ada data permintaan Radiologi',
                 ];
 
                 return response()->json(['error' => $errorMessages[$ruang] ?? 'Tidak ada data ditemukan'], 404);
@@ -1163,7 +1163,7 @@ class PasienKominfoController extends Controller
             return response()->json([
                 'metadata' => [
                     'message' => 'Data Tidak Ditemukan',
-                    'code' => 404,
+                    'code'    => 404,
                 ],
             ], 200);
         }
@@ -1188,7 +1188,7 @@ class PasienKominfoController extends Controller
         // Prepare the response
         $response = [
             'metadata' => [
-                'code' => 200,
+                'code'    => 200,
                 'message' => 'Data ditemukan!',
             ],
             'response' => [
@@ -1207,7 +1207,7 @@ class PasienKominfoController extends Controller
         $model = new KominfoModel();
 
         $data = $model->cpptRequest($params);
-        $res = $data['response']['data'];
+        $res  = $data['response']['data'];
 
         return response()->json($res);
 
@@ -1229,7 +1229,7 @@ class PasienKominfoController extends Controller
     {
         try {
             $params = $request->all();
-            $model = new KominfoModel();
+            $model  = new KominfoModel();
 
             // Ambil data dari model menggunakan metode waktuLayananRequest
             $data = $model->waktuLayananRequest($params);
@@ -1260,27 +1260,27 @@ class PasienKominfoController extends Controller
     {
         // Initialize totals, max values, and counts
         $totals = [
-            'tunggu_daftar' => 0,
-            'tunggu_rm' => 0,
-            'tunggu_lab' => 0,
+            'tunggu_daftar'    => 0,
+            'tunggu_rm'        => 0,
+            'tunggu_lab'       => 0,
             'tunggu_hasil_lab' => 0,
-            'tunggu_hasil_ro' => 0,
-            'tunggu_ro' => 0,
-            'tunggu_poli' => 0,
-            'durasi_poli' => 0,
-            'tunggu_tensi' => 0,
-            'tunggu_igd' => 0,
-            'lama_igd' => 0,
-            'tunggu_farmasi' => 0,
-            'tunggu_kasir' => 0,
+            'tunggu_hasil_ro'  => 0,
+            'tunggu_ro'        => 0,
+            'tunggu_poli'      => 0,
+            'durasi_poli'      => 0,
+            'tunggu_tensi'     => 0,
+            'tunggu_igd'       => 0,
+            'lama_igd'         => 0,
+            'tunggu_farmasi'   => 0,
+            'tunggu_kasir'     => 0,
         ];
 
         $maxValues = $totals;
         $minValues = array_fill_keys(array_keys($totals), PHP_INT_MAX);
 
         $counts = [
-            'rm' => 0,
-            'ro' => 0,
+            'rm'  => 0,
+            'ro'  => 0,
             'lab' => 0,
             'igd' => 0,
         ];
@@ -1291,7 +1291,7 @@ class PasienKominfoController extends Controller
 
         // Initialize variables for "oke" false
         $totalDurasiPoliOkeFalse = 0;
-        $countOkeFalse = 0;
+        $countOkeFalse           = 0;
 
         // Process each patient's data
         foreach ($data as $message) {
@@ -1345,13 +1345,13 @@ class PasienKominfoController extends Controller
                 $jml = $counts['igd'] == 0 ? 1 : $counts['igd'];
             }
 
-            $results["avg_$key"] = round($total / $jml, 2);
-            $results["max_$key"] = $maxValues[$key];
-            $results["min_$key"] = $minValues[$key];
-            $results["total_$key"] = round($total, 2);
-            $results["lebih_$key"] = $above90[$key];
-            $results["lebih_persen_$key"] = round(($above90[$key] / $jml) * 100, 2);
-            $results["kurang_$key"] = $below90[$key];
+            $results["avg_$key"]           = round($total / $jml, 2);
+            $results["max_$key"]           = $maxValues[$key];
+            $results["min_$key"]           = $minValues[$key];
+            $results["total_$key"]         = round($total, 2);
+            $results["lebih_$key"]         = $above90[$key];
+            $results["lebih_persen_$key"]  = round(($above90[$key] / $jml) * 100, 2);
+            $results["kurang_$key"]        = $below90[$key];
             $results["kurang_persen_$key"] = round(($below90[$key] / $jml) * 100, 2);
         }
 
@@ -1362,12 +1362,12 @@ class PasienKominfoController extends Controller
 
         // Include total counts
         $results = array_merge($results, [
-            'total_pasien' => count($data),
-            'total_ro' => $counts['ro'],
-            'total_lab' => $counts['lab'],
-            'total_igd' => $counts['igd'],
+            'total_pasien'         => count($data),
+            'total_ro'             => $counts['ro'],
+            'total_lab'            => $counts['lab'],
+            'total_igd'            => $counts['igd'],
             'total_tanpa_tambahan' => count(array_filter($data, fn($item) => isset($item['oke']) && $item['oke'] === false)),
-            'total_rm' => $counts['rm'],
+            'total_rm'             => $counts['rm'],
         ]);
 
         // Calculate average durasi_poli for "oke" false
@@ -1380,58 +1380,58 @@ class PasienKominfoController extends Controller
         $rodata = array_filter($data, function ($d) {
             return $d['rodata'] === true;
         });
-        $jumlahRo = count($rodata);
-        $totalWaktuRo = array_sum(array_column($rodata, 'tunggu_ro')); // Sum up 'tunggu_ro' values
-        $results['avg_tunggu_ro'] = $jumlahRo > 0 ? round($totalWaktuRo / $jumlahRo, 2) : 0;
-        $results['max_tunggu_ro'] = $jumlahRo > 0 ? max(array_column($rodata, 'tunggu_ro')) : 0;
-        $results['min_tunggu_ro'] = $jumlahRo > 0 ? min(array_column($rodata, 'tunggu_ro')) : 0;
-        $results['lebih_tunggu_ro'] = count(array_filter($rodata, fn($d) => $d['tunggu_ro'] > 90));
-        $results['lebih_persen_tunggu_ro'] = $jumlahRo > 0 ? round(($results['lebih_tunggu_ro'] / $jumlahRo) * 100, 2) : 0;
-        $results['kurang_tunggu_ro'] = $jumlahRo > 0 ? $jumlahRo - $results['lebih_tunggu_ro'] : 0;
-        $results['kurang_persen_tunggu_ro'] = $jumlahRo > 0 ? round(($results['kurang_tunggu_ro'] / $jumlahRo) * 100, 2) : 0;
-        $totalWaktuRo = array_sum(array_column($rodata, 'tunggu_hasil_ro')); // Sum up 'tunggu_ro' values
-        $results['avg_tunggu_hasil_ro'] = $jumlahRo > 0 ? round($totalWaktuRo / $jumlahRo, 2) : 0;
-        $results['max_tunggu_hasil_ro'] = $jumlahRo > 0 ? max(array_column($rodata, 'tunggu_hasil_ro')) : 0;
-        $results['min_tunggu_hasil_ro'] = $jumlahRo > 0 ? min(array_column($rodata, 'tunggu_hasil_ro')) : 0;
-        $results['lebih_tunggu_hasil_ro'] = count(array_filter($rodata, fn($d) => $d['tunggu_hasil_ro'] > 90));
-        $results['lebih_persen_tunggu_hasil_ro'] = $jumlahRo > 0 ? round(($results['lebih_tunggu_hasil_ro'] / $jumlahRo) * 100, 2) : 0;
-        $results['kurang_tunggu_hasil_ro'] = $jumlahRo > 0 ? $jumlahRo - $results['lebih_tunggu_hasil_ro'] : 0;
+        $jumlahRo                                 = count($rodata);
+        $totalWaktuRo                             = array_sum(array_column($rodata, 'tunggu_ro')); // Sum up 'tunggu_ro' values
+        $results['avg_tunggu_ro']                 = $jumlahRo > 0 ? round($totalWaktuRo / $jumlahRo, 2) : 0;
+        $results['max_tunggu_ro']                 = $jumlahRo > 0 ? max(array_column($rodata, 'tunggu_ro')) : 0;
+        $results['min_tunggu_ro']                 = $jumlahRo > 0 ? min(array_column($rodata, 'tunggu_ro')) : 0;
+        $results['lebih_tunggu_ro']               = count(array_filter($rodata, fn($d) => $d['tunggu_ro'] > 90));
+        $results['lebih_persen_tunggu_ro']        = $jumlahRo > 0 ? round(($results['lebih_tunggu_ro'] / $jumlahRo) * 100, 2) : 0;
+        $results['kurang_tunggu_ro']              = $jumlahRo > 0 ? $jumlahRo - $results['lebih_tunggu_ro'] : 0;
+        $results['kurang_persen_tunggu_ro']       = $jumlahRo > 0 ? round(($results['kurang_tunggu_ro'] / $jumlahRo) * 100, 2) : 0;
+        $totalWaktuRo                             = array_sum(array_column($rodata, 'tunggu_hasil_ro')); // Sum up 'tunggu_ro' values
+        $results['avg_tunggu_hasil_ro']           = $jumlahRo > 0 ? round($totalWaktuRo / $jumlahRo, 2) : 0;
+        $results['max_tunggu_hasil_ro']           = $jumlahRo > 0 ? max(array_column($rodata, 'tunggu_hasil_ro')) : 0;
+        $results['min_tunggu_hasil_ro']           = $jumlahRo > 0 ? min(array_column($rodata, 'tunggu_hasil_ro')) : 0;
+        $results['lebih_tunggu_hasil_ro']         = count(array_filter($rodata, fn($d) => $d['tunggu_hasil_ro'] > 90));
+        $results['lebih_persen_tunggu_hasil_ro']  = $jumlahRo > 0 ? round(($results['lebih_tunggu_hasil_ro'] / $jumlahRo) * 100, 2) : 0;
+        $results['kurang_tunggu_hasil_ro']        = $jumlahRo > 0 ? $jumlahRo - $results['lebih_tunggu_hasil_ro'] : 0;
         $results['kurang_persen_tunggu_hasil_ro'] = $jumlahRo > 0 ? round(($results['kurang_tunggu_hasil_ro'] / $jumlahRo) * 100, 2) : 0;
 
         // Similar calculations for lab
         $labdata = array_filter($data, function ($d) {
             return $d['labdata'] === true;
         });
-        $jumlahLab = count($labdata);
-        $totalWaktuLab = array_sum(array_column($labdata, 'tunggu_hasil_lab'));
-        $results['avg_tunggu_hasil_lab'] = $jumlahLab > 0 ? round($totalWaktuLab / $jumlahLab, 2) : 0;
-        $results['max_tunggu_hasil_lab'] = $jumlahLab > 0 ? max(array_column($labdata, 'tunggu_hasil_lab')) : 0;
-        $results['min_tunggu_hasil_lab'] = $jumlahLab > 0 ? min(array_column($labdata, 'tunggu_hasil_lab')) : 0;
-        $results['lebih_tunggu_hasil_lab'] = count(array_filter($labdata, fn($d) => $d['tunggu_hasil_lab'] > 90));
-        $results['lebih_persen_tunggu_hasil_lab'] = $jumlahLab > 0 ? round(($results['lebih_tunggu_hasil_lab'] / $jumlahLab) * 100, 2) : 0;
-        $results['kurang_tunggu_hasil_lab'] = $jumlahLab > 0 ? $jumlahLab - $results['lebih_tunggu_hasil_lab'] : 0;
+        $jumlahLab                                 = count($labdata);
+        $totalWaktuLab                             = array_sum(array_column($labdata, 'tunggu_hasil_lab'));
+        $results['avg_tunggu_hasil_lab']           = $jumlahLab > 0 ? round($totalWaktuLab / $jumlahLab, 2) : 0;
+        $results['max_tunggu_hasil_lab']           = $jumlahLab > 0 ? max(array_column($labdata, 'tunggu_hasil_lab')) : 0;
+        $results['min_tunggu_hasil_lab']           = $jumlahLab > 0 ? min(array_column($labdata, 'tunggu_hasil_lab')) : 0;
+        $results['lebih_tunggu_hasil_lab']         = count(array_filter($labdata, fn($d) => $d['tunggu_hasil_lab'] > 90));
+        $results['lebih_persen_tunggu_hasil_lab']  = $jumlahLab > 0 ? round(($results['lebih_tunggu_hasil_lab'] / $jumlahLab) * 100, 2) : 0;
+        $results['kurang_tunggu_hasil_lab']        = $jumlahLab > 0 ? $jumlahLab - $results['lebih_tunggu_hasil_lab'] : 0;
         $results['kurang_persen_tunggu_hasil_lab'] = $jumlahLab > 0 ? round(($results['kurang_tunggu_hasil_lab'] / $jumlahLab) * 100, 2) : 0;
-        $totalWaktuLab = array_sum(array_column($labdata, 'tunggu_lab'));
-        $results['avg_tunggu_lab'] = $jumlahLab > 0 ? round($totalWaktuLab / $jumlahLab, 2) : 0;
-        $results['max_tunggu_lab'] = $jumlahLab > 0 ? max(array_column($labdata, 'tunggu_lab')) : 0;
-        $results['min_tunggu_lab'] = $jumlahLab > 0 ? min(array_column($labdata, 'tunggu_lab')) : 0;
-        $results['lebih_tunggu_lab'] = count(array_filter($labdata, fn($d) => $d['tunggu_lab'] > 90));
-        $results['lebih_persen_tunggu_lab'] = $jumlahLab > 0 ? round(($results['lebih_tunggu_lab'] / $jumlahLab) * 100, 2) : 0;
-        $results['kurang_tunggu_lab'] = $jumlahLab > 0 ? $jumlahLab - $results['lebih_tunggu_lab'] : 0;
-        $results['kurang_persen_tunggu_lab'] = $jumlahLab > 0 ? round(($results['kurang_tunggu_lab'] / $jumlahLab) * 100, 2) : 0;
+        $totalWaktuLab                             = array_sum(array_column($labdata, 'tunggu_lab'));
+        $results['avg_tunggu_lab']                 = $jumlahLab > 0 ? round($totalWaktuLab / $jumlahLab, 2) : 0;
+        $results['max_tunggu_lab']                 = $jumlahLab > 0 ? max(array_column($labdata, 'tunggu_lab')) : 0;
+        $results['min_tunggu_lab']                 = $jumlahLab > 0 ? min(array_column($labdata, 'tunggu_lab')) : 0;
+        $results['lebih_tunggu_lab']               = count(array_filter($labdata, fn($d) => $d['tunggu_lab'] > 90));
+        $results['lebih_persen_tunggu_lab']        = $jumlahLab > 0 ? round(($results['lebih_tunggu_lab'] / $jumlahLab) * 100, 2) : 0;
+        $results['kurang_tunggu_lab']              = $jumlahLab > 0 ? $jumlahLab - $results['lebih_tunggu_lab'] : 0;
+        $results['kurang_persen_tunggu_lab']       = $jumlahLab > 0 ? round(($results['kurang_tunggu_lab'] / $jumlahLab) * 100, 2) : 0;
 
         // Similar calculations for igd
         $igddata = array_filter($data, function ($d) {
             return $d['igddata'] === true;
         });
-        $jumlahIgd = count($igddata);
-        $totalWaktuIgd = array_sum(array_column($igddata, 'tunggu_igd'));
-        $results['avg_tunggu_igd'] = $jumlahIgd > 0 ? round($totalWaktuIgd / $jumlahIgd, 2) : 0;
-        $results['max_tunggu_igd'] = $jumlahIgd > 0 ? max(array_column($igddata, 'tunggu_igd')) : 0;
-        $results['min_tunggu_igd'] = $jumlahIgd > 0 ? min(array_column($igddata, 'tunggu_igd')) : 0;
-        $results['lebih_tunggu_igd'] = count(array_filter($igddata, fn($d) => $d['tunggu_igd'] > 90));
-        $results['lebih_persen_tunggu_igd'] = $jumlahIgd > 0 ? round(($results['lebih_tunggu_igd'] / $jumlahIgd) * 100, 2) : 0;
-        $results['kurang_tunggu_igd'] = $jumlahIgd > 0 ? $jumlahIgd - $results['lebih_tunggu_igd'] : 0;
+        $jumlahIgd                           = count($igddata);
+        $totalWaktuIgd                       = array_sum(array_column($igddata, 'tunggu_igd'));
+        $results['avg_tunggu_igd']           = $jumlahIgd > 0 ? round($totalWaktuIgd / $jumlahIgd, 2) : 0;
+        $results['max_tunggu_igd']           = $jumlahIgd > 0 ? max(array_column($igddata, 'tunggu_igd')) : 0;
+        $results['min_tunggu_igd']           = $jumlahIgd > 0 ? min(array_column($igddata, 'tunggu_igd')) : 0;
+        $results['lebih_tunggu_igd']         = count(array_filter($igddata, fn($d) => $d['tunggu_igd'] > 90));
+        $results['lebih_persen_tunggu_igd']  = $jumlahIgd > 0 ? round(($results['lebih_tunggu_igd'] / $jumlahIgd) * 100, 2) : 0;
+        $results['kurang_tunggu_igd']        = $jumlahIgd > 0 ? $jumlahIgd - $results['lebih_tunggu_igd'] : 0;
         $results['kurang_persen_tunggu_igd'] = $jumlahIgd > 0 ? round(($results['kurang_tunggu_igd'] / $jumlahIgd) * 100, 2) : 0;
 
         return $results;
@@ -1440,8 +1440,8 @@ class PasienKominfoController extends Controller
     public function grafikDokter(Request $request)
     {
         $params = $request->all();
-        $model = new KominfoModel();
-        $data = $model->getGrafikDokter($params)['data'];
+        $model  = new KominfoModel();
+        $data   = $model->getGrafikDokter($params)['data'];
         // return $data;
         $pasien = $this->filterData($model->getTungguPoli($params)['data']);
         // return $pasien;
@@ -1470,8 +1470,8 @@ class PasienKominfoController extends Controller
         $result = [];
         foreach ($data as $item) {
             if (in_array($item['dokter_nama'], $doctors)) {
-                $tanggal = $item['tanggal'];
-                $dokter = $item['dokter_nama'];
+                $tanggal                   = $item['tanggal'];
+                $dokter                    = $item['dokter_nama'];
                 $result[$tanggal][$dokter] = ($result[$tanggal][$dokter] ?? 0) + 1;
             }
         }
@@ -1488,9 +1488,9 @@ class PasienKominfoController extends Controller
         foreach ($result as $tanggal => $dokters) {
             foreach ($dokters as $dokter => $count) {
                 $formattedResult[] = [
-                    'tanggal' => $tanggal,
+                    'tanggal'     => $tanggal,
                     'dokter_nama' => $dokter,
-                    'jumlah' => $count,
+                    'jumlah'      => $count,
                 ];
             }
         }
@@ -1507,16 +1507,16 @@ class PasienKominfoController extends Controller
         foreach ($data as $dataItem) {
             foreach ($pasien as $pasienItem) {
                 if ($dataItem['dokter_nama'] === $pasienItem['dokter_nama'] && $dataItem['tanggal'] === $pasienItem['tanggal']) {
-                    $jumlahData = $dataItem['jumlah'];
+                    $jumlahData   = $dataItem['jumlah'];
                     $jumlahPasien = $pasienItem['jumlah'];
-                    $percentage = $jumlahData > 0 ? ($jumlahData / $jumlahPasien) * 100 : 0;
+                    $percentage   = $jumlahData > 0 ? ($jumlahData / $jumlahPasien) * 100 : 0;
 
                     $hasil[] = [
-                        'tanggal' => $dataItem['tanggal'],
-                        'dokter_nama' => $dataItem['dokter_nama'],
+                        'tanggal'        => $dataItem['tanggal'],
+                        'dokter_nama'    => $dataItem['dokter_nama'],
                         'jumlah_farmasi' => $jumlahData,
-                        'jumlah_pasien' => $jumlahPasien,
-                        'percentage' => round($percentage, 2),
+                        'jumlah_pasien'  => $jumlahPasien,
+                        'percentage'     => round($percentage, 2),
                     ];
                 }
             }
