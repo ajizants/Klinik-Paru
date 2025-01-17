@@ -147,6 +147,7 @@ Route::post('pendapatanLain/delete', [KasirSetoranController::class, 'setoranDel
 Route::post('kasir/kunjungan', [KasirController::class, 'kunjungan']);
 Route::post('kasir/rekap', [KasirController::class, 'rekapKunjungan']);
 Route::get('/pendapatan/{tahun}', [KasirController::class, 'pendapatan']);
+Route::get('/pendapatanTgl/{tgl}', [KasirController::class, 'pendapatanTgl']);
 Route::get('/pendapatan/item/{tahun}', [KasirController::class, 'pendapatanPerItem']);
 Route::post('/pendapatan/item', [KasirController::class, 'pendapatanPerItem']);
 Route::post('/pendapatan/ruang', [KasirController::class, 'pendapatanPerRuang']);

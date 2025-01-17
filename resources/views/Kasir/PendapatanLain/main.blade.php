@@ -111,6 +111,7 @@
                                     data-setoran="${item.setoran}"
                                     data-asal_pendapatan="${item.asal_pendapatan}"
                                     data-penyetor="${item.penyetor}"
+                                    data-nosbs="${item.noSbs||""}"
                                     onclick="editPendLain(this)"><i class="fas fa-pen-to-square"></i></a>
                                 <a type="button" class="btn btn-danger my-1 delete"
                                     data-id="${item.id}"
@@ -170,7 +171,7 @@
                     },
                 ],
                 order: [
-                    [1, 'asc']
+                    [1, 'dsc']
                 ]
             });
         }
@@ -182,6 +183,8 @@
             let setoran = $(data).data('setoran');
             let asal_pendapatan = $(data).data('asal_pendapatan');
             let penyetor = $(data).data('penyetor');
+            let nosbs = $(data).data('nosbs');
+
             $('#id').val(id);
             $('#tanggal').val(tanggal);
             $('#pendapatan').val(pendapatan);
@@ -189,6 +192,7 @@
             $('#asal_pendapatan').val(asal_pendapatan);
             $('#penyetor').val(penyetor);
             $('#penyetor').trigger('change');
+            $('#noSbs').val(nosbs);
         }
 
         function deletePendLain(data) {
@@ -250,8 +254,20 @@
             let asal_pendapatan = $('#asal_pendapatan').val();
             let penyetor = $('#penyetor').val();
             let noSbs = $('#noSbs').val();
-            if (tanggal == "" || pendapatan == "" || setoran == "" || asal_pendapatan == "" || penyetor == "") {
-                tampilkanEror('Data belum lengkap');
+            if (tanggal == "" || pendapatan == "" || asal_pendapatan == "" || penyetor == "") {
+                let msg = "Berikut adalah data yang belum diisi: ";
+
+                // Cek masing-masing input dan tambahkan ke pesan jika kosong
+                if (tanggal == "") msg += "Tanggal, ";
+                if (pendapatan == "") msg += "Pendapatan, ";
+                if (setoran == "") msg += "Setoran, ";
+                if (asal_pendapatan == "") msg += "Asal Pendapatan, ";
+                if (penyetor == "") msg += "Penyetor, ";
+
+                // Hapus koma terakhir dan tampilkan pesan kesalahan
+                msg = msg.slice(0, -2); // Hapus koma dan spasi terakhir
+                tampilkanEror(msg); // Menampilkan pesan error
+
                 return
             }
             let method = id == "" ? 'POST' : 'PUT';
@@ -278,7 +294,7 @@
                         drawTable(
                             dataPendLain
                         );
-                        resetForm();
+                        resetForm('lainnya');
                     }
                 },
                 error: function(xhr, status, error) {

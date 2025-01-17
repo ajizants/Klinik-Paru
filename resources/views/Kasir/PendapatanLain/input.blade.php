@@ -20,12 +20,43 @@
                                         <div class="form-row">
                                             <div class="form-group col mx-2">
                                                 <div class="form-group row">
-                                                    <label class="col-form-label col-2" for="tanggal">Tanggal :</label>
-                                                    <div class="col-sm">
+                                                    <label class="col-form-label col-2" for="tanggal">Tgl Setor
+                                                        :</label>
+                                                    <div class="col">
                                                         <input type="date" id="tanggal" name="tanggal"
                                                             class="form-control bg-white" placeholder="Tanggal"
                                                             value="{{ date('Y-m-d') }}" />
                                                     </div>
+                                                    <div class="col-3">
+                                                        <a type="button" class="btn btn-success py-2"
+                                                            onclick="cariPendapatan();">Cari Pendapatan</a>
+                                                    </div>
+                                                    <script>
+                                                        function cariPendapatan() {
+                                                            var tanggal = document.getElementById("tanggal").value;
+                                                            //cari data get api/pendapatanTgl+tanggal
+                                                            $.ajax({
+                                                                url: '/api/pendapatanTgl/' + tanggal,
+                                                                type: 'GET',
+                                                                dataType: 'JSON',
+                                                                success: function(response) {
+                                                                    console.log(response);
+                                                                    if (response == false) {
+                                                                        tampilkanEror("Data tidak ditemukan...!");
+                                                                    } else {
+                                                                        tampilkanSuccess("Data ditemukan...!");
+                                                                        const pendapatan = formatRupiah(response.jumlah)
+                                                                        document.getElementById("pendapatan").value = pendapatan;
+                                                                        document.getElementById("noSbs").value = response.nomor;
+                                                                    }
+                                                                },
+                                                                error: function(xhr, status, error) {
+                                                                    console.log(error);
+                                                                    tampilkanEror('Terjadi kesalahan saat menyimpan data. Silakan coba lagi.' + error);
+                                                                }
+                                                            });
+                                                        }
+                                                    </script>
                                                     <div class="col-2">
                                                         <input type="number" id="id"
                                                             class="form-control bg-white" placeholder="ID" readonly />
@@ -46,6 +77,16 @@
                                                             class="form-control bg-white"
                                                             placeholder="Keluar / Setoran" />
                                                     </div>
+                                                    <div class="col-2 d-flex justify-content-end">
+                                                        <a type="button" class="btn btn-warning py-2"
+                                                            onclick="copy();">= Masuk</a>
+                                                    </div>
+                                                    <script>
+                                                        function copy() {
+                                                            var masuk = document.getElementById("pendapatan").value;
+                                                            document.getElementById("setoran").value = masuk;
+                                                        }
+                                                    </script>
                                                 </div>
                                             </div>
                                             <div class="form-group col mx-2">

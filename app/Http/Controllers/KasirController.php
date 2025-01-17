@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\IGDTransModel;
@@ -19,16 +18,16 @@ class KasirController extends Controller
     public function tagihan(Request $request)
     {
         // dd($request->all());
-        $norm = $request->input('norm');
+        $norm    = $request->input('norm');
         $tanggal = $request->input('tgl', Carbon::now()->format('Y-m-d'));
-        $params = [
-            'tanggal_awal' => $tanggal,
+        $params  = [
+            'tanggal_awal'  => $tanggal,
             'tanggal_akhir' => $tanggal,
-            'no_rm' => $norm ?? '',
+            'no_rm'         => $norm ?? '',
         ];
         // dd($params);
         $model = new KominfoModel();
-        $data = $model->pendaftaranRequest($params);
+        $data  = $model->pendaftaranRequest($params);
         // dd($data);
         $notrans = $data[0]['no_reg'];
         // dd($notrans);
@@ -37,13 +36,13 @@ class KasirController extends Controller
         $dataTind = [];
         foreach ($tindakan as $item) {
             $dataTind[] = [
-                'id' => $item->id,
-                'norm' => $item->norm,
-                'notrans' => $item->notrans,
-                'kdTind' => $item->kdTind,
-                'petugas' => $item->petugas,
+                'id'         => $item->id,
+                'norm'       => $item->norm,
+                'notrans'    => $item->notrans,
+                'kdTind'     => $item->kdTind,
+                'petugas'    => $item->petugas,
                 'nmTindakan' => $item->tindakan->nmTindakan,
-                'tarif' => $item->tindakan->harga,
+                'tarif'      => $item->tindakan->harga,
             ];
         }
         // return $dataTind;
@@ -53,12 +52,12 @@ class KasirController extends Controller
         $dataRO = [];
         foreach ($ro as $item) {
             $dataRO[] = [
-                'norm' => $item->norm,
-                'notrans' => $item->notrans,
+                'norm'     => $item->norm,
+                'notrans'  => $item->notrans,
                 'tgltrans' => $item->tgltrans,
-                'kdFoto' => $item->kdFoto,
-                'ro' => $item->foto->nmFoto,
-                'tarif' => $item->foto->tarif,
+                'kdFoto'   => $item->kdFoto,
+                'ro'       => $item->foto->nmFoto,
+                'tarif'    => $item->foto->tarif,
 
             ];
         }
@@ -68,23 +67,23 @@ class KasirController extends Controller
         $dataLab = [];
         foreach ($lab as $item) {
             $dataLab[] = [
-                'id' => $item->idLab,
-                'norm' => $item->norm,
-                'notrans' => $item->notrans,
-                'tgltrans' => $item->created_at,
+                'id'            => $item->idLab,
+                'norm'          => $item->norm,
+                'notrans'       => $item->notrans,
+                'tgltrans'      => $item->created_at,
                 'kdPemeriksaan' => $item->idLayanan,
                 'nmPemeriksaan' => $item->pemeriksaan->nmLayanan,
-                'tarif' => $item->pemeriksaan->tarif,
+                'tarif'         => $item->pemeriksaan->tarif,
             ];
         }
 
         // return $dataLab;
 
         $res = [
-            'pasien' => $data[0],
+            'pasien'   => $data[0],
             'tindakan' => $dataTind,
-            'ro' => $dataRO,
-            'lab' => $dataLab,
+            'ro'       => $dataRO,
+            'lab'      => $dataLab,
         ];
         return response()->json($res, 200, [], JSON_PRETTY_PRINT);
 
@@ -114,9 +113,9 @@ class KasirController extends Controller
         // Validate the incoming request data
         $validatedData = $request->validate([
             'nmLayanan' => 'required|string|max:255',
-            'tarif' => 'required|string|max:255',
-            'kelas' => 'required|int|max:10',
-            'status' => 'required',
+            'tarif'     => 'required|string|max:255',
+            'kelas'     => 'required|int|max:10',
+            'status'    => 'required',
         ]);
 
         try {
@@ -155,7 +154,7 @@ class KasirController extends Controller
             return response()->json(
                 [
                     'message' => 'Data layanan berhasil diperbarui',
-                    'data' => $hasilData,
+                    'data'    => $hasilData,
                 ]
             );
         } catch (\Exception $e) {
@@ -168,7 +167,7 @@ class KasirController extends Controller
     {
         $dataTerpilih = $request->input('dataTerpilih');
 
-        if (!is_array($dataTerpilih) || empty($dataTerpilih)) {
+        if (! is_array($dataTerpilih) || empty($dataTerpilih)) {
             return response()->json(['message' => 'Data terpilih tidak valid atau kosong'], 400);
         }
 
@@ -178,12 +177,12 @@ class KasirController extends Controller
             $dataToInsert = collect($dataTerpilih)
                 ->filter(fn($data) => isset($data['idLayanan'], $data['notrans']))
                 ->map(fn($data) => [
-                    'notrans' => $data['notrans'],
-                    'norm' => $data['norm'] ?? null,
-                    'idLayanan' => $data['idLayanan'],
-                    'qty' => $data['qty'] ?? 1,
+                    'notrans'    => $data['notrans'],
+                    'norm'       => $data['norm'] ?? null,
+                    'idLayanan'  => $data['idLayanan'],
+                    'qty'        => $data['qty'] ?? 1,
                     'totalHarga' => $data['harga'],
-                    'jaminan' => $data['jaminan'],
+                    'jaminan'    => $data['jaminan'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ])->toArray();
@@ -196,17 +195,17 @@ class KasirController extends Controller
 
             if ($request->input('notrans')) {
                 $req = [
-                    'notrans' => $request->input('notrans'),
-                    'norm' => $request->input('norm'),
-                    'nama' => $request->input('nama'),
-                    'jk' => $request->input('jk'),
-                    'umur' => $request->input('umur'),
-                    'alamat' => $request->input('alamat'),
-                    'jaminan' => $request->input('jaminan'),
-                    'tagihan' => 0,
-                    'bayar' => 0,
+                    'notrans'   => $request->input('notrans'),
+                    'norm'      => $request->input('norm'),
+                    'nama'      => $request->input('nama'),
+                    'jk'        => $request->input('jk'),
+                    'umur'      => $request->input('umur'),
+                    'alamat'    => $request->input('alamat'),
+                    'jaminan'   => $request->input('jaminan'),
+                    'tagihan'   => 0,
+                    'bayar'     => 0,
                     'kembalian' => 0,
-                    'petugas' => "Nasirin",
+                    'petugas'   => "Nasirin",
                 ];
                 $this->saveOrUpdateKunjungan($req);
             }
@@ -224,20 +223,20 @@ class KasirController extends Controller
 
     public function deleteTagihan(Request $request)
     {
-        $id = $request->input('id');
+        $id      = $request->input('id');
         $notrans = $request->input('notrans');
         try {
             $data = KasirAddModel::with('layanan')->where('id', $id)->first();
             // $item = KasirAddModel::with('layanan')->where('notrans', $notrans)->get();
 
             $dataDelete = [
-                'id' => $data->id,
-                'notrans' => $data->notrans,
-                'norm' => $data->norm,
-                'jaminan' => $data->jaminan,
-                'idLayanan' => $data->idLayanan,
-                'nmLayanan' => $data->layanan->nmLayanan,
-                'qty' => $data->qty,
+                'id'         => $data->id,
+                'notrans'    => $data->notrans,
+                'norm'       => $data->norm,
+                'jaminan'    => $data->jaminan,
+                'idLayanan'  => $data->idLayanan,
+                'nmLayanan'  => $data->layanan->nmLayanan,
+                'qty'        => $data->qty,
                 'totalHarga' => $data->totalHarga,
                 'created_at' => $data->created_at,
                 'updated_at' => $data->updated_at,
@@ -245,14 +244,14 @@ class KasirController extends Controller
             ];
 
             // return ['data' => $dataDelete, 'items' => $item];
-            if (!$data) {
+            if (! $data) {
                 return response()->json(['message' => 'Data layanan tidak ditemukan'], 404);
             }
             $data->delete();
 
             $response = [
                 'message' => 'Data layanan berhasil dihapus',
-                'delete' => $dataDelete,
+                'delete'  => $dataDelete,
                 // 'items' => $items,
             ];
             return response()->json($response, 200);
@@ -266,17 +265,17 @@ class KasirController extends Controller
     {
         if ($request->input('notrans')) {
             $req = [
-                'notrans' => $request->input('notrans'),
-                'norm' => $request->input('norm'),
-                'nama' => $request->input('nama'),
-                'jk' => $request->input('jk'),
-                'umur' => $request->input('umur'),
-                'alamat' => $request->input('alamat'),
-                'jaminan' => $request->input('jaminan'),
-                'tagihan' => $request->input('tagihan'),
-                'bayar' => $request->input('bayar'),
+                'notrans'   => $request->input('notrans'),
+                'norm'      => $request->input('norm'),
+                'nama'      => $request->input('nama'),
+                'jk'        => $request->input('jk'),
+                'umur'      => $request->input('umur'),
+                'alamat'    => $request->input('alamat'),
+                'jaminan'   => $request->input('jaminan'),
+                'tagihan'   => $request->input('tagihan'),
+                'bayar'     => $request->input('bayar'),
                 'kembalian' => $request->input('kembalian'),
-                'petugas' => $request->input('petugas'),
+                'petugas'   => $request->input('petugas'),
             ];
             $this->saveOrUpdateKunjungan($req);
             return response()->json(['message' => 'Kunjungan berhasil diproses...!!'], 200);
@@ -290,7 +289,7 @@ class KasirController extends Controller
 
         // Ambil kunjungan berdasarkan notrans
         $dataKunjungan = KasirTransModel::where('notrans', $notrans)->first();
-        if (!$dataKunjungan) {
+        if (! $dataKunjungan) {
             return response()->json(['message' => 'No Transaksi tidak valid'], 400);
         }
 
@@ -319,7 +318,7 @@ class KasirController extends Controller
 
             return response()->json([
                 'message' => 'Terjadi kesalahan saat menghapus data',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -331,16 +330,16 @@ class KasirController extends Controller
 
         $dataKunjungan = KasirTransModel::firstOrNew(['notrans' => $notrans]);
         $dataKunjungan->fill([
-            'norm' => $request['norm'],
-            'nama' => $request['nama'],
-            'jk' => $request['jk'],
-            'umur' => $request['umur'],
-            'alamat' => $request['alamat'],
-            'jaminan' => $request['jaminan'],
-            'tagihan' => str_replace(['Rp', '.', ',', ' '], '', $request['tagihan']),
-            'bayar' => str_replace(['Rp', '.', ',', ' '], '', $request['bayar']),
+            'norm'      => $request['norm'],
+            'nama'      => $request['nama'],
+            'jk'        => $request['jk'],
+            'umur'      => $request['umur'],
+            'alamat'    => $request['alamat'],
+            'jaminan'   => $request['jaminan'],
+            'tagihan'   => str_replace(['Rp', '.', ',', ' '], '', $request['tagihan']),
+            'bayar'     => str_replace(['Rp', '.', ',', ' '], '', $request['bayar']),
             'kembalian' => str_replace(['Rp', '.', ',', ' '], '', $request['kembalian']),
-            'petugas' => $request['petugas'],
+            'petugas'   => $request['petugas'],
         ]);
         $dataKunjungan->save();
 
@@ -350,7 +349,7 @@ class KasirController extends Controller
     public function order(Request $request)
     {
         $notrans = $request->input('notrans');
-        $data = KasirAddModel::with('layanan', 'transaksi')
+        $data    = KasirAddModel::with('layanan', 'transaksi')
             ->where('notrans', $notrans)
             ->get();
         // dd($data);
@@ -362,7 +361,7 @@ class KasirController extends Controller
     public function kunjungan(Request $request)
     {
         $notrans = $request->input('notrans');
-        $data = KasirTransModel::with(['item.layanan'])->where('notrans', $notrans)->first();
+        $data    = KasirTransModel::with(['item.layanan'])->where('notrans', $notrans)->first();
         if ($data == null) {
             return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
@@ -383,49 +382,49 @@ class KasirController extends Controller
 
     public function rekapKunjunganRupiah(Request $request)
     {
-        $norm = $request->input('norm');
-        $tglAwal = $request->input('tglAwal', now()->toDateString());
+        $norm     = $request->input('norm');
+        $tglAwal  = $request->input('tglAwal', now()->toDateString());
         $tglAkhir = $request->input('tglAkhir', now()->toDateString());
 
         $data = KasirTransModel::with('item.layanan')
             ->where('norm', 'like', '%' . $norm . '%')
             ->whereBetween('created_at', [
                 \Carbon\Carbon::parse($tglAwal)->startOfDay(), // Menambahkan waktu mulai hari
-                \Carbon\Carbon::parse($tglAkhir)->endOfDay(), // Menambahkan waktu akhir hari
+                \Carbon\Carbon::parse($tglAkhir)->endOfDay(),  // Menambahkan waktu akhir hari
             ])
             ->get();
         $dataKasir = json_decode($data, true);
-        $pasien = [];
+        $pasien    = [];
 
         foreach ($dataKasir as $d) {
             $tanggal = Carbon::parse($d['updated_at'])->format('d-m-Y');
 
             $pemeriksaanDetails = [];
             foreach ($d['item'] as $pemeriksaan) {
-                $hasilLab = ($pemeriksaan['hasil'] ?? null) . " " . ($pemeriksaan['ket'] ?? null);
+                $hasilLab             = ($pemeriksaan['hasil'] ?? null) . " " . ($pemeriksaan['ket'] ?? null);
                 $pemeriksaanDetails[] = [
-                    'id' => $pemeriksaan['idLab'] ?? null,
-                    'idLayanan' => $pemeriksaan['idLayanan'] ?? null,
+                    'id'          => $pemeriksaan['idLab'] ?? null,
+                    'idLayanan'   => $pemeriksaan['idLayanan'] ?? null,
                     'hasil_murni' => $pemeriksaan['hasil'] ?? null,
-                    'qty' => $pemeriksaan['qty'] ?? null,
-                    'totalHarga' => $pemeriksaan['totalHarga'] ?? null,
-                    'nmLayanan' => $pemeriksaan['layanan']['nmLayanan'] ?? null,
-                    'tarif' => $pemeriksaan['layanan']['tarif'] ?? null,
+                    'qty'         => $pemeriksaan['qty'] ?? null,
+                    'totalHarga'  => $pemeriksaan['totalHarga'] ?? null,
+                    'nmLayanan'   => $pemeriksaan['layanan']['nmLayanan'] ?? null,
+                    'tarif'       => $pemeriksaan['layanan']['tarif'] ?? null,
                 ];
             }
 
             $pasien[] = [
-                'id' => $d['id'] ?? null,
-                'notrans' => $d['notrans'] ?? null,
-                'tgl' => $tanggal ?? null,
-                'norm' => $d['norm'] ?? null,
-                'jaminan' => $d['jaminan'] ?? null,
-                'nama' => $d['nama'] ?? null,
-                'alamat' => $d['alamat'] ?? null,
-                'petugas' => $d['petugas'] ?? null,
-                'tagihan' => $d['tagihan'] ?? null,
-                'bayar' => $d['bayar'] ?? null,
-                'kembalian' => $d['kembalian'] ?? null,
+                'id'          => $d['id'] ?? null,
+                'notrans'     => $d['notrans'] ?? null,
+                'tgl'         => $tanggal ?? null,
+                'norm'        => $d['norm'] ?? null,
+                'jaminan'     => $d['jaminan'] ?? null,
+                'nama'        => $d['nama'] ?? null,
+                'alamat'      => $d['alamat'] ?? null,
+                'petugas'     => $d['petugas'] ?? null,
+                'tagihan'     => $d['tagihan'] ?? null,
+                'bayar'       => $d['bayar'] ?? null,
+                'kembalian'   => $d['kembalian'] ?? null,
                 'pemeriksaan' => $pemeriksaanDetails ?? null,
             ];
         }
@@ -437,32 +436,32 @@ class KasirController extends Controller
     {
         $dataKasir = json_decode($data, true);
 
-        $result = [];
+        $result         = [];
         $uniqueServices = [];
 
         // Inisialisasi array total
         $total = [
-            'NO' => 'Total',
-            'ID' => '-',
-            'Tanggal' => '-',
-            'NoRM' => '-',
-            'Nama' => '-',
-            'Jaminan' => '-',
-            'Tagihan' => 0,
-            'Bayar' => 0,
+            'NO'        => 'Total',
+            'ID'        => '-',
+            'Tanggal'   => '-',
+            'NoRM'      => '-',
+            'Nama'      => '-',
+            'Jaminan'   => '-',
+            'Tagihan'   => 0,
+            'Bayar'     => 0,
             'Kembalian' => 0,
         ];
 
         foreach ($dataKasir as $index => $d) {
             $row = [
-                'NO' => $index + 1,
-                'ID' => $d['id'] ?? '-',
-                'Tanggal' => isset($d['created_at']) ? Carbon::parse($d['created_at'])->format('d-m-Y') : '-',
-                'NoRM' => $d['norm'] ?? '-',
-                'Nama' => $d['nama'] ?? '-',
-                'Jaminan' => $d['jaminan'] ?? '-',
-                'Tagihan' => $d['tagihan'] ?? 0,
-                'Bayar' => $d['bayar'] ?? 0,
+                'NO'        => $index + 1,
+                'ID'        => $d['id'] ?? '-',
+                'Tanggal'   => isset($d['created_at']) ? Carbon::parse($d['created_at'])->format('d-m-Y') : '-',
+                'NoRM'      => $d['norm'] ?? '-',
+                'Nama'      => $d['nama'] ?? '-',
+                'Jaminan'   => $d['jaminan'] ?? '-',
+                'Tagihan'   => $d['tagihan'] ?? 0,
+                'Bayar'     => $d['bayar'] ?? 0,
                 'Kembalian' => $d['kembalian'] ?? 0,
             ];
 
@@ -473,7 +472,7 @@ class KasirController extends Controller
 
             foreach ($d['item'] as $item) {
                 $serviceName = $item['layanan']['nmLayanan'] ?? 'Unknown Service';
-                $qty = $item['totalHarga'] ?? 0;
+                $qty         = $item['totalHarga'] ?? 0;
 
                 // Kumpulkan layanan unik
                 $uniqueServices[$serviceName] = true;
@@ -482,15 +481,15 @@ class KasirController extends Controller
                 $row[$serviceName] = number_format($qty, 0, ',', '.');
 
                 // Akumulasi total layanan
-                if (!isset($total[$serviceName])) {
+                if (! isset($total[$serviceName])) {
                     $total[$serviceName] = 0;
                 }
                 $total[$serviceName] += $qty;
             }
 
             // Format nilai uang dalam baris
-            $row['Tagihan'] = number_format($row['Tagihan'], 0, ',', '.');
-            $row['Bayar'] = number_format($row['Bayar'], 0, ',', '.');
+            $row['Tagihan']   = number_format($row['Tagihan'], 0, ',', '.');
+            $row['Bayar']     = number_format($row['Bayar'], 0, ',', '.');
             $row['Kembalian'] = number_format($row['Kembalian'], 0, ',', '.');
 
             $result[] = $row;
@@ -499,7 +498,7 @@ class KasirController extends Controller
         // Tambahkan kolom dengan nilai 0 untuk layanan yang tidak ada
         foreach ($result as &$row) {
             foreach (array_keys($uniqueServices) as $service) {
-                if (!array_key_exists($service, $row)) {
+                if (! array_key_exists($service, $row)) {
                     $row[$service] = "-"; // Berikan nilai 0 jika tidak ada layanan
                 }
             }
@@ -507,14 +506,14 @@ class KasirController extends Controller
 
         // Pastikan total untuk semua layanan
         foreach (array_keys($uniqueServices) as $service) {
-            if (!isset($total[$service])) {
+            if (! isset($total[$service])) {
                 $total[$service] = "-";
             }
         }
 
         // Format nilai uang dalam total
-        $total['Tagihan'] = number_format($total['Tagihan'], 0, ',', '.');
-        $total['Bayar'] = number_format($total['Bayar'], 0, ',', '.');
+        $total['Tagihan']   = number_format($total['Tagihan'], 0, ',', '.');
+        $total['Bayar']     = number_format($total['Bayar'], 0, ',', '.');
         $total['Kembalian'] = number_format($total['Kembalian'], 0, ',', '.');
         foreach ($uniqueServices as $service => $value) {
             $total[$service] = number_format($total[$service], 0, ',', '.');
@@ -631,8 +630,8 @@ class KasirController extends Controller
     // }
     public function rekapKunjungan(Request $request)
     {
-        $norm = $request->input('norm');
-        $tglAwal = $request->input('tglAwal', now()->toDateString());
+        $norm     = $request->input('norm');
+        $tglAwal  = $request->input('tglAwal', now()->toDateString());
         $tglAkhir = $request->input('tglAkhir', now()->toDateString());
 
         $data = KasirTransModel::with('item.layanan')
@@ -649,33 +648,33 @@ class KasirController extends Controller
 
         $dataKasir = json_decode($data, true);
 
-        $result = [];
+        $result         = [];
         $uniqueServices = [];
 
         // Inisialisasi array total
         $total = [
-            'NO' => 'Total',
-            'ID' => '-',
-            'Tanggal' => '-',
-            'NoRM' => '-',
-            'Nama' => '-',
-            'Jaminan' => '-',
-            'Tagihan' => 0,
-            'Bayar' => 0,
+            'NO'        => 'Total',
+            'ID'        => '-',
+            'Tanggal'   => '-',
+            'NoRM'      => '-',
+            'Nama'      => '-',
+            'Jaminan'   => '-',
+            'Tagihan'   => 0,
+            'Bayar'     => 0,
             'Kembalian' => 0,
         ];
 
         // Looping untuk mengumpulkan data dan layanan unik
         foreach ($dataKasir as $index => $d) {
             $row = [
-                'NO' => $index + 1,
-                'ID' => $d['id'] ?? '-',
-                'Tanggal' => isset($d['created_at']) ? Carbon::parse($d['created_at'])->format('d-m-Y') : '-',
-                'NoRM' => $d['norm'] ?? '-',
-                'Nama' => $d['nama'] ?? '-',
-                'Jaminan' => $d['jaminan'] ?? '-',
-                'Tagihan' => $d['tagihan'] ?? 0,
-                'Bayar' => $d['bayar'] ?? 0,
+                'NO'        => $index + 1,
+                'ID'        => $d['id'] ?? '-',
+                'Tanggal'   => isset($d['created_at']) ? Carbon::parse($d['created_at'])->format('d-m-Y') : '-',
+                'NoRM'      => $d['norm'] ?? '-',
+                'Nama'      => $d['nama'] ?? '-',
+                'Jaminan'   => $d['jaminan'] ?? '-',
+                'Tagihan'   => $d['tagihan'] ?? 0,
+                'Bayar'     => $d['bayar'] ?? 0,
                 'Kembalian' => $d['kembalian'] ?? 0,
             ];
 
@@ -686,8 +685,8 @@ class KasirController extends Controller
 
             foreach ($d['item'] as $item) {
                 $serviceName = $item['layanan']['nmLayanan'] ?? 'Unknown Service';
-                $serviceId = $item['layanan']['idLayanan'] ?? 0; // Ambil ID Layanan
-                $qty = $item['qty'] ?? 0;
+                $serviceId   = $item['layanan']['idLayanan'] ?? 0; // Ambil ID Layanan
+                $qty         = $item['qty'] ?? 0;
 
                 // Kumpulkan layanan unik dengan ID-nya
                 $uniqueServices[$serviceId] = $serviceName;
@@ -696,15 +695,15 @@ class KasirController extends Controller
                 $row[$serviceName] = $qty;
 
                 // Akumulasi total layanan
-                if (!isset($total[$serviceName])) {
+                if (! isset($total[$serviceName])) {
                     $total[$serviceName] = 0;
                 }
                 $total[$serviceName] += $qty;
             }
 
             // Format nilai uang dalam baris
-            $row['Tagihan'] = number_format($row['Tagihan'], 0, ',', '.');
-            $row['Bayar'] = number_format($row['Bayar'], 0, ',', '.');
+            $row['Tagihan']   = number_format($row['Tagihan'], 0, ',', '.');
+            $row['Bayar']     = number_format($row['Bayar'], 0, ',', '.');
             $row['Kembalian'] = number_format($row['Kembalian'], 0, ',', '.');
 
             $result[] = $row;
@@ -717,21 +716,21 @@ class KasirController extends Controller
         foreach ($result as &$row) {
             foreach (array_keys($uniqueServices) as $serviceId) {
                 $serviceName = $uniqueServices[$serviceId]; // Ambil nama layanan berdasarkan ID
-                if (!array_key_exists($serviceName, $row)) {
+                if (! array_key_exists($serviceName, $row)) {
                     $row[$serviceName] = "-"; // Berikan nilai 0 jika tidak ada layanan
                 }
             }
         }
 
         // Format nilai uang dalam total
-        $total['Tagihan'] = number_format($total['Tagihan'], 0, ',', '.');
-        $total['Bayar'] = number_format($total['Bayar'], 0, ',', '.');
+        $total['Tagihan']   = number_format($total['Tagihan'], 0, ',', '.');
+        $total['Bayar']     = number_format($total['Bayar'], 0, ',', '.');
         $total['Kembalian'] = number_format($total['Kembalian'], 0, ',', '.');
 
         // Tambahkan baris total ke hasil
         foreach (array_keys($uniqueServices) as $serviceId) {
             $serviceName = $uniqueServices[$serviceId];
-            if (!isset($total[$serviceName])) {
+            if (! isset($total[$serviceName])) {
                 $total[$serviceName] = "-";
             }
         }
@@ -740,9 +739,9 @@ class KasirController extends Controller
 
         // Kembalikan respons JSON
         return response()->json([
-            'data' => $result,
+            'data'       => $result,
             'dataRupiah' => $dataRupiah,
-            'columns' => array_merge(['NO', 'ID', 'Tanggal', 'NoRM', 'Nama', 'Jaminan', 'Tagihan', 'Bayar', 'Kembalian'], array_values($uniqueServices)),
+            'columns'    => array_merge(['NO', 'ID', 'Tanggal', 'NoRM', 'Nama', 'Jaminan', 'Tagihan', 'Bayar', 'Kembalian'], array_values($uniqueServices)),
         ], 200, [], JSON_PRETTY_PRINT);
 
     }
@@ -756,7 +755,7 @@ class KasirController extends Controller
         $datas = $model->pendapatan($tahun);
 
         // If the data is not an array, return an error
-        if (!is_array($datas)) {
+        if (! is_array($datas)) {
             return response()->json(['error' => 'Invalid data format']);
         }
 
@@ -766,7 +765,7 @@ class KasirController extends Controller
             $jaminanData = is_object($datas[$jaminan]) ? json_decode(json_encode($datas[$jaminan]), true) : $datas[$jaminan];
 
             // Validate that $jaminanData is an array
-            if (!is_array($jaminanData)) {
+            if (! is_array($jaminanData)) {
                 return response()->json(['error' => 'Invalid jaminan data format']);
             }
 
@@ -795,7 +794,7 @@ class KasirController extends Controller
         $datas = $model->pendapatan($tahun);
 
         // If the data is not an array, return an error
-        if (!is_array($datas)) {
+        if (! is_array($datas)) {
             return response()->json(['error' => 'Invalid data format']);
         }
 
@@ -805,7 +804,7 @@ class KasirController extends Controller
             $jaminanData = is_object($datas[$jaminan]) ? json_decode(json_encode($datas[$jaminan]), true) : $datas[$jaminan];
 
             // Validate that $jaminanData is an array
-            if (!is_array($jaminanData)) {
+            if (! is_array($jaminanData)) {
                 return response()->json(['error' => 'Invalid jaminan data format']);
             }
 
@@ -826,24 +825,37 @@ class KasirController extends Controller
     public function pendapatan($tahun)
     {
         $model = new KasirTransModel();
-        $res = $model->pendapatan($tahun);
+        $res   = $model->pendapatan($tahun);
         return response()->json($res, 200, [], JSON_PRETTY_PRINT);
+    }
+    public function pendapatanTgl($tgl)
+    {
+        $model   = new KasirTransModel();
+        $tanggal = date('d-m-Y', strtotime($tgl));
+        $tahun   = date('Y', strtotime($tgl));
+        $res     = $model->pendapatan($tahun);
+        $res     = $res['umum'];
+        $data    = array_filter($res, function ($item) use ($tanggal) {
+            return isset($item['tanggal']) && $item['tanggal'] === $tanggal;
+        });
+        $response = reset($data);
+        return response()->json($response, 200, [], JSON_PRETTY_PRINT);
     }
 
     public function pendapatanPerItem(Request $request)
     {
-        $model = new KasirAddModel();
+        $model  = new KasirAddModel();
         $params = [
-            'tglAwal' => $request->input('tglAwal'),
+            'tglAwal'  => $request->input('tglAwal'),
             'tglAkhir' => $request->input('tglAkhir'),
         ];
         return $model->pendapatanPerItem($params);
     }
     public function pendapatanPerRuang(Request $request)
     {
-        $model = new KasirAddModel();
+        $model  = new KasirAddModel();
         $params = [
-            'tglAwal' => $request->input('tglAwal'),
+            'tglAwal'  => $request->input('tglAwal'),
             'tglAkhir' => $request->input('tglAkhir'),
         ];
         return $model->pendapatanPerRuang($params);

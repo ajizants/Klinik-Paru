@@ -242,7 +242,7 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
     data.forEach((item, index) => {
         item.no = index + 1;
         const today = new Date().toISOString().split("T")[0];
-        const atrb = item.tanggal === today ? "" : "disabled";
+        const atrb = item.tanggal === today ? "" : "";
         const blmSetor = ` <button class="btn btn-danger btn-sm mr-2 mb-2"
             data-tgl="${item.tanggal}"
             data-jumlah="${item.jumlah}"
@@ -367,7 +367,7 @@ function setorkan(button) {
                 type: "post",
                 data: {
                     noSbs: noSbs,
-                    tgl: tgl,
+                    tanggal: tgl,
                     pendapatan: pendapatan,
                     setoran: setoran,
                     asal_pendapatan: asalPendapatan,
@@ -678,6 +678,9 @@ function setorkan(button) {
 //     drawTableReport(dataTableData, columns, "#reportKunjunganRp");
 // }
 function drawTableReport(data, columns, idTable) {
+    if ($.fn.DataTable.isDataTable(idTable)) {
+        $(idTable).DataTable().clear().destroy();
+    }
     const judul =
         idTable == "#reportKunjungan"
             ? "Laporan Kunjungan Kasir"
