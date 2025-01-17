@@ -15,28 +15,74 @@
                                                 <div class="col-sm-1">
                                                     <label class="col-form-label" for="kdDx">ICD X :</label>
                                                     <input type="text" id="kdDx" name="kdDx"
-                                                        class="form-control bg-white" placeholder="Kd ICD X" />
+                                                        class="form-control form-control-sm bg-white"
+                                                        placeholder="Kd ICD X" />
                                                 </div>
 
                                                 <div class="col-sm">
                                                     <label class="col-form-label" for="masuk">Diagnosa
                                                         :</label>
                                                     <input type="text" id="diagnosa" name="diagnosa"
-                                                        class="form-control bg-white"
-                                                        placeholder="Nama Diagnosa ICD X" />
+                                                        class="form-control form-control-sm bg-white"
+                                                        placeholder="Kd ICD X" hidden />
+                                                    <select name="icdx" id="icdx" class="form-control select2">
+                                                    </select>
+                                                    <script>
+                                                        $(document).ready(function() {
+                                                            $('#icdx').select2({
+                                                                placeholder: 'Cari Diagnosa...',
+                                                                ajax: {
+                                                                    url: '/api/diagnosa_icd_x', // Endpoint untuk mengambil data diagnosa
+                                                                    dataType: 'json',
+                                                                    delay: 250, // Tambahkan jeda saat mengetik
+                                                                    data: function(params) {
+                                                                        return {
+                                                                            search: params.term, // Kata kunci pencarian
+                                                                            limit: 20, // Batasi jumlah hasil
+                                                                        };
+                                                                    },
+                                                                    processResults: function(data) {
+                                                                        return {
+                                                                            results: data.map(function(item) {
+                                                                                return {
+                                                                                    id: item.kdDx,
+                                                                                    text: item.kdDx + ' - ' + item.diagnosa,
+                                                                                };
+                                                                            }),
+                                                                        };
+                                                                    },
+                                                                    cache: true,
+                                                                },
+                                                            });
+
+                                                            // Isi kode ICD X ke input kdDx saat item dipilih
+                                                            $('#icdx').on('select2:select', function(e) {
+                                                                const data = e.params.data;
+                                                                $('#kdDx').val(data.id);
+                                                                $('#diagnosa').val(data.text);
+                                                            });
+                                                        });
+                                                    </script>
+
                                                 </div>
                                                 <div class="col-sm">
                                                     <label class="col-form-label" for="mapping">Mapping :</label>
-                                                    <input type="text" id="mapping" class="form-control bg-white"
+                                                    <input type="text" id="mapping"
+                                                        class="form-control form-control-sm bg-white"
                                                         placeholder="Maaping Diagnosa" />
                                                 </div>
-                                                <div class="col-sm-2">
-                                                    <label class="col-form-label" for="">Aksi</label>
+                                            </div>
+
+                                            <div class="form-group row d-flex justify-content-end">
+                                                <div class="col-sm-2 ">
+                                                    {{-- <label class="col-form-label" for="">Aksi</label> --}}
                                                     <div class="d-flex justify-content-start">
                                                         <a type="button" id="btnSimpan" class="mx-2 btn  btn-primary"
-                                                            onclick="simpanPendLain();">Simpan</a>
+                                                            onclick="simpanDX(true);">Simpan</a>
+                                                        <a type="button" id="btnUpdate" class="mx-2 btn  btn-warning"
+                                                            onclick="simpanDX(false);" style="display: none;">Update</a>
                                                         <a type="button" id="btnBatal" class="mx-2 btn  btn-secondary"
-                                                            onclick="resetForm('lainnya');">Batal</a>
+                                                            onclick="resetForm();">Batal</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -60,7 +106,7 @@
                                                     style="width:100%" cellspacing="0">
                                                     <thead class="bg-secondary">
                                                         <tr>
-                                                            <th>Aksi</th>
+                                                            <th class="col-1 text-center">Aksi</th>
                                                             <th>No</th>
                                                             <th>ICD X</th>
                                                             <th>Diagnosa</th>

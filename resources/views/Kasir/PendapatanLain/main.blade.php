@@ -272,7 +272,7 @@
                 success: function(response) {
                     console.log("🚀 ~ simpanPendLain ~ response:", response)
                     if (response.status == 'success') {
-                        tampilkanSukses(response.message);
+                        tampilkanSuccess(response.message);
 
                         dataPendLain = response.data
                         drawTable(

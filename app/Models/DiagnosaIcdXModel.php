@@ -4,11 +4,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DiagnosaModel extends Model
+class DiagnosaIcdXModel extends Model
 {
     use HasFactory;
 
-    protected $table    = 'm_diagnosa';
-    protected $fillable = ['kdDx', 'diagnosa'];
+    protected $table = 'm_diagnosa_icdx';
 
 }

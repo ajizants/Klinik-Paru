@@ -654,7 +654,7 @@ class HomeController extends Controller
     public function mappingDx()
     {
         $title = 'Mapping Diagnosa';
-        $data  = DiagnosaMapModel::all();
+        $data  = DiagnosaMapModel::orderBy('updated_at', 'desc')->get();
         return view('Diagnosa.main', compact('data'))->with('title', $title);
     }
 

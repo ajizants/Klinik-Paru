@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AntrianController;
+use App\Http\Controllers\DiagnosaMappingController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\DotsController;
 use App\Http\Controllers\FarmasiController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\ROTransaksiController;
 use App\Http\Controllers\StokController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\VerifController;
+use App\Models\DiagnosaIcdXModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -57,7 +59,25 @@ Route::get('tes', [InputController::class, 'tes']);
 Route::get('bmhp', [InputController::class, 'bmhp']);
 Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);
 
-//antrian
+Route::get('/diagnosa_icd_x', function (Request $request) {
+    $search = $request->get('search', '');
+    $limit  = $request->get('limit', 20);
+
+    $diagnosas = DiagnosaIcdXModel::where(function ($query) use ($search) {
+        $query->where('diagnosa', 'like', '%' . $search . '%')
+            ->orWhere('kdDx', 'like', '%' . $search . '%');
+    })
+        ->limit($limit)
+        ->get(['kdDx', 'diagnosa']);
+
+    return response()->json($diagnosas);
+});
+Route::get('/dxMapping', [DiagnosaMappingController::class, 'index']);
+Route::post('/dxMapping/simpan', [DiagnosaMappingController::class, 'store']);
+Route::post('/dxMapping/update', [DiagnosaMappingController::class, 'update']);
+Route::delete('/dxMapping/{kdDx}', [DiagnosaMappingController::class, 'destroy']);
+
+//antrians
 Route::post('cariRM', [AntrianController::class, 'cariRM']);
 Route::post('antrianAll', [AntrianController::class, 'all']);
 Route::post('cariRMObat', [AntrianController::class, 'cariRMObat']);

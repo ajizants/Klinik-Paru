@@ -23,12 +23,12 @@
             data.forEach(function(item, index) {
                 item.no = index + 1
                 item.aksi = `
-                                <a type="button" class="btn btn-warning my-1 edit"
+                                <a type="button" class="btn btn-warning my-1"
                                     data-kdDx="${item.kdDx}"
                                     data-diagnosa="${item.diagnosa}"
                                     data-mapping="${item.mapping}"
                                     onclick="editDX(this)"><i class="fas fa-pen-to-square"></i></a>
-                                <a type="button" class="btn btn-danger my-1 delete"
+                                <a type="button" class="btn btn-danger my-1"
                                     data-kdDx="${item.kdDx}"
                                     data-diagnosa="${item.diagnosa}"
                                     data-mapping="${item.mapping}"
@@ -40,7 +40,7 @@
                 data: data,
                 columns: [{
                         data: 'aksi',
-                        clasName: 'text-center col-1'
+                        clasName: 'text-center col-2'
                     },
                     {
                         data: 'no'
@@ -57,32 +57,41 @@
                 ],
                 order: [
                     [1, 'asc']
-                ]
+                ],
+                autowidth: false
             });
         }
 
         function editDX(data) {
             let kdDx = $(data).data('kddx');
-            console.log("🚀 ~ editDX ~ kdDx:", kdDx)
             let diagnosa = $(data).data('diagnosa');
             let mapping = $(data).data('mapping');
 
+            console.log("🚀 ~ editDX ~ kdDx:", kdDx);
+
+            // Tambahkan opsi manual ke select2
+            let newOption = new Option(diagnosa, diagnosa, true, true);
+            $('#icdx').append(newOption).trigger('change');
+
+            // Isi input lainnya
             $('#kdDx').val(kdDx);
             $('#diagnosa').val(diagnosa);
             $('#mapping').val(mapping);
+
+            // Sembunyikan tombol simpan dan tampilkan tombol update
+            $('#btnSimpan').hide();
+            $('#btnUpdate').show();
         }
 
+
         function deleteDX(data) {
-            let id = $(data).data('id');
-            let tanggal = $(data).data('tanggal');
-            let jumlah = $(data).data('jumlah');
-            let asal_pendapatan = $(data).data('asal_pendapatan');
-            let penyetor = $(data).data('penyetor');
+            let kdDx = $(data).data('kddx');
+            let diagnosa = $(data).data('diagnosa');
+            let mapping = $(data).data('mapping');
 
             Swal.fire({
-                title: 'Hapus Pendapatan Lain?',
-                text: 'Data pendapatan lain "' + asal_pendapatan + '" dengan jumlah ' + jumlah + ' pada tanggal ' +
-                    tanggal + ' akan dihapus!',
+                title: 'Hapus Diagnosa Mapping?',
+                text: 'Data Diagnosa ' + diagnosa + ' dengan mapping ' + mapping + ' akan dihapus!',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -91,13 +100,12 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/api/pendapatanLain/delete',
-                        type: 'POST',
-                        data: {
-                            id: id,
-                        },
+                        url: '/api/dxMapping/' + kdDx,
+                        type: 'DELETE',
                         success: function(response) {
-                            if (response.status == 'success') {
+                            console.log("🚀 ~ deleteDX ~ response:", response)
+
+                            if (response.success == true) {
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Berhasil',
@@ -106,8 +114,11 @@
                                     timer: 1500
                                 });
                                 drawTable(
-                                    data
+                                    response.dxMaps
                                 );
+                                $('#btnSimpan').show();
+                                $('#btnUpdate').hide();
+                                resetForm();
                             }
                         },
                         error: function(xhr, status, error) {
@@ -123,77 +134,64 @@
             });
         }
 
-        function simpanDX() {
-            let id = $('#id').val();
-            let tanggal = $('#tanggal').val();
-            let pendapatan = parseNumber($('#pendapatan').val())
-            let setoran = parseNumber($('#setoran').val())
-            let asal_pendapatan = $('#asal_pendapatan').val();
-            let penyetor = $('#penyetor').val();
-            let noSbs = $('#noSbs').val();
-            if (tanggal == "" || pendapatan == "" || setoran == "" || asal_pendapatan == "" || penyetor == "") {
+        function simpanDX(simpan) {
+            let kdDx = $('#kdDx').val();
+            let diagnosa = $('#diagnosa').val();
+            let mapping = $('#mapping').val();
+            if (kdDx == "" || diagnosa == "" || mapping == "") {
                 tampilkanEror('Data belum lengkap');
                 return
             }
-            let method = id == "" ? 'POST' : 'PUT';
-            let url = id == "" ? '/api/pendapatanLain/simpan' : '/api/pendapatanLain/ubah/' + id;
+            let url = simpan == true ? '/api/dxMapping/simpan' : '/api/dxMapping/update';
             tampilkanLoading();
             $.ajax({
                 url: url,
-                type: method,
+                type: 'POST',
                 data: {
-                    id: id,
-                    noSbs: noSbs,
-                    tanggal: tanggal,
-                    pendapatan: pendapatan,
-                    setoran: setoran,
-                    asal_pendapatan: asal_pendapatan,
-                    penyetor: penyetor,
+                    kdDx: kdDx,
+                    diagnosa: diagnosa,
+                    mapping: mapping
                 },
                 success: function(response) {
                     console.log("🚀 ~ simpan ~ response:", response)
-                    if (response.status == 'success') {
-                        tampilkanSukses(response.message);
+                    if (response.success == true) {
+                        tampilkanSuccess(response.message);
 
-                        data = response.data
+                        data = response.dxMaps
                         drawTable(
                             data
                         );
                         resetForm();
+                    } else {
+                        tampilkanEror(response.message);
                     }
                 },
                 error: function(xhr, status, error) {
                     console.log(error);
-                    tampilkanEror('Terjadi kesalahan saat menyimpan data. Silakan coba lagi.' + error);
+                    console.log("🚀 ~ simpanDX ~ xhr:", xhr)
+                    tampilkanEror('Terjadi kesalahan saat menyimpan data. Silakan coba lagi.' + error + xhr
+                        .responseJSON.message);
                 }
             });
         }
 
-        function resetForm(idForm) {
-            if (idForm == "lainnya") {
-                document.getElementById("form_input").reset();
-            } else {
-                document.getElementById("form_input_tutup_kas").reset();
-            }
+        function resetForm() {
+            document.getElementById("form_input").reset();
+            // Hapus semua opsi yang ada di dropdown diagnosa
+            $('#icdx').empty();
+            $('#diagnosa').val("");
+            $('#btnSimpan').show();
+            $('#btnUpdate').hide();
         }
 
         async function getData() {
-            // Ambil nilai tahun dari elemen input
-            const tahun = $('#tahun').val();
-
-            // Validasi nilai input
-            if (!tahun) {
-                console.error('Tahun tidak valid atau kosong');
-                tampilkanEror('Harap isi tahun terlebih dahulu!');
-                return;
-            }
 
             // Tampilkan indikator loading
             tampilkanLoading();
 
             try {
                 // Fetch data dari API
-                const response = await fetch('/api/kasir/setoran/' + tahun);
+                const response = await fetch('/api/dxMapping');
 
                 // Cek apakah respons berhasil
                 if (!response.ok) {

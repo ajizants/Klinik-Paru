@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,11 +8,15 @@ class DiagnosaMapModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'm_diagnosa_map';
+    protected $table      = 'm_diagnosa_map';
+    protected $primaryKey = 'kdDx';   // Primary key menggunakan kdDx
+    public $incrementing  = false;    // Non-incremental primary key
+    protected $keyType    = 'string'; // Tipe primary key adalah string
+    protected $fillable   = ['kdDx', 'diagnosa', 'mapping'];
 
-    public function diagnosa($kd_dx)
+    public function diagnosa($kdDx)
     {
-        return $this->where('kd_dx', $kd_dx)->first();
+        return $this->where('kdDx', $kdDx)->first();
     }
 
 }
