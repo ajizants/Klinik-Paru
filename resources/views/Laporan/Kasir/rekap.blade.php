@@ -64,23 +64,8 @@
                     </div>
                 </div>
 
-
                 <div class="row">
-                    <div class="col-4">
-                        <div class="row">
-                            <label class="col-form-label mb-0">Tanggal :</label>
-                            <div class="form-group col mb-0">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="far fa-calendar-alt"></i>
-                                        </span>
-                                    </div>
-                                    <input type="text" class="form-control float-right" id="reservation">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <h4>Menu Cetak Data:</h4>
                     <label class="col-form-label">Tahun :</label>
                     <div class="form-group col-1">
                         <div class="input-group">
@@ -92,7 +77,7 @@
                         </div>
                     </div>
                     <label class="col-form-label">Bulan :</label>
-                    <div class="form-group col-2">
+                    <div class="form-group col-1">
                         <div class="input-group">
                             <Select class="form-control" id="bulan">
                                 <option value="">-- Pilih Bulan --</option>
@@ -111,13 +96,7 @@
                             </Select>
                         </div>
                     </div>
-                    <div class="form-group col-2">
-                        <button type="button" class="btn btn-danger" onclick="updateData();">
-                            Perbarui Data
-                        </button>
-                    </div>
                 </div>
-                <h4>Menu Cetak Data:</h4>
                 <div class="row">
                     <button type="button" class="my-1 mx-1 font-weight-bold btn btn-info" onclick="cetakBruto('sts');">
                         Cetak STS Bruto
@@ -141,7 +120,30 @@
                         Register Penutupan Kas
                     </button>
                 </div>
-                <h4>Menu Menampilkan Data:</h4>
+                <div class="row">
+                    <h4>Menu Menampilkan Data:</h4>
+                    <div class="col-4">
+                        <div class="row">
+                            <label class="col-form-label mb-0">Tanggal :</label>
+                            <div class="form-group col mb-0">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="far fa-calendar-alt"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control float-right" id="reservation">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-2">
+                        <button type="button" class="btn btn-danger" onclick="updateData();">
+                            Perbarui Data
+                        </button>
+                    </div>
+                </div>
                 <div class="row">
                     <button type="button" class="my-1 mx-1 font-weight-bold btn btn-outline-primary"
                         onclick="tampilkan('#cardRekapJumlahPasien')">

@@ -277,6 +277,12 @@
                                     <p>Riwayat Pasien</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/Diagnosa/Mapping') }}">
+                                    <i class="fa-solid fa-book-medical nav-icon"></i>
+                                    <p>Mapping Dx Medis</p>
+                                </a>
+                            </li>
                             <li class="nav-item"
                                 style="margin-top: 100px;>
                                 <a class="nav-link"

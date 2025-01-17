@@ -645,15 +645,27 @@
                         <div
                             style=" font-weight: bold; text-align: left; text-decoration: underline; margin-bottom: 5px;">
                             Rencana Tindak Lanjut (P)</div>
-                        <li style="margin-left: 38px; text-align: justify;">
-                            Tanggal Kontrol Selanjutnya:
-                            {{ Carbon\Carbon::parse($resumePasien->tanggal_kontrol_selanjutnya)->locale('id')->isoFormat('DD MMMM Y') }}
-                        </li>
-                        @if ($resumePasien->rencana_tindak_lanjut != '-')
-                            <li style="margin-left: 38px; text-align: justify;">
-                                {{ $resumePasien->rencana_tindak_lanjut }}
-                            </li>
-                        @endif
+                        <div class="d-flex justify-between">
+                            <div class="col text-center">
+                                <li style="margin-left: 38px; text-align: justify;">
+                                    {{ $resumePasien->status_pasien_pulang }},
+                                    {{-- {{ $resumePasien->ket_status_pasien_pulang }} --}}
+                                </li>
+                                <li style="margin-left: 38px; text-align: justify;">
+                                    {{-- {{ $resumePasien->status_pasien_pulang }}, --}}
+                                    {{ $resumePasien->ket_status_pasien_pulang }}
+                                </li>
+                            </div>
+                            <div class="col text-center">
+                                @if ($resumePasien->rencana_tindak_lanjut != '-')
+                                    <li style="margin-left: 38px; text-align: justify;">
+                                        {{ $resumePasien->rencana_tindak_lanjut }}
+                                    </li>
+                                @endif
+                            </div>
+                            <div class="col text-center">
+                            </div>
+                        </div>
                     </td>
                 </tr>
             </tbody>
