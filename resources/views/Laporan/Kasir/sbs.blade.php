@@ -51,7 +51,7 @@
                             <div class="flex py-0">
                                 <div class="w-1/4">Bank</div>
                                 <div class="w-fil mx-2">:</div>
-                                <div class="flex-1">Bang Jateng</div>
+                                <div class="flex-1">Bank Jateng</div>
                             </div>
                             <div class="flex py-0">
                                 <div class="w-1/4">No. Rek</div>
