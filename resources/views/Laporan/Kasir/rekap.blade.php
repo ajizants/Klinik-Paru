@@ -114,13 +114,13 @@
                         onclick="cetakBruto('bkuBruto');">
                         Cetak BKU Bruto
                     </button>
-                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-secondary"
-                        onclick="cetakBruto('retriBruto');">
-                        Cetak Lap. Retribusi Bruto
-                    </button>
                     <a href="{{ url('/kasir/pendapatan/lain') }}" class="my-1 mx-1 font-weight-bold btn btn-secondary">
                         Register Penutupan Kas
                     </a>
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-info"
+                        onclick="cetakBruto('retriBruto');">
+                        Cetak Lap. Retribusi Bruto
+                    </button>
                 </div>
                 <div class="row mt-4">
                     <label class="col-form-label mr-4">Menu Menampilkan Data:</label>
@@ -153,23 +153,23 @@
                     </button>
                     <button type="button" class="my-1 mx-1 font-weight-bold btn btn-outline-secondary"
                         onclick="tampilkan('#cardRekapKunjungan')">
-                        Rekap Kunjungan
+                        Rekap Kunjungan Per Pasien
                     </button>
                     <button type="button" class="my-1 mx-1 font-weight-bold btn btn-outline-success"
                         onclick="tampilkan('#cardTotalPendapatanUmum')">
-                        Rekap Total Pendapatan Harian Umum
+                        Total Pendapatan Harian
                     </button>
                     <button type="button" class="my-1 mx-1 font-weight-bold btn btn-outline-info"
                         onclick="tampilkan('#cardPendapatanItemPerhariUmum')">
-                        Pendapatan Item Per Hari Umum
+                        Pendapatan Peritem Harian
                     </button>
                     <button type="button" class="my-1 mx-1 font-weight-bold btn btn-outline-danger"
-                        onclick="tampilkan('#cardTotalPendapatanBPJS')">
-                        Rekap Total Pendapatan Harian BPJS
+                        onclick="tampilkan('#cardTotalPendapatanBPJS')" hidden>
+                        Total Pendapatan Harian BPJS
                     </button>
                     <button type="button" class="my-1 mx-1 font-weight-bold btn btn-outline-dark"
-                        onclick="tampilkan('#cardPendapatanItemPerhariBpjs')">
-                        Pendapatan Item Per Hari BPJS
+                        onclick="tampilkan('#cardPendapatanItemPerhariBpjs')" hidden>
+                        Pendapatan Peritem Harian BPJS
                     </button>
                 </div>
 

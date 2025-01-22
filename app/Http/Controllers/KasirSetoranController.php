@@ -415,4 +415,8 @@ class KasirSetoranController extends Controller
         ]);
     }
 
+    public function retriBruto($bln, $tahun, $jaminan)
+    {
+        abort(404);
+    }
 }
