@@ -156,14 +156,16 @@ Route::get('cetakBAPH/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakB
 Route::get('stsBruto/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'stsBruto']);
 Route::get('stpbBruto/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'stpbBruto']);
 Route::get('rekapBulanan/{tahun}/{jaminan}', [KasirSetoranController::class, 'rekapBulanan']);
-Route::get('bkuBruto/{bln}/{tahun}', [KasirSetoranController::class, 'bkuBruto']);
-Route::get('retriBruto/{bln}/{tahun}', [KasirSetoranController::class, 'retriBruto']);
+Route::get('bkuBruto/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'bkuBruto']);
+Route::get('retriBruto/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'retriBruto']);
 
 //kasir penutupan kasir
 Route::post('/kasir/penutupanKas', [KasirPenutupanKasController::class, 'data']);
 Route::post('/kasir/penutupanKas/simpan', [KasirPenutupanKasController::class, 'store']);
 Route::post('/kasir/penutupanKas/ubah', [KasirPenutupanKasController::class, 'update']);
 Route::delete('/kasir/penutupanKas/delete', [KasirPenutupanKasController::class, 'destroy']);
+Route::get('/kasir/penutupanKas/cetak/{id}/{tgl}', [KasirPenutupanKasController::class, 'cetakRegPenutupan']);
+Route::get('tutupKas/{bln}/{tahun}', [KasirPenutupanKasController::class, 'cetakRegTupan']);
 
 //laboratorium
 Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);

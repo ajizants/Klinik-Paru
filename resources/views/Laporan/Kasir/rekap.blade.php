@@ -65,7 +65,7 @@
                 </div>
 
                 <div class="row">
-                    <h4>Menu Cetak Data:</h4>
+                    <label class="col-form-label mr-4">Menu Cetak Data:</label>
                     <label class="col-form-label">Tahun :</label>
                     <div class="form-group col-1">
                         <div class="input-group">
@@ -77,7 +77,7 @@
                         </div>
                     </div>
                     <label class="col-form-label">Bulan :</label>
-                    <div class="form-group col-1">
+                    <div class="form-group col-2">
                         <div class="input-group">
                             <Select class="form-control" id="bulan">
                                 <option value="">-- Pilih Bulan --</option>
@@ -98,30 +98,32 @@
                     </div>
                 </div>
                 <div class="row">
-                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-info" onclick="cetakBruto('sts');">
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-info"
+                        onclick="cetakBruto('stsBruto');">
                         Cetak STS Bruto
                     </button>
-                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-warning" onclick="cetakBruto('stpb');">
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-warning"
+                        onclick="cetakBruto('stpbBruto');">
                         Cetak STPB Bruto
                     </button>
                     <button type="button" class="my-1 mx-1 font-weight-bold btn btn-primary"
                         onclick="cetakBruto('rekapBulanan');">
                         Cetak Rekap Bulanan
                     </button>
-                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-success" onclick="cetakBruto('bku');">
+                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-success"
+                        onclick="cetakBruto('bkuBruto');">
                         Cetak BKU Bruto
                     </button>
                     <button type="button" class="my-1 mx-1 font-weight-bold btn btn-secondary"
-                        onclick="cetakBruto('retri');">
+                        onclick="cetakBruto('retriBruto');">
                         Cetak Lap. Retribusi Bruto
                     </button>
-                    <button type="button" class="my-1 mx-1 font-weight-bold btn btn-secondary"
-                        onclick="cetakBruto('tutupKas');">
+                    <a href="{{ url('/kasir/pendapatan/lain') }}" class="my-1 mx-1 font-weight-bold btn btn-secondary">
                         Register Penutupan Kas
-                    </button>
+                    </a>
                 </div>
-                <div class="row">
-                    <h4>Menu Menampilkan Data:</h4>
+                <div class="row mt-4">
+                    <label class="col-form-label mr-4">Menu Menampilkan Data:</label>
                     <div class="col-4">
                         <div class="row">
                             <label class="col-form-label mb-0">Tanggal :</label>
@@ -193,12 +195,11 @@
                             })
                             return;
                         }
-                        if (tipe == 'rekapBulanan') {
-                            var url = `/api/rekapBulanan/${tahun}/umum`;
-                        } else if (tipe == 'bku' || tipe == 'retri') {
-                            var url = `/api/${tipe}Bruto/${bulan}/${tahun}`;
+                        if (tipe == 'tutupKas') {
+
+                            var url = `/api/${tipe}/${bulan}/${tahun}`;
                         } else {
-                            var url = `/api/${tipe}Bruto/${bulan}/${tahun}/umum`;
+                            var url = `/api/${tipe}/${bulan}/${tahun}/umum`;
                         }
 
                         window.open(url, '_blank');
@@ -316,7 +317,7 @@
             </div>
         </div>
     </div>
-    <div class="card shadow mb-4" id="cardRekapKunjungan">
+    <div class="card shadow mb-4" id="cardRekapKunjungan"style="display: none">
         <!-- Card Header - Dropdown -->
         <div class="card-header py-3 d-flex flex-row align-items-center bg-primary justify-content-center">
             <h6 class="m-0 font-weight-bold">Rekap Kunjungan Kasir</h6>
@@ -485,7 +486,7 @@
         </div>
 
     </div>
-    <div class="card shadow mb-4" id="cardTotalPendapatanUmum" style="display: none">
+    <div class="card shadow mb-4" id="cardTotalPendapatanUmum">
         <!-- Card Header - Dropdown -->
         <div class="card-header  d-flex flex-row align-items-center bg-primary justify-content-center">
             <h5 class="m-0 font-weight-bold text-center">Laporan Total Pendapatan Per Hari UMUM</h5>

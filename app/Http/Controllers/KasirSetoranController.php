@@ -246,16 +246,18 @@ class KasirSetoranController extends Controller
 
         try {
             // Ambil data dari request
-            $tgl            = $request->input('tanggal');
-            $tanggal        = Carbon::parse($tgl)->format('Y-m-d');
-            $pendapatan     = $request->input('pendapatan');
-            $setoran        = $request->input('setoran');
-            $asalPendapatan = $request->input('asal_pendapatan');
-            $penyetor       = $request->input('penyetor');
-            $noSbs          = $request->input('noSbs') ?? null;
-            // dd($noSbs);
+            $tglSetor      = $request->input('tanggalSetor');
+            $tglPendapatan = $request->input('tanggalPendapatan');
 
-            $bulanTahun = Carbon::parse($tanggal)->format('m-Y');
+            $tanggal           = Carbon::parse($tglSetor)->format('Y-m-d');
+            $tanggalPendapatan = Carbon::parse($tglPendapatan)->format('Y-m-d');
+            $pendapatan        = $request->input('pendapatan');
+            $setoran           = $request->input('setoran');
+            $asalPendapatan    = $request->input('asal_pendapatan');
+            $penyetor          = $request->input('penyetor');
+            $noSbs             = $request->input('noSbs') ?? null;
+
+            $bulanTahun = Carbon::parse($tanggal)->format('Y-m');
             $tahun      = Carbon::parse($tanggal)->format('Y');
             //format bulan seperti ini JAN
             $bulanText = Carbon::parse($tanggal)->format('M');
@@ -265,25 +267,66 @@ class KasirSetoranController extends Controller
                 ->count();
             $no    = $jumlahData + 1;
             $nomor = $no . "/KKPM/" . strtoupper($bulanText) . "/" . $tahun;
-            // dd($nomor);
+            // dd($jumlahData);
 
-            // Simpan data ke database
-            $pendapatanLain = KasirSetoranModel::create([
-                'nomor'           => $nomor,
-                'noSbs'           => $noSbs,
-                'tanggal'         => $tanggal,
-                'pendapatan'      => $pendapatan,
-                'setoran'         => $setoran,
-                'asal_pendapatan' => $asalPendapatan,
-                'penyetor'        => $penyetor,
-            ]);
+            if ($tanggal != $tanggalPendapatan) {
+                // return "Tanggal Setor dan Tanggal Pendapatan harus sama";
+                // Simpan data ke database
+                $pendapatanLain = KasirSetoranModel::create([
+                    'nomor'           => $nomor,
+                    'noSbs'           => $noSbs,
+                    'tanggal'         => $tanggalPendapatan,
+                    'pendapatan'      => $pendapatan,
+                    'setoran'         => 0,
+                    'asal_pendapatan' => $asalPendapatan,
+                    'penyetor'        => $penyetor,
+                ]);
 
-            // Kembalikan respons sukses
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Data berhasil disimpan',
-                'data'    => $pendapatanLain,
-            ], 201);
+                // Buat nomor setoran
+                $jumlahData = KasirSetoranModel::where('tanggal', 'like', '%' . $bulanTahun . '%')
+                    ->count();
+                $no    = $jumlahData + 1;
+                $nomor = $no . "/KKPM/" . strtoupper($bulanText) . "/" . $tahun;
+
+                // Simpan data ke database
+                $pendapatanLain = KasirSetoranModel::create([
+                    'nomor'           => $nomor,
+                    'noSbs'           => $noSbs,
+                    'tanggal'         => $tanggal,
+                    'pendapatan'      => 0,
+                    'setoran'         => $setoran,
+                    'asal_pendapatan' => $asalPendapatan,
+                    'penyetor'        => $penyetor,
+                ]);
+
+                // Kembalikan respons sukses
+                return response()->json([
+                    'status'  => 'success',
+                    'message' => 'Data berhasil disetorkan di tanggal berbeda, tgl pendapatan: ' . $tanggalPendapatan . ', tgl setoran: ' . $tanggal,
+                    'data'    => $pendapatanLain,
+                ], 201);
+
+            } else {
+
+                // Simpan data ke database
+                $pendapatanLain = KasirSetoranModel::create([
+                    'nomor'           => $nomor,
+                    'noSbs'           => $noSbs,
+                    'tanggal'         => $tanggal,
+                    'pendapatan'      => $pendapatan,
+                    'setoran'         => $setoran,
+                    'asal_pendapatan' => $asalPendapatan,
+                    'penyetor'        => $penyetor,
+                ]);
+
+                // Kembalikan respons sukses
+                return response()->json([
+                    'status'  => 'success',
+                    'message' => 'Data berhasil disetorkan tanggal yang sama',
+                    'data'    => $pendapatanLain,
+                ], 201);
+            }
+
         } catch (\Exception $e) {
             // Tangani error
             return response()->json([
@@ -297,8 +340,11 @@ class KasirSetoranController extends Controller
     public function setoran($tahun)
     {
         $currentYear = $tahun ?? \Carbon\Carbon::now()->year;
-
-        $data = KasirSetoranModel::where('tanggal', 'like', '%' . $currentYear . '%')->get();
+        if ($tahun == 'all') {
+            $data = KasirSetoranModel::all();
+        } else {
+            $data = KasirSetoranModel::where('tanggal', 'like', '%' . $currentYear . '%')->get();
+        }
         return $data;
     }
 

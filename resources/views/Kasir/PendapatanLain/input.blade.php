@@ -6,15 +6,15 @@
                             <div class="container-fluid">
                                 <ul class="nav nav-tabs">
                                     <li class="nav-item">
-                                        <a type="button" class="nav-link border border-primary active bg-blue"
-                                            onclick=" toggleSections('#dTunggu')"><b>Transaksi Lainnya</b></a>
+                                        <a type="button" class="nav-link border border-primary  active bg-blue"
+                                            onclick=" toggleSections('#dSelesai')"><b>Penutupan Kas</b></a>
                                     </li>
                                     <li class="nav-item">
                                         <a type="button" class="nav-link border border-primary"
-                                            onclick=" toggleSections('#dSelesai')"><b>Penutupan Kas</b></a>
+                                            onclick=" toggleSections('#dTunggu')"><b>Transaksi Lainnya</b></a>
                                     </li>
                                 </ul>
-                                <div class="border border-primary p-2" id="dTunggu">
+                                <div class="border border-primary p-2" id="dTunggu" style="display: none">
                                     @csrf
                                     <form class="form-group " id="form_input">
                                         <div class="form-row">
@@ -146,6 +146,8 @@
                                                     <label for="tahun" class="col-form-label col-1">Tahun :</label>
                                                     <div class="col-2">
                                                         <select name="Tahun" id="tahun" class="form-control">
+                                                            <option value="all">Semua
+                                                            </option>
                                                             @foreach ($listYear as $item)
                                                                 <option value="{{ $item }}">{{ $item }}
                                                                 </option>
@@ -176,7 +178,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="border border-primary p-2" id="dSelesai" style="display: none">
+                                <div class="border border-primary p-2" id="dSelesai">
                                     @csrf
                                     <form class="form-group" id="form_input_tutup_kas">
                                         <div class="form-row">
@@ -339,6 +341,8 @@
                                                     <label for="tahun" class="col-form-label col-1">Tahun :</label>
                                                     <div class="col-2">
                                                         <select name="Tahun" id="tahunTutup" class="form-control">
+                                                            <option value="all">Semua
+                                                            </option>
                                                             @foreach ($listYear as $item)
                                                                 <option value="{{ $item }}">{{ $item }}
                                                                 </option>
@@ -348,13 +352,15 @@
                                                     <button class="btn btn-success mx-2"
                                                         onclick="getDataPenutupanKas(true)">Cari
                                                         Data Transaksi Penutupan Kas</button>
-                                                    <div class="table-responsive mt-2">
+                                                    <div class="table-responsive mt-2 "
+                                                        style="display: block;
+                                                        overflow-x: auto; white-space: nowrap;">
                                                         <table id="dataPenutupanKas" name="dataPenutupanKas"
                                                             class="table table-striped table-tight table-hover"
                                                             style="width:100%" cellspacing="0">
                                                             <thead class="bg-secondary">
                                                                 <tr>
-                                                                    <th style="width: 35px;">Aksi</th>
+                                                                    <th width="15%">Aksi</th>
                                                                     <th>No</th>
                                                                     <th>Tanggal Penutupan KAS Sekarang</th>
                                                                     <th>Tanggal Penutupan KAS Lalu</th>

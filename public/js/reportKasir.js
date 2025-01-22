@@ -280,8 +280,8 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
         .DataTable({
             data: data,
             columns: [
-                { data: "aksi", className: "text-center col-3" },
                 { data: "no", className: "text-center" },
+                { data: "aksi", className: "text-center col-4" },
                 { data: "tanggal", className: "text-center" },
                 { data: "nomor", className: "text-center" },
                 { data: "kode_akun" },
@@ -290,7 +290,7 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
                 { data: "pendapatan", className: "text-right" },
             ],
             autoWidth: false,
-            order: [[1, "asc"]],
+            order: [[1, "dsc"]],
             buttons: [
                 {
                     extend: "excelHtml5",
@@ -322,12 +322,17 @@ function cetakSBS() {
 
 function setorkan(button) {
     console.log("🚀 ~ setorkan ~ button:", button);
-    const tgl = $(button).data("tgl");
+    const tgl = $(button).data("tgl"); // Format input: "08-01-2025"
+    const [day, month, year] = tgl.split("-"); // Asumsikan format DD-MM-YYYY
+    const tgl_setor = new Date(`${year}-${month}-${day}`)
+        .toISOString()
+        .split("T")[0];
+    console.log("🚀 ~ setorkan ~ tgl_setor:", tgl_setor);
+
     const pendapatan = $(button).data("jumlah");
     const asalPendapatan = $(button).data("asal_pendapatan");
     const penyetor = "Nasirin";
     const noSbs = $(button).data("nosbs");
-    console.log("🚀 ~ setorkan ~ noSbs:", noSbs);
     const rupiah = pendapatan.toLocaleString("id-ID", {
         style: "currency",
         currency: "IDR",
@@ -335,31 +340,39 @@ function setorkan(button) {
 
     Swal.fire({
         title: "Setorkan Pendapatan",
-        text: `Jumlah pendapatan tanggal ${tgl}:\n${rupiah}.\nBerapa yang akan di setorkan?`,
+        html: `
+            <p>Jumlah pendapatan tanggal ${tgl}:</p>
+            <p><strong>${rupiah}</strong></p>
+            <label for="setoran" class="swal2-label">Masukkan nilai setoran:</label>
+            <input id="setoran" type="number" class="swal2-input" placeholder="Contoh: 50000" value="${pendapatan}">
+            <label for="tanggal_setor" class="swal2-label">Masukkan tanggal setoran:</label>
+            <input id="tanggal_setor" type="date" class="swal2-input" value="${tgl_setor}">
+        `,
         icon: "warning",
-        input: "number", // Input field untuk nilai setoran
-        inputLabel: "Masukkan nilai setoran",
-        inputPlaceholder: "Contoh: 50000",
-        inputValue: pendapatan,
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Ya",
         cancelButtonText: "Tidak",
-        preConfirm: (setoran) => {
-            if (!setoran || setoran <= 0) {
-                Swal.showValidationMessage("Nilai setoran harus lebih dari 0");
-            } else if (setoran > pendapatan) {
+        preConfirm: () => {
+            const setoran = document.getElementById("setoran").value;
+            const tanggalSetor = document.getElementById("tanggal_setor").value;
+
+            if (!setoran || !tanggalSetor) {
                 Swal.showValidationMessage(
-                    "Nilai setoran tidak boleh lebih besar dari pendapatan"
+                    "Nilai setoran dan tanggal wajib diisi!"
                 );
             }
-            return setoran;
+
+            return { setoran, tanggalSetor };
         },
     }).then((result) => {
         if (result.isConfirmed) {
-            const setoran = result.value; // Nilai input dari pengguna
-            console.log("🚀 ~ setorkan ~ setoran:", setoran);
+            console.log("Setoran:", result.value.setoran);
+            console.log("Tanggal Setor:", result.value.tanggalSetor);
+
+            const setoran = result.value.setoran;
+            const tanggalSetor = result.value.tanggalSetor;
 
             // Kirim data melalui AJAX
             $.ajax({
@@ -367,7 +380,8 @@ function setorkan(button) {
                 type: "post",
                 data: {
                     noSbs: noSbs,
-                    tanggal: tgl,
+                    tanggalPendapatan: tgl,
+                    tanggalSetor: tanggalSetor,
                     pendapatan: pendapatan,
                     setoran: setoran,
                     asal_pendapatan: asalPendapatan,
@@ -378,9 +392,7 @@ function setorkan(button) {
                     if (response.status == "success") {
                         Swal.fire({
                             icon: "success",
-                            title: "Setorkan pendapatan berhasil",
-                            showConfirmButton: false,
-                            timer: 1500,
+                            title: response.message,
                         });
                         $(button).removeClass("bg-danger");
                         $(button).addClass("bg-info");
@@ -390,9 +402,7 @@ function setorkan(button) {
                     } else {
                         Swal.fire({
                             icon: "error",
-                            title: "Setorkan pendapatan gagal",
-                            showConfirmButton: false,
-                            timer: 1500,
+                            title: response.message,
                         });
                     }
                 },

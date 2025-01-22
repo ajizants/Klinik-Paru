@@ -8,10 +8,12 @@
     <script src="{{ asset('js/populate.js') }}"></script>
     <script type="text/javascript">
         let dataPendLain = @json($data);
-        console.log("🚀 ~ dataPendLain:", dataPendLain)
+        let dataTutupKas = @json($dataTutupKas);
+        console.log("🚀 ~ dataTutupKas:", dataTutupKas)
 
         $(document).ready(function() {
             drawTable(dataPendLain);
+            drawTabelPenutupanKas(dataTutupKas);
         })
         // Ambil elemen input berdasarkan ID
         const pendapatan = document.getElementById("pendapatan");
@@ -193,6 +195,7 @@
             $('#penyetor').val(penyetor);
             $('#penyetor').trigger('change');
             $('#noSbs').val(nosbs);
+            scrollToTop();
         }
 
         function deletePendLain(data) {
@@ -462,6 +465,8 @@
                         // Tampilkan pesan sukses
                         if (result.status === 'success') {
                             tampilkanSuccess(result.message);
+                            const data = result.data;
+                            drawTabelPenutupanKas(data);
                         } else {
                             tampilkanEror(result.message);
                         }
@@ -479,38 +484,59 @@
             }
         }
 
-        async function deletePenutupanKas(id) {
+        async function deletePenutupanKas(button) {
             const tahun = $('#tahunTutup').val();
-            try {
-                // Kirim permintaan DELETE ke API menggunakan $.ajax
-                $.ajax({
-                    url: `/api/kasir/penutupanKas/delete`, // Gunakan relative URL
-                    type: 'DELETE',
-                    data: {
-                        id,
-                        tahun
-                    },
-                    success: function(result) {
-                        // Tampilkan pesan sukses
-                        if (result.status === 'success') {
-                            tampilkanSuccess(result.message);
-                            const data = result.data
-                            drawTabelPenutupanKas(data);
-                        } else {
-                            tampilkanEror(result.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        // Tangani kesalahan
+            const id = $(button).data('id');
+            const tanggal = $(button).data('tanggal');
+            const total_pengeluaran = $(button).data('total_pengeluaran');
+            const total_penerimaan = $(button).data('total_penerimaan');
+            const jumlah = $(button).data('jumlah');
+            Swal.fire({
+                title: 'Hapus Penutupan Kas?',
+                text: 'Data penutupan kas tgl: ' + tanggal + ' dengan total pengeluaran ' + total_pengeluaran +
+                    ' dan total penerimaan ' + total_penerimaan +
+                    ' akan dihapus! Apakah Anda yakin ingin melanjutkan?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Hapus',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    tampilkanLoading();
+                    // Kirim permintaan DELETE ke API menggunakan $.ajax
+                    try {
+                        // Kirim permintaan DELETE ke API menggunakan $.ajax
+                        $.ajax({
+                            url: `/api/kasir/penutupanKas/delete`, // Gunakan relative URL
+                            type: 'DELETE',
+                            data: {
+                                id,
+                                tahun
+                            },
+                            success: function(result) {
+                                // Tampilkan pesan sukses
+                                if (result.status === 'success') {
+                                    tampilkanSuccess(result.message);
+                                    const data = result.data
+                                    drawTabelPenutupanKas(data);
+                                } else {
+                                    tampilkanEror(result.message);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                // Tangani kesalahan
+                                console.error("Error:", error);
+                                tampilkanEror(`Terjadi kesalahan saat menghapus data: ${error}`);
+                            }
+                        });
+                    } catch (error) {
+                        // Tangani kesalahan jika terjadi di luar $.ajax
                         console.error("Error:", error);
                         tampilkanEror(`Terjadi kesalahan saat menghapus data: ${error}`);
                     }
-                });
-            } catch (error) {
-                // Tangani kesalahan jika terjadi di luar $.ajax
-                console.error("Error:", error);
-                tampilkanEror(`Terjadi kesalahan saat menghapus data: ${error}`);
-            }
+                }
+            });
         }
 
         function editPenutupanKas(button) {
@@ -545,6 +571,7 @@
 
             // Show the form (if hidden)
             $('#form_input_tutup_kas').show();
+            scrollToTop();
 
             // You can also trigger a custom action when opening the form, if needed.
         }
@@ -563,6 +590,7 @@
                 item.no = index + 1; // Numbering row
                 item.aksi = `<a type="button" class="btn btn-warning my-1edit " onclick="editPenutupanKas(this)"><i class="fas fa-pen-to-square"></i></a>
                             <a type="button" class="btn btn-danger my-1 delete" onclick="deletePenutupanKas(${item.id})"><i class="fas fa-trash"></i></a>
+                            <a href="/api/kasir/penutupanKas/cetak/${item.id}/${item.tanggal_sekarang}" class="btn btn-info my-1" ><i class="fas fa-print"></i></a>
                             `;
             });
 
@@ -572,12 +600,14 @@
                 columns: [{
                         data: 'aksi',
                         title: 'Aksi',
+                        className: 'text-center col-5',
                         orderable: false,
                         searchable: false
                     },
                     {
                         data: 'no',
-                        title: 'No'
+                        title: 'No',
+                        width: '5%'
                     },
                     {
                         data: 'tanggal_sekarang',
@@ -625,43 +655,59 @@
                     },
                     {
                         data: 'kertas10k',
-                        title: 'Kertas 10.000'
+                        title: 'Kertas 10.000',
+                        // visible: false
                     },
                     {
                         data: 'kertas5k',
-                        title: 'Kertas 5.000'
+                        title: 'Kertas 5.000',
+                        // visible: false
                     },
                     {
                         data: 'kertas2k',
-                        title: 'Kertas 2.000'
+                        title: 'Kertas 2.000',
+                        // visible: false
                     },
                     {
                         data: 'kertas1k',
-                        title: 'Kertas 1.000'
+                        title: 'Kertas 1.000',
+                        // visible: false
                     },
                     {
                         data: 'logam1k',
-                        title: 'Logam 1.000'
+                        title: 'Logam 1.000',
+                        // visible: false
                     },
                     {
                         data: 'logam500',
-                        title: 'Logam 500'
+                        title: 'Logam 500',
+                        // visible: false
                     },
                     {
                         data: 'logam200',
-                        title: 'Logam 200'
+                        title: 'Logam 200',
+                        // visible: false
                     },
                     {
                         data: 'logam100',
-                        title: 'Logam 100'
+                        title: 'Logam 100',
+                        // visible: false
                     },
-
                 ],
                 order: [
-                    [0, 'asc']
+                    [1, 'desc']
                 ],
-                autowidth: false,
+                dom: 'Bfrtip', // Menambahkan dom untuk tombol
+                buttons: [{
+                    extend: 'colvis',
+                    text: 'Atur Kolom', // Teks tombol
+                    columns: ':not(:first-child)', // Kolom yang bisa diatur (tidak termasuk aksi)
+                }],
+                responsive: true,
+                autoWidth: false,
+                scrollX: true,
             });
+
         }
     </script>
 @endsection

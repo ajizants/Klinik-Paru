@@ -1,9 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\KasirPenutupanKasModel;
 use App\Models\KasirSetoranModel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class KasirPenutupanKasController extends Controller
@@ -12,32 +12,132 @@ class KasirPenutupanKasController extends Controller
     {
         $bulan = $request->input('bulan');
         $tahun = $request->input('tahun');
-        $totalPendapatan = 0;
-        $totalPengeluaran = 0;
-        $saldo_bku = 0;
+        $res   = $this->dataPenutupan([
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'semua' => $tahun == "all" ? true : false,
+        ]);
 
-        $model = new KasirSetoranModel();
-        $penerimaan = $model->penerimaan($tahun, $bulan);
+        return $res;
+    }private function dataPenutupan($params)
+    {
+        $tahun            = $params['tahun'];
+        $bulan            = $params['bulan'];
+        $totalPendapatan  = 0;
+        $totalPengeluaran = 0;
+        $saldo_bku        = 0;
+
+        $model       = new KasirSetoranModel();
+        $penerimaan  = $model->penerimaan($tahun, $bulan);
         $pengeluaran = $model->pengeluaran($tahun, $bulan);
-        $dataPenutupan = KasirPenutupanKasModel::where('tanggal_sekarang', 'like', '%' . $tahun . '%')->get();
-        // return $data;
+
+        if ($params['semua'] == true) {
+            $dataPenutupan = KasirPenutupanKasModel::all();
+        } else {
+            $dataPenutupan = KasirPenutupanKasModel::whereYear('tanggal_sekarang', $tahun)
+                ->whereMonth('tanggal_sekarang', $bulan)
+                ->get();
+        }
+
         foreach ($penerimaan as $d) {
-            $totalPendapatan += $d->pendapatan;
+            $totalPendapatan += $d->pendapatan ?? 0;
         }
         foreach ($pengeluaran as $d) {
-            $totalPengeluaran += $d->pendapatan;
+            $totalPengeluaran += $d->pendapatan ?? 0;
         }
 
         $saldo_bku = $totalPendapatan - $totalPengeluaran;
 
-        $res = [
-            'total_penerimaan' => $totalPendapatan,
+        return [
+            'total_penerimaan'  => $totalPendapatan,
             'total_pengeluaran' => $totalPengeluaran,
-            'saldo_bku' => $saldo_bku,
-            'penerimaan' => $penerimaan,
-            'pengeluaran' => $pengeluaran,
-            'data' => $dataPenutupan,
+            'saldo_bku'         => $saldo_bku,
+            'penerimaan'        => $penerimaan,
+            'pengeluaran'       => $pengeluaran,
+            'data'              => $dataPenutupan,
         ];
+    }
+
+    public function cetakRegPenutupan($id, $tanggal)
+    {
+        $title  = 'Reg Penutupan Kas';
+        $tahun  = Carbon::parse($tanggal)->format('Y');
+        $bulan  = Carbon::parse($tanggal)->format('m');
+        $params = [
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'semua' => false,
+        ];
+
+        $data       = $this->dataPenutupan($params);
+        $bulanTahun = Carbon::parse($tanggal)->format('Y-m');
+
+        $res = $data['data']->where('id', $id)->first();
+
+        if (! $res) {
+            abort(404, 'Data penutupan kas tidak ditemukan.');
+        }
+
+        $res = $this->prosesJumlah($res);
+
+        return view('Laporan.Kasir.cetakPenutupanKas', compact('res', 'title'));
+    }
+
+    public function cetakRegTupan($bulan, $tahun)
+    {
+        $title  = 'Reg Penutupan Kas';
+        $params = [
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'semua' => false,
+        ];
+        $data = $this->dataPenutupan($params);
+
+        $bulanTahun = $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT);
+
+        $res = $data['data']->filter(function ($item) use ($bulanTahun) {
+            $itemBulanTahun = Carbon::parse($item->tanggal_sekarang)->format('Y-m');
+            return $itemBulanTahun == $bulanTahun;
+        })->first();
+
+        if (! $res) {
+            abort(404, 'Data penutupan kas tidak ditemukan.');
+        }
+
+        $res = $this->prosesJumlah($res);
+
+        return view('Laporan.Kasir.cetakPenutupanKas', compact('res', 'title'));
+    }
+
+    private function prosesJumlah($res)
+    {
+        if (! $res) {
+            return null;
+        }
+
+        $res['jml_kertas100k'] = ($res['kertas100k'] ?? 0) * 100000;
+        $res['jml_kertas50k']  = ($res['kertas50k'] ?? 0) * 50000;
+        $res['jml_kertas20k']  = ($res['kertas20k'] ?? 0) * 20000;
+        $res['jml_kertas10k']  = ($res['kertas10k'] ?? 0) * 10000;
+        $res['jml_kertas5k']   = ($res['kertas5k'] ?? 0) * 5000;
+        $res['jml_kertas2k']   = ($res['kertas2k'] ?? 0) * 2000;
+        $res['jml_kertas1k']   = ($res['kertas1k'] ?? 0) * 1000;
+        $res['jml_logam1k']    = ($res['logam1k'] ?? 0) * 1000;
+        $res['jml_logam500']   = ($res['logam500'] ?? 0) * 500;
+        $res['jml_logam200']   = ($res['logam200'] ?? 0) * 200;
+        $res['jml_logam100']   = ($res['logam100'] ?? 0) * 100;
+
+        $res['jumlah'] = $res['jml_kertas100k'] +
+            $res['jml_kertas50k'] +
+            $res['jml_kertas20k'] +
+            $res['jml_kertas10k'] +
+            $res['jml_kertas5k'] +
+            $res['jml_kertas2k'] +
+            $res['jml_kertas1k'] +
+            $res['jml_logam1k'] +
+            $res['jml_logam500'] +
+            $res['jml_logam200'] +
+            $res['jml_logam100'];
 
         return $res;
     }
@@ -46,33 +146,33 @@ class KasirPenutupanKasController extends Controller
     {
         // Validasi data input
         $validatedData = $request->validate([
-            'tanggal_sekarang' => 'required|date',
-            'tanggal_lalu' => 'required|date',
-            'petugas' => 'required|string|max:255',
-            'total_penerimaan' => 'required|string', // To handle formatted currency input
+            'tanggal_sekarang'  => 'required|date',
+            'tanggal_lalu'      => 'required|date',
+            'petugas'           => 'required|string|max:255',
+            'total_penerimaan'  => 'required|string', // To handle formatted currency input
             'total_pengeluaran' => 'required|string', // To handle formatted currency input
-            'saldo_bku' => 'required|string', // To handle formatted currency input
-            'saldo_kas' => 'required|string', // To handle formatted currency input
-            'selisih_saldo' => 'required|string', // To handle formatted currency input
-            'kertas100k' => 'nullable|integer',
-            'kertas50k' => 'nullable|integer',
-            'kertas20k' => 'nullable|integer',
-            'kertas10k' => 'nullable|integer',
-            'kertas5k' => 'nullable|integer',
-            'kertas2k' => 'nullable|integer',
-            'kertas1k' => 'nullable|integer',
-            'logam1k' => 'nullable|integer',
-            'logam500' => 'nullable|integer',
-            'logam200' => 'nullable|integer',
-            'logam100' => 'nullable|integer',
+            'saldo_bku'         => 'required|string', // To handle formatted currency input
+            'saldo_kas'         => 'required|string', // To handle formatted currency input
+            'selisih_saldo'     => 'required|string', // To handle formatted currency input
+            'kertas100k'        => 'nullable|integer',
+            'kertas50k'         => 'nullable|integer',
+            'kertas20k'         => 'nullable|integer',
+            'kertas10k'         => 'nullable|integer',
+            'kertas5k'          => 'nullable|integer',
+            'kertas2k'          => 'nullable|integer',
+            'kertas1k'          => 'nullable|integer',
+            'logam1k'           => 'nullable|integer',
+            'logam500'          => 'nullable|integer',
+            'logam200'          => 'nullable|integer',
+            'logam100'          => 'nullable|integer',
         ]);
 
         // Convert formatted currency values to numbers
-        $total_penerimaan = $this->convertCurrencyToNumber($request->input('total_penerimaan'));
+        $total_penerimaan  = $this->convertCurrencyToNumber($request->input('total_penerimaan'));
         $total_pengeluaran = $this->convertCurrencyToNumber($request->input('total_pengeluaran'));
-        $saldo_bku = $this->convertCurrencyToNumber($request->input('saldo_bku'));
-        $saldo_kas = $this->convertCurrencyToNumber($request->input('saldo_kas'));
-        $selisih_saldo = abs($saldo_bku - $saldo_kas);
+        $saldo_bku         = $this->convertCurrencyToNumber($request->input('saldo_bku'));
+        $saldo_kas         = $this->convertCurrencyToNumber($request->input('saldo_kas'));
+        $selisih_saldo     = abs($saldo_bku - $saldo_kas);
         try {
             // Simpan data ke database
             $model = new KasirPenutupanKasModel();
@@ -81,25 +181,25 @@ class KasirPenutupanKasController extends Controller
             $model->fill($validatedData);
 
             // Assign converted currency values
-            $model->total_penerimaan = $total_penerimaan;
+            $model->total_penerimaan  = $total_penerimaan;
             $model->total_pengeluaran = $total_pengeluaran;
-            $model->saldo_bku = $saldo_bku;
-            $model->saldo_kas = $saldo_kas;
-            $model->selisih_saldo = $selisih_saldo;
+            $model->saldo_bku         = $saldo_bku;
+            $model->saldo_kas         = $saldo_kas;
+            $model->selisih_saldo     = $selisih_saldo;
 
             // Save the model
             $model->save();
             $data = $model->all();
             // Kembalikan respons sukses
             return response()->json([
-                'status' => 'success',
+                'status'  => 'success',
                 'message' => 'Data berhasil disimpan.',
-                'data' => $data,
+                'data'    => $data,
             ], 201);
         } catch (\Exception $e) {
             // Handle exception if something goes wrong
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage(),
             ], 500);
         }
@@ -116,26 +216,26 @@ class KasirPenutupanKasController extends Controller
     {
         // Validasi input
         $validatedData = $request->validate([
-            'id' => 'required|exists:t_kasir_penutupanKas,id',
-            'tanggal_sekarang' => 'required|date',
-            'tanggal_lalu' => 'required|date',
-            'petugas' => 'required|string|max:255',
-            'total_penerimaan' => 'required|numeric',
+            'id'                => 'required|exists:t_kasir_penutupanKas,id',
+            'tanggal_sekarang'  => 'required|date',
+            'tanggal_lalu'      => 'required|date',
+            'petugas'           => 'required|string|max:255',
+            'total_penerimaan'  => 'required|numeric',
             'total_pengeluaran' => 'required|numeric',
-            'saldo_bku' => 'required|numeric',
-            'saldo_kas' => 'required|numeric',
-            'selisih_saldo' => 'required|numeric',
-            'kertas100k' => 'nullable|integer',
-            'kertas50k' => 'nullable|integer',
-            'kertas20k' => 'nullable|integer',
-            'kertas10k' => 'nullable|integer',
-            'kertas5k' => 'nullable|integer',
-            'kertas2k' => 'nullable|integer',
-            'kertas1k' => 'nullable|integer',
-            'logam1k' => 'nullable|integer',
-            'logam500' => 'nullable|integer',
-            'logam200' => 'nullable|integer',
-            'logam100' => 'nullable|integer',
+            'saldo_bku'         => 'required|numeric',
+            'saldo_kas'         => 'required|numeric',
+            'selisih_saldo'     => 'required|numeric',
+            'kertas100k'        => 'nullable|integer',
+            'kertas50k'         => 'nullable|integer',
+            'kertas20k'         => 'nullable|integer',
+            'kertas10k'         => 'nullable|integer',
+            'kertas5k'          => 'nullable|integer',
+            'kertas2k'          => 'nullable|integer',
+            'kertas1k'          => 'nullable|integer',
+            'logam1k'           => 'nullable|integer',
+            'logam500'          => 'nullable|integer',
+            'logam200'          => 'nullable|integer',
+            'logam100'          => 'nullable|integer',
         ]);
 
         try {
@@ -147,16 +247,16 @@ class KasirPenutupanKasController extends Controller
 
             // Kembalikan respons sukses
             return response()->json([
-                'status' => 'success',
+                'status'  => 'success',
                 'message' => 'Data berhasil diperbarui.',
-                'data' => $model,
+                'data'    => $model,
             ], 200);
         } catch (\Exception $e) {
             // Tangani kesalahan dan kembalikan respons gagal
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Terjadi kesalahan saat memperbarui data.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -165,7 +265,7 @@ class KasirPenutupanKasController extends Controller
     {
         // Validasi input
         $validatedData = $request->validate([
-            'id' => 'required|exists:t_kasir_penutupanKas,id',
+            'id'    => 'required|exists:t_kasir_penutupanKas,id',
             'tahun' => 'required|numeric',
         ]);
         $tahun = $validatedData['tahun'];
@@ -180,16 +280,16 @@ class KasirPenutupanKasController extends Controller
 
             // Kembalikan respons sukses
             return response()->json([
-                'status' => 'success',
+                'status'  => 'success',
                 'message' => 'Data berhasil dihapus.',
-                'data' => $data,
+                'data'    => $data,
             ], 200);
         } catch (\Exception $e) {
             // Tangani kesalahan dan kembalikan respons gagal
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Terjadi kesalahan saat menghapus data.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
