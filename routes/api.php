@@ -150,12 +150,13 @@ Route::get('/pendapatan/{tahun}', [KasirController::class, 'pendapatan']);
 Route::get('/pendapatanTgl/{tgl}', [KasirController::class, 'pendapatanTgl']);
 Route::get('/pendapatan/item/{tahun}', [KasirController::class, 'pendapatanPerItem']);
 Route::post('/pendapatan/item', [KasirController::class, 'pendapatanPerItem']);
+Route::post('/pendapatan/item/bulanan', [KasirController::class, 'pendapatanPerItemBulanan']);
 Route::post('/pendapatan/ruang', [KasirController::class, 'pendapatanPerRuang']);
 Route::get('cetakSBS/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakSBS']);
 Route::get('cetakBAPH/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakBAPH']);
 Route::get('stsBruto/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'stsBruto']);
 Route::get('stpbBruto/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'stpbBruto']);
-Route::get('rekapBulanan/{tahun}/{jaminan}', [KasirSetoranController::class, 'rekapBulanan']);
+Route::get('rekapBulanan/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'rekapBulanan']);
 Route::get('bkuBruto/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'bkuBruto']);
 Route::get('retriBruto/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'retriBruto']);
 

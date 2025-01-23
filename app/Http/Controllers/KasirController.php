@@ -851,6 +851,15 @@ class KasirController extends Controller
         ];
         return $model->pendapatanPerItem($params);
     }
+    public function pendapatanPerItemBulanan(Request $request)
+    {
+        $model  = new KasirAddModel();
+        $params = [
+            'tglAwal'  => $request->input('tglAwal'),
+            'tglAkhir' => $request->input('tglAkhir'),
+        ];
+        return $model->pendapatanPerItemBulanan($params);
+    }
     public function pendapatanPerRuang(Request $request)
     {
         $model  = new KasirAddModel();

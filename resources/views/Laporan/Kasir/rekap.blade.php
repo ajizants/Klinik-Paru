@@ -342,81 +342,121 @@
                 <table class="table table-sm table-bordered table-hover table-striped" id="reportKunjunganRp"
                     cellspacing="0">
                     <thead class="bg bg-info">
-                        <tr id="headerRow"></tr>
+                        <tr id="headerRowRp"></tr>
                     </thead>
                     <tbody class=" ">
                     </tbody>
                     <tfoot>
-                        <tr id="footerRow"></tr>
+                        <tr id="footerRowRp"></tr>
                     </tfoot>
                 </table>
             </div>
         </div>
     </div>
-    <div class="row" id="cardPendapatanItemPerhariUmum" style="display: none">
-        <div class="col card shadow mb-4 umum">
-            <!-- Card Header - Dropdown -->
-            <div class="card-header  d-flex flex-row align-items-center bg-info justify-content-center">
-                <h5 class="m-0 font-weight-bold text-center">Laporan Total Pendapatan Per Hari Per Item UMUM</h5>
-            </div>
-            <div class="card-body mb-2">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover" id="tabelPerItemUMUM" cellspacing="0">
-                        <thead class="bg bg-teal table-bordered border-warning">
-                            <tr id="table-header-item">
-                                <th>No</th>
-                                <th>Layanan</th>
-                                <th class="col-2">Tanggal</th>
-                                <th>Total Rupiah</th>
-                                <th>Total Pasien</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($perItem['umum'] as $item)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item['nmLayanan'] }}</td>
-                                    <td>{{ $item['tanggal'] }}</td>
-                                    <td>Rp. {{ number_format($item['jumlah'], 0, ',', '.') }}</td>
-                                    <td>{{ $item['totalItem'] }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+    <div class="card shadow mb-4" id="cardPendapatanItemPerhariUmum" style="display: none">
+        <div class="card-body">
+            <div class="form-row">
+                <div class="col card shadow mb-4 umum">
+                    <!-- Card Header - Dropdown -->
+                    <div class="card-header  d-flex flex-row align-items-center bg-info justify-content-center">
+                        <h5 class="m-0 font-weight-bold text-center">Laporan Total Pendapatan Per Hari Per Item UMUM</h5>
+                    </div>
+                    <div class="card-body mb-2">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="tabelPerItemUMUM" cellspacing="0">
+                                <thead class="bg bg-teal table-bordered border-warning">
+                                    <tr id="table-header-item">
+                                        <th>No</th>
+                                        <th>Layanan</th>
+                                        <th class="col-2">Tanggal</th>
+                                        <th>Total Rupiah</th>
+                                        <th>Total Pasien</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($perItem['umum'] as $item)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $item['nmLayanan'] }}</td>
+                                            <td>{{ $item['tanggal'] }}</td>
+                                            <td>Rp. {{ number_format($item['jumlah'], 0, ',', '.') }}</td>
+                                            <td>{{ $item['totalItem'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {{-- </div> --}}
+                {{-- <div class="form-row"> --}}
+                <div class="col card shadow mb-4 umum">
+                    <!-- Card Header - Dropdown -->
+                    <div class="card-header  d-flex flex-row align-items-center bg-info justify-content-center">
+                        <h5 class="m-0 font-weight-bold text-center">Laporan Total Pendapatan Per Bulan Per Item UMUM</h5>
+                    </div>
+                    <div class="card-body mb-2">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="tabelPerItemUMUMBln" cellspacing="0">
+                                <thead class="bg bg-teal table-bordered border-warning">
+                                    <tr id="table-header-item">
+                                        <th>No</th>
+                                        <th>Layanan</th>
+                                        {{-- <th class="col-2">Tanggal</th> --}}
+                                        <th>Total Rupiah</th>
+                                        <th>Total Pasien</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($perItem['umumBulanan'] as $item)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $item['nmLayanan'] }}</td>
+                                            {{-- <td>{{ $item['tanggal'] }}</td> --}}
+                                            <td>Rp. {{ number_format($item['jumlah'], 0, ',', '.') }}</td>
+                                            <td>{{ $item['totalItem'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col card shadow mb-4 umum">
-            <!-- Card Header - Dropdown -->
-            <div class="card-header  d-flex flex-row align-items-center bg-info justify-content-center">
-                <h5 class="m-0 font-weight-bold text-center">Laporan Total Pendapatan Per Hari Per Ruang UMUM</h5>
-            </div>
-            <div class="card-body mb-2">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover" id="tabelPerRuangUMUM" cellspacing="0">
-                        <thead class="bg bg-teal table-bordered border-black">
-                            <tr id="table-header-item">
-                                <th>No</th>
-                                <th>Ruangan/Grup</th>
-                                <th class="col-2">Tanggal</th>
-                                <th>Total Rupiah</th>
-                                <th>Total Pasien</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($perRuang['umum'] as $item)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item['nmKelas'] }}</td>
-                                    <td>{{ $item['tanggal'] }}</td>
-                                    <td>Rp. {{ number_format($item['jumlah'], 0, ',', '.') }}</td>
-                                    <td>{{ $item['totalItem'] }}</td>
+            {{-- <div class="form-row"> --}}
+            <div class="card shadow mb-4 umum">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header  d-flex flex-row align-items-center bg-info justify-content-center">
+                    <h5 class="m-0 font-weight-bold text-center">Laporan Total Pendapatan Per Hari Per Ruang UMUM</h5>
+                </div>
+                <div class="card-body mb-2">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="tabelPerRuangUMUM" cellspacing="0">
+                            <thead class="bg bg-teal table-bordered border-black">
+                                <tr id="table-header-item">
+                                    <th>No</th>
+                                    <th>Ruangan/Grup</th>
+                                    <th class="col-2">Tanggal</th>
+                                    <th>Total Rupiah</th>
+                                    <th>Total Pasien</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($perRuang['umum'] as $item)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $item['nmKelas'] }}</td>
+                                        <td>{{ $item['tanggal'] }}</td>
+                                        <td>Rp. {{ number_format($item['jumlah'], 0, ',', '.') }}</td>
+                                        <td>{{ $item['totalItem'] }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+            {{-- </div> --}}
         </div>
     </div>
     <div class="row" id="cardPendapatanItemPerhariBpjs" style="display: none">

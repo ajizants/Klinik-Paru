@@ -1,6 +1,12 @@
 function reportPendapatanItem(tglAwal, tglAkhir) {
-    if ($.fn.DataTable.isDataTable("#tabelPerItemUMUM,#tabelPerItemBPJS")) {
-        var tabel = $("#tabelPerItemUMUM,#tabelPerItemBPJS").DataTable();
+    if (
+        $.fn.DataTable.isDataTable(
+            "#tabelPerItemUMUM,#tabelPerItemUMUMBln,#tabelPerItemBPJS"
+        )
+    ) {
+        var tabel = $(
+            "#tabelPerItemUMUM,#tabelPerItemUMUMBln,#tabelPerItemBPJS"
+        ).DataTable();
         tabel.clear().destroy();
     }
     $.ajax({
@@ -13,9 +19,15 @@ function reportPendapatanItem(tglAwal, tglAkhir) {
         success: function (response) {
             Swal.close();
             const dataUmum = response.umum;
+            const dataUmumBln = response.umumBulanan;
             const dataBpjs = response.bpjs;
-            console.log("🚀 ~ reportPendapatanItem ~ dataUmum:", dataUmum);
+            console.log(
+                "🚀 ~ reportPendapatanItem ~ dataUmumBln:",
+                dataUmumBln
+            );
+            // console.log("🚀 ~ reportPendapatanItem ~ dataUmum:", dataUmum);
             isiTabelPendapatanItem(dataUmum, "#tabelPerItemUMUM");
+            isiTabelPendapatanItemBln(dataUmumBln, "#tabelPerItemUMUMBln");
             isiTabelPendapatanItem(dataBpjs, "#tabelPerItemBPJS");
         },
         error: function (xhr, status, error) {
@@ -49,6 +61,56 @@ function isiTabelPendapatanItem(data, id) {
                         return formattedDate;
                     },
                 },
+                {
+                    data: "jumlah",
+                    render: function (data, type, row) {
+                        var formattedTarif = parseInt(data).toLocaleString(
+                            "id-ID",
+                            {
+                                style: "currency",
+                                currency: "IDR",
+                                minimumFractionDigits: 0,
+                            }
+                        );
+                        return `${formattedTarif}`;
+                    },
+                },
+                { data: "totalItem" },
+            ],
+            order: [0, "asc"],
+            lengthChange: true,
+            autoWidth: true,
+            buttons: [
+                {
+                    extend: "excelHtml5",
+                    text: "Download",
+                    title:
+                        "Laporan Pendapatan Per Item Tanggal: " +
+                        tglAwal +
+                        " s.d. " +
+                        tglAkhir,
+                    filename:
+                        "Laporan Pendapatan Per Item Tanggal: " +
+                        tglAwal +
+                        "  s.d. " +
+                        tglAkhir,
+                },
+            ],
+        })
+        .buttons()
+        .container()
+        .appendTo(id + "_wrapper .col-md-6:eq(0)");
+}
+function isiTabelPendapatanItemBln(data, id) {
+    data.forEach(function (item, index) {
+        item.no = index + 1;
+    });
+    $(id)
+        .DataTable({
+            data: data,
+            columns: [
+                { data: "no" },
+                { data: "nmLayanan" },
                 {
                     data: "jumlah",
                     render: function (data, type, row) {
@@ -734,10 +796,12 @@ function drawTableReport(data, columns, idTable) {
 
 async function reportKunjungan(tglAwal, tglAkhir) {
     // Hapus tabel DataTable jika sudah ada
-    if ($.fn.DataTable.isDataTable("#reportKunjungan")) {
-        $("#reportKunjungan").DataTable().clear().destroy();
+    if ($.fn.DataTable.isDataTable("#reportKunjungan,#reportKunjunganRp")) {
+        $("#reportKunjungan,#reportKunjunganRp").DataTable().clear().destroy();
         $("#headerRow").empty(); // Bersihkan header
         $("#footerRow").empty(); // Bersihkan footer
+        $("#headerRowRp").empty(); // Bersihkan header
+        $("#footerRowRp").empty(); // Bersihkan footer
     }
 
     // Fetch data dari API
@@ -1012,6 +1076,12 @@ window.addEventListener("load", function () {
     initializeDataTable(
         "#tabelPerItemUMUM",
         "Laporan Pendapatan Per Item UMUM",
+        tglAwal,
+        tglAkhir
+    );
+    initializeDataTable(
+        "#tabelPerItemUMUMBln",
+        "Laporan Pendapatan Per Item UMUM Bulanan",
         tglAwal,
         tglAkhir
     );
