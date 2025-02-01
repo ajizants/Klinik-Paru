@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -20,19 +19,19 @@ class LoginController extends Controller
     {
         $email = $request->input('email');
 
-        if (!str_ends_with($email, '@rsparu.com')) {
+        if (! str_ends_with($email, '@rsparu.com')) {
             $email .= '@rsparu.com';
         }
 
         $data = [
-            'email' => $email,
+            'email'    => $email,
             'password' => $request->input('password'),
         ];
 
         if (Auth::attempt($data)) {
             // Ambil email dari input request
             $email = $request->input('email');
-            if (!str_ends_with($email, '@rsparu.com')) {
+            if (! str_ends_with($email, '@rsparu.com')) {
                 $email .= '@rsparu.com';
             }
             // Cek apakah email sama dengan 'nurse@rsparu.com'
@@ -42,7 +41,7 @@ class LoginController extends Controller
                     return redirect('/surat/medis');
                     break;
                 case 'tindakan@rsparu.com':
-                    return redirect('/idg');
+                    return redirect('/igd');
                     break;
                 case 'kasir@rsparu.com':
                     return redirect('/kasir');
