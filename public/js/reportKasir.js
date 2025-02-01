@@ -352,7 +352,7 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
                 { data: "pendapatan", className: "text-right" },
             ],
             autoWidth: false,
-            order: [[1, "dsc"]],
+            order: [[0, "dsc"]],
             buttons: [
                 {
                     extend: "excelHtml5",
