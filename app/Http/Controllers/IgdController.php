@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\BMHPIGDInStokModel;
@@ -25,7 +24,7 @@ class IgdController extends Controller
     }
     public function chart2024(Request $request)
     {
-        $year = $request->input('year'); // Mendapatkan tahun dari permintaan
+        $year = $request->input('year', date('Y')); // Gunakan tahun saat ini jika tidak ada input
 
         $chart = DB::table('t_kunjungan_tindakan')
             ->select(
@@ -34,12 +33,17 @@ class IgdController extends Controller
                 'm_kelompok.kelompok'
             )
             ->join('m_tindakan', 't_kunjungan_tindakan.kdTind', '=', 'm_tindakan.kdTindakan')
-            ->join('t_kunjungan', 't_kunjungan_tindakan.notrans', '=', 't_kunjungan.notrans')
+            ->join('t_kunjungan', function ($join) {
+                $join->on('t_kunjungan.norm', '=', 't_kunjungan_tindakan.norm')
+                    ->whereRaw("DATE(t_kunjungan.tgltrans) = DATE(t_kunjungan_tindakan.created_at)");
+            })
             ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
             ->whereIn('m_kelompok.kelompok', ['umum', 'bpjs'])
-            ->whereYear('t_kunjungan_tindakan.created_at', $year) // Filter berdasarkan tahun
+            ->whereYear('t_kunjungan_tindakan.created_at', $year)
             ->groupBy(DB::raw('MONTH(t_kunjungan_tindakan.created_at)'), 'm_kelompok.kelompok')
+            ->orderBy('bulan') // Mengurutkan hasil berdasarkan bulan
             ->get();
+
         return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
     }
 
@@ -84,10 +88,10 @@ class IgdController extends Controller
                 list($bulan, $kelompok) = explode('|', $key); // Pisahkan bulan dan kelompok
 
                 return [
-                    'bulan' => $bulan,
-                    'nmBulan' => Carbon::createFromFormat('m', $bulan)->locale('id')->translatedFormat('F'),
+                    'bulan'    => $bulan,
+                    'nmBulan'  => Carbon::createFromFormat('m', $bulan)->locale('id')->translatedFormat('F'),
                     'kelompok' => $kelompok,
-                    'jumlah' => $group->count(),
+                    'jumlah'   => $group->count(),
                 ];
             })
             ->values();
@@ -98,7 +102,7 @@ class IgdController extends Controller
 
     public function cariDataTindakan(Request $request)
     {
-        $notrans = $request->input('notrans');
+        $notrans      = $request->input('notrans');
         $dataTindakan = IGDTransModel::with(['tindakan', 'transbmhp.tindakan', 'transbmhp.bmhp', 'petugas.biodata', 'dokter.biodata'])
             ->where('notrans', 'LIKE', '%' . $notrans . '%')
             ->get();
@@ -113,11 +117,13 @@ class IgdController extends Controller
     public function simpanTindakan(Request $request)
     {
         // Mengambil nilai dari input pengguna
-        $norm = $request->input('norm');
+        $norm    = $request->input('norm');
         $notrans = $request->input('notrans');
-        $kdTind = $request->input('kdTind');
+        $kdTind  = $request->input('kdTind');
         $petugas = $request->input('petugas');
-        $dokter = $request->input('dokter');
+        $dokter  = $request->input('dokter');
+        $jaminan = $request->input('jaminan');
+        // dd($jaminan);
         // $created_at = $request->input('tgltrans');
         // $updated_at = $request->input('tgltind');
         // Pastikan $kdTind memiliki nilai yang valid sebelum menyimpan data
@@ -125,11 +131,12 @@ class IgdController extends Controller
             // Membuat instance dari model KunjunganTindakan
             $kunjunganTindakan = new IGDTransModel();
             // Mengatur nilai-nilai kolom
-            $kunjunganTindakan->kdTind = $kdTind;
-            $kunjunganTindakan->norm = $norm;
+            $kunjunganTindakan->kdTind  = $kdTind;
+            $kunjunganTindakan->norm    = $norm;
             $kunjunganTindakan->notrans = $notrans;
             $kunjunganTindakan->petugas = $petugas;
-            $kunjunganTindakan->dokter = $dokter;
+            $kunjunganTindakan->dokter  = $dokter;
+            $kunjunganTindakan->jaminan = $jaminan;
             // $kunjunganTindakan->created_at = $created_at;
             // $kunjunganTindakan->updated_at = $updated_at;
 
@@ -146,22 +153,22 @@ class IgdController extends Controller
 
     public function updateTindakan(Request $request)
     {
-        $id = $request->input('id');
-        $kdTind = $request->input('kdTind');
+        $id      = $request->input('id');
+        $kdTind  = $request->input('kdTind');
         $petugas = $request->input('petugas');
-        $dokter = $request->input('dokter');
+        $dokter  = $request->input('dokter');
 
         // Cek apakah ID yang diterima adalah ID yang valid dalam database
         $tindakan = IGDTransModel::find($id);
 
-        if (!$tindakan) {
+        if (! $tindakan) {
             return response()->json(['message' => 'Data tindakan tidak ditemukan'], 404);
         }
 
         // Update nilai kolom dengan nilai yang diterima dari input pengguna
-        $tindakan->kdTind = $kdTind;
+        $tindakan->kdTind  = $kdTind;
         $tindakan->petugas = $petugas;
-        $tindakan->dokter = $dokter;
+        $tindakan->dokter  = $dokter;
 
         // Simpan perubahan ke dalam database
         $tindakan->save();
@@ -172,12 +179,12 @@ class IgdController extends Controller
 
     public function deleteTindakan(Request $request)
     {
-        $id = $request->input('id');
+        $id     = $request->input('id');
         $idTind = $request->input('id');
         // Cek apakah ID yang diterima adalah ID yang valid dalam database
         $tindakan = IGDTransModel::find($id);
-        $bmhp = TransaksiBMHPModel::find($idTind);
-        if (!$tindakan) {
+        $bmhp     = TransaksiBMHPModel::find($idTind);
+        if (! $tindakan) {
             return response()->json(['message' => 'Data tindakan tidak ditemukan'], 404);
         }
 
@@ -199,9 +206,9 @@ class IgdController extends Controller
 
         if ($bmhp) {
             // dd($bmhp);
-            $kdBmhp = $bmhp->kdBmhp;
-            $jml = $bmhp->jml;
-            $instokigd = BMHPModel::find($kdBmhp);
+            $kdBmhp     = $bmhp->kdBmhp;
+            $jml        = $bmhp->jml;
+            $instokigd  = BMHPModel::find($kdBmhp);
             $product_id = $instokigd->product_id;
             // dd($product_id);
 
@@ -223,7 +230,7 @@ class IgdController extends Controller
         if ($updateKeluar) {
             $updateKeluar->update([
                 'keluar' => $updateKeluar->keluar - $jml,
-                'sisa' => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar - $jml),
+                'sisa'   => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar - $jml),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -234,7 +241,7 @@ class IgdController extends Controller
         if ($updateKeluarInStok) {
             $updateKeluarInStok->update([
                 'keluar' => $updateKeluarInStok->keluar - $jml,
-                'sisa' => $this->calculateSisa($updateKeluarInStok->stokBaru, $updateKeluarInStok->masuk, $updateKeluarInStok->keluar - $jml),
+                'sisa'   => $this->calculateSisa($updateKeluarInStok->stokBaru, $updateKeluarInStok->masuk, $updateKeluarInStok->keluar - $jml),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -244,24 +251,24 @@ class IgdController extends Controller
     public function addTransaksiBmhp(Request $request)
     {
         // Ambil data dari permintaan Ajax
-        $idTind = $request->input('idTind');
-        $kdTind = $request->input('kdTind');
-        $kdBmhp = $request->input('kdBmhp');
-        $jml = $request->input('jml');
-        $total = $request->input('total');
+        $idTind     = $request->input('idTind');
+        $kdTind     = $request->input('kdTind');
+        $kdBmhp     = $request->input('kdBmhp');
+        $jml        = $request->input('jml');
+        $total      = $request->input('total');
         $product_id = $request->input('productID');
-        $notrans = $request->input('notrans');
+        $notrans    = $request->input('notrans');
         // dd($idTind, $kdTind, $kdBmhp, $jml);
         if ($kdBmhp !== null) {
             // Membuat instance dari model KunjunganTindakan
             $transaksibmhp = new TransaksiBMHPModel();
             // Mengatur nilai-nilai kolom
             $transaksibmhp->notrans = $notrans;
-            $transaksibmhp->idTind = $idTind;
-            $transaksibmhp->kdTind = $kdTind;
-            $transaksibmhp->kdBmhp = $kdBmhp;
-            $transaksibmhp->jml = $jml;
-            $transaksibmhp->biaya = $total;
+            $transaksibmhp->idTind  = $idTind;
+            $transaksibmhp->kdTind  = $kdTind;
+            $transaksibmhp->kdBmhp  = $kdBmhp;
+            $transaksibmhp->jml     = $jml;
+            $transaksibmhp->biaya   = $total;
 
             // Simpan data ke dalam tabel
             $transaksibmhp->save();
@@ -281,7 +288,7 @@ class IgdController extends Controller
         if ($updateKeluar) {
             $updateKeluar->update([
                 'keluar' => $updateKeluar->keluar + $jml,
-                'sisa' => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar + $jml),
+                'sisa'   => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar + $jml),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -292,7 +299,7 @@ class IgdController extends Controller
         if ($updateKeluarInStok) {
             $updateKeluarInStok->update([
                 'keluar' => $updateKeluarInStok->keluar + $jml,
-                'sisa' => $this->calculateSisa($updateKeluarInStok->stokBaru, $updateKeluarInStok->masuk, $updateKeluarInStok->keluar + $jml),
+                'sisa'   => $this->calculateSisa($updateKeluarInStok->stokBaru, $updateKeluarInStok->masuk, $updateKeluarInStok->keluar + $jml),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -317,7 +324,7 @@ class IgdController extends Controller
 
     public function cariPoinTotal(Request $request)
     {
-        $mulaiTgl = $request->input('mulaiTgl');
+        $mulaiTgl   = $request->input('mulaiTgl');
         $selesaiTgl = $request->input('selesaiTgl');
 
         $query = DB::table(DB::raw('(
@@ -348,7 +355,7 @@ class IgdController extends Controller
     }
     public function cariPoin(Request $request)
     {
-        $mulaiTgl = $request->input('mulaiTgl');
+        $mulaiTgl   = $request->input('mulaiTgl');
         $selesaiTgl = $request->input('selesaiTgl');
 
         $query = DB::table('t_kunjungan_tindakan')

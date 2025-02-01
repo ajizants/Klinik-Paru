@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,7 +9,7 @@ class IGDTransModel extends Model
     use HasFactory;
     protected $connection = 'mysql';
 
-    protected $table = 't_kunjungan_tindakan';
+    protected $table      = 't_kunjungan_tindakan';
     protected $primaryKey = 'id';
 
     public function tindakan()
@@ -39,6 +38,7 @@ class IGDTransModel extends Model
     protected $fillable = [
         'norm',
         'notrans',
+        'jaminan',
         'kdtind',
         'petugas',
         'dokter',

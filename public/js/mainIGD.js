@@ -228,6 +228,10 @@ function addTindakan() {
     var petugas = $("#petugas").val();
     var dokter = $("#dokter").val();
     var tgltrans = $("#tgltrans").val();
+    var jaminan = $("#layanan").val();
+    if (jaminan == "BPJS PERIODE 2") {
+        jaminan = "BPJS";
+    }
     // Memeriksa apakah ada nilai yang kosong
     if (!norm || !notrans || !kdTind || !petugas || !dokter || !tgltrans) {
         // Menampilkan notifikasi jika ada nilai yang kosong
@@ -258,6 +262,7 @@ function addTindakan() {
                 dokter: dokter,
                 norm: norm,
                 tgltrans: tgltrans,
+                jaminan: jaminan,
             },
 
             success: function (response) {
