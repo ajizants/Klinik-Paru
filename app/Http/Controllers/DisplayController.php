@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\KominfoModel;
@@ -15,10 +14,10 @@ class DisplayController extends Controller
     {
         $title = 'Daftar Tunggu Loket';
         // Akses video dari folder yang di-share di jaringan
-        $videos = null;
-        $client = new KominfoModel();
-        $params = [];
-        $jadwal = $client->jadwalPoli($params);
+        $videos     = null;
+        $client     = new KominfoModel();
+        $params     = [];
+        $jadwal     = $client->jadwalPoli($params);
         $listTunggu = $this->listTungguLoket();
         // return $listTunggu;
         // return $jadwal;
@@ -28,10 +27,11 @@ class DisplayController extends Controller
 
     public function listTungguLoket()
     {
-        $client = new KominfoModel();
+        $client     = new KominfoModel();
         $listTunggu = $client->getTungguLoket();
+        // dd($listTunggu);
         $listTunggu = $listTunggu['data'];
-        if (is_array($listTunggu) && !isset($listTunggu['error'])) {
+        if (is_array($listTunggu) && ! isset($listTunggu['error'])) {
             // Filter to include only items with keterangan as "MENUNGGU DIPANGGIL" or "SKIP"
             $listTunggu = array_filter($listTunggu, function ($item) {
                 return in_array($item['keterangan'], ['MENUNGGU DIPANGGIL', 'SKIP']);
@@ -45,10 +45,10 @@ class DisplayController extends Controller
     {
         $title = 'Daftar Tunggu Farmasi';
         // Akses video dari folder yang di-share di jaringan
-        $videos = null;
-        $client = new KominfoModel();
-        $params = [];
-        $jadwal = $client->jadwalPoli($params);
+        $videos     = null;
+        $client     = new KominfoModel();
+        $params     = [];
+        $jadwal     = $client->jadwalPoli($params);
         $listTunggu = $this->listTungguFarmasi();
 
         // return $listTunggu;
@@ -63,7 +63,7 @@ class DisplayController extends Controller
         });
         // Filter listTunggu untuk membuat dua daftar: Menunggu dan Selesai
         $listMenunggu = array_filter($listTunggu, fn($item) => $item['ket'] === 'Menunggu');
-        $listSelesai = array_filter($listTunggu, fn($item) => $item['ket'] === 'Selesai');
+        $listSelesai  = array_filter($listTunggu, fn($item) => $item['ket'] === 'Selesai');
         // return $listTunggu;
 
         return view('Display.farmasi', compact('title', 'videos', 'jadwal', 'listTunggu', 'listMenunggu', 'listSelesai'));
@@ -71,12 +71,12 @@ class DisplayController extends Controller
 
     public function listTungguFarmasi()
     {
-        $client = new KominfoModel();
+        $client     = new KominfoModel();
         $listTunggu = $client->getTungguFaramsi();
         $listTunggu = $listTunggu['data'];
 
         foreach ($listTunggu as &$item) {
-            $now = Carbon::now();
+            $now          = Carbon::now();
             $createdAtLog = Carbon::parse($item['created_at_log']);
 
             // Tambahkan 30 menit ke waktu `created_at_log`
@@ -115,12 +115,12 @@ class DisplayController extends Controller
     {
         $listTunggu = [];
 
-        $client = new KominfoModel();
+        $client     = new KominfoModel();
         $listTunggu = $client->getTungguTensi();
 
         // return $listTunggu;
         // Cek apakah $listTunggu adalah array dan tidak mengandung error
-        if (is_array($listTunggu) && !isset($listTunggu['error'])) {
+        if (is_array($listTunggu) && ! isset($listTunggu['error'])) {
             // Lakukan filter jika tidak ada error
             $listTunggu = array_filter($listTunggu['data'], function ($item) {
                 return $item['keterangan'] !== 'SELESAI DIPANGGIL';
@@ -167,20 +167,20 @@ class DisplayController extends Controller
         $tungguLab = []; // Inisialisasi array
 
         foreach ($dataLab as $d) {
-            $estimasi = 10; // Nilai default estimasi
-            $pemeriksaan = $d->pemeriksaan;
+            $estimasi          = 10; // Nilai default estimasi
+            $pemeriksaan       = $d->pemeriksaan;
             $nonNullHasilCount = 0;
-            $params = ['BTA 1', 'BTA 2', 'Ureum darah', 'Creatinin darah', 'Asam Urat', 'SGOT', 'SGPT', 'Dlukosa darah', 'Trigliserid'];
+            $params            = ['BTA 1', 'BTA 2', 'Ureum darah', 'Creatinin darah', 'Asam Urat', 'SGOT', 'SGPT', 'Dlukosa darah', 'Trigliserid'];
 
             foreach ($pemeriksaan as $periksa) {
                 // Mengecek apakah hasil pemeriksaan tidak null
-                if (!is_null($periksa->hasil)) {
+                if (! is_null($periksa->hasil)) {
                     $nonNullHasilCount++;
                 }
 
                 // Menambahkan nama pemeriksaan dari relasi nmLayanan
                 $periksa->nmPemeriksaan = $periksa->pemeriksaan->nmLayanan;
-                $estimasiLayanan = $periksa->pemeriksaan->estimasi;
+                $estimasiLayanan        = $periksa->pemeriksaan->estimasi;
 
                 // Mengecek apakah nmPemeriksaan ada dalam array params
                 if (in_array($periksa->nmPemeriksaan, $params)) {
@@ -203,13 +203,13 @@ class DisplayController extends Controller
 
             // Menambahkan data tungguLab
             $tungguLab[] = [
-                'id' => $d->id,
-                'norm' => $d->norm,
-                'nama' => $d->nama,
-                'alamat' => $d->alamat,
+                'id'        => $d->id,
+                'norm'      => $d->norm,
+                'nama'      => $d->nama,
+                'alamat'    => $d->alamat,
                 'jam_masuk' => $jam_masuk,
-                'estimasi' => $estimasi,
-                'status' => $status,
+                'estimasi'  => $estimasi,
+                'status'    => $status,
             ];
         }
 
@@ -233,21 +233,21 @@ class DisplayController extends Controller
 
         foreach ($dataRo as $d) {
             $jam_masuk = Carbon::parse($d->created_at)->format('H:i');
-            $status = "Belum";
-            $hasil = ROTransaksiHasilModel::where('norm', $d->norm)->where('tanggal', 'like', '%' . $tgl . '%')->first();
+            $status    = "Belum";
+            $hasil     = ROTransaksiHasilModel::where('norm', $d->norm)->where('tanggal', 'like', '%' . $tgl . '%')->first();
 
             if ($hasil) {
                 $status = "Selesai";
             }
 
             $tungguRo[] = [
-                'id' => $d->id,
-                'norm' => $d->norm,
-                'nama' => $d->nama,
-                'alamat' => $d->alamat,
+                'id'        => $d->id,
+                'norm'      => $d->norm,
+                'nama'      => $d->nama,
+                'alamat'    => $d->alamat,
                 'jam_masuk' => $jam_masuk,
-                'estimasi' => 15,
-                'status' => $status,
+                'estimasi'  => 15,
+                'status'    => $status,
             ];
         }
         usort($tungguRo, function ($a, $b) {
@@ -259,7 +259,7 @@ class DisplayController extends Controller
     public function lab()
     {
 
-        $title = 'Daftar Tunggu';
+        $title     = 'Daftar Tunggu';
         $tungguLab = $this->tungguLab();
         // return $tungguLab;
         $tungguRo = $this->tungguRo();
@@ -289,17 +289,17 @@ class DisplayController extends Controller
         $title = 'Tunggu Poli ' . $dokter;
         // return $dokter;
         $params = [
-            'no_rm' => '',
-            'tanggal_awal' => Carbon::now()->format('Y-m-d'),
+            'no_rm'         => '',
+            'tanggal_awal'  => Carbon::now()->format('Y-m-d'),
             'tanggal_akhir' => Carbon::now()->format('Y-m-d'),
         ];
         $dataPendaftaran = [];
-        $listTunggu = [];
-        $client = new KominfoModel();
+        $listTunggu      = [];
+        $client          = new KominfoModel();
         $dataPendaftaran = $client->pendaftaranRequest($params);
         // return $dataPendaftaran;
         $dataPendaftaran = ["error" => "Server error: `POST https:\/\/kkpm.banyumaskab.go.id\/api_kkpm\/v1\/pendaftaran\/data_pendaftaran` resulted in a `500 Internal Server Error` response:\n\n<div style=\"border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;\">\n\n<h4>A PHP Error was encountered<\/h4>\n\n<p>S (truncated...)\n"];
-        if (is_array($dataPendaftaran) && !isset($dataPendaftaran['error'])) {
+        if (is_array($dataPendaftaran) && ! isset($dataPendaftaran['error'])) {
             $listTunggu = array_filter($dataPendaftaran, function ($item) use ($dokter) {
                 return $item['dokter_nama'] === $dokter && $item['status_pulang'] === 'Belum Pulang';
             });

@@ -12,6 +12,7 @@ use App\Models\LaboratoriumKunjunganModel;
 use App\Models\RoHasilModel;
 use App\Models\ROTransaksiModel;
 use Carbon\Carbon;
+use function Laravel\Prompts\error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -705,7 +706,11 @@ class PasienKominfoController extends Controller
         ];
         $model = new KominfoModel();
         $data  = $model->pendaftaranRequest($params);
-        // dd($data);
+        // return $data;
+        //jika respon {"error":"Error decoding JSON response: Syntax error"}
+        if (isset($data['error'])) {
+            return response()->json(['error' => $data['error']], 500);
+        }
 
         if (! isset($data) || ! is_array($data)) {
             return response()->json(['error' => 'Invalid data format'], 500);
@@ -1036,6 +1041,7 @@ class PasienKominfoController extends Controller
 
         $model = new KominfoModel();
         $data  = $model->cpptRequest($params);
+        // return $data;
 
         if (isset($data['response']['data']) && is_array($data['response']['data'])) {
             $filteredData = array_filter(array_map(function ($d) use ($ruang) {
@@ -1160,12 +1166,14 @@ class PasienKominfoController extends Controller
                 return response()->json(['error' => $errorMessages[$ruang] ?? 'Tidak ada data ditemukan'], 404);
             }
         } else {
-            return response()->json([
-                'metadata' => [
-                    'message' => 'Data Tidak Ditemukan',
-                    'code'    => 404,
-                ],
-            ], 200);
+            if (empty($data['response']['data'])) {
+                return response()->json([
+                    'metadata' => [
+                        'message' => 'Data Tidak Ditemukan',
+                        'code'    => 404,
+                    ],
+                ], 404);
+            }
         }
 
         return response()->json(['error' => 'Internal Server Error'], 500);

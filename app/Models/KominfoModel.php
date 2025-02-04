@@ -1225,6 +1225,7 @@ class KominfoModel extends Model
         $cookie  = $_COOKIE['kominfo_cookie'] ?? null;
         $tgl     = date('Y-m-d');
         $tanggal = $tgl . ' - ' . $tgl;
+        // dd($cookie);
 
         if (! $cookie) {
             // Authenticate if no cookie is found
