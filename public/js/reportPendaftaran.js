@@ -263,6 +263,102 @@ function reportPendaftaran(tglAwal, tglAkhir) {
     });
 }
 
+async function rekapFaskesPerujuk() {
+    var tglA = formatDate(new Date(tglAwal));
+    console.log("🚀 ~ rekapFaskesPerujuk ~ tglA:", tglA);
+    var tglB = formatDate(new Date(tglAkhir));
+    console.log("🚀 ~ rekapFaskesPerujuk ~ tglB:", tglB);
+
+    // Hapus DataTables jika sudah ada
+    if ($.fn.DataTable.isDataTable("#rekapFaskesPerujuk")) {
+        $("#rekapFaskesPerujuk").DataTable().clear().destroy();
+    }
+
+    try {
+        // Fetch data dari API
+        const response = await fetch(
+            "/api/kominfo/pendaftaran/faskes_perujuk",
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    tanggal_awal: tglAwal,
+                    tanggal_akhir: tglAkhir,
+                }),
+            }
+        );
+
+        // Cek jika response tidak OK
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        // Konversi response ke JSON
+        const result = await response.json();
+        console.log("🚀 ~ response data:", result);
+
+        // Pastikan `result.data` adalah array
+        let data = result.data || result;
+        if (!Array.isArray(data)) {
+            console.error("Data bukan array:", data);
+            return;
+        }
+
+        // Tambahkan nomor urut ke setiap item
+        data.forEach((item, index) => {
+            item.no = index + 1;
+        });
+
+        // Debug data sebelum masuk ke DataTable
+        console.log("🚀 ~ Data yang dikirim ke DataTable:", data);
+
+        // Jika data kosong, beri peringatan
+        if (data.length === 0) {
+            console.warn("⚠ Data kosong, tidak ada yang ditampilkan di tabel.");
+            return;
+        }
+
+        // Inisialisasi DataTable
+        $("#rekapFaskesPerujuk")
+            .DataTable({
+                data: data,
+                columns: [
+                    { data: "no" },
+                    { data: "nama_faskes" },
+                    { data: "jumlah" },
+                ],
+                autoWidth: false,
+                ordering: false,
+                paging: true,
+                searching: false,
+                lengthChange: false,
+                buttons: [
+                    {
+                        extend: "excelHtml5",
+                        text: "Excel",
+                        title: `Laporan Rekap Faskes Perujuk Tanggal: ${tglA} s.d. ${tglB}`,
+                        filename: `Laporan_Rekap_Faskes_Perujuk_${tglA}_sd_${tglB}`,
+                    },
+                    {
+                        extend: "colvis",
+                        text: "Tampilkan Kolom",
+                    },
+                ],
+            })
+            .buttons()
+            .container()
+            .appendTo("#rekapFaskesPerujuk_wrapper .col-md-6:eq(0)");
+
+        Swal.close();
+    } catch (error) {
+        console.error("🚨 Error:", error);
+        Swal.fire({
+            icon: "error",
+            title: `Terjadi kesalahan saat mengambil data...!!!\n${error.message}`,
+        });
+    }
+}
+
 function formatDate(date) {
     // Convert the input to a Date object if it isn't already
     if (!(date instanceof Date)) {

@@ -107,6 +107,8 @@ Route::post('cariPoinTotal', [IgdController::class, 'cariPoinTotal']);
 Route::post('cariDataTindakan', [IgdController::class, 'cariDataTindakan']);
 Route::get('chart', [IgdController::class, 'chart'])->name('chart.endpoint');
 Route::post('cariTransaksiBmhp', [IgdController::class, 'cariTransaksiBmhp']);
+Route::get('cariSisa/{year}', [IgdController::class, 'cariSisa']);
+Route::get('cariSisa2/{year}', [IgdController::class, 'cariKunjunganPerBulan']);
 
 // Dots Center
 Route::post('kunjungan/Dots', [DotsController::class, 'kunjunganDots']);
@@ -307,7 +309,8 @@ Route::get('resume/{no_rm}/{tgl}', [PasienKominfoController::class, 'resumePasie
 Route::post('kominfo/pendaftaran/resume', [PasienKominfoController::class, 'resumePasien']);
 Route::post('kominfo/report/dokter_rme', [PasienKominfoController::class, 'grafikDokter']);
 Route::post('kominfo/antrian/log', [PasienKominfoController::class, 'logAntrian']);
-
+Route::post('/kominfo/pendaftaran/faskes_perujuk', [PasienKominfoController::class, 'rekapFaskesPerujuk']);
+// sb
 Route::post('verif/pendaftaran/fr', [VerifController::class, 'frista']);
 Route::post('verif/pendaftaran/fp', [VerifController::class, 'afterapp']);
 Route::post('/verif/pendaftaran/kominfo/submit', [VerifController::class, 'submit']);

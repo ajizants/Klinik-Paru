@@ -509,7 +509,6 @@ class KasirSetoranController extends Controller
             // 'suction_lendir'         => $pendapatan->whereIn('nmLayanan', 'Suction Lendir')->first()['totalJumlah'] ?? 0,
             // 'hecting'                => $pendapatan->whereIn('nmLayanan', 'Hecting')->first()['totalJumlah'] ?? 0,
             // 'aff_hecting'            => $pendapatan->whereIn('nmLayanan', 'Aff Hecting')->first()['totalJumlah'] ?? 0,
-
             'Laboratorium'                => $grup->whereIn('kelas', 9)->first()['totalJumlah'] ?? 0,
             'Rekam Medis'                 => $grup->whereIn('kelas', 1)->first()['totalJumlah'] ?? 0,
             'Radiologi'                   => ($grup->whereIn('kelas', 8)->first()['totalJumlah'] ?? 0) - ($pendapatan->whereIn('nmLayanan', 'Konsultasi dokter Radiologi')->first()['totalJumlah'] ?? 0),
@@ -520,12 +519,9 @@ class KasirSetoranController extends Controller
             'Dokter Spesialis RAJAL'      => $pendapatan->whereIn('nmLayanan', 'Dokter spesialis Rajal')->first()['totalJumlah'] ?? 0,
             'Konsul Dokter Sp. Radiologi' => $pendapatan->whereIn('nmLayanan', 'Konsultasi dokter Radiologi')->first()['totalJumlah'] ?? 0,
             'Resep'                       => $grup->whereIn('kelas', 11)->first()['totalJumlah'] ?? 0,
-            'BUnga Bank'                  => $bungaBank ?? 0,
-            'Sirup'                       => $sirup ?? 0,
             'Surat Ket Medis'             => $pendapatan->whereIn('nmLayanan', 'Surat Keterangan Dokter')->first()['totalJumlah'] ?? 0,
             'Injeksi'                     => $pendapatan->whereIn('nmLayanan', 'Injeksi')->first()['totalJumlah'] ?? 0,
             'Infus'                       => $pendapatan->whereIn('nmLayanan', 'Infus')->first()['totalJumlah'] ?? 0,
-            'BPJS'                        => $bpjs ?? 0,
             'Konsultasi Kefarmasian'      => $pendapatan->whereIn('nmLayanan', 'Konsultasi Kefarmasian')->first()['totalJumlah'] ?? 0,
             'Tes Mantoux'                 => $pendapatan->whereIn('nmLayanan', 'Mantoux Test')->first()['totalJumlah'] ?? 0,
             'Pungsi'                      => $pendapatan->whereIn('nmLayanan', 'Punctie pleura')->first()['totalJumlah'] ?? 0,
@@ -545,10 +541,13 @@ class KasirSetoranController extends Controller
             'Konsultasi Gizi'             => $pendapatan->whereIn('nmLayanan', 'Konsultasi Gizi')->first()['totalJumlah'] ?? 0,
             'Konsultasi Lainnya'          => $pendapatan->whereIn('nmLayanan', 'Konsultasi Kesehatan lainnya')->first()['totalJumlah'] ?? 0,
             'Klinik VCT'                  => $pendapatan->whereIn('nmLayanan', 'Layanan Klinik VCT')->first()['totalJumlah'] ?? 0,
-            'Pendapatan TCM'              => $tcm ?? 0,
             'Suction Lendir'              => $pendapatan->whereIn('nmLayanan', 'Suction Lendir')->first()['totalJumlah'] ?? 0,
             'Hecting'                     => $pendapatan->whereIn('nmLayanan', 'Hecting')->first()['totalJumlah'] ?? 0,
             'Aff Hecting'                 => $pendapatan->whereIn('nmLayanan', 'Aff Hecting')->first()['totalJumlah'] ?? 0,
+            'Bunga Bank'                  => $bungaBank ?? 0,
+            'Sirup'                       => $sirup ?? 0,
+            'BPJS'                        => $bpjs ?? 0,
+            'Pendapatan TCM'              => $tcm ?? 0,
         ];
         return $data;
     }

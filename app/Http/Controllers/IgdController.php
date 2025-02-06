@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\BMHPIGDInStokModel;
 use App\Models\BMHPModel;
 use App\Models\IGDTransModel;
+use App\Models\KunjunganModel;
 use App\Models\KunjunganWaktuSelesai;
 use App\Models\TransaksiBMHPModel;
 use Carbon\Carbon;
@@ -22,41 +23,323 @@ class IgdController extends Controller
             return $this->chart2025($request);
         }
     }
+    // public function chart2024(Request $request)
+    // {
+    //     $year = $request->input('year', date('Y')); // Gunakan tahun saat ini jika tidak ada input
+    //     if ($year == 2024) {
+
+    //         $awal = DB::table('t_kunjungan_tindakan')
+    //             ->select(
+    //                 DB::raw('MONTH(t_kunjungan_tindakan.created_at) as bulan'),
+    //                 DB::raw('COUNT(DISTINCT t_kunjungan_tindakan.notrans) as jumlah'),
+    //                 'm_kelompok.kelompok'
+    //             )
+    //             ->join('m_tindakan', 't_kunjungan_tindakan.kdTind', '=', 'm_tindakan.kdTindakan')
+    //             ->join('t_kunjungan', 't_kunjungan.notrans', '=', 't_kunjungan_tindakan.notrans')
+    //             ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
+    //             ->whereIn('m_kelompok.kelompok', ['umum', 'bpjs'])
+    //             ->whereBetween('t_kunjungan_tindakan.created_at', [$year . '-01-01', $year . '-12-31'])
+    //             ->groupBy(DB::raw('MONTH(t_kunjungan_tindakan.created_at)'), 'm_kelompok.kelompok')
+    //             ->orderBy('bulan') // Mengurutkan hasil berdasarkan bulan
+    //             ->get();
+
+    //         $dataIGD = IGDTransModel::whereBetween('created_at', [$year . '-08-01', $year . '-12-31'])->get();
+
+    //         // Proses setiap item
+    //         foreach ($dataIGD as $item) {
+    //             // Cari data kunjungan berdasarkan notrans
+    //             $kunjungan = KunjunganWaktuSelesai::where('notrans', $item->notrans)->first();
+
+    //             // Tentukan kelompok berdasarkan no_sep
+    //             if (isset($kunjungan) && $kunjungan->no_sep != null) {
+    //                 $item->kelompok = "BPJS";
+    //             } else if (isset($kunjungan) && $kunjungan->no_sep == null) {
+    //                 $item->kelompok = "UMUM";
+    //             } else {
+    //                 $item->kelompok = "mbuh";
+    //             }
+
+    //             // Set no_sep dan format bulan dalam bahasa Indonesia
+    //             $item->no_sep = $kunjungan->no_sep ?? '';
+    //             $item->bulan  = Carbon::parse($item->created_at)->format('m');
+    //         }
+
+    //         // Hapus duplikasi berdasarkan notrans
+    //         $dataIGD = $dataIGD->unique('notrans')->values();
+
+    //         // Rubah menjadi array
+    //         $data = $dataIGD->toArray();
+
+    //         // Kelompokkan data berdasarkan bulan dan kelompok
+    //         $sisa = collect($data)
+    //             ->groupBy(function ($item) {
+    //                 return $item['bulan'] . '|' . $item['kelompok']; // Gabungkan bulan dan kelompok sebagai kunci
+    //             })
+    //             ->map(function ($group, $key) {
+    //                 list($bulan, $kelompok) = explode('|', $key); // Pisahkan bulan dan kelompok
+
+    //                 return [
+    //                     'bulan'    => $bulan,
+    //                     'nmBulan'  => Carbon::createFromFormat('m', $bulan)->locale('id')->translatedFormat('F'),
+    //                     'kelompok' => $kelompok,
+    //                     'jumlah'   => $group->count(),
+    //                 ];
+    //             })
+    //             ->values();
+
+    //         $chart = //jumlahkan data awal dan sisa sesuai bulan dan kelompok
+    //         $awal->merge($sisa)
+    //             ->groupBy('bulan')
+    //             ->map(function ($group, $bulan) {
+    //                 return [
+    //                     'bulan'   => $bulan,
+    //                     'nmBulan' => Carbon::createFromFormat('m', $bulan)->locale('id')->translatedFormat('F'),
+    //                     'umum'    => $group->where('kelompok', 'umum')->sum('jumlah'),
+    //                     'bpjs'    => $group->where('kelompok', 'bpjs')->sum('jumlah'),
+    //                     'total'   => $group->sum('jumlah'),
+    //                 ];
+    //             });
+
+    //         return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
+    //     } else {
+    //         $chart = DB::table('t_kunjungan_tindakan')
+    //             ->select(
+    //                 DB::raw('MONTH(t_kunjungan_tindakan.created_at) as bulan'),
+    //                 DB::raw('COUNT(DISTINCT t_kunjungan_tindakan.notrans) as jumlah'),
+    //                 'm_kelompok.kelompok'
+    //             )
+    //             ->join('m_tindakan', 't_kunjungan_tindakan.kdTind', '=', 'm_tindakan.kdTindakan')
+    //             ->join('t_kunjungan', 't_kunjungan.notrans', '=', 't_kunjungan_tindakan.notrans')
+    //             ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
+    //             ->whereIn('m_kelompok.kelompok', ['umum', 'bpjs'])
+    //             ->whereYear('t_kunjungan_tindakan.created_at', $year)
+    //             ->groupBy(DB::raw('MONTH(t_kunjungan_tindakan.created_at)'), 'm_kelompok.kelompok')
+    //             ->orderBy('bulan') // Mengurutkan hasil berdasarkan bulan
+    //             ->get();
+
+    //         return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
+    //     }
+    // }
+
     public function chart2024(Request $request)
     {
         $year = $request->input('year', date('Y')); // Gunakan tahun saat ini jika tidak ada input
 
-        $chart = DB::table('t_kunjungan_tindakan')
-            ->select(
-                DB::raw('MONTH(t_kunjungan_tindakan.created_at) as bulan'),
-                DB::raw('COUNT(*) as jumlah'),
-                'm_kelompok.kelompok'
-            )
-            ->join('m_tindakan', 't_kunjungan_tindakan.kdTind', '=', 'm_tindakan.kdTindakan')
-            ->join('t_kunjungan', function ($join) {
-                $join->on('t_kunjungan.norm', '=', 't_kunjungan_tindakan.norm')
-                    ->whereRaw("DATE(t_kunjungan.tgltrans) = DATE(t_kunjungan_tindakan.created_at)");
-            })
-            ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
-            ->whereIn('m_kelompok.kelompok', ['umum', 'bpjs'])
-            ->whereYear('t_kunjungan_tindakan.created_at', $year)
-            ->groupBy(DB::raw('MONTH(t_kunjungan_tindakan.created_at)'), 'm_kelompok.kelompok')
-            ->orderBy('bulan') // Mengurutkan hasil berdasarkan bulan
-            ->get();
+        if ($year == 2024) {
+            // Mengambil data awal dari tabel 't_kunjungan_tindakan'
+            $awal = DB::table('t_kunjungan_tindakan')
+                ->select(
+                    DB::raw('MONTH(t_kunjungan_tindakan.created_at) as bulan'),
+                    DB::raw('COUNT(DISTINCT t_kunjungan_tindakan.notrans) as jumlah'),
+                    'm_kelompok.kelompok'
+                )
+                ->join('m_tindakan', 't_kunjungan_tindakan.kdTind', '=', 'm_tindakan.kdTindakan')
+                ->join('t_kunjungan', 't_kunjungan.notrans', '=', 't_kunjungan_tindakan.notrans')
+                ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
+                ->whereIn('m_kelompok.kelompok', ['umum', 'bpjs'])
+                ->whereBetween('t_kunjungan_tindakan.created_at', [$year . '-01-01', $year . '-12-31'])
+                ->groupBy(DB::raw('MONTH(t_kunjungan_tindakan.created_at)'), 'm_kelompok.kelompok')
+                ->orderBy('bulan')
+                ->get()
+                ->map(function ($item) {
+                    return (array) $item; // Konversi objek stdClass ke array
+                });
+            // return $awal;
 
-        return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
+            $sisa = $this->cariSisa($year);
+
+            $jumlahKunjunganPerBulan = $this->cariKunjunganPerBulan($year);
+            // return $jumlahKunjunganPerBulan;
+
+            // Gabungkan data awal dan sisa, lalu jumlahkan berdasarkan bulan dan kelompok
+            $chart = collect($awal)
+                ->merge($sisa)
+                ->merge($jumlahKunjunganPerBulan)
+                ->groupBy(function ($item) {
+                    return $item['bulan'] . '|' . $item['kelompok']; // Gabungkan bulan dan kelompok
+                })
+                ->map(function ($group, $key) use ($jumlahKunjunganPerBulan) {
+                    list($bulan, $kelompok) = explode('|', $key);
+
+                    // Find the total kunjungan for the corresponding month
+                    $totalKunjungan = $jumlahKunjunganPerBulan->firstWhere('bulan', (int) $bulan)->total ?? 0;
+
+                    return [
+                        'bulan'          => (int) $bulan,
+                        'kelompok'       => ucfirst($kelompok), // Pastikan format nama kelompok rapi
+                        'jumlah'         => $group->sum('jumlah'),
+                        'totalKunjungan' => $totalKunjungan, // Assign the correct total kunjungan for the month
+                    ];
+                })
+                ->values()
+                ->sortBy('bulan')
+                ->values();
+
+            //jangan ambil $chart yang kelompoknya ""
+            $chart = $chart->where('kelompok', '!=', '');
+
+            return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
+        } else {
+            // Jika bukan tahun 2024, ambil data langsung dari tabel
+            $chart = DB::table('t_kunjungan_tindakan')
+                ->select(
+                    DB::raw('MONTH(t_kunjungan_tindakan.created_at) as bulan'),
+                    DB::raw('COUNT(DISTINCT t_kunjungan_tindakan.notrans) as jumlah'),
+                    'm_kelompok.kelompok'
+                )
+                ->join('m_tindakan', 't_kunjungan_tindakan.kdTind', '=', 'm_tindakan.kdTindakan')
+                ->join('t_kunjungan', 't_kunjungan.notrans', '=', 't_kunjungan_tindakan.notrans')
+                ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
+                ->whereIn('m_kelompok.kelompok', ['umum', 'bpjs'])
+                ->whereYear('t_kunjungan_tindakan.created_at', $year)
+                ->groupBy(DB::raw('MONTH(t_kunjungan_tindakan.created_at)'), 'm_kelompok.kelompok')
+                ->orderBy('bulan')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'bulan'    => (int) $item->bulan,
+                        'kelompok' => ucfirst($item->kelompok),
+                        'jumlah'   => (int) $item->jumlah,
+                    ];
+                })
+                ->values();
+
+            return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
+        }
     }
+    public function cariKunjunganPerBulan($year)
+    {
+        $data = KunjunganModel::select(DB::raw('MONTH(tgltrans) as bulan, COUNT(*) as total'))
+            ->whereBetween('tgltrans', [$year . '-01-01', $year . '-12-31'])
+            ->groupBy(DB::raw('MONTH(tgltrans)'))
+            ->get();
+        return $data;
+    }
+
+    public function cariSisa($year)
+    {
+        // Mengambil data IGD
+        $dataIGD = IGDTransModel::whereBetween('created_at', [$year . '-08-01', $year . '-12-31'])
+            ->whereRaw('LENGTH(notrans) = 13')->get();
+        // return $dataIGD;
+        // return count($dataIGD);
+
+        // Proses setiap item
+        foreach ($dataIGD as $item) {
+            // Cari data kunjungan berdasarkan notrans
+            $kunjungan = KunjunganWaktuSelesai::where('norm', $item->norm)
+                ->whereDate('created_at', $item->created_at) // Hanya membandingkan tahun, bulan, dan tanggal
+                ->get();
+
+            $noSep = $kunjungan[0]->no_sep ?? null;
+            // return $noSep;
+
+            // Tentukan kelompok berdasarkan no_sep
+            if ($kunjungan && $noSep != null) {
+                $item->kelompok = "BPJS";
+            } elseif ($kunjungan && $noSep == null) {
+                $item->kelompok = "UMUM";
+            } else {
+                $item->kelompok = "mbuh";
+            }
+
+            // Set nilai bulan dalam format numerik
+            $item->bulan = Carbon::parse($item->created_at)->format('m');
+        }
+
+        // Hapus duplikasi berdasarkan notrans
+        $dataIGD = $dataIGD->unique('notrans')->values();
+        // dd($dataIGD);
+
+        // Konversi ke array
+        $data = $dataIGD->toArray();
+        // return $data;
+
+        // Kelompokkan data berdasarkan bulan dan kelompok
+        $sisa = collect($data)
+            ->filter(function ($item) {
+                return $item['kelompok'] !== 'mbuh'; // Hanya ambil kelompok selain "mbuh"
+            })
+            ->groupBy(function ($item) {
+                // return $item->bulan . '|' . $item->kelompok; // Gabungkan bulan dan kelompok sebagai kunci
+                return $item['bulan'] . '|' . $item['kelompok'];
+            })
+            ->map(function ($group, $key) {
+                list($bulan, $kelompok) = explode('|', $key); // Pisahkan bulan dan kelompok
+                return [
+                    'bulan'    => (int) $bulan, // Konversi bulan ke integer
+                    'kelompok' => $kelompok,
+                    'jumlah'   => $group->count(),
+                ];
+            })
+            ->values();
+        return $sisa;
+    }
+
+    // public function chart2025(Request $request)
+    // {
+    //     $year = $request->input('year');
+
+    //     // Ambil data IGD berdasarkan tahun
+    //     $dataIGD = IGDTransModel::whereYear('created_at', $year)->get();
+
+    //     // Proses setiap item
+    //     foreach ($dataIGD as $item) {
+    //         // Cari data kunjungan berdasarkan tgltrans dan norm
+    //         $kunjungan = KunjunganWaktuSelesai::where('notrans', $item->notrans)->first();
+
+    //         // Tentukan kelompok berdasarkan no_sep
+    //         if (isset($kunjungan) && $kunjungan->no_sep != null) {
+    //             $item->kelompok = "BPJS";
+    //         } else if (isset($kunjungan) && $kunjungan->no_sep == null) {
+    //             $item->kelompok = "UMUM";
+    //         } else {
+    //             $item->kelompok = "mbuh";
+    //         }
+
+    //         // Set no_sep dan format bulan dalam bahasa Indonesia
+    //         $item->no_sep = $kunjungan->no_sep ?? '';
+
+    //         // $item->bulan= ambil bulan dati creted at mm
+    //         $item->bulan = Carbon::parse($item->created_at)->format('m');
+
+    //     }
+
+    //     // Rubah menjadi array
+    //     $data = $dataIGD->toArray();
+
+    //     // Kelompokkan data berdasarkan bulan dan kelompok
+    //     $chart = collect($data)
+    //         ->groupBy(function ($item) {
+    //             return $item['bulan'] . '|' . $item['kelompok']; // Gabungkan bulan dan kelompok menjadi satu kunci
+    //         })
+    //         ->map(function ($group, $key) {
+    //             list($bulan, $kelompok) = explode('|', $key); // Pisahkan bulan dan kelompok
+
+    //             return [
+    //                 'bulan'    => $bulan,
+    //                 'nmBulan'  => Carbon::createFromFormat('m', $bulan)->locale('id')->translatedFormat('F'),
+    //                 'kelompok' => $kelompok,
+    //                 'jumlah'   => $group->count(),
+    //             ];
+    //         })
+    //         ->values();
+
+    //     // Return hasil dalam bentuk JSON
+    //     return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
+    // }
 
     public function chart2025(Request $request)
     {
         $year = $request->input('year');
 
         // Ambil data IGD berdasarkan tahun
-        $dataIGD = IGDTransModel::whereYear('created_at', $year)->get();
+        $dataIGD                 = IGDTransModel::whereYear('created_at', $year)->get();
+        $jumlahKunjunganPerBulan = $this->cariKunjunganPerBulan($year);
 
         // Proses setiap item
         foreach ($dataIGD as $item) {
-            // Cari data kunjungan berdasarkan tgltrans dan norm
+            // Cari data kunjungan berdasarkan notrans
             $kunjungan = KunjunganWaktuSelesai::where('notrans', $item->notrans)->first();
 
             // Tentukan kelompok berdasarkan no_sep
@@ -70,31 +353,56 @@ class IgdController extends Controller
 
             // Set no_sep dan format bulan dalam bahasa Indonesia
             $item->no_sep = $kunjungan->no_sep ?? '';
-
-            // $item->bulan= ambil bulan dati creted at mm
-            $item->bulan = Carbon::parse($item->created_at)->format('m');
-
+            $item->bulan  = Carbon::parse($item->created_at)->format('m');
         }
+
+        // Hapus duplikasi berdasarkan notrans
+        $dataIGD = $dataIGD->unique('notrans')->values();
 
         // Rubah menjadi array
         $data = $dataIGD->toArray();
 
         // Kelompokkan data berdasarkan bulan dan kelompok
+        // $chart = collect($data)
+        //     ->groupBy(function ($item) {
+        //         return $item['bulan'] . '|' . $item['kelompok']; // Gabungkan bulan dan kelompok sebagai kunci
+        //     })
+        //     ->map(function ($group, $key) {
+        //         list($bulan, $kelompok) = explode('|', $key); // Pisahkan bulan dan kelompok
+
+        //         return [
+        //             'bulan'    => $bulan,
+        //             'nmBulan'  => Carbon::createFromFormat('m', $bulan)->locale('id')->translatedFormat('F'),
+        //             'kelompok' => $kelompok,
+        //             'jumlah'   => $group->count(),
+        //         ];
+        //     })
+        //     ->values();
+        // Gabungkan data awal dan sisa, lalu jumlahkan berdasarkan bulan dan kelompok
         $chart = collect($data)
+            ->merge($jumlahKunjunganPerBulan)
             ->groupBy(function ($item) {
-                return $item['bulan'] . '|' . $item['kelompok']; // Gabungkan bulan dan kelompok menjadi satu kunci
+                return $item['bulan'] . '|' . $item['kelompok']; // Gabungkan bulan dan kelompok
             })
-            ->map(function ($group, $key) {
-                list($bulan, $kelompok) = explode('|', $key); // Pisahkan bulan dan kelompok
+            ->map(function ($group, $key) use ($jumlahKunjunganPerBulan) {
+                list($bulan, $kelompok) = explode('|', $key);
+
+                // Find the total kunjungan for the corresponding month
+                $totalKunjungan = $jumlahKunjunganPerBulan->firstWhere('bulan', (int) $bulan)->total ?? 0;
 
                 return [
-                    'bulan'    => $bulan,
-                    'nmBulan'  => Carbon::createFromFormat('m', $bulan)->locale('id')->translatedFormat('F'),
-                    'kelompok' => $kelompok,
-                    'jumlah'   => $group->count(),
+                    'bulan'          => (int) $bulan,
+                    'kelompok'       => ucfirst($kelompok), // Pastikan format nama kelompok rapi
+                    'jumlah'         => $group->count(),
+                    'totalKunjungan' => $totalKunjungan, // Assign the correct total kunjungan for the month
                 ];
             })
+            ->values()
+            ->sortBy('bulan')
             ->values();
+
+        //jangan ambil $chart yang kelompoknya ""
+        $chart = $chart->where('kelompok', '!=', '');
 
         // Return hasil dalam bentuk JSON
         return response()->json($chart, 200, [], JSON_PRETTY_PRINT);

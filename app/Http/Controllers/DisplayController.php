@@ -43,8 +43,7 @@ class DisplayController extends Controller
 
     public function farmasi()
     {
-        $title = 'Daftar Tunggu Farmasi';
-        // Akses video dari folder yang di-share di jaringan
+        $title      = 'Daftar Tunggu Farmasi';
         $videos     = null;
         $client     = new KominfoModel();
         $params     = [];

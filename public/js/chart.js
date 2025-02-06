@@ -11,6 +11,7 @@ function getChartData() {
         },
         success: function (response) {
             var data = response;
+            console.log("🚀 ~ getChartData ~ data:", data);
 
             var selectedYear = $("#year-selector").val();
             console.log("🚀 ~ getChartData ~ selectedYear:", selectedYear);
@@ -22,9 +23,12 @@ function getChartData() {
 var myChart;
 
 function drawChart(data, tahun) {
-    // Data untuk dataset 'umum' dan 'bpjs'
+    console.log("🚀 ~ drawChart ~ data:", data);
+
+    // Data untuk dataset 'umum', 'bpjs', dan 'totalKunjungan'
     var umumData = Array(12).fill(0); // Inisialisasi array dengan 12 elemen nol
     var bpjsData = Array(12).fill(0);
+    var totalKunjunganData = Array(12).fill(0); // Array untuk total kunjungan per bulan
     var bulanLabels = [
         "Januari",
         "Februari",
@@ -47,15 +51,26 @@ function drawChart(data, tahun) {
     canvas.width = cardBody.offsetWidth;
     canvas.height = cardBody.offsetHeight;
 
+    // Jika data bukan array, konversikan menjadi array
+    if (!Array.isArray(data)) {
+        data = Object.values(data); // Mengonversi objek menjadi array
+    }
+
     // Mengisi data bulan dengan nilai dari respons JSON
     data.forEach(function (item) {
         var bulanIndex = item.bulan - 1; // Mengonversi nilai bulan ke indeks array (dikurangi 1 karena indeks dimulai dari 0)
         var kelompok = item.kelompok.toLowerCase();
+        var totalKunjungan = item.totalKunjungan;
+
+        // Update jumlah per kelompok untuk bulan yang sesuai
         if (kelompok === "umum") {
             umumData[bulanIndex] = item.jumlah;
         } else if (kelompok === "bpjs") {
             bpjsData[bulanIndex] = item.jumlah;
         }
+
+        // Update total kunjungan untuk bulan yang sesuai
+        totalKunjunganData[bulanIndex] = totalKunjungan;
     });
 
     // Pengaturan Grafik
@@ -93,6 +108,15 @@ function drawChart(data, tahun) {
                     borderColor: "rgba(255, 99, 132, 1)",
                     borderWidth: 1,
                 },
+                {
+                    label: "Total Kunjungan",
+                    data: totalKunjunganData, // Setiap bulan total kunjungan
+                    backgroundColor: "rgba(54, 162, 235, 0.2)", // Warna untuk total kunjungan
+                    borderColor: "rgba(54, 162, 235, 1)",
+                    borderWidth: 1,
+                    // type: "line", // Tipe grafik untuk total kunjungan (garis)
+                    // fill: false, // Tidak ada area yang diisi di bawah garis
+                },
             ],
         },
         options: options,
@@ -107,6 +131,10 @@ function drawChart(data, tahun) {
 }
 
 function tabelIgd(data, tahun) {
+    // Jika data bukan array, konversikan menjadi array
+    if (!Array.isArray(data)) {
+        data = Object.values(data); // Mengonversi objek menjadi array
+    }
     // Array untuk nama-nama bulan
     var namaBulan = [
         "Januari - " + tahun,

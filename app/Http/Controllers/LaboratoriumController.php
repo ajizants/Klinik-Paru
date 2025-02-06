@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\LaboratoriumHasilModel;
@@ -20,11 +19,11 @@ class LaboratoriumController extends Controller
                 ->whereDate('created_at', 'like', '%' . $tgl . '%')->get();
 
             foreach ($data as $item) {
-                $pemeriksaan = $item->pemeriksaan;
+                $pemeriksaan       = $item->pemeriksaan;
                 $nonNullHasilCount = 0;
 
                 foreach ($pemeriksaan as $periksa) {
-                    if (!is_null($periksa->hasil)) {
+                    if (! is_null($periksa->hasil)) {
                         $nonNullHasilCount++;
                     }
                 }
@@ -41,7 +40,7 @@ class LaboratoriumController extends Controller
 
                 $doctorNipMap = [
                     '198311142011012002' => 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.',
-                    '9' => 'dr. AGIL DANANJAYA, Sp.P',
+                    '9'                  => 'dr. AGIL DANANJAYA, Sp.P',
                     '198907252019022004' => 'dr. FILLY ULFA KUSUMAWARDANI',
                     '198903142022031005' => 'dr. SIGIT DWIYANTO',
                 ];
@@ -54,7 +53,7 @@ class LaboratoriumController extends Controller
         } catch (\Exception $e) {
             $res = [
                 'message' => $e->getMessage(),
-                'code' => 400,
+                'code'    => 400,
             ];
             return response()->json($res, 400, [], JSON_PRETTY_PRINT);
         }
@@ -62,11 +61,11 @@ class LaboratoriumController extends Controller
     public function noSampel()
     {
         //cari kunjunganLab hari ini
-        $data = LaboratoriumKunjunganModel::where('created_at', 'like', '%' . now()->toDateString() . '%')->get();
+        $data   = LaboratoriumKunjunganModel::where('created_at', 'like', '%' . now()->toDateString() . '%')->get();
         $jumlah = $data->count();
         // buatkan $noSample format 001
         $noSample = str_pad($jumlah + 1, 3, '0', STR_PAD_LEFT);
-        $res = [
+        $res      = [
             'noSample' => $noSample,
         ];
         return response()->json($res, 200, [], JSON_PRETTY_PRINT);
@@ -77,7 +76,7 @@ class LaboratoriumController extends Controller
         try {
             if ($request->input('notrans') == null) {
                 $norm = $request->input('norm');
-                $tgl = $request->input('tgl');
+                $tgl  = $request->input('tgl');
                 // dd($tgl);
                 // $data = LaboratoriumKunjunganModel::with('pemeriksaan.pemeriksaan')
                 // ->where('created_at', 'like', '%' . $tgl . '%')
@@ -91,7 +90,7 @@ class LaboratoriumController extends Controller
                     ->where('norm', 'like', '%' . $norm . '%')
                     ->whereDate('created_at', 'like', '%' . $tgl . '%')->get();
                 // dd($pemeriksaan);
-                if (!empty($pemeriksaan) && $pemeriksaan != "[]") {
+                if (! empty($pemeriksaan) && $pemeriksaan != "[]") {
                     $data->pemeriksaan = $pemeriksaan;
                 }
 
@@ -99,7 +98,7 @@ class LaboratoriumController extends Controller
                 if ($data == null) {
                     $res = [
                         'message' => 'Belum ada Transaksi Lab',
-                        'code' => 404,
+                        'code'    => 404,
                     ];
                     return response()->json($res, 404, [], JSON_PRETTY_PRINT);
                 }
@@ -107,7 +106,7 @@ class LaboratoriumController extends Controller
                 return response()->json($lab, 200, [], JSON_PRETTY_PRINT);
             } else {
                 $notrans = $request->input('notrans');
-                $tgl = $request->input('tgl');
+                $tgl     = $request->input('tgl');
 
                 $data = LaboratoriumHasilModel::with('pemeriksaan')
                     ->where('notrans', 'like', '%' . $notrans . '%')
@@ -138,14 +137,14 @@ class LaboratoriumController extends Controller
             }
             $layanan[] = [
                 'idLayanan' => $d->idLayanan,
-                'kelas' => $d->kelas,
+                'kelas'     => $d->kelas,
                 'nmLayanan' => $d->nmLayanan,
-                'tarif' => $d->tarif,
-                'status' => $d->status,
-                'statusTx' => $status,
-                'satuan' => $d->satuan,
-                'normal' => $d->normal,
-                'estimasi' => $d->estimasi,
+                'tarif'     => $d->tarif,
+                'status'    => $d->status,
+                'statusTx'  => $status,
+                'satuan'    => $d->satuan,
+                'normal'    => $d->normal,
+                'estimasi'  => $d->estimasi,
             ];
         }
 
@@ -154,7 +153,7 @@ class LaboratoriumController extends Controller
     public function layananlab(Request $request)
     {
         $kelas = $request->input('kelas');
-        $data = LayananModel::where('kelas', 'like', '%' . $kelas . '%')
+        $data  = LayananModel::where('kelas', 'like', '%' . $kelas . '%')
             ->where('status', 'like', '%1%')
             ->get();
 
@@ -163,9 +162,9 @@ class LaboratoriumController extends Controller
         foreach ($data as $d) {
             $layanan[] = [
                 'idLayanan' => $d->idLayanan,
-                'kelas' => $d->kelas,
+                'kelas'     => $d->kelas,
                 'nmLayanan' => $d->nmLayanan,
-                'tarif' => $d->tarif,
+                'tarif'     => $d->tarif,
             ];
         }
 
@@ -182,25 +181,25 @@ class LaboratoriumController extends Controller
         $dataTerpilih = $request->input('dataTerpilih');
 
         // Validasi bahwa dataTerpilih harus array dan tidak boleh kosong
-        if (!is_array($dataTerpilih) || empty($dataTerpilih)) {
+        if (! is_array($dataTerpilih) || empty($dataTerpilih)) {
             return response()->json([
                 'message' => 'Data terpilih tidak valid atau kosong',
             ], 400);
         }
-        $notrans = $request->input('notrans');
-        $norm = $request->input('norm');
-        $nama = $request->input('nama');
-        $jk = $request->input('jk');
-        $nik = $request->input('nik');
-        $noSampel = $request->input('noSampel');
-        $umur = $request->input('umur');
-        $alamat = $request->input('alamat');
-        $jaminan = $request->input('jaminan');
-        $dokter = $request->input('dokter');
-        $petugas = $request->input('petugas');
-        $tglTrans = $request->input('tgltrans'); // Assuming tglTrans is in 'Y-m-d' format
-        $currentDateTime = Carbon::now(); // Get current date and time
-        $today = $currentDateTime->format('Y-m-d');
+        $notrans         = $request->input('notrans');
+        $norm            = $request->input('norm');
+        $nama            = $request->input('nama');
+        $jk              = $request->input('jk');
+        $nik             = $request->input('nik');
+        $noSampel        = $request->input('noSampel');
+        $umur            = $request->input('umur');
+        $alamat          = $request->input('alamat');
+        $jaminan         = $request->input('jaminan');
+        $dokter          = $request->input('dokter');
+        $petugas         = $request->input('petugas');
+        $tglTrans        = $request->input('tgltrans'); // Assuming tglTrans is in 'Y-m-d' format
+        $currentDateTime = Carbon::now();               // Get current date and time
+        $today           = $currentDateTime->format('Y-m-d');
 
         // Check if today's date is not the same as tglTrans
         if ($today !== $tglTrans) {
@@ -223,11 +222,11 @@ class LaboratoriumController extends Controller
                 // Validasi data yang diperlukan pada setiap elemen dataTerpilih
                 if (isset($data['idLayanan']) && isset($data['notrans'])) {
                     $dataToInsert[] = [
-                        'notrans' => $data['notrans'],
-                        'norm' => $data['norm'],
-                        'idLayanan' => $data['idLayanan'],
-                        'petugas' => $petugas,
-                        'dokter' => $dokter,
+                        'notrans'    => $data['notrans'],
+                        'norm'       => $data['norm'],
+                        'idLayanan'  => $data['idLayanan'],
+                        'petugas'    => $petugas,
+                        'dokter'     => $dokter,
                         'created_at' => $tanggal,
                         'updated_at' => $tanggal,
                     ];
@@ -252,18 +251,18 @@ class LaboratoriumController extends Controller
                 if ($dataKunjungan == null) {
                     $kunjunganLab = new LaboratoriumKunjunganModel();
 
-                    $kunjunganLab->notrans = $notrans;
-                    $kunjunganLab->norm = $norm;
-                    $kunjunganLab->nama = $nama;
-                    $kunjunganLab->jk = $jk;
-                    $kunjunganLab->nik = $nik;
-                    $kunjunganLab->umur = $umur;
-                    $kunjunganLab->no_sampel = $noSampel;
-                    $kunjunganLab->alamat = $alamat;
-                    $kunjunganLab->layanan = $jaminan;
-                    $kunjunganLab->petugas = $petugas;
-                    $kunjunganLab->dokter = $dokter;
-                    $kunjunganLab->ket = "Belum";
+                    $kunjunganLab->notrans    = $notrans;
+                    $kunjunganLab->norm       = $norm;
+                    $kunjunganLab->nama       = $nama;
+                    $kunjunganLab->jk         = $jk;
+                    $kunjunganLab->nik        = $nik;
+                    $kunjunganLab->umur       = $umur;
+                    $kunjunganLab->no_sampel  = $noSampel;
+                    $kunjunganLab->alamat     = $alamat;
+                    $kunjunganLab->layanan    = $jaminan;
+                    $kunjunganLab->petugas    = $petugas;
+                    $kunjunganLab->dokter     = $dokter;
+                    $kunjunganLab->ket        = "Belum";
                     $kunjunganLab->created_at = $tanggal;
                     $kunjunganLab->updated_at = $tanggal;
                     $kunjunganLab->save();
@@ -276,7 +275,7 @@ class LaboratoriumController extends Controller
                 return response()->json(['message' => 'No Transaksi tidak valid'], 400);
             }
         } catch (\Exception $e) {
-            // Rollback transaksi database jika terjadi kesalahan
+                            // Rollback transaksi database jika terjadi kesalahan
             DB::rollback(); // Rollback transaksi jika terjadi kesalahan
             Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
             return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
@@ -305,9 +304,9 @@ class LaboratoriumController extends Controller
     {
         // Mendapatkan dataTerpilih dari permintaan
         $dataTerpilih = $request->input('dataTerpilih');
-        $ketStatus = $request->input('keterangan');
-        $tglTrans = Carbon::createFromFormat('Y-m-d', $request->input('tglTrans')); // Memastikan format yang benar
-        $tglNow = Carbon::now(); // Mengambil waktu sekarang sebagai objek Carbon
+        $ketStatus    = $request->input('keterangan');
+        $tglTrans     = Carbon::createFromFormat('Y-m-d', $request->input('tglTrans')); // Memastikan format yang benar
+        $tglNow       = Carbon::now();                                                  // Mengambil waktu sekarang sebagai objek Carbon
 
         if ($tglTrans < $tglNow) {
             // Jika tglTrans lebih kecil dari hari ini
@@ -319,7 +318,7 @@ class LaboratoriumController extends Controller
         }
 
         // Validasi bahwa dataTerpilih harus array dan tidak boleh kosong
-        if (!is_array($dataTerpilih) || empty($dataTerpilih)) {
+        if (! is_array($dataTerpilih) || empty($dataTerpilih)) {
             return response()->json([
                 'message' => 'Data terpilih tidak valid atau kosong',
             ], 400);
@@ -337,11 +336,11 @@ class LaboratoriumController extends Controller
                     LaboratoriumHasilModel::where('notrans', $data['notrans'])
                         ->where('idLab', $data['idLab'])
                         ->update([
-                            'norm' => $data['norm'],
+                            'norm'      => $data['norm'],
                             'idLayanan' => $data['idLayanan'],
-                            'hasil' => $data['hasil'],
-                            'petugas' => $data['petugas'],
-                            'ket' => $data['ket'],
+                            'hasil'     => $data['hasil'],
+                            'petugas'   => $data['petugas'],
+                            'ket'       => $data['ket'],
                             // 'updated_at' => now(), // Jika ada kolom updated_at dan ingin diperbarui
                         ]);
                 } else {
@@ -356,7 +355,7 @@ class LaboratoriumController extends Controller
                     ->first();
                 $kunjungan->update([
                     'waktu_selesai' => $waktuSelesai,
-                    'ket' => $ketStatus,
+                    'ket'           => $ketStatus,
                 ]);
             }
 
@@ -364,7 +363,7 @@ class LaboratoriumController extends Controller
             DB::commit();
 
             return response()->json([
-                'message' => 'Data Berhasil Diperbarui',
+                'message'       => 'Data Berhasil Diperbarui',
                 'waktu_selesai' => $waktuSelesai,
             ], 200);
 
@@ -412,8 +411,8 @@ class LaboratoriumController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Terjadi kesalahan saat mengakses database Lab. Silahkan hubungi TIM IT.',
-                'error' => $e->getMessage(),
-                'status' => 500,
+                'error'   => $e->getMessage(),
+                'status'  => 500,
             ], 500, [], JSON_PRETTY_PRINT);
         }
         return response()->json($hasilLab, 200, [], JSON_PRETTY_PRINT);
@@ -431,7 +430,7 @@ class LaboratoriumController extends Controller
             $data = LaboratoriumKunjunganModel::with('pemeriksaan.pemeriksaan')
                 ->where('notrans', 'like', '%' . $notrans . '%')
                 ->whereDate('created_at', 'like', '%' . $tgl . '%')->get();
-            $lab = $data[0];
+            $lab        = $data[0];
             $dataAnalis = [
                 'SUHARTANTI Amd.AK.',
                 'JUNI SUPRAPTI A.Md.AK',
@@ -466,52 +465,52 @@ class LaboratoriumController extends Controller
     }
     public function rekapKunjungan(Request $request)
     {
-        $norm = $request->input('norm');
-        $tglAwal = $request->input('tglAwal', now()->toDateString());
+        $norm     = $request->input('norm');
+        $tglAwal  = $request->input('tglAwal', now()->toDateString());
         $tglAkhir = $request->input('tglAkhir', now()->toDateString());
 
         $data = LaboratoriumKunjunganModel::with('pemeriksaan', 'pemeriksaan.petugas.biodata', 'pemeriksaan.pemeriksaan', 'petugas.biodata', 'dokter.biodata')
             ->where('norm', 'like', '%' . $norm . '%')
             ->whereBetween('created_at', [
                 \Carbon\Carbon::parse($tglAwal)->startOfDay(), // Menambahkan waktu mulai hari
-                \Carbon\Carbon::parse($tglAkhir)->endOfDay(), // Menambahkan waktu akhir hari
+                \Carbon\Carbon::parse($tglAkhir)->endOfDay(),  // Menambahkan waktu akhir hari
             ])
             ->get();
-        $lab = json_decode($data, true);
+        $lab    = json_decode($data, true);
         $pasien = [];
 
         foreach ($lab as $d) {
             $tanggal = Carbon::parse($d['updated_at'])->format('d-m-Y');
-            $dokter = ($d['dokter']['gelar_d'] ?? null) . " " . ($d['dokter']['biodata']['nama'] ?? null) . " " . ($d['dokter']['gelar_b'] ?? null);
-            $admin = ($d['petugas']['gelar_d'] ?? null) . " " . ($d['petugas']['biodata']['nama'] ?? null) . " " . ($d['petugas']['gelar_b'] ?? null);
+            $dokter  = ($d['dokter']['gelar_d'] ?? null) . " " . ($d['dokter']['biodata']['nama'] ?? null) . " " . ($d['dokter']['gelar_b'] ?? null);
+            $admin   = ($d['petugas']['gelar_d'] ?? null) . " " . ($d['petugas']['biodata']['nama'] ?? null) . " " . ($d['petugas']['gelar_b'] ?? null);
 
             $pemeriksaanDetails = [];
             foreach ($d['pemeriksaan'] as $pemeriksaan) {
-                $petugas = ($pemeriksaan['petugas']['gelar_d'] ?? null) . " " . ($pemeriksaan['petugas']['biodata']['nama'] ?? null) . " " . ($pemeriksaan['petugas']['gelar_b'] ?? null);
-                $hasilLab = ($pemeriksaan['hasil'] ?? null) . " " . ($pemeriksaan['ket'] ?? null);
+                $petugas              = ($pemeriksaan['petugas']['gelar_d'] ?? null) . " " . ($pemeriksaan['petugas']['biodata']['nama'] ?? null) . " " . ($pemeriksaan['petugas']['gelar_b'] ?? null);
+                $hasilLab             = ($pemeriksaan['hasil'] ?? null) . " " . ($pemeriksaan['ket'] ?? null);
                 $pemeriksaanDetails[] = [
-                    'idLab' => $pemeriksaan['idLab'] ?? null,
-                    'idLayanan' => $pemeriksaan['idLayanan'] ?? null,
-                    'nmLayanan' => $pemeriksaan['pemeriksaan']['nmLayanan'] ?? null,
-                    'tarif' => $pemeriksaan['pemeriksaan']['tarif'] ?? null,
-                    'hasil' => $hasilLab ?? null,
+                    'idLab'       => $pemeriksaan['idLab'] ?? null,
+                    'idLayanan'   => $pemeriksaan['idLayanan'] ?? null,
+                    'nmLayanan'   => $pemeriksaan['pemeriksaan']['nmLayanan'] ?? null,
+                    'tarif'       => $pemeriksaan['pemeriksaan']['tarif'] ?? null,
+                    'hasil'       => $hasilLab ?? null,
                     'hasil_murni' => $pemeriksaan['hasil'] ?? null,
-                    'petugas' => $petugas ?? null,
+                    'petugas'     => $petugas ?? null,
                 ];
             }
 
             $pasien[] = [
-                'id' => $d['id'] ?? null,
-                'notrans' => $d['notrans'] ?? null,
-                'tgl' => $tanggal ?? null,
-                'norm' => $d['norm'] ?? null,
-                'jaminan' => $d['layanan'] ?? null,
-                'nama' => $d['nama'] ?? null,
-                'alamat' => $d['alamat'] ?? null,
-                'dokter_nip' => $d['dokter']['nip'] ?? null,
+                'id'          => $d['id'] ?? null,
+                'notrans'     => $d['notrans'] ?? null,
+                'tgl'         => $tanggal ?? null,
+                'norm'        => $d['norm'] ?? null,
+                'jaminan'     => $d['layanan'] ?? null,
+                'nama'        => $d['nama'] ?? null,
+                'alamat'      => $d['alamat'] ?? null,
+                'dokter_nip'  => $d['dokter']['nip'] ?? null,
                 'dokter_nama' => $dokter ?? null,
-                'admin_nip' => $d['petugas']['nip'] ?? null,
-                'admin_nama' => $admin ?? null,
+                'admin_nip'   => $d['petugas']['nip'] ?? null,
+                'admin_nama'  => $admin ?? null,
                 'pemeriksaan' => $pemeriksaanDetails ?? null,
             ];
         }
@@ -521,15 +520,15 @@ class LaboratoriumController extends Controller
 
     public function rekapKunjungan1(Request $request)
     {
-        $norm = $request->input('norm');
-        $tglAwal = $request->input('tglAwal', now()->toDateString());
+        $norm     = $request->input('norm');
+        $tglAwal  = $request->input('tglAwal', now()->toDateString());
         $tglAkhir = $request->input('tglAkhir', now()->toDateString());
         // dd($tglAkhir);
         $data = LaboratoriumHasilModel::with('pasien', 'pemeriksaan', 'petugas.biodata', 'dokter.biodata')
             ->where('norm', 'like', '%' . $norm . '%')
             ->whereBetween('created_at', [
                 \Carbon\Carbon::parse($tglAwal)->startOfDay(), // Menambahkan waktu mulai hari
-                \Carbon\Carbon::parse($tglAkhir)->endOfDay(), // Menambahkan waktu akhir hari
+                \Carbon\Carbon::parse($tglAkhir)->endOfDay(),  // Menambahkan waktu akhir hari
             ])
             ->get();
 
@@ -539,23 +538,23 @@ class LaboratoriumController extends Controller
 
         foreach ($lab as $d) {
             $tanggal = Carbon::parse($d['updated_at'])->format('d-m-Y');
-            $dokter = ($d['dokter']['gelar_d'] ?? null) . " " . ($d['dokter']['biodata']['nama'] ?? null) . " " . ($d['dokter']['gelar_b'] ?? null);
+            $dokter  = ($d['dokter']['gelar_d'] ?? null) . " " . ($d['dokter']['biodata']['nama'] ?? null) . " " . ($d['dokter']['gelar_b'] ?? null);
             $petugas = ($d['petugas']['gelar_d'] ?? null) . " " . ($d['petugas']['biodata']['nama'] ?? null) . " " . ($d['petugas']['gelar_b'] ?? null);
-            $res[] = [
-                'id' => $d['idLab'],
-                'notrans' => $d['notrans'],
-                'tgl' => $tanggal,
-                'norm' => $d['norm'],
-                'jaminan' => $d['pasien']['layanan'],
-                'nama' => $d['pasien']['nama'],
-                'alamat' => $d['pasien']['alamat'],
-                'pemeriksaan' => $d['pemeriksaan']['nmLayanan'],
-                'tarif' => $d['pemeriksaan']['tarif'],
-                'hasil' => $d['hasil'],
-                'petugas' => $d['petugas']['biodata']['nama'],
-                'dokter_nip' => $d['dokter']['nip'],
-                'dokter_nama' => $dokter,
-                'petugas_nip' => $d['petugas']['nip'],
+            $res[]   = [
+                'id'           => $d['idLab'],
+                'notrans'      => $d['notrans'],
+                'tgl'          => $tanggal,
+                'norm'         => $d['norm'],
+                'jaminan'      => $d['pasien']['layanan'],
+                'nama'         => $d['pasien']['nama'],
+                'alamat'       => $d['pasien']['alamat'],
+                'pemeriksaan'  => $d['pemeriksaan']['nmLayanan'],
+                'tarif'        => $d['pemeriksaan']['tarif'],
+                'hasil'        => $d['hasil'],
+                'petugas'      => $d['petugas']['biodata']['nama'],
+                'dokter_nip'   => $d['dokter']['nip'],
+                'dokter_nama'  => $dokter,
+                'petugas_nip'  => $d['petugas']['nip'],
                 'petugas_nama' => $petugas,
             ];
         }
@@ -566,7 +565,7 @@ class LaboratoriumController extends Controller
 
     public function poinPetugas(Request $request)
     {
-        $mulaiTgl = $request->input('tglAwal', now()->toDateString());
+        $mulaiTgl   = $request->input('tglAwal', now()->toDateString());
         $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
 
         $labHasilPemeriksaan = DB::table('t_kunjungan_lab_hasil')
@@ -599,7 +598,7 @@ class LaboratoriumController extends Controller
 
     public function jumlah_pemeriksaan(Request $request)
     {
-        $mulaiTgl = $request->input('tglAwal', now()->toDateString());
+        $mulaiTgl   = $request->input('tglAwal', now()->toDateString());
         $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
 
         $labHasilPemeriksaan = DB::table('t_kunjungan_lab_hasil')
@@ -621,62 +620,117 @@ class LaboratoriumController extends Controller
 
     public function waktu_pemeriksaan(Request $request)
     {
-        $mulaiTgl = $request->input('tglAwal', now()->toDateString());
+        $mulaiTgl   = $request->input('tglAwal', now()->toDateString());
         $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
 
-        $labHasilPemeriksaan = LaboratoriumHasilModel::whereBetween(DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")'), [$mulaiTgl, $selesaiTgl])->get();
+        $labHasilPemeriksaan = LaboratoriumHasilModel::with('pemeriksaan')
+            ->whereBetween(DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")'), [$mulaiTgl, $selesaiTgl])
+            ->get();
+        // return response()->json($labHasilPemeriksaan, 200, [], JSON_PRETTY_PRINT);
         $data = [];
         foreach ($labHasilPemeriksaan as $d) {
-            $waktuMulai = date('Y-m-d H:i:s', strtotime($d->created_at));
+            $waktuMulai   = date('Y-m-d H:i:s', strtotime($d->created_at));
             $waktuSelesai = date('Y-m-d H:i:s', strtotime($d->updated_at));
-            $durasi = max(0, round((strtotime($waktuSelesai) - strtotime($waktuMulai)) / 60, 2));
-            $data[] = [
-                'waktu_mulai' => $waktuMulai,
+            $durasi       = max(0, round((strtotime($waktuSelesai) - strtotime($waktuMulai)) / 60, 2));
+            $data[]       = [
+                'waktu_mulai'   => $waktuMulai,
                 'waktu_selesai' => $waktuSelesai,
-                "durasi" => $durasi,
-                "idLab" => $d->idLab,
-                "notrans" => $d->notrans,
-                "norm" => $d->norm,
-                "idLayanan" => $d->idLayanan,
-                "hasil" => $d->pemeriksaan_fisik,
-                "ket" => $d->ket,
-                "created_at" => $d->created_at,
-                "updated_at" => $d->updated_at,
-
+                "durasi"        => $durasi,
+                "idLab"         => $d->idLab,
+                "notrans"       => $d->notrans,
+                "norm"          => $d->norm,
+                "idLayanan"     => $d->idLayanan,
+                "layanan"       => $d->pemeriksaan->nmLayanan,
+                "estimasi"      => $d->pemeriksaan->estimasi,
+                "hasil"         => $d->pemeriksaan_fisik,
+                "ket"           => $d->ket,
+                "created_at"    => $d->created_at,
+                "updated_at"    => $d->updated_at,
             ];
         }
 
-        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+        $rataWaktu = $this->rataWaktuPemeriksaan($data);
+        $response  = [
+            'rata_waktu'        => $rataWaktu,
+            'waktu_pemeriksaan' => $data,
+        ];
+        return response()->json($response, 200, [], JSON_PRETTY_PRINT);
         // return response()->json($labHasilPemeriksaan, 200, [], JSON_PRETTY_PRINT);
+    }
+    public function rataWaktuPemeriksaan($labHasilPemeriksaan)
+    {
+
+        $data = [];
+        // dd($labHasilPemeriksaan);
+        foreach ($labHasilPemeriksaan as $d) {
+            $waktuMulai   = strtotime($d['created_at']);
+            $waktuSelesai = strtotime($d['updated_at']);
+            $durasi       = max(0, round(($waktuSelesai - $waktuMulai) / 60, 2));
+
+            $idLayanan = $d['idLayanan'];
+            $nmLayanan = $d['layanan'];
+            $estimasi  = $d['estimasi'];
+
+            if (! isset($data[$idLayanan])) {
+                $data[$idLayanan] = [
+                    'idLayanan'      => $idLayanan,
+                    'nmLayanan'      => $nmLayanan,
+                    'estimasi'       => $estimasi,
+                    'total_waktu'    => 0,
+                    'jumlah'         => 0,
+                    'waktu_terlama'  => 0,
+                    'waktu_tercepat' => PHP_INT_MAX,
+                ];
+            }
+
+            $data[$idLayanan]['total_waktu'] += $durasi;
+            $data[$idLayanan]['jumlah']++;
+            $data[$idLayanan]['waktu_terlama']  = max($data[$idLayanan]['waktu_terlama'], $durasi);
+            $data[$idLayanan]['waktu_tercepat'] = min($data[$idLayanan]['waktu_tercepat'], $durasi);
+        }
+
+        $result = [];
+        foreach ($data as $item) {
+            $result[] = [
+                'idLayanan'      => $item['idLayanan'],
+                'nmLayanan'      => $item['nmLayanan'],
+                'estimasi'       => $item['estimasi'],
+                'rata-rata'      => round($item['total_waktu'] / max(1, $item['jumlah']), 2),
+                'waktu_terlama'  => $item['waktu_terlama'],
+                'waktu_tercepat' => ($item['waktu_tercepat'] == PHP_INT_MAX ? 0 : $item['waktu_tercepat']),
+            ];
+        }
+
+        return $result;
     }
 
     private function calculateAverages($data)
     {
         $total = count($data);
 
-        $total_tunggu_daftar = 0;
-        $total_tunggu_lab = 0;
+        $total_tunggu_daftar    = 0;
+        $total_tunggu_lab       = 0;
         $total_tunggu_hasil_lab = 0;
-        $total_tunggu_ro = 0;
-        $total_tunggu_hasil_ro = 0;
-        $total_tunggu_poli = 0;
-        $total_durasi_poli = 0;
-        $total_tunggu_tensi = 0;
-        $total_tunggu_igd = 0;
-        $total_tunggu_farmasi = 0;
-        $total_tunggu_kasir = 0;
+        $total_tunggu_ro        = 0;
+        $total_tunggu_hasil_ro  = 0;
+        $total_tunggu_poli      = 0;
+        $total_durasi_poli      = 0;
+        $total_tunggu_tensi     = 0;
+        $total_tunggu_igd       = 0;
+        $total_tunggu_farmasi   = 0;
+        $total_tunggu_kasir     = 0;
 
-        $max_tunggu_daftar = 0;
-        $max_tunggu_lab = 0;
+        $max_tunggu_daftar    = 0;
+        $max_tunggu_lab       = 0;
         $max_tunggu_hasil_lab = 0;
-        $max_tunggu_hasil_ro = 0;
-        $max_tunggu_ro = 0;
-        $max_tunggu_poli = 0;
-        $max_durasi_poli = 0;
-        $max_tunggu_tensi = 0;
-        $max_tunggu_igd = 0;
-        $max_tunggu_farmasi = 0;
-        $max_tunggu_kasir = 0;
+        $max_tunggu_hasil_ro  = 0;
+        $max_tunggu_ro        = 0;
+        $max_tunggu_poli      = 0;
+        $max_durasi_poli      = 0;
+        $max_tunggu_tensi     = 0;
+        $max_tunggu_igd       = 0;
+        $max_tunggu_farmasi   = 0;
+        $max_tunggu_kasir     = 0;
 
         foreach ($data as $message) {
             $total_tunggu_daftar += $message['tunggu_daftar'];
@@ -692,55 +746,55 @@ class LaboratoriumController extends Controller
             $total_tunggu_kasir += $message['tunggu_kasir'];
 
             // Update max values
-            $max_tunggu_daftar = max($max_tunggu_daftar, $message['tunggu_daftar']);
-            $max_tunggu_lab = max($max_tunggu_lab, $message['tunggu_lab']);
+            $max_tunggu_daftar    = max($max_tunggu_daftar, $message['tunggu_daftar']);
+            $max_tunggu_lab       = max($max_tunggu_lab, $message['tunggu_lab']);
             $max_tunggu_hasil_lab = max($max_tunggu_hasil_lab, $message['tunggu_hasil_lab']);
-            $max_tunggu_hasil_ro = max($max_tunggu_hasil_ro, $message['tunggu_hasil_ro']);
-            $max_tunggu_ro = max($max_tunggu_ro, $message['tunggu_ro']);
-            $max_tunggu_poli = max($max_tunggu_poli, $message['tunggu_poli']);
-            $max_durasi_poli = max($max_durasi_poli, $message['durasi_poli']);
-            $max_tunggu_tensi = max($max_tunggu_tensi, $message['tunggu_tensi']);
-            $max_tunggu_igd = max($max_tunggu_igd, $message['tunggu_igd']);
-            $max_tunggu_farmasi = max($max_tunggu_farmasi, $message['tunggu_farmasi']);
-            $max_tunggu_kasir = max($max_tunggu_kasir, $message['tunggu_kasir']);
+            $max_tunggu_hasil_ro  = max($max_tunggu_hasil_ro, $message['tunggu_hasil_ro']);
+            $max_tunggu_ro        = max($max_tunggu_ro, $message['tunggu_ro']);
+            $max_tunggu_poli      = max($max_tunggu_poli, $message['tunggu_poli']);
+            $max_durasi_poli      = max($max_durasi_poli, $message['durasi_poli']);
+            $max_tunggu_tensi     = max($max_tunggu_tensi, $message['tunggu_tensi']);
+            $max_tunggu_igd       = max($max_tunggu_igd, $message['tunggu_igd']);
+            $max_tunggu_farmasi   = max($max_tunggu_farmasi, $message['tunggu_farmasi']);
+            $max_tunggu_kasir     = max($max_tunggu_kasir, $message['tunggu_kasir']);
         }
 
-        $avg_tunggu_daftar = round($total_tunggu_daftar / $total, 2);
-        $avg_tunggu_lab = round($total_tunggu_lab / $total, 2);
+        $avg_tunggu_daftar    = round($total_tunggu_daftar / $total, 2);
+        $avg_tunggu_lab       = round($total_tunggu_lab / $total, 2);
         $avg_tunggu_hasil_lab = round($total_tunggu_hasil_lab / $total, 2);
-        $avg_tunggu_hasil_ro = round($total_tunggu_hasil_ro / $total, 2);
-        $avg_tunggu_ro = round($total_tunggu_ro / $total, 2);
-        $avg_tunggu_poli = round($total_tunggu_poli / $total, 2);
-        $avg_durasi_poli = round($total_durasi_poli / $total, 2);
-        $avg_tunggu_tensi = round($total_tunggu_tensi / $total, 2);
-        $avg_tunggu_igd = round($total_tunggu_igd / $total, 2);
-        $avg_tunggu_farmasi = round($total_tunggu_farmasi / $total, 2);
-        $avg_tunggu_kasir = round($total_tunggu_kasir / $total, 2);
+        $avg_tunggu_hasil_ro  = round($total_tunggu_hasil_ro / $total, 2);
+        $avg_tunggu_ro        = round($total_tunggu_ro / $total, 2);
+        $avg_tunggu_poli      = round($total_tunggu_poli / $total, 2);
+        $avg_durasi_poli      = round($total_durasi_poli / $total, 2);
+        $avg_tunggu_tensi     = round($total_tunggu_tensi / $total, 2);
+        $avg_tunggu_igd       = round($total_tunggu_igd / $total, 2);
+        $avg_tunggu_farmasi   = round($total_tunggu_farmasi / $total, 2);
+        $avg_tunggu_kasir     = round($total_tunggu_kasir / $total, 2);
 
         $results = [
-            'avg_tunggu_daftar' => $avg_tunggu_daftar,
-            'avg_tunggu_lab' => $avg_tunggu_lab,
+            'avg_tunggu_daftar'    => $avg_tunggu_daftar,
+            'avg_tunggu_lab'       => $avg_tunggu_lab,
             'avg_tunggu_hasil_lab' => $avg_tunggu_hasil_lab,
-            'avg_tunggu_hasil_ro' => $avg_tunggu_hasil_ro,
-            'avg_tunggu_ro' => $avg_tunggu_ro,
-            'avg_tunggu_poli' => $avg_tunggu_poli,
-            'avg_durasi_poli' => $avg_durasi_poli,
-            'avg_tunggu_tensi' => $avg_tunggu_tensi,
-            'avg_tunggu_igd' => $avg_tunggu_igd,
-            'avg_tunggu_farmasi' => $avg_tunggu_farmasi,
-            'avg_tunggu_kasir' => $avg_tunggu_kasir,
+            'avg_tunggu_hasil_ro'  => $avg_tunggu_hasil_ro,
+            'avg_tunggu_ro'        => $avg_tunggu_ro,
+            'avg_tunggu_poli'      => $avg_tunggu_poli,
+            'avg_durasi_poli'      => $avg_durasi_poli,
+            'avg_tunggu_tensi'     => $avg_tunggu_tensi,
+            'avg_tunggu_igd'       => $avg_tunggu_igd,
+            'avg_tunggu_farmasi'   => $avg_tunggu_farmasi,
+            'avg_tunggu_kasir'     => $avg_tunggu_kasir,
 
-            'max_tunggu_daftar' => $max_tunggu_daftar,
-            'max_tunggu_lab' => $max_tunggu_lab,
+            'max_tunggu_daftar'    => $max_tunggu_daftar,
+            'max_tunggu_lab'       => $max_tunggu_lab,
             'max_tunggu_hasil_lab' => $max_tunggu_hasil_lab,
-            'max_tunggu_hasil_ro' => $max_tunggu_hasil_ro,
-            'max_tunggu_ro' => $max_tunggu_ro,
-            'max_tunggu_poli' => $max_tunggu_poli,
-            'max_durasi_poli' => $max_durasi_poli,
-            'max_tunggu_tensi' => $max_tunggu_tensi,
-            'max_tunggu_igd' => $max_tunggu_igd,
-            'max_tunggu_farmasi' => $max_tunggu_farmasi,
-            'max_tunggu_kasir' => $max_tunggu_kasir,
+            'max_tunggu_hasil_ro'  => $max_tunggu_hasil_ro,
+            'max_tunggu_ro'        => $max_tunggu_ro,
+            'max_tunggu_poli'      => $max_tunggu_poli,
+            'max_durasi_poli'      => $max_durasi_poli,
+            'max_tunggu_tensi'     => $max_tunggu_tensi,
+            'max_tunggu_igd'       => $max_tunggu_igd,
+            'max_tunggu_farmasi'   => $max_tunggu_farmasi,
+            'max_tunggu_kasir'     => $max_tunggu_kasir,
         ];
 
         return $results;

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -38,14 +37,14 @@ class KasirTransModel extends Model
         $dataUMUM = self::selectRaw('DATE(created_at) as tanggal, SUM(tagihan) as pendapatan')
             ->whereYear('created_at', $tahun) // Filter berdasarkan tahun
             ->where('jaminan', 'UMUM')
-            ->groupBy('tanggal') // Kelompokkan berdasarkan tanggal
+            ->groupBy('tanggal')        // Kelompokkan berdasarkan tanggal
             ->orderBy('tanggal', 'asc') // Urutkan berdasarkan tanggal
             ->get();
 
         $dataBPJS = self::selectRaw('DATE(created_at) as tanggal, SUM(tagihan) as pendapatan')
             ->whereYear('created_at', $tahun) // Filter berdasarkan tahun
             ->where('jaminan', 'BPJS')
-            ->groupBy('tanggal') // Kelompokkan berdasarkan tanggal
+            ->groupBy('tanggal')        // Kelompokkan berdasarkan tanggal
             ->orderBy('tanggal', 'asc') // Urutkan berdasarkan tanggal
             ->get();
         if ($dataUMUM->isEmpty() && $dataBPJS->isEmpty()) {
@@ -74,43 +73,43 @@ class KasirTransModel extends Model
 
         // Looping data pendapatan
         foreach ($data as $d) {
-            $tanggal = \Carbon\Carbon::parse($d->tanggal); // Menggunakan Carbon
-            $formattedDate = $tanggal->format('d-m-Y');
-            $hari = $tanggal->locale('id')->isoFormat('dddd'); // Hari dalam bahasa Indonesia
-            $bulan = $tanggal->locale('id')->isoFormat('MMMM');
-            $blnNumber = $tanggal->format('m');
-            $tglNomor = $tanggal->locale('id')->isoFormat('DD MMMM YYYY');
+            $tanggal             = \Carbon\Carbon::parse($d->tanggal); // Menggunakan Carbon
+            $formattedDate       = $tanggal->format('d-m-Y');
+            $hari                = $tanggal->locale('id')->isoFormat('dddd'); // Hari dalam bahasa Indonesia
+            $bulan               = $tanggal->locale('id')->isoFormat('MMMM');
+            $blnNumber           = $tanggal->format('m');
+            $tglNomor            = $tanggal->locale('id')->isoFormat('DD MMMM YYYY');
             $terbilangPendapatan = $this->terbilang($d->pendapatan); // Konversi terbilang
-            $tgl = $tanggal->locale('id')->isoFormat('DD MMM YYYY');
+            $tgl                 = $tanggal->locale('id')->isoFormat('DD MMM YYYY');
 
             // Format nomor
-            $nomor = $tanggal->format('d') . '/SBS/01/' . $tanggal->format('Y');
-            $nomor_sts = $tanggal->format('d') . '/KKPM/' . $tanggal->locale('id')->isoFormat('MMM') . '/' . $tanggal->format('Y');
+            $nomor       = $tanggal->format('d') . '/SBS/' . $blnNumber . '/' . $tanggal->format('Y');
+            $nomor_sts   = $tanggal->format('d') . '/KKPM/' . $tanggal->locale('id')->isoFormat('MMM') . '/' . $tanggal->format('Y');
             $dataSetoran = KasirSetoranModel::where('noSbs', $nomor)->first();
-            $btnColor = $dataSetoran !== null ? 'btn btn-info' : 'btn btn-danger';
+            $btnColor    = $dataSetoran !== null ? 'btn btn-info' : 'btn btn-danger';
 
             // Tambahkan ke array hasil
             $result[] = [
-                'nomor' => $nomor,
-                'nomor_sts' => $nomor_sts,
-                'tanggal' => $formattedDate,
-                'tgl' => $tgl,
-                'hari' => $hari,
-                'bulan' => $bulan,
-                'tahun' => $tahun,
-                'bln_number' => $blnNumber,
-                'tgl_nomor' => $tglNomor,
-                'tgl_pendapatan' => $tglNomor,
-                'tgl_setor' => $tglNomor,
-                'pendapatan' => 'Rp ' . number_format($d->pendapatan, 0, ',', '.') . ',00',
-                'jumlah' => $d->pendapatan,
-                'terbilang' => ucfirst($terbilangPendapatan) . " rupiah.",
-                'kode_akun' => 102010041411,
-                'kode_rek' => "3.003.25581.5",
+                'nomor'           => $nomor,
+                'nomor_sts'       => $nomor_sts,
+                'tanggal'         => $formattedDate,
+                'tgl'             => $tgl,
+                'hari'            => $hari,
+                'bulan'           => $bulan,
+                'tahun'           => $tahun,
+                'bln_number'      => $blnNumber,
+                'tgl_nomor'       => $tglNomor,
+                'tgl_pendapatan'  => $tglNomor,
+                'tgl_setor'       => $tglNomor,
+                'pendapatan'      => 'Rp ' . number_format($d->pendapatan, 0, ',', '.') . ',00',
+                'jumlah'          => $d->pendapatan,
+                'terbilang'       => ucfirst($terbilangPendapatan) . " rupiah.",
+                'kode_akun'       => 102010041411,
+                'kode_rek'        => "3.003.25581.5",
                 'asal_pendapatan' => "-",
-                'bank' => "BPD",
-                'uraian' => 'Pendapatan Jasa Pelayanan Rawat Jalan 1',
-                'btnColor' => $btnColor,
+                'bank'            => "BPD",
+                'uraian'          => 'Pendapatan Jasa Pelayanan Rawat Jalan 1',
+                'btnColor'        => $btnColor,
             ];
 
         }
@@ -121,8 +120,8 @@ class KasirTransModel extends Model
     public function terbilang($angka)
     {
         $angka = abs((int) $angka); // Pastikan angka dalam bentuk numerik
-        $huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
-        $temp = "";
+        $huruf = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
+        $temp  = "";
 
         if ($angka < 12) {
             $temp = $huruf[$angka];

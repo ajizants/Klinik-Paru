@@ -864,6 +864,142 @@ function reportJumlahPemeriksaan() {
     });
 }
 
+function waktuPemeriksaan() {
+    //tabelWaktuLayanan
+    var tglAwal = document.getElementById("tglAwal").value;
+    var tglAkhir = document.getElementById("tglAkhir").value;
+
+    // Clear existing DataTable, if initialized
+    let formattedAwal = tglAwal.value;
+    let formattedAkhir = tglAkhir.value;
+
+    $.ajax({
+        url: "/api/rekap/lab/waktu_pemeriksaan",
+        type: "post",
+        data: {
+            tglAwal: tglAwal,
+            tglAkhir: tglAkhir,
+        },
+        success: function (response) {
+            console.log("🚀 ~ waktuPemeriksaan ~ response:", response);
+            var dataRataWaktu = response.rata_waktu;
+            var dataWaktu = response.waktu_pemeriksaan;
+            isiTabelRataWaktu(dataRataWaktu, formattedAwal, formattedAkhir);
+            isiTabelWaktu(dataWaktu, formattedAwal, formattedAkhir);
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        },
+    });
+}
+
+function isiTabelRataWaktu(data, formattedAwal, formattedAkhir) {
+    if ($.fn.DataTable.isDataTable("#tabelRataWaktuLayanan")) {
+        var table = $("#tabelRataWaktuLayanan").DataTable();
+        table.clear().destroy();
+    }
+
+    data.forEach(function (item) {
+        const ket = item.estimasi < item.rata_rata ? "Kurang" : "Baik";
+        item.ket = ket;
+    });
+
+    var table = $("#tabelRataWaktuLayanan").DataTable({
+        data: data,
+        columns: [
+            { data: "idLayanan", title: "ID" },
+            { data: "nmLayanan", title: "Layanan" },
+            { data: "ket", title: "Keterangan" },
+            { data: "estimasi", title: "Estimasi" },
+            { data: "rata-rata", title: "Rata-rata" },
+            { data: "waktu_terlama", title: "Waktu Terlama" },
+            { data: "waktu_tercepat", title: "Waktu Tercepat" },
+        ],
+        order: [0, "asc"],
+        lengthChange: false,
+        autoWidth: true,
+        buttons: [
+            {
+                extend: "copyHtml5",
+                text: "Salin",
+            },
+            {
+                extend: "excelHtml5",
+                text: "Excel",
+                title:
+                    "Rekap Penggunaan Reagen Laboratorium  " +
+                    formattedAwal +
+                    " s.d. " +
+                    formattedAkhir,
+                filename:
+                    "Rekap Penggunaan Reagen Laboratorium  " +
+                    formattedAwal +
+                    " s.d. " +
+                    formattedAkhir,
+            },
+            "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+        ],
+    });
+    table
+        .buttons()
+        .container()
+        .appendTo("#tabelRataWaktuLayanan_wrapper .col-md-6:eq(0)");
+}
+function isiTabelWaktu(data, formattedAwal, formattedAkhir) {
+    if ($.fn.DataTable.isDataTable("#tabelWaktuLayanan")) {
+        var table = $("#tabelWaktuLayanan").DataTable();
+        table.clear().destroy();
+    }
+
+    data.forEach(function (item) {
+        const ket = item.estimasi < item.durasi ? "Kurang" : "Baik";
+        item.capaian = ket;
+    });
+
+    var table = $("#tabelWaktuLayanan").DataTable({
+        data: data,
+        columns: [
+            { data: "notrans", title: "No Transaksi" },
+            { data: "norm", title: "No RM" },
+            { data: "idLayanan", title: "ID Layanan" },
+            { data: "layanan", title: "Layanan" },
+            { data: "waktu_mulai", title: "Waktu Mulai" },
+            { data: "waktu_selesai", title: "Waktu Selesai" },
+            { data: "durasi", title: "Durasi" },
+            { data: "estimasi", title: "Estimasi" },
+            { data: "capaian", title: "Ket" },
+        ],
+        order: [0, "asc"],
+        lengthChange: false,
+        autoWidth: true,
+        buttons: [
+            {
+                extend: "copyHtml5",
+                text: "Salin",
+            },
+            {
+                extend: "excelHtml5",
+                text: "Excel",
+                title:
+                    "Rekap Penggunaan Reagen Laboratorium  " +
+                    formattedAwal +
+                    " s.d. " +
+                    formattedAkhir,
+                filename:
+                    "Rekap Penggunaan Reagen Laboratorium  " +
+                    formattedAwal +
+                    " s.d. " +
+                    formattedAkhir,
+            },
+            "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+        ],
+    });
+    table
+        .buttons()
+        .container()
+        .appendTo("#tabelWaktuLayanan_wrapper .col-md-6:eq(0)");
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     // Check if elements are found before setting their values
     if (tglAwal && tglAkhir) {

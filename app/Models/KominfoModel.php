@@ -258,6 +258,39 @@ class KominfoModel extends Model
             return ['error' => $e->getMessage()];
         }
     }
+    public function rekapFaskesPerujuk(array $params)
+    {
+        // Inisialisasi klien GuzzleHTTP
+        $client = new Client();
+
+        // URL endpoint API yang ingin diakses
+        $url = 'https://kkpm.banyumaskab.go.id/api_kkpm/v1/rekap_faskes_perujuk';
+
+        // Username dan password untuk basic auth
+        $username = env('API_USERNAME', '');
+        $password = env('API_PASSWORD', '');
+
+        try {
+            // Lakukan permintaan POST dengan otentikasi dasar
+            $response = $client->request('POST', $url, [
+                'auth'        => [$username, $password],
+                'form_params' => $params,
+                'headers'     => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                ],
+            ]);
+
+            // Ambil body response
+            $body = $response->getBody();
+
+            // Konversi response body ke array
+            $data = json_decode($body, true);
+            return $data;
+        } catch (\Exception $e) {
+            // Tangani kesalahan
+            return ['error' => $e->getMessage()];
+        }
+    }
     public function cpptRequest(array $params)
     {
         // dd($params);
@@ -1261,6 +1294,7 @@ class KominfoModel extends Model
             }
 
             $body = (string) $response->getBody();
+            // dd($body);
             $data = json_decode($body, true);
 
             return $data;

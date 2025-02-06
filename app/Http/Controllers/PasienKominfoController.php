@@ -1533,86 +1533,38 @@ class PasienKominfoController extends Controller
         return $hasil;
     }
 
-    // public function grafikDokter(Request $request)
-    // {
-    //     $params = $request->all();
-    //     $model = new KominfoModel();
-    //     $data = $model->getGrafikDokter($params)['data'];
-    //     $pasien = $this->filterData($model->getTungguPoli($params)['data']);
+    public function rekapFaskesPerujuk(Request $request)
+    {
+        $params = $request->all();
+        $model  = new KominfoModel();
+        // $data   = $model->rekapFaskesPerujuk($params);
 
-    //     $formattedData = $this->filterData($data);
-    //     $hasil = $this->calculatePercentage($formattedData, $pasien);
+        $data = [
+            [
+                'nama_faskes' => 'Puskesmas Baturraden 1',
+                'jumlah'      => 10,
+            ],
+            [
+                'nama_faskes' => 'Puskesmas Baturraden 2',
+                'jumlah'      => 20,
+            ],
+            [
+                'nama_faskes' => 'Puskesmas Baturraden 3',
+                'jumlah'      => 30,
+            ],
+            [
+                'nama_faskes' => 'Puskesmas Baturraden 4',
+                'jumlah'      => 40,
+            ],
+            [
+                'nama_faskes' => 'Puskesmas Baturraden 5',
+                'jumlah'      => 50,
+            ],
+        ];
 
-    //     return response()->json($hasil, 200, [], JSON_PRETTY_PRINT);
-    // }
+        $data = array_values($data);
 
-    // private function filterData(array $data)
-    // {
-    //     // Daftar nama dokter yang ingin dihitung
-    //     $doctors = [
-    //         'dr. Cempaka Nova Intani, Sp.P, FISR., MM.',
-    //         'dr. AGIL DANANJAYA, Sp.P',
-    //         'dr. FILLY ULFA KUSUMAWARDANI',
-    //         'dr. SIGIT DWIYANTO',
-    //     ];
-
-    //     // Filter dan format ulang data
-    //     $result = [];
-    //     foreach ($data as $item) {
-    //         if (in_array($item['dokter_nama'], $doctors)) {
-    //             $tanggal = $item['tanggal'];
-    //             $dokter = $item['dokter_nama'];
-    //             $result[$tanggal][$dokter] = ($result[$tanggal][$dokter] ?? 0) + 1;
-    //         }
-    //     }
-
-    //     // Tambahkan dokter yang tidak memiliki data
-    //     foreach ($result as $tanggal => &$dokters) {
-    //         foreach ($doctors as $dokter) {
-    //             $dokters[$dokter] = $dokters[$dokter] ?? 0;
-    //         }
-    //     }
-
-    //     // Format ulang menjadi array terstruktur
-    //     $formattedResult = [];
-    //     foreach ($result as $tanggal => $dokters) {
-    //         foreach ($dokters as $dokter => $count) {
-    //             $formattedResult[] = [
-    //                 'tanggal' => $tanggal,
-    //                 'dokter_nama' => $dokter,
-    //                 'jumlah' => $count,
-    //             ];
-    //         }
-    //     }
-
-    //     // Urutkan berdasarkan tanggal
-    //     usort($formattedResult, fn($a, $b) => strtotime($a['tanggal']) - strtotime($b['tanggal']));
-
-    //     return $formattedResult;
-    // }
-
-    // private function calculatePercentage(array $data, array $pasien)
-    // {
-    //     $hasil = [];
-    //     foreach ($data as $dataItem) {
-    //         foreach ($pasien as $pasienItem) {
-    //             if ($dataItem['dokter_nama'] === $pasienItem['dokter_nama'] && $dataItem['tanggal'] === $pasienItem['tanggal']) {
-    //                 $jumlahData = $dataItem['jumlah'];
-    //                 $jumlahPasien = $pasienItem['jumlah'];
-    //                 $percentage = $jumlahData > 0 ? ($jumlahData / $jumlahPasien) * 100 : 0;
-
-    //                 $hasil[] = [
-    //                     'tanggal' => $dataItem['tanggal'],
-    //                     'dokter_nama' => $dataItem['dokter_nama'],
-    //                     'jumlah_farmasi' => $jumlahData,
-    //                     'jumlah_pasien' => $jumlahPasien,
-    //                     'percentage' => round($percentage, 2),
-    //                 ];
-    //             }
-    //         }
-    //     }
-
-    //     return $hasil;
-    // }
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
 
 }

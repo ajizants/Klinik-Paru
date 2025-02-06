@@ -2,82 +2,125 @@
 
 @section('content')
     {{-- Data per pasien --}}
-    <div class="card shadow mb-4">
-        <!-- Card Header - Dropdown -->
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
-            <h6 class="m-0 font-weight-bold text-primary">Rekap Jumlah Kunjungan</h6>
-        </div>
-        <div class="card-body mb-2">
-            <div class="row">
-                <label class="col-form-label">Rentang Tanggal :</label>
-                <div class="form-group col-3">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="far fa-calendar-alt"></i>
-                            </span>
-                        </div>
-                        <input type="text" class="form-control float-right" id="reservation">
+    <div class="container-fluid">
+        <div class="row">
+            <label class="col-form-label">Rentang Tanggal :</label>
+            <div class="form-group col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="far fa-calendar-alt"></i>
+                        </span>
                     </div>
+                    <input type="text" class="form-control float-right" id="reservation">
                 </div>
-                <div class="col">
-                    <button type="button" class="btn btn-success" onclick="segarkan();">
-                        Segarkan
-                        <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top" title="Update Data"
-                            id="cariantrian"></span>
-                    </button>
-                </div>
+            </div>
+            <div class="mx-2">
+                <button type="button" class="btn btn-success" onclick="segarkan();">
+                    Cari Data Jumlah Kujungan
+                </button>
+            </div>
+            <div class="mx-2">
+                <button type="button" class="btn btn-warning" onclick="rekapFaskesPerujuk();">
+                    Cari Data Faskes Perujuk
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a type="button" class="nav-link active bg-blue" onclick="toggleSections('#dTunggu');"><b>Rekap
+                                Kunjungan</b></a>
+                    </li>
+                    <li class="nav-item">
+                        <a type="button" class="nav-link" onclick="toggleSections('#dAntrian');"><b>Rekap Jumlah
+                                Kunjungan</b></a>
+                    </li>
+                    <li class="nav-item">
+                        <a type="button" class="nav-link" onclick="toggleSections('#dSelesai');"><b>Rekap Jumlah Faskes
+                                Perujuk</b></a>
+                    </li>
 
+                </ul>
             </div>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover dataTable dtr-inline" id="report" cellspacing="0">
-                    <thead class="bg bg-teal table-bordered border-warning">
-                        <tr>
-                            <th>Aksi</th>
-                            <th>Urut</th>
-                            <th>Tanggal</th>
-                            <th>No SEP</th>
-                            <th>Penjamin</th>
-                            <th>Daftar By</th>
-                            <th>Ket</th>
-                            <th>No. RM</th>
-                            <th class="col-2">Nama Pasien</th>
-                            <th>JK</th>
-                            <th>Umur</th>
-                            <th class="col-3">Alamat</th>
-                            <th>Poli</th>
-                            <th class="col-3">Dokter</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-bordered border-warning">
-                    </tbody>
-                </table>
+            <div class="" id="dTunggu">
+                <div class="container-fluid d-flex justify-content-center bg-warning border p-1 mx-1">
+                    <h5 class="m-2"><b>Rekapan Kunjungan</b></h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover dataTable dtr-inline" id="report" cellspacing="0">
+                        <thead class="bg bg-teal table-bordered border-warning">
+                            <tr>
+                                <th>Aksi</th>
+                                <th>Urut</th>
+                                <th>Tanggal</th>
+                                <th>No SEP</th>
+                                <th>Penjamin</th>
+                                <th>Daftar By</th>
+                                <th>Ket</th>
+                                <th>No. RM</th>
+                                <th class="col-2">Nama Pasien</th>
+                                <th>JK</th>
+                                <th>Umur</th>
+                                <th class="col-3">Alamat</th>
+                                <th>Poli</th>
+                                <th class="col-3">Dokter</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-bordered border-warning">
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="container-fluid d-flex justify-content-center bg-warning border p-1 mt-1">
-                <h5 class="m-2"><b>Rekapan Jumlah Pasien</b></h5>
+            <div class="" id="dAntrian" style="display: none;">
+                <div class="container-fluid d-flex justify-content-center bg-warning border p-1 mx-1">
+                    <h5 class="m-2"><b>Rekapan Jumlah Pasien</b></h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover dataTable dtr-inline" id="total" width="100%"
+                        cellspacing="0">
+                        <thead class="bg bg-teal table-bordered border-warning">
+                            <tr>
+                                <th class="text-center">Jumlah No Antri</th>
+                                <th class="text-center">Jumlah Pasien</th>
+                                <th class="text-center">Pasien Batal</th>
+                                <th class="text-center">Pasien Skip</th>
+                                <th class="text-center">Pasien BPJS</th>
+                                <th class="text-center">Pasien BPJS Per 2</th>
+                                <th class="text-center">Pasien UMUM</th>
+                                <th class="text-center">Pasien LAMA</th>
+                                <th class="text-center">Pasien BARU</th>
+                                <th class="text-center">Pasien OTS</th>
+                                <th class="text-center">Pasien JKN</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-bordered border-warning">
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover dataTable dtr-inline" id="total" width="100%"
-                    cellspacing="0">
-                    <thead class="bg bg-teal table-bordered border-warning">
-                        <tr>
-                            <th class="text-center">Jumlah No Antri</th>
-                            <th class="text-center">Jumlah Pasien</th>
-                            <th class="text-center">Pasien Batal</th>
-                            <th class="text-center">Pasien Skip</th>
-                            <th class="text-center">Pasien BPJS</th>
-                            <th class="text-center">Pasien BPJS Per 2</th>
-                            <th class="text-center">Pasien UMUM</th>
-                            <th class="text-center">Pasien LAMA</th>
-                            <th class="text-center">Pasien BARU</th>
-                            <th class="text-center">Pasien OTS</th>
-                            <th class="text-center">Pasien JKN</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-bordered border-warning">
-                    </tbody>
-                </table>
+            <div class="" id="dSelesai" style="display: none;">
+                <div class="container-fluid d-flex justify-content-center bg-warning border p-1 mx-1">
+                    <h5 class="m-2"><b>Rekapan Jumlah Faskes Perujuk</b></h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover dataTable dtr-inline" id="rekapFaskesPerujuk"
+                        cellspacing="0">
+                        <thead class="bg bg-info table-bordered border-warning">
+                            <tr>
+                                <th>NO</th>
+                                <th>Nama Faskes</th>
+                                <th>Jumlah</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-bordered border-warning">
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -110,12 +153,14 @@
                         </div>
                         <div class="form-group">
                             <label for="noSep">No. SEP</label>
-                            <input type="text" class="form-control" id="noSep" required onkeyup="checkEnter(event)">
+                            <input type="text" class="form-control" id="noSep" required
+                                onkeyup="checkEnter(event)">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="selesai();">Simpan</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal"
+                        onclick="selesai();">Simpan</button>
                     <button type="button" class="btn btn-danger"data-dismiss="modal">Batal</button>
                 </div>
             </div>

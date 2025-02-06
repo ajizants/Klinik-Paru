@@ -169,6 +169,7 @@ function toggleSections(sectionToShow) {
         "#hasilPemeriksaan",
         "#poin",
         "#jmlhPeriksa",
+        "#waktuLayanan",
 
         "#SubKelas",
         "#Kelas",

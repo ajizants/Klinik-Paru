@@ -5,6 +5,11 @@
                                 Hasil Pemeriksaan</b></a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" type="button" id="ijumlah"
+                            onclick="toggleSections('#waktuLayanan');"><b>Laporan
+                                Waktu Pemeriksaan</b></a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" type="button" id="ipoin" onclick="toggleSections('#poin');"><b>Laporan
                                 Poin
                                 Petugas</b></a>
@@ -14,7 +19,6 @@
                             onclick="toggleSections('#jmlhPeriksa');"><b>Laporan
                                 Jumlah Pemeriksaan</b></a>
                     </li>
-
                 </ul>
                 <div class="container-fluid mt-1" id="parameter">
                     <div class="card card-lime pb-0">
@@ -44,6 +48,34 @@
 
                                     </div>
                                 </div>
+
+                                <div class="container-fluid" id="jmlhPeriksa" style="display:none;">
+                                    <div id="cariPenjamin">
+                                        <a class="btn btn-success d-flex justify-content-center mx-2"
+                                            onclick="reportJumlahPemeriksaan();">Cari Laporan Jumlah Pemeriksaan</a>
+                                    </div>
+                                    <div class="table-responsive pt-2 px-2">
+                                        <table id="tabelJumlahPeriksa"class="table table-striped pt-0 mt-0 fs-6"
+                                            style="width:100%" cellspacing="0">
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="container-fluid" id="waktuLayanan" style="display:none;">
+                                    <div id="cariPenjamin">
+                                        <a class="btn btn-success d-flex justify-content-center mx-2"
+                                            onclick="waktuPemeriksaan();">Cari Laporan Waktu Pemeriksaan</a>
+                                    </div>
+                                    <div class="table-responsive pt-2 px-2">
+                                        <table id="tabelRataWaktuLayanan"class="table table-striped pt-0 mt-0 fs-6"
+                                            style="width:100%" cellspacing="0">
+                                        </table>
+                                    </div>
+                                    <div class="table-responsive pt-2 px-2">
+                                        <table id="tabelWaktuLayanan"class="table table-striped pt-0 mt-0 fs-6"
+                                            style="width:100%" cellspacing="0">
+                                        </table>
+                                    </div>
+                                </div>
                                 <div class="container-fluid" id="poin" style="display:none;">
                                     <div id="cariPoin">
                                         <a class="btn btn-success d-flex justify-content-center mx-2"
@@ -62,17 +94,6 @@
                                             </thead>
                                             <tbody>
                                             </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="container-fluid" id="jmlhPeriksa" style="display:none;">
-                                    <div id="cariPenjamin">
-                                        <a class="btn btn-success d-flex justify-content-center mx-2"
-                                            onclick="reportJumlahPemeriksaan();">Cari Laporan Jumlah Pemeriksaan</a>
-                                    </div>
-                                    <div class="table-responsive pt-2 px-2">
-                                        <table id="tabelJumlahPeriksa"class="table table-striped pt-0 mt-0 fs-6"
-                                            style="width:100%" cellspacing="0">
                                         </table>
                                     </div>
                                 </div>
