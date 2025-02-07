@@ -1535,34 +1535,18 @@ class PasienKominfoController extends Controller
 
     public function rekapFaskesPerujuk(Request $request)
     {
-        $params = $request->all();
-        $model  = new KominfoModel();
-        // $data   = $model->rekapFaskesPerujuk($params);
-
-        $data = [
-            [
-                'nama_faskes' => 'Puskesmas Baturraden 1',
-                'jumlah'      => 10,
-            ],
-            [
-                'nama_faskes' => 'Puskesmas Baturraden 2',
-                'jumlah'      => 20,
-            ],
-            [
-                'nama_faskes' => 'Puskesmas Baturraden 3',
-                'jumlah'      => 30,
-            ],
-            [
-                'nama_faskes' => 'Puskesmas Baturraden 4',
-                'jumlah'      => 40,
-            ],
-            [
-                'nama_faskes' => 'Puskesmas Baturraden 5',
-                'jumlah'      => 50,
-            ],
+        $params = [
+            'tanggal_sep_awal'  => $request->input('tanggal_awal'),
+            'tanggal_sep_akhir' => $request->input('tanggal_akhir'),
+            'order_by'          => 'jumlah_rujukan',
+            'order_jenis'       => 'desc',
         ];
-
-        $data = array_values($data);
+        $model = new KominfoModel();
+        $data  = $model->rekapFaskesPerujuk($params)['response']['data_rujukan'];
+        // return $req;
+        // return $req['response']['data_rujukan'];
+        // $data = $req['data_rujukan'];
+        // $data = array_values($data);
 
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }

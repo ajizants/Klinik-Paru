@@ -69,6 +69,7 @@ function segarkan() {
         },
     });
     reportPendaftaran(tglAwal, tglAkhir);
+    rekapFaskesPerujuk();
 }
 function cariJumlah() {
     Swal.fire({
@@ -324,14 +325,12 @@ async function rekapFaskesPerujuk() {
                 data: data,
                 columns: [
                     { data: "no" },
-                    { data: "nama_faskes" },
-                    { data: "jumlah" },
+                    { data: "ppk_rujukan_nama" },
+                    { data: "jumlah_rujukan" },
                 ],
                 autoWidth: false,
-                ordering: false,
                 paging: true,
-                searching: false,
-                lengthChange: false,
+                order: [[2, "dsc"]],
                 buttons: [
                     {
                         extend: "excelHtml5",
@@ -411,28 +410,9 @@ window.addEventListener("load", function () {
         function (ev, picker) {
             tglAwal = picker.startDate.format("YYYY-MM-DD");
             tglAkhir = picker.endDate.format("YYYY-MM-DD");
-
-            // Lakukan sesuatu dengan startDate dan endDate
-            Swal.fire({
-                icon: "info",
-                title: "Sedang mencarikan data...!!!",
-                showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-            });
-            reportPendaftaran(tglAwal, tglAkhir);
         }
     );
-    Swal.fire({
-        icon: "info",
-        title: "Sedang mencarikan data...!!!",
-        showConfirmButton: false,
-        didOpen: () => {
-            Swal.showLoading();
-        },
-    });
-    reportPendaftaran(tglAwal, tglAkhir);
+    segarkan();
 
     setInterval(function () {
         reportPendaftaran(tglAwal, tglAkhir);
