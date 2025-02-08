@@ -142,7 +142,7 @@
                         :
                     </td> --}}
                     <td width="30%" class="my-0 py-0" style=" text-align: left;">
-                        {{ $resumePasien->pasien_no_rm }}
+                        {{ $resumePasien->pasien_no_rm }} / {{ $kunjungan }}
                     </td>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Umur

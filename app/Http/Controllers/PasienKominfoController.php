@@ -298,7 +298,9 @@ class PasienKominfoController extends Controller
         ];
         $client = new KominfoModel();
         try {
-            $data              = $client->cpptRequest($params);
+            $data = $client->cpptRequest($params);
+            // dd($data);
+            $kunjungan         = $client->pendaftaranRequest($params)[0]['rs_paru_pasien_lama_baru'];
             $resumePasienArray = $data['response']['data'];
             // return ($resumePasienArray);
             // Cek jika $resumePasienArray adalah array
@@ -427,7 +429,7 @@ class PasienKominfoController extends Controller
             // $lab = [];
             // $ro = [];
 
-            return view('Laporan.resume', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan', 'obats', 'dxs'));
+            return view('Laporan.resume', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan', 'obats', 'dxs', 'kunjungan'));
             // $ttd = $this->generateQrCodeWithLogo($resumePasien->dokter_nama, $no_rm, $resumePasien->pasien_nama);
             // return view('Laporan.resume1', compact('resumePasien', 'alamat', 'ro', 'lab', 'tindakan'));
 

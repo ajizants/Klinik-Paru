@@ -42,9 +42,13 @@ class FarmasiController extends Controller
         // return $cppt;
         $notrans = $cppt['no_reg'];
         // return $notrans;
-        $waktu = $this->selesaiFarmasi($norm, $notrans);
+        $waktuSelesai = $this->selesaiFarmasi($norm, $notrans);
+        // return $waktuSelesai['data']->no_sep;
+        $waktu = $waktuSelesai['message'];
+        $noSep = $waktuSelesai['data']->no_sep ?? "";
+        // return $waktu;
         // Pass the data to the view
-        return view('Laporan.obat', compact('tindakanList', 'obats', 'cppt'))->with([
+        return view('Laporan.obat', compact('tindakanList', 'obats', 'cppt', 'noSep'))->with([
             'title' => "Obat Terpakai",
         ]);
     }
@@ -279,7 +283,12 @@ class FarmasiController extends Controller
 
             DB::commit();
 
-            return $msg;
+            $res = [
+                'message' => $msg,
+                'data'    => $data,
+            ];
+
+            return $res;
         } catch (\Exception $e) {
             DB::rollback(); // Rollback transaksi jika terjadi kesalahan
             Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
