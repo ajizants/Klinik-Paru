@@ -45,7 +45,9 @@
                                     <td class="px-2">No RM</td>
                                     <td class="px-2">:</td>
                                     <td class="px-2">{{ $cppt['pasien_no_rm'] }} / {{ $cppt['penjamin_nama'] }} /
-                                        {{ $cppt['antrean_nomor'] }} / {{ $noSep }}
+                                        {{ $cppt['antrean_nomor'] }} @if ($noSep != null)
+                                            / {{ $noSep }}
+                                        @endif
                                     </td>
                                     <td class="px-2"></td>
                                     <td class="px-2">Tanggal</td>

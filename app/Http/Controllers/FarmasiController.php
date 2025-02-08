@@ -45,7 +45,7 @@ class FarmasiController extends Controller
         $waktuSelesai = $this->selesaiFarmasi($norm, $notrans);
         // return $waktuSelesai['data']->no_sep;
         $waktu = $waktuSelesai['message'];
-        $noSep = $waktuSelesai['data']->no_sep ?? "";
+        $noSep = $waktuSelesai['data']->no_sep ?? null;
         // return $waktu;
         // Pass the data to the view
         return view('Laporan.obat', compact('tindakanList', 'obats', 'cppt', 'noSep'))->with([
