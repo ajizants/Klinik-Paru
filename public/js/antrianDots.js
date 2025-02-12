@@ -129,7 +129,8 @@ function cariPasienTb(norm, date, ruang) {
                             // Display a confirmation dialog
                             if (result.isConfirmed) {
                                 var pasien = response.data[0].pasien;
-                                var pendaftaran = response.data[0].pendaftaran;
+                                var pendaftaran =
+                                    response.data[0].pendaftaran[0];
                                 console.log(
                                     "🚀 ~ cariPasienTb ~ pendaftaran:",
                                     pendaftaran
