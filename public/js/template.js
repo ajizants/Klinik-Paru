@@ -152,7 +152,7 @@ var Toast = Swal.mixin({
 });
 
 function toggleSections(sectionToShow) {
-    // console.log("🚀 ~ toggleSections ~ sectionToShow:", sectionToShow);
+    console.log("🚀 ~ toggleSections ~ sectionToShow:", sectionToShow);
     var sections = [
         "#dAntrian",
         "#dSelesai",
