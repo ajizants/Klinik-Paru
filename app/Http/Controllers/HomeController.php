@@ -252,7 +252,10 @@ class HomeController extends Controller
     public function kasir()
     {
         $title   = 'KASIR';
-        $layanan = LayananModel::where('status', 'like', '%1%')->get();
+        $layanan = LayananModel::where('status', 'like', '%1%')
+            ->orderBy('grup', 'asc')
+            ->orderBy('kelas', 'asc')
+            ->get();
         // return $layanan;
         return view('Kasir.main', compact('layanan'))->with('title', $title);
     }
