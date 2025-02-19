@@ -405,6 +405,7 @@ class PasienKominfoController extends Controller
                 ->where('norm', $norm)
                 ->where('created_at', 'like', '%' . Carbon::parse($tanggal)->format('Y-m-d') . '%')->get();
             // return $dataTindakan;
+
             $tindakan = [];
             foreach ($dataTindakan as $item) {
                 $bmhp = [];
@@ -415,12 +416,13 @@ class PasienKominfoController extends Controller
                         'sediaan' => $key->sediaan,
                     ];
                 }
+
                 $tindakan[] = [
                     'id'        => $item->id,
                     'kdTind'    => $item->kdTind,
                     'tanggal'   => Carbon::parse($item->created_at)->format('d-m-Y'),
                     // 'tindakan' => $item->tindakan->nmTindakan,
-                    'tindakan'  => preg_replace('/\s?\(.*?\)/', '', $item->tindakan->nmTindakan),
+                    'tindakan'  => preg_replace('/\s?\(.*?\)/', '', $item->tindakan->nmTindakan ?? "Tidak ada Tindakan"),
                     'bmhp'      => $bmhp,
                     'totalItem' => count($dataTindakan),
                 ];
