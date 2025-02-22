@@ -264,33 +264,38 @@
                                             <div class="form-group col-md-2">
                                                 {{-- <label for="kertas100k">Kertas Rp. 100.000</label> --}}
                                                 <input type="number" class="form-control" id="kertas100k"
-                                                    name="kertas100k" placeholder="Kertas Rp. 100.000"
-                                                    min="0">
+                                                    name="kertas100k" placeholder="Kertas Rp. 100.000" min="0"
+                                                    value="0">
                                             </div>
                                             <div class="form-group col-md-2">
                                                 {{-- <label for="kertas50k">Kertas Rp. 50.000</label> --}}
                                                 <input type="number" class="form-control" id="kertas50k"
-                                                    name="kertas50k" placeholder="Kertas Rp. 50.000" min="0">
+                                                    name="kertas50k" placeholder="Kertas Rp. 50.000" min="0"
+                                                    value="0">
                                             </div>
                                             <div class="form-group col-md-2">
                                                 {{-- <label for="kertas20k">Kertas Rp. 20.000</label> --}}
                                                 <input type="number" class="form-control" id="kertas20k"
-                                                    name="kertas20k" placeholder="Kertas Rp. 20.000" min="0">
+                                                    name="kertas20k" placeholder="Kertas Rp. 20.000" min="0"
+                                                    value="0">
                                             </div>
                                             <div class="form-group col-md-2">
                                                 {{-- <label for="kertas10k">Kertas Rp. 10.000</label> --}}
                                                 <input type="number" class="form-control" id="kertas10k"
-                                                    name="kertas10k" placeholder="Kertas Rp. 10.000" min="0">
+                                                    name="kertas10k" placeholder="Kertas Rp. 10.000" min="0"
+                                                    value="0">
                                             </div>
                                             <div class="form-group col-md-2">
                                                 {{-- <label for="kertas5k">Kertas Rp. 5.000</label> --}}
                                                 <input type="number" class="form-control" id="kertas5k"
-                                                    name="kertas5k" placeholder="Kertas Rp. 5.000" min="0">
+                                                    name="kertas5k" placeholder="Kertas Rp. 5.000" min="0"
+                                                    value="0">
                                             </div>
                                             <div class="form-group col-md-2">
                                                 {{-- <label for="kertas2k">Kertas Rp. 2.000</label> --}}
                                                 <input type="number" class="form-control" id="kertas2k"
-                                                    name="kertas2k" placeholder="Kertas Rp. 2.000" min="0">
+                                                    name="kertas2k" placeholder="Kertas Rp. 2.000" min="0"
+                                                    value="0">
                                             </div>
                                         </div>
                                         <div class="form-row mx-1">
@@ -298,27 +303,32 @@
                                             <div class="form-group col-md-2">
                                                 {{-- <label for="kertas1k">Kertas Rp. 1.000</label> --}}
                                                 <input type="number" class="form-control" id="kertas1k"
-                                                    name="kertas1k" placeholder="Kertas Rp. 1.000" min="0">
+                                                    name="kertas1k" placeholder="Kertas Rp. 1.000" min="0"
+                                                    value="0">
                                             </div>
                                             <div class="form-group col-md-2">
                                                 {{-- <label for="logam1k">Logam Rp. 1.000</label> --}}
                                                 <input type="number" class="form-control" id="logam1k"
-                                                    name="logam1k" placeholder="Logam Rp. 1.000" min="0">
+                                                    name="logam1k" placeholder="Logam Rp. 1.000" min="0"
+                                                    value="0">
                                             </div>
                                             <div class="form-group col-md-2">
                                                 {{-- <label for="logam500">Logam Rp. 500</label> --}}
                                                 <input type="number" class="form-control" id="logam500"
-                                                    name="logam500" placeholder="Logam Rp. 500" min="0">
+                                                    name="logam500" placeholder="Logam Rp. 500" min="0"
+                                                    value="0">
                                             </div>
                                             <div class="form-group col-md-2">
                                                 {{-- <label for="logam200">Logam Rp. 200</label> --}}
                                                 <input type="number" class="form-control" id="logam200"
-                                                    name="logam200" placeholder="Logam Rp. 200" min="0">
+                                                    name="logam200" placeholder="Logam Rp. 200" min="0"
+                                                    value="0">
                                             </div>
                                             <div class="form-group col-md-2">
                                                 {{-- <label for="logam100">Logam Rp. 100</label> --}}
                                                 <input type="number" class="form-control" id="logam100"
-                                                    name="logam100" placeholder="Logam Rp. 100" min="0">
+                                                    name="logam100" placeholder="Logam Rp. 100" min="0"
+                                                    value="0">
                                             </div>
                                             <div class="form-group col-md-2 d-flex justify-content-between">
                                                 <button type="button" id="btnSimpan" class="btn btn-primary"

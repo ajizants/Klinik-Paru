@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -120,7 +119,7 @@ class KasirSetoranModel extends Model
     public function data($tahun, $bulan)
     {
         $paramPendLain = $tahun . '-' . $bulan;
-        $data = $this->where('tanggal', 'like', '%' . $paramPendLain . '%')
+        $data          = $this->where('tanggal', 'like', '%' . $paramPendLain . '%')
             ->whereNotIn('asal_pendapatan', ['Tunai', 'Saldo Bank'])
             ->get();
 
@@ -129,7 +128,7 @@ class KasirSetoranModel extends Model
     function penerimaan($tahun, $bulan)
     {
         $paramPendLain = $tahun . '-' . $bulan;
-        $data = $data = $this->where('tanggal', 'like', '%' . $paramPendLain . '%')
+        $data          = $this->where('tanggal', 'like', '%' . $paramPendLain . '%')
             ->where('pendapatan', '!=', 0)
             ->whereNotIn('asal_pendapatan', ['Tunai', 'Saldo Bank'])
             ->get();
@@ -139,10 +138,11 @@ class KasirSetoranModel extends Model
     function pengeluaran($tahun, $bulan)
     {
         $paramPendLain = $tahun . '-' . $bulan;
-        $data = $data = $this->where('tanggal', 'like', '%' . $paramPendLain . '%')
+        $data          = $this->where('tanggal', 'like', '%' . $paramPendLain . '%')
             ->where('setoran', '!=', 0)
             ->whereNotIn('asal_pendapatan', ['Tunai', 'Saldo Bank'])
             ->get();
+        // dd(count($data));
 
         return $data;
     }
@@ -193,18 +193,18 @@ class KasirSetoranModel extends Model
         // Return hasil
         return $data;
     }
-    public function dataTahunan($tahun)
+    public function dataTahunan($params)
     {
         $namaBulan = [
-            1 => 'Januari',
-            2 => 'Februari',
-            3 => 'Maret',
-            4 => 'April',
-            5 => 'Mei',
-            6 => 'Juni',
-            7 => 'Juli',
-            8 => 'Agustus',
-            9 => 'September',
+            1  => 'Januari',
+            2  => 'Februari',
+            3  => 'Maret',
+            4  => 'April',
+            5  => 'Mei',
+            6  => 'Juni',
+            7  => 'Juli',
+            8  => 'Agustus',
+            9  => 'September',
             10 => 'Oktober',
             11 => 'November',
             12 => 'Desember',
@@ -214,35 +214,40 @@ class KasirSetoranModel extends Model
         $dataBulanan = [];
         for ($i = 1; $i <= 12; $i++) {
             $dataBulanan[] = [
-                'bulan' => $namaBulan[$i],
-                'bln_number' => $i,
-                'penerimaan' => 0,
-                'setoran' => 0,
-                'sisa' => 0,
+                'bulan'        => $namaBulan[$i],
+                'bln_number'   => $i,
+                'penerimaan'   => 0,
+                'setoran'      => 0,
+                'sisa'         => 0,
                 'penerimaanRp' => 'Rp 0,00',
-                'setoranRp' => 'Rp 0,00',
-                'sisaRp' => 'Rp 0,00',
+                'setoranRp'    => 'Rp 0,00',
+                'sisaRp'       => 'Rp 0,00',
             ];
         }
 
         // Variabel total
         $totalPendapatan = 0;
-        $totalSetoran = 0;
+        $totalSetoran    = 0;
 
         // Mengambil data berdasarkan tahun
-        $doc = $this->where('tanggal', 'like', $tahun . '-%')
+        $tglAkhir = $params['tglAkhir'];
+        $tahun    = $params['tahun'];
+        // dd($bulanTahun);
+        $doc = $this->where('tanggal', "<=", $tglAkhir)
+            ->whereYear('tanggal', $tahun)
             ->whereNotIn('asal_pendapatan', ['Tunai', 'Saldo Bank'])
             ->get();
+        // dd($doc);
 
         // Mengolah data dokumen
         foreach ($doc as $d) {
             $bulan = (int) date('n', strtotime($d->tanggal)) - 1; // Indeks array mulai dari 0
             $dataBulanan[$bulan]['penerimaan'] += $d->pendapatan;
             $dataBulanan[$bulan]['setoran'] += $d->setoran;
-            $dataBulanan[$bulan]['sisa'] = $dataBulanan[$bulan]['penerimaan'] - $dataBulanan[$bulan]['setoran'];
+            $dataBulanan[$bulan]['sisa']         = $dataBulanan[$bulan]['penerimaan'] - $dataBulanan[$bulan]['setoran'];
             $dataBulanan[$bulan]['penerimaanRp'] = 'Rp ' . number_format($dataBulanan[$bulan]['penerimaan'], 0, ',', '.') . ',00';
-            $dataBulanan[$bulan]['setoranRp'] = 'Rp ' . number_format($dataBulanan[$bulan]['setoran'], 0, ',', '.') . ',00';
-            $dataBulanan[$bulan]['sisaRp'] = 'Rp ' . number_format($dataBulanan[$bulan]['sisa'], 0, ',', '.') . ',00';
+            $dataBulanan[$bulan]['setoranRp']    = 'Rp ' . number_format($dataBulanan[$bulan]['setoran'], 0, ',', '.') . ',00';
+            $dataBulanan[$bulan]['sisaRp']       = 'Rp ' . number_format($dataBulanan[$bulan]['sisa'], 0, ',', '.') . ',00';
 
             // Menambahkan ke total
             $totalPendapatan += $d->pendapatan;
@@ -250,19 +255,19 @@ class KasirSetoranModel extends Model
         }
 
         // Hitung saldo total
-        $totalSaldo = $totalPendapatan - $totalSetoran;
+        $totalSaldo        = $totalPendapatan - $totalSetoran;
         $totalPendapatanRp = 'Rp ' . number_format($totalPendapatan, 0, ',', '.') . ',00';
-        $totalSetoranRp = 'Rp ' . number_format($totalSetoran, 0, ',', '.') . ',00';
-        $totalSaldoRp = 'Rp ' . number_format($totalSaldo, 0, ',', '.') . ',00';
+        $totalSetoranRp    = 'Rp ' . number_format($totalSetoran, 0, ',', '.') . ',00';
+        $totalSaldoRp      = 'Rp ' . number_format($totalSaldo, 0, ',', '.') . ',00';
 
         return [
-            'dataBulanan' => $dataBulanan,
-            'totalPendapatan' => $totalPendapatan,
-            'totalSetoran' => $totalSetoran,
-            'totalSaldo' => $totalSaldo,
+            'dataBulanan'       => $dataBulanan,
+            'totalPendapatan'   => $totalPendapatan,
+            'totalSetoran'      => $totalSetoran,
+            'totalSaldo'        => $totalSaldo,
             'totalPendapatanRp' => $totalPendapatanRp,
-            'totalSetoranRp' => $totalSetoranRp,
-            'totalSaldoRp' => $totalSaldoRp,
+            'totalSetoranRp'    => $totalSetoranRp,
+            'totalSaldoRp'      => $totalSaldoRp,
         ];
     }
 

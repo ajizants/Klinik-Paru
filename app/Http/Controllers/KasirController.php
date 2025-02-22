@@ -839,6 +839,7 @@ class KasirController extends Controller
             return isset($item['tanggal']) && $item['tanggal'] === $tanggal;
         });
         $response = reset($data);
+        // dd($response);
         return response()->json($response, 200, [], JSON_PRETTY_PRINT);
     }
 

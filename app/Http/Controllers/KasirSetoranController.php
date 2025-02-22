@@ -99,8 +99,18 @@ class KasirSetoranController extends Controller
         $saldo           = 0;
         $target          = "Rp. 7.653.250.000,00";
 
-        $model = new KasirSetoranModel();
-        $data  = $model->dataTahunan($tahun);
+        $model           = new KasirSetoranModel();
+        $tanggalTerakhir = Carbon::create($tahun, $bln)->endOfMonth();
+
+                                                       // Format tanggal terakhir sesuai kebutuhan
+        $tglAkhir = $tanggalTerakhir->format('Y-m-d'); // Contoh: 2023-02-28
+
+        $params = [
+            'tahun'    => $tahun,
+            'tglAkhir' => $tglAkhir,
+
+        ];
+        $data = $model->dataTahunan($params);
         // return $data;
         $doc = $data['dataBulanan'];
         // return $doc;
@@ -135,14 +145,14 @@ class KasirSetoranController extends Controller
         // return $data;
         $totalPendapatan = 0;
         foreach ($data as $d) {
-            $totalPendapatan += $d->pendapatan;
+            $totalPendapatan += $d->setoran;
         }
 
         return view('Laporan.Kasir.stsBruto', compact('data', 'blnTahun', 'totalPendapatan', 'tglAkhir'))->with('title', $title);
     }
     public function stpbBruto($bulan, $tahun, $jaminan)
     {
-        $title    = 'BKU Bruto';
+        $title    = 'STPB';
         $model    = new KasirSetoranModel();
         $blnTahun = \Carbon\Carbon::create($tahun, $bulan, 1)->locale('id')->isoFormat('MMMM YYYY');
         $tglAkhir = \Carbon\Carbon::create($tahun, $bulan, 1)->lastOfMonth()->locale('id')->isoFormat('DD MMMM YYYY');
@@ -156,7 +166,7 @@ class KasirSetoranController extends Controller
     }
     public function bkuBruto($bulan, $tahun)
     {
-        $title           = 'STPB Bruto';
+        $title           = 'BKU Bruto';
         $model           = new KasirSetoranModel();
         $blnTahun        = \Carbon\Carbon::create($tahun, $bulan, 1)->locale('id')->isoFormat('MMMM YYYY');
         $tglAkhir        = \Carbon\Carbon::create($tahun, $bulan, 1)->lastOfMonth()->locale('id')->isoFormat('DD MMMM YYYY');

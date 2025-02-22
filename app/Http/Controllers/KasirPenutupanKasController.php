@@ -19,7 +19,8 @@ class KasirPenutupanKasController extends Controller
         ]);
 
         return $res;
-    }private function dataPenutupan($params)
+    }
+    private function dataPenutupan($params)
     {
         $tahun            = $params['tahun'];
         $bulan            = $params['bulan'];
@@ -30,6 +31,7 @@ class KasirPenutupanKasController extends Controller
         $model       = new KasirSetoranModel();
         $penerimaan  = $model->penerimaan($tahun, $bulan);
         $pengeluaran = $model->pengeluaran($tahun, $bulan);
+        // dd($pengeluaran);
 
         if ($params['semua'] == true) {
             $dataPenutupan = KasirPenutupanKasModel::all();
@@ -43,7 +45,7 @@ class KasirPenutupanKasController extends Controller
             $totalPendapatan += $d->pendapatan ?? 0;
         }
         foreach ($pengeluaran as $d) {
-            $totalPengeluaran += $d->pendapatan ?? 0;
+            $totalPengeluaran += $d->setoran ?? 0;
         }
 
         $saldo_bku = $totalPendapatan - $totalPengeluaran;
