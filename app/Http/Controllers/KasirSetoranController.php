@@ -247,9 +247,8 @@ class KasirSetoranController extends Controller
 
         try {
             // Ambil data dari request
-            $tglSetor      = $request->input('tanggalSetor');
-            $tglPendapatan = $request->input('tanggalPendapatan');
-
+            $tglSetor          = $request->input('tanggalSetor') === null ? $request->input('tanggal') : $request->input('tanggalSetor');
+            $tglPendapatan     = $request->input('tanggalPendapatan');
             $tanggal           = Carbon::parse($tglSetor)->format('Y-m-d');
             $tanggalPendapatan = Carbon::parse($tglPendapatan)->format('Y-m-d');
             $pendapatan        = $request->input('pendapatan');
@@ -308,6 +307,7 @@ class KasirSetoranController extends Controller
                 ], 201);
 
             } else {
+                dd($tanggal);
 
                 // Simpan data ke database
                 $pendapatanLain = KasirSetoranModel::create([
@@ -351,6 +351,7 @@ class KasirSetoranController extends Controller
 
     public function setoranSimpan(Request $request)
     {
+        // dd($request->all());
         $simpan = $this->setorkan($request);
         $data   = $this->setoran(\Carbon\Carbon::now()->year);
 
@@ -367,7 +368,8 @@ class KasirSetoranController extends Controller
         // Validasi data
         $validated = $request->validate([
             'asal_pendapatan' => 'required|string|max:255',
-            'jumlah'          => 'required|min:0',
+            'pendapatan'      => 'required|min:0',
+            'setoran'         => 'required|min:0',
             'tanggal'         => 'required|date',
             'penyetor'        => 'required|string|max:255',
         ]);
@@ -385,7 +387,7 @@ class KasirSetoranController extends Controller
         // Update data
         $pendapatanLain->update($validated);
 
-        $data = $this->pendapatanLain(\Carbon\Carbon::now()->year);
+        $data = $this->setoran(\Carbon\Carbon::now()->year);
 
         return response()->json([
             'status'  => 'success',
