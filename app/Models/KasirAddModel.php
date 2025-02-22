@@ -169,9 +169,10 @@ class KasirAddModel extends Model
     {
         $tglAwal  = $params['tglAwal'] . ' 00:00:00';
         $tglAkhir = $params['tglAkhir'] . ' 23:59:59';
+        // dd($params);
 
         // Ambil data utama dengan relasi
-        $dataBPJS = self::with('layanan.grup')
+        $dataBPJS = self::with('layanan.ruang')
             ->selectRaw('
                 DATE(created_at) as tanggal,
                 idLayanan,
@@ -183,8 +184,29 @@ class KasirAddModel extends Model
             ->groupBy('tanggal', 'idLayanan')
             ->orderBy('tanggal', 'asc')
             ->get();
+        // dd($dataBPJS);
+        //     $query = self::with('layanan.ruang')
+        //         ->selectRaw('
+        //     DATE(created_at) as tanggal,
+        //     idLayanan,
+        //     SUM(totalHarga) as jumlah,
+        //     COUNT(*) as totalItem
+        // ')
+        //         ->whereBetween('created_at', [$tglAwal, $tglAkhir])
+        //         ->where('jaminan', 'BPJS')
+        //         ->groupBy('tanggal', 'idLayanan')
+        //         ->orderBy('tanggal', 'asc');
 
-        $dataUmum = self::with('layanan.grup')
+        //     // Dapatkan query SQL dan binding parameter
+        //     $sql      = $query->toSql();
+        //     $bindings = $query->getBindings();
+
+        //     // Gabungkan query dengan binding parameter
+        //     $fullQuery = vsprintf(str_replace('?', '%s', $sql), $bindings);
+
+        //     dd($fullQuery);
+
+        $dataUmum = self::with('layanan.ruang')
             ->selectRaw('
                 DATE(created_at) as tanggal,
                 idLayanan,
@@ -196,21 +218,24 @@ class KasirAddModel extends Model
             ->groupBy('tanggal', 'idLayanan')
             ->orderBy('tanggal', 'asc')
             ->get();
+        // dd($dataUmum);
 
         $res = [
-            'bpjs' => $this->prosesPerRuang($dataBPJS),
             'umum' => $this->prosesPerRuang($dataUmum),
+            'bpjs' => $this->prosesPerRuang($dataBPJS),
         ];
+        // dd($res);
 
         return $res;
     }
 
     private function prosesPerRuang($data)
     {
+        // dd($data[0]->layanan->ruang);
         $result = [];
 
         foreach ($data as $d) {
-            $kelas = $d->layanan->grup->nmKelas;
+            $kelas = $d->layanan->ruang->nmKelas;
 
             // Key pengelompokan berdasarkan tanggal dan kelas
             $key = $d->tanggal . '|' . $kelas;
