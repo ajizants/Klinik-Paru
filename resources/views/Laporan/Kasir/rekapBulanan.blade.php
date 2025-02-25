@@ -97,11 +97,12 @@
                 <p>NIP: 19881016 201902 1 002</p>
             </div>
             <div class="w-1/2 text-center">
-                <p>Purwokerto, @php
+                <p>Purwokerto,
+                    {{-- @php
                     $date = Carbon\Carbon::now();
                     $tglAkhir = \Carbon\Carbon::create($date)->lastOfMonth()->locale('id')->isoFormat('DD MMMM YYYY');
-                @endphp
-                    {{ $tglAkhir }}</p>
+                @endphp --}}
+                    {{ \Carbon\Carbon::create($tglAkhir)->lastOfMonth()->locale('id')->isoFormat('DD MMMM YYYY') }}</p>
 
                 <p>Bendahara Penerimaan / Kasir</p>
                 <div class="h-16"></div>

@@ -131,7 +131,8 @@ class KasirSetoranController extends Controller
             'totalSaldoRp',
             'target',
             'title',
-            'tahun'
+            'tahun',
+            'tglAkhir'
         ));
     }
 
