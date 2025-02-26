@@ -318,7 +318,7 @@ class KasirSetoranController extends Controller
                 ], 201);
 
             } else {
-                dd($tanggal);
+                // dd($tanggal);
 
                 // Simpan data ke database
                 $pendapatanLain = KasirSetoranModel::create([
