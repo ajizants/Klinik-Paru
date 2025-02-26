@@ -590,9 +590,9 @@
     <script>
         let dataSBS = @json($pendapatanTotal);
         let dataSBSB = dataSBS.bpjs;
-        console.log("🚀 ~ dataSBSB:", dataSBSB)
+        // console.log("🚀 ~ dataSBSB:", dataSBSB)
         let dataSBSU = dataSBS.umum;
-        console.log("🚀 ~ dataSBSU:", dataSBSU)
+        // console.log("🚀 ~ dataSBSU:", dataSBSU)
     </script>
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('vendor/plugins/chart.js/Chart.min.js') }}"></script>

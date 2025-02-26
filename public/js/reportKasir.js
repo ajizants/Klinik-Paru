@@ -21,10 +21,10 @@ function reportPendapatanItem(tglAwal, tglAkhir) {
             const dataUmum = response.umum;
             const dataUmumBln = response.umumBulanan;
             const dataBpjs = response.bpjs;
-            console.log(
-                "🚀 ~ reportPendapatanItem ~ dataUmumBln:",
-                dataUmumBln
-            );
+            // console.log(
+            //     "🚀 ~ reportPendapatanItem ~ dataUmumBln:",
+            //     dataUmumBln
+            // );
             // console.log("🚀 ~ reportPendapatanItem ~ dataUmum:", dataUmum);
             isiTabelPendapatanItem(dataUmum, "#tabelPerItemUMUM");
             isiTabelPendapatanItemBln(dataUmumBln, "#tabelPerItemUMUMBln");
@@ -61,20 +61,21 @@ function isiTabelPendapatanItem(data, id) {
                         return formattedDate;
                     },
                 },
-                {
-                    data: "jumlah",
-                    render: function (data, type, row) {
-                        var formattedTarif = parseInt(data).toLocaleString(
-                            "id-ID",
-                            {
-                                style: "currency",
-                                currency: "IDR",
-                                minimumFractionDigits: 0,
-                            }
-                        );
-                        return `${formattedTarif}`;
-                    },
-                },
+                // {
+                //     data: "jumlah",
+                //     render: function (data, type, row) {
+                //         var formattedTarif = parseInt(data).toLocaleString(
+                //             "id-ID",
+                //             {
+                //                 style: "currency",
+                //                 currency: "IDR",
+                //                 minimumFractionDigits: 0,
+                //             }
+                //         );
+                //         return `${formattedTarif}`;
+                //     },
+                // },
+                { data: "jumlah" },
                 { data: "totalItem" },
             ],
             order: [0, "asc"],
@@ -111,20 +112,21 @@ function isiTabelPendapatanItemBln(data, id) {
             columns: [
                 { data: "no" },
                 { data: "nmLayanan" },
-                {
-                    data: "jumlah",
-                    render: function (data, type, row) {
-                        var formattedTarif = parseInt(data).toLocaleString(
-                            "id-ID",
-                            {
-                                style: "currency",
-                                currency: "IDR",
-                                minimumFractionDigits: 0,
-                            }
-                        );
-                        return `${formattedTarif}`;
-                    },
-                },
+                // {
+                //     data: "jumlah",
+                //     render: function (data, type, row) {
+                //         var formattedTarif = parseInt(data).toLocaleString(
+                //             "id-ID",
+                //             {
+                //                 style: "currency",
+                //                 currency: "IDR",
+                //                 minimumFractionDigits: 0,
+                //             }
+                //         );
+                //         return `${formattedTarif}`;
+                //     },
+                // },
+                { data: "jumlah" },
                 { data: "totalItem" },
             ],
             order: [0, "asc"],
@@ -171,7 +173,7 @@ function reportPendapatanRuang(tglAwal, tglAkhir) {
             Swal.close();
             const dataUmum = response.umum;
             const dataBpjs = response.bpjs;
-            console.log("🚀 ~ reportPendapatanRuang ~ dataUmum:", dataUmum);
+            // console.log("🚀 ~ reportPendapatanRuang ~ dataUmum:", dataUmum);
             isiTabelPendapatanRuang(dataUmum, "#tabelPerRuangUMUM");
             isiTabelPendapatanRuang(dataBpjs, "#tabelPerRuangBPJS");
         },
@@ -261,7 +263,7 @@ function reportPendapatanTotalPerHari(tahun) {
         }
     });
 
-    console.log("🚀 ~ reportPendapatanTotalPerHari ~ tahun:", tahun);
+    // console.log("🚀 ~ reportPendapatanTotalPerHari ~ tahun:", tahun);
 
     // Fetch data via AJAX
     $.ajax({
@@ -296,9 +298,9 @@ function reportPendapatanTotalPerHari(tahun) {
 }
 
 function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
-    console.log("🚀 ~ isiTabelPendapatanTotalPerHari ~ tableId:", tableId);
-    console.log("🚀 ~ isiTabelPendapatanTotalPerHari ~ data:", data);
-    console.log("🚀 ~ isiTabelPendapatanTotalPerHari ~ selector:", selector);
+    // console.log("🚀 ~ isiTabelPendapatanTotalPerHari ~ tableId:", tableId);
+    // console.log("🚀 ~ isiTabelPendapatanTotalPerHari ~ data:", data);
+    // console.log("🚀 ~ isiTabelPendapatanTotalPerHari ~ selector:", selector);
 
     // Enrich data for rendering
     data.forEach((item, index) => {
@@ -377,19 +379,19 @@ function cetakSBS() {
     const bulan = String(tgl.getMonth() + 1).padStart(2, "0");
     const tanggal = String(tgl.getDate()).padStart(2, "0");
     const tglSBS = `${tanggal}-${bulan}-${tahun}`;
-    console.log("🚀 ~ cetakSBS ~ tglSBS:", tglSBS);
+    // console.log("🚀 ~ cetakSBS ~ tglSBS:", tglSBS);
 
     window.open("api/cetakSBS/" + tglSBS);
 }
 
 function setorkan(button) {
-    console.log("🚀 ~ setorkan ~ button:", button);
+    // console.log("🚀 ~ setorkan ~ button:", button);
     const tgl = $(button).data("tgl"); // Format input: "08-01-2025"
     const [day, month, year] = tgl.split("-"); // Asumsikan format DD-MM-YYYY
     const tgl_setor = new Date(`${year}-${month}-${day}`)
         .toISOString()
         .split("T")[0];
-    console.log("🚀 ~ setorkan ~ tgl_setor:", tgl_setor);
+    // console.log("🚀 ~ setorkan ~ tgl_setor:", tgl_setor);
 
     const pendapatan = $(button).data("jumlah");
     const asalPendapatan = $(button).data("asal_pendapatan");
@@ -430,8 +432,8 @@ function setorkan(button) {
         },
     }).then((result) => {
         if (result.isConfirmed) {
-            console.log("Setoran:", result.value.setoran);
-            console.log("Tanggal Setor:", result.value.tanggalSetor);
+            // console.log("Setoran:", result.value.setoran);
+            // console.log("Tanggal Setor:", result.value.tanggalSetor);
 
             const setoran = result.value.setoran;
             const tanggalSetor = result.value.tanggalSetor;
@@ -450,7 +452,7 @@ function setorkan(button) {
                     penyetor: penyetor,
                 },
                 success: function (response) {
-                    console.log("🚀 ~ setorkan ~ response:", response);
+                    // console.log("🚀 ~ setorkan ~ response:", response);
                     if (response.status == "success") {
                         Swal.fire({
                             icon: "success",
@@ -822,25 +824,55 @@ async function reportKunjungan(tglAwal, tglAkhir) {
             return response.json();
         })
         .then((data) => {
-            console.log("🚀 ~ .then ~ data:", data);
-            const dataRupiah = data.dataRupiah;
+            console.log("🚀 ~ Data API:", data);
 
-            // Render kolom berdasarkan respons API
+            if (
+                !data ||
+                !Array.isArray(data.columns) ||
+                data.columns.length === 0
+            ) {
+                throw new Error("Data kolom tidak valid atau kosong");
+            }
+
+            const dataRupiah = data.dataRupiah;
             const columns = data.columns.map((column) => ({
                 title: column,
                 data: column,
             }));
 
-            // Tambahkan header kolom secara manual
+            // Ambil elemen header/footer
             const headerRow = document.getElementById("headerRow");
             const footerRow = document.getElementById("footerRow");
+            const headerRowRp = document.getElementById("headerRowRp");
+            const footerRowRp = document.getElementById("footerRowRp");
 
+            // Pastikan elemen ada sebelum memprosesnya
+            if (!headerRowRp || !footerRowRp) {
+                console.error(
+                    "Elemen headerRowRp atau footerRowRp tidak ditemukan."
+                );
+                return;
+            }
+
+            // Kosongkan sebelum mengisi ulang
+            headerRowRp.innerHTML = "";
+            footerRowRp.innerHTML = "";
+
+            // Buat header/footer
+            data.columns.forEach((column) => {
+                const th = document.createElement("th");
+                th.textContent = column;
+                headerRowRp.appendChild(th);
+
+                const td = document.createElement("td");
+                td.textContent = ""; // Kosong, akan diisi nanti
+                footerRowRp.appendChild(td);
+            });
             data.columns.forEach((column) => {
                 const th = document.createElement("th");
                 th.textContent = column;
                 headerRow.appendChild(th);
 
-                // Tambahkan elemen footer kosong
                 const td = document.createElement("td");
                 td.textContent = ""; // Kosong, akan diisi nanti
                 footerRow.appendChild(td);
@@ -849,8 +881,8 @@ async function reportKunjungan(tglAwal, tglAkhir) {
             // Inisialisasi DataTables
             drawTableReport(data.data, columns, "#reportKunjungan");
             drawTableReport(data.dataRupiah, columns, "#reportKunjunganRp");
-            // olahDataRupiah(dataRupiah);
         })
+
         .catch((error) => {
             console.error("Terjadi kesalahan:", error.message);
         });
@@ -970,7 +1002,7 @@ let tglAwal;
 let tglAkhir;
 
 let tahun = $("#tahun").val();
-console.log("🚀 ~ tahun:", tahun);
+// console.log("🚀 ~ tahun:", tahun);
 function updateData() {
     // reportPendaftaran(tglAwal, tglAkhir);
     reportPendapatanItem(tglAwal, tglAkhir);

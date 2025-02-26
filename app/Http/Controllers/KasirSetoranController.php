@@ -442,12 +442,17 @@ class KasirSetoranController extends Controller
             'tglAwal'  => $tglAwal,
             'tglAkhir' => $tglAkhir,
         ];
-        $tglAwalBlnLalu  = \Carbon\Carbon::create($tahun - 1, 1, 1)->isoFormat('YYYY-MM-DD');
-        $tglAkhirBlnLalu = \Carbon\Carbon::create($tahun, $bln - 1, 1)->lastOfMonth()->isoFormat('YYYY-MM-DD');
+        if ($bln == 1) {
+            $tglAwalBlnLalu = \Carbon\Carbon::create($tahun - 1, 1, 1)->isoFormat('YYYY-MM-DD');
+        } else {
+            $tglAwalBlnLalu = \Carbon\Carbon::create($tahun, $bln - 1, 1)->isoFormat('YYYY-MM-DD');
+        }
+        $tglAkhirBlnLalu = \Carbon\Carbon::create($tglAwalBlnLalu)->lastOfMonth()->isoFormat('YYYY-MM-DD');
         $paramsBlnLalu   = [
             'tglAwal'  => $tglAwalBlnLalu,
             'tglAkhir' => $tglAkhirBlnLalu,
         ];
+        $thnBefore = \Carbon\Carbon::parse($tglAwalBlnLalu)->year;
         // return $paramsBlnLalu;
         $pendapatan        = $model->pendapatanPerItem($params)[$jaminan];
         $pendapatanBlnLalu = $model->pendapatanPerItem($paramsBlnLalu)[$jaminan];
@@ -458,10 +463,20 @@ class KasirSetoranController extends Controller
         $grupKelasblnIni  = collect($this->grupedDataKelas($pendapatan));
         $grupKelasblnLalu = collect($this->grupedDataKelas($pendapatanBlnLalu));
 
-        $pendapatanBlnIni  = $this->makeResponse($grupKelasblnIni, $dataBlnIni, $bln, $tahun, 'pendapatan');
-        $pendapatanBlnLalu = $this->makeResponse($grupKelasblnLalu, $dataBlnLalu, $bln, $tahun, 'pendapatan');
-        $setoranBlnIni     = $this->makeResponse($grupKelasblnIni, $dataBlnIni, $bln, $tahun, 'setoran');
-        $setoranBlnLalu    = $this->makeResponse($grupKelasblnLalu, $dataBlnLalu, $bln, $tahun, 'setoran');
+        // return $pendapatanBlnLalu;
+        $pendapatanBlnIni = $this->makeResponse($grupKelasblnIni, $dataBlnIni, $bln, $tahun, 'pendapatan');
+        $setoranBlnIni    = $this->makeResponse($grupKelasblnIni, $dataBlnIni, $bln, $tahun, 'setoran');
+        //jika tahun dari $tglAwalBUlanLalu lebih kecil dari pada tahun di tglAwal ini maka
+        if ($tahun > $thnBefore) {
+            $pendapatanBlnLalu = $this->makeResponseNewYear();
+            $setoranBlnLalu    = $this->makeResponseNewYear();
+            // dd('gagal');
+        } else {
+            $bln               = (int) $bln;
+            $blnLalu           = "0" . $bln - 1;
+            $pendapatanBlnLalu = $this->makeResponse($grupKelasblnLalu, $dataBlnLalu, $blnLalu, $tahun, 'pendapatan');
+            $setoranBlnLalu    = $this->makeResponse($grupKelasblnLalu, $dataBlnLalu, $blnLalu, $tahun, 'setoran');
+        }
 
         $res = [
             'dataPendapatanBlnIni'  => $pendapatanBlnIni,
@@ -475,53 +490,14 @@ class KasirSetoranController extends Controller
 
     private function makeResponse($grup, $pendapatan, $bln, $tahun, $filter)
     {
-        $lain      = $this->setoran($tahun . '-' . $bln);
+        $lain = $this->setoran($tahun . '-' . $bln);
+        // return $lain;
         $bungaBank = $lain->where('asal_pendapatan', 'Bunga')->sum($filter);
-        $bpjs      = $lain->where('asal_pendapatan', 'KLAIM BPJS')->sum($filter);
+        $bpjs      = $lain->where('asal_pendapatan', 'Klaim BPJS')->sum($filter);
         $tcm       = $lain->where('asal_pendapatan', 'TCM')->sum($filter);
         $sirup     = $lain->where('asal_pendapatan', 'Sirup')->sum($filter);
 
         $data = [
-            // 'laboratorium'           => $grup->whereIn('kelas', 9)->first()['totalJumlah'] ?? 0,
-            // 'rekam_medis'            => $grup->whereIn('kelas', 1)->first()['totalJumlah'] ?? 0,
-            // 'radiologiAll'           => ($grup->whereIn('kelas', 8)->first()['totalJumlah'] ?? 0),
-            // 'radiologi'              => ($grup->whereIn('kelas', 8)->first()['totalJumlah'] ?? 0) - ($pendapatan->whereIn('nmLayanan', 'Konsultasi dokter Radiologi')->first()['totalJumlah'] ?? 0),
-            // 'nebulizer'              => $pendapatan->whereIn('nmLayanan', 'Nebulasi ( tanpa harga obat )')->first()['totalJumlah'] ?? 0,
-            // 'oksigensai'             => $pendapatan->whereIn('nmLayanan', 'Oksigenasi per jam')->first()['totalJumlah'] ?? 0,
-            // 'obat'                   => $pendapatan->whereIn('nmLayanan', 'Biaya Obat')->first()['totalJumlah'] ?? 0,
-            // 'dokter_umum_rajal'      => $pendapatan->whereIn('nmLayanan', 'Dokter umum Rajal')->first()['totalJumlah'] ?? 0,
-            // 'dokter_spesialis_rajal' => $pendapatan->whereIn('nmLayanan', 'Dokter spesialis Rajal')->first()['totalJumlah'] ?? 0,
-            // 'dokter_ro'              => $pendapatan->whereIn('nmLayanan', 'Konsultasi dokter Radiologi')->first()['totalJumlah'] ?? 0,
-            // 'resep'                  => $grup->whereIn('kelas', 11)->first()['totalJumlah'] ?? 0,
-            // 'bunga_bank'             => $bungaBank ?? 0,
-            // 'sirup'                  => $sirup ?? 0,
-            // 'surat_ket_medis'        => $pendapatan->whereIn('nmLayanan', 'Surat Keterangan Dokter')->first()['totalJumlah'] ?? 0,
-            // 'injeksi'                => $pendapatan->whereIn('nmLayanan', 'Injeksi')->first()['totalJumlah'] ?? 0,
-            // 'infus'                  => $pendapatan->whereIn('nmLayanan', 'Infus')->first()['totalJumlah'] ?? 0,
-            // 'bpjs'                   => $bpjs ?? 0,
-            // 'konsul_farmasi'         => $pendapatan->whereIn('nmLayanan', 'Konsultasi Kefarmasian')->first()['totalJumlah'] ?? 0,
-            // 'tes_mantoux'            => $pendapatan->whereIn('nmLayanan', 'Mantoux Test')->first()['totalJumlah'] ?? 0,
-            // 'pungsi'                 => $pendapatan->whereIn('nmLayanan', 'Punctie pleura')->first()['totalJumlah'] ?? 0,
-            // 'wsd'                    => $pendapatan->whereIn('nmLayanan', 'W S D')->first()['totalJumlah'] ?? 0,
-            // 'puyer'                  => $pendapatan->whereIn('nmLayanan', 'Ramuan puyer per bungkus/kapsul')->first()['totalJumlah'] ?? 0,
-            // 'konsul_nurse'           => $pendapatan->whereIn('nmLayanan', 'Konsultasi Keperawatan')->first()['totalJumlah'] ?? 0,
-            // 'ekg'                    => $pendapatan->whereIn('nmLayanan', 'EKG')->first()['totalJumlah'] ?? 0,
-            // 'spirometri'             => $pendapatan->whereIn('nmLayanan', 'Spirometri')->first()['totalJumlah'] ?? 0,
-            // 'vct-hiv'                => $pendapatan->whereIn('nmLayanan', 'Poli HIV')->first()['totalJumlah'] ?? 0,
-            // 'ambulans'               => $pendapatan->whereIn('nmLayanan', 'Ambulasi')->first()['totalJumlah'] ?? 0,
-            // 'dokter_umum_gadar'      => $pendapatan->whereIn('nmLayanan', 'Dokter umum Gadar')->first()['totalJumlah'] ?? 0,
-            // 'dokter_spesialis_gadar' => $pendapatan->whereIn('nmLayanan', 'Dokter spesialis Gadar')->first()['totalJumlah'] ?? 0,
-            // 'one_day_care'           => $pendapatan->whereIn('nmLayanan', 'Observasi one day care 6 - 12 jam')->first()['totalJumlah'] ?? 0,
-            // 'tcm'                    => $pendapatan->whereIn('nmLayanan', 'TCM')->first()['totalJumlah'] ?? 0,
-            // 'biopsi_halus'           => $pendapatan->whereIn('nmLayanan', 'Biopsi jarum halus')->first()['totalJumlah'] ?? 0,
-            // 'perawatan_luka'         => $pendapatan->whereIn('nmLayanan', 'Perawatan Luka')->first()['totalJumlah'] ?? 0,
-            // 'konsul_gizi'            => $pendapatan->whereIn('nmLayanan', 'Konsultasi Gizi')->first()['totalJumlah'] ?? 0,
-            // 'konsul_lainnya'         => $pendapatan->whereIn('nmLayanan', 'Konsultasi Kesehatan lainnya')->first()['totalJumlah'] ?? 0,
-            // 'klinik_vct'             => $pendapatan->whereIn('nmLayanan', 'Layanan Klinik VCT')->first()['totalJumlah'] ?? 0,
-            // 'pendapatan_tcm'         => $tcm ?? 0,
-            // 'suction_lendir'         => $pendapatan->whereIn('nmLayanan', 'Suction Lendir')->first()['totalJumlah'] ?? 0,
-            // 'hecting'                => $pendapatan->whereIn('nmLayanan', 'Hecting')->first()['totalJumlah'] ?? 0,
-            // 'aff_hecting'            => $pendapatan->whereIn('nmLayanan', 'Aff Hecting')->first()['totalJumlah'] ?? 0,
             'Laboratorium'                => $grup->whereIn('kelas', 9)->first()['totalJumlah'] ?? 0,
             'Rekam Medis'                 => $grup->whereIn('kelas', 1)->first()['totalJumlah'] ?? 0,
             'Radiologi'                   => ($grup->whereIn('kelas', 8)->first()['totalJumlah'] ?? 0) - ($pendapatan->whereIn('nmLayanan', 'Konsultasi dokter Radiologi')->first()['totalJumlah'] ?? 0),
@@ -531,8 +507,10 @@ class KasirSetoranController extends Controller
             'Dokter Umum RAJAL'           => $pendapatan->whereIn('nmLayanan', 'Dokter umum Rajal')->first()['totalJumlah'] ?? 0,
             'Dokter Spesialis RAJAL'      => $pendapatan->whereIn('nmLayanan', 'Dokter spesialis Rajal')->first()['totalJumlah'] ?? 0,
             'Konsul Dokter Sp. Radiologi' => $pendapatan->whereIn('nmLayanan', 'Konsultasi dokter Radiologi')->first()['totalJumlah'] ?? 0,
-            'Resep'                       => $grup->whereIn('kelas', 11)->first()['totalJumlah'] ?? 0,
+            'Konsul Dokter Spesialis'     => $pendapatan->whereIn('nmLayanan', 'Konsultasi Dokter Spesialis')->first()['totalJumlah'] ?? 0,
+            'Resep'                       => $pendapatan->whereIn('nmLayanan', 'Layanan resep per R/')->first()['totalJumlah'] ?? 0,
             'Surat Ket Medis'             => $pendapatan->whereIn('nmLayanan', 'Surat Keterangan Dokter')->first()['totalJumlah'] ?? 0,
+            'Surat Ket Lainnya'           => $pendapatan->whereIn('nmLayanan', 'Surat Keterangan lainnya')->first()['totalJumlah'] ?? 0,
             'Injeksi'                     => $pendapatan->whereIn('nmLayanan', 'Injeksi')->first()['totalJumlah'] ?? 0,
             'Infus'                       => $pendapatan->whereIn('nmLayanan', 'Infus')->first()['totalJumlah'] ?? 0,
             'Konsultasi Kefarmasian'      => $pendapatan->whereIn('nmLayanan', 'Konsultasi Kefarmasian')->first()['totalJumlah'] ?? 0,
@@ -543,12 +521,11 @@ class KasirSetoranController extends Controller
             'Konsultasi Keperawatan'      => $pendapatan->whereIn('nmLayanan', 'Konsultasi Keperawatan')->first()['totalJumlah'] ?? 0,
             'EKG'                         => $pendapatan->whereIn('nmLayanan', 'EKG')->first()['totalJumlah'] ?? 0,
             'Spirometri'                  => $pendapatan->whereIn('nmLayanan', 'Spirometri')->first()['totalJumlah'] ?? 0,
-            'VCT-HIV'                     => $pendapatan->whereIn('nmLayanan', 'Poli HIV')->first()['totalJumlah'] ?? 0,
+            'VCT-HIV'                     => $pendapatan->whereIn('nmLayanan', 'HIV')->first()['totalJumlah'] ?? 0,
             'Ambulans'                    => $pendapatan->whereIn('nmLayanan', 'Ambulasi')->first()['totalJumlah'] ?? 0,
             'Dokter Umum IGD'             => $pendapatan->whereIn('nmLayanan', 'Dokter umum Gadar')->first()['totalJumlah'] ?? 0,
             'Dokter Spesialis IGD'        => $pendapatan->whereIn('nmLayanan', 'Dokter spesialis Gadar')->first()['totalJumlah'] ?? 0,
             'Observasi one day care'      => $pendapatan->whereIn('nmLayanan', 'Observasi one day care 6 - 12 jam')->first()['totalJumlah'] ?? 0,
-            'TCM'                         => $pendapatan->whereIn('nmLayanan', 'TCM')->first()['totalJumlah'] ?? 0,
             'Biopsi Jarum Hasul'          => $pendapatan->whereIn('nmLayanan', 'Biopsi jarum halus')->first()['totalJumlah'] ?? 0,
             'Perawatan Luka'              => $pendapatan->whereIn('nmLayanan', 'Perawatan Luka')->first()['totalJumlah'] ?? 0,
             'Konsultasi Gizi'             => $pendapatan->whereIn('nmLayanan', 'Konsultasi Gizi')->first()['totalJumlah'] ?? 0,
@@ -561,6 +538,52 @@ class KasirSetoranController extends Controller
             'Sirup'                       => $sirup ?? 0,
             'BPJS'                        => $bpjs ?? 0,
             'Pendapatan TCM'              => $tcm ?? 0,
+        ];
+        return $data;
+    }
+    private function makeResponseNewYear()
+    {
+        $data = [
+            'Laboratorium'                => 0,
+            'Rekam Medis'                 => 0,
+            'Radiologi'                   => 0,
+            'Nebulizer'                   => 0,
+            'Oksigensai'                  => 0,
+            'Obat'                        => 0,
+            'Dokter Umum RAJAL'           => 0,
+            'Dokter Spesialis RAJAL'      => 0,
+            'Konsul Dokter Sp. Radiologi' => 0,
+            'Konsul Dokter Spesialis'     => 0,
+            'Resep'                       => 0,
+            'Surat Ket Medis'             => 0,
+            'Surat Ket Lainnya'           => 0,
+            'Injeksi'                     => 0,
+            'Infus'                       => 0,
+            'Konsultasi Kefarmasian'      => 0,
+            'Tes Mantoux'                 => 0,
+            'Pungsi'                      => 0,
+            'WSD'                         => 0,
+            'Puyer'                       => 0,
+            'Konsultasi Keperawatan'      => 0,
+            'EKG'                         => 0,
+            'Spirometri'                  => 0,
+            'VCT-HIV'                     => 0,
+            'Ambulans'                    => 0,
+            'Dokter Umum IGD'             => 0,
+            'Dokter Spesialis IGD'        => 0,
+            'Observasi one day care'      => 0,
+            'Biopsi Jarum Hasul'          => 0,
+            'Perawatan Luka'              => 0,
+            'Konsultasi Gizi'             => 0,
+            'Konsultasi Lainnya'          => 0,
+            'Klinik VCT'                  => 0,
+            'Suction Lendir'              => 0,
+            'Hecting'                     => 0,
+            'Aff Hecting'                 => 0,
+            'Bunga Bank'                  => 0,
+            'Sirup'                       => 0,
+            'BPJS'                        => 0,
+            'Pendapatan TCM'              => 0,
         ];
         return $data;
     }
