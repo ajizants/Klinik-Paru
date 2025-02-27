@@ -44,7 +44,7 @@
                 <!-- Messages Dropdown Menu -->
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="fa-solid fa-user"></i>
+                        <i class="fa-solid fa-user"></i> <b class="mx-1">{{ Auth::user()->name }}</b>
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         <a href="#" class="dropdown-item">

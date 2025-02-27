@@ -55,6 +55,9 @@ class LoginController extends Controller
                 case 'lab@rsparu.com':
                     return redirect('/lab');
                     break;
+                case 'dataanalis@rsparu.com':
+                    return redirect('/Pusat-Data');
+                    break;
                 default:
                     return redirect('/home');
             }

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Closure;
@@ -22,13 +21,13 @@ class Role
     public function handle($request, Closure $next, ...$roles)
     {
         // Periksa apakah pengguna adalah admin
-        if (auth()->user()->role === 'admin') {
+        if (auth()->user()->role === 'admin' || auth()->user()->role === 'analitik') {
             // Jika admin, langsung lanjutkan ke permintaan berikutnya
             return $next($request);
         }
 
         // Periksa apakah pengguna memiliki salah satu peran yang diizinkan
-        if (!in_array(auth()->user()->role, $roles)) {
+        if (! in_array(auth()->user()->role, $roles)) {
             // Jika tidak, arahkan ke halaman larangan akses
             $previousUrl = url()->previous();
             session()->flash('previous_url', $previousUrl);
