@@ -12,18 +12,20 @@
 
         function cariDataKunjungan(tglAwal, tglAkhir) {
             Swal.fire({
-                title: 'Memuat Data',
+                title: 'Memuat Data, Mohon Tunggu...',
                 showConfirmButton: false,
                 allowEscapeKey: false,
                 allowOutsideClick: false,
                 willOpen: () => {
                     Swal.showLoading();
                 }
-            })
+            });
+
+            // Cek jika DataTable sudah ada, hancurkan dengan clear untuk menghindari duplikasi data
             if ($.fn.DataTable.isDataTable("#kunjunganTable")) {
-                var table = $("#kunjunganTable").DataTable();
-                table.destroy();
+                $("#kunjunganTable").DataTable().clear().destroy();
             }
+
             $.ajax({
                 url: "/api/data/analis/biaya_pasien",
                 method: "POST",
@@ -33,11 +35,10 @@
                 },
                 dataType: "json",
                 success: function(response) {
-
                     $("#dataKunjungan").html(response.html); // Isi tabel dengan hasil response
 
-                    // Inisialisasi DataTables
-                    $("#kunjunganTable").DataTable({
+                    // Inisialisasi ulang DataTables setelah data dimuat
+                    var table = $("#kunjunganTable").DataTable({
                         responsive: true,
                         lengthChange: false,
                         autoWidth: false,
@@ -57,12 +58,35 @@
                                 next: "→",
                                 previous: "←"
                             }
-                        }
+                        },
+                        buttons: [{
+                            extend: "excel", // Tombol ekspor ke Excel
+                            text: "Download",
+                            title: "Data Pasien Baru & Kunjungan Ulang " + tglAwal + " s.d. " +
+                                tglAkhir,
+                            filename: "Data_Analisis_Biaya_Pasien_" + tglAwal + "_" +
+                                tglAkhir,
+                            exportOptions: {
+                                columns: ":visible",
+                            },
+                        }]
                     });
+
+                    // Menambahkan tombol ekspor ke dalam wrapper DataTables
+                    table.buttons().container().appendTo("#kunjunganTable_wrapper .col-md-6:eq(0)");
+
                     Swal.close();
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Gagal Memuat Data",
+                        text: "Terjadi kesalahan saat mengambil data: " + error,
+                    });
                 }
             });
         }
+
 
 
         window.addEventListener("load", function() {
