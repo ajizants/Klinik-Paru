@@ -219,6 +219,12 @@
                                     </li>
                                 </ul>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/Pusat-Data') }}">
+                                    <i class="fa-solid fa-database nav-icon"></i>
+                                    <p>Pusat Data</p>
+                                </a>
+                            </li>
                             {{-- @endif --}}
 
                             {{-- LAPORAN --}}

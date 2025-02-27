@@ -15,13 +15,14 @@
                 <div class="container-fluid mt-1" id="SubKelas">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h4 class="card-title">Data Biaya Kunjungan pasien baru, dan distribusi pasien berkunjung
+                            <h4 class="card-title font-weight-bold">Data Biaya Kunjungan pasien baru, dan distribusi
+                                pasien berkunjung
                                 ulang</h4>
                         </div>
                         <div class="card-body shadow">
                             <div class="row">
-                                <label class="col-form-label">Rentang Tanggal :</label>
                                 <div class="form-group col-3">
+                                    {{-- <label class="col-form-label">Rentang Tanggal :</label> --}}
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">
@@ -29,6 +30,67 @@
                                             </span>
                                         </div>
                                         <input type="text" class="form-control float-right" id="reservation">
+                                        <button type="button" class="btn btn-success" data-toggle="modal"
+                                            data-target="#modal-form"
+                                            onclick="cariDataKunjungan($('#reservation').data('daterangepicker').startDate.format('YYYY-MM-DD'), $('#reservation').data('daterangepicker').endDate.format('YYYY-MM-DD'))">Reload</button>
+                                    </div>
+                                </div>
+                                <div class="form-group col">
+                                    <div class="accordion" id="accordionExample">
+                                        <div class="card">
+                                            <a class="btn btn-link btn-block text-left" type="button"
+                                                data-toggle="collapse" id="headingOne" data-target="#collapseOne"
+                                                aria-expanded="true" aria-controls="collapseOne">
+                                                <strong>Klik Untuk Melihat Cara Pencarian Data</strong>
+                                            </a>
+                                            <div id="collapseOne" class="collapse" aria-labelledby="headingOne"
+                                                data-parent="#accordionExample">
+                                                <div class="card-body">
+                                                    <div class="form-row">
+                                                        <div class="col">
+                                                            <h5>Pencarian Data</h5>
+                                                            <ul>
+                                                                <li>Untuk mencari data, silahkan pilih rentang tanggal.
+                                                                    klik
+                                                                    tanggal pertama
+                                                                    untuk memilih
+                                                                    tanggal
+                                                                    awal, klik tanggal kedua untuk memilih tanggal
+                                                                    akhir.
+                                                                </li>
+                                                                <li>Apabila ingin mencari data di 1 tanggal, maka klik 2
+                                                                    kali pada tanggal
+                                                                    tersebut</li>
+                                                                <li>Klik tombol "Pilih" untuk mencari data</li>
+                                                                <li>Klik tombol "Reload" untuk memperbarui data</li>
+                                                            </ul>
+                                                        </div>
+                                                        {{-- <div class="col">
+                                                            <h5>Pencarian Data Total Pendapatan Harian</h5>
+                                                            <ul>
+                                                                <li>Untuk mencari data pendapatan total Perhari,
+                                                                    silahkan
+                                                                    pilih tahun terlebih
+                                                                    dahulu
+                                                                </li>
+                                                                <li>lalu klik link berikut <a type="button"
+                                                                        class="text-primary"
+                                                                        onclick="reportPendapatanTotalPerHari($('#tahun').val())">
+                                                                        "Cari
+                                                                        Pendapatan Perhari"</a>, lalu klik tombol "Rekap
+                                                                    Total Pendapatan Harian
+                                                                </li>
+                                                                <li>Untuk Mencetak data SBS dan BAPH, klik tombol sesuai
+                                                                    row
+                                                                    tanggal yang ingin
+                                                                    di
+                                                                    cwetak.</li>
+                                                            </ul>
+                                                        </div> --}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

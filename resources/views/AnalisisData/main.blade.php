@@ -82,13 +82,13 @@
             $("#reservation").daterangepicker({
                 startDate: tglAwal,
                 endDate: tglAkhir,
-                autoApply: true,
-                showDropdowns: true,
+                autoApply: false,
+                // showDropdowns: true,
                 locale: {
                     format: "YYYY-MM-DD",
-                    separator: " to ",
-                    applyLabel: "Apply",
-                    cancelLabel: "Cancel",
+                    separator: " s.d. ",
+                    applyLabel: "Cari",
+                    cancelLabel: "Batal",
                     customRangeLabel: "Custom Range",
                 },
             });
