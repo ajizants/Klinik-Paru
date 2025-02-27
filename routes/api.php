@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AntrianController;
+use App\Http\Controllers\DataAnalisController;
 use App\Http\Controllers\DiagnosaMappingController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\DotsController;
@@ -330,5 +331,7 @@ Route::post('surat/medis', [SuratController::class, 'store']);
 Route::post('surat/medis/update', [SuratController::class, 'update']);
 Route::post('surat/medis/delete', [SuratController::class, 'destroy']);
 Route::post('surat/medis/riwayat', [SuratController::class, 'riwayat']);
+
+Route::post('data/analis/biaya_pasien', [DataAnalisController::class, 'DataBiayaKunjungan']);
 
 // });

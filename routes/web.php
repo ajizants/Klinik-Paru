@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DataAnalisController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
@@ -85,4 +86,9 @@ Route::middleware('auth')->group(function () {
     //riwayat diagnosa
     Route::get('/Riwayat/Pasien', [HomeController::class, 'riwayatKunjungan'])->name('riwayatKunjungan')->middleware('role:dokter,perawat');
     Route::get('/Diagnosa/Mapping', [HomeController::class, 'mappingDx'])->name('mappingDx')->middleware('role:dokter,perawat');
+
+    //analisis data
+    Route::get('analisis', [DataAnalisController::class, 'index'])->name('analis.index')->middleware('role:analisis');
+    Route::get('analisis/pendaftaran', [DataAnalisController::class, 'analisisPendaftaran'])->name('analisisPendaftaran')->middleware('role:analisis');
+    Route::get('analisis/riwayat', [DataAnalisController::class, 'analisisRiwayat'])->name('analisisRiwayat')->middleware('role:analisis');
 });

@@ -109,9 +109,104 @@ class KominfoModel extends Model
         ]);
     }
 
+    public function pendaftaran(array $params)
+    {
+        $client = new Client();
+
+        // URL endpoint API yang ingin diakses
+        $url = 'https://kkpm.banyumaskab.go.id/api_kkpm/v1/pendaftaran/data_pendaftaran';
+
+        // Username dan password untuk basic auth
+        $username = env('API_USERNAME', '');
+        $password = env('API_PASSWORD', '');
+
+        // dd($params);
+
+        try {
+            // Lakukan permintaan POST dengan otentikasi dasar
+            $response = $client->request('POST', $url, [
+                'auth'        => [$username, $password],
+                'form_params' => $params,
+                'headers'     => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                ],
+            ]);
+
+            // Ambil body response
+            $body = $response->getBody();
+            // Konversi response body ke array
+            $data = json_decode($body, true);
+            // dd($data);
+            // Periksa apakah data berhasil di-decode menjadi array
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception('Error decoding JSON response: ' . json_last_error_msg());
+            }
+
+            $res = array_map(function ($d) {
+                $statusPulang = ! is_null($d["loket_farmasi_menunggu_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
+                // $statusPulang = !is_null($d["ruang_poli_selesai_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
+                $alamat = $d['kelurahan_nama'] . ', ' .
+                    $d['pasien_rt'] . '/' .
+                    $d['pasien_rw'] . ', ' .
+                    $d['kecamatan_nama'] . ', ' .
+                    $d['kabupaten_nama'];
+                $alamatMin = $d['kelurahan_nama'] . ', ' .
+                    $d['kecamatan_nama'];
+                $alamatPang = 'Desa ' . $d['kelurahan_nama'] . ', Kecamatan ' .
+                    $d['kecamatan_nama'];
+                $notrans = $d['tanggal'] < '2024-12-19' ? $d['no_trans'] : $d['no_reg'];
+
+                return [
+                    "status_pulang"            => $statusPulang,
+                    "no_reg"                   => $d["no_reg"] ?? 0,
+                    "id"                       => $d["id"] ?? 0,
+                    "no_trans"                 => $d["no_trans"] ?? 0,
+                    "notrans"                  => $notrans,
+                    "antrean_nomor"            => $d["antrean_nomor"] ?? 0,
+                    "tanggal"                  => $d["tanggal"] ?? 0,
+                    "penjamin_nama"            => $d["penjamin_nama"] ?? 0,
+                    "penjamin_nomor"           => $d["penjamin_nomor"] ?? 0,
+                    "jenis_kunjungan_nama"     => $d["jenis_kunjungan_nama"] ?? 0,
+                    "nomor_referensi"          => $d["nomor_referensi"] ?? 0,
+                    "pasien_nik"               => $d["pasien_nik"] ?? 0,
+                    "pasien_nama"              => $d["pasien_nama"] ?? 0,
+                    "pasien_no_rm"             => $d["pasien_no_rm"] ?? 0,
+                    "pasien_tgl_lahir"         => $d["pasien_tgl_lahir"] ?? 0,
+                    "jenis_kelamin_nama"       => $d["jenis_kelamin_nama"] ?? 0,
+                    "pasien_lama_baru"         => $d["pasien_lama_baru"] ?? 0,
+                    "rs_paru_pasien_lama_baru" => $d["rs_paru_pasien_lama_baru"] ?? 0,
+                    "poli_nama"                => $d["poli_nama"] ?? 0,
+                    "poli_sub_nama"            => $d["poli_sub_nama"] ?? 0,
+                    "dokter_nama"              => $d["dokter_nama"] ?? 0,
+                    "daftar_by"                => $d["daftar_by"] ?? 0,
+                    "waktu_daftar"             => $d["waktu_daftar"] ?? 0,
+                    "waktu_verifikasi"         => $d["waktu_verifikasi"] ?? 0,
+                    "admin_pendaftaran"        => $d["admin_pendaftaran"] ?? 0,
+                    "log_id"                   => $d["log_id"] ?? 0,
+                    "keterangan"               => $d["keterangan"] ?? 0,
+                    "keterangan_urutan"        => $d["keterangan_urutan"] ?? 0,
+                    "pasien_umur"              => ($d["pasien_umur_tahun"] ?? 0) . " Thn " . ($d["pasien_umur_bulan"] ?? 0) . " Bln ",
+                    "pasien_umur_tahun"        => $d["pasien_umur_tahun"] ?? 0,
+                    "pasien_umur_bulan"        => $d["pasien_umur_bulan"] ?? 0,
+                    "pasien_umur_hari"         => $d["pasien_umur_hari"] ?? 0,
+                    "pasien_alamat"            => $alamat ?? 0,
+                    "pasien_alamat_min"        => $alamatMin ?? 0,
+                    "pasien_alamat_pang"       => $alamatPang ?? 0,
+                    "kabupaten"                => $d["kabupaten_nama"] ?? 0,
+                    "kecamatan"                => $d["kecamatan_nama"] ?? 0,
+                    "kelurahan"                => $d["kelurahan_nama"] ?? 0,
+                ];
+            }, $data['response']['data']);
+
+            return $res;
+        } catch (\Exception $e) {
+            // Tangani kesalahan
+            return ['error' => $e->getMessage()];
+        }
+
+    }
     public function pendaftaranRequest(array $params)
     {
-        // Inisialisasi klien GuzzleHTTP
         $client = new Client();
 
         // URL endpoint API yang ingin diakses
