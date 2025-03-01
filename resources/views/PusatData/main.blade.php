@@ -1,7 +1,7 @@
 @extends('Template.lte')
 
 @section('content')
-    @include('AnalisisData.input')
+    @include('PusatData.input')
 
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
@@ -87,6 +87,84 @@
             });
         }
 
+        function cariDataFaksesPerujuk(tglAwal, tglAkhir) {
+            Swal.fire({
+                title: 'Memuat Data, Mohon Tunggu...',
+                showConfirmButton: false,
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                willOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Cek jika DataTable sudah ada, hancurkan dengan clear untuk menghindari duplikasi data
+            if ($.fn.DataTable.isDataTable("#faskesPerujukTable")) {
+                $("#faskesPerujukTable").DataTable().clear().destroy();
+            }
+
+            $.ajax({
+                url: "/api/data/analis/faskes_perujuk",
+                method: "POST",
+                data: {
+                    tanggal_awal: tglAwal,
+                    tanggal_akhir: tglAkhir,
+                },
+                dataType: "json",
+                success: function(response) {
+                    $("#dataFaskesPerujuk").html(response.html); // Isi tabel dengan hasil response
+
+                    // Inisialisasi ulang DataTables setelah data dimuat
+                    var table = $("#faskesPerujukTable").DataTable({
+                        responsive: true,
+                        lengthChange: false,
+                        autoWidth: false,
+                        searching: true,
+                        paging: true,
+                        ordering: true,
+                        info: true,
+                        language: {
+                            search: "Cari:",
+                            lengthMenu: "Tampilkan _MENU_ data",
+                            info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                            infoEmpty: "Tidak ada data tersedia",
+                            zeroRecords: "Tidak ada data yang cocok",
+                            paginate: {
+                                first: "Awal",
+                                last: "Akhir",
+                                next: "→",
+                                previous: "←"
+                            }
+                        },
+                        buttons: [{
+                            extend: "excel", // Tombol ekspor ke Excel
+                            text: "Download",
+                            title: "Data Faskes Perujuk " + tglAwal +
+                                " s.d. " +
+                                tglAkhir,
+                            filename: "Data_Faskes_Perujuk_" + tglAwal + "_" +
+                                tglAkhir,
+                            exportOptions: {
+                                columns: ":visible",
+                            },
+                        }]
+                    });
+
+                    // Menambahkan tombol ekspor ke dalam wrapper DataTables
+                    table.buttons().container().appendTo("#faskesPerujukTable_wrapper .col-md-6:eq(0)");
+
+                    Swal.close();
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Gagal Memuat Data",
+                        text: "Terjadi kesalahan saat mengambil data: " + error,
+                    });
+                }
+            });
+        }
+
 
 
         window.addEventListener("load", function() {
@@ -100,29 +178,27 @@
             tglAkhir = moment().subtract(0, "days").format("YYYY-MM-DD");
 
             // Menetapkan nilai ke input tanggal
-            $("#reservation").val(tglAwal + " to " + tglAkhir);
+            $("#reservation, #tglFaskesPerujuk").val(tglAwal + " to " + tglAkhir);
 
             // Date range picker
-            $("#reservation").daterangepicker({
+            $("#reservation, #tglFaskesPerujuk").daterangepicker({
                 startDate: tglAwal,
                 endDate: tglAkhir,
-                autoApply: false,
-                // showDropdowns: true,
+                autoApply: true,
                 locale: {
                     format: "YYYY-MM-DD",
                     separator: " s.d. ",
-                    applyLabel: "Cari",
+                    applyLabel: "Pilih",
                     cancelLabel: "Batal",
                     customRangeLabel: "Custom Range",
                 },
             });
 
-            $("#reservation").on(
+            $("#reservation, #tglFaskesPerujuk").on(
                 "apply.daterangepicker",
                 function(ev, picker) {
                     tglAwal = picker.startDate.format("YYYY-MM-DD");
                     tglAkhir = picker.endDate.format("YYYY-MM-DD");
-                    cariDataKunjungan(tglAwal, tglAkhir);
                 }
             );
         });

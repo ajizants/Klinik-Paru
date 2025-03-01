@@ -88,7 +88,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/Diagnosa/Mapping', [HomeController::class, 'mappingDx'])->name('mappingDx')->middleware('role:dokter,perawat');
 
     //analisis data
-    Route::get('Pusat-Data', [DataAnalisController::class, 'index'])->name('analis.index')->middleware('role:analitik');
+    Route::get('Pusat-Data', [DataAnalisController::class, 'index'])->name('pusatData')->middleware('role:analitik');
     Route::get('analisis/pendaftaran', [DataAnalisController::class, 'analisisPendaftaran'])->name('analisisPendaftaran')->middleware('role:analitik');
     Route::get('analisis/riwayat', [DataAnalisController::class, 'analisisRiwayat'])->name('analisisRiwayat')->middleware('role:analitik');
 });

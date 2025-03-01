@@ -107,9 +107,6 @@
             <div class="content-header py-0">
                 <div class="container-fluid">
                     <div class="row d-flex justify-content-end">
-                        {{-- <div class="col-sm-6">
-                            <h1 class="m-0">{{ isset($title) ? $title : '' }}</h1>
-                        </div><!-- /.col --> --}}
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
                                 <li class="breadcrumb-item"><a href="home">Home</a></li>
@@ -126,19 +123,18 @@
                 </div>
             </section>
         </div>
-        <div class="fixed-bottom left-0 m-3" style="pointer-events: none;">
-            <div class="input-group col d-flex justify-content-end">
-                <button class="btn btn-dark opacity-50" onclick="scrollToTop()" type="button" data-toggle="tooltip"
-                    data-placement="left" title="Kembali Ke Atas">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                        class="bi bi-caret-up-fill" viewBox="0 0 16 16">
-                        <path
-                            d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-        @include('Template.footer')
+    </div>
+    <div class="fixed-bottom input-group absolute d-flex justify-content-end p-2" style="pointer-events: none;">
+        <button class="relative btn btn-dark opacity-50" onclick="scrollToTop()" type="button" data-toggle="tooltip"
+            data-placement="left" title="Kembali Ke Atas" style="pointer-events: all;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                <path d=" m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0
+                .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+            </svg>
+        </button>
+    </div>
+    @include('Template.footer')
 
     </div>
 

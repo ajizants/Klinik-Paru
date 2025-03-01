@@ -1,5 +1,5 @@
-        <nav class="main-header navbar navbar-expand navbar-light font-weight-bold mobile-navbar"
-            style="background-color: #babcbf">
+        <nav class="main-header navbar navbar-expand navbar-dark font-weight-bold mobile-navbar"
+            style="background-color: #343a40;height: 53px;">
             <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -15,12 +15,10 @@
             </ul>
 
             <!-- Right navbar links -->
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ml-auto" style="color: rgba(255,255,255,.75);hover:color: rgba(255,255,255,1)">
                 <!-- Navbar Search -->
                 <li class="nav-item form-inline">
-                    <label for="waktu" class="font-weight-bold mb-0 mr-2">Waktu
-                        :</label>
-                    <label type="text" id="waktu" class="font-weight-bold mb-0 mr-2" readonly></label>
+                    <label type="text" id="waktu" class="font-weight-bold mb-0 mr-2"></label>
                 </li>
                 <li class="nav-item">
                     <div class="navbar-search-block">

@@ -4,7 +4,7 @@
                         Kelas
                         A</a>.</strong>
                 All rights reserved.
-                <div class="float-right d-none d-sm-inline-block">
+                <div class="float-right d-none d-sm-inline-block pr-4 mr-4">
                     <b>Versi</b> {{ env('APP_LARAVEL_VERSION') }}
                 </div>
             </footer>

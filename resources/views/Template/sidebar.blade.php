@@ -7,7 +7,7 @@
     </a>
 
     <!-- Sidebar -->
-    <div class="sidebar bg-navy font-weight-bold">
+    <div class="sidebar font-weight-bold">
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
@@ -210,6 +210,7 @@
                         <p>Hasil Penunjang</p>
                     </a>
                 </li>
+
                 <!-- Laporan Section -->
                 <li class="nav-header">LAPORAN</li>
                 <li class="nav-item">
@@ -230,12 +231,7 @@
                         <p>Riwayat Transaksi Gizi</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/logFarmasi') }}">
-                        <i class="fa-solid fa-chart-column nav-icon"></i>
-                        <p>Riwayat Transaksi Farmasi</p>
-                    </a>
-                </li>
+
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/riwayatRo') }}">
                         <i class="fa-solid fa-chart-column nav-icon"></i>

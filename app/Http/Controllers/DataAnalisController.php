@@ -120,18 +120,8 @@ class DataAnalisController extends Controller
         ];
         $data = $this->getData($params);
         // dd($data);
-        return view('AnalisisData.main', compact('data'))->with('title', $title);
+        return view('PusatData.main', compact('data'))->with('title', $title);
     }
-
-    // public function DataBiayaKunjungan(Request $request)
-    // {
-    //     $params = $request->all();
-    //     $data   = $this->getData($params);
-
-    //     //buatkan html tabel yang mengisi data
-
-    //     return response()->json($data);
-    // }
 
     public function DataBiayaKunjungan(Request $request)
     {
@@ -175,6 +165,40 @@ class DataAnalisController extends Controller
             $html .= '<td>' . $item['jaminan_lama_umum'] . '</td>';
             $html .= '<td>' . $item['jaminan_lama_bpjs'] . '</td>';
             $html .= '<td>' . $item['datang_lagi'] . '</td>';
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody></table>';
+
+        return response()->json(['html' => $html]);
+    }
+    public function faskesPerujuk(Request $request)
+    {
+        $params = [
+            'tanggal_sep_awal'  => $request->input('tanggal_awal'),
+            'tanggal_sep_akhir' => $request->input('tanggal_akhir'),
+            'order_by'          => 'jumlah_rujukan',
+            'order_jenis'       => 'desc',
+        ];
+        $model = new KominfoModel();
+        $data  = $model->rekapFaskesPerujuk($params)['response']['data_rujukan'];
+        // return $data;
+
+        $html = '<table id="faskesPerujukTable" class="table table-bordered table-striped">';
+        $html .= '<thead class="bg bg-orange table-bordered">
+                     <tr>
+                        <th>NO</th>
+                        <th>Nama Faskes</th>
+                        <th>Jumlah</th>
+                    </tr>
+                </thead>';
+        $html .= '<tbody>';
+
+        foreach ($data as $index => $item) {
+            $html .= '<tr>';
+            $html .= '<td>' . ($index + 1) . '</td>';
+            $html .= '<td>' . $item['ppk_rujukan_nama'] . '</td>';
+            $html .= '<td>' . $item['jumlah_rujukan'] . '</td>';
             $html .= '</tr>';
         }
 
