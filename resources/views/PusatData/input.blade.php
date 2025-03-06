@@ -2,21 +2,21 @@
                     <ul class="nav nav-tabs">
                         <li class="nav-item">
                             <a type="button" class="nav-link active bg-blue"
-                                onclick="toggleSections('#SubKelas');"><b>Kunjungan</b></a>
+                                onclick="toggleSections('#tab_1');"><b>Kunjungan</b></a>
                         </li>
                         <li class="nav-item">
-                            <a type="button" class="nav-link " onclick="toggleSections('#Kelas');"><b>Faskes
+                            <a type="button" class="nav-link " onclick="toggleSections('#tab_2');"><b>Faskes
                                     Perujuk</b></a>
                         </li>
-                        {{-- <li class="nav-item">
-                            <a type="button" class="nav-link " onclick="toggleSections('#Domain'); "><b>Domain</b></a>
-                        </li>  --}}
+                        <li class="nav-item">
+                            <a type="button" class="nav-link " onclick="toggleSections('#tab_3'); "><b>Data IGD</b></a>
+                        </li>
                         <li class="nav-item">
                             <a href="{{ url('/Laporan/Pendaftaran') }}" class="nav-link "><b>Laporan Pendaftaran</b></a>
                         </li>
                     </ul>
                 </div>
-                <div class="container-fluid mt-1" id="SubKelas">
+                <div class="container-fluid mt-1" id="tab_1">
                     <div class="card card-primary">
                         <div class="card-header">
                             <h4 class="card-title font-weight-bold">Data Biaya Kunjungan pasien baru, dan distribusi
@@ -131,7 +131,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="container-fluid mt-1" id="Kelas" style="display: none;">
+                <div class="container-fluid mt-1" id="tab_2" style="display: none;">
                     <div class="card card-orange">
                         <div class="card-header text-light">
                             <h4 class="card-title">Rekap Jumlah Faskes Perujuk</h4>
@@ -168,35 +168,68 @@
                         </div>
                     </div>
                 </div>
-                <div class="container-fluid mt-1" id="Domain" style="display: none;">
-                    <div class="card card-warning">
-                        <div class="card-header">
-                            <h4 class="card-title">Domain Diagnosa</h4>
-                        </div>
-                        <div class="card-body shadow">
-                            <div class="row">
-                                <button type="button" class="btn btn-success" data-toggle="modal"
-                                    data-target="#modal-form"
-                                    onclick="edit(null, 'form_domain','Form Tambah Domain Diagnosa')">Tambah
-                                    Domain</button>
+                <div class="container-fluid mt-1" id="tab_3" style="display: none;">
+                    <div class="card shadow mb-4 col">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start bg-teal">
+                            <h6 class="m-0 font-weight-bold">Data Kunjungan Pasien IGD Tahun:</h6>
+                            <div class="col-md-1 ">
+                                <select id="year-selector" class="form-control-sm">
+                                    @php
+                                        $startYear = 2021; // Tahun mulai
+                                        $currentYear = date('Y'); // Tahun saat ini
+                                    @endphp
+                                    @for ($year = $currentYear; $year >= $startYear; $year--)
+                                        <option value="{{ $year }}">{{ $year }}</option>
+                                    @endfor
+                                </select>
                             </div>
-                            <div class="table-responsive pt-2 px-2">
-                                <table id="dataDomain"class="table table-striped pt-0 mt-0 fs-6" style="width:100%"
-                                    cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Kode</th>
-                                            <th>Deskripsi</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                            <div class="col-md-1"></div>
+                            <button class="btn btn-success" onclick="getChartData()">Tampilkan</button>
+                        </div>
 
-                                    </tbody>
-
-                                </table>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body mb-2">
+                        <div class="row  flex-lg-row flex-column">
+                            <div class="card shadow mb-4 col">
+                                <!-- Card Header - Dropdown -->
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
+                                    <h6 class="m-0 font-weight-bold text-primary">Grafik Kunjungan Pasien IGD</h6>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body mb-2" id="divChartIGD">
+                                    <div class="chart-area">
+                                        <canvas id="chartIgd" class="mb-3 pb-3"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card shadow mb-4 col">
+                                <!-- Card Header - Dropdown -->
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
+                                    <h6 class="m-0 font-weight-bold text-primary">Tabel Kunjungan IGD</h6>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body mb-2">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="tabelIgd" width="100%"
+                                            cellspacing="0">
+                                            <thead class="bg bg-teal">
+                                                <tr>
+                                                    <th>Kd</th>
+                                                    <th>Bulan</th>
+                                                    <th>Layanan</th>
+                                                    <th>Jumlah</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Table rows will be dynamically populated with data -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>

@@ -29,7 +29,8 @@
                                 DX TB</b></a>
                     </li>
                     <li class="nav-item">
-                        <a type="button" class="nav-link" onclick=" toggleSections('#dSelesai')"><b>Selesai</b></a>
+                        <a type="button" class="nav-link" onclick=" toggleSections('#dSelesai')"><b>Selesai
+                                Input</b></a>
                     </li>
                     <li class="nav-item">
                         <a type="button" class="nav-link" id="iall"

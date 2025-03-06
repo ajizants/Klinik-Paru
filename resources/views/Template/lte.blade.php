@@ -87,10 +87,48 @@
         integrity="sha512-eVL5Lb9al9FzgR63gDs1MxcDS2wFu3loYAgjIH0+Hg38tCS8Ag62dwKyH+wzDb+QauDpEZjXbMn11blw8cbTJQ=="
         crossorigin=" anonymous"></script>
 
+    <style type="text/css">
+        html {
+            scrollbar-width: thin;
+            /* Untuk Firefox */
+            scrollbar-color: #888 #f1f1f1;
+            /* Warna thumb dan track */
+        }
+
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: #888 #f1f1f1;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            /* Lebar scrollbar vertikal */
+            height: 6px;
+            /* Tinggi scrollbar horizontal */
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            /* Warna track */
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            /* Warna thumb */
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+            /* Warna saat hover */
+        }
+    </style>
+
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
 </head>
 
-<body class="sidebar-mini layout-fixed control-sidebar-slide-open sidebar-collapse text-sm">
+<body class="scrollbar-thin sidebar-mini layout-fixed control-sidebar-slide-open sidebar-collapse text-sm">
     <div class="wrapper" id="top">
 
         <div class="preloader flex-column justify-content-center align-items-center">

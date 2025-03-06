@@ -1083,19 +1083,26 @@ class PasienKominfoController extends Controller
                     $d['status']     = $dots ? 'sudah' : 'belum';
                     $hasTuberculosis = false;
                     if (isset($d['diagnosa'][0])) {
-                        $dx1 = $d['diagnosa'][0];
-
                         $hasTuberculosis = false;
-                        if (stripos($dx1['nama_diagnosa'], 'tuberculosis') !== false ||
-                            (stripos($dx1['nama_diagnosa'], 'tb') !== false &&
-                                stripos($dx1['nama_diagnosa'], 'Observation for suspected tuberculosis') === false)) {
-                            $hasTuberculosis = true;
+
+                        // Loop hanya untuk dx1 sampai dx5 (maksimal 5 diagnosa)
+                        for ($i = 0; $i < min(5, count($d['diagnosa'])); $i++) {
+                            $dx = $d['diagnosa'][$i];
+
+                            if (stripos($dx['nama_diagnosa'], 'tuberculosis') !== false ||
+                                (stripos($dx['nama_diagnosa'], 'tb') !== false &&
+                                    stripos($dx['nama_diagnosa'], 'Observation for suspected tuberculosis') === false)) {
+                                $hasTuberculosis = true;
+                                break; // Hentikan loop jika sudah ditemukan
+                            }
                         }
 
+                        // Jika tidak ada diagnosis Tuberculosis, kembalikan null
                         if (! $hasTuberculosis) {
                             return null;
                         }
 
+                        // Cek status di DotsTransModel
                         $tb          = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
                         $d['status'] = $tb ? 'sudah' : 'belum';
 

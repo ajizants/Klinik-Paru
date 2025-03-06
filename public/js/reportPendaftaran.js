@@ -165,6 +165,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                         },
                     ],
                     autoWidth: false,
+                    lengthChange: false,
                     order: [
                         [14, "asc"],
                         [1, "asc"],
@@ -265,6 +266,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
 }
 
 async function rekapFaskesPerujuk() {
+    toggleSections("#dSelesai");
     var tglA = formatDate(new Date(tglAwal));
     console.log("🚀 ~ rekapFaskesPerujuk ~ tglA:", tglA);
     var tglB = formatDate(new Date(tglAkhir));
@@ -329,6 +331,7 @@ async function rekapFaskesPerujuk() {
                     { data: "jumlah_rujukan" },
                 ],
                 autoWidth: false,
+                lengthChange: false,
                 paging: true,
                 order: [[2, "dsc"]],
                 buttons: [
@@ -356,6 +359,109 @@ async function rekapFaskesPerujuk() {
             title: `Terjadi kesalahan saat mengambil data...!!!\n${error.message}`,
         });
     }
+}
+function rencanaKontrolPasien() {
+    toggleSections("#tab_1");
+    var tglA = formatDate(new Date(tglAwal));
+    var tglB = formatDate(new Date(tglAkhir));
+
+    console.log("🚀 ~ rencanaKontrolPasien ~ tglA:", tglA);
+    console.log("🚀 ~ rencanaKontrolPasien ~ tglB:", tglB);
+
+    $.ajax({
+        url: "/api/kominfo/data_rencana_kontrol",
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({
+            tanggal_awal: tglAwal,
+            tanggal_akhir: tglAkhir,
+        }),
+        beforeSend: function () {
+            Swal.fire({
+                title: "Mengambil data...",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+        },
+        success: function (result) {
+            console.log("🚀 ~ response data:", result);
+
+            // Pastikan data tidak kosong
+            if (!result.html || result.html.trim() === "") {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Data kosong atau tidak valid!",
+                });
+                return;
+            }
+
+            // Masukkan data ke dalam div
+            $("#divRencanaKontrolTable").html(result.html);
+
+            // Pastikan elemen tabel ada sebelum inisialisasi DataTables
+            if ($("#rencanaKontrolTable").length) {
+                // Hapus DataTables lama jika sudah ada
+                if ($.fn.DataTable.isDataTable("#rencanaKontrolTable")) {
+                    $("#rencanaKontrolTable").DataTable().destroy();
+                }
+
+                // Inisialisasi ulang DataTables
+                var table = $("#rencanaKontrolTable").DataTable({
+                    responsive: true,
+                    lengthChange: false,
+                    autoWidth: true,
+                    searching: true,
+                    paging: true,
+                    order: [[1, "asc"]],
+                    info: true,
+                    language: {
+                        search: "Cari:",
+                        lengthMenu: "Tampilkan _MENU_ data",
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                        infoEmpty: "Tidak ada data tersedia",
+                        zeroRecords: "Tidak ada data yang cocok",
+                        paginate: {
+                            first: "Awal",
+                            last: "Akhir",
+                            next: "→",
+                            previous: "←",
+                        },
+                    },
+                    buttons: [
+                        {
+                            extend: "copyHtml5",
+                            text: "Salin",
+                        },
+                        {
+                            extend: "excel",
+                            text: "Download",
+                            title: `Data Pasien Baru & Kunjungan Ulang ${tglAwal} s.d. ${tglAkhir}`,
+                            filename: `Data_Analisis_Biaya_Pasien_${tglAwal}_${tglAkhir}`,
+                            exportOptions: { columns: ":visible" },
+                        },
+                    ],
+                });
+
+                // Tambahkan tombol ekspor ke dalam wrapper DataTables
+                table
+                    .buttons()
+                    .container()
+                    .appendTo("#rencanaKontrolTable_wrapper .col-md-6:eq(0)");
+            }
+
+            Swal.close();
+        },
+        error: function (xhr, status, error) {
+            console.error("🚨 Error:", error);
+            Swal.fire({
+                icon: "error",
+                title: `Terjadi kesalahan saat mengambil data...!!!\n${xhr.status} - ${xhr.statusText}`,
+            });
+        },
+    });
 }
 
 function formatDate(date) {

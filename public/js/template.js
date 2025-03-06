@@ -177,6 +177,22 @@ function toggleSections(sectionToShow) {
 
         "#kunjungan",
         "#asesmen",
+
+        "#tab_1",
+        "#tab_2",
+        "#tab_3",
+        "#tab_4",
+        "#tab_5",
+        "#tab_6",
+        "#tab_7",
+        "#tab_8",
+        "#tab_9",
+        "#tab_10",
+        "#tab_11",
+        "#tab_12",
+        "#tab_13",
+        "#tab_14",
+        "#tab_15",
     ];
     sections.forEach(function (section) {
         if (section === sectionToShow) {

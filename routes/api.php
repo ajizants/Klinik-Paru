@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AntrianController;
+use App\Http\Controllers\ApiKominfoController;
 use App\Http\Controllers\DataAnalisController;
 use App\Http\Controllers\DiagnosaMappingController;
 use App\Http\Controllers\DisplayController;
@@ -107,6 +108,7 @@ Route::post('cariPoin', [IgdController::class, 'cariPoin']);
 Route::post('cariPoinTotal', [IgdController::class, 'cariPoinTotal']);
 Route::post('cariDataTindakan', [IgdController::class, 'cariDataTindakan']);
 Route::get('chart', [IgdController::class, 'chart'])->name('chart.endpoint');
+Route::get('report_igd', [IgdController::class, 'report_igd'])->name('report_igd.endpoint');
 Route::post('cariTransaksiBmhp', [IgdController::class, 'cariTransaksiBmhp']);
 Route::get('cariSisa/{year}', [IgdController::class, 'cariSisa']);
 Route::get('cariSisa2/{year}', [IgdController::class, 'cariKunjunganPerBulan']);
@@ -310,7 +312,10 @@ Route::get('resume/{no_rm}/{tgl}', [PasienKominfoController::class, 'resumePasie
 Route::post('kominfo/pendaftaran/resume', [PasienKominfoController::class, 'resumePasien']);
 Route::post('kominfo/report/dokter_rme', [PasienKominfoController::class, 'grafikDokter']);
 Route::post('kominfo/antrian/log', [PasienKominfoController::class, 'logAntrian']);
-Route::post('/kominfo/pendaftaran/faskes_perujuk', [PasienKominfoController::class, 'rekapFaskesPerujuk']);
+Route::post('kominfo/pendaftaran/faskes_perujuk', [PasienKominfoController::class, 'rekapFaskesPerujuk']);
+
+Route::post('kominfo/data_rencana_kontrol', [ApiKominfoController::class, 'data_rencana_kontrol']);
+
 // sb
 Route::post('verif/pendaftaran/fr', [VerifController::class, 'frista']);
 Route::post('verif/pendaftaran/fp', [VerifController::class, 'afterapp']);

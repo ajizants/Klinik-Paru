@@ -48,7 +48,7 @@
                                         <h3 class="card-title">Hasil Pemotretan</h3>
                                     </div>
                                     <!-- /.card-header -->
-                                    <div class="card-body table-responsive">
+                                    <div class="card-body table-responsive" id="containerTableLogBook">
                                         <table id="hasilRo" class="display table table-striped table-hover">
                                             <thead class="bg bg-secondary">
                                                 <tr>

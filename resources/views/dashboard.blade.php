@@ -3,70 +3,20 @@
 @section('content')
     <div class="container-fluid">
 
-        <!-- Area Chart -->
-        <div class="card shadow mb-4 col">
-            <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start bg-teal">
-                <h6 class="m-0 font-weight-bold">Data Kunjungan Pasien IGD Tahun:</h6>
-                <div class="col-md-1 ">
-                    <select id="year-selector" class="form-control-sm">
-                        @php
-                            $startYear = 2021; // Tahun mulai
-                            $currentYear = date('Y'); // Tahun saat ini
-                        @endphp
-                        @for ($year = $currentYear; $year >= $startYear; $year--)
-                            <option value="{{ $year }}">{{ $year }}</option>
-                        @endfor
-                    </select>
-                </div>
-
-            </div>
-            <!-- Card Body -->
-            <div class="card-body mb-2">
-                <div class="row  flex-lg-row flex-column">
-                    <div class="card shadow mb-4 col">
-                        <!-- Card Header - Dropdown -->
-                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
-                            <h6 class="m-0 font-weight-bold text-primary">Grafik Kunjungan Pasien IGD</h6>
-                        </div>
-                        <!-- Card Body -->
-                        <div class="card-body mb-2">
-                            <div class="chart-area" id="divChartIGD">
-                                <canvas id="myAreaChart" class="mb-3 pb-3"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card shadow mb-4 col">
-                        <!-- Card Header - Dropdown -->
-                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
-                            <h6 class="m-0 font-weight-bold text-primary">Tabel Kunjungan IGD</h6>
-                        </div>
-                        <!-- Card Body -->
-                        <div class="card-body mb-2">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="tabelIgd" width="100%" cellspacing="0">
-                                    <thead class="bg bg-teal">
-                                        <tr>
-                                            <th>Kd</th>
-                                            <th>Bulan</th>
-                                            <th>Layanan</th>
-                                            <th>Jumlah</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Table rows will be dynamically populated with data -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="container-fluid text-center h-100 mb-5">
+            <h3>Selamat Datang di Sistem Informasi Pelayanan Kesehatan</h3>
+            <br>
+            <h4>Klinik Utama Kesehatan Paru Masyarakat Kelas A</h4>
         </div>
+
+
         {{-- Tabel rata rata dan terlama --}}
         <div class="card shadow">
             <div class="card-header bg-info">
-                <div class="form-group row mb-0">
+                <strong class="font-size-20">Data Kunjungan Pasien</strong>
+            </div>
+            <div class="card-body">
+                <div class="form-group form-row">
                     <Label for="ratawaktulayanan" class="col-form-label font-weight-bold">Pencarian data pasien, Tanggal
                         :</Label>
                     <div class="input-group col-3">
@@ -78,8 +28,6 @@
                         <input type="text" class="form-control float-right" id="ratawaktulayanan">
                     </div>
                 </div>
-            </div>
-            <div class="card-body">
                 <div class="row  flex-lg-row flex-column">
                     <div class="card shadow mb-4 col">
                         <!-- Card Header - Dropdown -->

@@ -194,6 +194,85 @@
                         </li>
                     </ul>
                 </li>
+                <!-- Kasir Section -->
+                <li class="nav-item">
+                    <a href="" class="nav-link">
+                        <i class="fa-solid fa-desktop nav-icon"></i>
+                        <p>Display <i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview" style="display: none;">
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" target="_blank" href="{{ url('/verif/1') }}">
+                                <i class="fa-solid fa-tv nav-icon"></i>
+                                <p>Ambil Antrian</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" target="_blank" href="{{ url('display/loket') }}">
+                                <i class="fa-solid fa-tv nav-icon"></i>
+                                <p>Display Loket</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" target="_blank" href="{{ url('display/tensi') }}">
+                                <i class="fa-solid fa-tv nav-icon"></i>
+                                <p>Display Tensi</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" target="_blank" href="{{ url('display/lab') }}">
+                                <i class="fa-solid fa-tv nav-icon"></i>
+                                <p>Display Lab</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" target="_blank" href="{{ url('display/farmasi') }}">
+                                <i class="fa-solid fa-tv nav-icon"></i>
+                                <p>Display Farmasi</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item ml-4">
+                            <a href="" class="nav-link">
+                                <i class="fa-solid fa-desktop nav-icon"></i>
+                                <p>Display Poli
+                                    <i class="fas fa-angle-left" style="margin-left: 58px;"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview" style="display: none;">
+                                <li class="nav-item ml-4">
+                                    <a class="nav-link" target="_blank" href="{{ url('/display/poli/agil') }}">
+                                        <i class="fa-solid fa-tv nav-icon"></i>
+                                        <p>dr. Agil</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item ml-4">
+                                    <a class="nav-link" target="_blank" href="{{ url('/display/poli/nova') }}">
+                                        <i class="fa-solid fa-tv nav-icon"></i>
+                                        <p>dr. Cempaka</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item ml-4">
+                                    <a class="nav-link" target="_blank" href="{{ url('/display/poli/filly') }}">
+                                        <i class="fa-solid fa-tv nav-icon"></i>
+                                        <p>dr. Filly</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item ml-4">
+                                    <a class="nav-link" target="_blank" href="{{ url('/display/poli/sigit') }}">
+                                        <i class="fa-solid fa-tv nav-icon"></i>
+                                        <p>dr. Sigit</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                    </ul>
+                </li>
 
                 <!-- Surat Medis -->
                 <li class="nav-item">
