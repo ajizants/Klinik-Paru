@@ -47,7 +47,7 @@
                         autoWidth: true,
                         searching: true,
                         paging: true,
-                        ordering: false,
+                        // ordering: false,
                         order: [
                             [1, "asc"]
                         ],
