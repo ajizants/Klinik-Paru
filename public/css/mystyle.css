@@ -267,14 +267,14 @@ input:checked + .slider:before {
     }
 }
 
-.nav-item.disabled {
+.nav-item.non-aktif {
     pointer-events: none; /* Mencegah klik */
     opacity: 0.6; /* Membuat tampilan lebih redup */
     cursor: not-allowed; /* Menampilkan cursor dilarang */
     position: relative;
 }
 
-.nav-item.disabled:hover::after {
+.nav-item.non-aktif:hover::after {
     content: "🚫";
     position: absolute;
     left: 50%;

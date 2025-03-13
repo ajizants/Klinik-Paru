@@ -106,7 +106,7 @@
                 @php
                     $roleIGD = ['admin', '', 'igd', 'perawat'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleIGD)) disabled @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleIGD)) non-aktif @endif">
                     <a href="" class="nav-link">
                         <i class="fa-solid fa-truck-medical nav-icon"></i>
                         <p>Ruang Tindakan <i class="right fas fa-angle-left"></i></p>
@@ -137,7 +137,7 @@
                 @php
                     $roleDots = ['admin', '', 'dots', 'perawat'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleDots)) disabled @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleDots)) non-aktif @endif">
                     <a href="" class="nav-link">
                         <i class="nav-icon fa-solid fa-hand-holding-medical"></i>
                         <p>Dots Center <i class="right fas fa-angle-left"></i></p>
@@ -162,7 +162,7 @@
                 @php
                     $roleGizi = ['admin', '', 'gizi'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleGizi)) disabled @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleGizi)) non-aktif @endif">
                     <a href="" class="nav-link">
                         <i class="fa-brands fa-nutritionix nav-icon"></i>
                         <p>Gizi <i class="right fas fa-angle-left"></i></p>
@@ -193,7 +193,7 @@
                 @php
                     $roleFar = ['admin', '', 'farmasi'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleFar)) disabled @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleFar)) non-aktif @endif">
                     <a href="" class="nav-link">
                         <i class="fa-solid fa-pills nav-icon"></i>
                         <p>Farmasi <i class="right fas fa-angle-left"></i></p>
@@ -212,7 +212,7 @@
                 @php
                     $roleLab = ['admin', '', 'lab'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleLab)) disabled @endif"> <a href=""
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleLab)) non-aktif @endif"> <a href=""
                         class="nav-link">
                         <i class="fa-solid fa-microscope nav-icon"></i>
                         <p>Laboratorium <i class="right fas fa-angle-left"></i></p>
@@ -249,7 +249,7 @@
                 @php
                     $roleRO = ['admin', '', 'ro'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleRO)) disabled @endif"> <a href=""
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleRO)) non-aktif @endif"> <a href=""
                         class="nav-link">
                         <i class="nav-icon fa-solid fa-circle-radiation"></i>
                         <p>Radiologi <i class="right fas fa-angle-left"></i></p>
@@ -280,7 +280,7 @@
                 @php
                     $roleKasir = ['admin', '', 'kasir'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleKasir)) disabled @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleKasir)) non-aktif @endif">
                     <a href="" class="nav-link">
                         <i class="fa-solid fa-cash-register nav-icon"></i>
                         <p>Kasir <i class="right fas fa-angle-left"></i></p>
@@ -317,7 +317,7 @@
                 @php
                     $roleSurat = ['admin', 'nakes', 'dokter', 'perawat'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleSurat)) disabled @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleSurat)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/surat/medis') }}">
                         <i class="fa-solid fa-envelope nav-icon"></i>
                         <p>Surat Medis</p>
@@ -328,7 +328,7 @@
                 @php
                     $roleHasilPenunjang = ['admin', 'nakes', 'dokter', 'perawat'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleHasilPenunjang)) disabled @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleHasilPenunjang)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/RO/Hasil') }}">
                         <i class="fa-solid fa-x-ray nav-icon"></i>
                         <p>Hasil Penunjang</p>
@@ -360,13 +360,13 @@
                 @php
                     $roleDokter = ['admin', 'dokter', 'perawat'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleDokter)) disabled @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleDokter)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/Riwayat/Pasien') }}">
                         <i class="fa-solid fa-book-medical nav-icon"></i>
                         <p>Riwayat Pasien</p>
                     </a>
                 </li>
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleDokter)) disabled @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleDokter)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/Diagnosa/Mapping') }}">
                         <i class="fa-solid fa-book-medical nav-icon"></i>
                         <p>Mapping Dx Medis</p>
