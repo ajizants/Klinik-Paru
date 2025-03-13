@@ -266,3 +266,25 @@ input:checked + .slider:before {
         margin-top: 90px;
     }
 }
+
+.nav-item.disabled {
+    pointer-events: none; /* Mencegah klik */
+    opacity: 0.6; /* Membuat tampilan lebih redup */
+    cursor: not-allowed; /* Menampilkan cursor dilarang */
+    position: relative;
+}
+
+.nav-item.disabled:hover::after {
+    content: "🚫";
+    position: absolute;
+    left: 50%;
+    bottom: -25px;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}

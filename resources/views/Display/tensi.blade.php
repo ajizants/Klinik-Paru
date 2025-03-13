@@ -21,6 +21,149 @@
     <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
+
+    <script type="text/javascript">
+        // 1 detik = 1000
+        window.setTimeout("waktu()", 1000);
+
+        function waktu() {
+            var tanggal = new Date();
+            setTimeout("waktu()", 1000);
+            var detik = tanggal.getSeconds();
+            var menit = tanggal.getMinutes();
+            var jam = tanggal.getHours();
+            if (detik < 10) {
+                detik = "0" + detik;
+            }
+            if (menit < 10) {
+                menit = "0" + menit;
+            }
+            if (jam < 10) {
+                jam = "0" + jam;
+            }
+            document.getElementById("tanggalku").innerHTML
+
+            = jam + ":" + menit + ":" + detik;
+        }
+
+        $(document).ready(function() {
+            reload_table()
+        })
+
+        var tableData = $("#table_data").DataTable({
+            "lengthChange": false,
+            "info": false,
+            "dom": "lfrti",
+            "pagingType": "full_numbers",
+            "language": {
+                "infoEmpty": "Tidak ada data!",
+                "emptyTable": "Tidak ada data!",
+                "loadingRecords": "Memuat data...", // Teks yang ditampilkan saat data sedang dimuat
+                "processing": "Memproses...",
+            },
+            "processing": true,
+            "serverSide": true,
+            "ordering": false,
+            "searching": false,
+            "columnDefs": [],
+            "ajax": {
+                "url": "https://kkpm.banyumaskab.go.id/administrator/display_tv/ruang_tensi_get_data",
+                "type": "POST",
+                "error": function(xhr, status, error) {
+                    iziToast.warning({
+                        title: "'" + xhr.responseText + "'",
+                        position: 'topLeft',
+                        timeout: 100, //TODO : coba cek segini dulu
+                    });
+                },
+
+            },
+            "createdRow": function(row, data, dataIndex) {
+                console.log(data);
+                if (data['waktu_submit'] == null) {
+                    $(row).addClass('bg-info');
+                }
+            },
+            "columns": [{
+                    data: "pasien_nama",
+                    className: "text-center",
+                },
+                {
+                    data: "kelurahan",
+                    className: "text-center",
+                },
+                {
+                    data: "menuju_ke",
+                    className: "text-center",
+                },
+                {
+                    data: "created_at",
+                    className: "text-center",
+                },
+            ]
+        })
+
+        function reload_table() {
+            tableData.ajax.reload(null, false);
+            //  $("#div_ulangi_panggilan").html( /*html*/ ``)
+            $.ajax({
+                type: "POST",
+                url: "https://kkpm.banyumaskab.go.id/administrator/display_tv/ruang_tensi_get_data",
+                dataType: "json",
+                beforeSend: function() {
+                    $(".spinnerReloadTable").show()
+                },
+                data: {
+                    tanggal: $('#tanggal_filter').val()
+                },
+                success: function(e) {
+                    $(".spinnerReloadTable").hide()
+                    data = e.data
+                    antrean_sedang_dipanggil = data[0]['pasien_nama']
+                    antrean_sedang_dipanggil_kelurahan = data[0]['kelurahan']
+                    antrean_sedang_dipanggil_menuju_ke = data[0]['menuju_ke']
+                    if (antrean_sedang_dipanggil != null) {
+                        $("#antrean_sedang_dipanggil").html( /*html*/ `${antrean_sedang_dipanggil}`)
+                        $("#antrean_sedang_dipanggil_kelurahan").html( /*html*/
+                            `${antrean_sedang_dipanggil_kelurahan}`)
+                        $("#antrean_sedang_dipanggil_menuju_ke").html( /*html*/
+                            `${antrean_sedang_dipanggil_menuju_ke}`)
+                    } else {
+                        $("#antrean_sedang_dipanggil").html( /*html*/ `-`)
+                        $("#antrean_sedang_dipanggil_menuju_ke").html( /*html*/ ``)
+                    }
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    Swal.close();
+                    // alertz(xhr.responseText);
+                    iziToast.warning({
+                        title: "'" + xhr.responseText + "'",
+                        position: 'bottomRight'
+                    });
+                }
+            })
+        }
+
+        // var socketIO = io.connect('wss://kkpm.banyumaskab.go.id:3131/', {
+        //     // path: '/socket.io',
+        //     transports: ['websocket',
+        //         'polling',
+        //         'flashsocket'
+        //     ]
+        // });
+
+        socketIO.on('connectParu', () => {
+            const sessionID = socketIO.id
+            $('#socket-id').html(sessionID)
+            console.log("Socket ID : " + sessionID)
+        });
+
+        socketIO.on('reload', (msg) => {
+            if (msg == 'paru_ruang_tensi') {
+                reload_table()
+            }
+        });
+    </script>
 </head>
 
 <body>

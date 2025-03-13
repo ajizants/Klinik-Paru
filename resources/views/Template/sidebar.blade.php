@@ -19,182 +19,7 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
-
-                <!-- Transaksi Section -->
-                <li class="nav-header">TRANSAKSI</li>
-
-                <!-- IGD Section -->
-                <li class="nav-item">
-                    <a href="" class="nav-link">
-                        <i class="fa-solid fa-truck-medical nav-icon"></i>
-                        <p>Ruang Tindakan <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview" style="display: none;">
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/igd') }}" id="masukIGD">
-                                <i class="nav-icon fas fa-edit"></i>
-                                <p>Input Tindakan</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/gudangIGD') }}">
-                                <i class="fa-solid fa-database nav-icon"></i>
-                                <p>Master Tindakan</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/askep') }}">
-                                <i class="fa-solid fa-file-pen nav-icon"></i>
-                                <p>ASKEP</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- Dots Center Section -->
-                <li class="nav-item">
-                    <a href="" class="nav-link">
-                        <i class="nav-icon fa-solid fa-hand-holding-medical"></i>
-                        <p>Dots Center <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview" style="display: none;">
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/dots') }}">
-                                <i class="nav-icon fas fa-edit"></i>
-                                <p>Input Dots Center</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/dots_master') }}">
-                                <i class="fa-solid fa-database nav-icon"></i>
-                                <p>Master Dots Center</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- Gizi Section -->
-                <li class="nav-item">
-                    <a href="" class="nav-link">
-                        <i class="fa-brands fa-nutritionix nav-icon"></i>
-                        <p>Gizi <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview" style="display: none;">
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/gizi') }}">
-                                <i class="nav-icon fas fa-edit"></i>
-                                <p>Input Gizi</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/masterGizi') }}">
-                                <i class="fa-solid fa-database nav-icon"></i>
-                                <p>Master Gizi</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- Farmasi Section -->
-                <li class="nav-item">
-                    <a href="" class="nav-link">
-                        <i class="fa-solid fa-pills nav-icon"></i>
-                        <p>Farmasi <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview" style="display: none;">
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/farmasi') }}">
-                                <i class="nav-icon fas fa-edit"></i>
-                                <p>Input Farmasi</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- Lab Section -->
-                <li class="nav-item">
-                    <a href="" class="nav-link">
-                        <i class="fa-solid fa-microscope nav-icon"></i>
-                        <p>Laboratorium <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview" style="display: none;">
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/lab') }}">
-                                <i class="fa-solid fa-user-pen nav-icon"></i>
-                                <p>Pendaftaran Lab</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/hasilLab') }}">
-                                <i class="nav-icon fas fa-edit"></i>
-                                <p>Input Hasil Lab</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/masterLab') }}">
-                                <i class="fa-solid fa-database nav-icon"></i>
-                                <p>Master Lab</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- Radiologi Section -->
-                <li class="nav-item">
-                    <a href="" class="nav-link">
-                        <i class="nav-icon fa-solid fa-circle-radiation"></i>
-                        <p>Radiologi <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview" style="display: none;">
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/ro') }}">
-                                <i class="fa-regular nav-icon fas fa-edit"></i>
-                                <p>Input Radiologi</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/masterRo') }}">
-                                <i class="fa-solid fa-database nav-icon"></i>
-                                <p>Master Radiologi</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- Kasir Section -->
-                <li class="nav-item">
-                    <a href="" class="nav-link">
-                        <i class="fa-solid fa-cash-register nav-icon"></i>
-                        <p>Kasir <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview" style="display: none;">
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/kasir') }}">
-                                <i class="fa-regular nav-icon fas fa-edit"></i>
-                                <p>Transaksi Kasir</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/kasir/pendapatan/lain') }}">
-                                <i class="fa-regular nav-icon fas fa-edit"></i>
-                                <p>Transaksi Lain</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/kasir/report') }}">
-                                <i class="fa-solid fa-database nav-icon"></i>
-                                <p>Laporan Kunjungan</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/kasir/master') }}">
-                                <i class="fa-solid fa-database nav-icon"></i>
-                                <p>Master Data Layanan</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <!-- Kasir Section -->
+                <!-- Display Section -->
                 <li class="nav-item">
                     <a href="" class="nav-link">
                         <i class="fa-solid fa-desktop nav-icon"></i>
@@ -274,8 +99,225 @@
                     </ul>
                 </li>
 
+                <!-- Transaksi Section -->
+                <li class="nav-header">TRANSAKSI</li>
+
+                <!-- IGD Section -->
+                @php
+                    $roleIGD = ['admin', '', 'igd', 'perawat'];
+                @endphp
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleIGD)) disabled @endif">
+                    <a href="" class="nav-link">
+                        <i class="fa-solid fa-truck-medical nav-icon"></i>
+                        <p>Ruang Tindakan <i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview" style="display: none;">
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/igd') }}" id="masukIGD">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>Input Tindakan</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/gudangIGD') }}">
+                                <i class="fa-solid fa-database nav-icon"></i>
+                                <p>Master Tindakan</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/askep') }}">
+                                <i class="fa-solid fa-file-pen nav-icon"></i>
+                                <p>ASKEP</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Dots Center Section -->
+                @php
+                    $roleDots = ['admin', '', 'dots', 'perawat'];
+                @endphp
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleDots)) disabled @endif">
+                    <a href="" class="nav-link">
+                        <i class="nav-icon fa-solid fa-hand-holding-medical"></i>
+                        <p>Dots Center <i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview" style="display: none;">
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/dots') }}">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>Input Dots Center</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/dots_master') }}">
+                                <i class="fa-solid fa-database nav-icon"></i>
+                                <p>Master Dots Center</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Gizi Section -->
+                @php
+                    $roleGizi = ['admin', '', 'gizi'];
+                @endphp
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleGizi)) disabled @endif">
+                    <a href="" class="nav-link">
+                        <i class="fa-brands fa-nutritionix nav-icon"></i>
+                        <p>Gizi <i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview" style="display: none;">
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/gizi') }}">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>Input Gizi</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/masterGizi') }}">
+                                <i class="fa-solid fa-database nav-icon"></i>
+                                <p>Master Gizi</p>
+                            </a>
+                        </li>
+                        <li class="nav-item  ml-4"">
+                            <a class="nav-link" href="{{ url('/riwayatGizi') }}">
+                                <i class="fa-solid fa-chart-column nav-icon"></i>
+                                <p>Riwayat Transaksi Gizi</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Farmasi Section -->
+                @php
+                    $roleFar = ['admin', '', 'farmasi'];
+                @endphp
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleFar)) disabled @endif">
+                    <a href="" class="nav-link">
+                        <i class="fa-solid fa-pills nav-icon"></i>
+                        <p>Farmasi <i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview" style="display: none;">
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/farmasi') }}">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>Input Farmasi</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Lab Section -->
+                @php
+                    $roleLab = ['admin', '', 'lab'];
+                @endphp
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleLab)) disabled @endif"> <a href=""
+                        class="nav-link">
+                        <i class="fa-solid fa-microscope nav-icon"></i>
+                        <p>Laboratorium <i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview" style="display: none;">
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/lab') }}">
+                                <i class="fa-solid fa-user-pen nav-icon"></i>
+                                <p>Pendaftaran Lab</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/hasilLab') }}">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>Input Hasil Lab</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/masterLab') }}">
+                                <i class="fa-solid fa-database nav-icon"></i>
+                                <p>Master Lab</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/riwayatLab') }}">
+                                <i class="fa-solid fa-chart-column nav-icon"></i>
+                                <p>Laporan Laboratorium</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Radiologi Section -->
+                @php
+                    $roleRO = ['admin', '', 'ro'];
+                @endphp
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleRO)) disabled @endif"> <a href=""
+                        class="nav-link">
+                        <i class="nav-icon fa-solid fa-circle-radiation"></i>
+                        <p>Radiologi <i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview" style="display: none;">
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/ro') }}">
+                                <i class="fa-regular nav-icon fas fa-edit"></i>
+                                <p>Input Radiologi</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/masterRo') }}">
+                                <i class="fa-solid fa-database nav-icon"></i>
+                                <p>Master Radiologi</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/riwayatRo') }}">
+                                <i class="fa-solid fa-chart-column nav-icon"></i>
+                                <p>Laporan Radiologi</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Kasir Section -->
+                @php
+                    $roleKasir = ['admin', '', 'kasir'];
+                @endphp
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleKasir)) disabled @endif">
+                    <a href="" class="nav-link">
+                        <i class="fa-solid fa-cash-register nav-icon"></i>
+                        <p>Kasir <i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview" style="display: none;">
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/kasir') }}">
+                                <i class="fa-regular nav-icon fas fa-edit"></i>
+                                <p>Transaksi Kasir</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/kasir/pendapatan/lain') }}">
+                                <i class="fa-regular nav-icon fas fa-edit"></i>
+                                <p>Transaksi Lain</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/kasir/report') }}">
+                                <i class="fa-solid fa-database nav-icon"></i>
+                                <p>Laporan Kunjungan</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/kasir/master') }}">
+                                <i class="fa-solid fa-database nav-icon"></i>
+                                <p>Master Data Layanan</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 <!-- Surat Medis -->
-                <li class="nav-item">
+                @php
+                    $roleSurat = ['admin', 'nakes', 'dokter', 'perawat'];
+                @endphp
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleSurat)) disabled @endif">
                     <a class="nav-link" href="{{ url('/surat/medis') }}">
                         <i class="fa-solid fa-envelope nav-icon"></i>
                         <p>Surat Medis</p>
@@ -283,7 +325,10 @@
                 </li>
 
                 <!-- Hasil Penunjang -->
-                <li class="nav-item">
+                @php
+                    $roleHasilPenunjang = ['admin', 'nakes', 'dokter', 'perawat'];
+                @endphp
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleHasilPenunjang)) disabled @endif">
                     <a class="nav-link" href="{{ url('/RO/Hasil') }}">
                         <i class="fa-solid fa-x-ray nav-icon"></i>
                         <p>Hasil Penunjang</p>
@@ -304,38 +349,24 @@
                         <p>Laporan Petugas</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/riwayatGizi') }}">
-                        <i class="fa-solid fa-chart-column nav-icon"></i>
-                        <p>Riwayat Transaksi Gizi</p>
-                    </a>
-                </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/riwayatRo') }}">
-                        <i class="fa-solid fa-chart-column nav-icon"></i>
-                        <p>Laporan Radiologi</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/riwayatLab') }}">
-                        <i class="fa-solid fa-chart-column nav-icon"></i>
-                        <p>Laporan Laboratorium</p>
-                    </a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/Laporan/Pendaftaran') }}">
                         <i class="fa-solid fa-chart-column nav-icon"></i>
                         <p>Laporan Pendaftaran</p>
                     </a>
                 </li>
-                <li class="nav-item">
+
+                @php
+                    $roleDokter = ['admin', 'dokter', 'perawat'];
+                @endphp
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleDokter)) disabled @endif">
                     <a class="nav-link" href="{{ url('/Riwayat/Pasien') }}">
                         <i class="fa-solid fa-book-medical nav-icon"></i>
                         <p>Riwayat Pasien</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleDokter)) disabled @endif">
                     <a class="nav-link" href="{{ url('/Diagnosa/Mapping') }}">
                         <i class="fa-solid fa-book-medical nav-icon"></i>
                         <p>Mapping Dx Medis</p>

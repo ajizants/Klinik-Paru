@@ -339,5 +339,6 @@ Route::post('surat/medis/riwayat', [SuratController::class, 'riwayat']);
 
 Route::post('data/analis/biaya_pasien', [DataAnalisController::class, 'DataBiayaKunjungan']);
 Route::post('data/analis/faskes_perujuk', [DataAnalisController::class, 'faskesPerujuk']);
+Route::post('data/analis/kunjungan_lab', [DataAnalisController::class, 'kunjunganLab']);
 
 // });

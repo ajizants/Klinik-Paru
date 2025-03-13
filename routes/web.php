@@ -72,12 +72,14 @@ Route::middleware('auth')->group(function () {
     Route::get('lab', [HomeController::class, 'lab'])->name('lab')->middleware('role:lab');
     Route::get('hasilLab', [HomeController::class, 'hasilLab'])->name('hasilLab')->middleware('role:lab');
     Route::get('riwayatLab', [HomeController::class, 'riwayatLab'])->name('riwayatLab')->middleware('role:lab');
+    Route::get('Laporan/Lab', [HomeController::class, 'riwayatLab'])->name('riwayatLab')->middleware('role:lab');
     Route::get('masterLab', [HomeController::class, 'masterLab'])->name('masterLab')->middleware('role:lab');
     //RO
     Route::get('ro', [HomeController::class, 'ro'])->name('ro')->middleware('role:ro');
     Route::get('ro2', [HomeController::class, 'ro2'])->name('ro')->middleware('role:ro');
     Route::get('masterRo', [HomeController::class, 'masterRo'])->name('masterRo')->middleware('role:ro');
     Route::get('riwayatRo', [HomeController::class, 'riwayatRo'])->name('hasilRo')->middleware('role:ro');
+    Route::get('Laporan/Lab', [HomeController::class, 'riwayatRo'])->name('hasilRo')->middleware('role:ro');
     Route::post('waktu_layanan', [PasienKominfoController::class, 'waktuLayanan']);
     //gizi
     Route::get('gizi', [HomeController::class, 'gizi'])->name('gizi')->middleware('role:gizi');

@@ -1055,33 +1055,6 @@ class KominfoModel extends Model
         $data = json_decode($body, true);
         return $data;
     }
-    // public function get_data_antrian(array $data, $antrean_nomor = null)
-    // {
-    //     $client = new Client();
-    //     $url = env('BASR_URL_KOMINFO', '') . '/loket_pendaftaran/get_data';
-
-    //     // Persiapkan form_params dengan parameter length dan antrean_nomor
-    //     $form_params = [
-    //         'length' => 1000, // Menambahkan parameter length dengan nilai 1000
-    //     ];
-
-    //     // Tambahkan antrean_nomor jika ada
-    //     if ($antrean_nomor !== null) {
-    //         $form_params['antrean_nomor'] = $antrean_nomor; // Menambahkan filter antrean_nomor
-    //     }
-
-    //     $response = $client->request('POST', $url, [
-    //         'form_params' => $form_params,
-    //         'headers' => [
-    //             'Content-Type' => 'application/x-www-form-urlencoded',
-    //             'Cookie' => $data['cookie'],
-    //         ],
-    //     ]);
-
-    //     $body = $response->getBody();
-    //     $data = json_decode($body, true);
-    //     return $data;
-    // }
 
     public function panggil(array $data, $log_id = null, $loket)
     {
@@ -1231,6 +1204,55 @@ class KominfoModel extends Model
         }
     }
     public function getTungguFaramsi($tanggal = null, $cookie = null)
+    {
+        $client  = new Client();
+        $tgl     = $tanggal ?? date('Y-m-d');
+        $tanggal = $tgl . ' - ' . $tgl;
+
+        if (! $cookie) {
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+            $cookie        = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/");
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+
+        $url = env('BASR_URL_KOMINFO', '') . '/loket_farmasi/get_data';
+
+        try {
+            $response = $client->request('POST', $url, [
+                'form_params' => [
+                    'tanggal' => $tanggal,
+                    'length'  => 1000,
+                ],
+                'headers'     => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Cookie'       => $cookie,
+                ],
+            ]);
+
+            if ($response->getStatusCode() !== 200) {
+                Log::error('Error response body: ' . (string) $response->getBody());
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
+
+            $body = (string) $response->getBody();
+            $data = json_decode($body, true);
+
+            return $data;
+
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            Log::error('Request Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
+        } catch (\Exception $e) {
+            Log::error('Unexpected Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
+        }
+    }
+    public function loket_pendaftaran_get_data($tanggal = null, $cookie = null)
     {
         $client  = new Client();
         $tgl     = $tanggal ?? date('Y-m-d');

@@ -3,6 +3,10 @@ namespace App\Http\Controllers;
 
 use App\Models\KasirTransModel;
 use App\Models\KominfoModel;
+use App\Models\KunjunganWaktuSelesai;
+use App\Models\LaboratoriumHasilModel;
+use App\Models\LaboratoriumKunjunganModel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class DataAnalisController extends Controller
@@ -323,6 +327,29 @@ class DataAnalisController extends Controller
             'detail'            => $detail,
         ];
         return $res;
+    }
+
+    private function jumlahKunjungan(Request $request)
+    {
+        $tglAwal  = Carbon::parse($request->input('tglAwal'))->startOfDay(); // 00:00:00
+        $tglAkhir = Carbon::parse($request->input('tglAkhir'))->endOfDay();  // 23:59:59
+
+        $data = KunjunganWaktuSelesai::whereBetween('created_at', [$tglAwal, $tglAkhir])->get();
+
+        return response()->json($data, 200);
+    }
+
+    public function kunjunganLab(Request $request)
+    {
+        $tglAkhir         = Carbon::parse($request->input('tglAkhir'))->endOfDay();  // 23:59:59
+        $tglAwal          = Carbon::parse($request->input('tglAwal'))->startOfDay(); // 00:00:00
+        $dataKunjunganLab = LaboratoriumKunjunganModel::whereBetween('created_at', [$tglAwal, $tglAkhir])->get();
+        $dataHasilLab     = LaboratoriumHasilModel::whereBetween('created_at', [$tglAwal, $tglAkhir])->get();
+
+        return response()->json([
+            'kunjungan' => $dataKunjunganLab,
+            'hasil'     => $dataHasilLab,
+        ], 200);
     }
 
 }

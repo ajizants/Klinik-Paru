@@ -4,12 +4,12 @@
     {{-- Data per pasien --}}
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
-            <h6 class="m-0 font-weight-bold text-primary">Daftar Surat Keterangan Medis</h6>
+        <div class="card-header bg-lime py-3 d-flex flex-row align-items-center justify-content-start">
+            <h6 class="m-0 font-weight-bold text-dark">Daftar Surat Keterangan Medis</h6>
         </div>
         <div class="card-body mb-2 px-1">
             <div class="form-row mx-autow ">
-                <label class="col-form-label">Tanggal :</label>
+                <label class="col-form-label">Pilih Tanggal Kunjungan Pasien :</label>
                 <div class="form-group col-6 col-md-2">
                     <input type="date" id="tanggal" class="form-control bg-white" placeholder="Tanggal" />
                 </div>
@@ -21,14 +21,9 @@
                 </div>
 
             </div>
-            <div class="card card-warning">
-                {{-- <div class="card-header">
-                    <h3 class="card-title"><b>Daftar Pasien Hari ini</b></h3>
-                </div> --}}
-                <div class="card-body p-2">
-                    @include('Template.Table.all')
-                </div>
-            </div>
+
+            @include('Template.Table.all')
+
             <div class="card card-warning">
                 <div class="card-header">
                     <h3 class="card-title"><b>List Surat Keterangan Medis</b></h3>

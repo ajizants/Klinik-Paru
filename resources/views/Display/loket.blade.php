@@ -23,6 +23,11 @@
     <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js "
+        integrity="sha512-eVL5Lb9al9FzgR63gDs1MxcDS2wFu3loYAgjIH0+Hg38tCS8Ag62dwKyH+wzDb+QauDpEZjXbMn11blw8cbTJQ=="
+        crossorigin=" anonymousÂ&nbsp;"></script>
+
 </head>
 
 <body>
@@ -36,8 +41,8 @@
     <aside class="bg-white main-sidebar" style="width: 20px;z-index: 2 !important;height: 5000px;"></aside>
     <div class="container-fluid row px-2 mx-2">
         <div class="col">
-            <iframe class="custom-iframe" scrolling="no" style="margin-top: -34px; margin-left: -10px;"
-                src="https://kkpm.banyumaskab.go.id/administrator/display_tv/loket_pendaftaran"></iframe>
+            {{-- <iframe class="custom-iframe" scrolling="no" style="margin-top: -34px; margin-left: -10px;"
+                src="https://kkpm.banyumaskab.go.id/administrator/display_tv/loket_pendaftaran"></iframe> --}}
         </div>
         <div class="col mt-1">
             <h1 class="text-center font-weight-bold mt-5">Daftar Tunggu</h1>
@@ -181,8 +186,6 @@
     </footer>
     <script type="text/javascript">
         async function getList() {
-            const tableBody = document.querySelector("#listTunggu tbody");
-            tableBody.innerHTML = "";
             const norm = "";
             try {
                 const response = await fetch("/api/list/tunggu/loket", {
@@ -192,7 +195,7 @@
                     },
                 });
                 const data = await response.json();
-                console.log("🚀 ~ getList ~ data:", data)
+                // console.log("🚀 ~ getList ~ data:", data)
 
                 drawTable(data);
             } catch (error) {
@@ -201,8 +204,6 @@
         }
 
         function drawTable(data) {
-            console.log("🚀 ~ drawTable ~ data:", data)
-            console.log("🚀 ~ drawTable ~ data.length:", data.length)
             if (data.length > 0) {
                 const tableBody = document.querySelector("#listTunggu tbody");
                 tableBody.innerHTML = ""; // Bersihkan konten sebelumnya
@@ -256,9 +257,65 @@
         }
 
         setInterval(() => {
-            // Panggil fungsi untuk menggambar tabel
             getList();
         }, 20000);
+
+        function reload_table() {
+
+            $.ajax({
+                type: "POST",
+                url: "https://kkpm.banyumaskab.go.id/administrator/display_tv/loket_pendaftaran_get_data",
+                dataType: "json",
+                beforeSend: function() {
+                    $(".spinnerReloadTable").show()
+                },
+                data: {
+                    tanggal: $('#tanggal_filter').val()
+                },
+                success: function(e) {
+                    $(".spinnerReloadTable").hide()
+                    data = e.data
+                    antrean_sedang_dipanggil = data[0]['antrean_nomor']
+                    antrean_sedang_dipanggil_menuju_ke = data[0]['menuju_ke']
+                    if (antrean_sedang_dipanggil != null) {
+                        $("#antrean_sedang_dipanggil").html( /*html*/ `${antrean_sedang_dipanggil}`)
+                        $("#antrean_sedang_dipanggil_menuju_ke").html( /*html*/
+                            `${antrean_sedang_dipanggil_menuju_ke}`)
+                    } else {
+                        $("#antrean_sedang_dipanggil").html( /*html*/ `-`)
+                        $("#antrean_sedang_dipanggil_menuju_ke").html( /*html*/ ``)
+                    }
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    Swal.close();
+                    // alertz(xhr.responseText);
+                    iziToast.warning({
+                        title: "'" + xhr.responseText + "'",
+                        position: 'bottomRight'
+                    });
+                }
+            })
+        }
+
+        var socketIO = io.connect('wss://kkpm.banyumaskab.go.id:3131/', {
+            // path: '/socket.io',
+            transports: ['websocket',
+                'polling',
+                'flashsocket'
+            ]
+        });
+
+        socketIO.on('connectParu', () => {
+            const sessionID = socketIO.id
+            $('#socket-id').html(sessionID)
+            console.log("Socket ID : " + sessionID)
+        });
+
+        socketIO.on('reload', (msg) => {
+            if (msg == 'paru_loket_pendaftaran') {
+                reload_table();
+            }
+        });
     </script>
 </body>
 

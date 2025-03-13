@@ -14,6 +14,15 @@
                         <li class="nav-item">
                             <a href="{{ url('/Laporan/Pendaftaran') }}" class="nav-link "><b>Laporan Pendaftaran</b></a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ url('/Laporan/Lab') }}" class="nav-link "><b>Laporan Laboratorium</b></a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('/Laporan/Lab') }}" class="nav-link "><b>Laporan Radiologi</b></a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('/kasir/report') }}" class="nav-link "><b>Laporan Kasir</b></a>
+                        </li>
                     </ul>
                 </div>
                 <div class="container-fluid mt-1" id="tab_1">
@@ -169,7 +178,7 @@
                     </div>
                 </div>
                 <div class="container-fluid mt-1" id="tab_3" style="display: none;">
-                    <div class="card shadow mb-4 col">
+                    <div class="card shadow ">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start bg-teal">
                             <h6 class="m-0 font-weight-bold">Data Kunjungan Pasien IGD Tahun:</h6>
@@ -188,48 +197,48 @@
                             <button class="btn btn-success" onclick="getChartData()">Tampilkan</button>
                         </div>
 
-                    </div>
-                    <!-- Card Body -->
-                    <div class="card-body mb-2">
-                        <div class="row  flex-lg-row flex-column">
-                            <div class="card shadow mb-4 col">
-                                <!-- Card Header - Dropdown -->
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
-                                    <h6 class="m-0 font-weight-bold text-primary">Grafik Kunjungan Pasien IGD</h6>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body mb-2" id="divChartIGD">
-                                    <div class="chart-area">
-                                        <canvas id="chartIgd" class="mb-3 pb-3"></canvas>
+                        <!-- Card Body -->
+                        <div class="card-body mb-2">
+                            <div class="row  flex-lg-row flex-column">
+                                <div class="card shadow mb-4 col">
+                                    <!-- Card Header - Dropdown -->
+                                    <div
+                                        class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
+                                        <h6 class="m-0 font-weight-bold text-primary">Grafik Kunjungan Pasien IGD</h6>
+                                    </div>
+                                    <!-- Card Body -->
+                                    <div class="card-body mb-2" id="divChartIGD">
+                                        <div class="chart-area">
+                                            <canvas id="chartIgd" class="mb-3 pb-3"></canvas>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card shadow mb-4 col">
-                                <!-- Card Header - Dropdown -->
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
-                                    <h6 class="m-0 font-weight-bold text-primary">Tabel Kunjungan IGD</h6>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body mb-2">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered" id="tabelIgd" width="100%"
-                                            cellspacing="0">
-                                            <thead class="bg bg-teal">
-                                                <tr>
-                                                    <th>Kd</th>
-                                                    <th>Bulan</th>
-                                                    <th>Layanan</th>
-                                                    <th>Jumlah</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <!-- Table rows will be dynamically populated with data -->
-                                            </tbody>
-                                        </table>
+                                <div class="card shadow mb-4 col">
+                                    <!-- Card Header - Dropdown -->
+                                    <div
+                                        class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
+                                        <h6 class="m-0 font-weight-bold text-primary">Tabel Kunjungan IGD</h6>
+                                    </div>
+                                    <!-- Card Body -->
+                                    <div class="card-body mb-2">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered" id="tabelIgd" width="100%"
+                                                cellspacing="0">
+                                                <thead class="bg bg-teal">
+                                                    <tr>
+                                                        <th>Kd</th>
+                                                        <th>Bulan</th>
+                                                        <th>Layanan</th>
+                                                        <th>Jumlah</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Table rows will be dynamically populated with data -->
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                </div>
