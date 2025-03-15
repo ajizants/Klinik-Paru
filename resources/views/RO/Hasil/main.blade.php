@@ -674,7 +674,167 @@
         </nav>
 
 
-        @include('Template.sidebar')
+        <aside class="main-sidebar sidebar-dark-navy elevation-4">
+            <!-- Brand Logo -->
+            <a href="" class="brand-link">
+                <img src="{{ asset('img/LOGO KKPM.jpg') }}" alt="KKPM Logo"
+                    class="bg bg-light brand-image img-circle elevation-3" width="30" height="30">
+                <span class="brand-text font-weight-light text-md"><b>KKPM</b></span>
+            </a>
+            @if (Auth::user() != null)
+                @include('Template.sidebar')
+            @else
+                <!-- Sidebar -->
+                <div class="sidebar font-weight-bold">
+                    <!-- Sidebar Menu -->
+                    <nav class="mt-2">
+                        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                            data-accordion="false">
+                            <!-- Dashboard -->
+                            <li class="nav-item">
+                                <a href="{{ url('home') }}" class="nav-link">
+                                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                                    <p>Dashboard</p>
+                                </a>
+                            </li>
+                            <!-- Display Section -->
+                            <li class="nav-item">
+                                <a href="" class="nav-link">
+                                    <i class="fa-solid fa-desktop nav-icon"></i>
+                                    <p>Display <i class="right fas fa-angle-left"></i></p>
+                                </a>
+                                <ul class="nav nav-treeview" style="display: none;">
+                                    <li class="nav-item ml-4">
+                                        <a class="nav-link" target="_blank" href="{{ url('/verif/1') }}">
+                                            <i class="fa-solid fa-tv nav-icon"></i>
+                                            <p>Ambil Antrian</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item ml-4">
+                                        <a class="nav-link" target="_blank" href="{{ url('display/loket') }}">
+                                            <i class="fa-solid fa-tv nav-icon"></i>
+                                            <p>Display Loket</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item ml-4">
+                                        <a class="nav-link" target="_blank" href="{{ url('display/tensi') }}">
+                                            <i class="fa-solid fa-tv nav-icon"></i>
+                                            <p>Display Tensi</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item ml-4">
+                                        <a class="nav-link" target="_blank" href="{{ url('display/lab') }}">
+                                            <i class="fa-solid fa-tv nav-icon"></i>
+                                            <p>Display Lab</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item ml-4">
+                                        <a class="nav-link" target="_blank" href="{{ url('display/farmasi') }}">
+                                            <i class="fa-solid fa-tv nav-icon"></i>
+                                            <p>Display Farmasi</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item ml-4">
+                                        <a href="" class="nav-link">
+                                            <i class="fa-solid fa-desktop nav-icon"></i>
+                                            <p>Display Poli
+                                                <i class="fas fa-angle-left" style="margin-left: 58px;"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview" style="display: none;">
+                                            <li class="nav-item ml-4">
+                                                <a class="nav-link" target="_blank"
+                                                    href="{{ url('/display/poli/agil') }}">
+                                                    <i class="fa-solid fa-tv nav-icon"></i>
+                                                    <p>dr. Agil</p>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item ml-4">
+                                                <a class="nav-link" target="_blank"
+                                                    href="{{ url('/display/poli/nova') }}">
+                                                    <i class="fa-solid fa-tv nav-icon"></i>
+                                                    <p>dr. Cempaka</p>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item ml-4">
+                                                <a class="nav-link" target="_blank"
+                                                    href="{{ url('/display/poli/filly') }}">
+                                                    <i class="fa-solid fa-tv nav-icon"></i>
+                                                    <p>dr. Filly</p>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item ml-4">
+                                                <a class="nav-link" target="_blank"
+                                                    href="{{ url('/display/poli/sigit') }}">
+                                                    <i class="fa-solid fa-tv nav-icon"></i>
+                                                    <p>dr. Sigit</p>
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </li>
+
+                                </ul>
+                            </li>
+
+                            <!-- Transaksi Section -->
+                            <li class="nav-header">TRANSAKSI</li>
+                            <!-- Hasil Penunjang -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/RO/Hasil') }}">
+                                    <i class="fa-solid fa-x-ray nav-icon"></i>
+                                    <p>Hasil Penunjang</p>
+                                </a>
+                            </li>
+
+                            <!-- Laporan Section -->
+                            <li class="nav-header">LAPORAN</li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/Pusat-Data') }}">
+                                    <i class="fa-solid fa-database nav-icon"></i>
+                                    <p>Pusat Data</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/report') }}">
+                                    <i class="fa-solid fa-chart-column nav-icon"></i>
+                                    <p>Laporan Petugas</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/Laporan/Pendaftaran') }}">
+                                    <i class="fa-solid fa-chart-column nav-icon"></i>
+                                    <p>Laporan Pendaftaran</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/Riwayat/Pasien') }}">
+                                    <i class="fa-solid fa-book-medical nav-icon"></i>
+                                    <p>Riwayat Pasien</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/Diagnosa/Mapping') }}">
+                                    <i class="fa-solid fa-book-medical nav-icon"></i>
+                                    <p>Mapping Dx Medis</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <!-- /.sidebar-menu -->
+                </div>
+                <!-- /.sidebar -->
+            @endif
+
+
+        </aside>
+
 
         <div class="content-wrapper" id="topSection">
             <div class="content-header py-0">
