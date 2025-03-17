@@ -1,16 +1,22 @@
 @extends('Template.lte')
 
 @section('content')
-    {{-- Data per pasien --}}
     <div class="card shadow mb-4">
-        <!-- Card Header - Dropdown -->
+        <!-- Card Header -->
         <div class="card-header bg-lime py-3 d-flex flex-row align-items-center justify-content-start">
             <h6 class="m-0 font-weight-bold text-dark">Daftar Surat Keterangan Medis</h6>
         </div>
+
         <div class="card-body mb-2 px-1">
-            <div class="form-row mx-autow ">
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" style="display: none;" class="badge bg-warning text-wrap text-center z-3 loadingSpinner">
+                <i class="fa fa-spinner fa-spin"></i> Sedang Mencari data...
+            </div>
+
+            <!-- Form Pilih Tanggal -->
+            <div class="form-row mx-auto">
                 <label class="col-form-label">Pilih Tanggal Kunjungan Pasien :</label>
-                <div class="form-group col-6 col-md-2">
+                <div class="form-group col-5 col-md-2">
                     <input type="date" id="tanggal" class="form-control bg-white" placeholder="Tanggal" />
                 </div>
                 <div class="col col-md">
@@ -19,11 +25,12 @@
                             id="cariantrian"></span>
                     </button>
                 </div>
-
             </div>
 
+            <!-- Include Table -->
             @include('Template.Table.all')
 
+            <!-- Card List Surat Keterangan Medis -->
             <div class="card card-warning">
                 <div class="card-header">
                     <h3 class="card-title"><b>List Surat Keterangan Medis</b></h3>
@@ -35,7 +42,7 @@
                             <thead class="bg bg-teal table-bordered border-warning">
                                 <tr>
                                     <th class="text-center">NO</th>
-                                    <th class="text-center">aksi</th>
+                                    <th class="text-center">Aksi</th>
                                     <th class="text-center">No Surat</th>
                                     <th class="text-center">Tanggal</th>
                                     <th class="text-center">NoRM</th>
@@ -47,14 +54,14 @@
                                     <th class="text-center">Dokter</th>
                                 </tr>
                             </thead>
-                            <tbody class="table-bordered border-warning">
-                            </tbody>
+                            <tbody class="table-bordered border-warning"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- Modal -->
     <div class="modal fade show" id="modalCreateSurat" tabindex="-1" aria-labelledby="modalCreateSuratLabel">
@@ -173,38 +180,7 @@
                                     <input type="text" id="pekerjaan" class="form-control bg-white"
                                         placeholder="Tanggal Transaksi" />
                                 </div>
-                                {{-- <div class="form-group col-12 col-md-6">
-                                    <label for="keperluan" class="col-form-label font-weight-bold mb-0">
-                                        Keterangan/Keperluan Surat:
-                                    </label>
-                                    <input type="text" id="keperluan" class="form-control bg-white"/>
-                                    <select id="keperluan" class="form-control border border-primary">
-                                        <option value="">Pilih Keterangan/Keperluan Surat...</option>
-                                        <option value="KETERANGAN DIAGNOSA MEDIS">KETERANGAN DIAGNOSA MEDIS</option>
-                                        <option value="KETERANGAN UNTUK BEKERJA">KETERANGAN UNTUK BEKERJA</option>
-                                        <option value="KETERANGAN SEHAT UNTUK SEKOLAH">KETERANGAN SEHAT UNTUK SEKOLAH
-                                        </option>
-                                        <option value="KETERANGAN SAKIT UNTUK PENGAJUAN KIS">KETERANGAN SAKIT UNTUK
-                                            PENGAJUAN KIS</option>
-                                        <option value="KETERANGAN SEHAT UNTUK LATSAR">KETERANGAN SEHAT UNTUK LATSAR
-                                        </option>
-                                        <option value="KETERANGAN SELESAI PENGOBATAN TBC">KETERANGAN SELESAI PENGOBATAN TBC
-                                        </option>
-                                        <option value="PEMBUATAN SIP">PEMBUATAN SIP</option>
-                                    </select>
 
-                                </div> --}}
-                                {{-- <div class="form-group col-6 col-md-2">
-                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Hasil
-                                        :</label>
-                                    <div class="input-group">
-                                        <select id="hasil" class="form-control border border-primary">
-                                            <option value="">--Pilih Hasil--</option>
-                                            <option value="Sehat">Sehat</option>
-                                            <option value="Sakit">Sakit</option>
-                                        </select>
-                                    </div>
-                                </div> --}}
                                 <div class="form-group col-6 col-md-2">
                                     <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Hasil
                                         :</label>
@@ -217,23 +193,8 @@
                                             Sakit
                                         </label>
                                     </div>
-                                    {{-- <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="Sehat"
-                                            id="defaultCheck1" checked>
-                                        <label class="form-check-label" for="defaultCheck1">
-                                            Sehat
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="Sakit"
-                                            id="defaultCheck2">
-                                        <label class="form-check-label" for="defaultCheck2">
-                                            Sakit
-                                        </label>
-                                    </div> --}}
                                 </div>
-                                {{-- </div>
-                            <div class="row"> --}}
+
                                 <div class="form-group col-6 col-md-2">
                                     <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Tgl Surat
                                         :</label>
@@ -295,8 +256,6 @@
                                             <thead>
                                                 <tr>
                                                     <th width="15px" class="text-center">Tanggal</th>
-                                                    {{-- <th width="15px" class="text-center">NoRM</th>
-                                                    <th class="col-2 text-center">Nama</th> --}}
                                                     <th class="col-2 text-center">Dokter</th>
                                                     <th class="col-3">Diagnosa</th>
                                                     <th>Anamnesa</th>

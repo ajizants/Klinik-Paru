@@ -298,60 +298,49 @@ function reportPendapatanTotalPerHari(tahun) {
 }
 
 function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
-    // console.log("🚀 ~ isiTabelPendapatanTotalPerHari ~ tableId:", tableId);
-    // console.log("🚀 ~ isiTabelPendapatanTotalPerHari ~ data:", data);
-    // console.log("🚀 ~ isiTabelPendapatanTotalPerHari ~ selector:", selector);
-
-    // Enrich data for rendering
     data.forEach((item, index) => {
         item.no = index + 1;
         const today = new Date().toISOString().split("T")[0];
         const atrb = item.tanggal === today ? "" : "";
-        const blmSetor = ` <button class="btn btn-danger btn-sm mr-2 mb-2"
-            data-tgl="${item.tanggal}"
-            data-jumlah="${item.jumlah}"
-            data-asal_pendapatan="3.003.25581.5"
-            data-noSbs="${item.nomor}"
-            onclick="setorkan(this)"
-            ${atrb}
-            >Setorkan
-            </button>`;
-        const sdhSetor = ` <button class="btn btn-info btn-sm mr-2 mb-2"
-            data-tgl="${item.tanggal}"
-            data-jumlah="${item.jumlah}"
-            data-asal_pendapatan="3.003.25581.5"
-            data-nosbs="${item.nomor}">Sduah Disetorkan
-            </button>`;
-        const btnSetorkan =
-            item.btnColor === "btn btn-danger" ? blmSetor : sdhSetor;
-        item.aksi = `
-            <a class="btn btn-sm btn-warning mr-2 mb-2"
-                href="/api/cetakBAPH/${item.tanggal}/${tahun}/${selector}"
-                target="_blank">
-                BAPH ${selector}
-            </a>
-            <a class="btn btn-sm btn-success mr-2 mb-2"
-                href="/api/cetakSBS/${item.tanggal}/${tahun}/${selector}"
-                target="_blank">
-                SBS ${selector}
-            </a>
-           ${btnSetorkan}
-        `;
+        if (item.btnColor === "btn btn-danger") {
+            item.aksi = ` <button class="btn btn-danger btn-sm mb-2 col-sm-9"
+                            data-tgl="${item.tanggal}"
+                            data-jumlah="${item.jumlah}"
+                            data-asal_pendapatan="3.003.25581.5"
+                            data-noSbs="${item.nomor}"
+                            onclick="setorkan(this)"
+                            ${atrb}
+                            >Setorkan
+                            </button>
+                        `;
+        } else {
+            item.aksi = `
+                <a class="btn btn-sm btn-warning mr-2 mb-2"
+                    href="/api/cetakBAPH/${item.tanggal}/${tahun}/${selector}"
+                    target="_blank">
+                    BAPH
+                </a>
+                <a class="btn btn-sm btn-success mr-2 mb-2 px-3"
+                    href="/api/cetakSBS/${item.tanggal}/${tahun}/${selector}"
+                    target="_blank">
+                    SBS
+                </a>
+            `;
+        }
     });
 
-    // Initialize DataTable
     $(tableId)
         .DataTable({
             data: data,
             columns: [
                 { data: "no", className: "text-center" },
-                { data: "aksi", className: "text-center col-4" },
+                { data: "aksi", className: "text-center col-2" },
                 { data: "tanggal", className: "text-center" },
                 { data: "nomor", className: "text-center" },
                 { data: "kode_akun" },
                 { data: "uraian" },
                 { data: "jumlah", className: "text-right" },
-                { data: "pendapatan", className: "text-right" },
+                { data: "pendapatan", className: "col-2" },
             ],
             autoWidth: false,
             order: [[0, "dsc"]],
@@ -365,6 +354,12 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
                 {
                     extend: "colvis",
                     text: "Tampilkan Kolom",
+                },
+                {
+                    text: "Update Data Total Pendapatan", // Teks tombol
+                    action: function (e, dt, node, config) {
+                        reportPendapatanTotalPerHari($("#tahun").val()); // Panggil fungsi custom
+                    },
                 },
             ],
         })
@@ -1011,23 +1006,6 @@ function updateData() {
     reportPendapatanTotalPerHari(tahun);
 }
 
-// function initializeDataTable(selector, titlePrefix, tglAwal, tglAkhir) {
-//     $(selector)
-//         .DataTable({
-//             destroy: true,
-//             buttons: [
-//                 {
-//                     extend: "excelHtml5",
-//                     text: "Download",
-//                     title: `${titlePrefix} Tanggal: ${tglAwal} s.d. ${tglAkhir}`,
-//                     filename: `${titlePrefix} Tanggal: ${tglAwal} s.d. ${tglAkhir}`,
-//                 },
-//             ],
-//         })
-//         .buttons()
-//         .container()
-//         .appendTo(`${selector}_wrapper .col-md-6:eq(0)`);
-// }
 function initializeDataTable(selector, titlePrefix, tglAwal, tglAkhir) {
     if ($.fn.DataTable.isDataTable(selector)) {
         $(selector).DataTable().destroy();

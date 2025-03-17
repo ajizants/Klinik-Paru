@@ -6,14 +6,10 @@
     </a>
     <!-- Card Content - Collapse -->
     <div class="collapse show card-body p-0" id="collapseCardAntrian">
-        <div class="d-flex justify-content-center position-absolute" style="z-index: 500;">
-            @include('Template.Table.loading')
+        <div id="loadingSpinner" class="badge bg-warning text-wrap text-center z-3 loadingSpinner">
+            <i class="fa fa-spinner fa-spin"></i> Sedang Mencari data...
         </div>
         <div class="mt-3">
-            {{-- <div id="loadingSpinner" style="display: none; scale: 2;"
-                class="badge bg-primary text-wrap text-center z-3 position-absolute mt-5">
-                <i class="fa fa-spinner fa-spin"> </i>Sedang Mencari data...
-            </div> --}}
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a type="button" class="nav-link active bg-blue"

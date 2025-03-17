@@ -96,7 +96,7 @@
             });
         }
 
-        function cariDataFaksesPerujuk(tglAwal, tglAkhir) {
+        function cariDataFaskesPerujuk(tglAwal, tglAkhir) {
             Swal.fire({
                 title: 'Memuat Data, Mohon Tunggu...',
                 showConfirmButton: false,
@@ -236,114 +236,86 @@
         function drawChart(data, tahun) {
             console.log("🚀 ~ drawChart ~ data:", data);
 
-            // Data untuk dataset 'umum', 'bpjs', dan 'totalKunjungan'
-            var umumData = Array(12).fill(0); // Inisialisasi array dengan 12 elemen nol
+            // Inisialisasi array data untuk 12 bulan
+            var umumData = Array(12).fill(0);
             var bpjsData = Array(12).fill(0);
-            var totalKunjunganData = Array(12).fill(0); // Array untuk total kunjungan per bulan
+            var totalKunjunganData = Array(12).fill(0);
+
             var bulanLabels = [
-                "Januari",
-                "Februari",
-                "Maret",
-                "April",
-                "Mei",
-                "Juni",
-                "Juli",
-                "Agustus",
-                "September",
-                "Oktober",
-                "November",
-                "Desember",
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
             ];
 
             var canvas = document.getElementById("chartIgd");
-            var cardBody = document.getElementById("divChartIGD");
 
-            // Mengatur lebar dan tinggi canvas sesuai dengan lebar dan tinggi card-body
-            canvas.width = cardBody.offsetWidth;
-            canvas.height = cardBody.offsetHeight;
-
-            // Jika data bukan array, konversikan menjadi array
+            // Jika data bukan array, konversi ke array
             if (!Array.isArray(data)) {
-                data = Object.values(data); // Mengonversi objek menjadi array
+                data = Object.values(data);
             }
 
-            // Mengisi data bulan dengan nilai dari respons JSON
-            data.forEach(function(item) {
-                var bulanIndex = item.bulan -
-                    1; // Mengonversi nilai bulan ke indeks array (dikurangi 1 karena indeks dimulai dari 0)
+            // Mengisi dataset menggunakan reduce untuk efisiensi
+            data.reduce((acc, item) => {
+                var bulanIndex = item.bulan - 1; // Konversi bulan ke indeks array
                 var kelompok = item.kelompok.toLowerCase();
-                var totalKunjungan = item.totalKunjungan;
 
-                // Update jumlah per kelompok untuk bulan yang sesuai
-                if (kelompok === "umum") {
-                    umumData[bulanIndex] = item.jumlah;
-                } else if (kelompok === "bpjs") {
-                    bpjsData[bulanIndex] = item.jumlah;
-                }
+                if (kelompok === "umum") umumData[bulanIndex] = item.jumlah;
+                else if (kelompok === "bpjs") bpjsData[bulanIndex] = item.jumlah;
 
-                // Update total kunjungan untuk bulan yang sesuai
-                totalKunjunganData[bulanIndex] = totalKunjungan;
-            });
+                totalKunjunganData[bulanIndex] = item.totalKunjungan;
 
-            // Pengaturan Grafik
-            var options = {
-                responsive: true,
-                maintainAspectRatio: false, // Ini akan membuat chart menyesuaikan dengan ukuran canvas
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                    },
-                },
-            };
+                return acc;
+            }, {});
 
-            // Menggambar Grafik menggunakan Chart.js
-            var ctx = canvas.getContext("2d");
-            if (myChart) {
-                myChart.destroy();
+            // Jika `myChart` sudah ada, hancurkan sebelum membuat yang baru
+            if (window.myChart) {
+                window.myChart.destroy();
             }
-            myChart = new Chart(ctx, {
+
+            // Buat chart baru
+            var ctx = canvas.getContext("2d");
+            window.myChart = new Chart(ctx, {
                 type: "bar",
                 data: {
                     labels: bulanLabels,
                     datasets: [{
                             label: "Umum",
                             data: umumData,
-                            backgroundColor: "rgba(75, 192, 192, 0.2)",
+                            backgroundColor: "rgba(75, 192, 192, 0.5)",
                             borderColor: "rgba(75, 192, 192, 1)",
                             borderWidth: 1,
                         },
                         {
                             label: "BPJS",
                             data: bpjsData,
-                            backgroundColor: "rgba(255, 99, 132, 0.2)",
+                            backgroundColor: "rgba(255, 99, 132, 0.5)",
                             borderColor: "rgba(255, 99, 132, 1)",
                             borderWidth: 1,
                         },
                         {
                             label: "Total Kunjungan",
-                            data: totalKunjunganData, // Setiap bulan total kunjungan
-                            backgroundColor: "rgba(54, 162, 235, 0.2)", // Warna untuk total kunjungan
+                            data: totalKunjunganData,
+                            backgroundColor: "rgba(54, 162, 235, 0.5)",
                             borderColor: "rgba(54, 162, 235, 1)",
                             borderWidth: 1,
-                            // type: "line", // Tipe grafik untuk total kunjungan (garis)
-                            // fill: false, // Tidak ada area yang diisi di bawah garis
                         },
                     ],
                 },
-                options: options,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    aspectRatio: 0.7,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                },
             });
 
-            // Menyesuaikan tinggi canvas agar sesuai dengan ukuran card-body
-            window.addEventListener("resize", function() {
-                console.log("🚀 ~ window.addEventListener ~ resize:")
-                canvas.width = cardBody.offsetWidth;
-
-                canvas.height = cardBody.offsetHeight;
-                myChart.resize();
-            });
-
-            Swal.close()
+            // **Hapus event listener resize manual** karena Chart.js sudah handle resize otomatis
+            Swal.close();
         }
+
 
         function tabelIgd(data, tahun) {
             // Jika data bukan array, konversikan menjadi array

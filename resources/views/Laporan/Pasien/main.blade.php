@@ -5,200 +5,22 @@
         <div class="card-body">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a type="button" class="nav-link border border-primary active bg-blue"
-                        onclick=" toggleSections('#dTunggu')"><b>Riwayat
+                    <a type="button" class="nav-link border border-primary active bg-blue" onclick=" toggleSections('#tab_1')"
+                        id="link_tab_1"><b>Riwayat
                             Kunjungan</b></a>
                 </li>
                 <li class="nav-item">
-                    <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#dSelesai')"><b>Rekap
+                    <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#tab_2')"><b>Rekap
                             Diagnosa</b></a>
                 </li>
                 <li class="nav-item">
-                    <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#dAntrian')"><b>Rekap
-                            Jumlah
+                    <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#tab_3')"><b>Jumlah
                             Diagnosa</b></a>
                 </li>
             </ul>
-            <div class="card shadow mb-4" id="dTunggu">
-                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-start">
-                    <h6 class="font-weight-bold ">Riwayat Kunjungan Pasien</h6>
-                </div>
-                <div class="card-body">
-                    <div id="form_cari_riwayat">
-                        <div class="form-row mx-autow ">
-                            <label class="col-form-label">NO RM :</label>
-                            <div class="form-group col-6 col-md-2">
-                                <input type="text" id="no_rm" class="form-control" placeholder="No RM" maxlength="6"
-                                    pattern="[0-9]{6}" required />
-                            </div>
-                            <div class="col-1">
-                                <button type="button" class="btn btn-success" onclick="cariRiwayatKunjunganPasien();">
-                                    Cari Data
-                                </button>
-                            </div>
-                            <div class="col col-md ">
-                                <P class="font-weight-bold text-danger mt-2 fs-3"
-                                    style="animation: blink 3s infinite; font-size: 15px">
-                                    <= Untuk Mencari data, silahkan ketikan NO RM lalu tekan enter atau klik tombol cari</P>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="container-fluid">
-                        <div class="card card-info">
-                            <div class="card-body p-2">
-                                <div class="container-fluid d-flex justify-content-center bg-secondary p-2 pt-4 fs-3"
-                                    id="identitas">
-                                    <div class="col-1">
-                                        <p><strong>NO RM:</strong></p>
-                                        <p><strong>Nama:</strong></p>
-                                    </div>
-                                    <div class="col-3">
-                                        <p>-</p>
-                                        <p>-</p>
-                                    </div>
-                                    <div class="col-1">
-                                        <p><strong>Tgl Lahir:</strong></p>
-                                        <p><strong>Umur:</strong></p>
-                                    </div>
-                                    <div class="col-2">
-                                        <p>-</p>
-                                        <p>-</p>
-                                    </div>
-                                    <div class="col-1">
-                                        <p><strong>Kelamin:</strong></p>
-                                        <p><strong>Alamat:</strong></p>
-                                    </div>
-                                    <div class="col-4">
-                                        <p>-</p>
-                                        <p>-</p>
-                                    </div>
-                                </div>
-                                <div style="display: block; overflow-x: auto; white-space: nowrap;">
-                                    <table id="riwayatKunjungan" class="table table-striped table-hover pt-0 mt-0 fs-6"
-                                        style="width:100%" cellspacing="0">
-                                        <thead>
-                                            <tr>
-                                                <th width="15px" class="text-center">Antrian</th>
-                                                <th width="15px" class="text-center">Tanggal</th>
-                                                <th width="15px" class="text-center">Jaminan</th>
-                                                <th class="text-center">Dokter</th>
-                                                <th>Diagnosa</th>
-                                                <th>Anamnesa</th>
-                                                <th>Tindakan</th>
-                                                <th>Laborat</th>
-                                                <th>Radiologi</th>
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card shadow mb-4" id="dSelesai" style="display: none">
-                <!-- Card Header - Dropdown -->
-                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-start">
-                    <h6 class="font-weight-bold ">Rekap Diagnosa Kunjungan</h6>
-                </div>
-                <div class="card-body mb-2">
-                    <div class="row">
-                        <label class="col-form-label">Rentang Tanggal :</label>
-                        <div class="form-group col-3">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="far fa-calendar-alt"></i>
-                                    </span>
-                                </div>
-                                <input type="text" class="form-control float-right" id="reservation">
-                            </div>
-                        </div>
-                        <div class="col-3">
-                            <button type="button" class="btn btn-success" onclick="cariRiwayat(tglAwal,tglAkhir);">
-                                Refresh
-                                <span class="fa-solid fa-rotate ml-1" data-toggle="tooltip" data-placement="top"
-                                    title="Update Data" id="cariantrian"></span>
-                            </button>
-                        </div>
-
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover dataTable dtr-inline" id="report" cellspacing="0">
-                            <thead class="bg bg-teal table-bordered border-warning">
-                                <tr>
-                                    <th>Urut</th>
-                                    <th>Tanggal</th>
-                                    <th>Penjamin</th>
-                                    <th>No. RM</th>
-                                    <th class="col-2">Nama Pasien</th>
-                                    <th>Desa</th>
-                                    <th>RT/RW</th>
-                                    <th>Kecamatan</th>
-                                    <th>Kabupaten</th>
-                                    <th>ICD X 1</th>
-                                    <th>Diagnosa 1</th>
-                                    <th>ICD X 2</th>
-                                    <th>Diagnosa 2</th>
-                                    <th>ICD X 3</th>
-                                    <th>Diagnosa 3</th>
-                                    <th class="col-3">Dokter</th>
-                                    {{-- <th class="px-0 col-3">Aksi</th> --}}
-                                </tr>
-                            </thead>
-                            <tbody class="table-bordered border-warning">
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-            </div>
-            <div class="card shadow mb-4" id="dAntrian" style="display: none">
-                <!-- Card Header - Dropdown -->
-                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-start">
-                    <h6 class="font-weight-bold ">Rekap Jumlah Diagnosa Kunjungan</h6>
-                </div>
-                <div class="card-body mb-2">
-                    <div class="row">
-                        <label class="col-form-label">Rentang Tanggal :</label>
-                        <div class="form-group col-3">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="far fa-calendar-alt"></i>
-                                    </span>
-                                </div>
-                                <input type="text" class="form-control float-right" id="reservation2">
-                            </div>
-                        </div>
-                        <div class="col-3">
-                            <button type="button" class="btn btn-success" onclick="cariJumlah(tglAwal,tglAkhir);">
-                                Refresh
-                                <span class="fa-solid fa-rotate ml-1" data-toggle="tooltip" data-placement="top"
-                                    title="Update Data" id="cariantrian"></span>
-                            </button>
-                        </div>
-
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover dataTable dtr-inline" id="diagnosisTable"
-                            cellspacing="0">
-                            <thead class="bg bg-teal table-bordered border-warning">
-                                <tr>
-                                    <th>Diagnosa</th>
-                                    <th>Kode Dx</th>
-                                    <th>Jumlah Total</th>
-                                    <th>Jumlah UMUM</th>
-                                    <th>Jumlah BPJS</th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-bordered border-warning">
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-            </div>
+            @include('Laporan.Pasien.riwayatKunjungan')
+            @include('Laporan.Pasien.rekapDX')
+            @include('Laporan.Pasien.jumlahDX')
         </div>
     </div>
 
@@ -542,35 +364,32 @@
         function cariDataPasien(no_rm) {
             $("#no_rm").val(no_rm);
             cariRiwayatKunjunganPasien();
-            toggleSections('#dTunggu')
+            document.querySelector('.active.bg-blue').classList.remove('active', 'bg-blue');
+            document.getElementById('link_tab_1').classList.add('active', 'bg-blue');
+            toggleSections('#tab_1')
         }
 
         function cariRiwayatKunjunganPasien() {
             let identitas = `
-                                <div class="col-1">
-                                <p><strong>NO RM:</strong></p>
-                                <p><strong>Nama:</strong></p>
+                            <div class="row">
+                                <!-- Kolom 1 -->
+                                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                                    <p><strong>NO RM:</strong> <span>-</span></p>
+                                    <p><strong>Nama:</strong> <span>-</span></p>
                                 </div>
-                                <div class="col-3">
-                                <p>-</p>
-                                <p>-</p>
+
+                                <!-- Kolom 2 -->
+                                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                                    <p><strong>Tgl Lahir:</strong> <span>-</span></p>
+                                    <p><strong>Umur:</strong> <span>-</span></p>
                                 </div>
-                                <div class="col-1">
-                                    <p><strong>Tgl Lahir:</strong></p>
-                                    <p><strong>Umur:</strong></p>
+
+                                <!-- Kolom 3 -->
+                                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                                    <p><strong>Kelamin:</strong> <span>-</span></p>
+                                    <p><strong>Alamat:</strong> <span>-</span></p>
                                 </div>
-                                <div class="col-2">
-                                    <p>-</p>
-                                    <p>-</p>
-                                </div>
-                                <div class="col-1">
-                                    <p><strong>Kelamin:</strong></p>
-                                    <p><strong>Alamat:</strong></p>
-                                </div>
-                                <div class="col-4">
-                                    <p>-</p>
-                                    <p>-</p>
-                                </div>
+                            </div>
                             `;
             $("#identitas").html(identitas);
             let no_rm = ($("#no_rm").val()).padStart(6, "0");
@@ -615,6 +434,15 @@
                                         ${item.antrean_nomor}
                                     </div>                                    
                                     <div>
+                                        ${item.penjamin_nama}
+                                    </div>                                    
+                                    <div>
+                                        ${item.dokter_nama}
+                                    </div>                                    
+                                    <div>
+                                        <br>
+                                        <br>
+                                        <br>
                                         <br>
                                         <br>
                                         <br>
@@ -642,6 +470,8 @@
                                     </div>
                                 </div>
                         `;
+
+
                 item.anamnesa = `<div>
                             <p><strong>DS :</strong> ${item.ds || "-"}</p>
                             <p><strong>DO :</strong> ${item.do || "-"}</p>
@@ -670,36 +500,69 @@
                             </table>
                         </div>`;
                 let identitas = `
-                                <div class="col-1">
-                                <p><strong>NO RM:</strong></p>
-                                <p><strong>Nama:</strong></p>
+                            <div class="row">
+                                <!-- Kolom 1 -->
+                                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                                    <p><strong>NO RM:</strong> <span>${item.pasien_no_rm}</span></p>
+                                    <p><strong>Nama:</strong> <span>${item.pasien_nama}</span></p>
                                 </div>
-                                <div class="col-3">
-                                <p>${item.pasien_no_rm}</p>
-                                <p>${item.pasien_nama}</p>
+
+                                <!-- Kolom 2 -->
+                                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                                    <p><strong>Tgl Lahir:</strong> <span>${item.pasien_tgl_lahir}</span></p>
+                                    <p><strong>Umur:</strong> <span>${item.umur}</span></p>
                                 </div>
-                                <div class="col-1">
-                                    <p><strong>Tgl Lahir:</strong></p>
-                                    <p><strong>Umur:</strong></p>
+
+                                <!-- Kolom 3 -->
+                                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                                    <p><strong>Kelamin:</strong> <span>${item.jenis_kelamin_nama}</span></p>
+                                    <p><strong>Alamat:</strong> <span>${item.alamat}</span></p>
                                 </div>
-                                <div class="col-2">
-                                    <p>${item.pasien_tgl_lahir}</p>
-                                    <p>${item.umur}</p>
-                                </div>
-                                <div class="col-1">
-                                    <p><strong>Kelamin:</strong></p>
-                                    <p><strong>Alamat:</strong></p>
-                                </div>
-                                <div class="col-4">
-                                    <p>${item.jenis_kelamin_nama}</p>
-                                    <p>${item.alamat}</p>
-                                </div>
+                            </div>
                             `;
                 $("#identitas").html(identitas);
                 item.ro = generateAsktindString(item.radiologi);
                 item.igd = generateAsktindString(item.tindakan, true);
                 item.lab = generateAsktindString(item.laboratorium, false, true);
                 item.hasilLab = generateAsktindString(item.hasilLab, false, true);
+
+
+                const obats = item.obat;
+                let obatHtml = `<div>
+                                    <div>
+                                        <table border="1" style="width:100%; border-collapse:collapse;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nama Obat</th>
+                                                    <th>Aturan Pakai</th>
+                                                    <th>Jumlah</th>
+                                                </tr>
+                                            </thead>
+                                `;
+                obats.forEach(function(obat) {
+                    let detailObatHtml = "";
+                    obat.resep_obat_detail.forEach(function(detail) {
+                        detailObatHtml += `
+                                <tr>
+                                    <td><strong>${detail.nama_obat}</strong></td>
+                                    <td>${obat.signa_1} X ${obat.signa_2}</td>
+                                    <td>${detail.jumlah_obat}</td>
+                                </tr>
+                            `;
+                    });
+
+                    obatHtml += `                            
+                                    <tbody>
+                                        ${detailObatHtml}
+                                    </tbody>                             
+                        `;
+                });
+                obatHtml += `
+                            </table>
+                            </div>
+                            </div>`;
+
+                item.dataObats = obatHtml;
             });
 
             // Hancurkan DataTable sebelumnya jika ada
@@ -720,14 +583,6 @@
                         className: "text-center"
                     },
                     {
-                        data: "penjamin_nama",
-                        className: "text-center"
-                    },
-                    {
-                        data: "dokter_nama",
-                        className: "text-center text-wrap"
-                    },
-                    {
                         data: "diagnosa",
                         className: "text-wrap"
                     },
@@ -745,6 +600,10 @@
                     {
                         data: "ro",
                         title: "Radiologi",
+                    },
+                    {
+                        data: "dataObats",
+                        title: "Resep Obat",
                     },
                 ],
 

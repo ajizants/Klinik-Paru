@@ -903,7 +903,6 @@ class KominfoModel extends Model
             return ['error' => $e->getMessage()];
         }
     }
-
     private function urutan($panggilPoli, $panggilLabMat, $panggilRoMat, $selesaiTensi)
     {
 
@@ -985,7 +984,6 @@ class KominfoModel extends Model
             'tunggu_ro'   => $tunggu_ro,
         ];
     }
-
     public function login($username = null, $password = null)
     {
         // dd("masuk");
@@ -1027,7 +1025,6 @@ class KominfoModel extends Model
             'cookies' => $cookies,
         ];
     }
-
     public function get_data_antrian(array $data, $pasien_no_rm = null)
     {
         $client = new Client();
@@ -1092,7 +1089,6 @@ class KominfoModel extends Model
         $data = json_decode($body, true);
         return $data;
     }
-
     public function submit(array $data, $log_id = null)
     {
         $client = new Client();
@@ -1302,62 +1298,6 @@ class KominfoModel extends Model
         }
     }
 
-    // public function getTungguFaramsi($tanggal, $cookie)
-    // {
-    //     $client = new Client();
-    //     // $cookie = $_COOKIE['kominfo_cookie'] ?? null;
-    //     $tgl = $tanggal ?? date('Y-m-d');
-    //     $tanggal = $tgl . ' - ' . $tgl;
-    //     // dd($tanggal);
-
-    //     if (!$cookie) {
-    //         // Authenticate if no cookie is found
-    //         $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-    //         $cookie = $loginResponse['cookies'][0] ?? null;
-
-    //         if ($cookie) {
-    //             setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
-    //         } else {
-    //             return response()->json(['message' => 'Login gagal'], 401);
-    //         }
-    //     }
-
-    //     $url = env('BASR_URL_KOMINFO', '') . '/loket_farmasi/get_data';
-
-    //     try {
-    //         $response = $client->request('POST', $url, [
-    //             'form_data' => [
-    //                 'tanggal' => $tanggal,
-    //                 'length' => 1000,
-    //             ],
-    //             'headers' => [
-    //                 'Content-Type' => 'application/x-www-form-urlencoded',
-    //                 'Cookie' => $cookie,
-    //             ],
-    //         ]);
-    //         // dd($response);
-
-    //         // Check if the response status is 200
-    //         if ($response->getStatusCode() !== 200) {
-    //             Log::error('Error response body: ' . (string) $response->getBody());
-    //             return response()->json(['error' => 'Internal Server Error'], 500);
-    //         }
-
-    //         $body = (string) $response->getBody();
-    //         $data = json_decode($body, true);
-
-    //         return $data;
-
-    //     } catch (\GuzzleHttp\Exception\RequestException $e) {
-    //         // Handle network or request errors
-    //         Log::error('Request Error: ' . $e->getMessage());
-    //         return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
-    //     } catch (\Exception $e) {
-    //         // Handle unexpected errors
-    //         Log::error('Unexpected Error: ' . $e->getMessage());
-    //         return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
-    //     }
-    // }
     public function getTungguLoket()
     {
         $client  = new Client();

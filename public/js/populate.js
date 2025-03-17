@@ -635,11 +635,11 @@ function generateActionLink(item, ruang, statusFilter) {
             </a>
         `;
 
-    const linkLog = `<a type="button" class="aksi-button btn-sm btn-warning py-md-0 py-1 m-1 icon-link icon-link-hover"
+    const linkLog = `<a type="button" class="aksi-button btn-sm btn-warning py-md-0 py-1 m-1 col-sm-3 col icon-link icon-link-hover"
                     onclick="cariLog('${item.id}');">
                     <strong>Posisi</strong>
                 </a>`;
-    const linkCppt = `<a type="button" class="aksi-button btn-sm btn-success py-md-0 py-1 m-1 icon-link icon-link-hover"
+    const linkCppt = `<a type="button" class="aksi-button btn-sm btn-success py-md-0 py-1 m-1 col-sm-3 col icon-link icon-link-hover"
                     onclick="riwayatKunjungan('${item.pasien_no_rm}','${item.pasien_nama}');">
                     <strong>Riwayat</strong>                   
                 </a>`;
@@ -657,12 +657,12 @@ function generateActionLink(item, ruang, statusFilter) {
             createLink("fas fa-pen-to-square", "setTransaksi", ruang) + linkLog,
         surat:
             createLink(
-                "fas fa-pen-to-square",
+                "",
                 "setTransaksi",
                 ruang,
-                " m-1",
+                "col-sm-3 col m-1",
                 "",
-                "surat"
+                "<strong>Surat</strong>"
             ) +
             linkLog +
             linkCppt,
@@ -1092,7 +1092,7 @@ function antrianAll(ruang) {
                 getColumnDefinitions("status_pulang")
             );
             initializeDataTable(
-                "#dataTunggu",
+                "#dataAntrian",
                 daftarTungguUmum,
                 getColumnDefinitions("status", ruang),
                 ruang

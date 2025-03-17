@@ -9,10 +9,6 @@
         <div class="col-6 d-flex justify-content-center z-3 position-absolute">
         </div>
         <div class="mt-3">
-            <div id="loadingSpinner" style="display: none; scale: 2;"
-                class="badge bg-primary text-wrap text-center z-3 position-absolute mt-5">
-                <i class="fa fa-spinner fa-spin"> </i>Sedang Mencari data...
-            </div>
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a type="button" class="nav-link active bg-blue"
@@ -35,70 +31,15 @@
                 </div>
             </ul>
 
+            <div id="loadingSpinner" class="badge bg-warning text-wrap text-center z-3 loadingSpinner">
+                <i class="fa fa-spinner fa-spin"></i> Sedang Mencari data...
+            </div>
+
+
             @include('Template.Table.tunggu')
             @include('Template.Table.belumUpload')
             @include('Template.Table.selesai')
             @include('Template.Table.all')
-            {{-- <div id="dAntrian" class="card-body card-body-hidden p-2" style="display: none;">
-                <div class="table-responsive pt-2 px-2">
-                    <table id="antrianall" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
-                        cellspacing="0">
-                        <thead class="bg bg-warning">
-                            <tr>
-                                <th width="15px">Aksi</th>
-                                <th width="25px">Status</th>
-                                <th>Tanggal</th>
-                                <th>Urut</th>
-                                <th>Jaminan</th>
-                                <th>No RM</th>
-                                <th class="col-3">Nama Pasien</th>
-                                <th>Poli</th>
-                                <th class="col-3">Dokter</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-            <div id="dTunggu" class="card-body card-body-hidden p-2">
-                <div class="table-responsive pt-2 px-2">
-                    <table id="dataAntrian" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
-                        cellspacing="0">
-                        <thead class="bg bg-teal">
-                            <tr>
-                                <th width="15px">Aksi</th>
-                                <th>status</th>
-                                <th>Tanggal</th>
-                                <th>Urut</th>
-                                <th>Jaminan</th>
-                                <th>No RM</th>
-                                <th class="col-1">Nama Pasien</th>
-                                <th class="col-3">Dokter</th>
-                                <th class="col-3">Permintaan</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-            <div id="dSelesai" class="card-body card-body-hidden p-2" style="display: none;">
-                <div class="table-responsive pt-2 px-2">
-                    <table id="dataSelesai" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
-                        cellspacing="0">
-                        <thead class="bg bg-teal">
-                            <tr>
-                                <th width="15px">Aksi</th>
-                                <th width="25px">Status</th>
-                                <th>Tanggal</th>
-                                <th>Urut</th>
-                                <th>Jaminan</th>
-                                <th>No RM</th>
-                                <th class="col-3">Nama Pasien</th>
-                                <th>Poli</th>
-                                <th class="col-3">Dokter</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div> --}}
         </div>
     </div>
 </div>

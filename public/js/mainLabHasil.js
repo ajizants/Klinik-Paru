@@ -468,7 +468,7 @@ function antrianBelum(belumTransaksi, tgl) {
         item.tgl = tgl;
         item.tanggal = moment(item.created_at).format("DD-MM-YYYY");
         item.alamat = item.alamat.replace(/, [^,]*$/, "");
-        item.aksi = `<button class="btn btn-danger bg-danger"
+        item.aksi = `<button class="btn btn-danger col"
                             data-toggle="tooltip"
                             data-placement="right"
                             title="Input Hasil Lab"
@@ -540,22 +540,25 @@ function antrianSudah(sudahTransakasi, tgl) {
         item.alamat = item.alamat.replace(/, [^,]*$/, "");
         let desa = item.alamat.split(",")[0];
 
-        item.aksi = `<div>
-                        <button class="btn btn-danger"
-                                data-toggle="tooltip"
-                                data-placement="right"
-                                title="Edit Hasil Lab"
-                                data-norm="${item.norm}"
-                                data-nama="${item.nama}"
-                                data-alamat="${item.alamat}"
-                                onclick="cariTsLab('${item.norm}', '${item.tgl}','tampil');"><i class="fa-solid fa-file-pen"></i></button>
-                        <a href="/api/hasil/lab/cetak/${item.notrans}/${item.tgl}" method="get" target="_blank" class="btn btn-success"
-                                data-toggle="tooltip" data-placement="right" title="Cetak Hasil Lab"><i class="fa-solid fa-print"></i></a>
-                    </div>
-                    <div class="mt-2">
-                        <a class="panggil px-2 btn btn-sm btn-warning"
-                            onclick="panggil('${sebutan} ${item.nama} dari ${desa}, silahkan menuju ke loket laboratorium')">Panggil <i class="fa-solid fa-volume-high"></i></a>
-                    </div>`;
+        item.aksi = `<a class="m-1 col btn btn-danger"
+                            data-toggle="tooltip"
+                            data-placement="right"
+                            title="Edit Hasil Lab"
+                            data-norm="${item.norm}"
+                            data-nama="${item.nama}"
+                            data-alamat="${item.alamat}"
+                            onclick="cariTsLab('${item.norm}', '${item.tgl}','tampil');">
+                            <i class="fa-solid fa-file-pen"></i>
+                        </a>
+                        <a href="/api/hasil/lab/cetak/${item.notrans}/${item.tgl}" method="get" target="_blank" class="m-1 col btn btn-success"
+                            data-toggle="tooltip" data-placement="right" title="Cetak Hasil Lab">
+                            <i class="fa-solid fa-print"></i>
+                        </a>                   
+                        <a class="m-1 col btn btn-warning"
+                            onclick="panggil('${sebutan} ${item.nama} dari ${desa}, silahkan menuju ke loket laboratorium')">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </a>
+                    `;
     });
 
     $("#antrianSudah").DataTable({

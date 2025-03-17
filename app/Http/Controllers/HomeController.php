@@ -653,7 +653,7 @@ class HomeController extends Controller
     public function riwayatKunjungan()
     {
         $title = 'Riwayat Kunjungan';
-        return view('Laporan.riwayatPasien')->with('title', $title);
+        return view('Laporan.Pasien.main')->with('title', $title);
     }
 
     public function mappingDx()

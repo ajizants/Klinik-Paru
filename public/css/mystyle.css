@@ -288,3 +288,21 @@ input:checked + .slider:before {
     white-space: nowrap;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
+
+#loadingSpinner {
+    position: absolute;
+    left: 45%;
+    top: 60%;
+    transform: scale(2.5);
+    z-index: 3 !important;
+}
+
+@media (max-width: 768px) {
+    #loadingSpinner {
+        position: absolute;
+        left: 35%;
+        top: 40%;
+        transform: scale(2.5);
+        z-index: 3 !important;
+    }
+}

@@ -65,9 +65,8 @@
                 </div>
 
                 <div class="row">
-                    <label class="col-form-label mr-4">Menu Cetak Data:</label>
-                    <label class="col-form-label">Tahun :</label>
-                    <div class="form-group col-1">
+                    <label class="col-form-label mr-4">Cetak Data Tahun:</label>
+                    <div class="form-group col-7 col-sm-1">
                         <div class="input-group">
                             <Select class="form-control" id="tahun">
                                 @foreach ($listYear as $year)
@@ -76,8 +75,8 @@
                             </Select>
                         </div>
                     </div>
-                    <label class="col-form-label">Bulan :</label>
-                    <div class="form-group col-2">
+                    <label class="col-form-label ml-5 ml-sm-0 pl-5 pl-sm-0">Bulan :</label>
+                    <div class="form-group col-7 col-sm-2">
                         <div class="input-group">
                             <Select class="form-control" id="bulan">
                                 <option value="">-- Pilih Bulan --</option>
@@ -123,24 +122,19 @@
                     </button>
                 </div>
                 <div class="row mt-4">
-                    <label class="col-form-label mr-4">Menu Menampilkan Data:</label>
-                    <div class="col-4">
-                        <div class="row">
-                            <label class="col-form-label mb-0">Tanggal :</label>
-                            <div class="form-group col mb-0">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="far fa-calendar-alt"></i>
-                                        </span>
-                                    </div>
-                                    <input type="text" class="form-control float-right" id="reservation">
-                                </div>
+                    <label class="col-form-label mb-0">Tampilkan Data di Tanggal:</label>
+                    <div class="form-group col-8 col-sm-3 mb-0">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="far fa-calendar-alt"></i>
+                                </span>
                             </div>
+                            <input type="text" class="form-control float-right" id="reservation">
                         </div>
                     </div>
 
-                    <div class="form-group col-2">
+                    <div class="">
                         <button type="button" class="btn btn-danger" onclick="updateData();">
                             Perbarui Data
                         </button>
@@ -528,27 +522,22 @@
     </div>
     <div class="card shadow mb-4" id="cardTotalPendapatanUmum">
         <!-- Card Header - Dropdown -->
-        <div class="card-header  d-flex flex-row align-items-center bg-primary justify-content-center">
+        <div class="card-header d-flex flex-row align-items-center bg-primary justify-content-center">
             <h5 class="m-0 font-weight-bold text-center">Laporan Total Pendapatan Per Hari UMUM</h5>
         </div>
         <div class="card-body mb-2">
-            <div class="col-9 mt-4 position-absolute"style="z-index: 100;!important">
-                <button type="button" class="btn btn-success" onclick="reportPendapatanTotalPerHari($('#tahun').val())">
-                    Update Data
-                </button>
-            </div>
-            <div class="table-responsive ">
+            <div class="table-responsive">
                 <table class="table table-bordered table-hover" id="tabelPendapatanTotalPerHariUMUM" cellspacing="0">
                     <thead class="bg bg-teal table-bordered border-warning">
                         <tr>
-                            <th>Aksi</th>
                             <th>No</th>
+                            <th>Aksi</th>
                             <th>Tanggal</th>
                             <th>Nomor SBS</th>
                             <th>Kode Akun</th>
                             <th>Uraian Akun</th>
                             <th>Jumlah</th>
-                            <th>Total</th>
+                            <th>Rupiah</th>
                         </tr>
                     </thead>
                 </table>
@@ -590,9 +579,7 @@
     <script>
         let dataSBS = @json($pendapatanTotal);
         let dataSBSB = dataSBS.bpjs;
-        // console.log("🚀 ~ dataSBSB:", dataSBSB)
         let dataSBSU = dataSBS.umum;
-        // console.log("🚀 ~ dataSBSU:", dataSBSU)
     </script>
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('vendor/plugins/chart.js/Chart.min.js') }}"></script>
