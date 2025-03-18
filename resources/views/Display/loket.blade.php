@@ -41,8 +41,8 @@
     <aside class="bg-white main-sidebar" style="width: 20px;z-index: 2 !important;height: 5000px;"></aside>
     <div class="container-fluid row px-2 mx-2">
         <div class="col">
-            {{-- <iframe class="custom-iframe" scrolling="no" style="margin-top: -34px; margin-left: -10px;"
-                src="https://kkpm.banyumaskab.go.id/administrator/display_tv/loket_pendaftaran"></iframe> --}}
+            <iframe class="custom-iframe" scrolling="no" style="margin-top: -34px; margin-left: -10px;"
+                src="https://kkpm.banyumaskab.go.id/administrator/display_tv/loket_pendaftaran"></iframe>
         </div>
         <div class="col mt-1">
             <h1 class="text-center font-weight-bold mt-5">Daftar Tunggu</h1>
