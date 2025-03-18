@@ -296,15 +296,24 @@
             }
 
             const identitas = `
-                                <div class="col-4">
-                                <p><strong>NO RM:</strong> ${hasilLab[0].norm}</p>
-                                <p><strong>Nama:</strong> ${hasilLab[0].pasien.nama}</p>
-                                </div>
-                                <div class="col-4">
-                                <p><strong>Alamat:</strong> ${hasilLab[0].pasien.alamat}</p>
-                                <p><strong>Jaminan:</strong> ${hasilLab[0].pasien.layanan}</p>
-                                </div>
+                                <table class="table table-bordered table-sm mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <th class="bg-info text-white">No RM</th>
+                                            <td>${hasilLab[0].norm} / ${hasilLab[0].pasien.layanan}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bg-info text-white">Nama</th>
+                                            <td>${hasilLab[0].pasien.nama}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bg-info text-white">Alamat</th>
+                                            <td>${hasilLab[0].pasien.alamat}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             `;
+
             $("#identitas").html(identitas);
 
             // Format date to dd-mm-yyyy
@@ -647,7 +656,7 @@
                             <!-- Message Start -->
                             <div class="media">
                                 <img src="{{ asset('img/user1.webp') }}" alt="User Avatar"
-                                    class="img-size-50 mr-3 img-circle">/
+                                    class="img-size-50 mr-3 img-circle">
                                 <div class="media-body">
                                     <h3 class="dropdown-item-title">
                                         <span class="float-right text-sm text-danger"><i

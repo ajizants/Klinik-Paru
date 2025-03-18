@@ -546,12 +546,14 @@
                 columns: [{
                         data: "antrean",
                         className: "text-wrap",
-                        title: "Pendaftaran"
+                        title: "Pendaftaran",
+                        width: "25%"
                     },
                     {
                         data: "tanggal",
                         className: "text-center",
-                        title: "Tanggal"
+                        title: "Tanggal",
+                        width: "10%"
                     },
                     {
                         data: "rincian",
