@@ -970,40 +970,125 @@ class PasienKominfoController extends Controller
         return response()->json($result);
     }
 
+    // public function kunjungan(Request $request)
+    // {
+    //     // Ambil parameter dari req
+    //     $params = $request->only(['tanggal_awal', 'tanggal_akhir', 'no_rm']);
+    //     $model  = new KominfoModel();
+    //     $data   = $model->cpptRequest($params);
+    //     if (isset($data['response']['data']) && is_array($data['response']['data'])) {
+    //         // Filter data, jika tindakan kosong maka skip
+    //         $nowDate = Carbon::now()->format('Y-m-d');
+
+    //         $filteredData = array_filter($data['response']['data'], function ($item) use ($nowDate) {
+    //             return $item['tanggal'] <= $nowDate;
+    //         });
+
+    //         // Update the 'data' key with the filtered data
+    //         $data = $filteredData;
+    //     } else {
+    //         // Handle the case where 'response' or 'data' key is not present
+    //         $data = [];
+    //     }
+
+    //     // return $data;
+    //     $riwayat = [];
+    //     foreach ($data as $item) {
+    //         $dataLab  = LaboratoriumHasilModel::with('pemeriksaan')->where('notrans', $item['no_reg'])->get();
+    //         $hasilLab = [];
+    //         foreach ($dataLab as $lab) {
+    //             $hasilLab[] = [
+    //                 'pemeriksaan' => $lab->pemeriksaan->nmLayanan,
+    //                 'nilaiNormal' => $lab->pemeriksaan->normal,
+    //                 'hasil'       => $lab->hasil,
+    //             ];
+    //         }
+    //         $alamat = $item['kelurahan_nama'] . ', ' . $item['pasien_rt'] . '/' . $item['pasien_rw'] . ', ' . $item['kecamatan_nama'] . ', ' . $item['kabupaten_nama'] . ', ' . $item['provinsi_nama'];
+
+    //         $riwayat[] = [
+    //             'tanggal'            => $item['tanggal'],
+    //             'dokter_nama'        => $item['dokter_nama'],
+    //             'pasien_nama'        => $item['pasien_nama'],
+    //             'pasien_no_rm'       => $item['pasien_no_rm'],
+    //             'pasien_tgl_lahir'   => $item['pasien_tgl_lahir'],
+    //             'umur'               => $item['umur'],
+    //             'antrean_nomor'      => $item['antrean_nomor'],
+    //             'penjamin_nama'      => $item['penjamin_nama'],
+    //             'jenis_kelamin_nama' => $item['jenis_kelamin_nama'],
+    //             'alamat'             => $alamat,
+    //             'dx1'                => $item['diagnosa'][0]['nama_diagnosa'] ?? '',
+    //             'dx2'                => $item['diagnosa'][1]['nama_diagnosa'] ?? '',
+    //             'dx3'                => $item['diagnosa'][2]['nama_diagnosa'] ?? '',
+    //             'ds'                 => $item['subjek'] ?? '',
+    //             'do'                 => $item['objek_data_objektif'] ?? '',
+    //             'td'                 => $item['objek_tekanan_darah'] ?? '',
+    //             'bb'                 => $item['objek_bb'] ?? '',
+    //             'nadi'               => $item['objek_nadi'] ?? '',
+    //             'suhu'               => $item['objek_suhu'] ?? '',
+    //             'rr'                 => $item['objek_rr'] ?? '',
+    //             'tindakan'           => $item['tindakan'],
+    //             'radiologi'          => $item['radiologi'],
+    //             'obat'               => $item['resep_obat'],
+    //             'laboratorium'       => $item['laboratorium'],
+    //             'hasilLab'           => $hasilLab,
+    //         ];
+    //     }
+
+    //     // return response()->json($data);
+    //     return response()->json($riwayat);
+    // }
+
     public function kunjungan(Request $request)
     {
-        // Ambil parameter dari req
+        // Ambil parameter dari request
         $params = $request->only(['tanggal_awal', 'tanggal_akhir', 'no_rm']);
         $model  = new KominfoModel();
         $data   = $model->cpptRequest($params);
+        // Cek jika API mengembalikan error
+        if (isset($data['error'])) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Gagal mengambil data dari API: ' . $data['error'],
+            ], 500);
+        }
+
         if (isset($data['response']['data']) && is_array($data['response']['data'])) {
-            // Filter data, jika tindakan kosong maka skip
+            // Filter data, hanya menampilkan kunjungan hingga hari ini
             $nowDate = Carbon::now()->format('Y-m-d');
-
-            $filteredData = array_filter($data['response']['data'], function ($item) use ($nowDate) {
-                return $item['tanggal'] < $nowDate;
-            });
-
-            // Update the 'data' key with the filtered data
-            $data = $filteredData;
+            $data    = array_filter($data['response']['data'], fn($item) => $item['tanggal'] <= $nowDate);
         } else {
-            // Handle the case where 'response' or 'data' key is not present
             $data = [];
         }
 
-        // return $data;
         $riwayat = [];
         foreach ($data as $item) {
-            $dataLab  = LaboratoriumHasilModel::with('pemeriksaan')->where('notrans', $item['no_reg'])->get();
-            $hasilLab = [];
-            foreach ($dataLab as $lab) {
-                $hasilLab[] = [
-                    'pemeriksaan' => $lab->pemeriksaan->nmLayanan,
-                    'nilaiNormal' => $lab->pemeriksaan->normal,
-                    'hasil'       => $lab->hasil,
-                ];
+            $dataLab = LaboratoriumHasilModel::with('pemeriksaan')->where('notrans', $item['no_reg'])->get();
+
+            if (empty($dataLab) || count($dataLab) == 0 || $dataLab == null || $dataLab == []) {
+                $hasilLabHtml = "Tidak ada pemeriksaan laboratorium";
+            } else {
+                $hasilLabHtml = "<table border='1' cellpadding='5' cellspacing='0'>
+            <thead>
+                <tr>
+                    <th>Pemeriksaan</th>
+                    <th>Nilai Normal</th>
+                    <th>Hasil</th>
+                </tr>
+            </thead>
+            <tbody>";
+                foreach ($dataLab as $lab) {
+                    $hasilLabHtml .= "<tr>
+                <td>{$lab->pemeriksaan->nmLayanan}</td>
+                <td>{$lab->pemeriksaan->normal}</td>
+                <td>{$lab->hasil}</td>
+            </tr>";
+                }
+
             }
-            $alamat = $item['kelurahan_nama'] . ', ' . $item['pasien_rt'] . '/' . $item['pasien_rw'] . ', ' . $item['kecamatan_nama'] . ', ' . $item['kabupaten_nama'] . ', ' . $item['provinsi_nama'];
+
+            $hasilLabHtml .= "</tbody></table>";
+
+            $alamat = "{$item['kelurahan_nama']}, {$item['pasien_rt']}/{$item['pasien_rw']}, {$item['kecamatan_nama']}, {$item['kabupaten_nama']}, {$item['provinsi_nama']}";
 
             $riwayat[] = [
                 'tanggal'            => $item['tanggal'],
@@ -1030,13 +1115,13 @@ class PasienKominfoController extends Controller
                 'radiologi'          => $item['radiologi'],
                 'obat'               => $item['resep_obat'],
                 'laboratorium'       => $item['laboratorium'],
-                'hasilLab'           => $hasilLab,
+                'hasilLab'           => $hasilLabHtml,
             ];
         }
 
-        // return response()->json($data);
         return response()->json($riwayat);
     }
+
     public function newCpptRequest(Request $request)
     {
         // Ambil parameter dari req

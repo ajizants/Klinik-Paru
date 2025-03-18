@@ -425,242 +425,7 @@
             });
         }
 
-        // function tabelRiwayatKunjungan(data) {
-        //     data.forEach(function(item, index) {
-        //         item.no = index + 1; // Nomor urut dimulai dari 1
-        //         item.antrean = `
-    //                         <div>
-    //                             <div>
-    //                                 ${item.antrean_nomor}
-    //                             </div>                                    
-    //                             <div>
-    //                                 ${item.penjamin_nama}
-    //                             </div>                                    
-    //                             <div>
-    //                                 ${item.dokter_nama}
-    //                             </div>
-    //                         </div>
-    //                 `;
-        //         item.diagnosa = `
-    //                         <div>
-    //                             <div>
-    //                                 <p><strong>DX 1 :</strong></p>
-    //                                 <p>${item.dx1 || "-"}</p>
-    //                             </div>                                    
-    //                             <div>
-    //                                 <p><strong>DX 2 :</strong></p>
-    //                                 <p>${item.dx2 || "-"}</p>
-    //                             </div>                                    
-    //                             <div>
-    //                                 <p><strong>DX 3 :</strong></p>                                   
-    //                                 <p>${item.dx3 || "-"}</p>
-    //                             </div>                                    
-    //                             </div>
-    //                         </div>
-    //                 `;
 
-
-        //         item.anamnesa = `<div>
-    //                     <p><strong>DS :</strong> ${item.ds || "-"}</p>
-    //                     <p><strong>DO :</strong> ${item.do || "-"}</p>
-    //                     <table>
-    //                         <tr>
-    //                             <td><strong>TD :</strong> ${
-    //                                 item.td || "-"
-    //                             } mmHg</td>
-    //                             <td><strong>Nadi :</strong> ${
-    //                                 item.nadi || "-"
-    //                             } X/mnt</td>
-    //                         </tr>
-    //                         <tr>
-    //                             <td><strong>BB :</strong> ${
-    //                                 item.bb || "-"
-    //                             } Kg</td>
-    //                             <td><strong>Suhu :</strong> ${
-    //                                 item.suhu || "-"
-    //                             } °C</td>
-    //                         </tr>
-    //                         <tr>
-    //                             <td><strong>RR :</strong> ${
-    //                                 item.rr || "-"
-    //                             } X/mnt</td>
-    //                         </tr>
-    //                     </table>
-    //                 </div>
-    //                 `;
-        //         let identitas = `
-    //                     <div class="row">
-    //                         <!-- Kolom 1 -->
-    //                         <div class="col-md-4 col-sm-6 col-12 mb-2">
-    //                             <p><strong>NO RM:</strong> <span>${item.pasien_no_rm}</span></p>
-    //                             <p><strong>Nama:</strong> <span>${item.pasien_nama}</span></p>
-    //                         </div>
-
-    //                         <!-- Kolom 2 -->
-    //                         <div class="col-md-4 col-sm-6 col-12 mb-2">
-    //                             <p><strong>Tgl Lahir:</strong> <span>${item.pasien_tgl_lahir}</span></p>
-    //                             <p><strong>Umur:</strong> <span>${item.umur}</span></p>
-    //                         </div>
-
-    //                         <!-- Kolom 3 -->
-    //                         <div class="col-md-4 col-sm-6 col-12 mb-2">
-    //                             <p><strong>Kelamin:</strong> <span>${item.jenis_kelamin_nama}</span></p>
-    //                             <p><strong>Alamat:</strong> <span>${item.alamat}</span></p>
-    //                         </div>
-    //                     </div>
-    //                     `;
-        //         $("#identitas").html(identitas);
-        //         item.ro = generateAsktindString(item.radiologi);
-        //         item.igd = generateAsktindString(item.tindakan, true);
-        //         item.lab = generateAsktindString(item.laboratorium, false, true);
-        //         item.hasilLab = generateAsktindString(item.hasilLab, false, true);
-
-
-        //         const obats = item.obat;
-        //         let obatHtml = `<div>
-    //                             <div>
-    //                                 <table border="1" style="width:100%; border-collapse:collapse;">
-    //                                     <thead>
-    //                                         <tr>
-    //                                             <th>Nama Obat</th>
-    //                                             <th>Aturan</th>
-    //                                             <th>Jumlah</th>
-    //                                         </tr>
-    //                                     </thead>
-    //                         `;
-        //         obats.forEach(function(obat) {
-        //             let detailObatHtml = "";
-        //             obat.resep_obat_detail.forEach(function(detail) {
-        //                 let aturan =
-        //                     obat.aturan_pakai ==
-        //                     null ? '' : obat.aturan_pakai;
-        //                 detailObatHtml += `
-    //                         <tr>
-    //                             <td>${detail.nama_obat}</td>
-    //                             <td>${obat.signa_1} X ${obat.signa_2} ${aturan}</td>
-    //                             <td>${detail.jumlah_obat}</td>
-    //                         </tr>
-    //                     `;
-        //             });
-
-        //             obatHtml += `                            
-    //                             <tbody>
-    //                                 ${detailObatHtml}
-    //                             </tbody>                             
-    //                 `;
-        //         });
-        //         obatHtml += `
-    //                     </table>
-    //                     </div>
-    //                     </div>`;
-
-        //         item.dataObats = obatHtml;
-
-        //         item.rincian = `<div class="mb-2">
-    //                             <p><strong>DS :</strong> ${item.ds || "-"}</p>
-    //                             <p class="mb-0"><strong>DO :</strong> ${item.do || "-"}</p>
-    //                             <span class="mx-1"><strong >TD:</strong> ${item.td || "-"} mmHg, </span>
-    //                             <span class="mx-1"><strong >Nadi:</strong> ${item.nadi || "-"} X/mnt, </span>
-    //                             <span class="mx-1"><strong >BB:</strong> ${item.bb || "-"} Kg, </span>
-    //                             <span class="mx-1"><strong >Suhu:</strong> ${item.suhu || "-"} °C, </span>
-    //                             <span class="mx-1"><strong >RR:</strong> ${item.rr || "-"} X/mnt </span>
-    //                         </div>
-
-    //                         <div>
-    //                             <div>
-    //                                 <p><strong>DX 1 :</strong>${item.dx1 || "-"}</p>
-    //                             </div>                                    
-    //                             <div>
-    //                                 <p><strong>DX 2 :</strong>${item.dx2 || "-"}</p>
-    //                             </div>                                    
-    //                             <div>
-    //                                 <p><strong>DX 3 :</strong>${item.dx3 || "-"}</p>
-    //                             </div>                                    
-    //                             </div>
-    //                         </div>
-    //                         <div><strong>Radiologi :</strong>
-    //                             ${item.ro || ""}
-    //                         </div>
-    //                         <div><strong>Tindakan :</strong>
-    //                             ${item.igd || ""}
-    //                         </div>                             
-    //                         <div><strong>Laboratorium :</strong>
-    //                             ${item.hasilLab || ""}
-    //                         </div>
-    //                         <div><strong>Resep Obat :</strong>
-    //                             ${item.dataObats || ""}
-    //                         </div>
-
-    //                 `;
-        //     });
-
-        //     // Hancurkan DataTable sebelumnya jika ada
-        //     const table = $("#riwayatKunjungan").DataTable();
-        //     if ($.fn.DataTable.isDataTable("#riwayatKunjungan")) {
-        //         table.destroy();
-        //     }
-
-        //     // Inisialisasi DataTable baru
-        //     $("#riwayatKunjungan").DataTable({
-        //         data: data,
-        //         columns: [{
-        //                 data: "antrean",
-        //                 className: "text-wrap"
-        //             },
-        //             {
-        //                 data: "tanggal",
-        //                 className: "text-center"
-        //             },
-        //             {
-        //                 data: "rincian",
-        //                 className: "text-wrap"
-        //             },
-
-        //             // columns: [{
-        //             //         data: "antrean",
-        //             //         className: "text-wrap"
-        //             //     },
-        //             //     {
-        //             //         data: "tanggal",
-        //             //         className: "text-center"
-        //             //     },
-        //             //     {
-        //             //         data: "diagnosa",
-        //             //         className: "text-wrap"
-        //             //     },
-        //             //     {
-        //             //         data: "anamnesa"
-        //             //     },
-        //             //     {
-        //             //         data: "igd",
-        //             //         title: "Tindakan",
-        //             //     },
-        //             //     {
-        //             //         data: "hasilLab",
-        //             //         title: "Laboratorium",
-        //             //     },
-        //             //     {
-        //             //         data: "ro",
-        //             //         title: "Radiologi",
-        //             //     },
-        //             //     {
-        //             //         data: "dataObats",
-        //             //         title: "Resep Obat",
-        //             //     },
-        //         ],
-
-        //         paging: true,
-        //         order: [1, "desc"], // Mengurutkan berdasarkan tanggal
-        //         lengthMenu: [
-        //             [5, 10, 25, 50, -1],
-        //             [5, 10, 25, 50, "All"],
-        //         ],
-        //         pageLength: 3,
-        //         responsive: true,
-        //         autoWidth: false,
-        //         scrollX: true,
-        //     });
-        // }
 
         function tabelRiwayatKunjungan(data) {
             data.forEach((item, index) => {
@@ -720,7 +485,7 @@
                 item.ro = generateAsktindString(item.radiologi);
                 item.igd = generateAsktindString(item.tindakan, true);
                 item.lab = generateAsktindString(item.laboratorium, false, true);
-                item.hasilLab = generateAsktindString(item.hasilLab, false, true);
+                // item.hasilLab = generateAsktindString(item.hasilLab, false, true);
 
                 let obatHtml = `
             <div>
@@ -750,24 +515,24 @@
                 item.dataObats = obatHtml;
 
                 item.rincian = `
-            <div class="mb-2">
-                <p><strong>DS :</strong> ${item.ds || "-"}</p>
-                <p><strong>DO :</strong> ${item.do || "-"}</p>
-                <span><strong>TD:</strong> ${item.td || "-"} mmHg, </span>
-                <span><strong>Nadi:</strong> ${item.nadi || "-"} X/mnt, </span>
-                <span><strong>BB:</strong> ${item.bb || "-"} Kg, </span>
-                <span><strong>Suhu:</strong> ${item.suhu || "-"} °C, </span>
-                <span><strong>RR:</strong> ${item.rr || "-"} X/mnt </span>
-            </div>
-            <div>
-                <p><strong>DX 1 :</strong> ${item.dx1 || "-"}</p>
-                <p><strong>DX 2 :</strong> ${item.dx2 || "-"}</p>
-                <p><strong>DX 3 :</strong> ${item.dx3 || "-"}</p>
-            </div>
-            <div><strong>Radiologi :</strong> ${item.ro || ""}</div>
-            <div><strong>Tindakan :</strong> ${item.igd || ""}</div>
-            <div><strong>Laboratorium :</strong> ${item.hasilLab || ""}</div>
-            <div><strong>Resep Obat :</strong> ${item.dataObats || ""}</div>`;
+                <div class="mb-2">
+                    <p><strong>DS :</strong> ${item.ds || "-"}</p>
+                    <p><strong>DO :</strong> ${item.do || "-"}</p>
+                    <p><span><strong>TD:</strong> ${item.td || "-"} mmHg, </span>
+                    <span><strong>Nadi:</strong> ${item.nadi || "-"} X/mnt, </span>
+                    <span><strong>BB:</strong> ${item.bb || "-"} Kg, </span>
+                    <span><strong>Suhu:</strong> ${item.suhu || "-"} °C, </span>
+                    <span><strong>RR:</strong> ${item.rr || "-"} X/mnt </span></p>
+                </div>
+                <div class="mb-2" >
+                    <p><strong>DX 1 :</strong> ${item.dx1 || "-"}</p>
+                    <p><strong>DX 2 :</strong> ${item.dx2 || "-"}</p>
+                    <p><strong>DX 3 :</strong> ${item.dx3 || "-"}</p>
+                </div>
+                <p class="mb-2"><strong>Radiologi :</strong> ${item.ro || "Tidak Ada Pemeriksaan RO"}</p>
+                <p class="mb-2"><strong>Tindakan :</strong> ${item.igd || "Tidak Ada Tidankan"}</p>
+                <p class="mb-2"><strong>Laboratorium :</strong> ${item.hasilLab || ""}</p>
+                <p class="mb-2"><strong>Resep Obat :</strong> ${item.dataObats || "Tidak Ada Resep Obat"}</p>`;
             });
 
             // Hancurkan DataTable sebelumnya jika ada
@@ -780,15 +545,18 @@
                 data: data,
                 columns: [{
                         data: "antrean",
-                        className: "text-wrap"
+                        className: "text-wrap",
+                        title: "Pendaftaran"
                     },
                     {
                         data: "tanggal",
-                        className: "text-center"
+                        className: "text-center",
+                        title: "Tanggal"
                     },
                     {
                         data: "rincian",
-                        className: "text-wrap"
+                        className: "text-wrap",
+                        title: "SOAP"
                     }
                 ],
                 paging: true,
