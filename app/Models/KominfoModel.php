@@ -984,6 +984,48 @@ class KominfoModel extends Model
             'tunggu_ro'   => $tunggu_ro,
         ];
     }
+    public function resep_obat($pendaftaran_id)
+    {
+        $client = new Client();
+        $url    = 'https://kkpm.banyumaskab.go.id/administrator/loket_farmasi/lihat_resep?pendaftaran_id=' . $pendaftaran_id;
+        // dd($url);
+        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+        if (! $cookie) {
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+            $cookie        = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+        $response = $client->request('GET', $url, [
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+                'Cookie'       => $cookie,
+                'User-Agent'   => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                'Referer'      => 'https://kkpm.banyumaskab.go.id/',
+                'Accept'       => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            ],
+        ]);
+
+        // dd($response);
+        $responseBody = (string) $response->getBody();
+        if (empty($responseBody)) {
+            return response()->json(['message' => 'Response kosong'], 500);
+        }
+
+        $jsonData = json_decode($responseBody, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return response()->json(['message' => 'Response bukan JSON', 'body' => $responseBody], 500);
+        }
+        dd($responseBody);
+
+        $data = response()->json(json_decode($response->getBody(), true));
+        dd($data);
+
+    }
     public function login($username = null, $password = null)
     {
         // dd("masuk");
@@ -1319,6 +1361,63 @@ class KominfoModel extends Model
         }
 
         $url = env('BASR_URL_KOMINFO', '') . '/loket_pendaftaran/get_data';
+
+        try {
+            $response = $client->request('POST', $url, [
+                'form_params' => [
+                    'tanggal' => $tanggal,
+                    'length'  => 1000,
+                ],
+                'headers'     => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Cookie'       => $cookie,
+                ],
+            ]);
+            // dd($response);
+
+            // Check if the response status is 200
+            if ($response->getStatusCode() !== 200) {
+                Log::error('Error response body: ' . (string) $response->getBody());
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
+
+            $body = (string) $response->getBody();
+            // dd($body);
+            $data = json_decode($body, true);
+
+            return $data;
+
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            // Handle network or request errors
+            Log::error('Request Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
+        } catch (\Exception $e) {
+            // Handle unexpected errors
+            Log::error('Unexpected Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
+        }
+    }
+    public function getDataLoket()
+    {
+        $client  = new Client();
+        $cookie  = $_COOKIE['kominfo_cookie'] ?? null;
+        $tgl     = date('Y-m-d');
+        $tanggal = $tgl . ' - ' . $tgl;
+        // dd($cookie);
+
+        if (! $cookie) {
+            // Authenticate if no cookie is found
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+            $cookie        = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+
+        $url = 'https://kkpm.banyumaskab.go.id/administrator/display_tv/loket_pendaftaran_get_data';
 
         try {
             $response = $client->request('POST', $url, [

@@ -83,20 +83,51 @@
                         <table class="table-auto w-full border border-black mb-4 text-sm mx-auto table-layout-fixed">
                             <thead class="bg-gray-200">
                                 <tr>
-                                    <th class="border px-2">No Resep</th>
-                                    <th class="border px-2">Nama Obat</th>
-                                    <th class="border px-2">Jumlah</th>
-                                    <th class="border px-2">Signa</th>
+                                    <th class="border px-2 text-left">R/</th>
+                                    <th class="border px-2 text-left">Nama Obat</th>
+                                    <th class="border px-2 text-left">Jumlah</th>
+                                    <th class="border px-2 text-left">Aturan Pakai</th>
+                                    <th class="border px-2 text-left">Jumlah Racikan</th>
+                                    <th class="border px-2 text-left">Keterangan</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @php
+                                    $rowspanData = [];
+                                    foreach ($obats as $obat) {
+                                        $rowspanData[$obat['no_resep']] = count($obat['resep_obat_detail']);
+                                    }
+                                @endphp
+
                                 @foreach ($obats as $obat)
-                                    <tr>
-                                        <td class="border px-2">{{ $obat['no_resep'] }}</td>
-                                        <td class="border px-2">{{ $obat['nmObat'] }}</td>
-                                        <td class="border px-2">{{ $obat['jumlah'] }}</td>
-                                        <td class="border px-2">{{ $obat['signa'] }}</td>
-                                    </tr>
+                                    @php $firstRow = true; @endphp
+                                    @foreach ($obat['resep_obat_detail'] as $detail)
+                                        <tr>
+                                            @if ($firstRow)
+                                                <td class="border px-2 align-top"
+                                                    rowspan="{{ $rowspanData[$obat['no_resep']] }}">
+                                                    {{ $obat['no_resep'] }}
+                                                </td>
+                                            @endif
+                                            <td class="border px-2">{{ $detail['nama_obat'] }}</td>
+                                            <td class="border px-2">{{ $detail['jumlah_obat'] }}</td>
+                                            @if ($firstRow)
+                                                <td class="border px-2 align-top"
+                                                    rowspan="{{ $rowspanData[$obat['no_resep']] }}">
+                                                    {{ $obat['signa'] }}
+                                                </td>
+                                                <td class="border px-2 align-top"
+                                                    rowspan="{{ $rowspanData[$obat['no_resep']] }}">
+                                                    {{ $obat['jumlah_puyer'] ?? '-' }}
+                                                </td>
+                                                <td class="border px-2 align-top"
+                                                    rowspan="{{ $rowspanData[$obat['no_resep']] }}">
+                                                    {{ $obat['ket'] ?? '-' }}
+                                                </td>
+                                            @endif
+                                        </tr>
+                                        @php $firstRow = false; @endphp
+                                    @endforeach
                                 @endforeach
                             </tbody>
                         </table>
@@ -115,7 +146,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if ($tindakanList == [])
+                                @if ($tindakanList == null)
                                     <tr>
                                         <td colspan="4" class="border px-2 text-center">Tidak ada tindakan</td>
                                     </tr>

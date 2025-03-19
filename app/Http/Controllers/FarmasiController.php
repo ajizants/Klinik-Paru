@@ -26,28 +26,19 @@ class FarmasiController extends Controller
     }
     public function cetakObat($norm, $tanggal)
     {
-        // Fetch the response data from the API
         $data = $this->cariObats($norm, $tanggal);
-        // return $data;
 
-        // Decode the JSON response to an array if it's a JsonResponse
         $dataArray = json_decode($data->getContent(), true);
 
-                                                   // return $dataArray;
-                                                   // Extract 'obats' and 'tindakanList' from the decoded array
-        $obats        = $dataArray['obats'] ?? []; // Ensure it's set as an empty array if not available
-        $tindakanList = $dataArray['tindakan'] ?? [];
-        // return $tindakanList;
-        $cppt = $dataArray['cppt'] ?? [];
-        // return $cppt;
-        $notrans = $cppt['no_reg'];
-        // return $notrans;
+        // return $dataArray;
+        $obats        = $dataArray['obats'] ?? null;
+        $tindakanList = $dataArray['tindakan'] ?? null;
+        // dd($tindakanList);
+        $cppt         = $dataArray['cppt'] ?? null;
+        $notrans      = $cppt['no_reg'];
         $waktuSelesai = $this->selesaiFarmasi($norm, $notrans);
-        // return $waktuSelesai['data']->no_sep;
-        $waktu = $waktuSelesai['message'];
-        $noSep = $waktuSelesai['data']->no_sep ?? null;
-        // return $waktu;
-        // Pass the data to the view
+        $waktu        = $waktuSelesai['message'];
+        $noSep        = $waktuSelesai['data']->no_sep ?? null;
         return view('Laporan.obat', compact('tindakanList', 'obats', 'cppt', 'noSep'))->with([
             'title' => "Obat Terpakai",
         ]);
@@ -63,9 +54,14 @@ class FarmasiController extends Controller
         ];
         $model = new KominfoModel();
         $data  = $model->cpptRequest($params);
+        // dd($data);
 
         // Pastikan data CPPT tersedia
         $cppt = $data['response']['data'][0] ?? null;
+        if (! $cppt || ! isset($cppt['no_reg'])) {
+            return response()->json(['error' => 'Data CPPT tidak ditemukan atau tidak valid'], 404);
+        }
+
         // Periksa resep obat dari CPPT
         $obats  = [];
         $dObats = [];
@@ -86,27 +82,18 @@ class FarmasiController extends Controller
         });
         foreach ($dObats as $obat) {
             $obats[] = [
-                'no_resep'     => $obat['no_resep'],
-                'jumlah_puyer' => $obat['jumlah_puyer'],
-                'signa'        => $obat['signa_1'] . ' X ' . $obat['signa_2'] . ' ' . $obat['aturan_pakai'],
-                'nmObat'       => $obat['resep_obat_detail'][0]['nama_obat'],
-                'jumlah'       => $obat['resep_obat_detail'][0]['jumlah_obat'],
+                'no_resep'          => $obat['no_resep'],
+                'jumlah_puyer'      => $obat['jumlah_puyer'],
+                'signa'             => $obat['signa_1'] . ' X ' . $obat['signa_2'] . ' ' . $obat['aturan_pakai'],
+                'ket'               => $obat['keterangan'],
+                'resep_obat_detail' => $obat['resep_obat_detail'],
             ];
         }
 
-        if (! $cppt || ! isset($cppt['no_reg'])) {
-            return response()->json(['error' => 'Data CPPT tidak ditemukan atau tidak valid'], 404);
-        }
-
-        $noReg = $cppt['no_reg'];
-        // dd($noReg);
-
-        // Fetch tindakan dari model
+        $noReg     = $cppt['no_reg'];
         $tindakans = IGDTransModel::with(['tindakan', 'transbmhp.bmhp'])
             ->where('notrans', $noReg)
-        // ->whereDate('created_at', $tanggal)
             ->get();
-        // return $tindakans;
 
         $tindakanList = [];
         foreach ($tindakans as $item) {
@@ -118,7 +105,6 @@ class FarmasiController extends Controller
                     'bmhp'   => $trans->bmhp->nmObat ?? '',
                 ];
             }
-
             $tindakanList[] = [
                 'id'       => $item->id,
                 'notrans'  => $item->notrans,
