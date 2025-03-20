@@ -104,7 +104,7 @@
 
                 <!-- IGD Section -->
                 @php
-                    $roleIGD = ['admin', '', 'igd', 'perawat'];
+                    $roleIGD = ['admin', '', 'igd', 'nurse', 'dokter', 'perawat'];
                 @endphp
                 <li class="nav-item @if (!in_array(Auth::user()->role, $roleIGD)) non-aktif @endif">
                     <a href="" class="nav-link">
@@ -315,7 +315,7 @@
 
                 <!-- Surat Medis -->
                 @php
-                    $roleSurat = ['admin', 'nakes', 'dokter', 'perawat'];
+                    $roleSurat = ['admin', 'igd', 'nakes', 'dokter', 'perawat'];
                 @endphp
                 <li class="nav-item @if (!in_array(Auth::user()->role, $roleSurat)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/surat/medis') }}">
@@ -326,7 +326,7 @@
 
                 <!-- Hasil Penunjang -->
                 @php
-                    $roleHasilPenunjang = ['tamu', 'admin', 'nakes', 'dokter', 'perawat'];
+                    $roleHasilPenunjang = ['tamu', 'igd', 'admin', 'nakes', 'dokter', 'perawat'];
                 @endphp
                 <li class="nav-item @if (!in_array(Auth::user()->role, $roleHasilPenunjang)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/RO/Hasil') }}">
@@ -358,7 +358,7 @@
                 </li>
 
                 @php
-                    $roleDokter = ['admin', 'dokter', 'perawat'];
+                    $roleDokter = ['admin', 'igd', 'dokter', 'perawat'];
                 @endphp
                 <li class="nav-item @if (!in_array(Auth::user()->role, $roleDokter)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/Riwayat/Pasien') }}">

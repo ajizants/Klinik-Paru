@@ -31,67 +31,108 @@
 </head>
 
 <body>
-    <header class="container-fluid fixed-top bg-primary">
+    <header class="container-fluid  bg-primary mt-2">
         <h1 class="font-weight-bold text-center" style="font-size: 3rem">LOKET PENDAFTARAN</h1>
-        <div class="row mb-1">
-            <div class="col text-center font-weight-bold" style="font-size:2.5rem;">SEDANG DIPANGGIL</div>
-            <div class="col text-center font-weight-bold" style="font-size:2.5rem;">DAFTAR TUNGGU</div>
-        </div>
     </header>
-    <aside class="bg-white main-sidebar" style="width: 20px;z-index: 2 !important;height: 5000px;"></aside>
     <div class="container-fluid row px-2 mx-2">
-        <div class="col">
-            <iframe class="custom-iframe" scrolling="no" style="margin-top: -34px; margin-left: -10px;"
-                src="https://kkpm.banyumaskab.go.id/administrator/display_tv/loket_pendaftaran"></iframe>
+        <div class="col-7">
+            <div class="card card-primary">
+                <div class="card-header d-flex justify-content-center">
+                    <h1 class="card-title text-center font-weight-bold"
+                        style="font-size: 2rem !important; text-align: center !important;">SEDANG
+                        DIPANGGIL</h1>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card card-dark">
+                                <div class="card-header d-flex justify-content-center">
+                                    <h1 class="card-title" style="font-size: 3rem;">Loket Pendaftaran 1</h1>
+                                </div>
+                                <div class="card-body">
+                                    <div class="" id="notif_loket_1">
+                                        <div class="text-center font-weight-bold"
+                                            style="font-size: 20rem;height: 400px;">{{ $loket1['antrean_nomor'] }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card card-dark">
+                                <div class="card-header d-flex justify-content-center">
+                                    <h3 class="card-title" style="font-size: 3rem;">Loket Pendaftaran 2</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="" id="notif_loket_2">
+                                        <div class="text-center font-weight-bold"
+                                            style="font-size: 20rem;height: 400px;">{{ $loket2['antrean_nomor'] }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col mt-1">
-            <h1 class="text-center font-weight-bold mt-5">Daftar Tunggu</h1>
-            <div class="table-responsive mt-5">
-                <table class="table table-bordered table-striped table-hover mb-0" id="header" style="width:100%">
-                    <thead class="bg bg-dark" style="font-size: 2rem;">
-                        <tr>
-                            <th class="col-2">Antrean</th>
-                            <th class="col-2">Jaminan</th>
-                            <th class="col-3">Keterangan</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-            <div class="table-responsive table-container" style=" font-size: 2rem;">
-                @php
-                    $scrol = isset($listTunggu) && count($listTunggu) >= 7 ? 'table-auto' : '';
-                @endphp
-
-                <table class="table table-bordered table-striped table-hover {{ $scrol }}" id="listTunggu"
-                    style="width:100%;">
-                    @if (empty($listTunggu))
-                        <tbody>
-                            <tr>
-                                <td colspan="3" class="text-center">Tidak ada antrian</td>
-                            </tr>
-                        </tbody>
-                    @else
-                        <tbody>
-                            @foreach ($listTunggu as $item)
-                                @if ($item['keterangan'] === 'SKIP')
-                                    @php
-                                        $bg = 'bg-warning';
-                                    @endphp
-                                @else
-                                    @php
-                                        $bg = 'bg-success';
-                                    @endphp
-                                @endif
+        <div class="col-5">
+            <div class="card card-primary">
+                <div class="card-header d-flex justify-content-center">
+                    <h1 class="card-title text-center font-weight-bold"
+                        style="font-size: 2rem !important; text-align: center !important;">DAFTAR
+                        TUNGGU</h1>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover mb-0" id="header"
+                            style="width:100%">
+                            <thead class="bg bg-dark" style="font-size: 2rem;">
                                 <tr>
-                                    <td class="col-2">{{ $item['antrean_angka'] }}</td>
-                                    <td class="col-2">{{ $item['penjamin_nama'] }}</td>
-                                    <td class="col-3 {{ $bg }}">{{ $item['keterangan'] }}</td>
+                                    <th class="col-2">Antrean</th>
+                                    <th class="col-2">Jaminan</th>
+                                    <th class="col-3">Keterangan</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    @endif
-                </table>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="table-responsive table-container" style=" font-size: 2rem;">
+                        @php
+                            $scrol = isset($listTunggu) && count($listTunggu) >= 7 ? 'table-auto' : '';
+                        @endphp
+
+                        <table class="table table-bordered table-striped table-hover {{ $scrol }}"
+                            id="listTunggu" style="width:100%;">
+                            @if (empty($listTunggu))
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3" class="text-center">Tidak ada antrian</td>
+                                    </tr>
+                                </tbody>
+                            @else
+                                <tbody>
+                                    @foreach ($listTunggu as $item)
+                                        @if ($item['keterangan'] === 'SKIP')
+                                            @php
+                                                $bg = 'bg-warning';
+                                            @endphp
+                                        @else
+                                            @php
+                                                $bg = 'bg-success';
+                                            @endphp
+                                        @endif
+                                        <tr>
+                                            <td class="col-2">{{ $item['antrean_angka'] }}</td>
+                                            <td class="col-2">{{ $item['penjamin_nama'] }}</td>
+                                            <td class="col-3 {{ $bg }}">{{ $item['keterangan'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            @endif
+                        </table>
+                    </div>
+                </div>
             </div>
+
             <div class="bg-primary text-center">
                 <h2 class="text-center mt-2 mb-0">JADWAL PRAKTIK DOKTER</h2>
             </div>
@@ -196,8 +237,11 @@
                 });
                 const data = await response.json();
                 // console.log("🚀 ~ getList ~ data:", data)
+                const tunggu = data.tunggu;
+                const panggil = data.panggil;
 
-                drawTable(data);
+                drawTable(tunggu);
+                drawNotif(panggil);
             } catch (error) {
                 console.error("Terjadi kesalahan saat mencari data:", error);
             }
@@ -209,11 +253,23 @@
                 tableBody.innerHTML = ""; // Bersihkan konten sebelumnya
 
                 data.forEach(item => {
-                    if (item.keterangan === 'SKIP') {
-                        bg = "bg-warning";
-                    } else {
-                        bg = "bg-success";
+                    let bg;
+
+                    switch (item.keterangan) {
+                        case 'SEDANG DIPANGGIL':
+                            bg = "bg-success";
+                            break;
+                        case 'SKIP':
+                            bg = "bg-warning";
+                            break;
+                        case 'MENUNGGU DIPANGGIL':
+                            bg = "bg-lime";
+                            break;
+                        default:
+                            bg = "bg-info";
+                            break;
                     }
+
                     const row = document.createElement("tr");
 
                     const noUrut = document.createElement("td");
@@ -256,12 +312,41 @@
             }
         }
 
-        setInterval(() => {
-            getList();
-        }, 20000);
+        function drawNotif(data) {
+            console.log("🚀 ~ data:", data)
+            // Filter data untuk Loket Pendaftaran 1 dan 2 dengan waktu_submit null
+            let loket1 = data.find(item => item.menuju_ke === "Loket Pendaftaran 1" && item.waktu_submit ===
+                null);
+            console.log("🚀 ~ loket1:", loket1)
+            let loket2 = data.find(item => item.menuju_ke === "Loket Pendaftaran 2" && item.waktu_submit ===
+                null);
+            console.log("🚀 ~ loket2:", loket2, loket2)
+
+            // Ambil elemen DOM
+            let notifLoket1 = document.getElementById("notif_loket_1");
+            let notifLoket2 = document.getElementById("notif_loket_2");
+
+            // Update nomor antrean dan kategori untuk Loket 1
+            if (loket1) {
+                notifLoket1.innerHTML = `
+                        <div class="text-center font-weight-bold" style="font-size: 20rem;height: 400px;">
+                            ${loket1.antrean_nomor}
+                        </div>
+                    `;
+            }
+            if (loket2) {
+                notifLoket2.innerHTML = `
+                        <div class="text-center font-weight-bold" style="font-size: 20rem;height: 400px;">
+                            ${loket2.antrean_nomor}
+                        </div>
+                    `;
+            }
+        }
+
 
         function reload_table() {
-
+            tableData.ajax.reload(null, false);
+            //  $("#div_ulangi_panggilan").html( /*html*/ ``)
             $.ajax({
                 type: "POST",
                 url: "https://kkpm.banyumaskab.go.id/administrator/display_tv/loket_pendaftaran_get_data",
@@ -313,7 +398,8 @@
 
         socketIO.on('reload', (msg) => {
             if (msg == 'paru_loket_pendaftaran') {
-                reload_table();
+                // reload_table();
+                getList();
             }
         });
     </script>

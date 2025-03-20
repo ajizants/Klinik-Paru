@@ -12,33 +12,40 @@ class DisplayController extends Controller
 {
     public function loket()
     {
-        $title = 'Daftar Tunggu Loket';
-        // Akses video dari folder yang di-share di jaringan
-        $videos     = null;
-        $client     = new KominfoModel();
-        $params     = [];
-        $jadwal     = $client->jadwalPoli($params);
-        $listTunggu = $this->listTungguLoket();
-        // return $listTunggu;
-        // return $jadwal;
-
-        return view('Display.loket', compact('title', 'videos', 'jadwal', 'listTunggu'));
+        $title       = 'Daftar Tunggu Loket';
+        $client      = new KominfoModel();
+        $params      = [];
+        $jadwal      = $client->jadwalPoli($params);
+        $listTunggu  = $this->listTungguLoket()['tunggu'];
+        $listSelesai = $this->listTungguLoket()['panggil'];
+        $loket1      = $this->listTungguLoket()['loket1'];
+        $loket2      = $this->listTungguLoket()['loket2'];
+        return view('Display.loket', compact('title', 'jadwal', 'listTunggu', 'listSelesai', 'loket1', 'loket2'));
     }
 
     public function listTungguLoket()
     {
-        $client     = new KominfoModel();
-        $listTunggu = $client->getTungguLoket();
+        $client      = new KominfoModel();
+        $listTunggu  = $client->getTungguLoket();
+        $dataPanggil = $client->getDataLoket();
+        $dataPanggil = $dataPanggil['data'];
+        $loket1      = collect($dataPanggil)->where('menuju_ke', 'Loket Pendaftaran 1')->first();
+        $loket2      = collect($dataPanggil)->where('menuju_ke', 'Loket Pendaftaran 2')->first();
+
         // dd($listTunggu);
         $listTunggu = $listTunggu['data'];
         if (is_array($listTunggu) && ! isset($listTunggu['error'])) {
-            // Filter to include only items with keterangan as "MENUNGGU DIPANGGIL" or "SKIP"
             $listTunggu = array_filter($listTunggu, function ($item) {
-                return in_array($item['keterangan'], ['MENUNGGU DIPANGGIL', 'SKIP']);
+                return in_array($item['keterangan'], ['SEDANG DIPANGGIL', 'MENUNGGU DIPANGGIL', 'SKIP']);
             });
         }
-
-        return $listTunggu;
+        $res = [
+            'tunggu'  => $listTunggu,
+            'panggil' => $dataPanggil,
+            'loket1'  => $loket1 ?? "-",
+            'loket2'  => $loket2 ?? "-",
+        ];
+        return $res;
     }
 
     public function farmasi()

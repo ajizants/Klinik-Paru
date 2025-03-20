@@ -500,7 +500,7 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
         ];
     } else {
         aksiColumns = [
-            { data: "aksi", className: "p-2 col-1 text-center", title: "Aksi" },
+            { data: "aksi", className: "p-2 col-2 text-center", title: "Aksi" },
         ];
     }
     const ketColumns = [

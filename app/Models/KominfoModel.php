@@ -1590,7 +1590,7 @@ class KominfoModel extends Model
                 "created_at"                     => "Rabu, 08 November 2023",
                 "nama_hari"                      => "Jumat",
                 "waktu_mulai_poli_tampil"        => "07=>15=>00",
-                "waktu_selesai_poli_tampil"      => "23=>15=>00",
+                "waktu_selesai_poli_tampil"      => "11=>15=>00",
                 "waktu_mulai_pendaftaran_tampil" => "07=>05=>00",
             ],
             [
@@ -1913,8 +1913,8 @@ class KominfoModel extends Model
                 "estimasi_pelayanan_detik"       => "300",
                 "created_at"                     => "Rabu, 13 Desember 2023",
                 "nama_hari"                      => "Jumat",
-                "waktu_mulai_poli_tampil"        => "08=>00=>00",
-                "waktu_selesai_poli_tampil"      => "12=>00=>00",
+                "waktu_mulai_poli_tampil"        => "07=>15=>00",
+                "waktu_selesai_poli_tampil"      => "11=>15=>00",
                 "waktu_mulai_pendaftaran_tampil" => "07=>05=>00",
             ],
             [
