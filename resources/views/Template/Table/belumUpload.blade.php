@@ -4,7 +4,7 @@
         <table id="daftarUpload" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%" cellspacing="0">
             <thead class="bg bg-warning">
                 <tr>
-                    <th width="15px">Aksi</th>
+                    {{-- <th width="15px">Aksi</th>
                     <th width="15px">Status</th>
                     <th width="20px">Obat</th>
                     <th>Tanggal</th>
@@ -13,7 +13,7 @@
                     <th>NoRM</th>
                     <th class="col-3">Nama Pasien</th>
                     <th class="col-3">Dokter</th>
-                    <th>Permintaan</th>
+                    <th>Permintaan</th> --}}
                 </tr>
             </thead>
             <tbody>

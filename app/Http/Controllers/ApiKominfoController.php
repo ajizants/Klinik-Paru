@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApiKominfo;
+use App\Models\KominfoModel;
 use Illuminate\Http\Request;
 
 class ApiKominfoController extends Controller
@@ -62,6 +63,40 @@ class ApiKominfoController extends Controller
             'html' => $html,
             'data' => $data,
         ]);
+    }
+
+    public function poliDokter()
+    {
+        $model        = new KominfoModel();
+        $res          = $model->getAkssLoket();
+        $data         = $res['data'];
+        $jadwalDokter = array_filter($data, function ($item) {
+            return stripos($item['admin_nama'], 'dr. ') !== false;
+        });
+        $jadwalDokter = array_values($jadwalDokter);
+        return $jadwalDokter;
+
+        $html = '<table id="jadwal_ruang_dokter" class="table table-bordered table-striped">';
+        $html .= '<thead class="bg bg-orange table-bordered">
+                     <tr>
+                        <th>NO</th>
+                        <th>Nama Dokter</th>
+                        <th>Jadwal</th>
+                    </tr>
+                </thead>';
+        $html .= '<tbody>';
+
+        foreach ($jadwalDokter as $index => $item) {
+            $html .= '<tr>';
+            $html .= '<td>' . ($index + 1) . '</td>';
+            $html .= '<td>' . $item['admin_nama'] . '</td>';
+            $html .= '<td>' . $item['loket_nama'] . '</td>';
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody></table>';
+
+        return response()->json(['html' => $html]);
     }
 
 }

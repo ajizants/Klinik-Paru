@@ -9,9 +9,7 @@
         <div class="col-6 d-flex justify-content-center z-3 position-absolute">
         </div>
         <div class="mt-3">
-            <div id="loadingSpinner" class="badge bg-warning text-wrap text-center z-3 loadingSpinner">
-                <i class="fa fa-spinner fa-spin"></i> Sedang Mencari data...
-            </div>
+            @include('Template.Table.loading')
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a type="button" class="nav-link active bg-blue" onclick="toggleSections('#dTunggu');"><b>Daftar

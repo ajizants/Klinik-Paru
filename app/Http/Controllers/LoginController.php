@@ -29,46 +29,39 @@ class LoginController extends Controller
         ];
 
         if (Auth::attempt($data)) {
-            // Ambil email dari input request
             $email = $request->input('email');
             if (! str_ends_with($email, '@rsparu.com')) {
                 $email .= '@rsparu.com';
             }
-            // Cek apakah email sama dengan 'nurse@rsparu.com'
 
+            $go = "";
             switch ($email) {
                 case 'nurse@rsparu.com':
-                    return redirect('/surat/medis');
+                    $go = '/nurse';
                     break;
                 case 'tindakan@rsparu.com':
-                    return redirect('/igd');
+                    $go = '/igd';
                     break;
                 case 'kasir@rsparu.com':
-                    return redirect('/kasir');
+                    $go = '/kasir';
                     break;
                 case 'radiologi@rsparu.com':
-                    return redirect('/ro');
+                    $go = '/ro';
                     break;
                 case 'dots@rsparu.com':
-                    return redirect('/dots');
+                    $go = '/dots';
                     break;
                 case 'lab@rsparu.com':
-                    return redirect('/lab');
+                    $go = '/lab';
                     break;
-                case 'dataanalis@rsparu.com':
-                    return redirect('/Pusat-Data');
-                    break;
-                case 'admin@rsparu.com':
-                    return redirect('/Pusat-Data');
+                case 'dataanalis@rsparu.com' || 'admin@rsparu.com':
+                    $go = '/Pusat-Data';
                     break;
                 default:
-                    return redirect('/home');
+                    $go = '/home';
             }
-            // if ($email == 'nurse@rsparu.com' || $email == 'nurse') {
-            //     // dd($email);
-            //     return redirect('/surat/medis');
-            // }
-            // return redirect('home');
+
+            return redirect($go);
         } else {
             session()->flash('error', 'Email atau Password Salah');
 

@@ -200,11 +200,7 @@
                                                 <!-- /.card-header -->
                                                 <div class="card-body p-2">
                                                     <div class="table-responsive">
-                                                        <div id="loadingSpinner" style="display: none;"
-                                                            class="badge bg-primary text-wrap text-center z-3 position-absolute mt-5">
-                                                            <i class="fa fa-spinner fa-spin"></i> Sedang Mencari
-                                                            data...
-                                                        </div>
+                                                        @include('Template.Table.loading')
                                                         <table id="kunjDots" name="kunjungan Dots Center"
                                                             class="table table-striped" style="width:100%"
                                                             cellspacing="0">

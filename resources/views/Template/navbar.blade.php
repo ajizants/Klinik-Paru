@@ -12,6 +12,12 @@
                     <a href="https://kkpm.banyumaskab.go.id/administrator/auth" target="_blank"" class="nav-link">APPS
                         KOMINFO</a>
                 </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a type="button" class="nav-link" data-toggle="modal" data-target="#modal-jadwal"
+                        onclick="getJadwalDokter()">
+                        Jadwal Dokter
+                    </a>
+                </li>
             </ul>
 
             <!-- Right navbar links -->
@@ -74,3 +80,58 @@
                 </li>
             </ul>
         </nav>
+
+
+        <div class="modal fade" id="modal-jadwal" tabindex="-1" aria-labelledby="modal-jadwalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-jadwalLabel">Jadwal Dokter</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body px-4">
+                        <table id="jadwal_ruang_dokter" class="table table-bordered table-striped">
+                            <thead class="bg-orange table-bordered">
+                                <tr>
+                                    <th>NO</th>
+                                    <th>Nama Dokter</th>
+                                    <th>Ruangan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jadwal-tbody"></tbody>
+                        </table>
+                        <div id="loadingSpinner2" class="badge bg-warning text-wrap text-center z-3 loadingSpinner">
+                            <i class="fa fa-spinner fa-spin"></i> Sedang Mencari data...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function getJadwalDokter() {
+                $("#loadingSpinner2").show();
+                fetch('/api/jadwal/dokter/poli')
+                    .then(response => response.json())
+                    .then(data => {
+                        let tbody = document.getElementById("jadwal-tbody");
+                        tbody.innerHTML = ""; // Kosongkan sebelum diisi ulang
+
+                        data.forEach((item, index) => {
+                            let row = document.createElement("tr");
+                            row.innerHTML = `
+                                <td>${index + 1}</td>
+                                <td>${item.admin_nama}</td>
+                                <td>${item.loket_nama}</td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    })
+                    .catch(error => console.error('Error:', error))
+                    .finally(() => {
+                        $("#loadingSpinner2").hide();
+                    });
+            }
+        </script>

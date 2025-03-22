@@ -268,9 +268,7 @@
                                                     </thead>
                                                 </table>
                                             </div>
-                                            <div id="loadingSpinner" style="display: none;">
-                                                <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                                            </div>
+                                            @include('Template.Table.loading')
                                         </div>
                                         <!-- /.card-body -->
                                     </div>

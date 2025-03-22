@@ -21,7 +21,7 @@ body {
 }
 
 .table-container {
-    min-height: 50vh;
+    max-height: 40vh;
     /* Set max height untuk auto scroll */
     overflow: hidden;
     /* Sembunyikan scroll bar */

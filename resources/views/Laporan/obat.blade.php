@@ -52,7 +52,9 @@
                                     <td class="px-2"></td>
                                     <td class="px-2">Tanggal</td>
                                     <td class="px-2">:</td>
-                                    <td class="px-2">{{ $cppt['tanggal'] }}</td>
+                                    <td class="px-2">{{ $cppt['tanggal'] }}, <span
+                                            class="ml-4">{{ $cppt['ket_status_pasien_pulang'] }}</span>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="px-2">Nama</td>

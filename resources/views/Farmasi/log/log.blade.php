@@ -176,9 +176,7 @@
                         </thead>
                     </table>
                 </div>
-                <div id="loadingSpinner" style="display: none;">
-                    <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                </div>
+                @include('Template.Table.loading')
             </div>
             <div class="card card-lime col p-0">
                 <div class="card-header">
@@ -200,9 +198,7 @@
                         </thead>
                     </table>
                 </div>
-                <div id="loadingSpinner" style="display: none;">
-                    <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                </div>
+                @include('Template.Table.loading')
             </div>
         </div>
         <div class="container-fluid mb-4">

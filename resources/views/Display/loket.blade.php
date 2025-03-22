@@ -36,37 +36,39 @@
     </header>
     <div class="container-fluid row px-2 mx-2">
         <div class="col-7">
-            <div class="card card-primary">
+            <div class="card card-primary"> {{-- Dipanggil --}}
                 <div class="card-header d-flex justify-content-center">
                     <h1 class="card-title text-center font-weight-bold"
                         style="font-size: 2rem !important; text-align: center !important;">SEDANG
                         DIPANGGIL</h1>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <div class="row">
                         <div class="col">
-                            <div class="card card-dark">
+                            <div class="card card-dark mb-0">
                                 <div class="card-header d-flex justify-content-center">
                                     <h1 class="card-title" style="font-size: 3rem;">Loket Pendaftaran 1</h1>
                                 </div>
-                                <div class="card-body">
-                                    <div class="" id="notif_loket_1">
-                                        <div class="text-center font-weight-bold"
-                                            style="font-size: 20rem;height: 400px;">{{ $loket1['antrean_nomor'] }}</div>
+                                <div class="card-body p-0">
+                                    <div class="text-center py-4">
+                                        <span id="notif_loket_1" class="font-weight-bold"
+                                            style="font-size: 19rem; height: auto; line-height: 1;">
+                                            {{ $loket1['antrean_nomor'] ?? '-' }}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
-                            <div class="card card-dark">
+                            <div class="card card-dark mb-0">
                                 <div class="card-header d-flex justify-content-center">
                                     <h3 class="card-title" style="font-size: 3rem;">Loket Pendaftaran 2</h3>
                                 </div>
-                                <div class="card-body">
-                                    <div class="" id="notif_loket_2">
-                                        <div class="text-center font-weight-bold"
-                                            style="font-size: 20rem;height: 400px;">{{ $loket2['antrean_nomor'] }}
-                                        </div>
+                                <div class="card-body p-0">
+                                    <div class="text-center py-4">
+                                        <span id="notif_loket_2" class="font-weight-bold"
+                                            style="font-size: 19rem; height: auto; line-height: 1;">
+                                            {{ $loket2['antrean_nomor'] ?? '-' }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -74,19 +76,68 @@
                     </div>
                 </div>
             </div>
+            <div class="card card-primary"> {{-- Selesai --}}
+                <div class="card-header d-flex justify-content-center">
+                    <h1 class="card-title text-center font-weight-bold"
+                        style="font-size: 2rem !important; text-align: center !important;">DAFTAR
+                        SELESAI</h1>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover mb-0" id="headerSelesai"
+                            style="width:100%">
+                            <thead class="bg bg-dark" style="font-size: 1.5rem;">
+                                <tr>
+                                    <th class="col-2">Antrean</th>
+                                    <th class="col-2">Loket</th>
+                                    <th class="col-2">Ket</th>
+                                    <th class="col-3">Jam</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="table-responsive table-container" style=" font-size: 1.5rem;">
+                        @php
+                            $scrol = isset($listSelesai) && count($listSelesai) >= 7 ? 'table-auto' : '';
+                        @endphp
+
+                        <table class="table table-bordered table-striped table-hover {{ $scrol }}"
+                            id="listSelesai" style="width:100%;">
+                            @if (empty($listSelesai))
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3" class="text-center">Tidak ada antrian</td>
+                                    </tr>
+                                </tbody>
+                            @else
+                                <tbody>
+                                    @foreach ($listSelesai as $item)
+                                        <tr>
+                                            <td class="col-2">{{ $item['antrean_nomor'] }}</td>
+                                            <td class="col-2">{{ $item['menuju_ke'] }}</td>
+                                            <td class="col-2">Selesai di Daftar</td>
+                                            <td class="col-3">{{ $item['created_at'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            @endif
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-5">
-            <div class="card card-primary">
+            <div class="card card-primary"> {{-- Tunggu --}}
                 <div class="card-header d-flex justify-content-center">
                     <h1 class="card-title text-center font-weight-bold"
                         style="font-size: 2rem !important; text-align: center !important;">DAFTAR
                         TUNGGU</h1>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover mb-0" id="header"
                             style="width:100%">
-                            <thead class="bg bg-dark" style="font-size: 2rem;">
+                            <thead class="bg bg-dark" style="font-size: 1.5rem;">
                                 <tr>
                                     <th class="col-2">Antrean</th>
                                     <th class="col-2">Jaminan</th>
@@ -95,7 +146,7 @@
                             </thead>
                         </table>
                     </div>
-                    <div class="table-responsive table-container" style=" font-size: 2rem;">
+                    <div class="table-responsive table-container" style="height: 23.3rem; font-size: 1.5rem;">
                         @php
                             $scrol = isset($listTunggu) && count($listTunggu) >= 7 ? 'table-auto' : '';
                         @endphp
@@ -115,9 +166,13 @@
                                             @php
                                                 $bg = 'bg-warning';
                                             @endphp
-                                        @else
+                                        @elseif ($item['keterangan'] === 'SEDANG DIPANGGIL')
                                             @php
                                                 $bg = 'bg-success';
+                                            @endphp
+                                        @else
+                                            @php
+                                                $bg = 'bg-lime';
                                             @endphp
                                         @endif
                                         <tr>
@@ -132,40 +187,47 @@
                     </div>
                 </div>
             </div>
+            <div class="card card-primary"> {{-- Jadwal --}}
+                <div class="card-header d-flex justify-content-center">
+                    <h1 class="card-title text-center font-weight-bold"
+                        style="font-size: 2rem !important; text-align: center !important;">JADWAL PRAKTIK DOKTER</h1>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover mb-0" id="header"
+                            style="width:100%">
+                            <thead class="bg bg-dark" style="font-size: 1.5rem">
+                                <tr>
+                                    <th class="col-1">No</th>
+                                    <th class="col-2">Hari</th>
+                                    <th>Waktu</th>
+                                    <th class="col-5">Dokter</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="table-responsive" style="height: 23.3rem; overflow-y: hidden; font-size: 1.5rem">
+                        <table class="table-auto table table-bordered table-striped table-hover" id="listJadwal"
+                            style="width:100%">
+                            <tbody id="listJadwal">
+                                @foreach ($jadwal as $item)
+                                    <td class="col-1">{{ $loop->iteration }}</td>
+                                    <td class="col-2">{{ $item['nama_hari'] }}</td>
+                                    <td>
+                                        <!-- Convert and display waktu_mulai_poli and waktu_selesai_poli -->
+                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_mulai_poli'])->format('H:i') }}
+                                        -
+                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_selesai_poli'])->format('H:i') }}
+                                    </td>
+                                    <td class="col-5">{{ $item['admin_nama'] }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-            <div class="bg-primary text-center">
-                <h2 class="text-center mt-2 mb-0">JADWAL PRAKTIK DOKTER</h2>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover mb-0" id="header" style="width:100%">
-                    <thead class="bg bg-dark">
-                        <tr>
-                            <th class="col-1">No</th>
-                            <th class="col-2">Hari</th>
-                            <th>Waktu</th>
-                            <th class="col-5">Dokter</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-            <div class="table-responsive" style="height: 25vh; overflow-y: hidden; font-size: 1.5rem">
-                <table class="table-auto table table-bordered table-striped table-hover" id="listJadwal"
-                    style="width:100%">
-                    <tbody id="listJadwal">
-                        @foreach ($jadwal as $item)
-                            <td class="col-1">{{ $loop->iteration }}</td>
-                            <td class="col-2">{{ $item['nama_hari'] }}</td>
-                            <td>
-                                <!-- Convert and display waktu_mulai_poli and waktu_selesai_poli -->
-                                {{ \Carbon\Carbon::createFromTimestamp($item['waktu_mulai_poli'])->format('H:i') }} -
-                                {{ \Carbon\Carbon::createFromTimestamp($item['waktu_selesai_poli'])->format('H:i') }}
-                            </td>
-                            <td class="col-5">{{ $item['admin_nama'] }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
         </div>
     </div>
     <footer class="container-fluid fixed-bottom bg-primary">
@@ -312,6 +374,53 @@
             }
         }
 
+        function drawTableSelesai(data) {
+            if (data.length > 0) {
+                const tableBody = document.querySelector("#listSelesai tbody");
+                tableBody.innerHTML = ""; // Bersihkan konten sebelumnya
+
+                data.forEach(item => {
+                    const row = document.createElement("tr");
+
+                    const noUrut = document.createElement("td");
+                    noUrut.textContent = item.antrean_angka;
+                    row.appendChild(noUrut);
+                    noUrut.classList.add("col-2");
+
+                    const penjamin = document.createElement("td");
+                    penjamin.textContent = item.penjamin_nama;
+                    row.appendChild(penjamin);
+                    penjamin.classList.add("col-2");
+
+                    const status = document.createElement("td");
+                    status.textContent = item.keterangan;
+                    row.appendChild(status);
+                    status.classList.add("col-3 bg-success");
+
+                    tableBody.appendChild(row);
+                });
+
+                if (data.length >= 7) {
+                    document.querySelector("#listSelesai").style.animation = 'scroll 30s linear infinite';
+                } else {
+                    document.querySelector("#listSelesai").style.animation = 'none';
+                }
+
+            } else {
+                //draw tabel "Tidak ada antrian" coll span 3
+                const tableBody = document.querySelector("#listSelesai tbody");
+                tableBody.innerHTML = ""; // Bersihkan konten sebelumnya
+                const row = document.createElement("tr");
+                const noRmCell = document.createElement("td");
+                noRmCell.textContent = "Tidak ada antrian";
+                noRmCell.colSpan = 3;
+                //class text center
+                noRmCell.classList.add("text-center");
+                row.appendChild(noRmCell);
+                tableBody.appendChild(row);
+            }
+        }
+
         function drawNotif(data) {
             console.log("🚀 ~ data:", data)
             // Filter data untuk Loket Pendaftaran 1 dan 2 dengan waktu_submit null
@@ -329,16 +438,12 @@
             // Update nomor antrean dan kategori untuk Loket 1
             if (loket1) {
                 notifLoket1.innerHTML = `
-                        <div class="text-center font-weight-bold" style="font-size: 20rem;height: 400px;">
                             ${loket1.antrean_nomor}
-                        </div>
                     `;
             }
             if (loket2) {
                 notifLoket2.innerHTML = `
-                        <div class="text-center font-weight-bold" style="font-size: 20rem;height: 400px;">
                             ${loket2.antrean_nomor}
-                        </div>
                     `;
             }
         }

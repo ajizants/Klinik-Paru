@@ -30,11 +30,11 @@
                                                         onclick="obatSajaIdentitas()">Obat</button>
                                                 </div>
                                                 <label for="layanan"
-                                                    class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
+                                                    class="col-sm-1 col-form-label font-weight-bold mb-0">Jaminan
                                                     :</label>
                                                 <div class="col-sm-2">
                                                     <input type="text" id="layanan" class="form-control bg-white"
-                                                        placeholder="Layanan" />
+                                                        placeholder="BPJS/UMUM" />
                                                 </div>
                                                 <label for="nama"
                                                     class="col-sm-1 col-form-label font-weight-bold  mb-0">Nama

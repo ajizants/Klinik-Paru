@@ -9,9 +9,7 @@
 
         <div class="card-body mb-2 px-1">
             <!-- Loading Spinner -->
-            <div id="loadingSpinner" style="display: none;" class="badge bg-warning text-wrap text-center z-3 loadingSpinner">
-                <i class="fa fa-spinner fa-spin"></i> Sedang Mencari data...
-            </div>
+            @include('Template.Table.loading')
 
             <!-- Form Pilih Tanggal -->
             <div class="form-row mx-auto">

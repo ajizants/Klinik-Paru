@@ -4,7 +4,7 @@
         <table id="dataAntrian" class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%" cellspacing="0">
             <thead class="bg bg-primary">
                 <tr>
-                    <th>Aksi</th>
+                    {{-- <th>Aksi</th>
                     <th width="15px">Status</th>
                     <th width="20px">Obat</th>
                     <th>Tanggal</th>
@@ -13,7 +13,7 @@
                     <th>NoRM</th>
                     <th class="col-1">Nama Pasien</th>
                     <th class="col-3">Dokter</th>
-                    <th class="col-3">Permintaan</th>
+                    <th class="col-3">Permintaan</th> --}}
                 </tr>
             </thead>
             <tbody>

@@ -40,9 +40,7 @@
                                     </thead>
                                 </table>
                             </div>
-                            <div id="loadingSpinner" style="display: none;">
-                                <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                            </div>
+                            @include('Template.Table.loading')
                         </div>
                     </div>
                 </fieldset>
@@ -88,9 +86,7 @@
                                     </thead>
                                 </table>
                             </div>
-                            <div id="loadingSpinner" style="display: none;">
-                                <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                            </div>
+                            @include('Template.Table.loading')
                         </div>
                     </div>
                 </fieldset>
@@ -135,9 +131,7 @@
                                     </thead>
                                 </table>
                             </div>
-                            <div id="loadingSpinner" style="display: none;">
-                                <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                            </div>
+                            @include('Template.Table.loading')
                         </div>
                     </div>
                 </fieldset>
@@ -146,10 +140,5 @@
         </div>
     </div>
 
-    {{-- </div>
-    </section>
-    </div>
-    </div> --}}
-    <!-- my script -->
     <script src="{{ asset('js/report.js') }}"></script>
 @endsection

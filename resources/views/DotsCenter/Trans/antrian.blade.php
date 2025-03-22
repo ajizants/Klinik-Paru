@@ -18,9 +18,7 @@
         </div>
         <div class="mt-5">
             <div class="">
-                <div id="loadingSpinner" class="badge bg-warning text-wrap text-center z-3 loadingSpinner">
-                    <i class="fa fa-spinner fa-spin"></i> Sedang Mencari data...
-                </div>
+                @include('Template.Table.loading')
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a class="nav-link active bg-blue" id="itunggu" type="button"

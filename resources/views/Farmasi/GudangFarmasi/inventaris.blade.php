@@ -56,9 +56,7 @@
                                                     </tr>
                                                 </thead>
                                             </table>
-                                            <div id="loadingSpinner" style="display: none;" class="text-center">
-                                                <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                                            </div>
+                                            @include('Template.Table.loading')
                                         </div>
                                     </div>
 
@@ -98,15 +96,11 @@
                                                     </tr>
                                                 </thead>
                                             </table>
-                                            <div id="loadingSpinner" style="display: none;" class="text-center">
-                                                <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                                            </div>
+                                            @include('Template.Table.loading')
                                         </div>
                                     </div>
                                 </div>
-                                <div id="loadingSpinner" style="display: none;" class="text-center">
-                                    <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                                </div>
+                                @include('Template.Table.loading')
                             </form>
                         </div>
                         <div class="card card-info" id="dingudang">
@@ -141,15 +135,11 @@
                                                     </tr>
                                                 </thead>
                                             </table>
-                                            <div id="loadingSpinner" style="display: none;" class="text-center">
-                                                <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                                            </div>
+                                            @include('Template.Table.loading')
                                         </div>
                                     </div>
                                 </div>
-                                <div id="loadingSpinner" style="display: none;" class="text-center">
-                                    <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                                </div>
+                                @include('Template.Table.loading')
                             </form>
                         </div>
                         <div class="card card-info" id="digd">
@@ -184,14 +174,9 @@
                                                     </tr>
                                                 </thead>
                                             </table>
-                                            <div id="loadingSpinner" style="display: none;" class="text-center">
-                                                <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                                            </div>
+                                            @include('Template.Table.loading')
                                         </div>
                                     </div>
-                                </div>
-                                <div id="loadingSpinner" style="display: none;" class="text-center">
-                                    <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
                                 </div>
                             </form>
                         </div>

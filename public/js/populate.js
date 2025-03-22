@@ -252,6 +252,8 @@ function generateActionButton(item, ruang, konsul) {
     const today = new Date(2024, 9, 3).setHours(0, 0, 0, 0);
     const date = new Date(item.tanggal).setHours(0, 0, 0, 0);
     const notrans = date <= today ? item.no_trans : item.no_reg;
+    const tgl = ``;
+    // const tgl = `<br><br><p>${item.tanggal}</p>`;
 
     const commonAttributes = `
         data-norm="${item.pasien_no_rm}"
@@ -292,7 +294,7 @@ function generateActionButton(item, ruang, konsul) {
                 placeholder="Selesai">
                 <i class="fa-regular fa-square-check"></i>
             </a>`;
-        return `${editButton} ${checkOutButton}`;
+        return `${editButton} ${checkOutButton} ${tgl}`;
     }
 
     if (ruang === "ro") {
@@ -307,14 +309,14 @@ function generateActionButton(item, ruang, konsul) {
             item.status === "sudah" ||
             item.status === "Belum Upload Foto Thorax"
         ) {
-            return `${editButton} ${deleteButton}`;
+            return `${editButton} ${deleteButton} ${tgl}`;
         }
 
-        return editButton;
+        return editButton + tgl;
     }
 
     // Default case for other `ruang` values
-    return editButton;
+    return editButton + tgl;
 }
 
 function getFormattedAddress(item) {
@@ -325,13 +327,26 @@ function getColumnsForRuang(ruang, tableId) {
     // Tentukan kolom aksi berdasarkan tableId
     const aksiColumns =
         tableId === "#dataKonsul"
-            ? [{ data: "aksiKonsul", className: "col-1 text-center p-2" }]
-            : [{ data: "aksi", className: "col-1 text-center p-2" }];
+            ? [
+                  {
+                      data: "aksiKonsul",
+                      className: "col-1 text-center p-2",
+                      title: "Aksi",
+                  },
+              ]
+            : [
+                  {
+                      data: "aksi",
+                      className: "col-1 text-center p-2",
+                      title: "Aksi",
+                  },
+              ];
 
     // Kolom umum untuk semua ruang
     const commonColumns = [
         {
             data: "status",
+            title: "Status",
             className: "text-center p-2",
             render: function (data) {
                 const statusClasses = {
@@ -347,31 +362,46 @@ function getColumnsForRuang(ruang, tableId) {
         },
         {
             data: "status_obat",
+            title: "Obat",
             className: "text-center p-2",
             render: (data) =>
                 `<div class="badge badge-${
                     data === "Obat Belum" ? "danger" : "success"
                 }">${data}</div>`,
         },
-        { data: "tanggal", className: "text-center p-2 col-1" },
+        {
+            data: "tanggal",
+            title: "Tanggal",
+            className: "text-center p-2 col-1",
+        },
         {
             data: "antrean_nomor",
+            title: "Urut",
             className: "font-weight-bold text-center p-2",
         },
-        { data: "penjamin_nama", className: "text-center p-2" },
-        { data: "pasien_no_rm", className: "text-center p-2" },
-        { data: "pasien_nama", className: "p-2 col-2" },
-        { data: "dokter_nama", className: "p-2 col-3" },
+        {
+            data: "penjamin_nama",
+            title: "Penjamin",
+            className: "text-center p-2",
+        },
+        { data: "pasien_no_rm", title: "NoRM", className: "text-center p-2" },
+        { data: "pasien_nama", title: "Pasien", className: "p-2 col-2" },
+        { data: "dokter_nama", title: "Dokter", className: "p-2 col-3" },
     ];
 
     // Kolom tambahan berdasarkan ruang
     const extraColumns = {
         dots: [
-            { data: "nmDiagnosa", className: "p-2 col-4", title: "Diagnosa" },
+            {
+                data: "nmDiagnosa",
+                title: "Diagnosa",
+                className: "p-2 col-4",
+                title: "Diagnosa",
+            },
         ],
-        ro: [{ data: "asktind", className: "p-2 col-3" }],
-        igd: [{ data: "asktind", className: "p-2 col-4" }],
-        lab: [{ data: "asktind", className: "p-2 col-4" }],
+        ro: [{ data: "asktind", title: "Permintaan", className: "p-2 col-3" }],
+        igd: [{ data: "asktind", title: "Permintaan", className: "p-2 col-4" }],
+        lab: [{ data: "asktind", title: "Permintaan", className: "p-2 col-4" }],
     };
 
     // Gabungkan semua kolom dan kembalikan hasilnya
@@ -441,6 +471,7 @@ function initializeDataTable(selector, data, columns, ruang) {
         pageLength: 10,
         lengthMenu: [5, 10, 25, 50],
         destroy: true,
+        autoWidth: true,
     });
 }
 
@@ -500,7 +531,7 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
         ];
     } else {
         aksiColumns = [
-            { data: "aksi", className: "p-2 col-2 text-center", title: "Aksi" },
+            { data: "aksi", className: "p-2 text-center", title: "Aksi" },
         ];
     }
     const ketColumns = [
@@ -553,9 +584,6 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
 }
 
 function processResponse(response, ruang, statusFilter) {
-    // console.log("🚀 ~ processResponse ~ statusFilter:", statusFilter);
-    // console.log("🚀 ~ processResponse ~ ruang:", ruang);
-    // console.log("🚀 ~ processResponse ~ response:", response);
     if (!response || !response.response || !response.response.data) {
         console.error("Invalid response format:", response);
         return;
@@ -584,12 +612,10 @@ function processResponse(response, ruang, statusFilter) {
 }
 
 function generateActionLink(item, ruang, statusFilter) {
-    // console.log("🚀 ~ generateActionLink ~ statusFilter:", statusFilter);
-    const today = new Date(2024, 9, 3); // October 3, 2024
-    today.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
-    // console.log("🚀 ~ generateActionLink ~ today:", today);
+    const today = new Date(2024, 9, 3);
+    today.setHours(0, 0, 0, 0);
 
-    let notrans; // Declare notrans outside of the if-else block
+    let notrans;
     let actionLink;
 
     // Compare item.tanggal with today
@@ -635,11 +661,11 @@ function generateActionLink(item, ruang, statusFilter) {
             </a>
         `;
 
-    const linkLog = `<a type="button" class="aksi-button btn-sm btn-warning py-md-0 py-1 m-1 col-sm-3 col icon-link icon-link-hover"
+    const linkLog = `<a type="button" class="aksi-button btn-sm btn-warning py-md-0 py-1 m-1 col icon-link icon-link-hover"
                     onclick="cariLog('${item.id}');">
                     <strong>Posisi</strong>
                 </a>`;
-    const linkCppt = `<a type="button" class="aksi-button btn-sm btn-success py-md-0 py-1 m-1 col-sm-3 col icon-link icon-link-hover"
+    const linkCppt = `<a type="button" class="aksi-button btn-sm btn-success py-md-0 py-1 m-1 col icon-link icon-link-hover"
                     onclick="riwayatKunjungan('${item.pasien_no_rm}','${item.pasien_nama}');">
                     <strong>Riwayat</strong>                   
                 </a>`;
@@ -655,17 +681,17 @@ function generateActionLink(item, ruang, statusFilter) {
     const links = {
         dots:
             createLink("fas fa-pen-to-square", "setTransaksi", ruang) + linkLog,
-        surat:
-            createLink(
-                "",
-                "setTransaksi",
-                ruang,
-                "col-sm-3 col m-1",
-                "",
-                "<strong>Surat</strong>"
-            ) +
-            linkLog +
-            linkCppt,
+        surat: `<div class="row">
+        ${createLink(
+            "",
+            "setTransaksi",
+            ruang,
+            "col m-1",
+            "",
+            "<strong>Surat</strong>"
+        )}
+            ${linkLog}
+            ${linkCppt}</div>`,
         kasir:
             item.status === "Sudah Selesai"
                 ? createLink("fas fa-pen-to-square", "setTransaksi", ruang) +

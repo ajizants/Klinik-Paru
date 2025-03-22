@@ -45,7 +45,7 @@
                         <th>ICD X 3</th>
                         <th>Diagnosa 3</th>
                         <th class="col-3">Dokter</th>
-                        {{-- <th class="px-0 col-3">Aksi</th> --}}
+                        <th class="px-0 col-3">Status</th>
                     </tr>
                 </thead>
                 <tbody class="table-bordered border-warning">

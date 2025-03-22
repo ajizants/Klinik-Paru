@@ -289,7 +289,7 @@ input:checked + .slider:before {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-#loadingSpinner {
+.loadingSpinner {
     position: absolute;
     left: 45%;
     top: 60%;
@@ -298,11 +298,26 @@ input:checked + .slider:before {
 }
 
 @media (max-width: 768px) {
-    #loadingSpinner {
+    .loadingSpinner {
         position: absolute;
         left: 35%;
         top: 40%;
         transform: scale(2.5);
         z-index: 3 !important;
     }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.custom-spin {
+    display: inline-block;
+    animation: spin 1s linear infinite;
 }

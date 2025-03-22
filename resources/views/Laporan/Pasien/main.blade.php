@@ -206,10 +206,11 @@
                                 data: "dokter_nama",
                                 className: "col-3"
                             },
-                            // {
-                            //     data: "aksi",
-                            //     className: "px-0 col-3"
-                            // }
+                            {
+                                data: "ket_status_pasien_pulang",
+                                className: "px-0 col-3",
+                                label: "Status Pulang"
+                            }
                         ],
                         autoWidth: true,
                         order: [

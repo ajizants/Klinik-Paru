@@ -6,9 +6,7 @@
     </a>
     <!-- Card Content - Collapse -->
     <div class="collapse show card-body p-0" id="collapseCardAntrian">
-        <div id="loadingSpinner" class="badge bg-warning text-wrap text-center z-3 loadingSpinner">
-            <i class="fa fa-spinner fa-spin"></i> Sedang Mencari data...
-        </div>
+        @include('Template.Table.loading')
         <div class="table-responsive">
             <ul class="nav nav-tabs">
                 <li class="nav-item">

@@ -93,4 +93,5 @@ Route::middleware('auth')->group(function () {
     Route::get('Pusat-Data', [DataAnalisController::class, 'index'])->name('pusatData')->middleware('role:analitik');
     Route::get('analisis/pendaftaran', [DataAnalisController::class, 'analisisPendaftaran'])->name('analisisPendaftaran')->middleware('role:analitik');
     Route::get('analisis/riwayat', [DataAnalisController::class, 'analisisRiwayat'])->name('analisisRiwayat')->middleware('role:analitik');
+
 });

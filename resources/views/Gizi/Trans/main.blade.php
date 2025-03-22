@@ -41,9 +41,7 @@
                                             </tr>
                                         </thead>
                                     </table>
-                                    <div id="loadingSpinner" style="display: none;" class="text-center">
-                                        <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                                    </div>
+                                    @include('Template.Table.loading')
                                 </div>
                             </div>
                         </div>
@@ -83,9 +81,7 @@
                                             </tr>
                                         </thead>
                                     </table>
-                                    <div id="loadingSpinner" style="display: none;" class="text-center">
-                                        <i class="fa fa-spinner fa-spin"></i> Sedang mencari data...
-                                    </div>
+                                    @include('Template.Table.loading')
                                 </div>
                             </div>
                         </div>

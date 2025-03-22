@@ -360,7 +360,7 @@
                 @php
                     $roleDokter = ['admin', 'igd', 'dokter', 'perawat'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleDokter)) non-aktif @endif">
+                <li class="nav-item">
                     <a class="nav-link" href="{{ url('/Riwayat/Pasien') }}">
                         <i class="fa-solid fa-book-medical nav-icon"></i>
                         <p>Riwayat Pasien</p>

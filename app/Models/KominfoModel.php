@@ -2351,4 +2351,69 @@ class KominfoModel extends Model
         }
     }
 
+    public function getAkssLoket()
+    {
+        $client = new Client();
+        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+        if (! $cookie) {
+            // Authenticate if no cookie is found
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+            $cookie        = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+
+        $url = env('BASR_URL_KOMINFO', '') . '/akses_loket/get_data';
+
+        try {
+            $response = $client->request('POST', $url, [
+                'headers'     => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Cookie'       => $cookie,
+                ],
+                'form_params' => [
+                    'draw'       => 3,
+                    'columns'    => [
+                        ['data' => '', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
+                        ['data' => 'admin_nama', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
+                        ['data' => 'loket_nama', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
+                        ['data' => 'created_at', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
+                        ['data' => 'id', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
+                    ],
+                    'start'      => 0,
+                    'length'     => 200,
+                    'search'     => [
+                        'value' => '',
+                        'regex' => false,
+                    ],
+                    'loket_id'   => '',
+                    'admin_id'   => '',
+                    'created_at' => '',
+                ],
+            ]);
+
+            // Check if the response status is 200
+            if ($response->getStatusCode() !== 200) {
+                Log::error('Error response body: ' . (string) $response->getBody());
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
+
+            $body = (string) $response->getBody();
+            $data = json_decode($body, true);
+            return $data;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            // Handle network or request errors
+            Log::error('Request Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
+        } catch (\Exception $e) {
+            // Handle unexpected errors
+            Log::error('Unexpected Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
+        }
+    }
+
 }
