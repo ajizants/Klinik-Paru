@@ -1,20 +1,11 @@
 @extends('Template.lte')
 
 @section('content')
-    <div class="card shadow mb-4">
-        <!-- Card Header -->
+    <div class="card shadow mb-4" id="tab_1">
         <div class="card-header bg-lime py-3 d-flex flex-row align-items-center justify-content-start">
-            <h6 class="m-0 font-weight-bold text-dark">Daftar Surat Keterangan Medis</h6>
-        </div>
-
-        <div class="card-body mb-2 px-1">
-            <!-- Loading Spinner -->
-            @include('Template.Table.loading')
-
-            <!-- Form Pilih Tanggal -->
-            <div class="form-row mx-auto">
-                <label class="col-form-label">Pilih Tanggal Kunjungan Pasien :</label>
-                <div class="form-group col-5 col-md-2">
+            <div class="form-row">
+                <label class="col-form-label">Pendaftaran Surat Keterangan Medis Tanggal:</label>
+                <div class="form-group col col-md">
                     <input type="date" id="tanggal" class="form-control bg-white" placeholder="Tanggal" />
                 </div>
                 <div class="col col-md">
@@ -24,6 +15,11 @@
                     </button>
                 </div>
             </div>
+        </div>
+
+        <div class="card-body mb-2 px-1">
+            <!-- Loading Spinner -->
+            @include('Template.Table.loading')
 
             <!-- Include Table -->
             @include('Template.Table.all')
@@ -31,7 +27,7 @@
             <!-- Card List Surat Keterangan Medis -->
             <div class="card card-warning">
                 <div class="card-header">
-                    <h3 class="card-title"><b>List Surat Keterangan Medis</b></h3>
+                    <h3 class="card-title"><b>Surat Keterangan Medis</b></h3>
                 </div>
                 <div class="card-body p-2">
                     <div class="table-responsive">

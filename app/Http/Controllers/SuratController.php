@@ -100,7 +100,7 @@ class SuratController extends Controller
         $petugas             = $data['petugas'];
         $lists               = $data['lists'];
 
-        return view('Laporan.SuratMedis.main', compact('title', 'lists', 'pasien', 'jumlahSuratTahunIni', 'dokter', 'petugas'));
+        return view('SuratMedis.main', compact('title', 'lists', 'pasien', 'jumlahSuratTahunIni', 'dokter', 'petugas'));
     }
 
     public function store(Request $request)

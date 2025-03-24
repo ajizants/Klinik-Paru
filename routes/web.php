@@ -3,10 +3,12 @@
 use App\Http\Controllers\DataAnalisController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasienKominfoController;
 use App\Http\Controllers\SuratController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,4 +96,14 @@ Route::middleware('auth')->group(function () {
     Route::get('analisis/pendaftaran', [DataAnalisController::class, 'analisisPendaftaran'])->name('analisisPendaftaran')->middleware('role:analitik');
     Route::get('analisis/riwayat', [DataAnalisController::class, 'analisisRiwayat'])->name('analisisRiwayat')->middleware('role:analitik');
 
+    Route::get('jadwal', [JadwalController::class, 'index'])->name('viewJadwal');
+    Route::get('/download-template', function () {
+        $filePath = 'public/templates/format_jadwal_karyawan.xlsx';
+
+        if (Storage::exists($filePath)) {
+            return Storage::download($filePath, 'format_jadwal_karyawan.xlsx');
+        }
+
+        return response()->json(['error' => 'File tidak ditemukan'], 404);
+    })->name('download.template');
 });

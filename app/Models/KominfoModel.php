@@ -2415,5 +2415,86 @@ class KominfoModel extends Model
             return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
         }
     }
+    public function getDataSEP($params)
+    {
+        $client = new Client();
+        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+        $tglSep = $params["tanggal_awal"] . '-' . $params["tanggal_akhir"];
+
+        if (! $cookie) {
+            // Authenticate if no cookie is found
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+            $cookie        = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+
+        $url = env('BASR_URL_KOMINFO', '') . '/sep/get_dataSEP';
+
+        // Format request sesuai dengan yang Anda inginkan
+        $columns = [];
+        for ($i = 0; $i < 3; $i++) { // Sesuaikan jumlah kolom sesuai kebutuhan
+            $columns[] = [
+                'data'       => ($i === 0) ? '' : 'id',
+                'name'       => '',
+                'searchable' => true,
+                'orderable'  => false,
+                'search'     => ['value' => '', 'regex' => false],
+            ];
+        }
+
+        try {
+            $response = $client->request('POST', $url, [
+                'headers'     => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Cookie'       => $cookie,
+                ],
+                'form_params' => [
+                    'draw'               => 2,
+                    'columns'            => $columns,
+                    'start'              => 0,
+                    'length'             => 100,
+                    'search'             => [
+                        'value' => '',
+                        'regex' => false,
+                    ],
+                    'tanggal'            => $tglSep,
+                    'antrean_nomor'      => '',
+                    'no_reg'             => '',
+                    'daftar_by'          => '',
+                    'penjamin_id'        => 2,
+                    'nomor_referensi'    => '',
+                    'penjamin_nomor'     => '',
+                    'jenis_kunjungan_id' => '',
+                    'pasien'             => '',
+                    'pasien_nik'         => '',
+                    'no_sep'             => '',
+                    'tanggal_sep'        => $tglSep,
+                ],
+            ]);
+
+            // Check if response is successful
+            if ($response->getStatusCode() !== 200) {
+                Log::error('Error response body: ' . (string) $response->getBody());
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
+
+            $body = (string) $response->getBody();
+            $data = json_decode($body, true);
+            return $data;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            // Handle request errors
+            Log::error('Request Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
+        } catch (\Exception $e) {
+            // Handle unexpected errors
+            Log::error('Unexpected Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
+        }
+    }
 
 }

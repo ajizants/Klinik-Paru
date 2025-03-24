@@ -99,4 +99,11 @@ class ApiKominfoController extends Controller
         return response()->json(['html' => $html]);
     }
 
+    public function getDataSEP(Request $request)
+    {
+        $model = new KominfoModel();
+        $data  = $model->getDataSEP($request->all());
+        return response()->json($data);
+    }
+
 }

@@ -13,6 +13,7 @@ use App\Http\Controllers\GiziKunjunganController;
 use App\Http\Controllers\GudangFarmasiController;
 use App\Http\Controllers\IgdController;
 use App\Http\Controllers\InputController;
+use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\KasirPenutupanKasController;
 use App\Http\Controllers\KasirSetoranController;
@@ -315,7 +316,8 @@ Route::post('kominfo/antrian/log', [PasienKominfoController::class, 'logAntrian'
 Route::post('kominfo/pendaftaran/faskes_perujuk', [PasienKominfoController::class, 'rekapFaskesPerujuk']);
 
 Route::post('kominfo/data_rencana_kontrol', [ApiKominfoController::class, 'data_rencana_kontrol']);
-Route::get('jadwal/dokter/poli', [ApiKominfoController::class, 'poliDokter']);
+Route::get('jadwal/dokter/poli', [ApiKominfoController::class, 'getDataSEP']);
+Route::post('sep/get_data', [ApiKominfoController::class, 'poliDokter']);
 
 // sb
 Route::post('verif/pendaftaran/fr', [VerifController::class, 'frista']);
@@ -337,9 +339,16 @@ Route::post('surat/medis', [SuratController::class, 'store']);
 Route::post('surat/medis/update', [SuratController::class, 'update']);
 Route::post('surat/medis/delete', [SuratController::class, 'destroy']);
 Route::post('surat/medis/riwayat', [SuratController::class, 'riwayat']);
+Route::post('surat/medis/riwayat', [SuratController::class, 'riwayat']);
 
 Route::post('data/analis/biaya_pasien', [DataAnalisController::class, 'DataBiayaKunjungan']);
 Route::post('data/analis/faskes_perujuk', [DataAnalisController::class, 'faskesPerujuk']);
 Route::post('data/analis/kunjungan_lab', [DataAnalisController::class, 'kunjunganLab']);
 
+Route::post('jadwal/upload', [JadwalController::class, 'import'])->name('jadwal.import');
+Route::post('jadwal/get', [JadwalController::class, 'getJadwal'])->name('jadwal.getJadwal');
+Route::delete('jadwal/{id}', [JadwalController::class, 'destroy'])->name('jadwal.destroy');
+Route::put('jadwal/{id}', [JadwalController::class, 'update'])->name('jadwal.update');
+
+//
 // });

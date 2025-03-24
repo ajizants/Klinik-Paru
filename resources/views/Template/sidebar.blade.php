@@ -324,6 +324,13 @@
                     </a>
                 </li>
 
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleSurat)) non-aktif @endif">
+                    <a class="nav-link" href="{{ url('/jadwal') }}">
+                        <i class="fa-solid fa-calendar-days nav-icon"></i>
+                        <p>Jadwal Karyawan</p>
+                    </a>
+                </li>
+
                 <!-- Hasil Penunjang -->
                 @php
                     $roleHasilPenunjang = ['tamu', 'igd', 'admin', 'nakes', 'dokter', 'perawat'];
