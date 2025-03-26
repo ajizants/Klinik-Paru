@@ -515,7 +515,8 @@
                 obatHtml += `</tbody></table></div>`;
                 item.dataObats = obatHtml;
 
-                item.rincian = `
+                item.rincian =
+                    `
                 <div class="mb-2">
                     <p><strong>DS :</strong> ${item.ds || "-"}</p>
                     <p><strong>DO :</strong> ${item.do || "-"}</p>
@@ -533,7 +534,8 @@
                 <p class="mb-2"><strong>Radiologi :</strong> ${item.ro || "Tidak Ada Pemeriksaan RO"}</p>
                 <p class="mb-2"><strong>Tindakan :</strong> ${item.igd || "Tidak Ada Tidankan"}</p>
                 <p class="mb-2"><strong>Laboratorium :</strong> ${item.hasilLab || ""}</p>
-                <p class="mb-2"><strong>Resep Obat :</strong> ${item.dataObats || "Tidak Ada Resep Obat"}</p>`;
+                <p class="mb-2"><strong>Resep Obat :</strong> ${item.dataObats || "Tidak Ada Resep Obat"}</p>
+                <p class="mb-2"> <strong> Status Pulang: </strong> ${item.status_pasien_pulang +", " || ""}  ${item.ket_status_pasien_pulang || "-"}</p > `;
             });
 
             // Hancurkan DataTable sebelumnya jika ada

@@ -356,6 +356,12 @@
                         <p>Laporan Petugas</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url('/E-kinerja') }}">
+                        <i class="fa-solid fa-chart-column nav-icon"></i>
+                        <p>Kinerja Petugas</p>
+                    </a>
+                </li>
 
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/Laporan/Pendaftaran') }}">

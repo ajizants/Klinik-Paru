@@ -91,7 +91,7 @@ Route::middleware('auth')->group(function () {
     Route::get('masterGizi', [HomeController::class, 'masterGizi'])->name('masterGizi')->middleware('role:gizi');
     Route::get('riwayatGizi', [HomeController::class, 'riwayatGizi'])->name('riwayatGizi')->middleware('role:gizi');
     //riwayat diagnosa
-    Route::get('/Riwayat/Pasien', [HomeController::class, 'riwayatKunjungan'])->name('riwayatKunjungan')->middleware('role:dokter,perawat');
+    Route::get('/Riwayat/Pasien', [HomeController::class, 'riwayatKunjungan'])->name('riwayatKunjungan')->middleware('role:dokter,perawat,dots,igd');
     Route::get('/Diagnosa/Mapping', [HomeController::class, 'mappingDx'])->name('mappingDx')->middleware('role:dokter,perawat');
 
     //analisis data
