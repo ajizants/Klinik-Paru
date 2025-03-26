@@ -988,7 +988,6 @@ class KominfoModel extends Model
     {
         $client = new Client();
         $url    = 'https://kkpm.banyumaskab.go.id/administrator/loket_farmasi/lihat_resep?pendaftaran_id=' . $pendaftaran_id;
-        // dd($url);
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
         if (! $cookie) {
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
@@ -1023,8 +1022,8 @@ class KominfoModel extends Model
         dd($responseBody);
 
         $data = response()->json(json_decode($response->getBody(), true));
-        dd($data);
 
+        return $data;
     }
     public function login($username = null, $password = null)
     {
@@ -2419,7 +2418,7 @@ class KominfoModel extends Model
     {
         $client = new Client();
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
-        $tglSep = $params["tanggal_awal"] . '-' . $params["tanggal_akhir"];
+        $tglSep = $params["tanggal_awal"] . ' - ' . $params["tanggal_akhir"];
 
         if (! $cookie) {
             // Authenticate if no cookie is found
@@ -2492,6 +2491,50 @@ class KominfoModel extends Model
             return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
         } catch (\Exception $e) {
             // Handle unexpected errors
+            Log::error('Unexpected Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
+        }
+    }
+    public function getDetailSEP($no_sep)
+    {
+        $client = new Client();
+        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+
+        if (! $cookie) {
+            // Authenticate if no cookie is found
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+            $cookie        = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+
+        $url = env('BASR_URL_KOMINFO', '') . '/sep/lihat_detail_sep/' . $no_sep;
+
+        try {
+            $response = $client->request('POST', $url, [
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Cookie'       => $cookie,
+                ],
+            ]);
+
+            // Check if response is successful
+            if ($response->getStatusCode() !== 200) {
+                Log::error('Error response body: ' . (string) $response->getBody());
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
+
+            $body = (string) $response->getBody();
+            $data = json_decode($body, true);
+            return $data;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            Log::error('Request Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
+        } catch (\Exception $e) {
             Log::error('Unexpected Error: ' . $e->getMessage());
             return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
         }

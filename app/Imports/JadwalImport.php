@@ -23,6 +23,7 @@ class JadwalImport implements ToCollection
                                   // dd($this->tahunBulan);
 
         foreach ($rows as $row) {
+            $nip  = $row[0]; // nip dokter di kolom pertama
             $nama = $row[1]; // Nama dokter di kolom pertama
 
             for ($i = 2; $i < count($row); $i++) {
@@ -31,6 +32,7 @@ class JadwalImport implements ToCollection
 
                 if ($shift) {
                     JadwalModel::create([
+                        'nip'     => $nip ?? "-",
                         'nama'    => $nama,
                         'tanggal' => Carbon::parse("{$this->tahunBulan}-$tanggal"),
                         'shift'   => $shift,

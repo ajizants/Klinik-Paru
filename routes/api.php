@@ -316,8 +316,9 @@ Route::post('kominfo/antrian/log', [PasienKominfoController::class, 'logAntrian'
 Route::post('kominfo/pendaftaran/faskes_perujuk', [PasienKominfoController::class, 'rekapFaskesPerujuk']);
 
 Route::post('kominfo/data_rencana_kontrol', [ApiKominfoController::class, 'data_rencana_kontrol']);
-Route::get('jadwal/dokter/poli', [ApiKominfoController::class, 'getDataSEP']);
-Route::post('sep/get_data', [ApiKominfoController::class, 'poliDokter']);
+Route::get('jadwal/dokter/poli', [ApiKominfoController::class, 'poliDokter']);
+Route::post('sep/get_data', [ApiKominfoController::class, 'getDataSEP']);
+Route::post('sep/getSEP', [ApiKominfoController::class, 'getSEP']);
 
 // sb
 Route::post('verif/pendaftaran/fr', [VerifController::class, 'frista']);

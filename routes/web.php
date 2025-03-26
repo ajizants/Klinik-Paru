@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DataAnalisController;
 use App\Http\Controllers\DisplayController;
+use App\Http\Controllers\EkinController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\LoginController;
@@ -63,6 +64,8 @@ Route::middleware('auth')->group(function () {
     Route::get('askep', [HomeController::class, 'askep'])->name('askep')->middleware('role:igd');
     Route::get('igd', [HomeController::class, 'igd'])->name('igd')->middleware('role:igd');
     Route::get('gudangIGD', [HomeController::class, 'gudangIGD'])->name('gudangIGD')->middleware('role:igd');
+    //kinerja pegawai
+    Route::get('E-kinerja', [EkinController::class, 'index'])->name('kinerja');
     //Kasir
     Route::get('kasir', [HomeController::class, 'kasir'])->name('kasir')->middleware('role:kasir');
     Route::get('kasir/master', [HomeController::class, 'masterKasir'])->name('kasir')->middleware('role:kasir');

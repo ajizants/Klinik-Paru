@@ -101,8 +101,21 @@ class ApiKominfoController extends Controller
 
     public function getDataSEP(Request $request)
     {
-        $model = new KominfoModel();
-        $data  = $model->getDataSEP($request->all());
+        $model  = new KominfoModel();
+        $params = [
+            'tanggal_awal'  => $request->input('tanggal_awal'),
+            'tanggal_akhir' => $request->input('tanggal_akhir'),
+        ];
+        // dd($params);
+        $data = $model->getDataSEP($params);
+        return response()->json($data);
+    }
+    public function getDetailSEP(Request $request)
+    {
+        $model  = new KominfoModel();
+        $no_sep = $request->input('no_sep');
+        // dd($params);
+        $data = $model->getDetailSEP($no_sep);
         return response()->json($data);
     }
 
