@@ -13,15 +13,9 @@
                             <i class="far fa-calendar-alt"></i>
                         </span>
                     </div>
-                    <input type="text" class="form-control float-right" id="reservation2">
+                    <input type="text" class="form-control float-right" id="reservation">
                 </div>
             </div>
-            <div class="col-3">
-                <button type="button" class="btn btn-success" onclick="cariJumlah(tglAwal,tglAkhir);">
-                    Cari
-                </button>
-            </div>
-
         </div>
         <div class="table-responsive" id="divTablePegawai">
             {!! $tablePegawai !!}

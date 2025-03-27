@@ -45,19 +45,28 @@ class EkinController extends Controller
                 item-stat_pns="' . $data->stat_pns . '"
                 item-jabatan="' . $jabatan . '"
             ';
-
             $table .= '<tr>
-                        <td>
-                            <a type="button" class="btn btn-warning" ' . $atribut . ' onclick="edit(' . $data->nip . ',' . $data->biodata->nama . ')">Edit</a>
-                            <a type="button" class="btn btn-primary" onclick="lihat(' . $data->nip . ',' . $data->biodata->nama . ')">Lihat</a>
-                            <a type="button" class="btn btn-success" onclick="cetak(' . $data->nip . ',' . $data->biodata->nama . ')">Cetak</a>
-                        </td>
-                        <td>' . ($index + 1) . '</td>
-                        <td>' . $data->gelar_d . ' ' . $data->biodata->nama . ' ' . $data->gelar_b . '</td>
-                        <td>' . $data->nip . '</td>
-                        <td>' . $jabatan . '</td>
-                        <td>' . $data->stat_pns . '</td>
-                    </tr>';
+            <td>
+                <a type="button" class="btn btn-warning" ' . $atribut . '
+                   onclick="edit(\'' . $data->nip . '\', \'' . addslashes($data->biodata->nama) . '\')">
+                   Edit
+                </a>
+                <a type="button" class="btn btn-primary"
+                   onclick="lihat(\'' . $data->nip . '\', \'' . addslashes($data->biodata->nama) . '\')">
+                   Lihat
+                </a>
+                <a type="button" class="btn btn-success"
+                   onclick="cetak(\'' . $data->nip . '\', \'' . addslashes($data->biodata->nama) . '\')">
+                   Cetak
+                </a>
+            </td>
+            <td>' . ($index + 1) . '</td>
+            <td>' . $data->gelar_d . ' ' . htmlspecialchars($data->biodata->nama, ENT_QUOTES, 'UTF-8') . ' ' . $data->gelar_b . '</td>
+            <td>' . $data->nip . '</td>
+            <td>' . $jabatan . '</td>
+            <td>' . $data->stat_pns . '</td>
+        </tr>';
+
         }
 
         $table .= '</tbody></table>';
@@ -69,16 +78,19 @@ class EkinController extends Controller
     {
         $params = $request->only(['tanggal_awal', 'tanggal_akhir']);
 
-        $nip   = $request->input('nip');
-        $nama  = $request->input('nama'); // Bisa berupa sebagian dari nama
-        $model = new KominfoModel();
-        $data  = $model->poinRequest($params);
+        $nip         = $request->input('nip');
+        $nama        = $request->input('nama'); // Bisa berupa sebagian dari nama
+        $model       = new KominfoModel();
+        $data        = $model->poinRequest($params);
+        $poinKominfo = [];
+        if (empty($data['response']['data'])) {
+            return $poinKominfo;
+        }
 
         // Filter data yang bukan "Ruang Poli" dan admin_nama mengandung $nama
         $filteredData = collect($data['response']['data'])->filter(function ($item) use ($nama) {
             return $item['ruang_nama'] !== 'Ruang Poli' && stripos($item['admin_nama'], $nama) !== false;
         });
-        $poinKominfo = [];
         foreach ($filteredData as $item) {
             $key               = strtolower(str_replace([' ', '(', ')'], '', $item['ruang_nama'])); // Buat key unik
             $poinKominfo[$key] = $item['jumlah'];
