@@ -24,6 +24,10 @@
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
     <script>
+        function lihat(nip, nama) {
+
+        }
+
         function cariRiwayat(tglAwal, tglAkhir) {
             console.log("🚀 ~ cariRiwayat ~ tglAkhir:", tglAkhir)
             console.log("🚀 ~ cariRiwayat ~ tglAwal:", tglAwal)
