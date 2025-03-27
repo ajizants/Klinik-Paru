@@ -6,6 +6,7 @@ use App\Http\Controllers\DataAnalisController;
 use App\Http\Controllers\DiagnosaMappingController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\DotsController;
+use App\Http\Controllers\EkinController;
 use App\Http\Controllers\FarmasiController;
 use App\Http\Controllers\GiziAsesmenAwalController;
 use App\Http\Controllers\GiziDxModelController;
@@ -350,6 +351,8 @@ Route::post('jadwal/upload', [JadwalController::class, 'import'])->name('jadwal.
 Route::post('jadwal/get', [JadwalController::class, 'getJadwal'])->name('jadwal.getJadwal');
 Route::delete('jadwal/{id}', [JadwalController::class, 'destroy'])->name('jadwal.destroy');
 Route::put('jadwal/{id}', [JadwalController::class, 'update'])->name('jadwal.update');
+
+Route::get('ekin/poin', [EkinController::class, 'show']);
 
 //
 // });
