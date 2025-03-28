@@ -17,6 +17,12 @@
             @include('Laporan.Ekin.rekapDX')
         </div>
     </div>
+    <div class="card shadow">
+        <div class="card-body" id="divFormEdit">
+
+        </div>
+    </div>
+
 
 
 
@@ -29,6 +35,98 @@
                 `api/ekin/poin?tanggal_awal=${tglAwal}&tanggal_akhir=${tglAkhir}&nip=${nip}&nama=${encodeURIComponent(nama)}`;
 
             window.open(url, "_blank");
+        }
+
+        function edit(nip, nama) {
+            const url = `api/pegawai/${nip}`;
+
+            // Tampilkan SweetAlert loading
+            Swal.fire({
+                title: 'Memuat data...',
+                text: 'Silakan tunggu',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.get(url)
+                .done(function(data) {
+                    // Tampilkan data di divFormEdit
+                    $("#divFormEdit").html(data);
+
+                    // Inisialisasi Select2
+                    $("#kd_jab").select2();
+
+                    // Tutup alert loading dan tampilkan sukses
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data Ditemukan',
+                        text: `Form untuk ${nama} berhasil dimuat!`
+                    });
+
+                    // Scroll ke form
+                    $('html, body').animate({
+                        scrollTop: $("#divFormEdit").offset().top
+                    }, 500);
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    // Tutup alert loading dan tampilkan error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal Memuat Data',
+                        text: `Terjadi kesalahan: ${jqXHR.status} - ${errorThrown}`
+                    });
+                });
+        }
+
+        function updatePegawai() {
+            var formData = new FormData(document.getElementById("pegawaiForm"));
+            var nip = document.getElementById("nip").value;
+            $.ajax({
+                url: "/api/pegawai/update/" + nip,
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log(response);
+                    Swal.fire({
+                        icon: "success",
+                        title: "Data Berhasil Diubah",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    $('#divTablePegawai').html('');
+                    $('#divTablePegawai').html(response.data);
+                    $('#pegawaiTable').DataTable({
+                        paging: true,
+                        order: [
+                            [5, "dsc"],
+                            [1, "asc"]
+                        ], // Mengurutkan berdasarkan tanggal
+                        lengthMenu: [
+                            [5, 10, 25, 50, -1],
+                            [5, 10, 25, 50, "All"]
+                        ],
+                        pageLength: 5,
+                        responsive: true,
+                        autoWidth: false,
+                        scrollX: true
+                    });
+
+                    $('#divFormEdit').html('');
+                },
+                error: function(xhr) {
+                    console.error("Error:", xhr.responseText);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Gagal Mengubah Data",
+                        text: "Terjadi kesalahan, silakan coba lagi." + xhr.responseText,
+                    });
+                },
+            });
+
         }
 
         var tglAwal;

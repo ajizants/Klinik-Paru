@@ -12,7 +12,7 @@ class EkinController extends Controller
 {
     public function index()
     {
-        $title   = 'E-Kinerja';
+        $title = 'E-Kinerja';
         $pegawai = PegawaiModel::with('biodata')
             ->whereNot('kd_jab', '22')
             ->get();
@@ -49,7 +49,7 @@ class EkinController extends Controller
             <td>
                 <a type="button" class="btn btn-warning" ' . $atribut . '
                    onclick="edit(\'' . $data->nip . '\', \'' . addslashes($data->biodata->nama) . '\')">
-                   Edit
+                   Update Data Pegawai
                 </a>
                 <a type="button" class="btn btn-primary"
                    onclick="lihat(\'' . $data->nip . '\', \'' . addslashes($data->biodata->nama) . '\')">
@@ -78,10 +78,10 @@ class EkinController extends Controller
     {
         $params = $request->only(['tanggal_awal', 'tanggal_akhir']);
 
-        $nip         = $request->input('nip');
-        $nama        = $request->input('nama'); // Bisa berupa sebagian dari nama
-        $model       = new KominfoModel();
-        $data        = $model->poinRequest($params);
+        $nip = $request->input('nip');
+        $nama = $request->input('nama'); // Bisa berupa sebagian dari nama
+        $model = new KominfoModel();
+        $data = $model->poinRequest($params);
         $poinKominfo = [];
         if (empty($data['response']['data'])) {
             return $poinKominfo;
@@ -92,7 +92,7 @@ class EkinController extends Controller
             return $item['ruang_nama'] !== 'Ruang Poli' && stripos($item['admin_nama'], $nama) !== false;
         });
         foreach ($filteredData as $item) {
-            $key               = strtolower(str_replace([' ', '(', ')'], '', $item['ruang_nama'])); // Buat key unik
+            $key = strtolower(str_replace([' ', '(', ')'], '', $item['ruang_nama'])); // Buat key unik
             $poinKominfo[$key] = $item['jumlah'];
         }
         return $poinKominfo;
@@ -100,13 +100,13 @@ class EkinController extends Controller
 
     private function poinIGD(Request $request)
     {
-        $tglAwal  = $request->input('tanggal_awal');
+        $tglAwal = $request->input('tanggal_awal');
         $tglAkhir = $request->input('tanggal_akhir');
-        $nip      = $request->input('nip');
+        $nip = $request->input('nip');
         // dd($nip);
-        $nama  = $request->input('nama');
+        $nama = $request->input('nama');
         $model = new IGDTransModel();
-        $data  = json_decode(json_encode($model->cariPoin($tglAwal, $tglAkhir)), true);
+        $data = json_decode(json_encode($model->cariPoin($tglAwal, $tglAkhir)), true);
 
         //filter data berdasarkan nip
         $filteredData = collect($data)->filter(function ($item) use ($nip) {
@@ -115,16 +115,16 @@ class EkinController extends Controller
 
         $poinIgd = [];
         foreach ($filteredData as $item) {
-            $key           = strtolower(str_replace([' ', '(', ')'], '', $item['tindakan'])); // Buat key unik
+            $key = strtolower(str_replace([' ', '(', ')'], '', $item['tindakan'])); // Buat key unik
             $poinIgd[$key] = $item['jml'];
         }
         return $poinIgd;
     }
     private function poinInputHiv(Request $request)
     {
-        $tglAwal  = $request->input('tanggal_awal');
+        $tglAwal = $request->input('tanggal_awal');
         $tglAkhir = $request->input('tanggal_akhir');
-        $data     = LaboratoriumHasilModel::where('created_at', '>=', $tglAwal)
+        $data = LaboratoriumHasilModel::where('created_at', '>=', $tglAwal)
             ->where('created_at', '<=', $tglAkhir)
             ->whereIn('idLayanan', [124, 125, 129])
             ->count();
@@ -135,10 +135,10 @@ class EkinController extends Controller
     public function show(Request $request)
     {
         $params = [
-            'tanggal_awal'  => $request->input('tanggal_awal'),
+            'tanggal_awal' => $request->input('tanggal_awal'),
             'tanggal_akhir' => $request->input('tanggal_akhir'),
-            'nip'           => $request->input('nip'),
-            'nama'          => $request->input('nama'),
+            'nip' => $request->input('nip'),
+            'nama' => $request->input('nama'),
         ];
         $tglAkhir = Carbon::parse($request->input('tanggal_akhir'))
             ->locale('id') // Atur lokal ke Indonesia
@@ -146,7 +146,7 @@ class EkinController extends Controller
 
         $tgl = Carbon::parse($request->input('tanggal_akhir'));
 
-        $poinIgd     = $this->poinIGD(new Request($params));
+        $poinIgd = $this->poinIGD(new Request($params));
         $poinKominfo = $this->poinKominfo(new Request($params));
         if ($request->input('nip') == '199806222022031007') {
             $inputPitc = $this->poinInputHiv(new Request($params));
@@ -156,19 +156,19 @@ class EkinController extends Controller
 
         $pegawai = PegawaiModel::with('biodata', 'jabatan')->where('nip', $request->input('nip'))->first();
         $biodata = [
-            'nip'     => $pegawai->nip,
-            'nama'    => $pegawai->gelar_d . ' ' . $pegawai->biodata->nama . ', ' . $pegawai->gelar_b,
+            'nip' => $pegawai->nip,
+            'nama' => $pegawai->gelar_d . ' ' . $pegawai->biodata->nama . ', ' . $pegawai->gelar_b,
             'jabatan' => $pegawai->jabatan->nm_jabatan ?? "-",
             'pangkat' => $pegawai->jabatan->pangkat_gol ?? "-",
         ];
 
         return view('Laporan.Ekin.show', compact('poinIgd', 'poinKominfo', 'inputPitc', 'biodata', 'tglAkhir', 'tgl'))->with('title', 'E-Kinerja');
         return [
-            'inputPitc'   => $inputPitc,
-            'poinIgd'     => $poinIgd,
+            'inputPitc' => $inputPitc,
+            'poinIgd' => $poinIgd,
             'poinKominfo' => $poinKominfo,
-            'biodata'     => $biodata,
-            'pegawai'     => $pegawai,
+            'biodata' => $biodata,
+            'pegawai' => $pegawai,
         ];
 
     }

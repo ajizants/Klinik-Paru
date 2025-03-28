@@ -49,11 +49,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Route::middleware('auth')->group(function () {
 //sumber daya
-Route::get('dokter', [PegawaiController::class, 'dokter']);
-Route::get('perawat', [PegawaiController::class, 'perawat']);
-Route::get('apoteker', [PegawaiController::class, 'apoteker']);
-Route::get('radiografer', [PegawaiController::class, 'radiografer']);
-Route::get('analis', [PegawaiController::class, 'analis']);
+
 Route::get('dxMedis', [InputController::class, 'dxMedis']);
 Route::get('jaminan', [InputController::class, 'jaminan']);
 Route::get('tujuan', [InputController::class, 'tujuan']);
@@ -80,6 +76,20 @@ Route::get('/dxMapping', [DiagnosaMappingController::class, 'index']);
 Route::post('/dxMapping/simpan', [DiagnosaMappingController::class, 'store']);
 Route::post('/dxMapping/update', [DiagnosaMappingController::class, 'update']);
 Route::delete('/dxMapping/{kdDx}', [DiagnosaMappingController::class, 'destroy']);
+
+//pegawai
+Route::get('dokter', [PegawaiController::class, 'dokter']);
+Route::get('perawat', [PegawaiController::class, 'perawat']);
+Route::get('apoteker', [PegawaiController::class, 'apoteker']);
+Route::get('radiografer', [PegawaiController::class, 'radiografer']);
+Route::get('analis', [PegawaiController::class, 'analis']);
+
+Route::get('pegawai/{id}', [PegawaiController::class, 'show']);
+Route::post('pegawai', [PegawaiController::class, 'store']);
+Route::post('pegawai/update/{id}', [PegawaiController::class, 'update']);
+Route::post('pegawai/delete', [PegawaiController::class, 'destroy']);
+Route::post('pegawai/cek', [PegawaiController::class, 'cek']);
+Route::post('pegawai/cekLogin', [PegawaiController::class, 'cekLogin']);
 
 //antrians
 Route::post('cariRM', [AntrianController::class, 'cariRM']);
