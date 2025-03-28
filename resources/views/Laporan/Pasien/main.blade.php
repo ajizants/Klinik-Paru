@@ -434,7 +434,7 @@
 
                 item.antrean = `
             <div>
-                <p>${item.antrean_nomor}</p>                                    
+                <p>${item.antrean_nomor} </p>                                    
                 <p>${item.penjamin_nama}</p>                                    
                 <p>${item.dokter_nama}</p>
             </div>`;
@@ -468,7 +468,7 @@
                 let identitas = `
             <div class="row">
                 <div class="col-md-4 col-sm-6 col-12 mb-2">
-                    <p><strong>NO RM:</strong> ${item.pasien_no_rm}</p>
+                    <p><strong>NO RM:</strong> ${item.pasien_no_rm} <a class="font-weight-bold mx-2" href="/RO/Hasil/${item.pasien_no_rm}" target="_blank">Lihat Hasil Penunjang</a></p>
                     <p><strong>Nama:</strong> ${item.pasien_nama}</p>
                 </div>
                 <div class="col-md-4 col-sm-6 col-12 mb-2">

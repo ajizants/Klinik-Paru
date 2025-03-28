@@ -54,6 +54,9 @@ class LoginController extends Controller
                 case 'lab@rsparu.com':
                     $go = '/lab';
                     break;
+                case 'farmasi@rsparu.com':
+                    $go = '/farmasi';
+                    break;
                 case 'dataanalis@rsparu.com' || 'admin@rsparu.com':
                     $go = '/Pusat-Data';
                     break;

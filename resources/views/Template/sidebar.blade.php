@@ -359,7 +359,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/E-kinerja') }}">
                         <i class="fa-solid fa-chart-line  nav-icon"></i>
-                        <p>Laporan E-Kinerja</p>
+                        <p>Laporan Kinerja</p>
                     </a>
                 </li>
 

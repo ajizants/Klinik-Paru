@@ -8,18 +8,13 @@
                     <a type="button" class="nav-link border border-primary active bg-blue" onclick=" toggleSections('#tab_1')"
                         id="link_tab_1"><b>Daftar Pegawai</b></a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#tab_2')"><b>Rekap
                             Kegiatan Bulanan</b></a>
-                </li>
+                </li> --}}
             </ul>
             @include('Laporan.Ekin.daftarPegawai')
             @include('Laporan.Ekin.rekapDX')
-        </div>
-    </div>
-    <div class="card shadow">
-        <div class="card-body" id="divFormEdit">
-
         </div>
     </div>
 
@@ -66,9 +61,9 @@
                     });
 
                     // Scroll ke form
-                    $('html, body').animate({
-                        scrollTop: $("#divFormEdit").offset().top
-                    }, 500);
+                    // $('html, body').animate({
+                    //     scrollTop: $("#divFormEdit").offset().top
+                    // }, 500);
                 })
                 .fail(function(jqXHR, textStatus, errorThrown) {
                     // Tutup alert loading dan tampilkan error
@@ -129,6 +124,10 @@
 
         }
 
+        function batal() {
+            $('#divFormEdit').html('');
+        }
+
         var tglAwal;
         var tglAkhir;
 
@@ -140,9 +139,8 @@
             $('#pegawaiTable').DataTable({
                 paging: true,
                 order: [
-                    [5, "dsc"],
                     [1, "asc"]
-                ], // Mengurutkan berdasarkan tanggal
+                ],
                 lengthMenu: [
                     [5, 10, 25, 50, -1],
                     [5, 10, 25, 50, "All"]
