@@ -432,7 +432,7 @@ class HomeController extends Controller
     {
         $title = 'Laporan Pendaftaran';
 
-        return view('Laporan.pendaftaran')->with('title', $title);
+        return view('Laporan.Pendaftaran.main')->with('title', $title);
     }
     public function dispenser()
     {

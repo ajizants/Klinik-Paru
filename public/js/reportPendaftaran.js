@@ -266,7 +266,6 @@ function reportPendaftaran(tglAwal, tglAkhir) {
 }
 
 async function rekapFaskesPerujuk() {
-    toggleSections("#dSelesai");
     var tglA = formatDate(new Date(tglAwal));
     console.log("🚀 ~ rekapFaskesPerujuk ~ tglA:", tglA);
     var tglB = formatDate(new Date(tglAkhir));
@@ -361,7 +360,6 @@ async function rekapFaskesPerujuk() {
     }
 }
 function rencanaKontrolPasien() {
-    toggleSections("#tab_1");
     var tglA = formatDate(new Date(tglAwal));
     var tglB = formatDate(new Date(tglAkhir));
 
