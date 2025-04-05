@@ -417,6 +417,6 @@ $(document).ready(function () {
     setTodayDate();
     updateAntrian();
     pasienTB();
-    // pasienTelat();
+    pasienTelat();
     // pasienKontrol();
 });
