@@ -128,15 +128,20 @@
                                                         <div class="form-group">
                                                             <label for="bta"> Hasil
                                                                 BTA</label>
-                                                            <select id="bta"
-                                                                class="form-control select2bs4 border border-primary">
-                                                                <option value="Tidak Cek BTA">--Pilih Hasil--</option>
-                                                                <option value="negatif">Negatif</option>
-                                                                <option value="+1">Positif 1</option>
-                                                                <option value="+2">Positif 2</option>
-                                                                <option value="+3">Positif 3</option>
-                                                                <option value="+1-9">Positif 1-9</option>
-                                                            </select>
+                                                            <div class="row">
+                                                                <select id="bta"
+                                                                    class="form-control select2bs4 border border-primary">
+                                                                    <option value="Tidak Cek BTA">--Pilih Hasil--
+                                                                    </option>
+                                                                    <option value="negatif">Negatif</option>
+                                                                    <option value="+1">Positif 1</option>
+                                                                    <option value="+2">Positif 2</option>
+                                                                    <option value="+3">Positif 3</option>
+                                                                    <option value="+1-9">Positif 1-9</option>
+                                                                </select>
+                                                                <input class="form-control form-sontrol-sm"
+                                                                    id="id_kunjungan" />
+                                                            </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="blnKe">
@@ -160,7 +165,8 @@
                                                         </div>
                                                         <div class="form-group" id="obatD">
                                                             <label for="obatDots">
-                                                                Obat </label>
+                                                                Obat <span class="text-danger"
+                                                                    id="obatDotsBefore"></span> </label>
                                                             <select id="obatDots"
                                                                 class="form-control select2bs4 border border-primary">
                                                                 <option value="">--Jenis Obat--</option>

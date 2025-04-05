@@ -127,6 +127,8 @@ Route::get('cariSisa2/{year}', [IgdController::class, 'cariKunjunganPerBulan']);
 
 // Dots Center
 Route::post('kunjungan/Dots', [DotsController::class, 'kunjunganDots']);
+Route::get('kunjungan/Dots/edit/{id}', [DotsController::class, 'FindKunjunganDots']);
+Route::post('kunjungan/Dots/update', [DotsController::class, 'simpanKunjungan']);
 Route::get('obatDots', [DotsController::class, 'obatDots']);
 Route::get('blnKeDots', [DotsController::class, 'blnKeDots']);
 //pasien dots

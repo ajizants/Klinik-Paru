@@ -230,6 +230,48 @@ class DotsController extends Controller
 
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
+    public function FindKunjunganDots($id)
+    {
+        $data = DotsTransModel::with('pasien', 'petugas.biodata', 'dokter.biodata', 'bln')
+            ->where('id', $id)
+            ->get();
+        // foreach ($data as $d) {
+        //     $bta = $d->bta;
+        //     if ($bta == null || $bta == '') {
+        //         $d['bta'] = 'Tidak Diketahui/Tidak Cek';
+        //     }
+        // }
+        // return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+
+        $pasien = [
+            'pasien_no_rm' => $data[0]->norm,
+            'pasien_nama' => $data[0]->pasien->nama,
+            'pasien_alamat' => $data[0]->pasien->alamat,
+            'penjamin_nama' => "-",
+            'nip_dokter' => $data[0]->dokter,
+        ];
+        $pendaftaran = [
+            'no_reg' => $data[0]->notrans,
+        ];
+        $kunjungan = [
+            'id' => $data[0]->id,
+            'petugas' => $data[0]->petugas,
+            'tgl' => \Carbon\Carbon::parse($data[0]->created_at)->format('Y-m-d'),
+            'bta' => $data[0]->bta ?? 'Tidak Cek BTA',
+            'blnKe' => $data[0]->blnKe,
+            'nxKontrol' => $data[0]->nxKontrol,
+            'obatDots' => $data[0]->terapi,
+            'bb' => $data[0]->bb,
+            'ket' => $data[0]->ket,
+        ];
+        $response = [
+            'pasien' => $pasien,
+            'pendaftaran' => $pendaftaran,
+            'kunjungan' => $kunjungan,
+        ];
+
+        return response()->json($response, 200, [], JSON_PRETTY_PRINT);
+    }
     public function blnKeDots()
     {
         $obat = DotsBlnModel::on('mysql')
@@ -424,19 +466,54 @@ class DotsController extends Controller
     //     return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     // }
 
+    // public function poinPetugas(Request $request)
+    // {
+    //     $mulaiTgl = $request->input('tglAwal', now()->toDateString());
+    //     $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
+
+    //     // Ambil data
+    //     $kunjungan = DotsTransModel::whereBetween('created_at', [$mulaiTgl, $selesaiTgl])
+    //         ->get();
+
+    //     $data = [];
+    //     foreach ($kunjungan as $d) {
+    //         $pegawai = PegawaiModel::with('biodata')->where('nip', $d->petugas)->first();
+    //         $data[] = [
+    //             "id" => $d->id,
+    //             "norm" => $d->norm,
+    //             "notrans" => $d->notrans,
+    //             'nip' => $d->petugas,
+    //             'nama' => $pegawai->biodata->nama ?? 'Tidak Diketahui',
+    //         ];
+    //     }
+
+    //     // Hitung jumlah kemunculan per NIP
+    //     $poin = collect($data)->groupBy('nip')->map(function ($group, $nip) {
+    //         return [
+    //             'nip' => $nip,
+    //             'nama' => $group->first()['nama'], // Nama pertama dari grup
+    //             'jumlah' => $group->count(), // Hitung jumlah kemunculan
+    //         ];
+    //     })->values(); // Reset indeks array
+
+    //     return response()->json($poin, 200, [], JSON_PRETTY_PRINT);
+    // }
+
     public function poinPetugas(Request $request)
     {
         $mulaiTgl = $request->input('tglAwal', now()->toDateString());
         $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
 
-        // Ambil data
-        $kunjungan = DotsTransModel::whereBetween('created_at', [$mulaiTgl, $selesaiTgl])
-            ->get();
+        // Ambil data kunjungan
+        $kunjungan = DotsTransModel::whereBetween('created_at', [$mulaiTgl, $selesaiTgl])->get();
+        // Ambil data pasien baru
+        $pasienBaru = DotsModel::whereBetween('created_at', [$mulaiTgl, $selesaiTgl])->get();
 
-        $data = [];
+        // Data kunjungan
+        $dataLama = [];
         foreach ($kunjungan as $d) {
             $pegawai = PegawaiModel::with('biodata')->where('nip', $d->petugas)->first();
-            $data[] = [
+            $dataLama[] = [
                 "id" => $d->id,
                 "norm" => $d->norm,
                 "notrans" => $d->notrans,
@@ -445,14 +522,63 @@ class DotsController extends Controller
             ];
         }
 
-        // Hitung jumlah kemunculan per NIP
-        $poin = collect($data)->groupBy('nip')->map(function ($group, $nip) {
+        // Data pasien baru
+        $dataBaru = [];
+        foreach ($pasienBaru as $d) {
+            $pegawai = PegawaiModel::with('biodata')->where('nip', $d->petugas)->first();
+            $dataBaru[] = [
+                "id" => $d->id,
+                "norm" => $d->norm,
+                "notrans" => $d->notrans,
+                'nip' => $d->petugas,
+                'nama' => $pegawai->biodata->nama ?? 'Tidak Diketahui',
+            ];
+        }
+
+        // Hitung jumlah poin lama
+        $poinLama = collect($dataLama)->groupBy('nip')->map(function ($group, $nip) {
             return [
                 'nip' => $nip,
-                'nama' => $group->first()['nama'], // Nama pertama dari grup
-                'jumlah' => $group->count(), // Hitung jumlah kemunculan
+                'nama' => $group->first()['nama'],
+                'jumlahLama' => $group->count(),
             ];
-        })->values(); // Reset indeks array
+        });
+
+        // Hitung jumlah poin baru
+        $poinBaru = collect($dataBaru)->groupBy('nip')->map(function ($group, $nip) {
+            return [
+                'nip' => $nip,
+                'nama' => $group->first()['nama'],
+                'jumlahBaru' => $group->count(),
+            ];
+        });
+
+        // Gabungkan data berdasarkan NIP
+        $poinGabungan = $poinLama->map(function ($lama, $nip) use ($poinBaru) {
+            $baru = $poinBaru->get($nip, ['jumlahBaru' => 0]);
+
+            return [
+                'nip' => $nip,
+                'nama' => $lama['nama'],
+                'jumlahLama' => $lama['jumlahLama'],
+                'jumlahBaru' => $baru['jumlahBaru'] ?? 0,
+            ];
+        })->values();
+
+        // Tambahkan data dari poinBaru yang tidak ada di poinLama
+        $poinTambahan = $poinBaru->filter(function ($item) use ($poinLama) {
+            return !$poinLama->has($item['nip']);
+        })->map(function ($item) {
+            return [
+                'nip' => $item['nip'],
+                'nama' => $item['nama'],
+                'jumlahLama' => 0,
+                'jumlahBaru' => $item['jumlahBaru'],
+            ];
+        });
+
+        // Gabungkan semua poin
+        $poin = $poinGabungan->merge($poinTambahan)->values();
 
         return response()->json($poin, 200, [], JSON_PRETTY_PRINT);
     }

@@ -196,6 +196,30 @@ function isiBiodataModal(norm, date, pasien, pendaftaran, dx) {
     $("#modal-pasienTB #modal-kdDx").val(kdDx).trigger("change");
     Swal.close();
 }
+
+function isiDataKunjungan(data) {
+    console.log("🚀 ~ isiBiodataModal ~ data:", data);
+    const tgl = data.tgl;
+    const petugas = data.petugas;
+    const id_kunjungan = data.id;
+    const bta = data.bta;
+    const blnKe = data.blnKe;
+    const nxKontrol = data.nxKontrol;
+    const obatDots = "Sebelumnya: " + data.obatDots;
+    const bb = data.bb;
+    const ket = data.ket;
+
+    $("#id_kunjungan").val(id_kunjungan);
+    $("#tglKunj").val(tgl).trigger("change");
+    $("#petugas").val(petugas).trigger("change");
+    $("#bta").val(bta).trigger("change");
+    $("#blnKe").val(blnKe).trigger("change");
+    $("#nxKontrol").val(nxKontrol).trigger("change");
+    $("#obatDotsBefore").html(obatDots);
+    $("#bb").val(bb);
+    $("#ket").val(ket);
+    $("#modal-RiwayatKunjungan").modal("hide");
+}
 function editPasienTB(button) {
     console.log("🚀 ~ editPasienTB ~ editPasienTB:", editPasienTB);
     var id = button.getAttribute("data-id");
@@ -308,48 +332,88 @@ function updateStatus(id) {
     });
 }
 
-function pasienTelat() {
+// function pasienTelat() {
+//     $("#loadingSpinner").show();
+//     if ($.fn.DataTable.isDataTable("#Ptelat, #Pdo, #Pkontrol")) {
+//         $("#Ptelat, #Pdo, #Pkontrol").DataTable().destroy();
+//     }
+
+//     $.ajax({
+//         url: "/api/pasien/TB/Telat",
+//         type: "GET",
+//         success: function (response) {
+//             $("#loadingSpinner").hide();
+//             const data = response.data;
+
+//             const pasienTelat = data.filter(
+//                 (item) =>
+//                     item.status === "Telat" &&
+//                     item.blnKe !== "Selesai Pengobatan"
+//             );
+//             const pasienDo = data.filter(
+//                 (item) =>
+//                     item.status === "DO" && item.blnKe !== "Selesai Pengobatan"
+//             );
+//             const pasienKontrol = data.filter(
+//                 (item) => item.status === "Tepat Waktu"
+//             );
+
+//             generateTable(
+//                 "#Ptelat",
+//                 pasienTelat,
+//                 "Data Pasien TBC Telat di KKPM"
+//             );
+//             generateTable("#Pdo", pasienDo, "Data Pasien TBC DO di KKPM");
+//             generateTable(
+//                 "#Pkontrol",
+//                 pasienKontrol,
+//                 "Data Pasien TBC Tepat Waktu di KKPM"
+//             );
+//         },
+//         error: function (xhr, status, error) {
+//             console.error("Error:", error);
+//         },
+//     });
+// }
+async function pasienTelat() {
     $("#loadingSpinner").show();
+
     if ($.fn.DataTable.isDataTable("#Ptelat, #Pdo, #Pkontrol")) {
         $("#Ptelat, #Pdo, #Pkontrol").DataTable().destroy();
     }
 
-    $.ajax({
-        url: "/api/pasien/TB/Telat",
-        type: "GET",
-        success: function (response) {
-            $("#loadingSpinner").hide();
-            const data = response.data;
+    try {
+        const response = await $.ajax({
+            url: "/api/pasien/TB/Telat",
+            type: "GET",
+        });
 
-            const pasienTelat = data.filter(
-                (item) =>
-                    item.status === "Telat" &&
-                    item.blnKe !== "Selesai Pengobatan"
-            );
-            const pasienDo = data.filter(
-                (item) =>
-                    item.status === "DO" && item.blnKe !== "Selesai Pengobatan"
-            );
-            const pasienKontrol = data.filter(
-                (item) => item.status === "Tepat Waktu"
-            );
+        $("#loadingSpinner").hide();
+        const data = response.data;
 
-            generateTable(
-                "#Ptelat",
-                pasienTelat,
-                "Data Pasien TBC Telat di KKPM"
-            );
-            generateTable("#Pdo", pasienDo, "Data Pasien TBC DO di KKPM");
-            generateTable(
-                "#Pkontrol",
-                pasienKontrol,
-                "Data Pasien TBC Tepat Waktu di KKPM"
-            );
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-        },
-    });
+        const pasienTelat = data.filter(
+            (item) =>
+                item.status === "Telat" && item.blnKe !== "Selesai Pengobatan"
+        );
+        const pasienDo = data.filter(
+            (item) =>
+                item.status === "DO" && item.blnKe !== "Selesai Pengobatan"
+        );
+        const pasienKontrol = data.filter(
+            (item) => item.status === "Tepat Waktu"
+        );
+
+        generateTable("#Ptelat", pasienTelat, "Data Pasien TBC Telat di KKPM");
+        generateTable("#Pdo", pasienDo, "Data Pasien TBC DO di KKPM");
+        generateTable(
+            "#Pkontrol",
+            pasienKontrol,
+            "Data Pasien TBC Tepat Waktu di KKPM"
+        );
+    } catch (error) {
+        $("#loadingSpinner").hide();
+        console.error("Error:", error);
+    }
 }
 
 function generateTable(selector, data, title) {
@@ -594,6 +658,7 @@ function showRiwayatKunjungan(norm, modal) {
                 item.actions = `<button class="editTB bg-danger"
                                 data-id="${item.id}"
                                 data-norm="${item.norm}"
+                                onclick="editKunjunganPasien('${item.id}')"
                                 ><i class="fas fa-pen-to-square"></i></button>`;
                 item.no = index + 1;
                 item.dokter = `${item.dokter.gelar_d} ${item.dokter.biodata.nama} ${item.dokter.gelar_b}`;
@@ -655,6 +720,20 @@ function showRiwayatKunjungan(norm, modal) {
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
+        },
+    });
+}
+
+function editKunjunganPasien(id) {
+    const url = "api/kunjungan/Dots/edit/" + id;
+    $.ajax({
+        url: url,
+        type: "GET",
+        success: function (response) {
+            console.log("🚀 ~ editKunjunganPasien ~ response:", response);
+            isiBiodata(response.pasien, response.pendaftaran);
+            isiDataKunjungan(response.kunjungan);
+            showRiwayatKunjungan(response.pasien.pasien_no_rm);
         },
     });
 }

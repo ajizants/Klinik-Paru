@@ -1,8 +1,6 @@
 <div class="card shadow mb-4" id="tab_1">
-    <!-- Card Header - Dropdown -->
-    <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-start">
-        <h6 class="font-weight-bold ">Data Pegawai</h6>
-    </div>
+    {{-- <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-start">
+    </div> --}}
     <div class="card-body">
         <div class="row">
             <label class="col-form-label">Pilih Rentang Tanggal sebelum mencetak data kinerja pegawai:</label>

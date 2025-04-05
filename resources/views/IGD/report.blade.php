@@ -126,7 +126,8 @@
                                             <th class="">No</th>
                                             {{-- <th class="">NIP</th> --}}
                                             <th class="">Nama</th>
-                                            <th class="col-3">Jumlah</th>
+                                            <th class="col-3">Input Kunjungan</th>
+                                            <th class="col-3">Input Pasien Baru</th>
                                         </tr>
                                     </thead>
                                 </table>

@@ -1281,6 +1281,8 @@ function handleLab(cppt, pasien, pendaftaran) {
 }
 
 function isiIdentitas(pasien, pendaftaran, permintaan) {
+    console.log("🚀 ~ isiIdentitas ~ pendaftaran:", pendaftaran);
+    console.log("🚀 ~ isiIdentitas ~ pasien:", pasien);
     // console.log("🚀 ~ isiIdentitas ~ permintaan:", permintaan);
 
     // Set values for input fields

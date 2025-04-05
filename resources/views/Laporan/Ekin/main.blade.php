@@ -6,7 +6,7 @@
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a type="button" class="nav-link border border-primary active bg-blue" onclick=" toggleSections('#tab_1')"
-                        id="link_tab_1"><b>Daftar Pegawai</b></a>
+                        id="link_tab_1"><b>Kepegawaian</b></a>
                 </li>
                 {{-- <li class="nav-item">
                     <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#tab_2')"><b>Rekap

@@ -110,7 +110,6 @@ function validasiKunjungan() {
             text: "Ada data yang masih kosong! Mohon lengkapi semua data.",
         });
     } else {
-        // Lakukan pengiriman data atau proses selanjutnya jika semua data valid
         simpanKunjungan(); // Contoh: Panggil fungsi simpan() jika semua data valid
     }
 }
@@ -193,6 +192,7 @@ async function simpanKunjungan() {
         var ket = $("#ket").val();
         var petugas = $("#petugas").val();
         var dokter = $("#dokter").val();
+        var id_kunjungan = $("#id_kunjungan").val();
         // Membuat objek FormData untuk mengirim data dengan file
         var formData = new FormData();
         formData.append("notrans", notrans);
@@ -207,9 +207,18 @@ async function simpanKunjungan() {
         formData.append("petugas", petugas);
         formData.append("dokter", dokter);
         // console.log("🚀 ~ simpanKunjungan ~ formData:", formData);
+        let url;
+        let msg;
+        if (id_kunjungan === "") {
+            url = "/api/simpan/kunjungan/dots";
+            msg = "Data berhasil disimpan,\n \n" + "Maturnuwun...!!";
+        } else {
+            url = "/api/kunjungan/Dots/update";
+            msg = "Data berhasil diupdate,\n \n" + "Maturnuwun...!!";
+        }
 
         // Kirim data menggunakan fetch API dengan async/await
-        const response = await fetch("/api/simpan/kunjungan/dots", {
+        const response = await fetch(url, {
             method: "POST",
             body: formData,
         });
@@ -224,10 +233,11 @@ async function simpanKunjungan() {
 
         Swal.fire({
             icon: "success",
-            title: "Data berhasil disimpan,\n \n" + "Maturnuwun...!!",
+            title: msg,
         });
 
         resetFormTs();
+        $("#id_kunjungan").val("");
         showRiwayatKunjungan(norm);
     } catch (error) {
         console.error("Terjadi kesalahan saat menyimpan data:", error.massage);
@@ -389,7 +399,6 @@ $(document).ready(function () {
     scrollToTop();
     $(".select2bs4").select2();
     $("#modal-pasienTB .select2bs4").select2();
-
     $("#modal-pasienTB #modal-norm").on("keyup", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -408,6 +417,6 @@ $(document).ready(function () {
     setTodayDate();
     updateAntrian();
     pasienTB();
-    pasienTelat();
+    // pasienTelat();
     // pasienKontrol();
 });

@@ -19,26 +19,26 @@ class PegawaiController extends Controller
         $data = [];
         foreach ($pegawai as $peg) {
             $data[] = array_map('strval', [
-                "nip"          => $peg["nip"] ?? null,
-                "status"       => $peg["stat_pns"] ?? null,
-                "gelar_d"      => $peg["gelar_d"] ?? null,
-                "gelar_b"      => $peg["gelar_b"] ?? null,
-                "kd_jab"       => $peg["kd_jab"] ?? null,
-                "kd_pend"      => $peg["kd_pend"] ?? null,
-                "kd_jurusan"   => $peg["kd_jurusan"] ?? null,
-                "tgl_masuk"    => $peg["tgl_masuk"] ?? null,
-                "nama"         => $peg["biodata"]["nama"] ?? null,
-                "jeniskel"     => $peg["biodata"]["jeniskel"] ?? null,
+                "nip" => $peg["nip"] ?? null,
+                "status" => $peg["stat_pns"] ?? null,
+                "gelar_d" => $peg["gelar_d"] ?? null,
+                "gelar_b" => $peg["gelar_b"] ?? null,
+                "kd_jab" => $peg["kd_jab"] ?? null,
+                "kd_pend" => $peg["kd_pend"] ?? null,
+                "kd_jurusan" => $peg["kd_jurusan"] ?? null,
+                "tgl_masuk" => $peg["tgl_masuk"] ?? null,
+                "nama" => $peg["biodata"]["nama"] ?? null,
+                "jeniskel" => $peg["biodata"]["jeniskel"] ?? null,
                 "tempat_lahir" => $peg["biodata"]["tempat_lahir"] ?? null,
-                "tgl_lahir"    => $peg["biodata"]["tgl_lahir"] ?? null,
-                "alamat"       => $peg["biodata"]["alamat"] ?? null,
-                "kd_prov"      => $peg["biodata"]["kd_prov"] ?? null,
-                "kd_kab"       => $peg["biodata"]["kd_kab"] ?? null,
-                "kd_kec"       => $peg["biodata"]["kd_kec"] ?? null,
-                "kd_kel"       => $peg["biodata"]["kd_kel"] ?? null,
-                "kdAgama"      => $peg["biodata"]["kdAgama"] ?? null,
+                "tgl_lahir" => $peg["biodata"]["tgl_lahir"] ?? null,
+                "alamat" => $peg["biodata"]["alamat"] ?? null,
+                "kd_prov" => $peg["biodata"]["kd_prov"] ?? null,
+                "kd_kab" => $peg["biodata"]["kd_kab"] ?? null,
+                "kd_kec" => $peg["biodata"]["kd_kec"] ?? null,
+                "kd_kel" => $peg["biodata"]["kd_kel"] ?? null,
+                "kdAgama" => $peg["biodata"]["kdAgama"] ?? null,
                 "status_kawin" => $peg["biodata"]["status_kawin"] ?? null,
-                "nm_jabatan"   => $peg["jabatan"]["nm_jabatan"] ?? null,
+                "nm_jabatan" => $peg["jabatan"]["nm_jabatan"] ?? null,
             ]);
         }
 
@@ -47,7 +47,7 @@ class PegawaiController extends Controller
 
     public function dokter(Request $request)
     {
-        $nip   = $request->nip;
+        $nip = $request->nip;
         $kdjab = [1, 7, 8];
 
         $dokter = PegawaiModel::with(['biodata', 'jabatan'])
@@ -57,26 +57,26 @@ class PegawaiController extends Controller
         foreach ($dokter as $peg) {
 
             $data[] = array_map('strval', [
-                "nip"          => $peg["nip"] ?? null,
-                "status"       => $peg["stat_pns"] ?? null,
-                "gelar_d"      => $peg["gelar_d"] ?? null,
-                "gelar_b"      => $peg["gelar_b"] ?? null,
-                "kd_jab"       => $peg["kd_jab"] ?? null,
-                "kd_pend"      => $peg["kd_pend"] ?? null,
-                "kd_jurusan"   => $peg["kd_jurusan"] ?? null,
-                "tgl_masuk"    => $peg["tgl_masuk"] ?? null,
-                "nama"         => $peg["biodata"]["nama"] ?? null,
-                "jeniskel"     => $peg["biodata"]["jeniskel"] ?? null,
+                "nip" => $peg["nip"] ?? null,
+                "status" => $peg["stat_pns"] ?? null,
+                "gelar_d" => $peg["gelar_d"] ?? null,
+                "gelar_b" => $peg["gelar_b"] ?? null,
+                "kd_jab" => $peg["kd_jab"] ?? null,
+                "kd_pend" => $peg["kd_pend"] ?? null,
+                "kd_jurusan" => $peg["kd_jurusan"] ?? null,
+                "tgl_masuk" => $peg["tgl_masuk"] ?? null,
+                "nama" => $peg["biodata"]["nama"] ?? null,
+                "jeniskel" => $peg["biodata"]["jeniskel"] ?? null,
                 "tempat_lahir" => $peg["biodata"]["tempat_lahir"] ?? null,
-                "tgl_lahir"    => $peg["biodata"]["tgl_lahir"] ?? null,
-                "alamat"       => $peg["biodata"]["alamat"] ?? null,
-                "kd_prov"      => $peg["biodata"]["kd_prov"] ?? null,
-                "kd_kab"       => $peg["biodata"]["kd_kab"] ?? null,
-                "kd_kec"       => $peg["biodata"]["kd_kec"] ?? null,
-                "kd_kel"       => $peg["biodata"]["kd_kel"] ?? null,
-                "kdAgama"      => $peg["biodata"]["kdAgama"] ?? null,
+                "tgl_lahir" => $peg["biodata"]["tgl_lahir"] ?? null,
+                "alamat" => $peg["biodata"]["alamat"] ?? null,
+                "kd_prov" => $peg["biodata"]["kd_prov"] ?? null,
+                "kd_kab" => $peg["biodata"]["kd_kab"] ?? null,
+                "kd_kec" => $peg["biodata"]["kd_kec"] ?? null,
+                "kd_kel" => $peg["biodata"]["kd_kel"] ?? null,
+                "kdAgama" => $peg["biodata"]["kdAgama"] ?? null,
                 "status_kawin" => $peg["biodata"]["status_kawin"] ?? null,
-                "nm_jabatan"   => $peg["jabatan"]["nm_jabatan"] ?? null,
+                "nm_jabatan" => $peg["jabatan"]["nm_jabatan"] ?? null,
             ]);
         }
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
@@ -91,26 +91,26 @@ class PegawaiController extends Controller
         $data = [];
         foreach ($perawat as $peg) {
             $data[] = array_map('strval', [
-                "nip"          => $peg["nip"] ?? null,
-                "status"       => $peg["stat_pns"] ?? null,
-                "gelar_d"      => $peg["gelar_d"] ?? null,
-                "gelar_b"      => $peg["gelar_b"] ?? null,
-                "kd_jab"       => $peg["kd_jab"] ?? null,
-                "kd_pend"      => $peg["kd_pend"] ?? null,
-                "kd_jurusan"   => $peg["kd_jurusan"] ?? null,
-                "tgl_masuk"    => $peg["tgl_masuk"] ?? null,
-                "nama"         => $peg["biodata"]["nama"] ?? null,
-                "jeniskel"     => $peg["biodata"]["jeniskel"] ?? null,
+                "nip" => $peg["nip"] ?? null,
+                "status" => $peg["stat_pns"] ?? null,
+                "gelar_d" => $peg["gelar_d"] ?? null,
+                "gelar_b" => $peg["gelar_b"] ?? null,
+                "kd_jab" => $peg["kd_jab"] ?? null,
+                "kd_pend" => $peg["kd_pend"] ?? null,
+                "kd_jurusan" => $peg["kd_jurusan"] ?? null,
+                "tgl_masuk" => $peg["tgl_masuk"] ?? null,
+                "nama" => $peg["biodata"]["nama"] ?? null,
+                "jeniskel" => $peg["biodata"]["jeniskel"] ?? null,
                 "tempat_lahir" => $peg["biodata"]["tempat_lahir"] ?? null,
-                "tgl_lahir"    => $peg["biodata"]["tgl_lahir"] ?? null,
-                "alamat"       => $peg["biodata"]["alamat"] ?? null,
-                "kd_prov"      => $peg["biodata"]["kd_prov"] ?? null,
-                "kd_kab"       => $peg["biodata"]["kd_kab"] ?? null,
-                "kd_kec"       => $peg["biodata"]["kd_kec"] ?? null,
-                "kd_kel"       => $peg["biodata"]["kd_kel"] ?? null,
-                "kdAgama"      => $peg["biodata"]["kdAgama"] ?? null,
+                "tgl_lahir" => $peg["biodata"]["tgl_lahir"] ?? null,
+                "alamat" => $peg["biodata"]["alamat"] ?? null,
+                "kd_prov" => $peg["biodata"]["kd_prov"] ?? null,
+                "kd_kab" => $peg["biodata"]["kd_kab"] ?? null,
+                "kd_kec" => $peg["biodata"]["kd_kec"] ?? null,
+                "kd_kel" => $peg["biodata"]["kd_kel"] ?? null,
+                "kdAgama" => $peg["biodata"]["kdAgama"] ?? null,
                 "status_kawin" => $peg["biodata"]["status_kawin"] ?? null,
-                "nm_jabatan"   => $peg["jabatan"]["nm_jabatan"] ?? null,
+                "nm_jabatan" => $peg["jabatan"]["nm_jabatan"] ?? null,
             ]);
         }
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
@@ -124,26 +124,26 @@ class PegawaiController extends Controller
         $data = [];
         foreach ($radiografer as $peg) {
             $data[] = array_map('strval', [
-                "nip"          => $peg["nip"] ?? null,
-                "status"       => $peg["stat_pns"] ?? null,
-                "gelar_d"      => $peg["gelar_d"] ?? null,
-                "gelar_b"      => $peg["gelar_b"] ?? null,
-                "kd_jab"       => $peg["kd_jab"] ?? null,
-                "kd_pend"      => $peg["kd_pend"] ?? null,
-                "kd_jurusan"   => $peg["kd_jurusan"] ?? null,
-                "tgl_masuk"    => $peg["tgl_masuk"] ?? null,
-                "nama"         => $peg["biodata"]["nama"] ?? null,
-                "jeniskel"     => $peg["biodata"]["jeniskel"] ?? null,
+                "nip" => $peg["nip"] ?? null,
+                "status" => $peg["stat_pns"] ?? null,
+                "gelar_d" => $peg["gelar_d"] ?? null,
+                "gelar_b" => $peg["gelar_b"] ?? null,
+                "kd_jab" => $peg["kd_jab"] ?? null,
+                "kd_pend" => $peg["kd_pend"] ?? null,
+                "kd_jurusan" => $peg["kd_jurusan"] ?? null,
+                "tgl_masuk" => $peg["tgl_masuk"] ?? null,
+                "nama" => $peg["biodata"]["nama"] ?? null,
+                "jeniskel" => $peg["biodata"]["jeniskel"] ?? null,
                 "tempat_lahir" => $peg["biodata"]["tempat_lahir"] ?? null,
-                "tgl_lahir"    => $peg["biodata"]["tgl_lahir"] ?? null,
-                "alamat"       => $peg["biodata"]["alamat"] ?? null,
-                "kd_prov"      => $peg["biodata"]["kd_prov"] ?? null,
-                "kd_kab"       => $peg["biodata"]["kd_kab"] ?? null,
-                "kd_kec"       => $peg["biodata"]["kd_kec"] ?? null,
-                "kd_kel"       => $peg["biodata"]["kd_kel"] ?? null,
-                "kdAgama"      => $peg["biodata"]["kdAgama"] ?? null,
+                "tgl_lahir" => $peg["biodata"]["tgl_lahir"] ?? null,
+                "alamat" => $peg["biodata"]["alamat"] ?? null,
+                "kd_prov" => $peg["biodata"]["kd_prov"] ?? null,
+                "kd_kab" => $peg["biodata"]["kd_kab"] ?? null,
+                "kd_kec" => $peg["biodata"]["kd_kec"] ?? null,
+                "kd_kel" => $peg["biodata"]["kd_kel"] ?? null,
+                "kdAgama" => $peg["biodata"]["kdAgama"] ?? null,
                 "status_kawin" => $peg["biodata"]["status_kawin"] ?? null,
-                "nm_jabatan"   => $peg["jabatan"]["nm_jabatan"] ?? null,
+                "nm_jabatan" => $peg["jabatan"]["nm_jabatan"] ?? null,
             ]);
         }
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
@@ -157,26 +157,26 @@ class PegawaiController extends Controller
         $data = [];
         foreach ($apoteker as $peg) {
             $data[] = array_map('strval', [
-                "nip"          => $peg["nip"] ?? null,
-                "status"       => $peg["stat_pns"] ?? null,
-                "gelar_d"      => $peg["gelar_d"] ?? null,
-                "gelar_b"      => $peg["gelar_b"] ?? null,
-                "kd_jab"       => $peg["kd_jab"] ?? null,
-                "kd_pend"      => $peg["kd_pend"] ?? null,
-                "kd_jurusan"   => $peg["kd_jurusan"] ?? null,
-                "tgl_masuk"    => $peg["tgl_masuk"] ?? null,
-                "nama"         => $peg["biodata"]["nama"] ?? null,
-                "jeniskel"     => $peg["biodata"]["jeniskel"] ?? null,
+                "nip" => $peg["nip"] ?? null,
+                "status" => $peg["stat_pns"] ?? null,
+                "gelar_d" => $peg["gelar_d"] ?? null,
+                "gelar_b" => $peg["gelar_b"] ?? null,
+                "kd_jab" => $peg["kd_jab"] ?? null,
+                "kd_pend" => $peg["kd_pend"] ?? null,
+                "kd_jurusan" => $peg["kd_jurusan"] ?? null,
+                "tgl_masuk" => $peg["tgl_masuk"] ?? null,
+                "nama" => $peg["biodata"]["nama"] ?? null,
+                "jeniskel" => $peg["biodata"]["jeniskel"] ?? null,
                 "tempat_lahir" => $peg["biodata"]["tempat_lahir"] ?? null,
-                "tgl_lahir"    => $peg["biodata"]["tgl_lahir"] ?? null,
-                "alamat"       => $peg["biodata"]["alamat"] ?? null,
-                "kd_prov"      => $peg["biodata"]["kd_prov"] ?? null,
-                "kd_kab"       => $peg["biodata"]["kd_kab"] ?? null,
-                "kd_kec"       => $peg["biodata"]["kd_kec"] ?? null,
-                "kd_kel"       => $peg["biodata"]["kd_kel"] ?? null,
-                "kdAgama"      => $peg["biodata"]["kdAgama"] ?? null,
+                "tgl_lahir" => $peg["biodata"]["tgl_lahir"] ?? null,
+                "alamat" => $peg["biodata"]["alamat"] ?? null,
+                "kd_prov" => $peg["biodata"]["kd_prov"] ?? null,
+                "kd_kab" => $peg["biodata"]["kd_kab"] ?? null,
+                "kd_kec" => $peg["biodata"]["kd_kec"] ?? null,
+                "kd_kel" => $peg["biodata"]["kd_kel"] ?? null,
+                "kdAgama" => $peg["biodata"]["kdAgama"] ?? null,
                 "status_kawin" => $peg["biodata"]["status_kawin"] ?? null,
-                "nm_jabatan"   => $peg["jabatan"]["nm_jabatan"] ?? null,
+                "nm_jabatan" => $peg["jabatan"]["nm_jabatan"] ?? null,
             ]);
         }
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
@@ -190,26 +190,26 @@ class PegawaiController extends Controller
         $data = [];
         foreach ($apoteker as $peg) {
             $data[] = array_map('strval', [
-                "nip"          => $peg["nip"] ?? null,
-                "status"       => $peg["stat_pns"] ?? null,
-                "gelar_d"      => $peg["gelar_d"] ?? null,
-                "gelar_b"      => $peg["gelar_b"] ?? null,
-                "kd_jab"       => $peg["kd_jab"] ?? null,
-                "kd_pend"      => $peg["kd_pend"] ?? null,
-                "kd_jurusan"   => $peg["kd_jurusan"] ?? null,
-                "tgl_masuk"    => $peg["tgl_masuk"] ?? null,
-                "nama"         => $peg["biodata"]["nama"] ?? null,
-                "jeniskel"     => $peg["biodata"]["jeniskel"] ?? null,
+                "nip" => $peg["nip"] ?? null,
+                "status" => $peg["stat_pns"] ?? null,
+                "gelar_d" => $peg["gelar_d"] ?? null,
+                "gelar_b" => $peg["gelar_b"] ?? null,
+                "kd_jab" => $peg["kd_jab"] ?? null,
+                "kd_pend" => $peg["kd_pend"] ?? null,
+                "kd_jurusan" => $peg["kd_jurusan"] ?? null,
+                "tgl_masuk" => $peg["tgl_masuk"] ?? null,
+                "nama" => $peg["biodata"]["nama"] ?? null,
+                "jeniskel" => $peg["biodata"]["jeniskel"] ?? null,
                 "tempat_lahir" => $peg["biodata"]["tempat_lahir"] ?? null,
-                "tgl_lahir"    => $peg["biodata"]["tgl_lahir"] ?? null,
-                "alamat"       => $peg["biodata"]["alamat"] ?? null,
-                "kd_prov"      => $peg["biodata"]["kd_prov"] ?? null,
-                "kd_kab"       => $peg["biodata"]["kd_kab"] ?? null,
-                "kd_kec"       => $peg["biodata"]["kd_kec"] ?? null,
-                "kd_kel"       => $peg["biodata"]["kd_kel"] ?? null,
-                "kdAgama"      => $peg["biodata"]["kdAgama"] ?? null,
+                "tgl_lahir" => $peg["biodata"]["tgl_lahir"] ?? null,
+                "alamat" => $peg["biodata"]["alamat"] ?? null,
+                "kd_prov" => $peg["biodata"]["kd_prov"] ?? null,
+                "kd_kab" => $peg["biodata"]["kd_kab"] ?? null,
+                "kd_kec" => $peg["biodata"]["kd_kec"] ?? null,
+                "kd_kel" => $peg["biodata"]["kd_kel"] ?? null,
+                "kdAgama" => $peg["biodata"]["kdAgama"] ?? null,
                 "status_kawin" => $peg["biodata"]["status_kawin"] ?? null,
-                "nm_jabatan"   => $peg["jabatan"]["nm_jabatan"] ?? null,
+                "nm_jabatan" => $peg["jabatan"]["nm_jabatan"] ?? null,
             ]);
         }
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
@@ -240,7 +240,7 @@ class PegawaiController extends Controller
         $pegawai = PegawaiModel::with(['biodata', 'jabatan'])->where('nip', $nip)->first();
         $jabatan = JabatanModel::all();
 
-        if (! $pegawai) {
+        if (!$pegawai) {
             return response()->json(['message' => 'Pegawai tidak ditemukan'], 404);
         }
 
@@ -250,27 +250,27 @@ class PegawaiController extends Controller
     private function createFormPegawai($pegawai, $jabatan)
     {
         $kd_jab = $pegawai->kd_jab;
-        $form   = '<div class="container-fuid mt-4">';
+        $form = '<div class="container-fuid mt-4">';
         $form .= '<div class="card">';
-        $form .= '<div class="card-header bg-primary text-white">Form Update Data Pegawai</div>';
+        $form .= '<div class="card-header bg-warning text-white">Form Update Data Pegawai</div>';
         $form .= '<div class="card-body">';
         $form .= '<form id="pegawaiForm">
         <div class="row">';
 
         // NIP (readonly)
-        $form .= '<div class="form-group col-auto">
+        $form .= '<div class="form-group col-12 col-md-auto">
                 <label for="nip">NIP</label>
                 <input type="text" class="form-control form-control-sm" id="nip" name="nip" value="' . htmlspecialchars($pegawai->nip, ENT_QUOTES, 'UTF-8') . '" readonly>
               </div>';
 
         // Nama
-        $form .= '<div class="form-group col-auto">
+        $form .= '<div class="form-group col-sm-2">
                 <label for="nama">Nama</label>
                 <input type="text" class="form-control form-control-sm" id="nama" name="nama" value="' . htmlspecialchars($pegawai->biodata->nama, ENT_QUOTES, 'UTF-8') . '" >
               </div>';
 
         // Jenis Kelamin
-        $form .= '<div class="form-group col-auto">
+        $form .= '<div class="form-group col-6 col-md-auto">
                 <label for="jeniskel">Jenis Kelamin</label>
                 <select class="form-control form-control-sm" id="jeniskel" name="jeniskel">
                     <option value="P"' . ($pegawai->biodata->jeniskel == 'P' ? ' selected' : '') . '>Perempuan</option>
@@ -279,25 +279,37 @@ class PegawaiController extends Controller
               </div>';
 
         // Tempat Lahir
-        $form .= '<div class="form-group col-auto">
+        $form .= '<div class="form-group col-6 col-md-auto col-sm-1">
                 <label for="tempat_lahir">Tempat Lahir</label>
                 <input type="text" class="form-control form-control-sm" id="tempat_lahir" name="tempat_lahir" value="' . htmlspecialchars($pegawai->biodata->tempat_lahir, ENT_QUOTES, 'UTF-8') . '" >
               </div>';
 
         // Tanggal Lahir
-        $form .= '<div class="form-group col-auto">
+        $form .= '<div class="form-group col-6 col-md-auto">
                 <label for="tgl_lahir">Tanggal Lahir</label>
                 <input type="date" class="form-control form-control-sm" id="tgl_lahir" name="tgl_lahir" value="' . $pegawai->biodata->tgl_lahir . '" >
               </div>';
 
         // Alamat
-        $form .= '<div class="form-group col-auto">
+        $form .= '<div class="form-group col-6 col-md-auto">
                 <label for="alamat">Alamat</label>
                 <input type="text" class="form-control form-control-sm" id="alamat" name="alamat"  value="' . htmlspecialchars($pegawai->biodata->alamat, ENT_QUOTES, 'UTF-8') . '"/>
               </div>';
 
+        // Status PNS
+        $form .= '<div class="form-group col-6 col-md-auto">
+                <label for="stat_pns">Status Pegawai</label>
+                <select class="form-control form-control-sm" id="stat_pns" name="stat_pns">
+                    <option value="PNS"' . ($pegawai->stat_pns == 'PNS' ? ' selected' : '') . '>PNS</option>
+                    <option value="PPPK"' . ($pegawai->stat_pns == 'PPPK' ? ' selected' : '') . '>PPPK</option>
+                    <option value="KONTRAK"' . ($pegawai->stat_pns == 'KONTRAK' ? ' selected' : '') . '>KONTRAK</option>
+                    <option value="KONTRAK BLUD"' . ($pegawai->stat_pns == 'KONTRAK BLUD' ? ' selected' : '') . '>KONTRAK BLUD</option>
+
+                </select>
+              </div>';
+
         // Status Kawin
-        $form .= '<div class="form-group col-auto">
+        $form .= '<div class="form-group col-6 col-md-auto">
                 <label for="status_kawin">Status Kawin</label>
                 <select class="form-control form-control-sm" id="status_kawin" name="status_kawin">
                     <option value="KAWIN"' . ($pegawai->biodata->status_kawin == 'KAWIN' ? ' selected' : '') . '>KWIN</option>
@@ -308,24 +320,19 @@ class PegawaiController extends Controller
                 </select>
               </div>';
         // Gelar Depan
-        $form .= '<div class="form-group col-auto">
+        $form .= '<div class="form-group col-6 col-md-auto">
                 <label for="gelar_d">Gelar Depan</label>
                 <input type="text" class="form-control form-control-sm" id="gelar_d" name="gelar_d" value="' . htmlspecialchars($pegawai->gelar_d, ENT_QUOTES, 'UTF-8') . '" >
               </div>';
 
         // Gelar Belakang
-        $form .= '<div class="form-group col-auto">
+        $form .= '<div class="form-group col-6 col-md-auto">
                 <label for="gelar_b">Gelar Belakang</label>
                 <input type="text" class="form-control form-control-sm" id="gelar_b" name="gelar_b" value="' . htmlspecialchars($pegawai->gelar_b, ENT_QUOTES, 'UTF-8') . '" >
               </div>';
-        //Pangkat
-        $form .= '<div class="form-group col-auto">
-              <label for="pangkat">Pangkat</label>
-              <input type="text" class="form-control form-control-sm" id="pangkat" name="pangkat" value="' . htmlspecialchars($pegawai->pangkat_gol, ENT_QUOTES, 'UTF-8') . '" >
-            </div>';
 
-        // Jabatan (readonly)
-        $form .= '<div class="form-group col-auto">
+        // Jabatan
+        $form .= '<div class="form-group col-6 col-md-auto">
         <label for="kd_jab">Jabatan</label>
         <select class="form-control select2" id="kd_jab" name="kd_jab">';
 
@@ -337,8 +344,14 @@ class PegawaiController extends Controller
         $form .= '</select>
       </div>';
 
+        //Pangkat
+        $form .= '<div class="form-group col-6 col-md-auto">
+        <label for="pangkat">Pangkat</label>
+        <input type="text" class="form-control form-control-sm" id="pangkat" name="pangkat" value="' . htmlspecialchars($pegawai->pangkat_gol, ENT_QUOTES, 'UTF-8') . '" >
+        </div>';
+
         // Tombol Simpan
-        $form .= '<div class="col-auto d-flex align-items-center mt-2">
+        $form .= '<div class="col-6 col-sm d-flex align-items-center mt-2">
         <a type="button" onclick="updatePegawai(' . $pegawai->nip . ')" class="mx-2 btn btn-success">Update</a>
         <a type="button" onclick="batal();" class="mx-2 btn btn-danger">Batal</a>
         </div>';
@@ -364,28 +377,28 @@ class PegawaiController extends Controller
             ->where('nip', $nip)
             ->first();
 
-        if (! $pegawai) {
+        if (!$pegawai) {
             return response()->json([
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => 'Pegawai tidak ditemukan',
             ], 404);
         }
 
         // Update data pegawai
-        $pegawai->kd_jab      = $request->kd_jab;
-        $pegawai->gelar_d     = $request->gelar_d;
-        $pegawai->gelar_b     = $request->gelar_b;
+        $pegawai->kd_jab = $request->kd_jab;
+        $pegawai->gelar_d = $request->gelar_d;
+        $pegawai->gelar_b = $request->gelar_b;
         $pegawai->pangkat_gol = $request->pangkat;
-        $pegawai->stat_pns    = $request->stat_pns;
+        $pegawai->stat_pns = $request->stat_pns;
         $pegawai->save();
 
         // Update data biodata pegawai
         $pegawai->biodata->update([
-            'nama'         => $request->nama,
-            'jeniskel'     => $request->jeniskel,
+            'nama' => $request->nama,
+            'jeniskel' => $request->jeniskel,
             'tempat_lahir' => $request->tempat_lahir,
-            'tgl_lahir'    => $request->tgl_lahir,
-            'alamat'       => $request->alamat,
+            'tgl_lahir' => $request->tgl_lahir,
+            'alamat' => $request->alamat,
             'status_kawin' => $request->status_kawin,
         ]);
 
@@ -393,15 +406,15 @@ class PegawaiController extends Controller
 
         // Response sukses
         return response()->json([
-            'status'  => 'success',
+            'status' => 'success',
             'message' => 'Data pegawai berhasil diperbarui',
-            'data'    => $listData,
+            'data' => $listData,
         ], 200);
     }
 
     private function dataPegawai()
     {
-        $title   = 'E-Kinerja';
+        $title = 'E-Kinerja';
         $pegawai = PegawaiModel::with('biodata')
             ->whereNot('kd_jab', '22')
             ->get();

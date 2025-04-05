@@ -384,7 +384,7 @@ function generateAsktindString(data, addNewLine = false, isLab = false) {
             } ${ket} ${hasilLab} ${addNewLine ? "<br>" : separator}`;
         })
         .join("")
-        .replace(/(,\s*<br>|,\s)$/, ""); // Remove trailing separator
+        .replace(/(,\s*<br>|,\s)$/, "");
 }
 
 $.extend(true, $.fn.dataTable.defaults, {
@@ -396,10 +396,10 @@ $.extend(true, $.fn.dataTable.defaults, {
         infoEmpty: "Tidak ada data yang tersedia",
         infoFiltered: "(difilter dari _MAX_ total data)",
         paginate: {
-            first: "Pertama",
-            last: "Terakhir",
-            next: "Selanjutnya",
-            previous: "Sebelumnya",
+            first: "<",
+            last: ">",
+            next: ">>",
+            previous: "<<",
         },
     },
 });
