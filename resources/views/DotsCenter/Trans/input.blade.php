@@ -140,7 +140,7 @@
                                                                     <option value="+1-9">Positif 1-9</option>
                                                                 </select>
                                                                 <input class="form-control form-sontrol-sm"
-                                                                    id="id_kunjungan" />
+                                                                    id="id_kunjungan" hidden />
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
