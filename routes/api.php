@@ -91,6 +91,9 @@ Route::post('pegawai/delete', [PegawaiController::class, 'destroy']);
 Route::post('pegawai/cek', [PegawaiController::class, 'cek']);
 Route::post('pegawai/cekLogin', [PegawaiController::class, 'cekLogin']);
 
+//ekin
+Route::get('ekin/poin', [EkinController::class, 'show']);
+
 //antrians
 Route::post('cariRM', [AntrianController::class, 'cariRM']);
 Route::post('antrianAll', [AntrianController::class, 'all']);
@@ -363,8 +366,6 @@ Route::post('jadwal/upload', [JadwalController::class, 'import'])->name('jadwal.
 Route::post('jadwal/get', [JadwalController::class, 'getJadwal'])->name('jadwal.getJadwal');
 Route::delete('jadwal/{id}', [JadwalController::class, 'destroy'])->name('jadwal.destroy');
 Route::put('jadwal/{id}', [JadwalController::class, 'update'])->name('jadwal.update');
-
-Route::get('ekin/poin', [EkinController::class, 'show']);
 
 //
 // });

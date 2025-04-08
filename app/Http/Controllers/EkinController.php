@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\DotsTransModel;
 use App\Models\IGDTransModel;
 use App\Models\KominfoModel;
 use App\Models\LaboratoriumHasilModel;
@@ -13,64 +14,15 @@ class EkinController extends Controller
     public function index()
     {
         $title = 'E-Kinerja';
+        $model = new PegawaiModel();
         $pegawai = PegawaiModel::with('biodata')
             ->whereNot('kd_jab', '22')
-            ->get();
+            ->get()
+            ->sortBy('kd_jab');
         // return $pegawai;
-        $tablePegawai = $this->createTablePegawai($pegawai);
+        $tablePegawai = $model->dataPegawai();
 
         return view('Laporan.Ekin.main', compact('pegawai', 'tablePegawai'))->with('title', $title);
-    }
-
-    private function createTablePegawai($pegawai)
-    {
-        $table = '<table class="table table-bordered table-hover dataTable dtr-inline" cellspacing="0" id="pegawaiTable">';
-        $table .= '<thead class="bg bg-info table-bordered border-dark">
-                        <tr>
-                            <th>Aksi</th>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>NIP</th>
-                            <th>Jabatan</th>
-                            <th>Pangkat/Gol</th>
-                            <th>Status Pegawai</th>
-                        </tr>
-                    </thead>';
-        $table .= '<tbody>';
-
-        foreach ($pegawai as $index => $data) {
-            $jabatan = isset($data->jabatan->nm_jabatan) ? $data->jabatan->nm_jabatan : '-';
-            $atribut = '
-                item-nip="' . $data->nip . '"
-                item-nama="' . $data->biodata->nama . '"
-                item-stat_pns="' . $data->stat_pns . '"
-                item-jabatan="' . $jabatan . '"
-            ';
-            $table .= '<tr>
-            <td>
-                <a type="button" class="btn btn-warning" ' . $atribut . '
-                   onclick="edit(\'' . $data->nip . '\', \'' . addslashes($data->biodata->nama) . '\')">
-                   Update Data Pegawai
-                </a>
-
-                <a type="button" class="btn btn-success"
-                   onclick="cetak(\'' . $data->nip . '\', \'' . addslashes($data->biodata->nama) . '\')">
-                   Cetak Data Kinerja
-                </a>
-            </td>
-            <td>' . ($index + 1) . '</td>
-            <td>' . $data->gelar_d . ' ' . htmlspecialchars($data->biodata->nama, ENT_QUOTES, 'UTF-8') . ' ' . $data->gelar_b . '</td>
-            <td>' . $data->nip . '</td>
-            <td>' . $jabatan . '</td>
-            <td>' . $data->pangkat_gol . '</td>
-            <td>' . $data->stat_pns . '</td>
-        </tr>';
-
-        }
-
-        $table .= '</tbody></table>';
-
-        return $table;
     }
 
     private function poinKominfo(Request $request)
@@ -94,6 +46,27 @@ class EkinController extends Controller
             $key = strtolower(str_replace([' ', '(', ')'], '', $item['ruang_nama'])); // Buat key unik
             $poinKominfo[$key] = $item['jumlah'];
         }
+
+        if (empty($poinKominfo)) {
+            $kosong = [
+                "anamnesa" => "-",
+                "pasienBaru" => "-",
+                "pasienLama" => "-",
+                "ruangpoliperawatpoli" => "-",
+            ];
+            return $kosong;
+        }
+        $anamnesa = $poinKominfo['ruangtensi1'] ?? 0 + $poinKominfo['ruangtensi2'] ?? 0;
+        $pasienBaru = ceil($anamnesa / 2); // Membulatkan ke atas
+        $pasienLama = floor($anamnesa / 2);
+
+        $poinKominfo = [
+            "anamnesa" => $anamnesa,
+            "pasienBaru" => $pasienBaru,
+            "pasienLama" => $pasienLama,
+            "ruangpoliperawatpoli" => $poinKominfo['ruangpoliperawatpoli'],
+        ];
+
         return $poinKominfo;
     }
 
@@ -146,28 +119,46 @@ class EkinController extends Controller
         $tgl = Carbon::parse($request->input('tanggal_akhir'));
 
         $poinIgd = $this->poinIGD(new Request($params));
+
         $poinKominfo = $this->poinKominfo(new Request($params));
+
         if ($request->input('nip') == '199806222022031007') {
             $inputPitc = $this->poinInputHiv(new Request($params));
         } else {
-            $inputPitc = 0;
+            $inputPitc = "-";
+        }
+
+        if ($request->input('nip') == '5') {
+            $nipReplace = '199409052024211029';
+        } else if ($request->input('nip') == '4') {
+            $nipReplace = '199304112024212037';
+        } else if ($request->input('nip') == '9999') {
+            $nipReplace = '197511201996032001';
+        } else {
+            $nipReplace = $request->input('nip');
         }
 
         $pegawai = PegawaiModel::with('biodata', 'jabatan')->where('nip', $request->input('nip'))->first();
+        // return $pegawai;
         $biodata = [
-            'nip' => $pegawai->nip,
+            'nip' => $nipReplace,
             'nama' => $pegawai->gelar_d . ' ' . $pegawai->biodata->nama . ', ' . $pegawai->gelar_b,
             'jabatan' => $pegawai->jabatan->nm_jabatan ?? "-",
-            'pangkat' => $pegawai->jabatan->pangkat_gol ?? "-",
+            'pangkat' => $pegawai->pangkat_gol ?? "-",
         ];
 
-        return view('Laporan.Ekin.show', compact('poinIgd', 'poinKominfo', 'inputPitc', 'biodata', 'tglAkhir', 'tgl'))->with('title', 'E-Kinerja');
+        $modelPoinDots = new DotsTransModel();
+        $poinDots = $modelPoinDots->poinPetugas($request->input('tanggal_awal'), $request->input('tanggal_akhir'), $request->input('nip'));
+        // return $poinDots;
+
+        return view('Laporan.Ekin.show', compact('poinIgd', 'poinKominfo', 'inputPitc', 'biodata', 'tglAkhir', 'tgl', 'poinDots'))->with('title', 'E-Kinerja');
         return [
             'inputPitc' => $inputPitc,
             'poinIgd' => $poinIgd,
             'poinKominfo' => $poinKominfo,
             'biodata' => $biodata,
             'pegawai' => $pegawai,
+            'poinDots' => $poinDots,
         ];
 
     }

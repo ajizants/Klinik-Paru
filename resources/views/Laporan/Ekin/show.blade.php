@@ -190,21 +190,15 @@
             <tbody>
                 <tr>
                     <td class="my-0 py-0" style=" font-weight: bold; padding-left:10rem;" colspan="3">
-                        Pengkajian Keperawatan</td>
+                        A. Pengkajian Keperawatan</td>
                 </tr>
-                @php
-                    $anamnesa = ($poinKominfo['ruangtensi1'] ?? 0) + ($poinKominfo['ruangtensi2'] ?? 0);
-                    $pasienBaru = ceil($anamnesa / 2); // Membulatkan ke atas
-                    $pasienLama = floor($anamnesa / 2); // Membulatkan ke bawah
-                @endphp
-
                 <tr>
                     <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">1.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Anamnesa pasien baru</td>
                     <td class="my-0 py-0" style="text-align: center;">
                         <input type="text" name="injeksi" style="text-align: center; border: none"
-                            value="{{ $pasienBaru ?? '-' }}">
+                            value="{{ $poinKominfo['pasienBaru'] ?? '-' }}">
                     </td>
                 </tr>
                 <tr>
@@ -213,7 +207,7 @@
                     <td class="my-0 py-0" style="text-align: left;">Anamnesa pasien lama</td>
                     <td class="my-0 py-0" style="text-align: center;">
                         <input type="text" name="injeksi" style="text-align: center; border: none"
-                            value="{{ $pasienLama ?? '-' }}">
+                            value="{{ $poinKominfo['pasienLama'] ?? '-' }}">
                     </td>
                 </tr>
                 <tr>
@@ -222,13 +216,13 @@
                     <td class="my-0 py-0" style="text-align: left;">Timbang tensi</td>
                     <td class="my-0 py-0" style="text-align: center;">
                         <input type="text" name="injeksi" style="text-align: center; border: none"
-                            value="{{ $poinKominfo['ruangtensi1'] ?? '-' }}">
+                            value="{{ $poinKominfo['anamnesa'] ?? '-' }}">
                     </td>
                 </tr>
 
                 <tr>
                     <td class="my-0 py-0" style="font-weight: bold; padding-left:10rem;" colspan="3">
-                        Implementasi Keperawatan</td>
+                        B. Implementasi Keperawatan</td>
                 </tr>
                 <tr>
                     <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">1.
@@ -314,7 +308,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">10.
+                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                        10.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Asisten pungsi</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -323,7 +318,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">11.
+                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                        11.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Asisten biopsi</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -331,7 +327,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">12.
+                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                        12.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Asisten WSD</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -339,7 +336,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">13.
+                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                        13.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Konseling PITC</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -348,35 +346,37 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">14.
+                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                        14.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Melayani pasien baru di DOTS Center</td>
                     <td class="my-0 py-0" style="text-align: center;">
 
-                        <input style="text-align: center; border: none" value="{{ $poinDots['baru'] ?? '-' }}">
+                        <input style="text-align: center; border: none"
+                            value="{{ $poinDots[0]['jumlahBaru'] ?? '-' }}">
                     </td>
                 </tr>
                 <tr>
-                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">15.
+                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                        15.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Melayani pasien lama di DOTS Center</td>
                     <td class="my-0 py-0" style="text-align: center;">
-                        <input style="text-align: center; border: none" value="{{ $poinDots['lama'] ?? '-' }}">
+                        <input style="text-align: center; border: none"
+                            value="{{ $poinDots[0]['jumlahLama'] ?? '-' }}">
                     </td>
                 </tr>
                 <tr>
                     <td class="my-0 py-0" style="font-weight: bold; padding-left:10rem;" colspan="3">
-                        Pendokumentasian Keperawatan</td>
+                        C. Pendokumentasian Keperawatan</td>
                 </tr>
                 <tr>
                     <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">1.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Input data anamnesa pasien di RME</td>
                     <td class="my-0 py-0" style="text-align: center;">
-                        @php
-                            $inputAnamnesa = ($poinKominfo['ruangtensi1'] ?? 0) + ($poinKominfo['ruangtensi2'] ?? 0);
-                        @endphp
-                        <input style="text-align: center; border: none" value="{{ $inputAnamnesa ?: '-' }}">
+                        <input style="text-align: center; border: none"
+                            value="{{ $poinKominfo['anamnesa'] ?: '-' }}">
                     </td>
                 </tr>
                 <tr>
@@ -398,28 +398,35 @@
                     </td>
                     </td>
                 </tr>
+                <tr>
+                    <td class="my-0 py-0 px-5" colspan="3"
+                        style="padding-left:2rem; padding-right:2rem; text-align: left; border: none">
+                        <!-- Tanda Tangan -->
+                        <div class="flex justify-between mt-20">
+
+                            <div class="w-1/2 text-center">
+                                <p>Purwokerto, {{ $tglAkhir }}</p>
+                                <p>Pegawai yang Dinilai</p>
+                                <div class="h-16"></div>
+                                <p><u>{{ $biodata['nama'] ?? '-' }}</u></p>
+                                <p>NIP: {{ $biodata['nip'] ?? '-' }}</p>
+                            </div>
+                            <div class="w-1/2 text-center">
+                                <p>Mengetahui,</p>
+                                <p>Plt. Kepala KKPM PURWOKERTO</p>
+                                <div class="h-16"></div>
+                                <p><u>dr. RENDI RETISSU</u></p>
+                                <p>NIP: 19881016 201902 1 002</p>
+                            </div>
+                        </div>
+                    </td>
+
+                </tr>
 
             </tbody>
         </table>
 
-        <!-- Tanda Tangan -->
-        <div class="text-xs flex justify-between mt-20">
 
-            <div class="w-1/2 text-center">
-                <p>Purwokerto, {{ $tglAkhir }}</p>
-                <p>Pegawai yang Dinilai</p>
-                <div class="h-16"></div>
-                <p><u>NASIRIN</u></p>
-                <p>NIP: 196906022007011039</p>
-            </div>
-            <div class="w-1/2 text-center">
-                <p>Mengetahui,</p>
-                <p>Plt. Kepala KKPM PURWOKERTO</p>
-                <div class="h-16"></div>
-                <p><u>dr. RENDI RETISSU</u></p>
-                <p>NIP: 19881016 201902 1 002</p>
-            </div>
-        </div>
     </div>
 
 

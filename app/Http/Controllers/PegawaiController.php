@@ -85,8 +85,9 @@ class PegawaiController extends Controller
     public function perawat()
     {
         $kdjab = [10, 15];
+        $nip = [4, 5, 9999];
 
-        $perawat = PegawaiModel::on('mysql')->whereIn('kd_jab', $kdjab)->get();
+        $perawat = PegawaiModel::on('mysql')->whereIn('kd_jab', $kdjab)->whereNotIn('nip', $nip)->get();
 
         $data = [];
         foreach ($perawat as $peg) {
@@ -414,66 +415,11 @@ class PegawaiController extends Controller
 
     private function dataPegawai()
     {
-        $title = 'E-Kinerja';
-        $pegawai = PegawaiModel::with('biodata')
-            ->whereNot('kd_jab', '22')
-            ->get();
+        $model = new PegawaiModel();
 
-        $tablePegawai = $this->createTablePegawai($pegawai);
+        $tablePegawai = $model->dataPegawai();
 
         return $tablePegawai;
-    }
-
-    private function createTablePegawai($pegawai)
-    {
-        $table = '<table class="table table-bordered table-hover dataTable dtr-inline" cellspacing="0" id="pegawaiTable">';
-        $table .= '<thead class="bg bg-info table-bordered border-dark">
-                        <tr>
-                            <th>Aksi</th>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>NIP</th>
-                            <th>Jabatan</th>
-                            <th>Status Pegawai</th>
-                        </tr>
-                    </thead>';
-        $table .= '<tbody>';
-
-        foreach ($pegawai as $index => $data) {
-            $jabatan = isset($data->jabatan->nm_jabatan) ? $data->jabatan->nm_jabatan : '-';
-            $atribut = '
-                item-nip="' . $data->nip . '"
-                item-nama="' . $data->biodata->nama . '"
-                item-stat_pns="' . $data->stat_pns . '"
-                item-jabatan="' . $jabatan . '"
-            ';
-            $table .= '<tr>
-            <td>
-                <a type="button" class="btn btn-warning" ' . $atribut . '
-                   onclick="edit(\'' . $data->nip . '\', \'' . addslashes($data->biodata->nama) . '\')">
-                   Update Data Pegawai
-                </a>
-                <a type="button" class="btn btn-primary"
-                   onclick="lihat(\'' . $data->nip . '\', \'' . addslashes($data->biodata->nama) . '\')">
-                   Lihat
-                </a>
-                <a type="button" class="btn btn-success"
-                   onclick="cetak(\'' . $data->nip . '\', \'' . addslashes($data->biodata->nama) . '\')">
-                   Cetak
-                </a>
-            </td>
-            <td>' . ($index + 1) . '</td>
-            <td>' . $data->gelar_d . ' ' . htmlspecialchars($data->biodata->nama, ENT_QUOTES, 'UTF-8') . ' ' . $data->gelar_b . '</td>
-            <td>' . $data->nip . '</td>
-            <td>' . $jabatan . '</td>
-            <td>' . $data->stat_pns . '</td>
-        </tr>';
-
-        }
-
-        $table .= '</tbody></table>';
-
-        return $table;
     }
 
     /**
