@@ -56,14 +56,18 @@ class EkinController extends Controller
             ];
             return $kosong;
         }
-        $anamnesa = $poinKominfo['ruangtensi1'] ?? 0 + $poinKominfo['ruangtensi2'] ?? 0;
+
+        // return $poinKominfo;
+        $tensi1 = $poinKominfo['ruangtensi1'] ?? 0;
+        $tensi2 = $poinKominfo['ruangtensi2'] ?? 0;
+        $anamnesa = $tensi1 + $tensi2;
         $pasienBaru = ceil($anamnesa / 2); // Membulatkan ke atas
         $pasienLama = floor($anamnesa / 2);
 
         $poinKominfo = [
-            "anamnesa" => $anamnesa,
-            "pasienBaru" => $pasienBaru,
-            "pasienLama" => $pasienLama,
+            "anamnesa" => $anamnesa == 0 ? '-' : $anamnesa,
+            "pasienBaru" => $pasienBaru == 0 ? '-' : $pasienBaru,
+            "pasienLama" => $pasienLama == 0 ? '-' : $pasienLama,
             "ruangpoliperawatpoli" => $poinKominfo['ruangpoliperawatpoli'],
         ];
 
