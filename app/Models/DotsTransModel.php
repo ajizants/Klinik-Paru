@@ -45,8 +45,8 @@ class DotsTransModel extends Model
 
     public function poinPetugas($mulaiTgl, $selesaiTgl, $petugas = null)
     {
-        $mulaiTgl = date('Y-m-d', strtotime($mulaiTgl));
-        $selesaiTgl = date('Y-m-d', strtotime($selesaiTgl));
+        $mulaiTgl = date('Y-m-d 00:00:00', strtotime($mulaiTgl));
+        $selesaiTgl = date('Y-m-d 23:59:59', strtotime($selesaiTgl));
 
         if ($petugas) {
             $kunjungan = DotsTransModel::whereBetween('created_at', [$mulaiTgl, $selesaiTgl])->where('petugas', $petugas)->get();
