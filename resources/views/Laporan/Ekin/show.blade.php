@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Laporan Kinerja</title>
+    <title>{{ $title }}</title>
     <!-- Google Font: Source Sans Pro -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -190,7 +190,7 @@
             <tbody>
                 <tr>
                     <td class="my-0 py-0" style=" font-weight: bold; padding-left:10rem;" colspan="3">
-                        A. Pengkajian Keperawatan</td>
+                        A. Pengkajian</td>
                 </tr>
                 <tr>
                     <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">1.
@@ -222,7 +222,7 @@
 
                 <tr>
                     <td class="my-0 py-0" style="font-weight: bold; padding-left:10rem;" colspan="3">
-                        B. Implementasi Keperawatan</td>
+                        B. Implementasi</td>
                 </tr>
                 <tr>
                     <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">1.
@@ -245,6 +245,15 @@
                 <tr>
                     <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">3.
                     </td>
+                    <td class="my-0 py-0" style="text-align: left;">Spirometri</td>
+                    <td class="my-0 py-0" style="text-align: center;">
+                        <input type="text" name="injeksi" style="text-align: center; border: none"
+                            value="{{ $poinIgd['spirometri'] ?? '-' }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">4.
+                    </td>
                     <td class="my-0 py-0" style="text-align: left;">Tes mantoux</td>
                     <td class="my-0 py-0" style="text-align: center;">
                         <input type="text" name="injeksi" style="text-align: center; border: none"
@@ -254,7 +263,7 @@
                 <tr>
                     <td class="my-0
                             py-0 px-5"
-                        style="padding-left:2rem; padding-right:2rem; text-align: left;">4.
+                        style="padding-left:2rem; padding-right:2rem; text-align: left;">5.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Injeksi</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -264,7 +273,7 @@
                 </tr>
                 </tr>
                 <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">5.
+                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">6.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Infus</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -272,7 +281,7 @@
                             value="{{ $poinIgd['infus'] ?? '-' }}">
                     </td>
                 <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">6.
+                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">7.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Observasi infus</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -281,7 +290,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">7.
+                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">8.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Penanganan pasien hemaptoe</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -290,7 +299,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">8.
+                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">9.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">EKG</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -299,7 +308,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">9.
+                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">10.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Asisten dokter</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -309,7 +318,7 @@
                 </tr>
                 <tr>
                     <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
-                        10.
+                        11.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Asisten pungsi</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -319,7 +328,7 @@
                 </tr>
                 <tr>
                     <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
-                        11.
+                        12.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Asisten biopsi</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -328,7 +337,7 @@
                 </tr>
                 <tr>
                     <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
-                        12.
+                        13.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Asisten WSD</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -337,7 +346,7 @@
                 </tr>
                 <tr>
                     <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
-                        13.
+                        14.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Konseling PITC</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -347,7 +356,23 @@
                 </tr>
                 <tr>
                     <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
-                        14.
+                        15.
+                    </td>
+                    <td class="my-0 py-0" style="text-align: left;">Konsultasi Pasien</td>
+                    <td class="my-0 py-0" style="text-align: center;">
+                        @php
+                            $konseling =
+                                ($poinIgd['konsultasikesehatanlainnya'] ?? 0) + ($poinIgd['konsultasigizi'] ?? 0);
+                            if ($konseling == 0) {
+                                $konseling = '-';
+                            }
+                        @endphp
+                        <input style="text-align: center; border: none" value="{{ $konseling ?? '-' }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                        16.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Melayani pasien baru di DOTS Center</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -358,7 +383,7 @@
                 </tr>
                 <tr>
                     <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
-                        15.
+                        17.
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Melayani pasien lama di DOTS Center</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -368,7 +393,7 @@
                 </tr>
                 <tr>
                     <td class="my-0 py-0" style="font-weight: bold; padding-left:10rem;" colspan="3">
-                        C. Pendokumentasian Keperawatan</td>
+                        C. Pendokumentasian</td>
                 </tr>
                 <tr>
                     <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">1.

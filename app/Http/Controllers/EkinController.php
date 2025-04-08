@@ -155,7 +155,9 @@ class EkinController extends Controller
         $poinDots = $modelPoinDots->poinPetugas($request->input('tanggal_awal'), $request->input('tanggal_akhir'), $request->input('nip'));
         // return $poinDots;
 
-        return view('Laporan.Ekin.show', compact('poinIgd', 'poinKominfo', 'inputPitc', 'biodata', 'tglAkhir', 'tgl', 'poinDots'))->with('title', 'E-Kinerja');
+        $title = $pegawai->gelar_d . ' ' . $pegawai->biodata->nama . ', ' . $pegawai->gelar_b . ' Bulan ' . $tgl->locale('id')->translatedFormat('F');
+
+        return view('Laporan.Ekin.show', compact('title', 'poinIgd', 'poinKominfo', 'inputPitc', 'biodata', 'tglAkhir', 'tgl', 'poinDots'));
         return [
             'inputPitc' => $inputPitc,
             'poinIgd' => $poinIgd,
