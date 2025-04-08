@@ -42,21 +42,22 @@ class EkinController extends Controller
         $filteredData = collect($data['response']['data'])->filter(function ($item) use ($nama) {
             return $item['ruang_nama'] !== 'Ruang Poli' && stripos($item['admin_nama'], $nama) !== false;
         });
+        // return $filteredData;
         foreach ($filteredData as $item) {
             $key = strtolower(str_replace([' ', '(', ')'], '', $item['ruang_nama'])); // Buat key unik
             $poinKominfo[$key] = $item['jumlah'];
         }
-
+        // return $poinKominfo;
         if (empty($poinKominfo)) {
             $kosong = [
                 "anamnesa" => "-",
                 "pasienBaru" => "-",
                 "pasienLama" => "-",
                 "ruangpoliperawatpoli" => "-",
+                "ruangpolidoktercppt" => '-',
             ];
             return $kosong;
         }
-
         // return $poinKominfo;
         $tensi1 = $poinKominfo['ruangtensi1'] ?? 0;
         $tensi2 = $poinKominfo['ruangtensi2'] ?? 0;
@@ -68,7 +69,8 @@ class EkinController extends Controller
             "anamnesa" => $anamnesa == 0 ? '-' : $anamnesa,
             "pasienBaru" => $pasienBaru == 0 ? '-' : $pasienBaru,
             "pasienLama" => $pasienLama == 0 ? '-' : $pasienLama,
-            "ruangpoliperawatpoli" => $poinKominfo['ruangpoliperawatpoli'],
+            "ruangpoliperawatpoli" => $poinKominfo['ruangpoliperawatpoli'] ?? '-',
+            "ruangpolidoktercppt" => $poinKominfo['ruangpolidoktercppt'] ?? '-',
         ];
 
         return $poinKominfo;
@@ -157,7 +159,15 @@ class EkinController extends Controller
 
         $title = $pegawai->gelar_d . ' ' . $pegawai->biodata->nama . ', ' . $pegawai->gelar_b . ' Bulan ' . $tgl->locale('id')->translatedFormat('F');
 
-        return view('Laporan.Ekin.show', compact('title', 'poinIgd', 'poinKominfo', 'inputPitc', 'biodata', 'tglAkhir', 'tgl', 'poinDots'));
+        $view = match (true) {
+            in_array($pegawai->kd_jab, [7, 8]) => 'dokter',
+            $pegawai->kd_jab === 14 => 'gizi',
+            $pegawai->kd_jab === 15 => 'terapis',
+            in_array($pegawai->kd_jab, [10, 23]) => 'nurse',
+        };
+
+        return view("Laporan.Ekin.$view", compact('title', 'poinIgd', 'poinKominfo', 'inputPitc', 'biodata', 'tglAkhir', 'tgl', 'poinDots'));
+
         return [
             'inputPitc' => $inputPitc,
             'poinIgd' => $poinIgd,
