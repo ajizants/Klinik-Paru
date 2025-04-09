@@ -573,6 +573,50 @@ function pasienTB() {
 }
 
 function creatTabelPTB(data, id) {
+    console.log("🚀 ~ creatTabelPTB ~ data:", data);
+    if (data.actions == undefined) {
+        data.forEach(function (item, index) {
+            let ket = item.ket ? item.ket : "";
+
+            item.actions = `<button class="editTB bg-danger"
+                               data-id="${item.id}"
+                                data-norm="${item.norm}"
+                                data-nik="${item.nik}"
+                                data-nama="${item.nama}"
+                                data-alamat="${item.alamat}"
+                                data-noHP="${item.noHP}"
+                                data-tcm="${item.tcm}"
+                                data-sample="${item.sample}"
+                                data-kdDx="${item.kdDx}"
+                                data-tglmulai="${item.tglMulai}"
+                                data-bb="${item.bb}"
+                                data-obat="${item.obat}"
+                                data-hiv="${item.hiv}"
+                                data-dm="${item.dm}"
+                                data-ket="${item.ket}"
+                                data-hasilBerobat="${item.hasilBerobat}"
+                                data-statusPengobatan="${item.statusPengobatan}"
+                                data-petugas="${item.petugas}"
+                                data-dokter="${item.dokter.nip}"
+                                data-toggle="modal"
+                                data-target="#modal-update"
+                                data-toggle="tooltip" data-placement="right" title="Update Hasil Pengobatan dan TCM"
+                                onclick="editPasienTB(this);"><i class="fa-solid fa-file-pen"></i></button><br><br>
+                            <button class="riwayat bg-green"
+                                data-id="${item.id}"
+                                data-toggle="tooltip" data-placement="right" title="Riwayat Kunjungan"
+                                onclick="showRiwayatKunjungan('${item.norm}','modal');" data-toggle="modal" data-target="#modal-RiwayatKunjungan">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-fill" viewBox="0 0 16 16">
+                                <path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z"/>
+                                </svg>
+                                </button>`;
+            item.no = index + 1;
+            item.dokter = `${item.dokter.gelar_d} ${item.dokter.biodata.nama} ${item.dokter.gelar_b}`;
+            item.diagnosa = item.diagnosa
+                ? item.diagnosa.diagnosa
+                : "Diagnosa Belum diisi";
+        });
+    }
     $(id)
         .DataTable({
             data: data,

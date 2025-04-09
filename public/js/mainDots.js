@@ -416,7 +416,7 @@ $(document).ready(function () {
 
     setTodayDate();
     updateAntrian();
-    pasienTB();
-    // pasienTelat();
-    pasienKontrol();
+    // pasienTB();
+    creatTabelPTB(tb, "#Ptb");
+    pasienTelat();
 });

@@ -247,4 +247,4 @@
                     </div>
                 </div>
 
-                {{-- @include('DotsCenter.Trans.lain') --}}
+                @include('Laporan.Ekin.kegiatan')

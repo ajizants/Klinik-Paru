@@ -15,7 +15,7 @@
             </ul>
             @include('Laporan.Ekin.daftarPegawai')
             <div id="tab_2" style="display: none">
-                @include('DotsCenter.Trans.lain')
+                @include('Laporan.Ekin.kegiatan')
             </div>
         </div>
     </div>
@@ -68,8 +68,6 @@
         <!-- my script -->
         <script src="{{ asset('js/template.js') }}"></script>
         <script>
-            let dataKegiatan = @json($hasilKegiatan);
-
             function cetak(nip, nama) {
                 $('#modalTglEkin').modal('show');
                 $('#nama').val(nama);

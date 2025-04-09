@@ -46,8 +46,12 @@
 
                             <div class="form-group">
                                 <label for="jumlah">Jumlah</label>
-                                <input id="jumlah" type="number" class="form-control border border-primary"
-                                    placeholder="Jumlah" required>
+                                <div class="row">
+                                    <input id="idKegiatan" class="col-2 form-control border border-primary"
+                                        placeholder="idKegiatan">
+                                    <input id="jumlah" type="number" class="col form-control border border-primary"
+                                        placeholder="Jumlah" required>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="kegLain">Keterangan/Kegiatan Lain</label>
@@ -98,6 +102,7 @@
             var kegiatan = $('#kegiatan').val();
             var kegLain = $('#kegLain').val();
             var jumlah = $('#jumlah').val();
+            var idKegiatan = $('#idKegiatan').val();
 
             if (!pegawai || !tglKegiatan || !kegiatan || !jumlah) {
                 Swal.fire({
@@ -110,14 +115,23 @@
                 return;
             }
 
-            simpanKegiatanLain(pegawai, tglKegiatan, kegiatan, kegLain, jumlah);
+            simpanKegiatanLain(pegawai, tglKegiatan, kegiatan, kegLain, jumlah, idKegiatan);
         }
 
-        async function simpanKegiatanLain(pegawai, tglKegiatan, kegiatan, kegLain, jumlah) {
+        async function simpanKegiatanLain(pegawai, tglKegiatan, kegiatan, kegLain, jumlah, idKegiatan) {
             tampilkanLoading();
+            let url;
+            let type;
+            if (idKegiatan != '') {
+                url = "{{ route('updatePekerjaanPegawai') }}";
+                type = "PUT";
+            } else {
+                url = "{{ route('tambahPekerjaanPegawai') }}";
+                type = "POST";
+            }
             $.ajax({
-                url: "{{ route('tambahPekerjaanPegawai') }}",
-                type: "POST",
+                url: url,
+                type: type,
                 data: {
                     pegawai: pegawai,
                     tglKegiatan: tglKegiatan,
@@ -206,6 +220,25 @@
             });
         }
 
+        function editKegiatan(button) {
+            console.log("🚀 ~ editKegiatan ~ button:", button)
+            var id = $(button).attr('data-id');
+            var pegawai = $(button).attr('data-nip');
+            var tglKegiatan = $(button).attr('data-tanggal');
+            var kegiatan = $(button).attr('data-kegiatan');
+            var kegLain = $(button).attr('data-keterangan');
+            var jumlah = $(button).attr('data-jumlah');
+
+            $('#idKegiatan').val(id);
+            $('#pegawai').val(pegawai).trigger('change');
+            $('#tglKegiatan').val(tglKegiatan);
+            $('#kegiatan').val(kegiatan).trigger('change');
+            $('#kegLain').val(kegLain);
+            $('#jumlah').val(jumlah);
+
+        }
+
+        let dataKegiatan = @json($hasilKegiatan);
         document.addEventListener('DOMContentLoaded', function() {
             drawTabelKegiatanLain(dataKegiatan);
         })
