@@ -1007,6 +1007,7 @@ function setTransaksi(button, ruang) {
             if (cekIgd == true) {
                 cekTransLain(notrans);
             }
+
             break;
         case "ro":
             if ($.fn.DataTable.isDataTable("#tableRo")) {

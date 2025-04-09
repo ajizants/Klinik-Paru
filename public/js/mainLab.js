@@ -505,6 +505,7 @@ async function cariTsLab(norm, tgl, ruang) {
     norm = norm || formatNorm($("#norm").val);
     tgl = tgl || $("#tanggal").val();
     var requestData = { norm: norm, tgl: tgl };
+    const notrans = $("#notrans").val();
 
     Swal.fire({
         icon: "info",
@@ -560,6 +561,8 @@ async function cariTsLab(norm, tgl, ruang) {
                 throw new Error("Network response was not ok");
             }
             Swal.close();
+
+            cetakPermintaan(notrans, tgl, norm);
         } else {
             const data = await response.json();
             let noSampel = data.no_sampel;
@@ -586,6 +589,7 @@ async function cariTsLab(norm, tgl, ruang) {
             var btndelete = document.getElementById("delete_ts");
             btndelete.style.display = "block";
             scrollToInputSection();
+            cetakPermintaan(notrans, tgl, norm);
         }
     } catch (error) {
         console.error("Terjadi kesalahan saat mencari data:", error);
@@ -620,7 +624,7 @@ async function getNoSampel() {
         let noSampel = data.noSample; // Sesuaikan nama properti dengan hasil fetch
         $("#no_sampel").val(noSampel);
 
-        Swal.close();
+        // Swal.close();
     } catch (error) {
         console.error("Terjadi kesalahan saat mencari data:", error);
         Swal.fire({
@@ -692,26 +696,43 @@ function ckelisPemeriksaan(data) {
 }
 
 function resetForm(message) {
+    const notrans = document.getElementById("notrans").value;
+    const tglTrans = document.getElementById("tgltrans").value;
+    const norm = document.getElementById("norm").value;
+    console.log("🚀 ~ resetForm ~ notrans:", notrans);
     if (message != "trans") {
         antrian("lab");
     } else {
         message = "";
     }
-    $('table thead input[type="checkbox"]').prop("checked", false);
-    $('table tbody input[type="checkbox"]').prop("checked", false);
-    document.getElementById("form_identitas").reset();
-    document.getElementById("form_Petugas").reset();
-    $("#permintaan").html("");
-    $("#tujuanLain").html("");
-    $("#analis,#dokter,#tujuan").trigger("change");
-    var btndelete = document.getElementById("delete_ts");
-    btndelete.style.display =
-        btndelete.style.display === "none" ? "block" : "none";
+    // console.log(msgSelesai);
+    // Swal.fire({
+    //     icon: "question",
+    //     title: "Apakah anda ingin mencetak form permintaan?",
+    //     showCancelButton: true,
+    //     confirmButtonText: "Ya",
+    //     cancelButtonText: "Batal",
+    //     allowOutsideClick: false,
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         cetakPermintaan(notrans, tglTrans, norm);
+    //         Swal.fire({
+    //             icon: "question",
+    //             title: message + "\n Maturnuwun...!!!",
+    //             showCancelButton: true,
+    //             confirmButtonText: "Ya",
+    //             cancelButtonText: "Batal",
+    //             allowOutsideClick: false,
+    //         });
+    //     } else {
+    //         Swal.fire({
+    //             icon: "info",
+    //             title: msgSelesai,
+    //             allowOutsideClick: false,
+    //         });
+    //     }
+    // });
 
-    if ($.fn.DataTable.isDataTable("#dataTrans")) {
-        let tableTrans = $("#dataTrans").DataTable();
-        tableTrans.clear().destroy();
-    }
     console.log(msgSelesai);
     Swal.fire({
         icon: "info",
@@ -727,9 +748,52 @@ function resetForm(message) {
         }
     });
 
+    $('table thead input[type="checkbox"]').prop("checked", false);
+    $('table tbody input[type="checkbox"]').prop("checked", false);
+    document.getElementById("form_identitas").reset();
+    document.getElementById("form_Petugas").reset();
+    $("#permintaan").html("");
+    $("#tujuanLain").html("");
+    $("#analis,#dokter,#tujuan").trigger("change");
+    var btndelete = document.getElementById("delete_ts");
+    btndelete.style.display =
+        btndelete.style.display === "none" ? "block" : "none";
+
+    if ($.fn.DataTable.isDataTable("#dataTrans")) {
+        let tableTrans = $("#dataTrans").DataTable();
+        tableTrans.clear().destroy();
+    }
+
     document.getElementById("tgltrans").value = new Date()
         .toISOString()
         .split("T")[0];
+}
+
+function cetakPermintaan(notrans, tglTrans, norm) {
+    Swal.fire({
+        icon: "question",
+        title: "Apakah anda ingin mencetak form permintaan?",
+        showCancelButton: true,
+        confirmButtonText: "Ya",
+        cancelButtonText: "Batal",
+        allowOutsideClick: false,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            notrans = notrans ? notrans : $("#notrans").val();
+            norm = norm ? norm : $("#norm").val();
+            tglTrans = tglTrans ? tglTrans : $("#tgltrans").val();
+            window.open(
+                "api/lab/cetakPermintaan/" +
+                    notrans +
+                    "/" +
+                    norm +
+                    "/" +
+                    tglTrans,
+                "_blank",
+                "noopener noreferrer"
+            );
+        }
+    });
 }
 function batal() {
     resetForm("Transaksi Lab dibatalkan...!!!");
