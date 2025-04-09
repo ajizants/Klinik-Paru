@@ -94,7 +94,7 @@ class HomeController extends Controller
     {
         $title = 'IGD';
         $dokter = $this->pegawai([1, 7, 8]);
-        $perawat = $this->pegawai([10, 15]);
+        $perawat = $this->pegawai([10, 15, 23]);
         $tindakan = $this->layanan([2, 3, 5, 6, 10]);
         $bmhp = BMHPModel::all();
         $dxMed = DiagnosaModel::all();
@@ -190,7 +190,8 @@ class HomeController extends Controller
     {
         $title = 'Dots Center';
         $dokter = $this->pegawai([1, 7, 8]);
-        $perawat = $this->pegawai([10, 15]);
+        $perawat = $this->pegawai([10, 15, 23]);
+        return $perawat;
         $bulan = DotsBlnModel::all();
         $obat = DotsObatModel::all();
         $dxMed = DiagnosaModel::all();
@@ -222,7 +223,7 @@ class HomeController extends Controller
     {
         $title = 'FARMASI';
         $dokter = $this->pegawai([1, 7, 8]);
-        $perawat = $this->pegawai([10, 15]);
+        $perawat = $this->pegawai([10, 15, 23]);
         $tindakan = $this->layanan([2, 3, 5, 6, 10]);
         $bmhp = BMHPModel::all();
         $dxMed = DiagnosaModel::all();
