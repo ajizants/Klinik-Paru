@@ -191,7 +191,7 @@ class HomeController extends Controller
         $title = 'Dots Center';
         $dokter = $this->pegawai([1, 7, 8]);
         $perawat = $this->pegawai([10, 15, 23]);
-        return $perawat;
+        // return $perawat;
         $bulan = DotsBlnModel::all();
         $obat = DotsObatModel::all();
         $dxMed = DiagnosaModel::all();
