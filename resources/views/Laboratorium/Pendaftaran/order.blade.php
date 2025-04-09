@@ -123,7 +123,7 @@
                         :
                     </td>
                     <td width="26%" class="my-0 py-0" style=" text-align: left;">
-                        {{ $lab->norm }} / {{ $tahun }}
+                        {{ $lab->norm }} / {{ $tahun }} / {{ $tglLahir }}
                     </td>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Tanggal</td>

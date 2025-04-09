@@ -1004,9 +1004,9 @@ function setTransaksi(button, ruang) {
             cariTsLab(norm, tgl, ruang);
             $("#umur").val(umur);
             getNoSampel();
-            if (cekIgd == true) {
-                cekTransLain(notrans);
-            }
+            // if (cekIgd == true) {
+            //     cekTransLain(notrans);
+            // }
 
             break;
         case "ro":

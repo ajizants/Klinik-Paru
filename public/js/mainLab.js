@@ -326,14 +326,6 @@ function simpan() {
                     icon: "success",
                     title: massage,
                     allowOutsideClick: false,
-                }).then((result) => {
-                    if (result.isConfirmed && msgSelesai != undefined) {
-                        Swal.fire({
-                            icon: "info",
-                            title: msgSelesai,
-                            allowOutsideClick: false,
-                        });
-                    }
                 });
                 var notrans = $("#notrans").val();
                 tampilkanOrder(notrans);
@@ -734,18 +726,14 @@ function resetForm(message) {
     // });
 
     console.log(msgSelesai);
+    // Toast.fire({
+    //     icon: "success",
+    //     title: message + "\n Maturnuwun...!!!",
+    // });
     Swal.fire({
         icon: "info",
         title: message + "\n Maturnuwun...!!!",
-        allowOutsideClick: false,
-    }).then((result) => {
-        if (result.isConfirmed && msgSelesai != undefined) {
-            Swal.fire({
-                icon: "info",
-                title: msgSelesai,
-                allowOutsideClick: false,
-            });
-        }
+        allowOutsideClick: true,
     });
 
     $('table thead input[type="checkbox"]').prop("checked", false);

@@ -93,6 +93,8 @@ Route::post('pegawai/cekLogin', [PegawaiController::class, 'cekLogin']);
 
 //ekin
 Route::get('ekin/poin', [EkinController::class, 'show']);
+Route::post('ekin/cek', [EkinController::class, 'kegiatanLain']);
+Route::post('ekin/poin', [EkinController::class, 'store'])->name('tambahPekerjaanPegawai');
 
 //antrians
 Route::post('cariRM', [AntrianController::class, 'cariRM']);

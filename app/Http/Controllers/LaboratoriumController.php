@@ -474,7 +474,9 @@ class LaboratoriumController extends Controller
                 'tanggal_akhir' => $tgl,
             ];
             $cppt = $model->cpptRequest($params);
+            // return $cppt;
             $permintaan = $cppt['response']['data'][0]['laboratorium'];
+            $tglLahir = $cppt['response']['data'][0]['pasien_tgl_lahir'];
             // return $permintaan;
             $lab = LaboratoriumKunjunganModel::with('pemeriksaan.pemeriksaan')
                 ->where('notrans', 'like', '%' . $notrans . '%')
@@ -503,7 +505,7 @@ class LaboratoriumController extends Controller
 
             $analis = $dataAnalis[rand(0, 2)];
             // return $lab;
-            return view('Laboratorium.Pendaftaran.order', compact('lab', 'permintaan', 'analis', 'dokter'));
+            return view('Laboratorium.Pendaftaran.order', compact('lab', 'tglLahir', 'permintaan', 'analis', 'dokter'));
 
         } catch (\Exception $e) {
             Log::error('Terjadi kesalahan saat mencari data: ' . $e->getMessage());

@@ -33,8 +33,14 @@ class HomeController extends Controller
     private function pegawai($kdjab)
     {
         $nip = [4, 5, 9999];
-        $data = PegawaiModel::with(['biodata', 'jabatan'])->whereIn('kd_jab', $kdjab)
-            ->whereNotIn('nip', $nip)->get();
+        if ($kdjab == []) {
+            $data = PegawaiModel::with(['biodata', 'jabatan'])
+                ->whereNotIn('nip', $nip)->get();
+        } else {
+
+            $data = PegawaiModel::with(['biodata', 'jabatan'])->whereIn('kd_jab', $kdjab)
+                ->whereNotIn('nip', $nip)->get();
+        }
 
         $pegawai = [];
         foreach ($data as $peg) {
@@ -191,7 +197,8 @@ class HomeController extends Controller
         $title = 'Dots Center';
         $dokter = $this->pegawai([1, 7, 8]);
         $perawat = $this->pegawai([10, 14, 15, 23]);
-        // return $perawat;
+        $pegawai = $this->pegawai([]);
+        // return $pegawai;
         $bulan = DotsBlnModel::all();
         $obat = DotsObatModel::all();
         $dxMed = DiagnosaModel::all();
@@ -215,7 +222,7 @@ class HomeController extends Controller
             return (object) $item;
         }, $perawat);
 
-        return view('DotsCenter.Trans.main', compact('bulan', 'obat', 'dxMed', 'dokter', 'perawat', 'pasienTB'))
+        return view('DotsCenter.Trans.main', compact('bulan', 'obat', 'dxMed', 'dokter', 'perawat', 'pegawai', 'pasienTB'))
             ->with('title', $title);
     }
 

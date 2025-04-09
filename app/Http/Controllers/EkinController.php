@@ -5,6 +5,7 @@ use App\Models\DotsTransModel;
 use App\Models\IGDTransModel;
 use App\Models\KominfoModel;
 use App\Models\LaboratoriumHasilModel;
+use App\Models\PegawaiKegiatanModel;
 use App\Models\PegawaiModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -179,9 +180,49 @@ class EkinController extends Controller
 
     }
 
+    public function kegiatanLain(Request $request)
+    {
+        $model = new PegawaiKegiatanModel();
+        $params = [
+            'tanggal_awal' => $request->input('tanggal_awal'),
+            'tanggal_akhir' => $request->input('tanggal_akhir'),
+            'nip' => $request->input('nip') ?? "",
+        ];
+
+        $data = $model->rekap($params);
+
+        return $data;
+    }
+
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'pegawai' => 'required|string',
+            'tglKegiatan' => 'required|date',
+            'kegiatan' => 'required|string',
+            // 'kegLain' => 'required|string',
+            'jumlah' => 'required|numeric',
+        ]);
+        $params = [
+            'tanggal_awal' => $request->input('tglKegiatan'),
+            'tanggal_akhir' => $request->input('tglKegiatan'),
+            'nip' => "",
+        ];
+
+        try {
+            $data = PegawaiKegiatanModel::create([
+                'nip' => $request->pegawai,
+                'tanggal' => $request->tglKegiatan,
+                'kegiatan' => $request->kegiatan,
+                'keterangan' => $request->kegLain,
+                'jumlah' => $request->jumlah,
+            ]);
+            $hasil = $this->kegiatanLain(new Request($params));
+
+            return response()->json(['success' => true, 'data' => $data, 'table' => $hasil]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Gagal menyimpan data: ' . $e->getMessage()], 500);
+        }
     }
 
     public function edit(string $id)

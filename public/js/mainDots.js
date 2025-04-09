@@ -415,8 +415,8 @@ $(document).ready(function () {
     });
 
     setTodayDate();
-    updateAntrian();
-    pasienTB();
-    pasienTelat();
+    // updateAntrian();
+    // pasienTB();
+    // pasienTelat();
     // pasienKontrol();
 });
