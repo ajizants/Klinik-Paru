@@ -74,10 +74,11 @@
                                 <thead>
                                     <tr>
                                         <th class="col-1">Aksi</th>
+                                        <th class="col-1">Tgl</th>
                                         <th class="col-1">NIP</th>
                                         <th class="col-1">NAMA</th>
                                         <th class="col-1">Kegiatan</th>
-                                        <th class="col-1">Jumlah</th>
+                                        <th class="col-1">QTY</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -129,6 +130,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(data) {
+                    console.log("🚀 ~ simpanKegiatanLain ~ data:", data)
                     if (data.error) {
                         Swal.fire({
                             icon: 'error',
@@ -149,11 +151,12 @@
                         // reset form setelah simpan
                         document.getElementById("formKegiatanLain").reset();
                         $('#tglKegiatan').val(new Date().toISOString().split('T')[0]);
+                        $('#pegawai').trigger('change');
+                        $('#kegiatan').trigger('change');
 
-                        // reload datatable jika ada
-                        if ($.fn.DataTable.isDataTable('#tabelKegLain')) {
-                            $('#tabelKegLain').DataTable().ajax.reload();
-                        }
+
+                        const dataTabel = data.table;
+                        drawTabelKegiatanLain(dataTabel);
                     }
                 },
                 error: function(xhr, status, error) {
@@ -162,6 +165,50 @@
                 }
             });
         }
+
+        function drawTabelKegiatanLain(dataTabel) {
+            if ($.fn.DataTable.isDataTable('#tabelKegLain')) {
+                $('#tabelKegLain').DataTable().clear().destroy();
+            }
+            $('#tabelKegLain').DataTable({
+                data: dataTabel,
+                columns: [{
+                        data: 'aksi'
+                    },
+                    {
+                        data: 'tanggal'
+                    },
+                    {
+                        data: 'nip'
+                    },
+                    {
+                        data: 'nama'
+                    },
+                    {
+                        data: 'kegiatan'
+                    },
+                    {
+                        data: 'jumlah'
+                    },
+                ],
+                paging: true,
+                order: [
+                    [1, "asc"]
+                ],
+                lengthMenu: [
+                    [5, 10, 25, 50, -1],
+                    [5, 10, 25, 50, "All"]
+                ],
+                pageLength: 5,
+                responsive: true,
+                autoWidth: false,
+                scrollX: true
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            drawTabelKegiatanLain(dataKegiatan);
+        })
     </script>
 
 </div>

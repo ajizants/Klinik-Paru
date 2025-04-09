@@ -8,13 +8,15 @@
                     <a type="button" class="nav-link border border-primary active bg-blue" onclick=" toggleSections('#tab_1')"
                         id="link_tab_1"><b>Kepegawaian</b></a>
                 </li>
-                {{-- <li class="nav-item">
-                    <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#tab_2')"><b>Rekap
-                            Kegiatan Bulanan</b></a>
-                </li> --}}
+                <li class="nav-item">
+                    <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#tab_2')"><b>Kegiatan
+                            Lain</b></a>
+                </li>
             </ul>
             @include('Laporan.Ekin.daftarPegawai')
-            @include('Laporan.Ekin.rekapDX')
+            <div id="tab_2" style="display: none">
+                @include('DotsCenter.Trans.lain')
+            </div>
         </div>
     </div>
 
@@ -66,6 +68,8 @@
         <!-- my script -->
         <script src="{{ asset('js/template.js') }}"></script>
         <script>
+            let dataKegiatan = @json($hasilKegiatan);
+
             function cetak(nip, nama) {
                 $('#modalTglEkin').modal('show');
                 $('#nama').val(nama);

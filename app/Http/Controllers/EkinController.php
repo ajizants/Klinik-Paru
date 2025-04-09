@@ -16,14 +16,30 @@ class EkinController extends Controller
     {
         $title = 'E-Kinerja';
         $model = new PegawaiModel();
-        $pegawai = PegawaiModel::with('biodata')
+        $karyawan = PegawaiModel::with('biodata')
             ->whereNot('kd_jab', '22')
             ->get()
             ->sortBy('kd_jab');
+        $pegawai = $model->olahPegawai([]);
         // return $pegawai;
+        $tgl = Carbon::now()->toDateString();
+        $hasilKegiatan = PegawaiKegiatanModel::with('user.biodata')->whereBetween('tanggal', [$tgl, $tgl])->get();
+        foreach ($hasilKegiatan as $item) {
+            $item['aksi'] = '
+                <a type="button" class="btn btn-sm btn-warning"
+                   onclick="editKegiatan(' . $item['id'] . ')">
+                   <i class="fa-solid fa-file-pen">
+                </a>
+                <a type="button" class="btn btn-sm btn-danger"
+                   onclick="deleteKegiatan(' . $item['id'] . ')">
+                    <i class="fas fa-trash"></i>
+                </a>';
+
+            $item['nama'] = $item->user->gelar_d . ' ' . $item->user->biodata->nama . ' ' . $item->user->gelar_b;
+        }
         $tablePegawai = $model->dataPegawai();
 
-        return view('Laporan.Ekin.main', compact('pegawai', 'tablePegawai'))->with('title', $title);
+        return view('Laporan.Ekin.main', compact('pegawai', 'tablePegawai', 'hasilKegiatan'))->with('title', $title);
     }
 
     private function poinKominfo(Request $request)
@@ -190,8 +206,48 @@ class EkinController extends Controller
         ];
 
         $data = $model->rekap($params);
+        dd($data);
 
-        return $data;
+        foreach ($data as $item) {
+            $item['aksi'] = '
+                <a type="button" class="btn btn-warning"
+                   onclick="editKegiatan(' . $item['id'] . ')">
+                   Ubah
+                </a>
+                <a type="button" class="btn btn-success"
+                   onclick="deleteKegiatan(' . $item['id'] . ')">
+                   Hapus
+                </a>';
+        }
+
+        return response()->json($data);
+    }
+
+    public function dataKegiatanLain(Request $request)
+    {
+        $model = new PegawaiKegiatanModel();
+        $params = [
+            'tanggal_awal' => $request->input('tanggal_awal'),
+            'tanggal_akhir' => $request->input('tanggal_akhir'),
+            'nip' => $request->input('nip') ?? "",
+        ];
+
+        $data = $model->rekap($params);
+        dd($data);
+
+        foreach ($data as $item) {
+            $item['aksi'] = '
+                <a type="button" class="btn btn-warning"
+                   onclick="editKegiatan(' . $item['id'] . ')">
+                   Ubah
+                </a>
+                <a type="button" class="btn btn-success"
+                   onclick="deleteKegiatan(' . $item['id'] . ')">
+                   Hapus
+                </a>';
+        }
+
+        return response()->json($data);
     }
 
     public function store(Request $request)
@@ -217,7 +273,20 @@ class EkinController extends Controller
                 'keterangan' => $request->kegLain,
                 'jumlah' => $request->jumlah,
             ]);
-            $hasil = $this->kegiatanLain(new Request($params));
+            $hasil = PegawaiKegiatanModel::with('user.biodata')->whereBetween('tanggal', [$request->tglKegiatan, $request->tglKegiatan])->get();
+            foreach ($hasil as $item) {
+                $item['aksi'] = '
+                    <a type="button" class="btn btn-warning"
+                       onclick="editKegiatan(' . $item['id'] . ')">
+                       Ubah
+                    </a>
+                    <a type="button" class="btn btn-success"
+                       onclick="deleteKegiatan(' . $item['id'] . ')">
+                       Hapus
+                    </a>';
+
+                $item['nama'] = $item->user->gelar_d . ' ' . $item->user->biodata->nama . ' ' . $item->user->gelar_b;
+            }
 
             return response()->json(['success' => true, 'data' => $data, 'table' => $hasil]);
         } catch (\Exception $e) {
