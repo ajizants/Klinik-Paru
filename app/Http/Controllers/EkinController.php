@@ -159,7 +159,7 @@ class EkinController extends Controller
         ];
 
         $modelPoinDots = new DotsTransModel();
-        $poinDots = collect($modelPoinDots->poinPetugas($request->input('tanggal_awal'), $request->input('tanggal_akhir'), $request->input('nip')))->first();
+        $poinDots = $modelPoinDots->poinPetugas($request->input('tanggal_awal'), $request->input('tanggal_akhir'), $request->input('nip'));
         // return $poinDots;
 
         $modelPoinLain = new PegawaiKegiatanModel();

@@ -232,9 +232,12 @@
                         </td>
                         <td class="my-0 py-0" style="text-align: left;">Melayani pasien baru di DOTS Center</td>
                         <td class="my-0 py-0" style="text-align: center;">
-
-                            <input style="text-align: center; border: none"
-                                value="{{ $poinDots['jumlahBaru'] ?? '-' }}">
+                            @if ($poinDots['jumlahBaru'] == 0)
+                                <input style="text-align: center; border: none" value="-">
+                            @else
+                                <input style="text-align: center; border: none"
+                                    value="{{ $poinDots['jumlahBaru'] ?? '-' }}">
+                            @endif
                         </td>
                     </tr>
                     <tr>
@@ -243,8 +246,12 @@
                         </td>
                         <td class="my-0 py-0" style="text-align: left;">Melayani pasien lama di DOTS Center</td>
                         <td class="my-0 py-0" style="text-align: center;">
-                            <input style="text-align: center; border: none"
-                                value="{{ $poinDots['jumlahLama'] ?? '-' }}">
+                            @if ($poinDots['jumlahLama'] == 0)
+                                <input style="text-align: center; border: none" value="-">
+                            @else
+                                <input style="text-align: center; border: none"
+                                    value="{{ $poinDots['jumlahLama'] ?? '-' }}">
+                            @endif
                         </td>
                     </tr>
                 @endif

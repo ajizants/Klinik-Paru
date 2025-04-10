@@ -138,6 +138,10 @@ class DotsTransModel extends Model
             ];
         }
 
+        if ($petugas !== null) {
+            $poin = $poin[0];
+        }
+
         return $poin;
     }
 }
