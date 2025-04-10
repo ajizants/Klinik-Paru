@@ -60,7 +60,7 @@ class PegawaiKegiatanModel extends Model
 
     public function allData()
     {
-        $tglAwal = Carbon::now()->startOfMonth()->toDateString();
+        $tglAwal = Carbon::now()->subMonths(4)->startOfMonth()->toDateString();
         $tglAkhir = Carbon::now()->endOfMonth()->toDateString();
         $hasilKegiatan = $this->with('user.biodata')->whereBetween('tanggal', [$tglAwal, $tglAkhir])->get();
         foreach ($hasilKegiatan as $item) {

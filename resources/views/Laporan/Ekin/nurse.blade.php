@@ -283,7 +283,7 @@
                 @endphp
 
                 @foreach ($poinLain as $item)
-                    @if (!Str::contains($item['kegiatan'], 'Input TCM') || !Str::contains($item['kegiatan'], 'Input SITB'))
+                    @if (!Str::contains($item['kegiatan'], 'Input TCM') && !Str::contains($item['kegiatan'], 'Input SITB'))
                         <tr>
                             <td class="my-0 py-0" style="padding-left:2rem; padding-right:2rem; text-align: left;">
                                 {{ $no++ }}
