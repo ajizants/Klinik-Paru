@@ -165,7 +165,7 @@ class EkinController extends Controller
         $modelPoinLain = new PegawaiKegiatanModel();
         $poinLain = $modelPoinLain->rekap($params);
 
-        $title = $pegawai->gelar_d . ' ' . $pegawai->biodata->nama . ', ' . $pegawai->gelar_b . ' Bulan ' . $tgl->locale('id')->translatedFormat('F');
+        $title = $pegawai->gelar_d . ' ' . $pegawai->biodata->nama . ', ' . $pegawai->gelar_b . ' Kinerja Bulan ' . $tgl->locale('id')->translatedFormat('F Y');
 
         $view = match (true) {
             in_array($pegawai->kd_jab, [7, 8]) => 'dokter',
@@ -184,6 +184,7 @@ class EkinController extends Controller
             // 'pegawai' => $pegawai,
             'poinDots' => $poinDots,
             'poinLain' => $poinLain,
+            'title' => $title,
         ];
 
     }
