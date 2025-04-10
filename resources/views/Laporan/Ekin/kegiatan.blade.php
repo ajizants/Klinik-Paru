@@ -37,9 +37,12 @@
                                 <label for="kegiatan">Kegiatan</label>
                                 <select id="kegiatan" class="form-control select2bs4 border border-primary">
                                     <option value="">--Pilih Kegiatan--</option>
+                                    <option value="Penyuluhan">Penyuluhan</option>
+                                    <option value="Penanganan Pasien Hemaptoe">Penanganan Pasien Hemaptoe</option>
                                     <option value="Input TCM">Input TCM</option>
                                     <option value="Input SITB">Input SITB</option>
                                     <option value="Konseling VCT">Konseling VCT</option>
+                                    <option value="Konsultasi Pasien">Konsultasi Pasien</option>
                                     <option value="Lainnya">Lainnya (tambahkan di keterangan)</option>
                                 </select>
                             </div>
@@ -48,7 +51,7 @@
                                 <label for="jumlah">Jumlah</label>
                                 <div class="row">
                                     <input id="idKegiatan" class="col-2 form-control border border-primary"
-                                        placeholder="idKegiatan">
+                                        placeholder="idKegiatan" readonly hidden>
                                     <input id="jumlah" type="number" class="col form-control border border-primary"
                                         placeholder="Jumlah" required>
                                 </div>
@@ -81,7 +84,7 @@
                                         <th class="col-1">Tgl</th>
                                         <th class="col-1">NIP</th>
                                         <th class="col-1">NAMA</th>
-                                        <th class="col-1">Kegiatan</th>
+                                        <th class="col-1">KEGIATAN</th>
                                         <th class="col-1">QTY</th>
                                     </tr>
                                 </thead>
@@ -122,23 +125,33 @@
             tampilkanLoading();
             let url;
             let type;
+            let data = [];
             if (idKegiatan != '') {
                 url = "{{ route('updatePekerjaanPegawai') }}";
                 type = "PUT";
+                data = {
+                    pegawai: pegawai,
+                    tglKegiatan: tglKegiatan,
+                    kegiatan: kegiatan,
+                    kegLain: kegLain,
+                    jumlah: jumlah,
+                    id: idKegiatan
+                }
             } else {
                 url = "{{ route('tambahPekerjaanPegawai') }}";
                 type = "POST";
-            }
-            $.ajax({
-                url: url,
-                type: type,
-                data: {
+                data = {
                     pegawai: pegawai,
                     tglKegiatan: tglKegiatan,
                     kegiatan: kegiatan,
                     kegLain: kegLain,
                     jumlah: jumlah
-                },
+                }
+            }
+            $.ajax({
+                url: url,
+                type: type,
+                data: data,
                 dataType: "JSON",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -238,10 +251,60 @@
 
         }
 
+        function deleteKegiatan(id) {
+
+            Swal.fire({
+                title: 'Apakah anda yakin?',
+                text: "Data akan dihapus secara permanen",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('hapusPekerjaanPegawai', '') }}/" + id,
+                        type: "DELETE",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(data) {
+                            console.log("🚀 ~ hapusKegiatan ~ data:", data);
+                            if (data.error) {
+                                tampilkanEror(data.error);
+                            } else {
+                                tampilkanSuccess('Data berhasil dihapus');
+                                const dataTabel = data.table;
+                                drawTabelKegiatanLain(dataTabel);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("❌ ~ Error Hapus:", error);
+                            // Coba ambil pesan dari respon jika tersedia
+                            let errorMessage = 'Terjadi kesalahan saat menghapus data.' + error;
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            } else if (xhr.status === 404) {
+                                errorMessage = 'Data tidak ditemukan.';
+                            } else if (xhr.status === 500) {
+                                errorMessage = 'Kesalahan server. Silakan coba lagi nanti.';
+                            }
+
+                            tampilkanEror(errorMessage);
+                        }
+                    });
+                }
+            })
+        }
+
+
         let dataKegiatan = @json($hasilKegiatan);
-        document.addEventListener('DOMContentLoaded', function() {
-            drawTabelKegiatanLain(dataKegiatan);
-        })
+        document.addEventListener('DOMContentLoaded',
+            function() {
+                drawTabelKegiatanLain(dataKegiatan);
+            })
     </script>
 
 </div>

@@ -20,11 +20,11 @@ class PegawaiKegiatanModel extends Model
         return $this->belongsTo(PegawaiModel::class, 'nip', 'nip');
     }
 
-    public function rekap($request)
+    public function rekap(array $request)
     {
-        $tglAwal  = $request['tanggal_awal'];
+        $tglAwal = $request['tanggal_awal'];
         $tglAkhir = $request['tanggal_akhir'];
-        $nip      = $request['nip'] ?? "";
+        $nip = $request['nip'] ?? "";
 
         $query = PegawaiKegiatanModel::with('user')
             ->whereBetween('tanggal', [$tglAwal, $tglAkhir]);
@@ -34,20 +34,19 @@ class PegawaiKegiatanModel extends Model
         }
 
         $data = $query->get();
-
         // Kelompokkan dan jumlahkan secara manual
         $rekap = [];
 
         foreach ($data as $item) {
             $nama = trim(($item->user->gelar_d ?? '') . ' ' . $item->user->biodata->nama . ' ' . ($item->user->gelar_b ?? ''));
-            $key  = $item->nip . '|' . $nama . '|' . $item->kegiatan . '|' . $item->keterangan;
+            $key = $item->nip . '|' . $nama . '|' . $item->kegiatan . '|' . $item->keterangan;
 
-            if (! isset($rekap[$key])) {
+            if (!isset($rekap[$key])) {
                 $rekap[$key] = [
-                    'nip'          => $item->nip,
-                    'nama'         => $nama,
-                    'kegiatan'     => $item->kegiatan,
-                    'keterangan'   => $item->keterangan,
+                    'nip' => $item->nip,
+                    'nama' => $nama,
+                    'kegiatan' => $item->kegiatan,
+                    'keterangan' => $item->keterangan ?? "",
                     'total_jumlah' => 0,
                 ];
             }
@@ -61,8 +60,8 @@ class PegawaiKegiatanModel extends Model
 
     public function allData()
     {
-        $tglAwal       = Carbon::now()->startOfMonth()->toDateString();
-        $tglAkhir      = Carbon::now()->endOfMonth()->toDateString();
+        $tglAwal = Carbon::now()->startOfMonth()->toDateString();
+        $tglAkhir = Carbon::now()->endOfMonth()->toDateString();
         $hasilKegiatan = $this->with('user.biodata')->whereBetween('tanggal', [$tglAwal, $tglAkhir])->get();
         foreach ($hasilKegiatan as $item) {
             $item['aksi'] = '

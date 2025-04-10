@@ -224,179 +224,92 @@
                     <td class="my-0 py-0" style="font-weight: bold; padding-left:10rem;" colspan="3">
                         B. Implementasi</td>
                 </tr>
-                <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">1.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Oksigenasi</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input type="text" name="injeksi" style="text-align: center; border: none"
-                            value="{{ $poinIgd['oksigenasiperjam'] ?? '-' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">2.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Nebulasi</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input type="text" name="nebu" id="nebu" style="text-align: center; border: none"
-                            value={{ $poinIgd['nebulasitanpahargaobat'] ?? '-' }}>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">3.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Spirometri</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input type="text" name="injeksi" style="text-align: center; border: none"
-                            value="{{ $poinIgd['spirometri'] ?? '-' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">4.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Tes mantoux</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input type="text" name="injeksi" style="text-align: center; border: none"
-                            value="{{ $poinIgd['mantouxtest'] ?? '-' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0
-                            py-0 px-5"
-                        style="padding-left:2rem; padding-right:2rem; text-align: left;">5.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Injeksi</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input type="text" name="injeksi" style="text-align: center; border: none"
-                            value="{{ $poinIgd['injeksi'] ?? '-' }}">
-                    </td>
-                </tr>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">6.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Infus</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input type="text" name="infus" id="infus" style="text-align: center; border: none"
-                            value="{{ $poinIgd['infus'] ?? '-' }}">
-                    </td>
-                <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">7.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Observasi infus</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input type="text" name="infus" id="infus" style="text-align: center; border: none"
-                            value="{{ $poinIgd['infus'] ?? '-' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">8.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Penanganan pasien hemaptoe</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input type="text" name="penangananpasienhematoe" style="text-align: center; border: none"
-                            value="{{ $poinIgd['penangananpasienhematoe'] ?? '-' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">9.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">EKG</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input type="text" name="ekg" style="text-align: center; border: none"
-                            value="{{ $poinIgd['ekg'] ?? '-' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">10.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Asisten dokter</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input style="text-align: center; border: none"
-                            value="{{ $poinKominfo['ruangpoliperawatpoli'] ?? '-' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
-                        11.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Asisten pungsi</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input style="text-align: center; border: none"
-                            value="{{ $poinIgd['punctiepleura'] ?? '-' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
-                        12.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Asisten biopsi</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input style="text-align: center; border: none" value="{{ $poinIgd['biopsi'] ?? '-' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
-                        13.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Asisten WSD</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input style="text-align: center; border: none" value="{{ $poinIgd['wsd'] ?? '-' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
-                        14.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Konseling PITC</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input style="text-align: center; border: none"
-                            value="{{ $poinIgd['konselingPITC'] ?? '-' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
-                        15.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Konsultasi Pasien</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        @php
-                            $konseling =
-                                ($poinIgd['konsultasikesehatanlainnya'] ?? 0) + ($poinIgd['konsultasigizi'] ?? 0);
-                            if ($konseling == 0) {
-                                $konseling = '-';
-                            }
-                        @endphp
-                        <input style="text-align: center; border: none" value="{{ $konseling ?? '-' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
-                        16.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Melayani pasien baru di DOTS Center</td>
-                    <td class="my-0 py-0" style="text-align: center;">
+                @php $no = 1; @endphp
+                @if ($poinDots['jumlahBaru'] > 0 || $poinDots['jumlahLama'] > 0)
+                    <tr>
+                        <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                            {{ $no++ }}.
+                        </td>
+                        <td class="my-0 py-0" style="text-align: left;">Melayani pasien baru di DOTS Center</td>
+                        <td class="my-0 py-0" style="text-align: center;">
 
-                        <input style="text-align: center; border: none"
-                            value="{{ $poinDots[0]['jumlahBaru'] ?? '-' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
-                        17.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Melayani pasien lama di DOTS Center</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input style="text-align: center; border: none"
-                            value="{{ $poinDots[0]['jumlahLama'] ?? '-' }}">
-                    </td>
-                </tr>
+                            <input style="text-align: center; border: none"
+                                value="{{ $poinDots['jumlahBaru'] ?? '-' }}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="my-0 py-0" px-5 style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                            {{ $no++ }}.
+                        </td>
+                        <td class="my-0 py-0" style="text-align: left;">Melayani pasien lama di DOTS Center</td>
+                        <td class="my-0 py-0" style="text-align: center;">
+                            <input style="text-align: center; border: none"
+                                value="{{ $poinDots['jumlahLama'] ?? '-' }}">
+                        </td>
+                    </tr>
+                @endif
+                @php
+                    $implementasi = [
+                        'Oksigenasi' => $poinIgd['oksigenasiperjam'] ?? '-',
+                        'Nebulasi' => $poinIgd['nebulasitanpahargaobat'] ?? '-',
+                        'Spirometri' => $poinIgd['spirometri'] ?? '-',
+                        'Tes mantoux' => $poinIgd['mantouxtest'] ?? '-',
+                        'Injeksi' => $poinIgd['injeksi'] ?? '-',
+                        'Infus' => $poinIgd['infus'] ?? '-',
+                        'Observasi infus' => $poinIgd['infus'] ?? '-',
+                        'EKG' => $poinIgd['ekg'] ?? '-',
+                        'Asisten dokter' => $poinKominfo['ruangpoliperawatpoli'] ?? '-',
+                        'Asisten Pungsi/Biopsi/WSD' =>
+                            ($poinIgd['punctiepleura'] ?? 0) + ($poinIgd['biopsi'] ?? 0) + ($poinIgd['wsd'] ?? 0),
+                        'Konseling PITC' => $poinIgd['konselingPITC'] ?? '-',
+                        'Konsultasi Pasien' =>
+                            ($poinIgd['konsultasikesehatanlainnya'] ?? 0) + ($poinIgd['konsultasigizi'] ?? 0),
+                    ];
+                @endphp
+                @foreach ($implementasi as $label => $nilai)
+                    <tr>
+                        <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                            {{ $no++ }}.</td>
+                        <td style="text-align: left;">{{ $label }}</td>
+                        <td style="text-align: center;">
+                            <input type="text" style="text-align: center; border: none"
+                                value="{{ $nilai == 0 ? '-' : $nilai }}">
+                        </td>
+                    </tr>
+                @endforeach
+
+                @php
+                    use Illuminate\Support\Str;
+                @endphp
+
+                @foreach ($poinLain as $item)
+                    @if (!Str::contains($item['kegiatan'], 'Input TCM') || !Str::contains($item['kegiatan'], 'Input SITB'))
+                        <tr>
+                            <td class="my-0 py-0" style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                                {{ $no++ }}
+                            </td>
+                            <td class="my-0 py-0" style="text-align: left;">
+                                {{ $item['kegiatan'] }}
+                                @if (!empty($item['keterangan']))
+                                    : {{ $item['keterangan'] }}
+                                @endif
+                            </td>
+                            <td class="my-0 py-0" style="text-align: center;">
+                                <input style="text-align: center; border: none"
+                                    value="{{ $item['total_jumlah'] ?? '-' }}">
+                            </td>
+                        </tr>
+                    @endif
+                @endforeach
+
                 <tr>
                     <td class="my-0 py-0" style="font-weight: bold; padding-left:10rem;" colspan="3">
                         C. Pendokumentasian</td>
                 </tr>
+                @php $no=1;  @endphp
                 <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">1.
+                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                        {{ $no++ }}
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Input data Rekam Medis Pasien</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -407,22 +320,32 @@
                 <tr>
                     <td class="my-0
                             py-0 px-5"
-                        style="padding-left:2rem; padding-right:2rem; text-align: left;">2.
+                        style="padding-left:2rem; padding-right:2rem; text-align: left;">{{ $no++ }}
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Input data PITC SIHA</td>
                     <td class="my-0 py-0" style="text-align: center;">
                         <input style="text-align: center; border: none" value="{{ $inputPitc ?? '-' }}">
                     </td>
                 </tr>
-                <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">3.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Input data TCM/BTA SITB</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input style="text-align: center; border: none" value="">
-                    </td>
-                    </td>
-                </tr>
+                @foreach ($poinLain as $item)
+                    @if (Str::contains($item['kegiatan'], 'Input TCM') || Str::contains($item['kegiatan'], 'Input SITB'))
+                        <tr>
+                            <td class="my-0 py-0" style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                                {{ $no++ }}
+                            </td>
+                            <td class="my-0 py-0" style="text-align: left;">
+                                {{ $item['kegiatan'] }}
+                                @if (!empty($item['keterangan']))
+                                    : {{ $item['keterangan'] }}
+                                @endif
+                            </td>
+                            <td class="my-0 py-0" style="text-align: center;">
+                                <input style="text-align: center; border: none"
+                                    value="{{ $item['total_jumlah'] ?? '-' }}">
+                            </td>
+                        </tr>
+                    @endif
+                @endforeach
                 <tr>
                     <td class="my-0 py-0 px-5" colspan="3"
                         style="padding-left:2rem; padding-right:2rem; text-align: left; border: none">

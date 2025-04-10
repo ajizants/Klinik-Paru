@@ -61,7 +61,7 @@ Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);
 
 Route::get('/diagnosa_icd_x', function (Request $request) {
     $search = $request->get('search', '');
-    $limit  = $request->get('limit', 20);
+    $limit = $request->get('limit', 20);
 
     $diagnosas = DiagnosaIcdXModel::where(function ($query) use ($search) {
         $query->where('diagnosa', 'like', '%' . $search . '%')
@@ -96,6 +96,7 @@ Route::get('ekin/poin', [EkinController::class, 'show']);
 Route::post('ekin/cek', [EkinController::class, 'kegiatanLain']);
 Route::post('ekin/poin', [EkinController::class, 'store'])->name('tambahPekerjaanPegawai');
 Route::put('ekin/poin', [EkinController::class, 'update'])->name('updatePekerjaanPegawai');
+Route::delete('ekin/poin/{id}', [EkinController::class, 'destroy'])->name('hapusPekerjaanPegawai');
 
 //antrians
 Route::post('cariRM', [AntrianController::class, 'cariRM']);
