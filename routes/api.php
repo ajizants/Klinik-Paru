@@ -92,8 +92,9 @@ Route::post('pegawai/cek', [PegawaiController::class, 'cek']);
 Route::post('pegawai/cekLogin', [PegawaiController::class, 'cekLogin']);
 
 //ekin
-Route::get('ekin/poin', [EkinController::class, 'show']);
+Route::get('ekin/poin', [EkinController::class, 'export']);
 Route::post('ekin/cek', [EkinController::class, 'kegiatanLain']);
+Route::post('ekin/poin/cari', [EkinController::class, 'show'])->name('cariPekerjaanPegawai');
 Route::post('ekin/poin', [EkinController::class, 'store'])->name('tambahPekerjaanPegawai');
 Route::put('ekin/poin', [EkinController::class, 'update'])->name('updatePekerjaanPegawai');
 Route::delete('ekin/poin/{id}', [EkinController::class, 'destroy'])->name('hapusPekerjaanPegawai');

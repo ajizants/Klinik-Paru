@@ -58,27 +58,83 @@ class PegawaiKegiatanModel extends Model
         return array_values($rekap);
     }
 
-    public function allData()
+    // public function allData()
+    // {
+    //     $tglAwal = Carbon::now()->subMonths(4)->startOfMonth()->toDateString();
+    //     $tglAkhir = Carbon::now()->endOfMonth()->toDateString();
+    //     $hasilKegiatan = $this->with('user.biodata')->whereBetween('tanggal', [$tglAwal, $tglAkhir])->get();
+    //     foreach ($hasilKegiatan as $item) {
+    //         $item['aksi'] = '
+    //             <a type="button" class="btn btn-sm btn-warning"
+    //                data-id="' . $item['id'] . '"
+    //                data-nip="' . $item['nip'] . '"
+    //                data-tanggal="' . $item['tanggal'] . '"
+    //                data-jumlah="' . $item['jumlah'] . '"
+    //                data-keterangan="' . $item['keterangan'] . '"
+    //                data-kegiatan="' . $item['kegiatan'] . '"
+    //                onclick="editKegiatan(this)">
+    //                <i class="fa-solid fa-file-pen"></i>
+    //             </a>
+    //             <a type="button" class="btn btn-sm btn-danger"
+    //                onclick="deleteKegiatan(' . $item['id'] . ')">
+    //                 <i class="fas fa-trash"></i>
+    //             </a>';
+
+    //         $item['nama'] = $item->user->gelar_d . ' ' . $item->user->biodata->nama . ' ' . $item->user->gelar_b;
+    //     }
+
+    //     return $hasilKegiatan;
+    // }
+
+    public function allData(array $request = [], $role = 'guest')
     {
-        $tglAwal = Carbon::now()->subMonths(4)->startOfMonth()->toDateString();
-        $tglAkhir = Carbon::now()->endOfMonth()->toDateString();
-        $hasilKegiatan = $this->with('user.biodata')->whereBetween('tanggal', [$tglAwal, $tglAkhir])->get();
+        if (empty($request)) {
+            $tglAwal = Carbon::now()->subMonths(4)->startOfMonth()->toDateString();
+            $tglAkhir = Carbon::now()->endOfMonth()->toDateString();
+            $hasilKegiatan = $this->with('user.biodata')
+                ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
+                ->get();
+        } else if ($request['pegawai'] === null) {
+            $tgl = $request['tglKegiatan'] ?? Carbon::now()->toDateString();
+            $carbonTgl = Carbon::parse($tgl);
+            $tglAwal = $carbonTgl->startOfMonth()->toDateString();
+            $tglAkhir = $carbonTgl->endOfMonth()->toDateString();
+            $nip = $request['pegawai'] ?? '';
+            $hasilKegiatan = PegawaiKegiatanModel::with('user.biodata')
+                ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
+                ->get();
+        } else {
+            $tgl = $request['tglKegiatan'] ?? Carbon::now()->toDateString();
+            $carbonTgl = Carbon::parse($tgl);
+            $tglAwal = $carbonTgl->startOfMonth()->toDateString();
+            $tglAkhir = $carbonTgl->endOfMonth()->toDateString();
+            $nip = $request['pegawai'] ?? '';
+            $hasilKegiatan = PegawaiKegiatanModel::with('user.biodata')
+                ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
+                ->where('nip', $nip)
+                ->get();
+        }
+
         foreach ($hasilKegiatan as $item) {
-            $item['aksi'] = '
-                <a type="button" class="btn btn-sm btn-warning"
-                   data-id="' . $item['id'] . '"
-                   data-nip="' . $item['nip'] . '"
-                   data-tanggal="' . $item['tanggal'] . '"
-                   data-jumlah="' . $item['jumlah'] . '"
-                   data-keterangan="' . $item['keterangan'] . '"
-                   data-kegiatan="' . $item['kegiatan'] . '"
-                   onclick="editKegiatan(this)">
-                   <i class="fa-solid fa-file-pen"></i>
-                </a>
-                <a type="button" class="btn btn-sm btn-danger"
-                   onclick="deleteKegiatan(' . $item['id'] . ')">
-                    <i class="fas fa-trash"></i>
-                </a>';
+            if ($role === 'admin') {
+                $item['aksi'] = '
+                    <a type="button" class="btn btn-sm btn-warning"
+                       data-id="' . $item['id'] . '"
+                       data-nip="' . $item['nip'] . '"
+                       data-tanggal="' . $item['tanggal'] . '"
+                       data-jumlah="' . $item['jumlah'] . '"
+                       data-keterangan="' . $item['keterangan'] . '"
+                       data-kegiatan="' . $item['kegiatan'] . '"
+                       onclick="editKegiatan(this)">
+                       <i class="fa-solid fa-file-pen"></i>
+                    </a>
+                    <a type="button" class="btn btn-sm btn-danger"
+                       onclick="deleteKegiatan(' . $item['id'] . ')">
+                        <i class="fas fa-trash"></i>
+                    </a>';
+            } else {
+                $item['aksi'] = 'Hub Admin Untuk Mengedit/Menghapus';
+            }
 
             $item['nama'] = $item->user->gelar_d . ' ' . $item->user->biodata->nama . ' ' . $item->user->gelar_b;
         }

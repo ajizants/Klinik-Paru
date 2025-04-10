@@ -19,25 +19,25 @@ class LoginController extends Controller
     {
         $email = $request->input('email');
 
-        if (! str_ends_with($email, '@rsparu.com')) {
+        if (!str_ends_with($email, '@rsparu.com')) {
             $email .= '@rsparu.com';
         }
 
         $data = [
-            'email'    => $email,
+            'email' => $email,
             'password' => $request->input('password'),
         ];
 
         if (Auth::attempt($data)) {
             $email = $request->input('email');
-            if (! str_ends_with($email, '@rsparu.com')) {
+            if (!str_ends_with($email, '@rsparu.com')) {
                 $email .= '@rsparu.com';
             }
 
             $go = "";
             switch ($email) {
                 case 'nurse@rsparu.com':
-                    $go = '/nurse';
+                    $go = '/E-kinerja';
                     break;
                 case 'tindakan@rsparu.com':
                     $go = '/igd';

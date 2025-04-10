@@ -61,9 +61,36 @@
                                 <textarea id="kegLain" class="form-control border border-primary" placeholder="Keterangan/Kegiatan Lain"></textarea>
                             </div>
 
-                            <button type="button" class="btn btn-success d-flex justify-content-center mb-4"
+                            <button type="button" class="btn btn-success d-flex justify-content-center mb-2 col"
                                 onclick="validasiKegiatanLain();">
                                 Simpan Kegiatan
+                            </button>
+                            <div class="accordion" id="accordionExample">
+                                <div class="card">
+                                    <a class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
+                                        id="headingOne" data-target="#caraCariDataKegiatan" aria-expanded="true"
+                                        aria-controls="caraCariDataKegiatan">
+                                        <strong>Klik Untuk Melihat Cara Pencarian Data Kegiatan</strong>
+                                    </a>
+                                    <div id="caraCariDataKegiatan" class="collapse" aria-labelledby="headingOne"
+                                        data-parent="#accordionExample">
+                                        <div class="card-body p-1">
+                                            <ul class="list-decimal list-outside space-y-2 ml-6">
+                                                <li>Pertama pilih Nama Petugas</li>
+                                                <li>Lalu, silahkan pilih tanggal bebas, patokannya adalah bulannya.
+                                                </li>
+                                                <li><strong>Contoh:</strong> Jika ingin mencari data Kegiatan Bulan
+                                                    Maret 2025 maka
+                                                    bisa memilih tanggal 10 Maret 2025 atau 25 Maret 2025</li>
+                                                <li>Lalu Klik Tombol "Cari Data Kegiatan"</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-info d-flex justify-content-center mb-2 col"
+                                onclick="cariDataKegiatanPerOrang();">
+                                Cari Data Kegiatan
                             </button>
                         </form>
                     </div>
@@ -119,6 +146,52 @@
             }
 
             simpanKegiatanLain(pegawai, tglKegiatan, kegiatan, kegLain, jumlah, idKegiatan);
+        }
+
+        function drawTabelKegiatanLain(dataTabel) {
+            if ($.fn.DataTable.isDataTable('#tabelKegLain')) {
+                $('#tabelKegLain').DataTable().clear().destroy();
+            }
+            const role = $("#roleUser").val();
+            dataTabel.forEach(item => {
+                if (role !== 'admin') {
+                    item.aksi = "Hub admin";
+                }
+            })
+            $('#tabelKegLain').DataTable({
+                data: dataTabel,
+                columns: [{
+                        data: 'aksi'
+                    },
+                    {
+                        data: 'tanggal'
+                    },
+                    {
+                        data: 'nip'
+                    },
+                    {
+                        data: 'nama'
+                    },
+                    {
+                        data: 'kegiatan'
+                    },
+                    {
+                        data: 'jumlah'
+                    },
+                ],
+                paging: true,
+                order: [
+                    [1, "asc"]
+                ],
+                lengthMenu: [
+                    [5, 10, 25, 50, -1],
+                    [5, 10, 25, 50, "All"]
+                ],
+                pageLength: 5,
+                responsive: true,
+                autoWidth: false,
+                scrollX: true
+            });
         }
 
         async function simpanKegiatanLain(pegawai, tglKegiatan, kegiatan, kegLain, jumlah, idKegiatan) {
@@ -193,46 +266,6 @@
             });
         }
 
-        function drawTabelKegiatanLain(dataTabel) {
-            if ($.fn.DataTable.isDataTable('#tabelKegLain')) {
-                $('#tabelKegLain').DataTable().clear().destroy();
-            }
-            $('#tabelKegLain').DataTable({
-                data: dataTabel,
-                columns: [{
-                        data: 'aksi'
-                    },
-                    {
-                        data: 'tanggal'
-                    },
-                    {
-                        data: 'nip'
-                    },
-                    {
-                        data: 'nama'
-                    },
-                    {
-                        data: 'kegiatan'
-                    },
-                    {
-                        data: 'jumlah'
-                    },
-                ],
-                paging: true,
-                order: [
-                    [1, "asc"]
-                ],
-                lengthMenu: [
-                    [5, 10, 25, 50, -1],
-                    [5, 10, 25, 50, "All"]
-                ],
-                pageLength: 5,
-                responsive: true,
-                autoWidth: false,
-                scrollX: true
-            });
-        }
-
         function editKegiatan(button) {
             console.log("🚀 ~ editKegiatan ~ button:", button)
             var id = $(button).attr('data-id');
@@ -299,6 +332,46 @@
             })
         }
 
+        function cariDataKegiatanPerOrang() {
+            let pegawai = $('#pegawai').val();
+            let tglKegiatan = $('#tglKegiatan').val();
+            let roleUser = $('#roleUser').val();
+            console.log("🚀 ~ cariDataKegiatanPerOrang ~ pegawai:", pegawai);
+            console.log("🚀 ~ cariDataKegiatanPerOrang ~ tglKegiatan:", tglKegiatan);
+
+            $.ajax({
+                url: "{{ route('cariPekerjaanPegawai') }}",
+                type: "POST",
+                dataType: "JSON",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    pegawai: pegawai,
+                    tglKegiatan: tglKegiatan,
+                    roleUser: roleUser
+                },
+                success: function(data) {
+                    console.log("🚀 ~ cariDataKegiatanPerOrang ~ data:", data);
+                    const dataTabel = data.table;
+                    drawTabelKegiatanLain(dataTabel);
+                },
+                error: function(xhr, status, error) {
+                    console.error("❌ ~ Error Hapus:", error);
+                    // Coba ambil pesan dari respon jika tersedia
+                    let errorMessage = 'Terjadi kesalahan saat menghapus data.' + error;
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    } else if (xhr.status === 404) {
+                        errorMessage = 'Data tidak ditemukan.';
+                    } else if (xhr.status === 500) {
+                        errorMessage = 'Kesalahan server. Silakan coba lagi nanti.';
+                    }
+
+                    tampilkanEror(errorMessage);
+                }
+            });
+        }
 
         let dataKegiatan = @json($hasilKegiatan);
         document.addEventListener('DOMContentLoaded',

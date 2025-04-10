@@ -18,6 +18,10 @@
                         Jadwal Dokter
                     </a>
                 </li>
+                <li class="nav-item d-none d-sm-inline-block" style="display: none">
+                    <input type="text" class="form-control form-control-navbar" placeholder="Search" id='roleUser'
+                        value="{{ Auth::user()->role }}" hidden>
+                </li>
             </ul>
 
             <!-- Right navbar links -->

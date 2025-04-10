@@ -23,7 +23,9 @@ class EkinController extends Controller
         $pegawai = $model->olahPegawai([]);
         // return $pegawai;
         $modelKegiatanLain = new PegawaiKegiatanModel();
-        $hasilKegiatan = $modelKegiatanLain->allData();
+        $auth = auth()->user()->role;
+        $hasilKegiatan = $modelKegiatanLain->allData([], $auth);
+
         $tablePegawai = $model->dataPegawai();
 
         return view('Laporan.Ekin.main', compact('pegawai', 'tablePegawai', 'hasilKegiatan'))->with('title', $title);
@@ -115,7 +117,7 @@ class EkinController extends Controller
         return $data;
     }
 
-    public function show(Request $request)
+    public function export(Request $request)
     {
         $params = [
             'tanggal_awal' => $request->input('tanggal_awal'),
@@ -257,5 +259,17 @@ class EkinController extends Controller
             'message' => $data ? 'Data Berhasil dihapus' : 'Data not found',
             'table' => $hasil,
         ], 200);
+    }
+
+    public function show(Request $request)
+    {
+        $tgl = $request->input('tglKegiatan', Carbon::now()->toDateString());
+        $nip = $request->input('pegawai');
+        $role = $request->input('roleUser');
+
+        $modelKegiatanLain = new PegawaiKegiatanModel();
+        $hasil = $modelKegiatanLain->allData(['tglKegiatan' => $tgl, 'pegawai' => $nip], $role);
+
+        return response()->json(['success' => true, 'table' => $hasil]);
     }
 }
