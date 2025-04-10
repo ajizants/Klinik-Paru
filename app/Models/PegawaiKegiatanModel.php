@@ -116,8 +116,8 @@ class PegawaiKegiatanModel extends Model
         }
 
         foreach ($hasilKegiatan as $item) {
-            if ($role === 'admin') {
-                $item['aksi'] = '
+            // if ($role === 'admin') {
+            $item['aksi'] = '
                     <a type="button" class="btn btn-sm btn-warning"
                        data-id="' . $item['id'] . '"
                        data-nip="' . $item['nip'] . '"
@@ -132,9 +132,9 @@ class PegawaiKegiatanModel extends Model
                        onclick="deleteKegiatan(' . $item['id'] . ')">
                         <i class="fas fa-trash"></i>
                     </a>';
-            } else {
-                $item['aksi'] = 'Hub Admin Untuk Mengedit/Menghapus';
-            }
+            // } else {
+            //     $item['aksi'] = 'Hub Admin Untuk Mengedit/Menghapus';
+            // }
 
             $item['nama'] = $item->user->gelar_d . ' ' . $item->user->biodata->nama . ' ' . $item->user->gelar_b;
         }
