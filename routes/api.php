@@ -223,6 +223,7 @@ Route::get('obat', [GudangFarmasiController::class, 'gudangFarmasiIn']);
 //transaksi apotok
 Route::post('lists/obat', [FarmasiController::class, 'obats']);
 Route::get('resep/{norm}/{tgl}', [FarmasiController::class, 'cetakObat']);
+Route::get('resep2/{norm}/{tgl}', [FarmasiController::class, 'cetakResepKominnfo']);
 Route::post('farmasi/panggil', [FarmasiController::class, 'panggil']);
 // Route::post('farmasi/cetak/{norm}/{notrans}', [FarmasiController::class, 'selesaiFarmasi']);
 Route::post('farmasi/pulangkan', [FarmasiController::class, 'pulangkan']);
