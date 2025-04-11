@@ -662,7 +662,7 @@ function generateActionLink(item, ruang, statusFilter) {
         `;
 
     const linkLog = `<a type="button" class="aksi-button btn-sm btn-warning py-md-0 py-1 m-1 col icon-link icon-link-hover"
-                    onclick="cariLog('${item.id}');">
+                    onclick="cariLog('${item.id}','${item.pasien_no_rm}','${item.tanggal}');">
                     <strong>Posisi</strong>
                 </a>`;
     const linkCppt = `<a type="button" class="aksi-button btn-sm btn-success py-md-0 py-1 m-1 col icon-link icon-link-hover"
@@ -843,7 +843,7 @@ function tabelRiwayatKunjungan(data) {
     });
 }
 
-function cariLog(id) {
+function cariLog(id, norm, tgl) {
     // console.log("🚀 ~ cariLog ~ id:", id);
     Swal.fire({
         title: "Loading...",
@@ -884,6 +884,10 @@ function cariLog(id) {
                                             <a href="https://kkpm.banyumaskab.go.id/administrator/loket_farmasi/cetak_resep?pendaftaran_id=${id}"
                                             target="_blank" class="btn btn-success" style="margin-top: 10px;">
                                                 Cetak Resep
+                                            </a>
+                                            <a href="/api/resep2/${norm}/${tgl}"
+                                            target="_blank" class="btn btn-primary" style="margin-top: 10px;">
+                                                Cetak Resep BPJS
                                             </a>
                                         </div>
                                     `;
