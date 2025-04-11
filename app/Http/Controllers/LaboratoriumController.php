@@ -491,7 +491,10 @@ class LaboratoriumController extends Controller
 
             $analis = $dataAnalis[rand(0, 2)];
 
-            return view('Laboratorium.Pendaftaran.order', compact('dataCppt', 'lab', 'tglLahir', 'permintaan', 'analis', 'dokter'));
+            $dataNoSampel = $this->noSampel();
+            $noSampel = $dataNoSampel->getData()->noSample; // atau getData(true) untuk array
+
+            return view('Laboratorium.Pendaftaran.order', compact('noSampel', 'dataCppt', 'lab', 'tglLahir', 'permintaan', 'analis', 'dokter'));
 
         } catch (\Exception $e) {
             Log::error('Terjadi kesalahan saat mencari data: ' . $e->getMessage());

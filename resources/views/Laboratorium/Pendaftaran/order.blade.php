@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cetak</title>
+    <title>Cetak Permintaan Laboratorium</title>
     <!-- Google Font: Source Sans Pro -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -152,8 +152,8 @@
                     </td>
                     <td width="36%" class="my-0 py-0 px-1 border-0" style=" font-weight: bold; text-align: left;">
                         <input type="text" name="no_sampel" id="no_sampel" style="border: none; outline: none;"
-                            class="px-2 {{ $lab == null || $lab->no_sampel == null || $lab->no_sampel == '' ? ' bg-warning' : '' }}"
-                            oninput="removeBgWarning('no_sampel')" value="{{ $lab->no_sampel ?? '' }}" />
+                            class="px-2 {{ $noSampel == null || $noSampel == null || $noSampel == '' ? ' bg-warning' : '' }}"
+                            oninput="removeBgWarning('no_sampel')" value="{{ $noSampel ?? '-' }}" />
 
                     </td>
                 </tr>
