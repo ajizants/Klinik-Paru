@@ -21,7 +21,7 @@
                 <!-- Header -->
                 <tr>
                     <td class="w-1/6 py-2 border-b border-black scale-60">
-                        <img src="{{ asset('img/banyumas.png') }}" class="w-14 mx-2 justify-self-center" alt="banyumas" />
+                        <img src="{{ asset('img/banyumas.png') }}" class="w-20 mx-2 justify-self-center" alt="banyumas" />
                     </td>
                     <td class="w-4/6 text-center border-b border-black scale-55">
                         <p class="text-md mb-0">PEMERINTAH KABUPATEN BANYUMAS</p>
@@ -31,7 +31,7 @@
                         <p class="text-xs">Kode Pos 53111, Telepon (0281) 635658, Pos-el bkpm_purwokerto@yahoo.com</p>
                     </td>
                     <td class="w-1/6 py-2 border-b border-black scale-60">
-                        <img src="{{ asset('img/LOGO_KKPM.png') }}" class="w-14 mx-2 justify-self-center"
+                        <img src="{{ asset('img/LOGO_KKPM.png') }}" class="w-20 mx-2 justify-self-center"
                             alt="kkpm" />
                     </td>
                 </tr>
@@ -42,39 +42,51 @@
                         <table class="table-auto w-full mb-4 text-sm">
                             <tbody>
                                 <tr>
-                                    <td class="px-2">No RM</td>
-                                    <td class="px-2">:</td>
-                                    <td class="px-2">{{ $cppt['pasien_no_rm'] }} / {{ $cppt['penjamin_nama'] }} /
+                                    <td class="px-2 align-top">No RM</td>
+                                    <td class="px-2 align-top">:</td>
+                                    <td class="px-2 align-top">{{ $cppt['pasien_no_rm'] }} /
+                                        {{ $cppt['penjamin_nama'] }} /
                                         {{ $cppt['antrean_nomor'] }} @if ($noSep != null)
                                             / {{ $noSep }}
                                         @endif
                                     </td>
-                                    <td class="px-2"></td>
-                                    <td class="px-2">Tanggal</td>
-                                    <td class="px-2">:</td>
-                                    <td class="px-2">{{ $cppt['tanggal'] }}, <span
+                                    <td class="px-2 align-top"></td>
+                                    <td class="px-2 align-top">Tanggal</td>
+                                    <td class="px-2 align-top">:</td>
+                                    <td class="px-2 align-top">{{ $cppt['tanggal'] }}, <span
                                             class="ml-4">{{ $cppt['ket_status_pasien_pulang'] }}</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-2">Nama</td>
-                                    <td class="px-2">:</td>
-                                    <td class="px-2">{{ $cppt['pasien_nama'] }} / {{ $cppt['umur'] }}</td>
-                                    <td class="px-2"></td>
-                                    <td class="px-2">BB</td>
-                                    <td class="px-2">:</td>
-                                    <td class="px-2">{{ $cppt['objek_bb'] }} Kg</td>
+                                    <td class="px-2 align-top">Nama/Umur</td>
+                                    <td class="px-2 align-top">:</td>
+                                    <td class="px-2 align-top">{{ $cppt['pasien_nama'] }} / {{ $cppt['umur'] }}</td>
+                                    <td class="px-2 align-top"></td>
+                                    <td class="px-2 align-top">BB</td>
+                                    <td class="px-2 align-top">:</td>
+                                    <td class="px-2 align-top">{{ $cppt['objek_bb'] }} Kg</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-2">Alamat</td>
-                                    <td class="px-2">:</td>
-                                    <td class="px-2">{{ $cppt['kelurahan_nama'] }},
+                                    <td class="px-2 align-top">Alamat</td>
+                                    <td class="px-2 align-top">:</td>
+                                    <td class="px-2 align-top">{{ $cppt['kelurahan_nama'] }},
                                         {{ $cppt['pasien_rt'] }}/{{ $cppt['pasien_rw'] }},
                                         {{ $cppt['kecamatan_nama'] }}</td>
-                                    <td class="px-2"></td>
-                                    <td class="px-2">Dokter</td>
-                                    <td class="px-2">:</td>
-                                    <td class="px-2">{{ $cppt['dokter_nama'] }}</td>
+                                    <td class="px-2 align-top"></td>
+                                    <td class="px-2 align-top">Dokter</td>
+                                    <td class="px-2 align-top">:</td>
+                                    <td class="px-2 align-top">{{ $cppt['dokter_nama'] }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-2 align-top">Alergi</td>
+                                    <td class="px-2 align-top">:</td>
+                                    <td class="px-2 align-top">{{ $cppt['riwayat_alergi'] }} Kg</td>
+
+                                    <td class="px-2 align-top"></td>
+                                    <td class="px-2 align-top">Diagnosa</td>
+                                    <td class="px-2 align-top">:</td>
+                                    <td class="px-2 align-top">{{ $cppt['diagnosa'][0]['nama_diagnosa'] }}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </td>
@@ -177,7 +189,7 @@
                 <tr>
                     <td colspan="3" class="border-t border-black">
                         <table class="table-auto w-full border border-black mb-2 text-sm mx-auto table-layout-fixed">
-                            <table width="100%" style="color: black;" border="1">
+                            <table width="100%" style="color: black;font-size: 8pt;">
                                 <thead class="border">
                                     <tr class="bg-gray-200">
                                         <th class="border px-2 text-center" colspan="3">
