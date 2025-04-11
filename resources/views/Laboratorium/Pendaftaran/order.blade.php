@@ -102,7 +102,7 @@
         <table class="table table-borderless mb-0" width="100%">
             @php
                 // Assuming $resumePasien->umur contains "64th 11bln 10hr"
-                $umur = $lab->umur;
+                $umur = $dataCppt['umur'];
 
                 // Use regular expression to capture the year (digits followed by 'th')
                 preg_match('/(\d+)th/', $umur, $matches);
@@ -123,7 +123,7 @@
                         :
                     </td>
                     <td width="26%" class="my-0 py-0" style=" text-align: left;">
-                        {{ $lab->norm }} / {{ $tahun }} / {{ $tglLahir }}
+                        {{ $dataCppt['pasien_no_rm'] }} / {{ $tahun }} / {{ $tglLahir }}
                     </td>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Tanggal</td>
@@ -131,8 +131,7 @@
                         :
                     </td>
                     <td width="36%" class="my-0 py-0" style=" text-align: left;">
-                        {{ Carbon\Carbon::parse($lab->created_at)->locale('id')->isoFormat('DD MMMM Y') }} ,
-                        {{ Carbon\Carbon::parse($lab->created_at)->format('H:i') }} WIB
+                        {{ Carbon\Carbon::parse($dataCppt['tanggal'])->locale('id')->isoFormat('DD MMMM Y') }}
                     </td>
                 </tr>
                 <tr>
@@ -143,7 +142,7 @@
                         :
                     </td>
                     <td width="26%" class="my-0 py-0" style=" text-align: left;">
-                        {{ $lab->nama }}
+                        {{ $dataCppt['pasien_nama'] }}
                     </td>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         No.
@@ -153,8 +152,8 @@
                     </td>
                     <td width="36%" class="my-0 py-0 px-1 border-0" style=" font-weight: bold; text-align: left;">
                         <input type="text" name="no_sampel" id="no_sampel" style="border: none; outline: none;"
-                            class="px-2 {{ $lab->no_sampel == null || $lab->no_sampel == '' ? ' bg-warning' : '' }}"
-                            oninput="removeBgWarning('no_sampel')" value="{{ $lab->no_sampel }}" />
+                            class="px-2 {{ $lab == null || $lab->no_sampel == null || $lab->no_sampel == '' ? ' bg-warning' : '' }}"
+                            oninput="removeBgWarning('no_sampel')" value="{{ $lab->no_sampel ?? '' }}" />
 
                     </td>
                 </tr>
@@ -165,7 +164,8 @@
                         :
                     </td>
                     <td width="26%" class="my-0 py-0" style=" text-align: left;">
-                        {{ $lab->alamat }}
+                        {{ $dataCppt['kelurahan_nama'] }}, {{ $dataCppt['pasien_rt'] }}/{{ $dataCppt['pasien_rw'] }},
+                        {{ $dataCppt['kecamatan_nama'] }}, {{ $dataCppt['kabupaten_nama'] }}
                     </td>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Dokter</td>

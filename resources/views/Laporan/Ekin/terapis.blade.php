@@ -268,12 +268,38 @@
                         <input style="text-align: center; border: none" value="{{ $konseling ?? '-' }}">
                     </td>
                 </tr>
+                @php
+                    use Illuminate\Support\Str;
+                @endphp
+
+                @foreach ($poinLain as $item)
+                    @if (!Str::contains($item['kegiatan'], 'Input TCM') && !Str::contains($item['kegiatan'], 'Input SITB'))
+                        <tr>
+                            <td class="my-0 py-0" style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                                {{ $no++ }}
+                            </td>
+                            <td class="my-0 py-0" style="text-align: left;">
+                                {{ $item['kegiatan'] }}
+                                @if (!empty($item['keterangan']))
+                                    : {{ $item['keterangan'] }}
+                                @endif
+                            </td>
+                            <td class="my-0 py-0" style="text-align: center;">
+                                <input style="text-align: center; border: none"
+                                    value="{{ $item['total_jumlah'] ?? '-' }}">
+                            </td>
+                        </tr>
+                    @endif
+                @endforeach
+
                 <tr>
                     <td class="my-0 py-0" style="font-weight: bold; padding-left:10rem;" colspan="3">
                         C. Pendokumentasian</td>
                 </tr>
+                @php $no=1;  @endphp
                 <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">1.
+                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                        {{ $no++ }}
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Input data Rekam Medis Pasien</td>
                     <td class="my-0 py-0" style="text-align: center;">
@@ -283,29 +309,38 @@
                 </tr>
                 <tr>
                     <td class="my-0
-                            py-0 px-5"
-                        style="padding-left:2rem; padding-right:2rem; text-align: left;">2.
+                        py-0 px-5"
+                        style="padding-left:2rem; padding-right:2rem; text-align: left;">{{ $no++ }}
                     </td>
                     <td class="my-0 py-0" style="text-align: left;">Input data PITC SIHA</td>
                     <td class="my-0 py-0" style="text-align: center;">
                         <input style="text-align: center; border: none" value="{{ $inputPitc ?? '-' }}">
                     </td>
                 </tr>
-                <tr>
-                    <td class="my-0 py-0 px-5" style="padding-left:2rem; padding-right:2rem; text-align: left;">3.
-                    </td>
-                    <td class="my-0 py-0" style="text-align: left;">Input data TCM/BTA SITB</td>
-                    <td class="my-0 py-0" style="text-align: center;">
-                        <input style="text-align: center; border: none" value="">
-                    </td>
-                    </td>
-                </tr>
+                @foreach ($poinLain as $item)
+                    @if (Str::contains($item['kegiatan'], 'Input TCM') || Str::contains($item['kegiatan'], 'Input SITB'))
+                        <tr>
+                            <td class="my-0 py-0" style="padding-left:2rem; padding-right:2rem; text-align: left;">
+                                {{ $no++ }}
+                            </td>
+                            <td class="my-0 py-0" style="text-align: left;">
+                                {{ $item['kegiatan'] }}
+                                @if (!empty($item['keterangan']))
+                                    : {{ $item['keterangan'] }}
+                                @endif
+                            </td>
+                            <td class="my-0 py-0" style="text-align: center;">
+                                <input style="text-align: center; border: none"
+                                    value="{{ $item['total_jumlah'] ?? '-' }}">
+                            </td>
+                        </tr>
+                    @endif
+                @endforeach
                 <tr>
                     <td class="my-0 py-0 px-5" colspan="3"
                         style="padding-left:2rem; padding-right:2rem; text-align: left; border: none">
                         <!-- Tanda Tangan -->
                         <div class="flex justify-between mt-20">
-
                             <div class="w-1/2 text-center">
                                 <p>Purwokerto, {{ $tglAkhir }}</p>
                                 <p>Pegawai yang Dinilai</p>

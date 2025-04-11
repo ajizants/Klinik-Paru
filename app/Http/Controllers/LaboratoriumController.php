@@ -474,10 +474,10 @@ class LaboratoriumController extends Controller
                 'tanggal_akhir' => $tgl,
             ];
             $cppt = $model->cpptRequest($params);
-            // return $cppt;
             $permintaan = $cppt['response']['data'][0]['laboratorium'];
             $tglLahir = $cppt['response']['data'][0]['pasien_tgl_lahir'];
-            // return $permintaan;
+            $dataCppt = $cppt['response']['data'][0];
+            // return $dataCppt;
             $lab = LaboratoriumKunjunganModel::with('pemeriksaan.pemeriksaan')
                 ->where('notrans', 'like', '%' . $notrans . '%')
             // ->whereDate('created_at', 'like', '%' . $tgl . '%')
@@ -487,25 +487,11 @@ class LaboratoriumController extends Controller
                 'JUNI SUPRAPTI A.Md.AK',
                 'TANTI LISTIYOWATI S.Tr.Kes',
             ];
-            $nipDokter = $lab->dokter;
-            switch ($nipDokter) {
-                case "198311142011012002":
-                    $dokter = "dr. CEMPAKA NOVA INTANI Sp.P, MM, FISR.";
-                    break;
-                case "9":
-                    $dokter = "dr. AGIL DANARJAYA Sp.P.";
-                    break;
-                case "198907252019022004":
-                    $dokter = "dr. FILLY ULFA KUSUMAWARDANI";
-                    break;
-                case "198903142022031005":
-                    $dokter = "dr. SIGIT DWIYANTO";
-                    break;
-            }
+            $dokter = $cppt['response']['data'][0]['dokter_nama'];
 
             $analis = $dataAnalis[rand(0, 2)];
-            // return $lab;
-            return view('Laboratorium.Pendaftaran.order', compact('lab', 'tglLahir', 'permintaan', 'analis', 'dokter'));
+
+            return view('Laboratorium.Pendaftaran.order', compact('dataCppt', 'lab', 'tglLahir', 'permintaan', 'analis', 'dokter'));
 
         } catch (\Exception $e) {
             Log::error('Terjadi kesalahan saat mencari data: ' . $e->getMessage());
