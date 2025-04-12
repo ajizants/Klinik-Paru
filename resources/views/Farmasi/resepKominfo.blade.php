@@ -85,7 +85,7 @@
                                     <td class="px-2 align-top"></td>
                                     <td class="px-2 align-top">Diagnosa</td>
                                     <td class="px-2 align-top">:</td>
-                                    <td class="px-2 align-top">{{ $cppt['diagnosa'][0]['nama_diagnosa'] }}</td>
+                                    <td class="px-2 align-top">{{ $cppt['diagnosa'][0]['nama_diagnosa'] ?? '-' }}</td>
                                 </tr>
                             </tbody>
                         </table>
