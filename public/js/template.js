@@ -132,6 +132,7 @@ function setTodayDate() {
     $("#tglKunj").val(today);
     $("#tglRO").val(today);
     $("#tgltrans").val(today);
+    $("#tanggal_bpjs").val(today);
 }
 
 function scrollToInputSection() {

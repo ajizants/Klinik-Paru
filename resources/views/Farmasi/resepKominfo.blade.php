@@ -80,12 +80,32 @@
                                 <tr>
                                     <td class="px-2 align-top">Alergi</td>
                                     <td class="px-2 align-top">:</td>
-                                    <td class="px-2 align-top">{{ $cppt['riwayat_alergi'] }} Kg</td>
+                                    <td class="px-2 align-top">
+                                        @if ($cppt['riwayat_alergi'] != '')
+                                            {{ $cppt['riwayat_alergi'] }}
+                                        @else
+                                            tidak ada alergi
+                                        @endif
+                                    </td>
 
                                     <td class="px-2 align-top"></td>
                                     <td class="px-2 align-top">Diagnosa</td>
                                     <td class="px-2 align-top">:</td>
-                                    <td class="px-2 align-top">{{ $cppt['diagnosa'][0]['nama_diagnosa'] ?? '-' }}</td>
+                                    <td class="px-2 align-top">
+                                        @if ($dxs[0]['kode_diagnosa'] == 'Z09.8')
+                                            @if (empty($dxs) || count($dxs) == 0)
+                                                -
+                                            @else
+                                                {{ $dxs[1]['nmDx'] }}
+                                            @endif
+                                        @else
+                                            @if (empty($dxs) || count($dxs) == 0)
+                                                -
+                                            @else
+                                                {{ $dxs[0]['nmDx'] }}
+                                            @endif
+                                        @endif
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -302,7 +322,7 @@
                                                     Jam Penerimaan
                                                 </div>
                                                 <div class="col-md-12">
-                                                    <input type="text" value="-">
+                                                    <input type="text" value="-" id="jam_penerimaan">
                                                 </div>
                                             </div>
                                             <div class="row" style="margin-top: 20px;">
@@ -310,7 +330,7 @@
                                                     Jam Penyerahan
                                                 </div>
                                                 <div class="col-md-12">
-                                                    <input type="text" value="-">
+                                                    <input type="text" value="-" id="jam_penyerahan">
                                                 </div>
                                             </div>
                                         </td>
@@ -324,6 +344,45 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+        //buat semua checkbox ter cheked
+        document.addEventListener("DOMContentLoaded", function() {
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = true;
+            });
+
+            var now = new Date();
+
+            // Jam penerimaan = sekarang
+            var jamPenerimaanJam = now.getHours();
+            var jamPenerimaanMenit = now.getMinutes();
+
+            // Tambahkan waktu random antara 15 - 60 menit untuk jam penyerahan
+            var tambahanMenit = Math.floor(Math.random() * 46) + 15; // 15-60 menit
+            var penyerahan = new Date(now.getTime() + tambahanMenit * 60000);
+
+            // Ambil jam dan menit penyerahan
+            var jamPenyerahanJam = penyerahan.getHours();
+            var jamPenyerahanMenit = penyerahan.getMinutes();
+
+            // Fungsi untuk menambahkan 0 jika satuan
+            function formatWaktu(jam, menit) {
+                return (
+                    (jam < 10 ? "0" + jam : jam) + ":" + (menit < 10 ? "0" + menit : menit)
+                );
+            }
+
+            var jamPenerimaan = formatWaktu(jamPenerimaanJam, jamPenerimaanMenit);
+            var jamPenyerahan = formatWaktu(jamPenyerahanJam, jamPenyerahanMenit);
+
+            // Set ke input
+            document.getElementById("jam_penerimaan").value = jamPenerimaan;
+            document.getElementById("jam_penyerahan").value = jamPenyerahan;
+
+        })
+    </script>
 
 
 </body>

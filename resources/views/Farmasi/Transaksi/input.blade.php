@@ -26,29 +26,7 @@
                                                     <input type="text" name="norm" id="norm"
                                                         class="form-control" placeholder="No RM" maxlength="6"
                                                         pattern="[0-9]{6}" required />
-                                                    <span>
-                                                        <a onclick="cetakResepBpjs();" class="m-1 col btn btn-success"
-                                                            data-toggle="tooltip" data-placement="right"
-                                                            title="Cetak Hasil Lab">
-                                                            <i class="fa-solid fa-print"></i>
-                                                        </a>
-                                                    </span>
-                                                    <script>
-                                                        function cetakResepBpjs() {
-                                                            const norm = $('#norm').val();
-                                                            const tgl = $('#tgltrans').val();
-                                                            //cek jika kosong
-                                                            if (!norm || !tgl) {
-                                                                Swal.fire({
-                                                                    icon: 'error',
-                                                                    title: 'No RM dan Tanggal Belum di isi...!!!',
-                                                                });
-                                                                return;
-                                                            }
-                                                            const url = `/resep2/${norm}/${tgl}`;
-                                                            window.open(url, '_blank');
-                                                        }
-                                                    </script>
+
                                                 </div>
                                                 <label for="layanan"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
