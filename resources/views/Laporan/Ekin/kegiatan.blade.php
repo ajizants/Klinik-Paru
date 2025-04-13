@@ -200,7 +200,7 @@
             let type;
             let data = [];
             if (idKegiatan != '') {
-                url = "{{ route('updatePekerjaanPegawai') }}";
+                url = "/api/ekin/poin";
                 type = "PUT";
                 data = {
                     pegawai: pegawai,
@@ -211,7 +211,7 @@
                     id: idKegiatan
                 }
             } else {
-                url = "{{ route('tambahPekerjaanPegawai') }}";
+                url = "/api/ekin/poin"
                 type = "POST";
                 data = {
                     pegawai: pegawai,
@@ -297,7 +297,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "{{ route('hapusPekerjaanPegawai', '') }}/" + id,
+                        url: "api/ekin/poin/" + id,
                         type: "DELETE",
                         dataType: "JSON",
                         headers: {
@@ -340,7 +340,7 @@
             console.log("🚀 ~ cariDataKegiatanPerOrang ~ tglKegiatan:", tglKegiatan);
 
             $.ajax({
-                url: "{{ route('cariPekerjaanPegawai') }}",
+                url: "api/ekin/poin/cari",
                 type: "POST",
                 dataType: "JSON",
                 headers: {
