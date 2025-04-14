@@ -23,22 +23,23 @@
                 <li class="nav-item">
                     <a type="button" class="nav-link" onclick=" toggleSections('#dSkip')"><b>Skip</b></a>
                 </li>
-                <div class="input-group col d-flex justify-content-start ml-5">
-                    <input type="date" class="form-control col-sm-4 bg bg-warning" id="tanggal"
+                <div class="input-group col-4 d-flex justify-content-start ml-5">
+                    <input type="date" class="form-control col-sm-4 col-md-4 bg bg-warning" id="tanggal"
                         value="{{ old('date') }}" required onchange="antrianFar();">
                     <div class="input-group-addon btn btn-danger" style="height: 38.22222px;">
                         <i class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top"
                             title="Update Pasien Hari ini" id="cariantrian" onclick="antrianFar();"></i>
                     </div>
                 </div>
-                <div class="input-group col d-flex justify-content-start ml-5">
-                    <input type="date" class="form-control col-sm-4 bg bg-warning" id="tanggal_bpjs"
-                        value="{{ old('date') }}" required onchange="antrianFar();">
-                    <input type="number" name="no_rm" id="no_rm" class="form-control"
+                <div class="input-group col d-flex justify-content-start ml-5 bg-danger">
+                    <label for="tanggal_bpjs" class="col-form-label"> Tgl Resep:</label>
+                    <input type="date" class="form-control col-sm-4 col-md-4 bg bg-warning" id="tanggal_bpjs"
+                        value="{{ old('date') }}">
+                    <input type="number" name="no_rm" id="no_rm" class="form-control col"
                         placeholder="Tulis No RM untuk cetak resep BPJS" />
-                    <a onclick="cetakResepBpjs();" class="col-1 btn btn-success" data-toggle="tooltip"
-                        data-placement="right" title="Cetak Resep BPJS">
-                        <i class="fa-solid fa-print"></i>
+                    <a onclick="cetakResepBpjs();" class="btn btn-success" data-toggle="tooltip" data-placement="right"
+                        title="Cetak Resep BPJS">
+                        <i class="fa-solid fa-print px-2"></i>
                     </a>
                     <script>
                         function cetakResepBpjs() {

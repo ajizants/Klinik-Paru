@@ -174,9 +174,9 @@ class IgdController extends Controller
                     $totalKunjungan = $jumlahKunjunganPerBulan->firstWhere('bulan', (int) $bulan)->total ?? 0;
 
                     return [
-                        'bulan'          => (int) $bulan,
-                        'kelompok'       => ucfirst($kelompok), // Pastikan format nama kelompok rapi
-                        'jumlah'         => $group->sum('jumlah'),
+                        'bulan' => (int) $bulan,
+                        'kelompok' => ucfirst($kelompok), // Pastikan format nama kelompok rapi
+                        'jumlah' => $group->sum('jumlah'),
                         'totalKunjungan' => $totalKunjungan, // Assign the correct total kunjungan for the month
                     ];
                 })
@@ -206,9 +206,9 @@ class IgdController extends Controller
                 ->get()
                 ->map(function ($item) {
                     return [
-                        'bulan'    => (int) $item->bulan,
+                        'bulan' => (int) $item->bulan,
                         'kelompok' => ucfirst($item->kelompok),
-                        'jumlah'   => (int) $item->jumlah,
+                        'jumlah' => (int) $item->jumlah,
                     ];
                 })
                 ->values();
@@ -276,9 +276,9 @@ class IgdController extends Controller
             ->map(function ($group, $key) {
                 list($bulan, $kelompok) = explode('|', $key); // Pisahkan bulan dan kelompok
                 return [
-                    'bulan'    => (int) $bulan, // Konversi bulan ke integer
+                    'bulan' => (int) $bulan, // Konversi bulan ke integer
                     'kelompok' => $kelompok,
-                    'jumlah'   => $group->count(),
+                    'jumlah' => $group->count(),
                 ];
             })
             ->values();
@@ -358,8 +358,8 @@ class IgdController extends Controller
             $kunjungan = $kunjunganData->get($item->notrans);
 
             return [
-                'notrans'  => $item->notrans,
-                'bulan'    => Carbon::parse($item->created_at)->format('m'),
+                'notrans' => $item->notrans,
+                'bulan' => Carbon::parse($item->created_at)->format('m'),
                 'kelompok' => $kunjungan ? ($kunjungan->no_sep ? "BPJS" : "UMUM") : "mbuh",
             ];
         })->unique('notrans')->values();
@@ -369,12 +369,12 @@ class IgdController extends Controller
             ->groupBy(fn($item) => $item['bulan'] . '|' . $item['kelompok'])
             ->map(function ($group, $key) use ($jumlahKunjunganPerBulan) {
                 list($bulan, $kelompok) = explode('|', $key);
-                $totalKunjungan         = $jumlahKunjunganPerBulan->firstWhere('bulan', (int) $bulan)->total ?? 0;
+                $totalKunjungan = $jumlahKunjunganPerBulan->firstWhere('bulan', (int) $bulan)->total ?? 0;
 
                 return [
-                    'bulan'          => (int) $bulan,
-                    'kelompok'       => ucfirst($kelompok),
-                    'jumlah'         => $group->count(),
+                    'bulan' => (int) $bulan,
+                    'kelompok' => ucfirst($kelompok),
+                    'jumlah' => $group->count(),
                     'totalKunjungan' => $totalKunjungan,
                 ];
             })
@@ -388,7 +388,7 @@ class IgdController extends Controller
 
     public function cariDataTindakan(Request $request)
     {
-        $notrans      = $request->input('notrans');
+        $notrans = $request->input('notrans');
         $dataTindakan = IGDTransModel::with(['tindakan', 'transbmhp.tindakan', 'transbmhp.bmhp', 'petugas.biodata', 'dokter.biodata'])
             ->where('notrans', 'LIKE', '%' . $notrans . '%')
             ->get();
@@ -403,12 +403,15 @@ class IgdController extends Controller
     public function simpanTindakan(Request $request)
     {
         // Mengambil nilai dari input pengguna
-        $norm    = $request->input('norm');
+        $norm = $request->input('norm');
         $notrans = $request->input('notrans');
-        $kdTind  = $request->input('kdTind');
+        $kdTind = $request->input('kdTind');
         $petugas = $request->input('petugas');
-        $dokter  = $request->input('dokter');
+        $dokter = $request->input('dokter');
         $jaminan = $request->input('jaminan');
+        $tglTrans = $request->input('tgltrans');
+        $tglNow = Carbon::now()->format('Y-m-d');
+
         // dd($jaminan);
         // $created_at = $request->input('tgltrans');
         // $updated_at = $request->input('tgltind');
@@ -417,12 +420,17 @@ class IgdController extends Controller
             // Membuat instance dari model KunjunganTindakan
             $kunjunganTindakan = new IGDTransModel();
             // Mengatur nilai-nilai kolom
-            $kunjunganTindakan->kdTind  = $kdTind;
-            $kunjunganTindakan->norm    = $norm;
+            $kunjunganTindakan->kdTind = $kdTind;
+            $kunjunganTindakan->norm = $norm;
             $kunjunganTindakan->notrans = $notrans;
             $kunjunganTindakan->petugas = $petugas;
-            $kunjunganTindakan->dokter  = $dokter;
+            $kunjunganTindakan->dokter = $dokter;
             $kunjunganTindakan->jaminan = $jaminan;
+            //    jika tgl trans sebelum tgl sekarang maka isi creted_at dengan tglTrans dan jam sekarang
+            if ($tglTrans < $tglNow) {
+                $kunjunganTindakan->created_at = $tglTrans . ' ' . Carbon::now()->format('H:i:s');
+                $kunjunganTindakan->updated_at = $tglTrans . ' ' . Carbon::now()->format('H:i:s');
+            }
             // $kunjunganTindakan->created_at = $created_at;
             // $kunjunganTindakan->updated_at = $updated_at;
 
@@ -436,25 +444,61 @@ class IgdController extends Controller
             return response()->json(['message' => 'kdTind tidak valid'], 400);
         }
     }
+    // public function simpanTindakan(Request $request)
+    // {
+    //     // Mengambil nilai dari input pengguna
+    //     $norm    = $request->input('norm');
+    //     $notrans = $request->input('notrans');
+    //     $kdTind  = $request->input('kdTind');
+    //     $petugas = $request->input('petugas');
+    //     $dokter  = $request->input('dokter');
+    //     $jaminan = $request->input('jaminan');
+    //     // dd($jaminan);
+    //     // $created_at = $request->input('tgltrans');
+    //     // $updated_at = $request->input('tgltind');
+    //     // Pastikan $kdTind memiliki nilai yang valid sebelum menyimpan data
+    //     if ($kdTind !== null) {
+    //         // Membuat instance dari model KunjunganTindakan
+    //         $kunjunganTindakan = new IGDTransModel();
+    //         // Mengatur nilai-nilai kolom
+    //         $kunjunganTindakan->kdTind  = $kdTind;
+    //         $kunjunganTindakan->norm    = $norm;
+    //         $kunjunganTindakan->notrans = $notrans;
+    //         $kunjunganTindakan->petugas = $petugas;
+    //         $kunjunganTindakan->dokter  = $dokter;
+    //         $kunjunganTindakan->jaminan = $jaminan;
+    //         // $kunjunganTindakan->created_at = $created_at;
+    //         // $kunjunganTindakan->updated_at = $updated_at;
+
+    //         // Simpan data ke dalam tabel
+    //         $kunjunganTindakan->save();
+
+    //         // Respon sukses atau redirect ke halaman lain
+    //         return response()->json(['message' => 'Data berhasil disimpan']);
+    //     } else {
+    //         // Handle case when $kdTind is null, misalnya kirim respon error
+    //         return response()->json(['message' => 'kdTind tidak valid'], 400);
+    //     }
+    // }
 
     public function updateTindakan(Request $request)
     {
-        $id      = $request->input('id');
-        $kdTind  = $request->input('kdTind');
+        $id = $request->input('id');
+        $kdTind = $request->input('kdTind');
         $petugas = $request->input('petugas');
-        $dokter  = $request->input('dokter');
+        $dokter = $request->input('dokter');
 
         // Cek apakah ID yang diterima adalah ID yang valid dalam database
         $tindakan = IGDTransModel::find($id);
 
-        if (! $tindakan) {
+        if (!$tindakan) {
             return response()->json(['message' => 'Data tindakan tidak ditemukan'], 404);
         }
 
         // Update nilai kolom dengan nilai yang diterima dari input pengguna
-        $tindakan->kdTind  = $kdTind;
+        $tindakan->kdTind = $kdTind;
         $tindakan->petugas = $petugas;
-        $tindakan->dokter  = $dokter;
+        $tindakan->dokter = $dokter;
 
         // Simpan perubahan ke dalam database
         $tindakan->save();
@@ -465,12 +509,12 @@ class IgdController extends Controller
 
     public function deleteTindakan(Request $request)
     {
-        $id     = $request->input('id');
+        $id = $request->input('id');
         $idTind = $request->input('id');
         // Cek apakah ID yang diterima adalah ID yang valid dalam database
         $tindakan = IGDTransModel::find($id);
-        $bmhp     = TransaksiBMHPModel::find($idTind);
-        if (! $tindakan) {
+        $bmhp = TransaksiBMHPModel::find($idTind);
+        if (!$tindakan) {
             return response()->json(['message' => 'Data tindakan tidak ditemukan'], 404);
         }
 
@@ -492,9 +536,9 @@ class IgdController extends Controller
 
         if ($bmhp) {
             // dd($bmhp);
-            $kdBmhp     = $bmhp->kdBmhp;
-            $jml        = $bmhp->jml;
-            $instokigd  = BMHPModel::find($kdBmhp);
+            $kdBmhp = $bmhp->kdBmhp;
+            $jml = $bmhp->jml;
+            $instokigd = BMHPModel::find($kdBmhp);
             $product_id = $instokigd->product_id;
             // dd($product_id);
 
@@ -516,7 +560,7 @@ class IgdController extends Controller
         if ($updateKeluar) {
             $updateKeluar->update([
                 'keluar' => $updateKeluar->keluar - $jml,
-                'sisa'   => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar - $jml),
+                'sisa' => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar - $jml),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -527,7 +571,7 @@ class IgdController extends Controller
         if ($updateKeluarInStok) {
             $updateKeluarInStok->update([
                 'keluar' => $updateKeluarInStok->keluar - $jml,
-                'sisa'   => $this->calculateSisa($updateKeluarInStok->stokBaru, $updateKeluarInStok->masuk, $updateKeluarInStok->keluar - $jml),
+                'sisa' => $this->calculateSisa($updateKeluarInStok->stokBaru, $updateKeluarInStok->masuk, $updateKeluarInStok->keluar - $jml),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -537,24 +581,24 @@ class IgdController extends Controller
     public function addTransaksiBmhp(Request $request)
     {
         // Ambil data dari permintaan Ajax
-        $idTind     = $request->input('idTind');
-        $kdTind     = $request->input('kdTind');
-        $kdBmhp     = $request->input('kdBmhp');
-        $jml        = $request->input('jml');
-        $total      = $request->input('total');
+        $idTind = $request->input('idTind');
+        $kdTind = $request->input('kdTind');
+        $kdBmhp = $request->input('kdBmhp');
+        $jml = $request->input('jml');
+        $total = $request->input('total');
         $product_id = $request->input('productID');
-        $notrans    = $request->input('notrans');
+        $notrans = $request->input('notrans');
         // dd($idTind, $kdTind, $kdBmhp, $jml);
         if ($kdBmhp !== null) {
             // Membuat instance dari model KunjunganTindakan
             $transaksibmhp = new TransaksiBMHPModel();
             // Mengatur nilai-nilai kolom
             $transaksibmhp->notrans = $notrans;
-            $transaksibmhp->idTind  = $idTind;
-            $transaksibmhp->kdTind  = $kdTind;
-            $transaksibmhp->kdBmhp  = $kdBmhp;
-            $transaksibmhp->jml     = $jml;
-            $transaksibmhp->biaya   = $total;
+            $transaksibmhp->idTind = $idTind;
+            $transaksibmhp->kdTind = $kdTind;
+            $transaksibmhp->kdBmhp = $kdBmhp;
+            $transaksibmhp->jml = $jml;
+            $transaksibmhp->biaya = $total;
 
             // Simpan data ke dalam tabel
             $transaksibmhp->save();
@@ -574,7 +618,7 @@ class IgdController extends Controller
         if ($updateKeluar) {
             $updateKeluar->update([
                 'keluar' => $updateKeluar->keluar + $jml,
-                'sisa'   => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar + $jml),
+                'sisa' => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar + $jml),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -585,7 +629,7 @@ class IgdController extends Controller
         if ($updateKeluarInStok) {
             $updateKeluarInStok->update([
                 'keluar' => $updateKeluarInStok->keluar + $jml,
-                'sisa'   => $this->calculateSisa($updateKeluarInStok->stokBaru, $updateKeluarInStok->masuk, $updateKeluarInStok->keluar + $jml),
+                'sisa' => $this->calculateSisa($updateKeluarInStok->stokBaru, $updateKeluarInStok->masuk, $updateKeluarInStok->keluar + $jml),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -610,7 +654,7 @@ class IgdController extends Controller
 
     public function cariPoinTotal(Request $request)
     {
-        $mulaiTgl   = $request->input('mulaiTgl');
+        $mulaiTgl = $request->input('mulaiTgl');
         $selesaiTgl = $request->input('selesaiTgl');
 
         $query = DB::table(DB::raw('(
@@ -641,7 +685,7 @@ class IgdController extends Controller
     }
     public function cariPoin(Request $request)
     {
-        $mulaiTgl   = $request->input('mulaiTgl');
+        $mulaiTgl = $request->input('mulaiTgl');
         $selesaiTgl = $request->input('selesaiTgl');
 
         $query = DB::table('t_kunjungan_tindakan')

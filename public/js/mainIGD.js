@@ -275,9 +275,10 @@ function addTindakan() {
                 $("#tindakan,#petugas").trigger("change");
             },
             error: function (xhr) {
+                console.log("🚀 ~ addTindakan ~ xhr:", xhr);
                 swal.fire({
                     icon: "error",
-                    title: "Data Tidak Lengkap...!!!",
+                    title: xhr,
                 });
             },
         });
