@@ -81,6 +81,7 @@ class KasirPenutupanKasController extends Controller
         }
 
         $res = $this->prosesJumlah($res);
+        // return $res;
 
         return view('Laporan.Kasir.cetakPenutupanKas', compact('res', 'title'));
     }
@@ -267,10 +268,9 @@ class KasirPenutupanKasController extends Controller
     {
         // Validasi input
         $validatedData = $request->validate([
-            'id'    => 'required|exists:t_kasir_penutupanKas,id',
-            'tahun' => 'required|numeric',
+            'id' => 'required|exists:t_kasir_penutupanKas,id',
         ]);
-        $tahun = $validatedData['tahun'];
+        $tahun = date('Y');
         // return $validatedData;
         try {
             // Cari data berdasarkan ID

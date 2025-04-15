@@ -284,7 +284,8 @@
                 <p>NIP: 19881016 201902 1 002</p>
             </div>
             <div class="w-1/2 text-center">
-                <p>Purwokerto, {{ $res->tanggal_sekarang }}</p>
+                <p>Purwokerto,
+                    {{ \Carbon\Carbon::parse($res->tanggal_sekarang)->locale('id')->isoFormat('DD MMMM YYYY') }}</p>
                 <p>Bendahara Penerimaan / Kasir</p>
                 <div class="h-16"></div>
                 <p><u>NASIRIN</u></p>

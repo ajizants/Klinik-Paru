@@ -320,6 +320,7 @@ function resetForm() {
     document.getElementById("tglKunj").valueAsDate = new Date();
     $("#formKunjungan select").trigger("change");
     $("#formTBbaru select").trigger("change");
+    $("#formIdentitas select").trigger("change");
 
     if ($.fn.DataTable.isDataTable("#kunjDots")) {
         console.log("🚀 ~ resetForm ~ DataTable");
@@ -331,9 +332,12 @@ function resetForm() {
 function resetFormTs() {
     console.log("Mereset form");
     document.getElementById("formKunjungan").reset();
+    document.getElementById("formIdentitas").reset();
     document.getElementById("formTBbaru").reset();
 
     $("#formKunjungan select").trigger("change");
+    $("#formIdentitas select").trigger("change");
+
     $("#formTBbaru select").trigger("change");
 }
 function batal() {
