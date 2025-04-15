@@ -303,28 +303,48 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
         const today = new Date().toISOString().split("T")[0];
         const atrb = item.tanggal === today ? "" : "";
         if (item.btnColor === "btn btn-danger") {
-            item.aksi = ` <button class="btn btn-danger btn-sm mb-2 col-sm-9"
-                            data-tgl="${item.tanggal}"
-                            data-jumlah="${item.jumlah}"
-                            data-asal_pendapatan="3.003.25581.5"
-                            data-noSbs="${item.nomor}"
-                            onclick="setorkan(this)"
-                            ${atrb}
-                            >Setorkan
-                            </button>
-                        `;
+            item.aksi = ` 
+                <button class="btn btn-danger btn-sm mb-2 col-sm-9"
+                    data-tgl="${item.tanggal}"
+                    data-jumlah="${item.jumlah}"
+                    data-asal_pendapatan="3.003.25581.5"
+                    data-noSbs="${item.nomor}"
+                    onclick="setorkan(this)" ${atrb}>Setorkan
+                </button>
+                <div class="row d-flex justify-content-center" id="divStpbSts" style="display: none !important;">
+                    <a class="btn btn-sm btn-warning mr-2 mb-2"
+                        href="/api/cetakBAPH/${item.tanggal}/${tahun}/${selector}"
+                        target="_blank">
+                        BAPH
+                    </a>
+                    <a class="btn btn-sm btn-success mr-2 mb-2 px-3"
+                        href="/api/cetakSBS/${item.tanggal}/${tahun}/${selector}"
+                        target="_blank">
+                        SBS
+                    </a>
+                </div>
+            `;
         } else {
-            item.aksi = `
-                <a class="btn btn-sm btn-warning mr-2 mb-2"
-                    href="/api/cetakBAPH/${item.tanggal}/${tahun}/${selector}"
-                    target="_blank">
-                    BAPH
-                </a>
-                <a class="btn btn-sm btn-success mr-2 mb-2 px-3"
-                    href="/api/cetakSBS/${item.tanggal}/${tahun}/${selector}"
-                    target="_blank">
-                    SBS
-                </a>
+            item.aksi = ` 
+                <button class="btn btn-danger btn-sm mb-2 col-sm-9"
+                    data-tgl="${item.tanggal}"
+                    data-jumlah="${item.jumlah}"
+                    data-asal_pendapatan="3.003.25581.5"
+                    data-noSbs="${item.nomor}"
+                    onclick="setorkan(this)" ${atrb} style="display: none;">Setorkan
+                </button>
+                <div class="row d-flex justify-content-center" id="divStpbSts">
+                    <a class="btn btn-sm btn-warning mr-2 mb-2"
+                        href="/api/cetakBAPH/${item.tanggal}/${tahun}/${selector}"
+                        target="_blank">
+                        BAPH
+                    </a>
+                    <a class="btn btn-sm btn-success mr-2 mb-2 px-3"
+                        href="/api/cetakSBS/${item.tanggal}/${tahun}/${selector}"
+                        target="_blank">
+                        SBS
+                    </a>
+                </div>
             `;
         }
     });
@@ -453,26 +473,26 @@ function setorkan(button) {
                             icon: "success",
                             title: response.message,
                         });
-                        $(button).removeClass("bg-danger");
-                        $(button).addClass("bg-info");
-                        $(button).text("Sudah Disetorkan");
+
+                        $(button).remove();
+
+                        // Mencari div terkait dari button yang ditekan
+                        const parent = button.parentElement;
+                        const divStpbSts = parent.querySelector("#divStpbSts");
+
+                        if (divStpbSts) {
+                            divStpbSts.style.display = "flex"; // atau "block" tergantung kebutuhan layout
+                        }
+
                         //remove onclick
                         $(button).attr("onclick", "");
                     } else {
-                        Swal.fire({
-                            icon: "error",
-                            title: response.message,
-                        });
+                        tampilkanError(response.message);
                     }
                 },
                 error: function (xhr) {
                     console.log("🚀 ~ setorkan ~ xhr:", xhr);
-                    Swal.fire({
-                        icon: "error",
-                        title: "Setorkan pendapatan gagal",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    });
+                    tampilkanError(xhr);
                 },
             });
         }
