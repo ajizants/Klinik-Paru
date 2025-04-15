@@ -19,7 +19,7 @@ class TataUsahaController extends Controller
     public function surat()
     {
         $title = 'Tata Usaha';
-        return view('TataUsahas.Surat.main')->with('title', $title);
+        return view('TataUsaha.Surat.main')->with('title', $title);
     }
     public function keuangan()
     {

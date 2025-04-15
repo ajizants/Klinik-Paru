@@ -132,6 +132,7 @@ class KasirSetoranModel extends Model
         $data = $this->where('tanggal', 'like', '%' . $paramPendLain . '%')
             ->where('pendapatan', '!=', 0)
             ->whereNotIn('asal_pendapatan', ['Tunai', 'Saldo Bank'])
+            ->orderBy('tanggal', 'asc')
             ->get();
 
         return $data;
