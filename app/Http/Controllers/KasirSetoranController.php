@@ -218,13 +218,23 @@ class KasirSetoranController extends Controller
         foreach ($data as $d) {
             if ($d->asal_pendapatan == "3.003.25581.5") {
                 if ($d->pendapatan != 0 && $d->setoran != 0) {
-                    $d->uraian = "Penerimaan: Pendapatan Rawat Jalan";
-                    $d->uraian2 = "Pengeluaran: Setor ke Kas BLUD";
+                    $tgl_dapat = \Carbon\Carbon::parse($d->tanggal)->locale('id')->isoFormat('DD MMMM YYYY');
+                    // $d->uraian = "Pendapatan Rawat Jalan tgl: " . $d->tanggal . " Sudah di Setorkan ke Kas BLUD tgl: " . $d->tanggal;
+                    $d->uraian = "Penerimaan: Pendapatan Rawat Jalan  tgl: " . $tgl_dapat;
+                    $d->uraian2 = "Pengeluaran: Setor ke Kas BLUD  tgl: " . $tgl_dapat;
                 } elseif ($d->pendapatan == 0) {
-                    $d->uraian = "Penerimaan: Pendapatan Rawat Jalan";
-                    $d->uraian2 = "Pengeluaran: Setor ke Kas BLUD, Pendapatan tgl: " . $tglBefore;
+                    // extrak 2 karakter pertama dari noSBS
+                    $no = substr($d->noSbs, 0, 2);
+                    // dd($no);
+                    // dd($bulan);
+                    $tgl_setor = $tahun . '-' . $bulan . '-' . $no;
+                    //format tanggal
+                    $tgl_setor = \Carbon\Carbon::parse($tgl_setor)->locale('id')->isoFormat('DD MMMM YYYY');
+                    $d->uraian = "Penerimaan: -";
+                    $d->uraian2 = "Pengeluaran: Setor ke Kas BLUD, Pendapatan tgl: " . $tgl_setor;
                 } elseif ($d->setoran == 0) {
-                    $d->uraian = "Penerimaan: Pendapatan Rawat Jalan";
+                    $tgl_dapat = \Carbon\Carbon::parse($d->tanggal)->locale('id')->isoFormat('DD MMMM YYYY');
+                    $d->uraian = "Pendapatan Rawat Jalan tgl: " . $tgl_dapat;
                     $d->uraian2 = "Pengeluaran: Belum di Setorkan";
                 }
             } else {

@@ -56,7 +56,8 @@
                     <tr>
                         <td class="px-1 border border-black text-center">
                             {{ \Carbon\Carbon::parse($item['tanggal'])->locale('id')->isoFormat('DD MMMM YYYY') }}</td>
-                        <td class="px-1 border border-black text-center">{{ $item['uraian'] }}<br>{{ $item['uraian2'] }}
+                        <td class="px-1 border border-black text-center">
+                            {{ $item['uraian'] }}<br>{{ $item['uraian2'] }}
                         </td>
                         <td class="px-1 border border-black text-right">
                             {{ 'Rp ' . number_format($item['pendapatan'], 0, ',', '.') . ',00' }}</td>
@@ -113,8 +114,19 @@
                 <p>Oleh kami dalam kas Rp. ...............</p>
             </div>
             <div class=" ">
-                <p>Rp. <span><input type="text" name="sisa_kas" id="sisa_kas" value="-"></span></p>
-                <p>Rp. <span><input type="text" name="dalam_kas" id="dalam_kas" value="-"></span></p>
+                @php
+                    $totalPendapatanSekarang = $totalPendapatan + $totalPendapatanSampaiBlnLalu;
+                    $totalPengeluaranSekarang = $totalPengeluaran + $totalPengeluaranSampaiBlnLalu;
+                    $sisaKas = $totalPendapatanSekarang - $totalPengeluaranSekarang;
+                    if ($sisaKas == 0) {
+                        $sisaKas = '-';
+                    }
+                @endphp
+                <p>Rp. <span><input type="text" name="sisa_kas" id="sisa_kas"
+                            value={{ number_format($sisaKas, 0, ',', '.') . ',00' }}></span></p>
+                <p>Rp. <span><input type="text" name="dalam_kas" id="dalam_kas"
+                            value={{ number_format($sisaKas, 0, ',', '.') . ',00' }}></span>
+                </p>
             </div>
         </div>
         <p class="text-xs ">Terdiri dari:</p>
@@ -125,7 +137,8 @@
                 <p>c. Surat berharga</p>
             </div>
             <div class=" ">
-                <p>Rp. <span><input type="text" name="tunai" id="tunai" value="-"></span></span>
+                <p>Rp. <span><input type="text" name="tunai" id="tunai"
+                            value={{ number_format($sisaKas, 0, ',', '.') . ',00' }}></span></span>
                 </p>
                 <p>Rp. <span><input type="text" name="saldo_bank" id="saldo_bank" value="-"></span></p>
                 <p>Rp. <span><input type="text" name="surat_berharga" id="surat_berharga" value="-"></span></p>

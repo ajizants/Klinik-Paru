@@ -8,6 +8,7 @@ use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasienKominfoController;
 use App\Http\Controllers\SuratController;
+use App\Http\Controllers\TataUsahaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
@@ -109,4 +110,11 @@ Route::middleware('auth')->group(function () {
 
         return response()->json(['error' => 'File tidak ditemukan'], 404);
     })->name('download.template');
+
+    //Tata Usaha Dan Keuangan
+    Route::get('TataUsaha/surat', [TataUsahaController::class, 'surat'])->name('tu.surat')->middleware('role:tu');
+    Route::get('TataUsaha/keuangan', [TataUsahaController::class, 'keuangan'])->name('tu.keuangan')->middleware('role:tu');
+    Route::get('TataUsaha/belanja', [TataUsahaController::class, 'belanja'])->name('tu.belanja')->middleware('role:tu');
+    Route::get('TataUsaha/report', [TataUsahaController::class, 'report'])->name('tu.report')->middleware('role:tu');
+
 });
