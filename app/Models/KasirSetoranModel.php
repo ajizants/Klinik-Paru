@@ -122,6 +122,7 @@ class KasirSetoranModel extends Model
         $paramPendLain = $tahun . '-' . $bulan;
         $data = $this->where('tanggal', 'like', '%' . $paramPendLain . '%')
             ->whereNotIn('asal_pendapatan', ['Tunai', 'Saldo Bank'])
+            ->orderBy('tanggal', 'asc')
             ->get();
         return $data;
     }
