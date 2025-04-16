@@ -62,7 +62,7 @@ Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);
 
 Route::get('/diagnosa_icd_x', function (Request $request) {
     $search = $request->get('search', '');
-    $limit = $request->get('limit', 20);
+    $limit  = $request->get('limit', 20);
 
     $diagnosas = DiagnosaIcdXModel::where(function ($query) use ($search) {
         $query->where('diagnosa', 'like', '%' . $search . '%')
@@ -378,7 +378,7 @@ Route::put('jadwal/{id}', [JadwalController::class, 'update'])->name('jadwal.upd
 //Pendaftaran Cetak
 Route::get('pendaftaran/cetak/label/{norm}', [PendaftaranController::class, 'label']);
 Route::get('pendaftaran/cetak/rm/{norm}', [PendaftaranController::class, 'biodata']);
+Route::post('pendaftaran/pasien/daftar', [PendaftaranController::class, 'daftar']);
 
-Route::get('pendaftaran/cetak/sep/{norm}', [PendaftaranController::class, 'sep']);
 //
 // });

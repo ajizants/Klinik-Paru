@@ -1,16 +1,15 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TransaksiModel extends Model
+class TransaksiModelOld extends Model
 {
     use HasFactory;
     protected $connection = 'mysql';
 
-    protected $table = 't_kunjungan_tindakan';
+    protected $table      = 't_kunjungan_tindakan';
     protected $primaryKey = 'id';
 
     public function tindakan()
