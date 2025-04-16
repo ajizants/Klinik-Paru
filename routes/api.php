@@ -22,6 +22,7 @@ use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\NoAntrianController;
 use App\Http\Controllers\PasienKominfoController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\RoMasterController;
 use App\Http\Controllers\ROTransaksiController;
@@ -374,5 +375,10 @@ Route::post('jadwal/get', [JadwalController::class, 'getJadwal'])->name('jadwal.
 Route::delete('jadwal/{id}', [JadwalController::class, 'destroy'])->name('jadwal.destroy');
 Route::put('jadwal/{id}', [JadwalController::class, 'update'])->name('jadwal.update');
 
+//Pendaftaran Cetak
+Route::get('pendaftaran/cetak/label/{norm}', [PendaftaranController::class, 'label']);
+Route::get('pendaftaran/cetak/rm/{norm}', [PendaftaranController::class, 'biodata']);
+
+Route::get('pendaftaran/cetak/sep/{norm}', [PendaftaranController::class, 'sep']);
 //
 // });

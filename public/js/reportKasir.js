@@ -481,7 +481,7 @@ function setorkan(button) {
                         const divStpbSts = parent.querySelector("#divStpbSts");
 
                         if (divStpbSts) {
-                            divStpbSts.style.display = "flex"; // atau "block" tergantung kebutuhan layout
+                            divStpbSts.style.display = "flex";
                         }
 
                         //remove onclick
