@@ -47,33 +47,26 @@
     <div style="border:1px solid black; padding:10px; overflow: auto; height: 100%; max-width:210mm;">
         <table width="100%">
             <tr>
-                {{-- <td>
-                    <img src="{{ asset('img/banyumas.png') }}" style="width:3cm" />
+                <td
+                    style="text-align: center; padding-top: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid black;">
+                    <img src="/public/img/banyumas.png" style="width: 85px; display: block; margin: 0 auto;"
+                        alt="banyumas" />
                 </td>
-                <td align="center" style="width:100%">
-                    <h3 class="cusMargin025">PEMERINTAH KABUPATEN BANYUMAS</h3>
-                    <h3 class="cusMargin025">DINAS KESEHATAN</h3>
-                    <h2 class="cusMargin025">KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A</h2>
-                    <h5 class="cusMargin025">Jalan Jendral Ahmad Yani No. 33 Purwokerto</h5>
+                <td style="width: 66.66%; text-align: center; border-bottom: 1px solid black;">
+                    <p style="font-size: 0.875rem; margin-bottom: 0;">PEMERINTAH KABUPATEN BANYUMAS</p>
+                    <p style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0;">DINAS KESEHATAN</p>
+                    <p style="font-size: 0.875rem; font-weight: bold; margin-bottom: 0;">KLINIK UTAMA KESEHATAN PARU
+                        MASYARAKAT KELAS A</p>
+                    <p style="font-size: 0.75rem;">Jln. A. Yani Nomor 33 Purwokerto Timur, Banyumas, Jawa Tengah</p>
+                    <p style="font-size: 0.75rem;">Kode Pos 53111, Telepon (0281) 635658</p>
+                    <p style="font-size: 0.75rem;">Pos-el bkpm_purwokerto@yahoo.com</p>
                 </td>
-                <td></td>
-                <td>
-                    <img src="{{ asset('/img/LOGO_KKPM.png') }}" style="width:3cm; height:3cm" />
-                </td> --}}
-                <td class="text-center py-2 border-b border-black scale-60">
-                    <img src="{{ asset('img/banyumas.png') }}" class="w-[85px] mx-auto" alt="banyumas" />
+                <td
+                    style="text-align: center; padding-top: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid black;">
+                    <img src="/public/img/LOGO_KKPM.png" style="width: 6rem; display: block; margin: 0 auto;"
+                        alt="kkpm" />
                 </td>
-                <td class="w-4/6 text-center border-b border-black scale-55">
-                    <p class="text-md mb-0">PEMERINTAH KABUPATEN BANYUMAS</p>
-                    <p class="text-lg font-semibold mb-0">DINAS KESEHATAN</p>
-                    <p class="text-md font-bold mb-0">KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A</p>
-                    <p class="text-xs">Jln. A. Yani Nomor 33 Purwokerto Timur, Banyumas, Jawa Tengah</p>
-                    <p class="text-xs">Kode Pos 53111, Telepon (0281) 635658</p>
-                    <p class="text-xs">Pos-el bkpm_purwokerto@yahoo.com</p>
-                </td>
-                <td class="text-center py-2 border-b border-black scale-60">
-                    <img src="{{ asset('img/LOGO_KKPM.png') }}" class="w-24 mx-auto" alt="kkpm" />
-                </td>
+
             </tr>
             <tr>
                 <td colspan="4">
