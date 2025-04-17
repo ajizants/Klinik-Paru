@@ -259,9 +259,16 @@ class KominfoModel extends Model
                 $checkIn = $checkRm == null ? 'danger' : 'success';
                 $noSep = $check->no_sep ?? "";
                 $checkInIGD = $igd == null ? 'danger' : 'success';
+                $notrans2 = $d['tanggal'] < '2025-04-17' ? $d['no_trans'] : $d['no_reg'];
+                // dd($notrans2);
+                $pendaftaranLocal = KunjunganModel::where('notrans', $notrans2)->first();
+                // dd($pendaftaranLocal);
+
+                $cekDaftar = $pendaftaranLocal != null || $pendaftaranLocal != "" ? 'success' : 'warning';
 
                 return [
                     "check_in" => $checkIn,
+                    "statusDaftar" => $cekDaftar,
                     "igd_selesai" => $checkInIGD,
                     "status_pulang" => $statusPulang,
                     "no_sep" => $noSep,

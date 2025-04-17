@@ -16,6 +16,35 @@ function checkEnter(event) {
     }
 }
 
+function daftarkan(button) {
+    var norm = $(button).data("norm");
+    var notrans = $(button).data("notrans");
+    var no_urut = $(button).data("no_urut");
+    var tgltrans = $(button).data("tgltrans");
+
+    try {
+        $.ajax({
+            url: "/api/pendaftaran/pasien/daftar",
+            type: "post",
+            data: {
+                norm: norm,
+                notrans: notrans,
+                no_urut: no_urut,
+                tgltrans: tgltrans,
+            },
+            success: function (response) {
+                Toast.fire({
+                    icon: "success",
+                    title: response.message,
+                });
+                reportPendaftaran(tglAwal, tglAkhir);
+            },
+        });
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 function selesai(norm, notrans) {
     var norm = norm ? norm : $("#norm").val();
     var notrans = notrans ? notrans : $("#notrans").val();
@@ -128,6 +157,12 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                                     <i class="fa-regular fa-square-check"></i></button>
                             <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" placeholder="Resume"
                                     href="/api/resume/${item.pasien_no_rm}/${item.tanggal}" target="_blank">Resume</a>
+                            <a type="button" class="btn btn-sm btn-${item.statusDaftar} mr-2 mb-2" placeholder="Resume"
+                            data-norm="${item.pasien_no_rm}"
+                            data-notrans="${item.no_reg}"
+                            data-no_urut="${item.antrean_nomor}"
+                            data-tgl="${item.waktu_daftar}"
+                                    onclick="daftarkan(this)">Daftarkan</a>
                             `;
                 if (item.check_in == "danger") {
                     item.status = "Belum";
@@ -522,9 +557,9 @@ window.addEventListener("load", function () {
     );
     segarkan();
 
-    setInterval(function () {
-        reportPendaftaran(tglAwal, tglAkhir);
-    }, 60000);
+    // setInterval(function () {
+    //     reportPendaftaran(tglAwal, tglAkhir);
+    // }, 60000);
     $("#modalSep").on("shown.bs.modal", function () {
         $("#noSep").focus();
     });

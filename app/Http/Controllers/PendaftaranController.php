@@ -108,7 +108,8 @@ class PendaftaranController extends Controller
         $pekerjaan = $request->input('pekerjaan');
         $ibukandung = $request->input('ibu_kandung');
         $notrans = $request->input('notrans');
-        $nourut = $request->input('no_rut');
+        $nourut = (int) ltrim($request->input('no_urut'), '0');
+        // dd($nourut);
 
         $model = new KominfoModel();
         $pasienKominfo = $model->pasienRequest($norm);
@@ -191,34 +192,37 @@ class PendaftaranController extends Controller
         ];
 
         if ($pasienLocal && $pasienFromLocal == array_intersect_key($pasien, $pasienFromLocal)) {
-            return response()->json([
-                'status' => 'sama',
-                'message' => 'Data pasien sama.',
-                'pasienKominfo' => $pasien,
-                'fromLocal' => $pasienFromLocal,
-                'local' => $pasienLocal,
-                'kominfo' => $pasienKominfo,
-            ]);
+            // return response()->json([
+            //     'status' => 'apa',
+            //     'message' => 'Data pasien sama.',
+            //     'pasienKominfo' => $pasien,
+            //     'fromLocal' => $pasienFromLocal,
+            //     'local' => $pasienLocal,
+            //     'kominfo' => $pasienKominfo,
+            // ]);
+            $this->storeKunjungan($dataPendaftaran);
+            return response()->json(['message' => 'Pasien Berhasil Di daftarkan.'], 200, [], JSON_PRETTY_PRINT);
         }
 
         $beda = array_diff_assoc($pasien, $pasienFromLocal);
 
         if (!isset($beda['jamdaftar'], $beda['rmlama'], $beda['ibuKandung'], $beda['pekerjaan'])) {
-            // $storePasien = DataPasienModel::updateOrCreate(['norm' => $norm], $pasien);
-            // if ($storePasien) {
-            //     $this->storeKunjungan($dataPendaftaran);
-            // }
+            $storePasien = DataPasienModel::updateOrCreate(['norm' => $norm], $pasien);
+            if ($storePasien) {
+                $this->storeKunjungan($dataPendaftaran);
+            }
+            return response()->json(['message' => 'Pasien Berhasil Di daftarkan.'], 200, [], JSON_PRETTY_PRINT);
 
-            return response()->json([
-                'status' => 'sama',
-                'message' => 'Data pasien diperbarui.',
-                'perbedaan' => $beda,
-                'dataPendaftaran' => $dataPendaftaran,
-                'pasienKominfo' => $pasien,
-                'fromLocal' => $pasienFromLocal,
-                'local' => $pasienLocal,
-                'kominfo' => $pasienKominfo,
-            ]);
+            // return response()->json([
+            //     'status' => 'sama',
+            //     'message' => 'Data pasien diperbarui.',
+            //     'perbedaan' => $beda,
+            //     'dataPendaftaran' => $dataPendaftaran,
+            //     'pasienKominfo' => $pasien,
+            //     'fromLocal' => $pasienFromLocal,
+            //     'local' => $pasienLocal,
+            //     'kominfo' => $pasienKominfo,
+            // ]);
         }
 
         return response()->json([
@@ -236,25 +240,52 @@ class PendaftaranController extends Controller
     {
         $pasien = $data['pasien'];
 
-        return KunjunganModel::create([
-            'notrans' => $data['notrans'],
-            'norm' => $pasien['norm'],
-            'rmlama' => $pasien['rmlama'],
-            'nourut' => $data['nourut'],
-            'tgltrans' => $pasien['tgldaftar'],
-            'kunj' => $data['jenisKunjungan'],
-            'jeniskel' => $pasien['jeniskel'],
-            'kkelompok' => $pasien['kkelompok'],
-            'noasuransi' => $pasien['noasuransi'],
-            'ktujan' => 1,
-            'kkabupaten' => $pasien['kkabupaten'],
-            'umurthn' => $data['umurthn'],
-            'umurbln' => $data['umurbln'],
-            'umurhr' => $data['umurhr'],
-            'biaaya' => 0,
-            'loket' => 1,
-            'selesai' => 0,
-        ]);
+        // Cari data kunjungan berdasarkan 'notrans'
+        $kunjungan = KunjunganModel::where('notrans', $data['notrans'])->first();
+
+        // Jika data kunjungan ditemukan, update hanya kolom yang diperlukan
+        if ($kunjungan) {
+            // Hanya update jika 'notrans' cocok
+            $kunjungan->update([
+                'norm' => $pasien['norm'],
+                'rmlama' => $pasien['rmlama'],
+                'nourut' => $data['nourut'],
+                'tgltrans' => $pasien['tgldaftar'],
+                'kunj' => $data['jenisKunjungan'],
+                'jeniskel' => $pasien['jeniskel'],
+                'kkelompok' => $pasien['kkelompok'],
+                'noasuransi' => $pasien['noasuransi'],
+                'ktujan' => 1,
+                'kkabupaten' => $pasien['kkabupaten'],
+                'umurthn' => $data['umurthn'],
+                'umurbln' => $data['umurbln'],
+                'umurhr' => $data['umurhr'],
+                'biaaya' => 0,
+                'loket' => 1,
+                'selesai' => 0,
+            ]);
+        } else {
+            // Jika data belum ada, buat baru
+            KunjunganModel::create([
+                'notrans' => $data['notrans'],
+                'norm' => $pasien['norm'],
+                'rmlama' => $pasien['rmlama'],
+                'nourut' => $data['nourut'],
+                'tgltrans' => $pasien['tgldaftar'],
+                'kunj' => $data['jenisKunjungan'],
+                'jeniskel' => $pasien['jeniskel'],
+                'kkelompok' => $pasien['kkelompok'],
+                'noasuransi' => $pasien['noasuransi'],
+                'ktujan' => 1,
+                'kkabupaten' => $pasien['kkabupaten'],
+                'umurthn' => $data['umurthn'],
+                'umurbln' => $data['umurbln'],
+                'umurhr' => $data['umurhr'],
+                'biaaya' => 0,
+                'loket' => 1,
+                'selesai' => 0,
+            ]);
+        }
     }
 
     /**
