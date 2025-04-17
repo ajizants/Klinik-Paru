@@ -112,8 +112,8 @@ class HomeController extends Controller
             return (object) $item;
         }, $perawat);
 
-        //ambil data igdtrnas 3 terakhir
-        $dataIgd = IGDTransModel::with('pelaksana.biodata')->orderBy('created_at', 'desc')->limit(3)->get();
+        $model = new IGDTransModel();
+        $dataIgd = $model->getPelaksanaLast();
         // return $dataIgd;
 
         return view('IGD.Trans.main', compact('tindakan', 'bmhp', 'dxMed', 'dokter', 'perawat', 'dataIgd'))->with('title', $title);

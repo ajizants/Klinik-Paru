@@ -269,12 +269,22 @@ function addTindakan() {
             },
 
             success: function (response) {
+                console.log("🚀 ~ addTindakan ~ response:", response);
                 Toast.fire({
                     icon: "success",
                     title: "Data Berhasil Disimpan, Maturnuwun...!!!",
                 });
-                namaPetugasSebelumnya = $("#petugas option:selected").text();
-                $("#petugasSebelum").html("Bef: " + namaPetugasSebelumnya);
+
+                const dataIGD = response.dataIGD;
+                console.log("🚀 ~ addTindakan ~ dataIGD:", dataIGD);
+
+                // namaPetugasSebelumnya = $("#petugas option:selected").text();
+                namaPetugasSebelumnya = dataIGD[0].nama;
+                console.log(
+                    "🚀 ~ addTindakan ~ namaPetugasSebelumnya:",
+                    namaPetugasSebelumnya
+                );
+                $("#petugasSebelumnya").html("Bef: " + namaPetugasSebelumnya);
                 dataTindakan();
                 $("#tindakan,#petugas").val("");
                 $("#tindakan,#petugas").trigger("change");
@@ -436,6 +446,18 @@ $(document).ready(function () {
 
                         dataTindakan();
                         dataBMHP();
+                        const dataIGD = response.dataIGD;
+                        console.log("🚀 ~ addTindakan ~ dataIGD:", dataIGD);
+
+                        // namaPetugasSebelumnya = $("#petugas option:selected").text();
+                        namaPetugasSebelumnya = dataIGD[0].nama;
+                        console.log(
+                            "🚀 ~ addTindakan ~ namaPetugasSebelumnya:",
+                            namaPetugasSebelumnya
+                        );
+                        $("#petugasSebelumnya").html(
+                            "Bef: " + namaPetugasSebelumnya
+                        );
                     },
                     error: function (xhr, status, error) {
                         Toast.fire({

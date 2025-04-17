@@ -51,6 +51,33 @@ class IGDTransModel extends Model
         'updated_at',
     ];
 
+    public function getPelaksanaLast()
+    {
+        $dataIgd = IGDTransModel::whereIn('kdTind', [19, 20])
+            ->with('pelaksana.biodata')
+            ->orderBy('created_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        $namaPetugas = [];
+
+        foreach ($dataIgd as $item) {
+            $pelaksana = $item->pelaksana;
+            $biodata = $pelaksana->biodata ?? null;
+
+            if ($biodata) {
+                $gelar_d = $pelaksana->gelar_d ?? '';
+                $nama = $biodata->nama ?? '';
+                $gelar_b = $pelaksana->gelar_b ?? '';
+
+                $namaLengkap = trim("{$gelar_d} {$nama} {$gelar_b}");
+                $namaPetugas[] = ['nama' => $namaLengkap];
+            }
+        }
+
+        return $namaPetugas;
+    }
+
     public function cariPoinTotal($request)
     {
         $mulaiTgl = $request->input('mulaiTgl');

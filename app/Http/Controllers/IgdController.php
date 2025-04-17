@@ -436,9 +436,10 @@ class IgdController extends Controller
 
             // Simpan data ke dalam tabel
             $kunjunganTindakan->save();
+            $dataIGD = $this->getIgdLast();
 
             // Respon sukses atau redirect ke halaman lain
-            return response()->json(['message' => 'Data berhasil disimpan']);
+            return response()->json(['message' => 'Data berhasil disimpan', 'dataIGD' => $dataIGD], 200, [], JSON_PRETTY_PRINT);
         } else {
             // Handle case when $kdTind is null, misalnya kirim respon error
             return response()->json(['message' => 'kdTind tidak valid'], 400);
@@ -481,6 +482,13 @@ class IgdController extends Controller
     //     }
     // }
 
+    private function getIgdLast()
+    {
+        $model = new IGDTransModel();
+        $dataIgd = $model->getPelaksanaLast();
+        return $dataIgd;
+    }
+
     public function updateTindakan(Request $request)
     {
         $id = $request->input('id');
@@ -502,9 +510,10 @@ class IgdController extends Controller
 
         // Simpan perubahan ke dalam database
         $tindakan->save();
+        $dataIGD = $this->getIgdLast();
 
         // Respon sukses
-        return response()->json(['message' => 'Data tindakan berhasil diperbarui']);
+        return response()->json(['message' => 'Data tindakan berhasil diperbarui', 'dataIGD' => $dataIGD]);
     }
 
     public function deleteTindakan(Request $request)
@@ -524,9 +533,10 @@ class IgdController extends Controller
         }
 
         $tindakan->delete();
+        $dataIGD = $this->getIgdLast();
 
         // Respon sukses
-        return response()->json(['message' => 'Data tindakan berhasil dihapus']);
+        return response()->json(['message' => 'Data tindakan berhasil dihapus', 'dataIGD' => $dataIGD]);
     }
     public function deleteTransaksiBmhp(Request $request)
     {
