@@ -338,10 +338,10 @@ socketIO.on("connectParu", () => {
     console.log("Socket ID : " + sessionID);
 });
 
-function tampilkanLoading() {
+function tampilkanLoading(msg = "Sedang memproses data...!!!") {
     Swal.fire({
         icon: "info",
-        title: "Sedang memproses data...!!!",
+        title: msg,
         showConfirmButton: false,
         allowOutsideClick: false,
         didOpen: () => {

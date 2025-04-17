@@ -40,6 +40,16 @@
         }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
+    {{-- buatkan scrit untuk cetak saat selesai load --}}
+    <script>
+        window.onload = function() {
+            window.print();
+        }
+        // tutup jendela saat selesai cetak
+        window.onafterprint = function() {
+            window.close();
+        }
+    </script>
 
 </head>
 

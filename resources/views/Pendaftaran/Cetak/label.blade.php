@@ -53,8 +53,28 @@
         body {
             margin: 0;
             /* biasanya 0 di sini biar yang dipakai margin @page */
+            font-family: Arial, sans-serif;
         }
     </style>
+    <script>
+        window.onload = function() {
+            window.print();
+        }
+        // tutup jendela saat selesai cetak
+        window.onafterprint = function() {
+            window.close();
+        }
+
+        // saat menekan tombol p lakukan cetak
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "p" || event.keyCode === 80) { // Check for Enter key
+                event.preventDefault(); // Prevent the default action (optional)
+                // Your code to execute on Enter key press
+                console.log("Enter key pressed!");
+                window.print();
+            }
+        })
+    </script>
 </head>
 
 <body>
@@ -64,10 +84,11 @@
             <table border="0">
                 <tr>
                     <td>
-                        (<b>{{ $item['norm'] }}</b>)
-                        , ({{ $item['jkel'] }}),
-                        ({{ \Carbon\Carbon::parse($item['tgllahir'])->format('d-m-Y') }})
+                        <b>{{ $item['norm'] }}</b>
+                        / {{ $item['jkel'] }}
+                        / {{ \Carbon\Carbon::parse($item['tgllahir'])->format('d-m-Y') }}
                     </td>
+
                 </tr>
                 <tr>
                     <td>

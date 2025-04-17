@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class KunjunganModel extends Model
 {
     use HasFactory;
-    protected $table = 't_kunjungan';
+    protected $table   = 't_kunjungan';
     public $timestamps = false;
-    public $incrementing = false; // Karena menggunakan kombinasi kunci
-    protected $primaryKey = null; // Tidak ada kunci utama tunggal
-    protected $fillable = [
+    // public $incrementing = false; // Karena menggunakan kombinasi kunci
+    protected $primaryKey = 'notrans';
+    protected $fillable   = [
         'notrans',
         'norm',
         'rmlama',
