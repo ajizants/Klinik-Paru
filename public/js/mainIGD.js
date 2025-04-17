@@ -178,8 +178,8 @@ function batal() {
     scrollToTop();
     $("#formbmhp").hide();
     $("#formtind").show();
+    $("#petugasSebelum").html("Bef: " + namaPetugasSebelumnya);
 }
-
 function selesai() {
     var norm = $("#norm").val();
     var notrans = $("#notrans").val();
@@ -213,6 +213,8 @@ function selesai() {
             icon: "success",
             title: "Transaksi Berhasil Disimpan, Maturnuwun...!!!",
         });
+        $("#permintaan").html("");
+        $("#petugasSebelum").html("Bef: " + namaPetugasSebelumnya);
     }
 }
 
@@ -220,6 +222,7 @@ function updateAntrian() {
     antrian("igd");
     antrianAll("igd");
 }
+let namaPetugasSebelumnya;
 
 function addTindakan() {
     var norm = $("#norm").val();
@@ -270,6 +273,8 @@ function addTindakan() {
                     icon: "success",
                     title: "Data Berhasil Disimpan, Maturnuwun...!!!",
                 });
+                namaPetugasSebelumnya = $("#petugas option:selected").text();
+                $("#petugasSebelum").html("Bef: " + namaPetugasSebelumnya);
                 dataTindakan();
                 $("#tindakan,#petugas").val("");
                 $("#tindakan,#petugas").trigger("change");

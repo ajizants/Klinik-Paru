@@ -26,6 +26,10 @@ class IGDTransModel extends Model
     {
         return $this->belongsTo(PegawaiModel::class, 'petugas', 'nip');
     }
+    public function pelaksana()
+    {
+        return $this->belongsTo(PegawaiModel::class, 'petugas', 'nip');
+    }
 
     public function dokter()
     {
