@@ -261,7 +261,7 @@ class KominfoModel extends Model
                 $noSep      = $check->no_sep ?? "";
                 $checkInIGD = $igd == null ? 'danger' : 'success';
                 if ($d['tanggal'] < '2025-04-18') {
-                    $notrans2 = $d['tanggal'] < '2025-04-17' ? $d['no_trans'] : $d['no_reg'];
+                    $notrans2 = $d['tanggal'] < '2025-04-18' ? $d['no_trans'] : $d['no_reg'];
                     // dd($notrans2);
                     $pendaftaranLocal = KunjunganModel::where('notrans', $notrans2)->first();
                     // dd($pendaftaranLocal);
