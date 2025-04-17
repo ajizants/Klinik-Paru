@@ -4,6 +4,10 @@ function cetak(norm) {
     // window.open("http://rsparu.kkpm.local/Cetak/Kartu/norm/" + norm);
     // window.open("http://rsparu.kkpm.local/Cetak/Label/norm/" + norm);
     window.open("http://rsparu.kkpm.local/Cetak/Label3/norm/" + norm);
+    // const baseUrl = window.location.origin;
+
+    // window.open(`${baseUrl}/api/pendaftaran/cetak/label/${norm}`);
+    // window.open(`${baseUrl}/api/pendaftaran/cetak/rm/${norm}`);
 }
 
 function checkEnter(event) {

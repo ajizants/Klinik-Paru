@@ -61,7 +61,7 @@
 
     @foreach ($pasien as $item)
         <div class="box">
-            <table border="1">
+            <table border="0">
                 <tr>
                     <td>
                         (<b>{{ $item['norm'] }}</b>)

@@ -49,8 +49,10 @@
             <tr>
                 <td
                     style="text-align: center; padding-top: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid black;">
-                    <img src="/public/img/banyumas.png" style="width: 85px; display: block; margin: 0 auto;"
+                    <img src="{{ asset('img/banyumas.png') }}" style="width: 85px; display: block; margin: 0 auto;"
                         alt="banyumas" />
+                    {{-- <img src="/public/img/banyumas.png" style="width: 85px; display: block; margin: 0 auto;"
+                        alt="banyumas" /> --}}
                 </td>
                 <td style="width: 66.66%; text-align: center; border-bottom: 1px solid black;">
                     <p style="font-size: 0.875rem; margin-bottom: 0;">PEMERINTAH KABUPATEN BANYUMAS</p>
@@ -63,8 +65,10 @@
                 </td>
                 <td
                     style="text-align: center; padding-top: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid black;">
-                    <img src="/public/img/LOGO_KKPM.png" style="width: 6rem; display: block; margin: 0 auto;"
+                    <img src="{{ asset('img/LOGO_KKPM.png') }}" style="width: 6rem; display: block; margin: 0 auto;"
                         alt="kkpm" />
+                    {{-- <img src="/public/img/LOGO_KKPM.png" style="width: 6rem; display: block; margin: 0 auto;"
+                        alt="kkpm" /> --}}
                 </td>
 
             </tr>
