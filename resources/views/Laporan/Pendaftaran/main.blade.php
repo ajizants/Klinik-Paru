@@ -224,7 +224,7 @@
                             data: response,
                             columns: [{
                                     data: "aksi",
-                                    className: "col-3"
+                                    // className: "col-3"
                                 },
                                 {
                                     data: "antrean_nomor"

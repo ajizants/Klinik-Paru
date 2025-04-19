@@ -6,7 +6,7 @@
         <table class="table table-bordered table-hover dataTable dtr-inline" id="tableSEP" cellspacing="0">
             <thead class="bg bg-teal table-bordered border-warning">
                 <tr>
-                    <th>Aksi</th>
+                    <th class="col">Aksi</th>
                     <th>Urut</th>
                     <th>Tanggal</th>
                     <th>Detail SEP</th>
