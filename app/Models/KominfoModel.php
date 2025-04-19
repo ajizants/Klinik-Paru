@@ -7,6 +7,7 @@ use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class KominfoModel extends Model
@@ -260,17 +261,19 @@ class KominfoModel extends Model
                 $checkIn = $checkRm == null ? 'danger' : 'success';
                 $noSep = $check->no_sep ?? "";
                 $checkInIGD = $igd == null ? 'danger' : 'success';
-                if ($d['tanggal'] < '2025-04-18') {
-                    // dd($d['pasien_no_rm']);
-                    // dd($d['pasien_no_rm']);
-                    $pendaftaranLocal = KunjunganModel::where('norm', $d['pasien_no_rm'])
-                        ->where('tgltrans', 'like', '%' . $d['tanggal'] . '%')->first();
-                } else {
-                    $notrans2 = $d['no_reg'];
-                    // dd($notrans2);
-                    $pendaftaranLocal = KunjunganModel::where('notrans', $notrans2)->first();
-                    // dd($pendaftaranLocal);
-                }
+
+                $pendaftaranLocal = KunjunganModel::where('norm', $d['pasien_no_rm'])
+                    ->whereDate('tgltrans', $d['tanggal'])
+                    ->first();
+                // dd($pendaftaranLocal);
+                $results = DB::table('t_kunjungan')
+                    ->where('norm', '026601')
+                    ->select('norm', 'tgltrans')
+                    ->orderBy('tgltrans', 'desc')
+                    ->limit(10)
+                    ->get();
+
+                // dd($results);
 
                 $cekDaftar = $pendaftaranLocal != null || $pendaftaranLocal != "" ? 'success' : 'warning';
 
@@ -2528,6 +2531,133 @@ class KominfoModel extends Model
         }
 
         $url = env('BASR_URL_KOMINFO', '') . '/sep/lihat_detail_sep/' . $no_sep;
+
+        try {
+            $response = $client->request('POST', $url, [
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Cookie' => $cookie,
+                ],
+            ]);
+
+            // Check if response is successful
+            if ($response->getStatusCode() !== 200) {
+                Log::error('Error response body: ' . (string) $response->getBody());
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
+
+            $body = (string) $response->getBody();
+            $data = json_decode($body, true);
+            return $data;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            Log::error('Request Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
+        } catch (\Exception $e) {
+            Log::error('Unexpected Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
+        }
+    }
+
+    public function getDataSuratKontrol($params)
+    {
+        $client = new Client();
+        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+        $tglSep = $params["tanggal_awal"] . ' - ' . $params["tanggal_akhir"];
+
+        if (!$cookie) {
+            // Authenticate if no cookie is found
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+            $cookie = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/");
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+
+        $url = env('BASR_URL_KOMINFO', '') . '/sep/get_dataSuratKontrol';
+
+        // Format request sesuai dengan yang Anda inginkan
+        $columns = [];
+        for ($i = 0; $i < 3; $i++) { // Sesuaikan jumlah kolom sesuai kebutuhan
+            $columns[] = [
+                'data' => ($i === 0) ? '' : 'id',
+                'name' => '',
+                'searchable' => true,
+                'orderable' => false,
+                'search' => ['value' => '', 'regex' => false],
+            ];
+        }
+
+        try {
+            $response = $client->request('POST', $url, [
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Cookie' => $cookie,
+                ],
+                'form_params' => [
+                    'draw' => 2,
+                    'columns' => $columns,
+                    'start' => 0,
+                    'length' => 100,
+                    'search' => [
+                        'value' => '',
+                        'regex' => false,
+                    ],
+                    'tanggal' => '',
+                    'antrean_nomor' => '',
+                    'no_reg' => '',
+                    'daftar_by' => '',
+                    'penjamin_id' => 2,
+                    'nomor_referensi' => '',
+                    'penjamin_nomor' => '',
+                    'jenis_kunjungan_id' => '',
+                    'pasien' => '',
+                    'pasien_nik' => '',
+                    'no_surat_kontrol' => '',
+                    'tanggal_rencana_kontrol' => $tglSep,
+                ],
+            ]);
+
+            // Check if response is successful
+            if ($response->getStatusCode() !== 200) {
+                Log::error('Error response body: ' . (string) $response->getBody());
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
+
+            $body = (string) $response->getBody();
+            $data = json_decode($body, true);
+            return $data;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            // Handle request errors
+            Log::error('Request Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
+        } catch (\Exception $e) {
+            // Handle unexpected errors
+            Log::error('Unexpected Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
+        }
+    }
+
+    public function getDetailSuratKontrol($id)
+    {
+        $client = new Client();
+        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+
+        if (!$cookie) {
+            // Authenticate if no cookie is found
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+            $cookie = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+
+        $url = env('BASR_URL_KOMINFO', '') . '/sep/lihat_detail_surat_kontrol/' . $id;
 
         try {
             $response = $client->request('POST', $url, [

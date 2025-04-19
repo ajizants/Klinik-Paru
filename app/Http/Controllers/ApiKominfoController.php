@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\ApiKominfo;
 use App\Models\KominfoModel;
 use Illuminate\Http\Request;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ApiKominfoController extends Controller
 {
@@ -11,10 +12,10 @@ class ApiKominfoController extends Controller
     public function data_rencana_kontrol(Request $request)
     {
         $model = new ApiKominfo();
-        $data  = $model->data_pasien_kontrol($request->all());
+        $data = $model->data_pasien_kontrol($request->all());
 
         // Cek jika data kosong atau tidak valid
-        if (! $data || count($data) == 0) {
+        if (!$data || count($data) == 0) {
             return response()->json([
                 'html' => '<p class="text-center text-danger">Tidak ada data tersedia</p>',
                 'data' => [],
@@ -67,9 +68,9 @@ class ApiKominfoController extends Controller
 
     public function poliDokter()
     {
-        $model        = new KominfoModel();
-        $res          = $model->getAkssLoket();
-        $data         = $res['data'];
+        $model = new KominfoModel();
+        $res = $model->getAkssLoket();
+        $data = $res['data'];
         $jadwalDokter = array_filter($data, function ($item) {
             return stripos($item['admin_nama'], 'dr. ') !== false;
         });
@@ -101,22 +102,162 @@ class ApiKominfoController extends Controller
 
     public function getDataSEP(Request $request)
     {
-        $model  = new KominfoModel();
+        $model = new KominfoModel();
         $params = [
-            'tanggal_awal'  => $request->input('tanggal_awal'),
-            'tanggal_akhir' => $request->input('tanggal_akhir'),
+            'tanggal_awal' => $request->input('tanggal_awal') ?? date('Y-m-d'),
+            'tanggal_akhir' => $request->input('tanggal_akhir') ?? date('Y-m-d'),
         ];
         // dd($params);
         $data = $model->getDataSEP($params);
-        return response()->json($data);
+        $res = $data['data'];
+        // tambahkan aksi di $res
+        foreach ($res as &$item) {
+            $item['aksi'] = '
+                <a href="' . url('api/sep/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-primary">Cetak SEP</a>
+            ';
+        }
+
+        return response()->json($res);
     }
+    public function getDataSEPSK(Request $request)
+    {
+        $model = new KominfoModel();
+        $params = [
+            'tanggal_awal' => $request->input('tanggal_awal') ?? date('Y-m-d'),
+            'tanggal_akhir' => $request->input('tanggal_akhir') ?? date('Y-m-d'),
+        ];
+
+        // Ambil data SEP
+        $data = $model->getDataSEP($params);
+        $res = $data['data'];
+
+        // Ambil data Surat Kontrol
+        $dataSurat = $model->getDataSuratKontrol($params);
+        $resSurat = $dataSurat['data'];
+
+        // Index data surat kontrol berdasarkan pasien_nik untuk efisiensi pencarian
+        $suratKontrolMap = [];
+        foreach ($resSurat as $surat) {
+            $nik = $surat['pasien_nik'];
+            $suratKontrolMap[$nik] = $surat; // Jika 1 pasien hanya 1 surat. Kalau lebih, bisa ubah jadi array.
+        }
+
+        // Tambahkan aksi ke data SEP
+        foreach ($res as &$item) {
+            $nik = $item['pasien_nik'];
+
+            $aksi = '<a href="' . url('api/sep/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-primary">Cetak SEP</a> ';
+
+            // Cek apakah ada surat kontrol untuk NIK tersebut
+            if (isset($suratKontrolMap[$nik])) {
+                $noSurat = $suratKontrolMap[$nik]['no_surat_kontrol']; // Atau 'no_surat_kontrol' kalau kamu pakai itu
+                $aksi .= '<br><a href="' . url('api/SuratKontrol/cetak/' . $noSurat) . '" target="_blank" class="btn btn-sm btn-success">Cetak Surat Kontrol</a>';
+                // Tambahkan data Surat Kontrol ke dalam data SEP
+                $item['no_surat_kontrol'] = $surat['no_surat_kontrol'] ?? null;
+                $item['tanggal_rencana_kontrol'] = $surat['tanggal_rencana_kontrol'] ?? null;
+                $item['tanggal_tampil'] = $surat['tanggal_tampil'] ?? null;
+                $item['tanggal_rencana_kontrol_tampil'] = $surat['tanggal_rencana_kontrol_tampil'] ?? null;
+                $item['detail_surat_kontrol'] = '
+                            <p>No Surat Kontrol: <br>' . ($surat['no_surat_kontrol'] ?? '-') . '</p>
+
+                            <p>Rencana Kontrol: <br>' . ($surat['tanggal_rencana_kontrol_tampil'] ?? '-') . '</p>
+                        ';
+
+            } else {
+                // Kalau tidak ada surat kontrol, tetap null
+                $item['no_surat_kontrol'] = null;
+                $item['tanggal_rencana_kontrol'] = null;
+                $item['tanggal_tampil'] = null;
+                $item['tanggal_rencana_kontrol_tampil'] = null;
+
+                // Tampilkan info kosong di detail
+                $item['detail_surat_kontrol'] = '
+                                                    <p>No Surat Kontrol: -</p>
+
+                                                    <p>Tanggal Rencana Kontrol: -</p>
+                                                ';
+            }
+
+            $sepTanggal = $item['tanggal_sep'] ?? null;
+            $sepTanggalTampil = $item['tanggal_sep_tampil'] ?? '-';
+            $tanggalTampil = $item['tanggal_tampil'] ?? '-';
+
+            $item['detail_sep'] = '
+                                        <p>No SEP: <br>' . ($item['no_sep'] ?? '-') . '</p>
+
+                                        <p>Tanggal SEP: <br>' . $sepTanggalTampil . '</p>
+                                    ';
+
+            $item['aksi'] = $aksi;
+        }
+
+        return response()->json($res);
+    }
+
     public function getDetailSEP(Request $request)
     {
-        $model  = new KominfoModel();
+        $model = new KominfoModel();
         $no_sep = $request->input('no_sep');
         // dd($params);
         $data = $model->getDetailSEP($no_sep);
         return response()->json($data);
+    }
+    public function cetakSEP(string $no_sep)
+    {
+        $model = new KominfoModel();
+        // dd($params);
+        $data = $model->getDetailSEP($no_sep);
+        // return response()->json($detailSEP);
+        $detailSEP = $data['data'];
+
+        // Buat QR Code dengan logo
+        $qrCode = QrCode::format('svg') // atau svg
+            ->size(100)
+            ->errorCorrection('H')
+            ->generate($detailSEP['peserta']['noKartu']);
+
+        // dd($qrCode);
+        $base64QrCode = base64_encode($qrCode);
+        $qrCodeImage = 'data:image/png;base64,' . $base64QrCode;
+
+        return view('Laporan.Pasien.sep', compact('detailSEP', 'qrCode'));
+    }
+    public function getDataSuratKontrol(Request $request)
+    {
+        $model = new KominfoModel();
+        $params = [
+            'tanggal_awal' => $request->input('tanggal_awal') ?? date('Y-m-d'),
+            'tanggal_akhir' => $request->input('tanggal_akhir') ?? date('Y-m-d'),
+        ];
+        // dd($params);
+        $data = $model->getDataSuratKontrol($params);
+        $res = $data['data'];
+        // tambahkan aksi di $res
+        foreach ($res as &$item) {
+            $item['aksi'] = '
+                <a href="' . url('api/SuratKontrol/cetak/' . $item['no_surat_kontrol']) . '" target="_blank" class="btn btn-sm btn-primary">Cetak SuratKontrol</a>
+            ';
+        }
+
+        return response()->json($res);
+    }
+    public function getDetailSuratKontrol(Request $request)
+    {
+        $model = new KominfoModel();
+        $no_SuratKontrol = $request->input('no_SuratKontrol');
+        // dd($params);
+        $data = $model->getDetailSuratKontrol($no_SuratKontrol);
+        return response()->json($data);
+    }
+    public function cetakSuratKontrol(string $no_SuratKontrol)
+    {
+        $model = new KominfoModel();
+        // dd($params);
+        $data = $model->getDetailSuratKontrol($no_SuratKontrol);
+        $detailSuratKontrol = $data['data'];
+        // return response()->json($detailSuratKontrol);
+
+        return view('Laporan.Pasien.SuratKontrol', compact('detailSuratKontrol'));
     }
 
 }

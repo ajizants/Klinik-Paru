@@ -17,7 +17,7 @@
             </div>
             <div class="mx-2">
                 <button type="button" class="btn btn-success" onclick="segarkan(); toggleSections('#tab_1');">
-                    Cari Data Jumlah Kujungan
+                    Cari Data Kujungan
                 </button>
             </div>
             <div class="mx-2">
@@ -41,8 +41,8 @@
                                 Kunjungan</b></a>
                     </li>
                     <li class="nav-item">
-                        <a type="button" class="nav-link" onclick="toggleSections('#tab_2');"><b>Rekap Jumlah
-                                Kunjungan</b></a>
+                        <a type="button" class="nav-link" onclick="toggleSections('#tab_2');"><b>SEP & Surat
+                                Kontrol</b></a>
                     </li>
                     <li class="nav-item">
                         <a type="button" class="nav-link" onclick="toggleSections('#tab_3');"><b>Rekap Jumlah Faskes
@@ -56,9 +56,9 @@
                 </ul>
             </div>
             @include('Laporan.Pendaftaran.kunjungan')
-            @include('Laporan.Pendaftaran.jumlahKunjungan')
             @include('Laporan.Pendaftaran.faskesPerujuk')
             @include('Laporan.Pendaftaran.rencanaKontrol')
+            @include('Laporan.Pendaftaran.listSEP')
         </div>
     </div>
 
@@ -188,8 +188,122 @@
                 const notif = new Audio("/audio/dingdong.mp3");
                 notif.load();
                 notif.play();
-                reportPendaftaran(tglAwal, tglAkhir);
+                if (prosesPanggilFungsi == false) {
+                    console.log("🚀 ~ socketIO.on ~ prosesPanggilFungsi:", prosesPanggilFungsi)
+                    reportPendaftaran(tglAwal, tglAkhir);
+                }
             }
         });
+
+        function cariDataSEP(tglAwal, tglAkhir) {
+            prosesCariDataLaporan = true;
+            console.log(
+                "🚀 ~ reportPendaftaran ~ prosesCariDataLaporan:",
+                prosesCariDataLaporan
+            );
+            var tglA = formatDate(new Date(tglAwal));
+            var tglB = formatDate(new Date(tglAkhir));
+
+            if ($.fn.DataTable.isDataTable("#tableSEP")) {
+                var tabletindakan = $("#tableSEP").DataTable();
+                tabletindakan.destroy();
+            }
+
+            $.ajax({
+                url: "/api/bpjs/get_data",
+                type: "post",
+                data: {
+                    tanggal_awal: tglAwal,
+                    tanggal_akhir: tglAkhir
+                },
+                success: function(response) {
+                    console.log("🚀 ~ cariDataSEP ~ response:", response)
+
+                    $("#tableSEP")
+                        .DataTable({
+                            data: response,
+                            columns: [{
+                                    data: "aksi",
+                                    className: "col-3"
+                                },
+                                {
+                                    data: "antrean_nomor"
+                                },
+                                {
+                                    data: "tanggal"
+                                },
+                                {
+                                    data: "detail_sep"
+                                },
+                                {
+                                    data: "detail_surat_kontrol"
+                                },
+                                {
+                                    data: "jenis_kunjungan_nama"
+                                },
+                                {
+                                    data: "penjamin_nama"
+                                },
+                                {
+                                    data: "daftar_by"
+                                },
+                                {
+                                    data: "pasien_no_rm"
+                                },
+                                {
+                                    data: "pasien_nama",
+                                    className: "col-2"
+                                },
+
+                                {
+                                    data: "poli_sub_nama"
+                                },
+                                {
+                                    data: "dokter_nama",
+                                    className: "col-2"
+                                },
+                            ],
+                            autoWidth: false,
+                            lengthChange: false,
+                            order: [
+                                [1, "asc"],
+                            ],
+                            buttons: [{
+                                    extend: "excelHtml5",
+                                    text: "Excel",
+                                    title: "Laporan Pendaftaran Tanggal: " +
+                                        tglA +
+                                        " s.d. " +
+                                        tglB,
+                                    filename: "Laporan Pendaftaran Tanggal: " +
+                                        tglA +
+                                        "  s.d. " +
+                                        tglB,
+                                },
+                                {
+                                    extend: "colvis",
+                                    text: "Tampilkan Kolom",
+                                },
+                                // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+                            ],
+                        })
+                        .buttons()
+                        .container()
+                        .appendTo("#report_wrapper .col-md-6:eq(0)");
+                    Swal.close();
+                    setTimeout(function() {
+                        prosesCariDataLaporan = false;
+                    }, 3000);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Terjadi kesalahan saat mengambil data pasien...!!!\n" +
+                            error,
+                    });
+                },
+            });
+        }
     </script>
 @endsection

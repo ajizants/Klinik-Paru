@@ -342,7 +342,12 @@ Route::post('kominfo/pendaftaran/faskes_perujuk', [PasienKominfoController::clas
 Route::post('kominfo/data_rencana_kontrol', [ApiKominfoController::class, 'data_rencana_kontrol']);
 Route::get('jadwal/dokter/poli', [ApiKominfoController::class, 'poliDokter']);
 Route::post('sep/get_data', [ApiKominfoController::class, 'getDataSEP']);
-Route::post('sep/getSEP', [ApiKominfoController::class, 'getSEP']);
+Route::post('sep/detail', [ApiKominfoController::class, 'getDetailSEP']);
+Route::get('sep/cetak/{no_sep}', [ApiKominfoController::class, 'cetakSEP']);
+Route::post('SuratKontrol/get_data', [ApiKominfoController::class, 'getDataSuratKontrol']);
+Route::post('SuratKontrol/detail', [ApiKominfoController::class, 'getDetailSuratKontrol']);
+Route::get('SuratKontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakSuratKontrol']);
+Route::post('bpjs/get_data', [ApiKominfoController::class, 'getDataSEPSK']);
 
 // sb
 Route::post('verif/pendaftaran/fr', [VerifController::class, 'frista']);

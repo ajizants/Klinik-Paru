@@ -242,6 +242,7 @@ function segarkan() {
     });
     reportPendaftaran(tglAwal, tglAkhir);
     rekapFaskesPerujuk();
+    cariDataSEP(tglAwal, tglAkhir);
 }
 function cariJumlah() {
     Swal.fire({
@@ -255,8 +256,27 @@ function cariJumlah() {
     });
     reportJumlah(tglAwal, tglAkhir);
 }
+let prosesCariDataLaporan;
+function tes() {
+    console.log(
+        "🚀 ~ socketIO.on ~ prosesCariDataLaporan:",
+        prosesCariDataLaporan
+    );
+    if (prosesCariDataLaporan == false) {
+        console.log(
+            "🚀 ~ socketIO.on ~ prosesCariDataLaporan:",
+            prosesCariDataLaporan
+        );
+        reportPendaftaran(tglAwal, tglAkhir);
+    }
+}
 
 function reportPendaftaran(tglAwal, tglAkhir) {
+    prosesCariDataLaporan = true;
+    console.log(
+        "🚀 ~ reportPendaftaran ~ prosesCariDataLaporan:",
+        prosesCariDataLaporan
+    );
     var tglA = formatDate(new Date(tglAwal));
     var tglB = formatDate(new Date(tglAkhir));
 
@@ -429,8 +449,10 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                 .container()
                 .appendTo("#total_wrapper .col-md-6:eq(0)");
             Swal.close();
+            setTimeout(function () {
+                prosesCariDataLaporan = false;
+            }, 3000);
         },
-
         error: function (xhr, status, error) {
             console.error("Error:", error);
             Swal.fire({
