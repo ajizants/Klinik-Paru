@@ -184,7 +184,7 @@
     <script src="{{ asset('js/reportPendaftaran.js') }}"></script>
     <script>
         socketIO.on("reload", (msg) => {
-            if (msg == "paru_ruang_tensi" || msg == "paru_notifikasi_ruang_tensi_1") {
+            if (msg == "paru_ruang_tensi") {
                 const notif = new Audio("/audio/dingdong.mp3");
                 notif.load();
                 notif.play();
