@@ -116,12 +116,17 @@ class PendaftaranController extends Controller
         $model         = new KominfoModel();
         $pasienKominfo = $model->pasienRequest($norm);
         $pasienLocal   = DataPasienModel::where('norm', $norm)->first();
+        // dd($pasienLocal->ibuKandung);
         if ($request->input('statusPasien') == 'Baru') {
-            $pekerjaan  = $request->input('pekerjaan');
-            $ibukandung = $request->input('ibu');
+            $pekerjaan      = $request->input('pekerjaan');
+            $ibukandung     = $request->input('ibu');
+            $jenisKunjungan = 'B';
         } else {
-            $pekerjaan  = $pasienLocal->pekerjaan;
-            $ibukandung = $pasienLocal->ibuKandung !== $request->input('ibu') ? $request->input('ibu') : $pasienLocal->ibu_kandung;
+            // dd($pasienLocal->ibuKandung);
+            $pekerjaan      = $pasienLocal->pekerjaan;
+            $ibukandung     = $pasienLocal->ibuKandung !== $request->input('ibu') ? $request->input('ibu') : $pasienLocal->ibuKandung;
+            $jenisKunjungan = 'L';
+            // dd($ibukandung);
         }
 
         $pasienFromLocal = $pasienLocal ? [
@@ -177,13 +182,11 @@ class PendaftaranController extends Controller
             'statKawin'    => $pasienKominfo['rs_paru_status_kawin'],
             'pekerjaan'    => $pekerjaan,
             'pjwb'         => $pasienKominfo['pasien_penanggung_jawab_nama'],
-            'ibuKandung'   => $ibukandung === 'pjwb' ? $pasienKominfo['pasien_penanggung_jawab_nama'] : $ibukandung,
+            'ibuKandung'   => $ibukandung,
             'jctkkartu'    => 0,
             'goldarah'     => $pasienKominfo['goldar_nama'] === 'TIDAK DIKETAHUI' ? '' : $pasienKominfo['goldar_nama'] ?? '',
             'kunj'         => 'B',
         ];
-
-        $jenisKunjungan = $pasienLocal ? 'L' : 'B';
 
         $lahir    = Carbon::parse($pasien['tgllahir']);
         $sekarang = Carbon::now();
