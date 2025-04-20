@@ -62,7 +62,7 @@ Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);
 
 Route::get('/diagnosa_icd_x', function (Request $request) {
     $search = $request->get('search', '');
-    $limit = $request->get('limit', 20);
+    $limit  = $request->get('limit', 20);
 
     $diagnosas = DiagnosaIcdXModel::where(function ($query) use ($search) {
         $query->where('diagnosa', 'like', '%' . $search . '%')
@@ -225,6 +225,7 @@ Route::get('obat', [GudangFarmasiController::class, 'gudangFarmasiIn']);
 Route::post('lists/obat', [FarmasiController::class, 'obats']);
 Route::get('resep/{norm}/{tgl}', [FarmasiController::class, 'cetakObat']);
 Route::get('resep2/{norm}/{tgl}', [FarmasiController::class, 'cetakResepKominnfo']);
+Route::get('etiket/{norm}/{tgl}', [FarmasiController::class, 'cetakEtiket']);
 Route::post('farmasi/panggil', [FarmasiController::class, 'panggil']);
 // Route::post('farmasi/cetak/{norm}/{notrans}', [FarmasiController::class, 'selesaiFarmasi']);
 Route::post('farmasi/pulangkan', [FarmasiController::class, 'pulangkan']);

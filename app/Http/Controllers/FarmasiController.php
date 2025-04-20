@@ -159,10 +159,21 @@ class FarmasiController extends Controller
             ];
         }
 
-        return response()->json([
+        return [
             'tindakan' => $tindakanList,
             'obats'    => $obats,
             'cppt'     => $cppt,
+        ];
+    }
+
+    public function cetakEtiket($norm, $tanggal)
+    {
+
+        $dataObat = $this->cariObats($norm, $tanggal);
+        // return $dataObat;
+        $obats = (object) $dataObat['obats'] ?? null;
+        return view('Farmasi.Cetak.etiket', compact('obats'))->with([
+            'title' => "Etiket Obat",
         ]);
     }
 
