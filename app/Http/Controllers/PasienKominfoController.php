@@ -223,16 +223,44 @@ class PasienKominfoController extends Controller
         $jumlahLama = count(array_filter($filteredData, function ($item) {
             return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'LAMA';
         }));
+        $jumlahLamaUmum = count(array_filter($filteredData, function ($item) {
+            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'LAMA' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
+        }));
+
+        $jumlahLamaBpjs = count(array_filter($filteredData, function ($item) {
+            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'LAMA' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
+        }));
+
         $jumlahBaru = count(array_filter($filteredData, function ($item) {
             return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'BARU';
+        }));
+
+        $jumlahBaruUmum = count(array_filter($filteredData, function ($item) {
+            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'BARU' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
+        }));
+        $jumlahBaruBpjs = count(array_filter($filteredData, function ($item) {
+            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'BARU' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
         }));
 
         // Hitung jumlah berdasarkan daftar_by
         $jumlahOTS = count(array_filter($filteredData, function ($item) {
             return isset($item['daftar_by']) && $item['daftar_by'] === 'OTS';
         }));
+        $jumlahOTSUmum = count(array_filter($filteredData, function ($item) {
+            return isset($item['daftar_by']) && $item['daftar_by'] === 'OTS' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
+        }))
+        ;
+        $jumlahOTSBpjs = count(array_filter($filteredData, function ($item) {
+            return isset($item['daftar_by']) && $item['daftar_by'] === 'OTS' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
+        }));
         $jumlahJKN = count(array_filter($filteredData, function ($item) {
             return isset($item['daftar_by']) && $item['daftar_by'] === 'JKN';
+        }));
+        $jumlahJKNUmum = count(array_filter($filteredData, function ($item) {
+            return isset($item['daftar_by']) && $item['daftar_by'] === 'JKN' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
+        }));
+        $jumlahJKNBpjs = count(array_filter($filteredData, function ($item) {
+            return isset($item['daftar_by']) && $item['daftar_by'] === 'JKN' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
         }));
         $jumlahBatal = count(array_filter($dataPendaftaranResponse, function ($item) {
             return isset($item['keterangan']) && strpos($item['keterangan'], 'DIBATALKAN PADA') !== false;
@@ -247,24 +275,95 @@ class PasienKominfoController extends Controller
         // Build response
         $jumlah = [
             'jumlah_no_antrian' => (int) count($dataPendaftaranResponse),
-            'jumlah_no_menunggu' => (int) $jumlahTunggu,
             'jumlah_pasien' => (int) count($filteredData),
             'jumlah_pasien_batal' => (int) $jumlahBatal,
-            'jumlah_nomor_skip' => (int) $jumlahSkip,
             'jumlah_BPJS' => (int) $jumlahBPJS,
             'jumlah_BPJS_2' => (int) $jumlahBPJS2,
             'jumlah_UMUM' => (int) $jumlahUMUM,
             'jumlah_pasien_LAMA' => (int) $jumlahLama,
+            'jumlah_pasien_LAMA_UMUM' => (int) $jumlahLamaUmum,
+            'jumlah_pasien_LAMA_BPJS' => (int) $jumlahLamaBpjs,
             'jumlah_pasien_BARU' => (int) $jumlahBaru,
+            'jumlah_pasien_BARU_UMUM' => (int) $jumlahBaruUmum,
+            'jumlah_pasien_BARU_BPJS' => (int) $jumlahBaruBpjs,
             'jumlah_daftar_OTS' => (int) $jumlahOTS,
+            'jumlah_daftar_OTS_UMUM' => (int) $jumlahOTSUmum,
+            'jumlah_daftar_OTS_BPJS' => (int) $jumlahOTSBpjs,
             'jumlah_daftar_JKN' => (int) $jumlahJKN,
+            'jumlah_daftar_JKN_UMUM' => (int) $jumlahJKNUmum,
+            'jumlah_daftar_JKN_BPJS' => (int) $jumlahJKNBpjs,
         ];
+
+        $rows = [
+            'Jumlah No Antrian' => [
+                'total' => count($dataPendaftaranResponse),
+                'bpjs' => 0,
+                'umum' => 0,
+            ],
+            'Jumlah Pasien' => [
+                'total' => count($filteredData),
+                'bpjs' => $jumlahBPJS,
+                'umum' => $jumlahUMUM,
+            ],
+            'Jumlah Pasien Batal' => [
+                'total' => $jumlahBatal,
+                'bpjs' => 0,
+                'umum' => 0,
+            ],
+            'Pasien Lama' => [
+                'total' => $jumlahLama,
+                'bpjs' => $jumlahLamaBpjs,
+                'umum' => $jumlahLamaUmum,
+            ],
+            'Pasien Baru' => [
+                'total' => $jumlahBaru,
+                'bpjs' => $jumlahBaruBpjs,
+                'umum' => $jumlahBaruUmum,
+            ],
+            'Daftar OTS' => [
+                'total' => $jumlahOTS,
+                'bpjs' => $jumlahOTSBpjs,
+                'umum' => $jumlahOTSUmum,
+            ],
+            'Daftar JKN' => [
+                'total' => $jumlahJKN,
+                'bpjs' => $jumlahJKNBpjs,
+                'umum' => $jumlahJKNUmum,
+            ],
+        ];
+
+        $html = '<table class="table table-bordered table-hover dataTable dtr-inline" id="rekapTotal" width="100%" cellspacing="0">';
+        $html .= '
+            <thead class="bg bg-teal table-bordered border-warning">
+                <tr>
+                    <th rowspan="2" class="align-middle">Keterangan</th>
+                    <th rowspan="2" class="text-center align-middle">Total</th>
+                    <th colspan="2" class="text-center">Jaminan</th>
+                </tr>
+                <tr>
+                    <th class="text-center">BPJS</th>
+                    <th class="text-center">UMUM</th>
+                </tr>
+            </thead>
+            <tbody>';
+
+        foreach ($rows as $label => $data) {
+            $html .= '<tr>';
+            $html .= '<td>' . $label . '</td>';
+            $html .= '<td class="text-center">' . $data['total'] . '</td>';
+            $html .= '<td class="text-center">' . $data['bpjs'] . '</td>';
+            $html .= '<td class="text-center">' . $data['umum'] . '</td>';
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody></table>';
 
         $data = array_values($filteredData);
 
         $res = [
             "total" => $jumlah,
             "data" => $data,
+            "html" => $html,
         ];
 
         return response()->json($res);

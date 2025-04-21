@@ -123,6 +123,14 @@
                 // }
             }
         })
+
+        // load langsung cetak
+        document.addEventListener("DOMContentLoaded", function() {
+            window.print();
+            window.onafterprint = function() {
+                window.close();
+            }
+        })
     </script>
 </body>
 

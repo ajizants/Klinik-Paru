@@ -296,6 +296,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
         success: function (response) {
             var pendaftaran = response["data"];
             var total = response["total"];
+            var html = response["html"];
             // console.log("🚀 ~ reportPendaftaran ~ total:", total);
             // console.log("🚀 ~ reportPendaftaran ~ $data:", pendaftaran);
 
@@ -393,35 +394,32 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                 .buttons()
                 .container()
                 .appendTo("#report_wrapper .col-md-6:eq(0)");
-            $("#total")
+            // Convert total object to an array of key-value pairs
+            const entries = Object.entries(total).map(([key, value]) => ({
+                key: key.replaceAll("_", " ").toUpperCase(),
+                value,
+            }));
+
+            // Gabungkan 2 data per baris
+            const mergedData = [];
+            for (let i = 0; i < entries.length; i += 2) {
+                mergedData.push({
+                    ket1: entries[i].key,
+                    val1: entries[i].value,
+                    ket2: entries[i + 1] ? entries[i + 1].key : "",
+                    val2: entries[i + 1] ? entries[i + 1].value : "",
+                });
+            }
+
+            // Inisialisasi DataTable
+            $("#tabelJumlah").html(html);
+            $("#rekapTotal")
                 .DataTable({
-                    data: [total],
-                    columns: [
-                        { data: "jumlah_no_antrian", className: "text-center" },
-                        { data: "jumlah_pasien", className: "text-center" },
-                        {
-                            data: "jumlah_pasien_batal",
-                            className: "text-center",
-                        },
-                        { data: "jumlah_nomor_skip", className: "text-center" },
-                        { data: "jumlah_BPJS", className: "text-center" },
-                        { data: "jumlah_BPJS_2", className: "text-center" },
-                        { data: "jumlah_UMUM", className: "text-center" },
-                        {
-                            data: "jumlah_pasien_LAMA",
-                            className: "text-center",
-                        },
-                        {
-                            data: "jumlah_pasien_BARU",
-                            className: "text-center",
-                        },
-                        { data: "jumlah_daftar_OTS", className: "text-center" },
-                        { data: "jumlah_daftar_JKN", className: "text-center" },
-                    ],
                     autoWidth: false,
                     ordering: false,
-                    paging: true,
+                    paging: false,
                     searching: false,
+                    info: false,
                     lengthChange: false,
                     buttons: [
                         {
@@ -433,21 +431,76 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                                 " s.d. " +
                                 tglB,
                             filename:
-                                "Laporan Pendaftaran Tanggal: " +
+                                "Laporan Pendaftaran Tanggal " +
                                 tglA +
-                                "  s.d. " +
+                                " s.d. " +
                                 tglB,
                         },
                         {
                             extend: "colvis",
                             text: "Tampilkan Kolom",
                         },
-                        // "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
                     ],
                 })
                 .buttons()
                 .container()
-                .appendTo("#total_wrapper .col-md-6:eq(0)");
+                .appendTo("#rekapTotal_wrapper .col-md-6:eq(0)");
+            // $("#total")
+            //     .DataTable({
+            //         data: mergedData,
+            //         columns: [
+            //             {
+            //                 data: "ket1",
+            //                 title: "Keterangan",
+            //                 className: "text-left",
+            //             },
+            //             {
+            //                 data: "val1",
+            //                 title: "Jumlah",
+            //                 className: "text-center",
+            //             },
+            //             {
+            //                 data: "ket2",
+            //                 title: "Keterangan",
+            //                 className: "text-left",
+            //             },
+            //             {
+            //                 data: "val2",
+            //                 title: "Jumlah",
+            //                 className: "text-center",
+            //             },
+            //         ],
+            //         autoWidth: false,
+            //         ordering: false,
+            //         paging: false,
+            //         searching: false,
+            //         info: false,
+            //         lengthChange: false,
+            //         buttons: [
+            //             {
+            //                 extend: "excelHtml5",
+            //                 text: "Excel",
+            //                 title:
+            //                     "Laporan Pendaftaran Tanggal: " +
+            //                     tglA +
+            //                     " s.d. " +
+            //                     tglB,
+            //                 filename:
+            //                     "Laporan Pendaftaran Tanggal " +
+            //                     tglA +
+            //                     " s.d. " +
+            //                     tglB,
+            //             },
+            //             {
+            //                 extend: "colvis",
+            //                 text: "Tampilkan Kolom",
+            //             },
+            //         ],
+            //     })
+            //     .buttons()
+            //     .container()
+            //     .appendTo("#total_wrapper .col-md-6:eq(0)");
+
             Swal.close();
             setTimeout(function () {
                 prosesCariDataLaporan = false;

@@ -3,11 +3,28 @@ namespace App\Http\Controllers;
 
 use App\Models\ApiKominfo;
 use App\Models\KominfoModel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ApiKominfoController extends Controller
 {
+
+    // public function cetakSEP(string $no_sep)
+    // {
+    //     $model = new KominfoModel();
+    //     $data = $model->getDetailSEP($no_sep);
+    //     $detailSEP = $data['data'];
+
+    //     // Generate QR Code in SVG format
+    //     $qrCode = QrCode::format('svg')->size(100)->generate($detailSEP['peserta']['noKartu']);
+
+    //     $qrCodePath = 'data:image/png;base64,' . base64_encode($qrCode);
+
+    //     // Generate the PDF with the converted PNG QR code
+    //     $pdf = PDF::loadView('Laporan.Pasien.sepPdf', compact('detailSEP', 'qrCodePath'));
+
+    //     return $pdf->stream('sep.pdf');
+    // }
 
     public function data_rencana_kontrol(Request $request)
     {
@@ -210,18 +227,31 @@ class ApiKominfoController extends Controller
         // return response()->json($detailSEP);
         $detailSEP = $data['data'];
 
-        // Buat QR Code dengan logo
-        $qrCode = QrCode::format('svg') // atau svg
-            ->size(100)
-            ->errorCorrection('H')
-            ->generate($detailSEP['peserta']['noKartu']);
+        //     // Buat QR Code dengan logo
+        //     $qrCode = QrCode::format('svg') // atau svg
+        //         ->size(100)
+        //         ->errorCorrection('H')
+        //         ->generate($detailSEP['peserta']['noKartu']);
 
-        // dd($qrCode);
-        $base64QrCode = base64_encode($qrCode);
-        $qrCodeImage = 'data:image/png;base64,' . $base64QrCode;
+        //     // dd($qrCode);
+        //     $base64QrCode = base64_encode($qrCode);
+        //     $qrCodeImage = 'data:image/png;base64,' . $base64QrCode;
 
-        return view('Laporan.Pasien.sep', compact('detailSEP', 'qrCode'));
+        $noKartu = $detailSEP['peserta']['noKartu'];
+        $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=' . urlencode($noKartu) . '&size=100x100';
+
+        $qrCodeBase64 = base64_encode(file_get_contents($qrCodeUrl));
+        //buat judul, yaitu 6 digit terakhir dari noSEP
+        $judul = substr($detailSEP['noSep'], -6);
+
+        // return view('Laporan.Pasien.sepPdf', compact('detailSEP', 'qrCodeBase64'));
+        // Generate the PDF with the converted PNG QR code
+        $pdf = PDF::loadView('Laporan.Pasien.sepPdf', compact('detailSEP', 'qrCodeBase64'));
+
+        return $pdf->stream($judul . '.pdf'); // Generate the PDF with the converted PNG QR code
+
     }
+
     public function getDataSuratKontrol(Request $request)
     {
         $model = new KominfoModel();

@@ -4,12 +4,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TransaksiModelOld extends Model
+class TransaksiModelcopy extends Model
 {
     use HasFactory;
     protected $connection = 'mysql';
 
-    protected $table      = 't_kunjungan_tindakan';
+    protected $table = 't_kunjungan_tindakan';
     protected $primaryKey = 'id';
 
     public function tindakan()
