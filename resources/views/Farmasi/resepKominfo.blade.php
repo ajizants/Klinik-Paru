@@ -189,7 +189,8 @@
                                         <br>
                                         <br>
                                         <br>
-                                        <input style="width: 100%; text-align: center;" type="text" value="">
+                                        <input style="width: 100%; text-align: center;" type="text"
+                                            value="apt. Ummu Kultsum">
                                     </td>
                                     <td class="border" style="vertical-align: top;font-weight: bold;" width="33%">
                                         Paraf Penerima Obat

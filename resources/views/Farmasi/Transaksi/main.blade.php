@@ -675,9 +675,10 @@
         function cetakResep(norm, tgl, btn) {
             btn.classList.remove("btn-secondary");
             btn.classList.add("btn-danger");
-            const url = "/api/resep/" + norm + "/" + tgl;
-            console.log("🚀 ~ cetakResep ~ url:", url)
-            window.open(url, "_blank");
+            const urlEtiket = "/api/etiket/" + norm + "/" + tgl;
+            const urlResep = "/api/resep/" + norm + "/" + tgl;
+            // window.open(urlEtiket, "_blank");
+            window.open(urlResep, "_blank");
 
         }
 
