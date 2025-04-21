@@ -189,15 +189,11 @@ class PasienKominfoController extends Controller
         // ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
         // ini_set('memory_limit', '512M');
         $params = $request->all();
-        // dd($params);
-        $tglAwal = $request->input('tanggal_awal');
-        $tglAkhir = $request->input('tanggal_akhir');
-
         $kominfo = new KominfoModel();
         $dataPendaftaranResponse = $kominfo->pendaftaranRequest($params);
 
         // Debugging: print the data received
-        // dd($dataPendaftaranResponse);
+        // return $dataPendaftaranResponse;
 
         // Filter data dengan keterangan "SELESAI DOPANGGIL PENDAFTARAN"
         // $filteredData = $dataPendaftaranResponse;
@@ -271,10 +267,18 @@ class PasienKominfoController extends Controller
         $jumlahTunggu = count(array_filter($dataPendaftaranResponse, function ($item) {
             return isset($item['keterangan']) && strpos($item['keterangan'], 'MENUNGGU DIPANGGIL LOKET PENDAFTARAN') !== false;
         }));
+        $jumlahNoUmum = count(array_filter($dataPendaftaranResponse, function ($item) {
+            return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
+        }));
+        $jumlahNoBpjs = count(array_filter($dataPendaftaranResponse, function ($item) {
+            return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
+        }));
 
         // Build response
         $jumlah = [
             'jumlah_no_antrian' => (int) count($dataPendaftaranResponse),
+            'jumlah_no_umum' => (int) $jumlahNoUmum,
+            'jumlah_no_bpjs' => (int) $jumlahNoBpjs,
             'jumlah_pasien' => (int) count($filteredData),
             'jumlah_pasien_batal' => (int) $jumlahBatal,
             'jumlah_BPJS' => (int) $jumlahBPJS,
@@ -297,8 +301,8 @@ class PasienKominfoController extends Controller
         $rows = [
             'Jumlah No Antrian' => [
                 'total' => count($dataPendaftaranResponse),
-                'bpjs' => 0,
-                'umum' => 0,
+                'bpjs' => $jumlahNoBpjs,
+                'umum' => $jumlahNoUmum,
             ],
             'Jumlah Pasien' => [
                 'total' => count($filteredData),

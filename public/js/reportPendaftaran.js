@@ -280,8 +280,8 @@ function reportPendaftaran(tglAwal, tglAkhir) {
     var tglA = formatDate(new Date(tglAwal));
     var tglB = formatDate(new Date(tglAkhir));
 
-    if ($.fn.DataTable.isDataTable("#report, #total")) {
-        var tabletindakan = $("#report, #total").DataTable();
+    if ($.fn.DataTable.isDataTable("#report, #rekapTotal")) {
+        var tabletindakan = $("#report, #rekapTotal").DataTable();
         tabletindakan.destroy();
     }
 
@@ -394,24 +394,9 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                 .buttons()
                 .container()
                 .appendTo("#report_wrapper .col-md-6:eq(0)");
-            // Convert total object to an array of key-value pairs
-            const entries = Object.entries(total).map(([key, value]) => ({
-                key: key.replaceAll("_", " ").toUpperCase(),
-                value,
-            }));
-
-            // Gabungkan 2 data per baris
-            const mergedData = [];
-            for (let i = 0; i < entries.length; i += 2) {
-                mergedData.push({
-                    ket1: entries[i].key,
-                    val1: entries[i].value,
-                    ket2: entries[i + 1] ? entries[i + 1].key : "",
-                    val2: entries[i + 1] ? entries[i + 1].value : "",
-                });
-            }
 
             // Inisialisasi DataTable
+
             $("#tabelJumlah").html(html);
             $("#rekapTotal")
                 .DataTable({
