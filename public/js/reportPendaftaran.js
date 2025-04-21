@@ -241,8 +241,8 @@ function segarkan() {
         },
     });
     reportPendaftaran(tglAwal, tglAkhir);
-    rekapFaskesPerujuk();
-    cariDataSEP(tglAwal, tglAkhir);
+    // rekapFaskesPerujuk();
+    // cariDataSEP(tglAwal, tglAkhir);
 }
 function cariJumlah() {
     Swal.fire({

@@ -17,17 +17,23 @@
             </div>
             <div class="mx-2">
                 <button type="button" class="btn btn-success" onclick="segarkan(); toggleSections('#tab_1');">
-                    Cari Data Kujungan
+                    Data Kujungan
+                </button>
+            </div>
+            <div class="mx-2">
+                <button type="button" class="btn btn-primary"
+                    onclick=" cariDataSEP(tglAwal, tglAkhir); toggleSections('#tab_2');">
+                    Data SEP & SK
                 </button>
             </div>
             <div class="mx-2">
                 <button type="button" class="btn btn-warning" onclick="rekapFaskesPerujuk(); toggleSections('#tab_3');">
-                    Cari Data Faskes Perujuk
+                    Data Faskes Perujuk
                 </button>
             </div>
             <div class="mx-2">
                 <button type="button" class="btn btn-info" onclick="rencanaKontrolPasien(); toggleSections('#tab_4');">
-                    Cari Data Rencana Kontrol
+                    Data Rencana Kontrol
                 </button>
             </div>
         </div>
@@ -196,6 +202,15 @@
         });
 
         function cariDataSEP(tglAwal, tglAkhir) {
+            Swal.fire({
+                icon: "info",
+                title: "Sedang mencarikan data...!!!\n Proses lama jika mencari lebih dari 10 hari",
+                showConfirmButton: true,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
             prosesCariDataLaporan = true;
             console.log(
                 "🚀 ~ reportPendaftaran ~ prosesCariDataLaporan:",

@@ -261,11 +261,11 @@ class PasienKominfoController extends Controller
         $jumlahBatal = count(array_filter($dataPendaftaranResponse, function ($item) {
             return isset($item['keterangan']) && strpos($item['keterangan'], 'DIBATALKAN PADA') !== false;
         }));
-        $jumlahSkip = count(array_filter($dataPendaftaranResponse, function ($item) {
-            return isset($item['keterangan']) && strpos($item['keterangan'], 'SKIP LOKET PENDAFTARAN') !== false;
+        $jumlahBatalUmum = count(array_filter($dataPendaftaranResponse, function ($item) {
+            return isset($item['keterangan']) && strpos($item['keterangan'], 'DIBATALKAN PADA') !== false && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
         }));
-        $jumlahTunggu = count(array_filter($dataPendaftaranResponse, function ($item) {
-            return isset($item['keterangan']) && strpos($item['keterangan'], 'MENUNGGU DIPANGGIL LOKET PENDAFTARAN') !== false;
+        $jumlahBatalBpjs = count(array_filter($dataPendaftaranResponse, function ($item) {
+            return isset($item['keterangan']) && strpos($item['keterangan'], 'DIBATALKAN PADA') !== false && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
         }));
         $jumlahNoUmum = count(array_filter($dataPendaftaranResponse, function ($item) {
             return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
@@ -281,6 +281,8 @@ class PasienKominfoController extends Controller
             'jumlah_no_bpjs' => (int) $jumlahNoBpjs,
             'jumlah_pasien' => (int) count($filteredData),
             'jumlah_pasien_batal' => (int) $jumlahBatal,
+            'jumlah_pasien_batal_UMUM' => (int) $jumlahBatalUmum,
+            'jumlah_pasien_batal_BPJS' => (int) $jumlahBatalBpjs,
             'jumlah_BPJS' => (int) $jumlahBPJS,
             'jumlah_BPJS_2' => (int) $jumlahBPJS2,
             'jumlah_UMUM' => (int) $jumlahUMUM,
@@ -311,8 +313,8 @@ class PasienKominfoController extends Controller
             ],
             'Jumlah Pasien Batal' => [
                 'total' => $jumlahBatal,
-                'bpjs' => 0,
-                'umum' => 0,
+                'bpjs' => $jumlahBatalBpjs,
+                'umum' => $jumlahBatalUmum,
             ],
             'Pasien Lama' => [
                 'total' => $jumlahLama,
