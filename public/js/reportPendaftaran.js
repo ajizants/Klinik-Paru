@@ -374,12 +374,12 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                             extend: "excelHtml5",
                             text: "Excel",
                             title:
-                                "Laporan Pendaftaran Tanggal: " +
+                                "Laporan Pasien Tanggal: " +
                                 tglA +
                                 " s.d. " +
                                 tglB,
                             filename:
-                                "Laporan Pendaftaran Tanggal: " +
+                                "Laporan Pasien Tanggal: " +
                                 tglA +
                                 "  s.d. " +
                                 tglB,
@@ -411,12 +411,12 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                             extend: "excelHtml5",
                             text: "Excel",
                             title:
-                                "Laporan Pendaftaran Tanggal: " +
+                                "Laporan Jumlah Pendaftaran Tanggal: " +
                                 tglA +
                                 " s.d. " +
                                 tglB,
                             filename:
-                                "Laporan Pendaftaran Tanggal " +
+                                "Laporan Jumlah Pendaftaran Tanggal " +
                                 tglA +
                                 " s.d. " +
                                 tglB,
@@ -430,61 +430,6 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                 .buttons()
                 .container()
                 .appendTo("#rekapTotal_wrapper .col-md-6:eq(0)");
-            // $("#total")
-            //     .DataTable({
-            //         data: mergedData,
-            //         columns: [
-            //             {
-            //                 data: "ket1",
-            //                 title: "Keterangan",
-            //                 className: "text-left",
-            //             },
-            //             {
-            //                 data: "val1",
-            //                 title: "Jumlah",
-            //                 className: "text-center",
-            //             },
-            //             {
-            //                 data: "ket2",
-            //                 title: "Keterangan",
-            //                 className: "text-left",
-            //             },
-            //             {
-            //                 data: "val2",
-            //                 title: "Jumlah",
-            //                 className: "text-center",
-            //             },
-            //         ],
-            //         autoWidth: false,
-            //         ordering: false,
-            //         paging: false,
-            //         searching: false,
-            //         info: false,
-            //         lengthChange: false,
-            //         buttons: [
-            //             {
-            //                 extend: "excelHtml5",
-            //                 text: "Excel",
-            //                 title:
-            //                     "Laporan Pendaftaran Tanggal: " +
-            //                     tglA +
-            //                     " s.d. " +
-            //                     tglB,
-            //                 filename:
-            //                     "Laporan Pendaftaran Tanggal " +
-            //                     tglA +
-            //                     " s.d. " +
-            //                     tglB,
-            //             },
-            //             {
-            //                 extend: "colvis",
-            //                 text: "Tampilkan Kolom",
-            //             },
-            //         ],
-            //     })
-            //     .buttons()
-            //     .container()
-            //     .appendTo("#total_wrapper .col-md-6:eq(0)");
 
             Swal.close();
             setTimeout(function () {
