@@ -1228,7 +1228,8 @@ class KominfoModel extends Model
             }
         }
 
-        $url = env('BASR_URL_KOMINFO', '') . '/ruang_tensi/get_data?id_ruang_tensi=2';
+        $url  = env('BASR_URL_KOMINFO', '') . '/ruang_tensi/get_data?id_ruang_tensi=2';
+        $url2 = env('BASR_URL_KOMINFO', '') . '/ruang_tensi/data_atas';
 
         try {
             $response = $client->request('POST', $url, [
@@ -1241,17 +1242,36 @@ class KominfoModel extends Model
                     'Cookie'       => $cookie,
                 ],
             ]);
+            $response2 = $client->request('POST', $url2, [
+                'form_params' => [
+                    'ruang_id' => 2,
+                    'length'   => 1000,
+                ],
+                'headers'     => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Cookie'       => $cookie,
+                ],
+            ]);
 
             // Check if the response status is 200
             if ($response->getStatusCode() !== 200) {
                 Log::error('Error response body: ' . (string) $response->getBody());
                 return response()->json(['error' => 'Internal Server Error'], 500);
             }
+            if ($response2->getStatusCode() !== 200) {
+                Log::error('Error response body: ' . (string) $response2->getBody());
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
 
-            $body = (string) $response->getBody();
-            $data = json_decode($body, true);
+            $body  = (string) $response->getBody();
+            $data  = json_decode($body, true);
+            $body2 = (string) $response2->getBody();
+            $data2 = json_decode($body2, true);
 
-            return $data;
+            return [
+                'dataAtas' => $data2,
+                'data'     => $data,
+            ];
 
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             // Handle network or request errors

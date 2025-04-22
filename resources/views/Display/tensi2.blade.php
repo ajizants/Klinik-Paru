@@ -461,11 +461,20 @@
             $('#socket-id').html(sessionID)
             console.log("Socket ID : " + sessionID)
         });
-
+        let count = 0;
         socketIO.on('reload', (msg) => {
             if (msg == 'paru_ruang_tensi') {
                 // reload_table();
                 getList();
+                count++;
+                if (count == 1) {
+                    alert('Tensi 1' + count)
+                } else if (count == 2) {
+                    alert('Tensi 1' + count)
+                } else if (count == 3) {
+                    alert('Tensi 1' + count)
+                    count = 0
+                }
             }
         });
     </script>

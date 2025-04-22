@@ -121,18 +121,28 @@ class DisplayController extends Controller
     {
         $listTunggu = [];
 
-        $client     = new KominfoModel();
-        $listTunggu = $client->getTungguTensi();
+        $client = new KominfoModel();
+        $data   = $client->getTungguTensi();
 
-        // return $listTunggu;
-        // Cek apakah $listTunggu adalah array dan tidak mengandung error
-        if (is_array($listTunggu) && ! isset($listTunggu['error'])) {
+        return $data;
+        // Cek apakah $data adalah array dan tidak mengandung error
+        if (is_array($data) && ! isset($data['error'])) {
             // Lakukan filter jika tidak ada error
-            $listTunggu = array_filter($listTunggu['data'], function ($item) {
+            $listTunggu = array_filter($data['data'], function ($item) {
                 return $item['keterangan'] !== 'SELESAI DIPANGGIL';
             });
+            $listSelesai = array_filter($data['data'], function ($item) {
+                return $item['keterangan'] === 'SELESAI DIPANGGIL';
+            });
+            $skip = array_filter($data['data'], function ($item) {
+                return $item['keterangan'] === 'SKIP';
+            });
         }
-        return $listTunggu;
+        return [
+            'tunggu'  => $listTunggu,
+            'selesai' => $listSelesai,
+            'skip'    => $skip,
+        ];
 
     }
 
