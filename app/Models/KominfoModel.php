@@ -1045,7 +1045,7 @@ class KominfoModel extends Model
     }
     public function login($username = null, $password = null)
     {
-        // dd("masuk");
+        dd("masuk");
         $username = $username ?? env('USERNAME_KOMINFO', '');
         $password = env('PASSWORD_KOMINFO', '');
         $client   = new Client();
@@ -1073,12 +1073,12 @@ class KominfoModel extends Model
         // Mengambil body response untuk memastikan login berhasil
         $body = $response->getBody();
         $data = json_decode($body, true);
-        DB::table('login_logs')->insert([
-            'username'   => $username,
-            'ip'         => request()->ip(),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // DB::table('login_logs')->insert([
+        //     'username'   => $username,
+        //     'ip'         => request()->ip(),
+        //     'created_at' => now(),
+        //     'updated_at' => now(),
+        // ]);
         if (isset($cookies[0])) {
                                                                                   // Set cookie di browser
             setcookie('kominfo_cookie', $cookies[0], time() + (86400 * 30), "/"); // Cookie akan kedaluwarsa dalam 30 hari
@@ -1270,6 +1270,7 @@ class KominfoModel extends Model
         $tanggal = $tgl . ' - ' . $tgl;
 
         if (! $cookie) {
+            dd($cookie);
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
             $cookie        = $loginResponse['cookies'][0] ?? null;
 

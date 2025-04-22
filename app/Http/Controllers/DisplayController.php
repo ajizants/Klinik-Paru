@@ -142,7 +142,7 @@ class DisplayController extends Controller
         $title = 'Daftar Tunggu Tensi';
         // Akses video dari folder yang di-share di jaringan
         $listTunggu = $this->listTungguTensi();
-        // return $data;
+        return $listTunggu;
         if (isset($listTunggu['response']['data']) && is_array($listTunggu['response']['data'])) {
             $filteredData = array_filter(array_map(function ($d) {
                 $d['status'] = 'belum';
@@ -159,7 +159,7 @@ class DisplayController extends Controller
         $params = [];
         $jadwal = $client->jadwalPoli($params);
 
-        return view('Display.tensi', compact('title', 'listTunggu', 'jadwal'));
+        return view('Display.tensi2', compact('title', 'listTunggu', 'jadwal'));
     }
 
     public function tungguLab()
