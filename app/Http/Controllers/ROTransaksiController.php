@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KunjunganWaktuSelesai;
+use App\Models\PegawaiModel;
 use App\Models\RoHasilModel;
 use App\Models\ROJenisKondisi;
 use App\Models\ROTransaksiHasilModel;
@@ -22,11 +23,11 @@ class ROTransaksiController extends Controller
 
     public function dataTransaksiRo(Request $request)
     {
-        $tglAwal  = $request->input('tglAwal');
+        $tglAwal = $request->input('tglAwal');
         $tglAkhir = $request->input('tglAkhir');
-        $norm     = $request->input('norm');
-        $norm     = str_pad($norm, 6, '0', STR_PAD_LEFT);
-        $data     = ROTransaksiModel::with('film', 'foto', 'proyeksi', 'mesin', 'kv', 'ma', 's')
+        $norm = $request->input('norm');
+        $norm = str_pad($norm, 6, '0', STR_PAD_LEFT);
+        $data = ROTransaksiModel::with('film', 'foto', 'proyeksi', 'mesin', 'kv', 'ma', 's')
             ->when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
                 return $query->where('norm', $norm);
             })
@@ -42,33 +43,33 @@ class ROTransaksiController extends Controller
     public function addTransaksiRo(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'notrans'        => 'required',
-            'norm'           => 'required',
-            'nama'           => 'required',
-            'alamat'         => 'required',
-            'tgltrans'       => 'required|date_format:Y-m-d',
-            'noreg'          => 'required',
-            'pasienRawat'    => 'required',
-            'kdFoto'         => 'required',
-            'kdFilm'         => 'required',
-            'ma'             => 'required',
-            'kv'             => 'required',
-            's'              => 'required',
-            'jmlExpose'      => 'required',
+            'notrans' => 'required',
+            'norm' => 'required',
+            'nama' => 'required',
+            'alamat' => 'required',
+            'tgltrans' => 'required|date_format:Y-m-d',
+            'noreg' => 'required',
+            'pasienRawat' => 'required',
+            'kdFoto' => 'required',
+            'kdFilm' => 'required',
+            'ma' => 'required',
+            'kv' => 'required',
+            's' => 'required',
+            'jmlExpose' => 'required',
             'jmlFilmDipakai' => 'required',
-            'jmlFilmRusak'   => 'required',
-            'kdMesin'        => 'required',
-            'kdProyeksi'     => 'required',
-            'layanan'        => 'required',
-            'p_rontgen'      => 'required',
-            'dokter'         => 'required',
-            'jk'             => 'required',
+            'jmlFilmRusak' => 'required',
+            'kdMesin' => 'required',
+            'kdProyeksi' => 'required',
+            'layanan' => 'required',
+            'p_rontgen' => 'required',
+            'dokter' => 'required',
+            'jk' => 'required',
         ]);
 
         // Jika validasi gagal, kembalikan respons dengan pesan error
         if ($validator->fails()) {
             return response()->json([
-                'errors'  => $validator->errors(),
+                'errors' => $validator->errors(),
                 'message' => 'Data belum lengkap. Mohon lengkapi semua data yang diperlukan.',
             ], 400);
         }
@@ -80,17 +81,17 @@ class ROTransaksiController extends Controller
             $msgFile = '';
             // Cari data berdasarkan notrans
             $transaksi = ROTransaksiModel::where('notrans', $request->input('notrans'))->first();
-            if (! $transaksi) {
+            if (!$transaksi) {
                 // Jika tidak ada, buat entitas baru
-                $transaksi          = new ROTransaksiModel();
+                $transaksi = new ROTransaksiModel();
                 $transaksi->notrans = $request->input('notrans');
-                $massage            = 'Transaksi Baru...!!';
+                $massage = 'Transaksi Baru...!!';
             } else {
                 $massage = 'Transaksi Update...!!';
             }
-            $tglTrans        = $request->input('tgltrans'); // Assuming tglTrans is in 'Y-m-d' format
-            $currentDateTime = Carbon::now();               // Get current date and time
-            $today           = $currentDateTime->format('Y-m-d');
+            $tglTrans = $request->input('tgltrans'); // Assuming tglTrans is in 'Y-m-d' format
+            $currentDateTime = Carbon::now(); // Get current date and time
+            $today = $currentDateTime->format('Y-m-d');
 
             // Check if today's date is not the same as tglTrans
             if ($today !== $tglTrans) {
@@ -102,30 +103,30 @@ class ROTransaksiController extends Controller
             }
 
             // Isi properti model dengan data dari permintaan
-            $transaksi->norm           = $request->input('norm');
-            $transaksi->nama           = $request->input('nama');
-            $transaksi->alamat         = $request->input('alamat');
-            $transaksi->jk             = $request->input('jk');
-            $transaksi->tgltrans       = $request->input('tgltrans');
-            $transaksi->noreg          = $request->input('noreg');
-            $transaksi->pasienRawat    = $request->input('pasienRawat');
-            $transaksi->kdFoto         = $request->input('kdFoto');
-            $transaksi->kdFilm         = $request->input('kdFilm');
-            $transaksi->ma             = $request->input('ma');
-            $transaksi->kv             = $request->input('kv');
-            $transaksi->s              = $request->input('s');
-            $transaksi->jmlExpose      = $request->input('jmlExpose');
+            $transaksi->norm = $request->input('norm');
+            $transaksi->nama = $request->input('nama');
+            $transaksi->alamat = $request->input('alamat');
+            $transaksi->jk = $request->input('jk');
+            $transaksi->tgltrans = $request->input('tgltrans');
+            $transaksi->noreg = $request->input('noreg');
+            $transaksi->pasienRawat = $request->input('pasienRawat');
+            $transaksi->kdFoto = $request->input('kdFoto');
+            $transaksi->kdFilm = $request->input('kdFilm');
+            $transaksi->ma = $request->input('ma');
+            $transaksi->kv = $request->input('kv');
+            $transaksi->s = $request->input('s');
+            $transaksi->jmlExpose = $request->input('jmlExpose');
             $transaksi->jmlFilmDipakai = $request->input('jmlFilmDipakai');
-            $transaksi->jmlFilmRusak   = $request->input('jmlFilmRusak');
-            $transaksi->kdMesin        = $request->input('kdMesin');
-            $transaksi->kdProyeksi     = $request->input('kdProyeksi');
-            $transaksi->catatan        = $request->input('catatan');
-            $transaksi->layanan        = $request->input('layanan');
-            $transaksi->selesai        = 1;
-            $transaksi->kdKondisiRo    = 55;
-            $transaksi->created_at     = $tanggal;
-            $transaksi->updated_at     = $tanggal;
-            $id                        = "";
+            $transaksi->jmlFilmRusak = $request->input('jmlFilmRusak');
+            $transaksi->kdMesin = $request->input('kdMesin');
+            $transaksi->kdProyeksi = $request->input('kdProyeksi');
+            $transaksi->catatan = $request->input('catatan');
+            $transaksi->layanan = $request->input('layanan');
+            $transaksi->selesai = 1;
+            $transaksi->kdKondisiRo = 55;
+            $transaksi->created_at = $tanggal;
+            $transaksi->updated_at = $tanggal;
+            $id = "";
 
             if ($request->hasFile('gambar')) {
                 if ($request->input('ket_foto') == '') {
@@ -137,7 +138,7 @@ class ROTransaksiController extends Controller
 
                 // $id = $tanggalBersih . '_' . $request->input('norm') . '_' . $ket_foto;
                 $dataRO = ROTransaksiHasilModel::orderBy('id', 'desc')->first();
-                $id     = $dataRO->id + 1;
+                $id = $dataRO->id + 1;
                 // dd($id);
                 $namaFile = $tanggalBersih . '_' . $request->input('norm') . '_' . $ket_foto . $request->input('foto') . '.' . pathinfo($request->file('gambar')->getClientOriginalName(), PATHINFO_EXTENSION);
             } else {
@@ -148,13 +149,14 @@ class ROTransaksiController extends Controller
 
             // Simpan transaksi petugas, cari data berdasarkan notrans, jika ada update, jika tidak ada create
             $petugas = TransPetugasModel::where('notrans', $request->input('notrans'))->first();
-            if (! $petugas) {
-                $petugas          = new TransPetugasModel();
+            if (!$petugas) {
+                $petugas = new TransPetugasModel();
                 $petugas->notrans = $request->input('notrans');
             }
 
             $petugas->p_dokter_poli = $request->input('dokter');
-            $petugas->p_rontgen     = $request->input('p_rontgen');
+            $petugas->p_rontgen = $request->input('p_rontgen');
+            $petugas->p_rontgen_evaluator = $request->input('p_rontgen_evaluator');
 
             // Simpan data petugas ke dalam database
             $petugas->save();
@@ -173,49 +175,49 @@ class ROTransaksiController extends Controller
                         ->first();
                     // dd($upload);
 
-                    if (! $upload) {
+                    if (!$upload) {
                         // Jika tidak ada data, buat entitas baru
-                        $upload          = new ROTransaksiHasilModel();
-                        $upload->id      = $id;
-                        $upload->norm    = $request->input('norm');
+                        $upload = new ROTransaksiHasilModel();
+                        $upload->id = $id;
+                        $upload->norm = $request->input('norm');
                         $upload->tanggal = $request->input('tgltrans');
-                        $upload->nama    = $request->input('nama');
-                        $upload->foto    = $namaFile;
+                        $upload->nama = $request->input('nama');
+                        $upload->foto = $namaFile;
 
                         // Upload gambar karena data belum ada
-                        $file     = $request->file('gambar');
+                        $file = $request->file('gambar');
                         $fileName = $file->getClientOriginalName();
                         $filePath = $file->getPathname();
-                        $jenis    = $request->input('ket_foto');
+                        $jenis = $request->input('ket_foto');
                         // dd($jenis);
 
                         $param = [
                             [
-                                'name'     => 'id',
+                                'name' => 'id',
                                 'contents' => $id,
                             ],
                             [
-                                'name'     => 'norm',
+                                'name' => 'norm',
                                 'contents' => $request->input('norm'),
                             ],
                             [
-                                'name'     => 'notrans',
+                                'name' => 'notrans',
                                 'contents' => $request->input('notrans'),
                             ],
                             [
-                                'name'     => 'tanggal',
+                                'name' => 'tanggal',
                                 'contents' => $request->input('tgltrans'),
                             ],
                             [
-                                'name'     => 'nama',
+                                'name' => 'nama',
                                 'contents' => $request->input('nama'),
                             ],
                             [
-                                'name'     => 'jenis',
+                                'name' => 'jenis',
                                 'contents' => $jenis,
                             ],
                             [
-                                'name'     => 'foto',
+                                'name' => 'foto',
                                 'contents' => fopen($filePath, 'r'),
                                 'filename' => $fileName,
                             ],
@@ -236,7 +238,7 @@ class ROTransaksiController extends Controller
                         ->where('foto', $namaFile)
                         ->first();
 
-                    if (! $upload) {
+                    if (!$upload) {
                         $ket_upload = 'Tidak ada foto thorax yang dipilih untuk di upload';
                     } else {
                         $ket_upload = 'Sudah ada foto thorax yang diupload';
@@ -246,10 +248,10 @@ class ROTransaksiController extends Controller
                 $resMsg = [
                     'metadata' => [
                         'message' => 'Data berhasil disimpan',
-                        'status'  => 200,
+                        'status' => 200,
                     ],
-                    'data'     => [
-                        'transaksi'   => $massage,
+                    'data' => [
+                        'transaksi' => $massage,
                         'foto_thorax' => $ket_upload,
                     ],
                 ];
@@ -285,12 +287,12 @@ class ROTransaksiController extends Controller
                 ->whereDate('tgltrans', $tanggal)
                 ->first();
 
-            if (! $transaksi) {
+            if (!$transaksi) {
                 return response()->json(['message' => 'Data transaksi tidak ditemukan'], 404);
             }
 
             $norm = $transaksi->norm;
-            $tgl  = $transaksi->tgltrans;
+            $tgl = $transaksi->tgltrans;
 
             // Ambil data foto thorax
             $hasilFoto = ROTransaksiHasilModel::where('norm', $norm)
@@ -334,11 +336,11 @@ class ROTransaksiController extends Controller
         try {
             $gambar = ROTransaksiHasilModel::find($params['id']);
 
-            if (! $gambar) {
+            if (!$gambar) {
                 return response()->json([
                     'metadata' => [
                         'message' => 'Data gambar tidak ditemukan',
-                        'status'  => 404,
+                        'status' => 404,
                     ],
                 ], 404);
             }
@@ -361,7 +363,7 @@ class ROTransaksiController extends Controller
             $msg = [
                 'metadata' => [
                     'message' => $res['message'] ?? 'Gambar berhasil dihapus',
-                    'status'  => 200,
+                    'status' => 200,
                 ],
             ];
 
@@ -373,7 +375,7 @@ class ROTransaksiController extends Controller
             $msg = [
                 'metadata' => [
                     'message' => 'Terjadi kesalahan saat menghapus gambar: ' . $e->getMessage(),
-                    'status'  => 500,
+                    'status' => 500,
                 ],
             ];
         }
@@ -385,11 +387,11 @@ class ROTransaksiController extends Controller
     {
         // Sanitize the date by removing non-numeric characters
         $tanggalBersih = preg_replace("/[^0-9]/", "", $request->input('tgltrans'));
-        $dataRO        = ROTransaksiHasilModel::orderBy('id', 'desc')->first();
-        $id            = $dataRO->id + 1;
+        $dataRO = ROTransaksiHasilModel::orderBy('id', 'desc')->first();
+        $id = $dataRO->id + 1;
         // Construct the new file name
         $namaFile = $tanggalBersih . '_' . $request->input('norm') . '_' . $request->input('ket_foto') . $request->input('foto') . '.' . $request->file('gambar')->getClientOriginalExtension();
-        $key      = pathinfo($namaFile, PATHINFO_FILENAME);
+        $key = pathinfo($namaFile, PATHINFO_FILENAME);
         // dd($namaFile);
         // Find the existing record by ID
         $dataFoto = ROTransaksiHasilModel::where('norm', $request->input('norm'))
@@ -400,45 +402,45 @@ class ROTransaksiController extends Controller
 
         if ($dataFoto) {
             // Update the record with new data
-            $dataFoto->norm    = $request->input('norm');
+            $dataFoto->norm = $request->input('norm');
             $dataFoto->tanggal = $request->input('tgltrans');
-            $dataFoto->nama    = $request->input('nama');
-            $dataFoto->foto    = $namaFile;
+            $dataFoto->nama = $request->input('nama');
+            $dataFoto->foto = $namaFile;
 
             // Upload gambar karena data belum ada
-            $file     = $request->file('gambar');
+            $file = $request->file('gambar');
             $fileName = $file->getClientOriginalName();
             $filePath = $file->getPathname();
-            $jenis    = $request->input('ket_foto');
+            $jenis = $request->input('ket_foto');
             // dd($jenis);
 
             $param = [
                 [
-                    'name'     => 'id',
+                    'name' => 'id',
                     'contents' => $id,
                 ],
                 [
-                    'name'     => 'norm',
+                    'name' => 'norm',
                     'contents' => $request->input('norm'),
                 ],
                 [
-                    'name'     => 'notrans',
+                    'name' => 'notrans',
                     'contents' => $request->input('notrans'),
                 ],
                 [
-                    'name'     => 'tanggal',
+                    'name' => 'tanggal',
                     'contents' => $request->input('tgltrans'),
                 ],
                 [
-                    'name'     => 'nama',
+                    'name' => 'nama',
                     'contents' => $request->input('nama'),
                 ],
                 [
-                    'name'     => 'jenis',
+                    'name' => 'jenis',
                     'contents' => $jenis,
                 ],
                 [
-                    'name'     => 'foto',
+                    'name' => 'foto',
                     'contents' => fopen($filePath, 'r'),
                     'filename' => $fileName,
                 ],
@@ -450,7 +452,7 @@ class ROTransaksiController extends Controller
             $resMsg = [
                 // 'metadata' => [
                 'message' => $keterangan_upload['message'],
-                'status'  => 200,
+                'status' => 200,
                 // ],
             ];
             // Save the updated record to the database RS Paru
@@ -467,7 +469,7 @@ class ROTransaksiController extends Controller
     {
         try {
             $norm = $request->input('norm');
-            $tgl  = $request->input('tgltrans');
+            $tgl = $request->input('tgltrans');
             $data = RoHasilModel::when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
                 return $query->where('norm', $norm);
             })
@@ -477,16 +479,16 @@ class ROTransaksiController extends Controller
             if ($data->isEmpty()) {
                 $res = [
                     'message' => 'Data Foto Thorax pada Pasien dengan Norm: <u><b>' . $norm . '</b></u> tidak ditemukan,<br> Jika pasien melakukan Foto Thorax di KKPM, silahkan Menghubungi Bagian Radiologi. Terima Kasih..."',
-                    'status'  => 404,
+                    'status' => 404,
                 ];
                 return response()->json($res, 404, [], JSON_PRETTY_PRINT);
             } else {
                 $res = [
                     'metadata' => [
                         'message' => 'Data foto thorax ditemukan',
-                        'status'  => 200,
+                        'status' => 200,
                     ],
-                    'data'     => $data,
+                    'data' => $data,
                 ];
             }
             return response()->json($res, 200, [], JSON_PRETTY_PRINT);
@@ -495,7 +497,7 @@ class ROTransaksiController extends Controller
 
             return response()->json([
                 'message' => 'Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.',
-                'status'  => 500,
+                'status' => 500,
             ], 500, [], JSON_PRETTY_PRINT);
 
         }
@@ -504,8 +506,8 @@ class ROTransaksiController extends Controller
 
     public function logBook(Request $request)
     {
-        $norm     = $request->input('norm');
-        $tglAwal  = $request->input('tglAwal');
+        $norm = $request->input('norm');
+        $tglAwal = $request->input('tglAwal');
         $tglAkhir = $request->input('tglAkhir');
 
         if (Carbon::parse($tglAwal)->lessThanOrEqualTo(Carbon::parse('2024-06-01'))) {
@@ -527,10 +529,10 @@ class ROTransaksiController extends Controller
         }
 
         // Ambil semua kode kondisi sekaligus untuk mengurangi query berulang
-        $kodeKondisi  = collect($data)->pluck('kv')->merge($data->pluck('ma'))->merge($data->pluck('s'))->unique()->filter();
+        $kodeKondisi = collect($data)->pluck('kv')->merge($data->pluck('ma'))->merge($data->pluck('s'))->unique()->filter();
         $jenisKondisi = ROJenisKondisi::whereIn('kdKondisiRo', $kodeKondisi)->get()->keyBy('kdKondisiRo');
 
-        $res    = [];
+        $res = [];
         $jumlah = [
             ["nama" => "AMBARSARI, Amd.Rad.", "nip" => "197404231998032006", "jml" => 0],
             ["nama" => "NOFI INDRIYANI, Amd.Rad.", "nip" => "199009202011012001", "jml" => 0],
@@ -555,7 +557,7 @@ class ROTransaksiController extends Controller
 
             // Tentukan proyeksi
             $kdProyeksi = optional($d->proyeksi)->kdProyeksi;
-            $proy       = $kdProyeksi ? optional($d->proyeksi)->proyeksi : implode(', ', array_filter([
+            $proy = $kdProyeksi ? optional($d->proyeksi)->proyeksi : implode(', ', array_filter([
                 $d['pa'] ? 'pa' : null,
                 $d['ap'] ? 'ap' : null,
                 $d['lateral'] ? 'lateral' : null,
@@ -563,58 +565,58 @@ class ROTransaksiController extends Controller
             ]));
 
             // Tentukan alamat
-            $pasien     = $pasienData[$d['norm']] ?? null;
-            $alamatFix  = $pasien ? "{$pasien->kelurahan}, {$pasien->rtrw}, {$pasien->kecamatan}, {$pasien->kabupaten}" : $d['alamat'];
+            $pasien = $pasienData[$d['norm']] ?? null;
+            $alamatFix = $pasien ? "{$pasien->kelurahan}, {$pasien->rtrw}, {$pasien->kecamatan}, {$pasien->kabupaten}" : $d['alamat'];
             $namaPasien = $pasien->nama ?? $d['nama'];
-            $jkPasien   = $pasien->jkel ?? $d['jk'];
+            $jkPasien = $pasien->jkel ?? $d['jk'];
 
             $res[] = [
-                "notrans"          => $d['notrans'],
-                "norm"             => $d['norm'],
-                "nama"             => $d['nama'],
-                "alamatDbOld"      => $d['alamat'],
-                "jkel"             => $d['jk'],
+                "notrans" => $d['notrans'],
+                "norm" => $d['norm'],
+                "nama" => $d['nama'],
+                "alamatDbOld" => $d['alamat'],
+                "jkel" => $d['jk'],
                 // "nama"             => $namaPasien,
                 // "alamatDbOld"      => $alamatFix,
                 // "jkel"             => $jkPasien,
-                "tgltrans"         => $d['tgltrans'],
-                "ktujuan"          => $d['ktujuan'],
-                "pasienRawat"      => $d['pasienRawat'],
-                "noreg"            => $d['noreg'],
-                "jmlExpose"        => $d['jmlExpose'],
-                "jmlFilmDipakai"   => $d['jmlFilmDipakai'],
-                "jmlFilmRusak"     => $d['jmlFilmRusak'],
-                "catatan"          => $d['catatan'],
-                "selesai"          => $d['selesai'],
-                "layanan"          => $d['layanan'],
-                "kdLayanan"        => optional($d->kunjungan)->kkelompok,
-                "file"             => $d['file'],
-                "noktp"            => optional($d->pasien)->noktp,
-                "domisili"         => optional($d->pasien)->alamat,
-                "jeniskel"         => optional($d->pasien)->jeniskel,
-                "tmptlahir"        => optional($d->pasien)->tmptlahir,
-                "tgllahir"         => optional($d->pasien)->tgllahir,
-                "umur"             => optional($d->pasien)->umur,
-                "nohp"             => optional($d->pasien)->nohp,
-                "rtrw"             => optional($d->pasien)->rtrw,
-                "provinsi"         => optional($d->pasien)->provinsi,
-                "kabupaten"        => optional($d->pasien)->kabupaten,
-                "kecamatan"        => optional($d->pasien)->kecamatan,
-                "kelurahan"        => optional($d->pasien)->kelurahan,
-                "kdFoto"           => optional($d->foto)->kdFoto,
-                "nmFoto"           => optional($d->foto)->nmFoto,
-                "kdKv"             => $d['kv'],
-                "kdMa"             => $d['ma'],
-                "KdS"              => $d['s'],
-                "kdKondisiRo"      => $d['kdKondisiRo'],
-                "kondisiRo"        => $d['kondisiRo'],
-                "kdFilm"           => optional($d->film)->kdFilm,
-                "ukuranFilm"       => optional($d->film)->ukuranFilm,
-                "kdProyeksi"       => $kdProyeksi,
-                "proyeksi"         => $proy,
-                "kdMesin"          => optional($d->mesin)->kdMesin,
-                "nmMesin"          => optional($d->mesin)->nmMesin,
-                "p_rontgen"        => optional($d->radiografer)->p_rontgen,
+                "tgltrans" => $d['tgltrans'],
+                "ktujuan" => $d['ktujuan'],
+                "pasienRawat" => $d['pasienRawat'],
+                "noreg" => $d['noreg'],
+                "jmlExpose" => $d['jmlExpose'],
+                "jmlFilmDipakai" => $d['jmlFilmDipakai'],
+                "jmlFilmRusak" => $d['jmlFilmRusak'],
+                "catatan" => $d['catatan'],
+                "selesai" => $d['selesai'],
+                "layanan" => $d['layanan'],
+                "kdLayanan" => optional($d->kunjungan)->kkelompok,
+                "file" => $d['file'],
+                "noktp" => optional($d->pasien)->noktp,
+                "domisili" => optional($d->pasien)->alamat,
+                "jeniskel" => optional($d->pasien)->jeniskel,
+                "tmptlahir" => optional($d->pasien)->tmptlahir,
+                "tgllahir" => optional($d->pasien)->tgllahir,
+                "umur" => optional($d->pasien)->umur,
+                "nohp" => optional($d->pasien)->nohp,
+                "rtrw" => optional($d->pasien)->rtrw,
+                "provinsi" => optional($d->pasien)->provinsi,
+                "kabupaten" => optional($d->pasien)->kabupaten,
+                "kecamatan" => optional($d->pasien)->kecamatan,
+                "kelurahan" => optional($d->pasien)->kelurahan,
+                "kdFoto" => optional($d->foto)->kdFoto,
+                "nmFoto" => optional($d->foto)->nmFoto,
+                "kdKv" => $d['kv'],
+                "kdMa" => $d['ma'],
+                "KdS" => $d['s'],
+                "kdKondisiRo" => $d['kdKondisiRo'],
+                "kondisiRo" => $d['kondisiRo'],
+                "kdFilm" => optional($d->film)->kdFilm,
+                "ukuranFilm" => optional($d->film)->ukuranFilm,
+                "kdProyeksi" => $kdProyeksi,
+                "proyeksi" => $proy,
+                "kdMesin" => optional($d->mesin)->kdMesin,
+                "nmMesin" => optional($d->mesin)->nmMesin,
+                "p_rontgen" => optional($d->radiografer)->p_rontgen,
                 "radiografer_nama" => optional($d->radiografer->radiografer)->nama ? optional($d->radiografer->radiografer)->nama . ", Amd.Rad." : null,
             ];
 
@@ -666,8 +668,8 @@ class ROTransaksiController extends Controller
 
         // Inisialisasi total
         $totalFilmDipakai = 0;
-        $totalExpose      = 0;
-        $totalRusak       = 0;
+        $totalExpose = 0;
+        $totalRusak = 0;
 
         foreach ($data as $index => $d) {
             $html .= "<tr>
@@ -698,14 +700,14 @@ class ROTransaksiController extends Controller
         }
 
         // Hitung jumlah PA & AP
-        $jumlahPA     = collect($data)->where('proyeksi', 'PA')->count();
-        $jumlahAP     = collect($data)->where('proyeksi', 'AP')->count();
-        $jumlahLat    = collect($data)->where('proyeksi', 'Lateral')->count();
-        $jumlahOB     = collect($data)->where('proyeksi', 'Obliq')->count();
+        $jumlahPA = collect($data)->where('proyeksi', 'PA')->count();
+        $jumlahAP = collect($data)->where('proyeksi', 'AP')->count();
+        $jumlahLat = collect($data)->where('proyeksi', 'Lateral')->count();
+        $jumlahOB = collect($data)->where('proyeksi', 'Obliq')->count();
         $jmlIndoray_1 = collect($data)->where('nmMesin', 'Indoray 1')->count();
         $jmlIndoray_2 = collect($data)->where('nmMesin', 'Indoray 2')->count();
-        $petugas_1    = collect($data)->where('p_rontgen', '197404231998032006')->count();
-        $petugas_2    = collect($data)->where('p_rontgen', '199009202011012001')->count();
+        $petugas_1 = collect($data)->where('p_rontgen', '197404231998032006')->count();
+        $petugas_2 = collect($data)->where('p_rontgen', '199009202011012001')->count();
 
         $html .= '
             <tr class="bg bg-secondary font-weight-bold">
@@ -736,7 +738,7 @@ class ROTransaksiController extends Controller
 
     public function cariTransaksiRo(Request $request)
     {
-        $tgl  = $request->input('tgl', date('Y-m-d'));
+        $tgl = $request->input('tgl', date('Y-m-d'));
         $norm = $request->input('norm');
 
         // Query untuk mendapatkan data transaksi berdasarkan tanggal dan norm
@@ -747,11 +749,11 @@ class ROTransaksiController extends Controller
             ->where('tglTrans', $tgl)
             ->first();
 
-        if (! $data) {
+        if (!$data) {
             return response()->json([
                 'metadata' => [
                     'message' => 'Data transaksi tidak ditemukan',
-                    'status'  => 404,
+                    'status' => 404,
                 ],
             ], 404, [], JSON_PRETTY_PRINT);
         }
@@ -761,11 +763,11 @@ class ROTransaksiController extends Controller
         // Query untuk mendapatkan data petugas berdasarkan nilai 'notrans'
         $data_petugas = TransPetugasModel::where('notrans', $notrans)->first();
 
-        if (! $data_petugas) {
+        if (!$data_petugas) {
             $petugas = [
                 'metadata' => [
                     'message' => 'Data petugas tidak ditemukan',
-                    'status'  => 404,
+                    'status' => 404,
                 ],
             ];
         } else {
@@ -781,11 +783,11 @@ class ROTransaksiController extends Controller
                 ->whereDate('tanggal', $tgl)
                 ->get();
 
-            if (! $data_foto) {
+            if (!$data_foto) {
                 $foto = [
                     'metadata' => [
                         'message' => 'Data foto thorax tidak ditemukan',
-                        'status'  => 404,
+                        'status' => 404,
                     ],
                 ];
             } else {
@@ -795,8 +797,8 @@ class ROTransaksiController extends Controller
             $foto = [
                 'metadata' => [
                     'message' => 'Terjadi kesalahan pada koneksi database',
-                    'status'  => 500,
-                    'error'   => $e->getMessage(),
+                    'status' => 500,
+                    'error' => $e->getMessage(),
                 ],
             ];
         }
@@ -806,12 +808,12 @@ class ROTransaksiController extends Controller
         $response = [
             'metadata' => [
                 'message' => 'Data Transaksi Ditemukan',
-                'status'  => 200,
+                'status' => 200,
             ],
-            'data'     => [
+            'data' => [
                 'transaksi_ro' => $data,
-                'petugas'      => $petugas, // This will now be an object instead of an array
-                'foto_thorax'  => $foto,    // This will now be an object instead of an array
+                'petugas' => $petugas, // This will now be an object instead of an array
+                'foto_thorax' => $foto, // This will now be an object instead of an array
             ],
         ];
 
@@ -833,7 +835,7 @@ class ROTransaksiController extends Controller
                 return response()->json([
                     'metadata' => [
                         'message' => 'Pasien a.n.' . $request->input('nama') . ' - ' . $request->input('norm') . ' berhasil di konsulkan ke dokter Sp. Rad.',
-                        'status'  => 200,
+                        'status' => 200,
                     ],
                 ], 200, [], JSON_PRETTY_PRINT);
             }
@@ -841,7 +843,7 @@ class ROTransaksiController extends Controller
             return response()->json([
                 'metadata' => [
                     'message' => 'Data transaksi tidak ditemukan',
-                    'status'  => 404,
+                    'status' => 404,
                 ],
             ], 404, [], JSON_PRETTY_PRINT);
 
@@ -851,10 +853,196 @@ class ROTransaksiController extends Controller
             return response()->json([
                 'metadata' => [
                     'message' => 'Terjadi kesalahan pada koneksi database',
-                    'status'  => 500,
-                    'error'   => $th->getMessage(),
+                    'status' => 500,
+                    'error' => $th->getMessage(),
                 ],
             ], 500, [], JSON_PRETTY_PRINT);
         }
     }
+
+    public function rekapKegiatan(Request $request)
+    {
+        $tglAwal = $request->input('tglAwal') ?? Carbon::now()->format('Y-m-d');
+        $tglAkhir = $request->input('tglAkhir') ?? Carbon::now()->format('Y-m-d');
+
+        if (Carbon::parse($tglAwal)->lessThanOrEqualTo(Carbon::parse('2024-06-01'))) {
+            return response()->json(['message' => 'Data transaksi sebelum 2024-06-24 tidak ditemukan, cari di Aplikasi lama : RSPARU'], 404, [], JSON_PRETTY_PRINT);
+        }
+
+        $data = ROTransaksiModel::with([
+            'radiografer.radiografer', 'evaluator.evaluator',
+        ])
+            ->whereBetween('tgltrans', [$tglAwal, $tglAkhir])
+            ->orderBy('tgltrans')->orderBy('notrans', 'desc')
+            ->get();
+
+        if ($data->isEmpty()) {
+            return response()->json(['message' => 'Data transaksi tidak ditemukan'], 404, [], JSON_PRETTY_PRINT);
+        }
+
+        $dataRadiografers = $this->getRadiografer();
+        $prosesJumlah = $this->prosesJumlah($data);
+        // return [$prosesJumlah, $dataRadiografers];
+
+        // Mulai pembuatan tabel HTML
+        $html = '<table class="table table-bordered" id="reportTable">
+                <thead class="bg bg-secondary">
+                    <tr>
+                        <th rowspan="2">Tanggal</th>';
+
+        // Header nama radiografer dengan colspan 3
+        foreach ($dataRadiografers as $radiografer) {
+            $html .= '<th colspan="3" class="text-center">' . $radiografer['nama'] . '</th>';
+        }
+
+        $html .= '
+                    <th rowspan="2">Jumlah Pasien</th>
+                    <th rowspan="2">Catatan</th>
+                </tr>
+                <tr>';
+
+        // Sub kolom tetap untuk setiap radiografer
+        foreach ($dataRadiografers as $radiografer) {
+            $html .= '<th>Mutu CR</th>
+                  <th>Persiapan RO</th>
+                  <th>Pelaksanaan RO</th>';
+        }
+
+        $html .= '
+                </tr>
+            </thead>
+            <tbody>';
+
+        // Menambahkan baris per tanggal
+        foreach ($prosesJumlah['persiapan_ro'] as $tanggal => $radiograferData) {
+            $html .= '<tr>';
+            $html .= '<td>' . $tanggal . '</td>';
+
+            // Menambahkan data radiografer per tanggal
+            foreach ($dataRadiografers as $radiografer) {
+                $radiograferNip = $radiografer['nip'];
+
+                // Mencari jumlah persiapan
+                $persiapan = '-';
+                if (isset($prosesJumlah['persiapan_ro'][$tanggal])) {
+                    foreach ($prosesJumlah['persiapan_ro'][$tanggal] as $item) {
+                        if ($item['nip'] == $radiograferNip) {
+                            $persiapan = $item['jumlah'];
+                            break;
+                        }
+                    }
+                }
+
+                // Mencari jumlah pelaksanaan
+                $pelaksanaan = '-';
+                if (isset($prosesJumlah['pelaksanaan_ro'][$tanggal])) {
+                    foreach ($prosesJumlah['pelaksanaan_ro'][$tanggal] as $item) {
+                        if ($item['nip'] == $radiograferNip) {
+                            $pelaksanaan = $item['jumlah'];
+                            break;
+                        }
+                    }
+                }
+
+                // Mencari mutu CR (saat ini kosong, jadi nilai tetap 0)
+                $mutuCr = '-'; // Seperti yang terlihat, 'mutu_cr' tidak ada datanya pada contoh yang diberikan
+
+                // Menambahkan kolom jumlah untuk radiografer
+                $html .= '<td>' . $mutuCr . '</td>';
+                $html .= '<td>' . $persiapan . '</td>';
+                $html .= '<td>' . $pelaksanaan . '</td>';
+            }
+
+            // Menambahkan kolom jumlah pasien (jumlah evaluator) dan catatan
+            $totalPasien = array_sum(array_column($radiograferData, 'jumlah')); // Jumlah pasien untuk evaluator
+            $html .= '<td>' . $totalPasien . '</td>';
+            $html .= '<td>-</td>'; // Kolom catatan kosong
+
+            $html .= '</tr>';
+        }
+
+        $html .= '
+            </tbody>
+        </table>';
+
+        return $html;
+
+    }
+
+    public function getRadiografer()
+    {
+        $pegawai = PegawaiModel::with(['biodata', 'jabatan'])->where('kd_jab', 12)->get();
+        $dataRadiografer = [];
+        foreach ($pegawai as $index => $d) {
+            $dataRadiografer[] = [
+                'nip' => $d->nip,
+                'nama' => $d->gelar_d
+                ? $d->gelar_d . ' ' . $d->biodata->nama . ' ' . $d->gelar_b
+                : $d->biodata->nama . ' ' . $d->gelar_b,
+                'jabatan' => $d->jabatan->nm_jabatan,
+            ];
+        }
+        return $dataRadiografer;
+    }
+
+    public function prosesJumlah($data)
+    {
+        // Inisialisasi array penampung per tanggal
+        $radiograferCount = [];
+        $evaluatorCount = [];
+
+        foreach ($data as $item) {
+            // Ambil tanggal transaksi
+            $tanggal = $item->tgltrans;
+
+            // Hitung Radiografer per tanggal
+            $nipRadiografer = $item->radiografer->radiografer->nip ?? null;
+            if ($nipRadiografer) {
+                if (!isset($radiograferCount[$tanggal])) {
+                    $radiograferCount[$tanggal] = [];
+                }
+                if (!isset($radiograferCount[$tanggal][$nipRadiografer])) {
+                    $radiograferCount[$tanggal][$nipRadiografer] = [
+                        'nip' => $nipRadiografer,
+                        'nama' => $item->radiografer->radiografer->nama ?? '-',
+                        'jumlah' => 0,
+                    ];
+                }
+                $radiograferCount[$tanggal][$nipRadiografer]['jumlah']++;
+            }
+
+            // Hitung Evaluator per tanggal
+            $nipEvaluator = $item->evaluator->evaluator->nip ?? null;
+            if ($nipEvaluator) {
+                if (!isset($evaluatorCount[$tanggal])) {
+                    $evaluatorCount[$tanggal] = [];
+                }
+                if (!isset($evaluatorCount[$tanggal][$nipEvaluator])) {
+                    $evaluatorCount[$tanggal][$nipEvaluator] = [
+                        'nip' => $nipEvaluator,
+                        'nama' => $item->evaluator->evaluator->nama ?? '-',
+                        'jumlah' => 0,
+                    ];
+                }
+                $evaluatorCount[$tanggal][$nipEvaluator]['jumlah']++;
+            }
+        }
+
+        // Convert array associative tanggal ke array biasa untuk output
+        return [
+            'persiapan_ro' => $this->convertToDateWise($radiograferCount),
+            'pelaksanaan_ro' => $this->convertToDateWise($radiograferCount),
+            'mutu_cr' => $this->convertToDateWise($evaluatorCount),
+        ];
+    }
+
+    private function convertToDateWise($countArray)
+    {
+        $result = [];
+        foreach ($countArray as $tanggal => $items) {
+            $result[$tanggal] = array_values($items); // Convert to indexed array
+        }
+        return $result;
+    }
+
 }

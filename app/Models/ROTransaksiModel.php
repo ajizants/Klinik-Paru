@@ -14,7 +14,7 @@ class ROTransaksiModel extends Model
     protected $fillable = [
         'norm', 'nama', 'alamat', 'jk', 'tgltrans', 'noreg', 'pasienRawat',
         'kdFoto', 'kdFilm', 'ma', 'kv', 's', 'jmlExpose', 'jmlFilmDipakai',
-        'jmlFilmRusak', 'kdMesin', 'kdProyeksi', 'catatan', 'layanan','created_at', 'updated_at',
+        'jmlFilmRusak', 'kdMesin', 'kdProyeksi', 'catatan', 'layanan', 'created_at', 'updated_at',
     ];
 
     public function film()
@@ -63,6 +63,10 @@ class ROTransaksiModel extends Model
         // return $this->hasOne(KominfoModel::class, 'norm', 'norm');
     }
     public function radiografer()
+    {
+        return $this->hasOne(TransPetugasModel::class, 'notrans', 'notrans');
+    }
+    public function evaluator()
     {
         return $this->hasOne(TransPetugasModel::class, 'notrans', 'notrans');
     }
