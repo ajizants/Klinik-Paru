@@ -1501,68 +1501,92 @@ class KominfoModel extends Model
 
     public function jadwalPoli(array $params)
     {
+        $dokter = '
+                <ul>
+                <li>dr. Agil Dananjaya, Sp.P</li>
+                <li>dr. Cempaka Nova I., Sp.P</li>
+                <li>dr. Filly Ulfa K.</li>
+                <li>dr. Sigit Dwiyanto</li>
+                </ul>
+        ';
         $jadwal = [
             [
-                "dokter" => "dr. Agil Dananjaya, Sp.P",
+                "dokter" => $dokter,
                 "hari"   => "Senin - Kamis",
                 "jam"    => "07:15 - 14:15",
             ],
             [
-                "dokter" => "dr. Agil Dananjaya, Sp.P",
+                "dokter" => $dokter,
                 "hari"   => "Jumat",
                 "jam"    => "07:15 - 11:15",
             ],
             [
-                "dokter" => "dr. Agil Dananjaya, Sp.P",
+                "dokter" => $dokter,
                 "hari"   => "Sabtu",
                 "jam"    => "07:15 - 12:45",
-            ],
-            [
-                "dokter" => "dr. Cempaka Nova I., Sp.P",
-                "hari"   => "Senin - Kamis",
-                "jam"    => "07:15 - 14:15",
-            ],
-            [
-                "dokter" => "dr. Cempaka Nova I., Sp.P",
-                "hari"   => "Jumat",
-                "jam"    => "07:15 - 11:15",
-            ],
-            [
-                "dokter" => "dr. Cempaka Nova I., Sp.P",
-                "hari"   => "Sabtu",
-                "jam"    => "07:15 - 12:45",
-            ],
-            [
-                "dokter" => "dr. Filly Ulfa K.",
-                "hari"   => "Senin - Kamis",
-                "jam"    => "07:15 - 14:15",
-            ],
-            [
-                "dokter" => "dr. Filly Ulfa K.",
-                "hari"   => "Jumat",
-                "jam"    => "07:15 - 11:15",
-            ],
-            [
-                "dokter" => "dr. Filly Ulfa K.",
-                "hari"   => "Sabtu",
-                "jam"    => "07:15 - 12:45",
-            ],
-            [
-                "dokter" => "dr. Sigit Dwiyanto",
-                "hari"   => "Senin - Kamis",
-                "jam"    => "07:15 - 14:15",
-            ],
-            [
-                "dokter" => "dr. Sigit Dwiyanto",
-                "hari"   => "Jumat",
-                "jam"    => "07:15 - 11:15",
-            ],
-            [
-                "dokter" => "dr. Sigit Dwiyanto",
-                "hari"   => "Sabtu",
-                "jam"    => "07:15 - 12:45",
-            ],
-        ];
+            ]];
+        // $jadwal = [
+        //     [
+        //         "dokter" => "",
+        //         "hari"   => "Senin - Kamis",
+        //         "jam"    => "07:15 - 14:15",
+        //     ],
+        //     [
+        //         "dokter" => "dr. Agil Dananjaya, Sp.P",
+        //         "hari"   => "Jumat",
+        //         "jam"    => "07:15 - 11:15",
+        //     ],
+        //     [
+        //         "dokter" => "dr. Agil Dananjaya, Sp.P",
+        //         "hari"   => "Sabtu",
+        //         "jam"    => "07:15 - 12:45",
+        //     ],
+        //     [
+        //         "dokter" => "dr. Cempaka Nova I., Sp.P",
+        //         "hari"   => "Senin - Kamis",
+        //         "jam"    => "07:15 - 14:15",
+        //     ],
+        //     [
+        //         "dokter" => "dr. Cempaka Nova I., Sp.P",
+        //         "hari"   => "Jumat",
+        //         "jam"    => "07:15 - 11:15",
+        //     ],
+        //     [
+        //         "dokter" => "dr. Cempaka Nova I., Sp.P",
+        //         "hari"   => "Sabtu",
+        //         "jam"    => "07:15 - 12:45",
+        //     ],
+        //     [
+        //         "dokter" => "dr. Filly Ulfa K.",
+        //         "hari"   => "Senin - Kamis",
+        //         "jam"    => "07:15 - 14:15",
+        //     ],
+        //     [
+        //         "dokter" => "dr. Filly Ulfa K.",
+        //         "hari"   => "Jumat",
+        //         "jam"    => "07:15 - 11:15",
+        //     ],
+        //     [
+        //         "dokter" => "dr. Filly Ulfa K.",
+        //         "hari"   => "Sabtu",
+        //         "jam"    => "07:15 - 12:45",
+        //     ],
+        //     [
+        //         "dokter" => "dr. Sigit Dwiyanto",
+        //         "hari"   => "Senin - Kamis",
+        //         "jam"    => "07:15 - 14:15",
+        //     ],
+        //     [
+        //         "dokter" => "dr. Sigit Dwiyanto",
+        //         "hari"   => "Jumat",
+        //         "jam"    => "07:15 - 11:15",
+        //     ],
+        //     [
+        //         "dokter" => "dr. Sigit Dwiyanto",
+        //         "hari"   => "Sabtu",
+        //         "jam"    => "07:15 - 12:45",
+        //     ],
+        // ];
 
         $html = '<table class="table-auto table table-bordered table-striped table-hover">
         <tbody>';

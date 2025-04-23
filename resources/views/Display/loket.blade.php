@@ -76,55 +76,50 @@
                     </div>
                 </div>
             </div>
-            <div class="card card-primary"> {{-- Selesai --}}
+            <div class="card card-primary"> {{-- Jadwal --}}
                 <div class="card-header d-flex justify-content-center">
                     <h1 class="card-title text-center font-weight-bold"
-                        style="font-size: 2rem !important; text-align: center !important;">DAFTAR
-                        SELESAI</h1>
+                        style="font-size: 2rem !important; text-align: center !important;">JADWAL PRAKTIK DOKTER</h1>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover mb-0" id="headerSelesai"
+                        <table class="table table-bordered table-striped table-hover mb-0" id="header"
                             style="width:100%">
-                            <thead class="bg bg-dark" style="font-size: 1.5rem;">
+                            <thead class="bg bg-dark" style="font-size: 1.5rem">
                                 <tr>
-                                    <th class="col-2">Antrean</th>
-                                    <th class="col-2">Loket</th>
-                                    <th class="col-2">Ket</th>
-                                    <th class="col-3">Jam</th>
+                                <tr>
+                                    <th class="col-1">No</th>
+                                    <th class="col-5">Dokter</th>
+                                    <th class="col-3">Hari</th>
+                                    <th>Waktu</th>
+                                </tr>
                                 </tr>
                             </thead>
                         </table>
                     </div>
-                    <div class="table-responsive table-container" style=" font-size: 1.5rem;">
-                        @php
-                            $scrol = isset($listSelesai) && count($listSelesai) >= 7 ? 'table-auto' : '';
-                        @endphp
-
-                        <table class="table table-bordered table-striped table-hover {{ $scrol }}"
-                            id="listSelesai" style="width:100%;">
-                            @if (empty($listSelesai))
-                                <tbody>
-                                    <tr>
-                                        <td colspan="3" class="text-center">Tidak ada antrian</td>
+                    <div class="table-responsive" style="height: 23.3rem; overflow-y: hidden; font-size: 2rem">
+                        {{-- <table class="table-auto table table-bordered table-striped table-hover" id="listJadwal"
+                            style="width:100%">
+                            <tbody id="listJadwal">
+                                @foreach ($jadwal as $item)
+                                    <td class="col-1">{{ $loop->iteration }}</td>
+                                    <td class="col-2">{{ $item['nama_hari'] }}</td>
+                                    <td>
+                                        <!-- Convert and display waktu_mulai_poli and waktu_selesai_poli -->
+                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_mulai_poli'])->format('H:i') }}
+                                        -
+                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_selesai_poli'])->format('H:i') }}
+                                    </td>
+                                    <td class="col-5">{{ $item['admin_nama'] }}</td>
                                     </tr>
-                                </tbody>
-                            @else
-                                <tbody>
-                                    @foreach ($listSelesai as $item)
-                                        <tr>
-                                            <td class="col-2">{{ $item['antrean_nomor'] }}</td>
-                                            <td class="col-2">{{ $item['menuju_ke'] }}</td>
-                                            <td class="col-2">Selesai di Daftar</td>
-                                            <td class="col-3">{{ $item['created_at'] }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            @endif
-                        </table>
+                                @endforeach
+                            </tbody>
+                        </table> --}}
+                        {!! $jadwal !!}
                     </div>
                 </div>
             </div>
+
         </div>
         <div class="col-5">
             <div class="card card-primary"> {{-- Tunggu --}}
@@ -187,44 +182,51 @@
                     </div>
                 </div>
             </div>
-            <div class="card card-primary"> {{-- Jadwal --}}
+            <div class="card card-primary"> {{-- Selesai --}}
                 <div class="card-header d-flex justify-content-center">
                     <h1 class="card-title text-center font-weight-bold"
-                        style="font-size: 2rem !important; text-align: center !important;">JADWAL PRAKTIK DOKTER</h1>
+                        style="font-size: 2rem !important; text-align: center !important;">DAFTAR
+                        SELESAI</h1>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover mb-0" id="header"
+                        <table class="table table-bordered table-striped table-hover mb-0" id="headerSelesai"
                             style="width:100%">
-                            <thead class="bg bg-dark" style="font-size: 1.5rem">
+                            <thead class="bg bg-dark" style="font-size: 1.5rem;">
                                 <tr>
-                                <tr>
-                                    <th class="col-1">No</th>
-                                    <th class="col-5">Dokter</th>
-                                    <th class="col-2">Hari</th>
-                                    <th>Waktu</th>
-                                </tr>
+                                    <th class="col-2">Antrean</th>
+                                    <th class="col-2">Loket</th>
+                                    <th class="col-2">Ket</th>
+                                    <th class="col-3">Jam</th>
                                 </tr>
                             </thead>
                         </table>
                     </div>
-                    <div class="table-responsive" style="height: 23.3rem; overflow-y: hidden; font-size: 1.5rem">
-                        <table class="table-auto table table-bordered table-striped table-hover" id="listJadwal"
-                            style="width:100%">
-                            <tbody id="listJadwal">
-                                @foreach ($jadwal as $item)
-                                    <td class="col-1">{{ $loop->iteration }}</td>
-                                    <td class="col-2">{{ $item['nama_hari'] }}</td>
-                                    <td>
-                                        <!-- Convert and display waktu_mulai_poli and waktu_selesai_poli -->
-                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_mulai_poli'])->format('H:i') }}
-                                        -
-                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_selesai_poli'])->format('H:i') }}
-                                    </td>
-                                    <td class="col-5">{{ $item['admin_nama'] }}</td>
+                    <div class="table-responsive table-container" style=" font-size: 1.5rem;">
+                        @php
+                            $scrol = isset($listSelesai) && count($listSelesai) >= 7 ? 'table-auto' : '';
+                        @endphp
+
+                        <table class="table table-bordered table-striped table-hover {{ $scrol }}"
+                            id="listSelesai" style="width:100%;">
+                            @if (empty($listSelesai))
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3" class="text-center">Tidak ada antrian</td>
                                     </tr>
-                                @endforeach
-                            </tbody>
+                                </tbody>
+                            @else
+                                <tbody>
+                                    @foreach ($listSelesai as $item)
+                                        <tr>
+                                            <td class="col-2">{{ $item['antrean_nomor'] }}</td>
+                                            <td class="col-2">{{ $item['menuju_ke'] }}</td>
+                                            <td class="col-2">Selesai di Daftar</td>
+                                            <td class="col-3">{{ $item['created_at'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            @endif
                         </table>
                     </div>
                 </div>
