@@ -62,7 +62,7 @@ Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);
 
 Route::get('/diagnosa_icd_x', function (Request $request) {
     $search = $request->get('search', '');
-    $limit = $request->get('limit', 20);
+    $limit  = $request->get('limit', 20);
 
     $diagnosas = DiagnosaIcdXModel::where(function ($query) use ($search) {
         $query->where('diagnosa', 'like', '%' . $search . '%')
@@ -344,7 +344,7 @@ Route::post('kominfo/pendaftaran/faskes_perujuk', [PasienKominfoController::clas
 Route::post('kominfo/data_rencana_kontrol', [ApiKominfoController::class, 'data_rencana_kontrol']);
 Route::get('jadwal/dokter/poli', [ApiKominfoController::class, 'poliDokter']);
 
-// sb
+// Display
 Route::post('verif/pendaftaran/fr', [VerifController::class, 'frista']);
 Route::post('verif/pendaftaran/fp', [VerifController::class, 'afterapp']);
 Route::post('/verif/pendaftaran/kominfo/submit', [VerifController::class, 'submit']);
@@ -352,7 +352,7 @@ Route::post('/verif/pendaftaran/kominfo/submit', [VerifController::class, 'submi
 // Route::post('verif/pendaftaran/fp', [VerifController::class, 'fingerprint']);
 Route::post('kominfo/submit', [VerifController::class, 'submit']);
 Route::post('ambil/no/kominfo', [PasienKominfoController::class, 'ambilAntrean']);
-Route::post('list/tunggu/tensi', [DisplayController::class, 'listTungguTensi']);
+Route::get('list/tunggu/tensi', [DisplayController::class, 'listTungguTensi']);
 Route::get('list/tunggu/lab', [DisplayController::class, 'tungguLab']);
 Route::get('list/tunggu/ro', [DisplayController::class, 'tungguRo']);
 Route::get('list/tunggu/farmasi', [DisplayController::class, 'listTungguFarmasi']);

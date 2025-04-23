@@ -124,16 +124,16 @@
                 <table class="table table-bordered text-center">
                     <tbody>
                         <tr>
-                            @foreach ($sedangDipanggil as $item)
+                            @foreach ($sedangDipanggil as $index => $item)
                                 <td class="font-weight-bold" style="font-size: calc(2vw + 1rem); width: 33.33%;">
                                     <div class="text-center py-4">
-                                        <span id="notif_loket_1" class="font-weight-bold"
+                                        <span id="nama_loket_{{ $index }}" class="font-weight-bold"
                                             style="font-size: calc(5vw + 2rem); height: auto; line-height: 1;">
                                             {{ $item['pasien_nama'] ?? '-' }}
                                         </span>
                                     </div>
                                     <div class="text-center py-4">
-                                        <span id="notif_loket_1" class="font-weight-bold"
+                                        <span id="alamat_loket_{{ $index }}_lokasi" class="font-weight-bold"
                                             style="font-size: calc(3vw + 1rem); height: auto; line-height: 1;">
                                             {{ $item['kelurahan'] ?? '-' }}
                                         </span>
@@ -207,7 +207,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card card-primary col"> {{-- Selesai --}}
+            <div class="card card-primary col" hidden> {{-- Selesai --}}
                 <div class="card-header d-flex justify-content-center">
                     <h1 class="card-title text-center font-weight-bold"
                         style="font-size: 2rem !important; text-align: center !important;">DAFTAR
@@ -268,31 +268,15 @@
                             <thead class="bg bg-dark" style="font-size: 1.5rem">
                                 <tr>
                                     <th class="col-1">No</th>
-                                    <th class="col-2">Hari</th>
-                                    <th>Waktu</th>
                                     <th class="col-5">Dokter</th>
+                                    <th class="col-3">Hari</th>
+                                    <th>Waktu</th>
                                 </tr>
                             </thead>
                         </table>
                     </div>
                     <div class="table-responsive" style="height: 27rem; overflow-y: hidden; font-size: 1.5rem">
-                        <table class="table-auto table table-bordered table-striped table-hover" id="listJadwal"
-                            style="width:100%">
-                            <tbody id="listJadwal">
-                                @foreach ($jadwal as $item)
-                                    <td class="col-1">{{ $loop->iteration }}</td>
-                                    <td class="col-2">{{ $item['nama_hari'] }}</td>
-                                    <td>
-                                        <!-- Convert and display waktu_mulai_poli and waktu_selesai_poli -->
-                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_mulai_poli'])->format('H:i') }}
-                                        -
-                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_selesai_poli'])->format('H:i') }}
-                                    </td>
-                                    <td class="col-5">{{ $item['admin_nama'] }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                        {!! $jadwal !!}
                     </div>
                 </div>
             </div>
@@ -368,10 +352,11 @@
                 const data = await response.json();
                 // console.log("🚀 ~ getList ~ data:", data)
                 const tunggu = data.tunggu;
-                const panggil = data.panggil;
+                //ambil 3 data pertama dari data.dataAtas
+                const dataAtas = data.dataAtas.slice(0, 3);
 
                 drawTable(tunggu);
-                drawNotif(panggil);
+                drawNotif(dataAtas);
             } catch (error) {
                 console.error("Terjadi kesalahan saat mencari data:", error);
             }
@@ -490,31 +475,23 @@
         }
 
         function drawNotif(data) {
-            console.log("🚀 ~ data:", data)
-            // Filter data untuk Loket Pendaftaran 1 dan 2 dengan waktu_submit null
-            let loket1 = data.find(item => item.menuju_ke === "Loket Pendaftaran 1" && item.waktu_submit ===
-                null);
-            console.log("🚀 ~ loket1:", loket1)
-            let loket2 = data.find(item => item.menuju_ke === "Loket Pendaftaran 2" && item.waktu_submit ===
-                null);
-            console.log("🚀 ~ loket2:", loket2, loket2)
+            console.log("🚀 ~ data:", data);
 
-            // Ambil elemen DOM
-            let notifLoket1 = document.getElementById("notif_loket_1");
-            let notifLoket2 = document.getElementById("notif_loket_2");
+            data.forEach((item, index) => {
+                // Isi nama pasien
+                const namaEl = document.getElementById(`notif_loket_${index}`);
+                if (namaEl) {
+                    namaEl.textContent = item.pasien_nama || '-';
+                }
 
-            // Update nomor antrean dan kategori untuk Loket 1
-            if (loket1) {
-                notifLoket1.innerHTML = `
-                            ${loket1.antrean_nomor}
-                    `;
-            }
-            if (loket2) {
-                notifLoket2.innerHTML = `
-                            ${loket2.antrean_nomor}
-                    `;
-            }
+                // Isi kelurahan
+                const kelurahanEl = document.getElementById(`notif_loket_${index}_lokasi`);
+                if (kelurahanEl) {
+                    kelurahanEl.textContent = item.kelurahan || '-';
+                }
+            });
         }
+
 
         var socketIO = io.connect('wss://kkpm.banyumaskab.go.id:3131/', {
             // path: '/socket.io',
