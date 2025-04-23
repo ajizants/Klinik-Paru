@@ -20,6 +20,14 @@
                                         </div>
                                         <input type="text" class="form-control float-right" id="reservation">
                                     </div>
+                                    <div class="mx-2">
+                                        <button type="button" class="btn btn-primary"
+                                            onclick="cariRo(tglAwal, tglAkhir)">Cari Data Loog Book</button>
+                                    </div>
+                                    <div class="mx-2">
+                                        <button type="button" class="btn btn-success"
+                                            onclick="cariKegiatanRo(tglAwal, tglAkhir)">Cetak Data Kegiatan</button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="container-fluid">
