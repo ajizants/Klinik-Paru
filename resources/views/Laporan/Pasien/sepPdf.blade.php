@@ -10,7 +10,8 @@
         @page {
             size: 22cm 13.8cm;
             /* atau bisa coba: 29.7cm 21cm */
-            margin: 0.5cm 0.5cm 0.5cm 0.5cm;
+            margin: 0.2cm 0.2cm 0.2cm 0.2cm;
+            /* scale: 0.8; */
         }
 
         .pembungkus {
@@ -113,7 +114,7 @@
         }
 
         img.h-70px {
-            height: 55px;
+            height: 50px;
         }
 
         h3,
@@ -130,7 +131,7 @@
             <tr>
                 <td width="40%"><img src="/public/img/BPJS_Kesehatan.png" alt="bpjslogo" class="h-70px"></td>
                 <td>
-                    <div class="mx-3" style="margin-top: 10px;">
+                    <div class="mx-3" style="margin-top: 8px;">
                         <h3 class="text-lg font-semibold">SURAT ELEGIBILITAS PESERTA</h3>
                         <h4 class="text-base">KKPM PURWOKERTO</h4>
                     </div>
@@ -189,8 +190,8 @@
                 <td>: {{ $detailSEP['kelasRawat'] }}</td>
             </tr>
             <tr>
-                <td class="font-bold">Diagnosa Awal</td>
-                <td>: {{ $detailSEP['diagnosa'] }}</td>
+                <td class="font-bold " width="20%">Diagnosa Awal</td>
+                <td class=>: {{ $detailSEP['diagnosa'] }}</td>
                 <td class="font-bold">Penjamin</td>
                 <td>: {{ $detailSEP['penjamin'] ?? '-' }}</td>
             </tr>

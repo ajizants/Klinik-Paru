@@ -17,23 +17,23 @@
             </div>
             <div class="mx-2">
                 <button type="button" class="btn btn-success" onclick="segarkan(); toggleSections('#tab_1');">
-                    Data Kujungan
+                    Cari Data Kujungan
                 </button>
             </div>
             <div class="mx-2">
                 <button type="button" class="btn btn-primary"
                     onclick=" cariDataSEP(tglAwal, tglAkhir); toggleSections('#tab_2');">
-                    Data SEP & SK
+                    Cari Data SEP & SK
                 </button>
             </div>
             <div class="mx-2">
                 <button type="button" class="btn btn-warning" onclick="rekapFaskesPerujuk(); toggleSections('#tab_3');">
-                    Data Faskes Perujuk
+                    Cari Data Faskes Perujuk
                 </button>
             </div>
             <div class="mx-2">
                 <button type="button" class="btn btn-info" onclick="rencanaKontrolPasien(); toggleSections('#tab_4');">
-                    Data Rencana Kontrol
+                    Cari Data Rencana Kontrol
                 </button>
             </div>
         </div>
@@ -204,7 +204,7 @@
         function cariDataSEP(tglAwal, tglAkhir) {
             Swal.fire({
                 icon: "info",
-                title: "Sedang mencarikan data...!!!\n Proses lama jika mencari lebih dari 10 hari",
+                title: "Sedang mencarikan data...!!!\n Mohon Bersabar...!!!",
                 showConfirmButton: true,
                 allowOutsideClick: false,
                 didOpen: () => {
