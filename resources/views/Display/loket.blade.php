@@ -198,10 +198,12 @@
                             style="width:100%">
                             <thead class="bg bg-dark" style="font-size: 1.5rem">
                                 <tr>
+                                <tr>
                                     <th class="col-1">No</th>
+                                    <th class="col-5">Dokter</th>
                                     <th class="col-2">Hari</th>
                                     <th>Waktu</th>
-                                    <th class="col-5">Dokter</th>
+                                </tr>
                                 </tr>
                             </thead>
                         </table>
