@@ -150,6 +150,147 @@ function cariRo(tglAwal, tglAkhir, norm) {
         },
     });
 }
+function cariKegiatanRo(tglAwal, tglAkhir) {
+    var tglA = formatTgl(new Date(tglAwal));
+    var tglB = formatTgl(new Date(tglAkhir));
+    if ($.fn.DataTable.isDataTable("#hasilRo, #jumlahPetugas")) {
+        var tabletindakan = $("#hasilRo, #jumlahPetugas").DataTable();
+        tabletindakan.destroy();
+    }
+
+    Swal.fire({
+        icon: "info",
+        title: "Sedang mencarikan Log Book...!!!",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+
+    $.ajax({
+        url: "/api/ro/kegiatan/laporan",
+        type: "post",
+        data: { tglAkhir: tglAkhir, tglAwal: tglAwal },
+        success: function (response) {
+            Swal.fire({
+                icon: "success",
+                title: "Data Laporan Kegiatan Ditemukan...!!!",
+            });
+            const html = response.html;
+            document.getElementById("containerTableLaporan").innerHTML = html;
+            $("#logBookTable")
+                .DataTable({
+                    // data: response.data,
+                    // columns: [
+                    //     {
+                    //         data: null, // Data null akan diisi oleh render function
+                    //         render: function (data, type, row, meta) {
+                    //             return meta.row + 1; // Nomor urut mulai dari 1
+                    //         },
+                    //         title: "No", // Judul kolom
+                    //     },
+                    //     { data: "noreg" },
+                    //     { data: "tgltrans" },
+                    //     { data: "norm" },
+                    //     { data: "nama" },
+                    //     { data: "layanan" },
+                    //     { data: "jkel" },
+                    //     { data: "alamatDbOld", className: "col-4" },
+                    //     { data: "nmFoto" },
+                    //     { data: "ukuranFilm" },
+                    //     { data: "kondisiRo" },
+                    //     { data: "jmlFilmDipakai" },
+                    //     { data: "jmlExpose" },
+                    //     { data: "jmlFilmRusak" },
+                    //     { data: "proyeksi" },
+                    //     { data: "nmMesin" },
+                    //     { data: "catatan" },
+                    //     { data: "radiografer_nama" },
+                    // ],
+                    autoWidth: false,
+                    paging: true,
+                    buttons: [
+                        {
+                            extend: "copyHtml5",
+                            text: "Salin",
+                        },
+                        {
+                            extend: "excelHtml5",
+                            text: "Excel",
+                            title:
+                                "Log Book Radiologi Tanggal: " +
+                                tglA +
+                                " s.d. " +
+                                tglB,
+                            filename:
+                                "Log Book Radiologi Tanggal: " +
+                                tglA +
+                                "  s.d. " +
+                                tglB,
+                        },
+                        "colvis",
+                    ],
+                })
+                .buttons()
+                .container()
+                .appendTo("#logBookTable_wrapper .col-md-6:eq(0)");
+
+            $("#jumlahPetugas")
+                .DataTable({
+                    data: response.jumlah,
+                    columns: [
+                        {
+                            data: null, // Data null akan diisi oleh render function
+                            render: function (data, type, row, meta) {
+                                return meta.row + 1; // Nomor urut mulai dari 1
+                            },
+                            title: "No", // Judul kolom
+                        },
+                        { data: "nip" },
+                        { data: "nama" },
+                        { data: "jml" },
+                    ],
+                    autoWidth: false,
+                    buttons: [
+                        {
+                            extend: "copyHtml5",
+                            text: "Salin",
+                        },
+                        {
+                            extend: "excelHtml5",
+                            text: "Excel",
+                            title:
+                                "Log Book Radiologi Tanggal: " +
+                                tglA +
+                                " s.d. " +
+                                tglB,
+                            filename:
+                                "Log Book Radiologi Tanggal: " +
+                                tglA +
+                                "  s.d. " +
+                                tglB,
+                        },
+                        "colvis",
+                    ],
+                })
+                .buttons()
+                .container()
+                .appendTo("#jumlahPetugas_wrapper .col-md-6:eq(0)");
+        },
+        error: function (xhr, status, error) {
+            console.log("🚀 ~ cariRo ~ status:", status);
+            console.log("🚀 ~ cariRo ~ xhr:", xhr.responseJSON);
+            console.error("Error:", error);
+            Swal.fire({
+                icon: "error",
+                title:
+                    "Terjadi kesalahan saat mengambil data pasien...!!!\n" +
+                    xhr.responseJSON.message,
+            });
+        },
+    });
+}
 
 function cariRo2() {
     var tglAwal = document.getElementById("tglAwal").value;

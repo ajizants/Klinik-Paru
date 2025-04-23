@@ -860,10 +860,10 @@ class ROTransaksiController extends Controller
         }
     }
 
-    public function rekapKegiatan(Request $request)
+    public function rekapKegiatan($tglAwal, $tglAkhir)
     {
-        $tglAwal = $request->input('tglAwal') ?? Carbon::now()->format('Y-m-d');
-        $tglAkhir = $request->input('tglAkhir') ?? Carbon::now()->format('Y-m-d');
+        $tglAwal = $tglAwal ?? Carbon::now()->format('Y-m-d');
+        $tglAkhir = $tglAkhir ?? Carbon::now()->format('Y-m-d');
 
         if (Carbon::parse($tglAwal)->lessThanOrEqualTo(Carbon::parse('2024-06-01'))) {
             return response()->json(['message' => 'Data transaksi sebelum 2024-06-24 tidak ditemukan, cari di Aplikasi lama : RSPARU'], 404, [], JSON_PRETTY_PRINT);
@@ -884,28 +884,27 @@ class ROTransaksiController extends Controller
         $prosesJumlah = $this->prosesJumlah($data);
         // return [$prosesJumlah, $dataRadiografers];
 
-        // Mulai pembuatan tabel HTML
-        $html = '<table class="table table-bordered" id="reportTable">
-                <thead class="bg bg-secondary">
-                    <tr>
-                        <th rowspan="2">Tanggal</th>';
+        $html = '<table class="min-w-full table-auto border-collapse border border-black mb-8">
+            <thead class="bg-lime-400">
+                <tr>
+                    <th rowspan="2" class="px-4 py-2 text-center border border-black">Tanggal</th>';
 
         // Header nama radiografer dengan colspan 3
         foreach ($dataRadiografers as $radiografer) {
-            $html .= '<th colspan="3" class="text-center">' . $radiografer['nama'] . '</th>';
+            $html .= '<th colspan="3" class="px-4 py-2 text-center border border-black">' . $radiografer['nama'] . '</th>';
         }
 
         $html .= '
-                    <th rowspan="2">Jumlah Pasien</th>
-                    <th rowspan="2">Catatan</th>
+                    <th rowspan="2" class="px-4 py-2 text-center border border-black">Jumlah Pasien</th>
+                    <th rowspan="2" class="px-4 py-2 text-center border border-black">Catatan</th>
                 </tr>
                 <tr>';
 
         // Sub kolom tetap untuk setiap radiografer
         foreach ($dataRadiografers as $radiografer) {
-            $html .= '<th>Mutu CR</th>
-                  <th>Persiapan RO</th>
-                  <th>Pelaksanaan RO</th>';
+            $html .= '<th class="px-4 py-2 text-center border border-black">Mutu CR</th>
+                      <th class="px-4 py-2 text-center border border-black">Persiapan RO</th>
+                      <th class="px-4 py-2 text-center border border-black">Pelaksanaan RO</th>';
         }
 
         $html .= '
@@ -916,7 +915,7 @@ class ROTransaksiController extends Controller
         // Menambahkan baris per tanggal
         foreach ($prosesJumlah['persiapan_ro'] as $tanggal => $radiograferData) {
             $html .= '<tr>';
-            $html .= '<td>' . $tanggal . '</td>';
+            $html .= '<td class="px-4 py-1 text-center border border-black">' . date('d', strtotime($tanggal)) . '</td>';
 
             // Menambahkan data radiografer per tanggal
             foreach ($dataRadiografers as $radiografer) {
@@ -946,17 +945,25 @@ class ROTransaksiController extends Controller
 
                 // Mencari mutu CR (saat ini kosong, jadi nilai tetap 0)
                 $mutuCr = '-'; // Seperti yang terlihat, 'mutu_cr' tidak ada datanya pada contoh yang diberikan
+                if (isset($prosesJumlah['mutu_cr'][$tanggal])) {
+                    foreach ($prosesJumlah['mutu_cr'][$tanggal] as $item) {
+                        if ($item['nip'] == $radiograferNip) {
+                            $mutuCr = $item['jumlah'];
+                            break;
+                        }
+                    }
+                }
 
                 // Menambahkan kolom jumlah untuk radiografer
-                $html .= '<td>' . $mutuCr . '</td>';
-                $html .= '<td>' . $persiapan . '</td>';
-                $html .= '<td>' . $pelaksanaan . '</td>';
+                $html .= '<td class="px-4 py-1 text-center border border-black"><input class="text-center w-16" value="' . $mutuCr . '"></td>';
+                $html .= '<td class="px-4 py-1 text-center border border-black"><input class="text-center w-16" value="' . $persiapan . '"></td>';
+                $html .= '<td class="px-4 py-1 text-center border border-black"><input class="text-center w-16" value="' . $pelaksanaan . '"></td>';
             }
 
             // Menambahkan kolom jumlah pasien (jumlah evaluator) dan catatan
             $totalPasien = array_sum(array_column($radiograferData, 'jumlah')); // Jumlah pasien untuk evaluator
-            $html .= '<td>' . $totalPasien . '</td>';
-            $html .= '<td>-</td>'; // Kolom catatan kosong
+            $html .= '<td class="px-4 py-1 text-center border border-black">' . $totalPasien . '</td>';
+            $html .= '<td class="px-4 py-1 text-center border border-black">-</td>'; // Kolom catatan kosong
 
             $html .= '</tr>';
         }
@@ -965,7 +972,9 @@ class ROTransaksiController extends Controller
             </tbody>
         </table>';
 
-        return $html;
+        $blnTahun = Carbon::parse($tglAkhir)->locale('id')->isoFormat('MMMM YYYY');
+
+        return view('RO.LogBook.laporanKegiatan', compact('html', 'blnTahun', 'tglAkhir'));
 
     }
 

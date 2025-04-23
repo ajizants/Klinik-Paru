@@ -297,7 +297,7 @@ Route::post('dataTransaksiRo', [ROTransaksiController::class, 'dataTransaksiRo']
 Route::post('hasilRo', [ROTransaksiController::class, 'hasilRo']);
 Route::post('logBook', [ROTransaksiController::class, 'logBook']);
 Route::post('ro/konsul', [ROTransaksiController::class, 'konsulRo']);
-Route::post('ro/kegiatan/laporan', [ROTransaksiController::class, 'rekapKegiatan']);
+Route::get('ro/kegiatan/laporan/{tglAwal}/{tglAkhir}', [ROTransaksiController::class, 'rekapKegiatan']);
 
 //Gizi
 Route::post('gizi/asesmenAwal', [GiziAsesmenAwalController::class, 'search']);
