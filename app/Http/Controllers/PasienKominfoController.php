@@ -168,7 +168,7 @@ class PasienKominfoController extends Controller
             "rs_paru_pasien_lama_baru" => "L",
             "poli_nama" => "PARU",
             "poli_sub_nama" => "PARU",
-            "dokter_nama" => "dr. AGIL DANANJAYA, Sp.P",
+            "dokter_nama" => "dr. Agil Dananjaya, Sp.P",
             "daftar_by" => "JKN",
             "waktu_daftar" => "2024-06-23 14=>12=>23",
             "waktu_verifikasi" => "2024-07-20 07=>44=>24",
@@ -837,9 +837,9 @@ class PasienKominfoController extends Controller
 
         $doctorNipMap = [
             'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
-            'dr. AGIL DANANJAYA, Sp.P' => '9',
-            'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
-            'dr. SIGIT DWIYANTO' => '198903142022031005',
+            'dr. Agil Dananjaya, Sp.P' => '9',
+            'dr. Filly Ulfa Kusumawardani' => '198907252019022004',
+            'dr. Sigit Dwiyanto' => '198903142022031005',
         ];
         $tes = $filteredData;
 
@@ -995,9 +995,9 @@ class PasienKominfoController extends Controller
 
                     $doctorNipMap = [
                         'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
-                        'dr. AGIL DANANJAYA, Sp.P' => '9',
-                        'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
-                        'dr. SIGIT DWIYANTO' => '198903142022031005',
+                        'dr. Agil Dananjaya, Sp.P' => '9',
+                        'dr. Filly Ulfa Kusumawardani' => '198907252019022004',
+                        'dr. Sigit Dwiyanto' => '198903142022031005',
                     ];
 
                     // Iterate over filtered data and add nip
@@ -1340,9 +1340,9 @@ class PasienKominfoController extends Controller
 
                 $doctorNipMap = [
                     'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
-                    'dr. AGIL DANANJAYA, Sp.P' => '9',
-                    'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
-                    'dr. SIGIT DWIYANTO' => '198903142022031005',
+                    'dr. Agil Dananjaya, Sp.P' => '9',
+                    'dr. Filly Ulfa Kusumawardani' => '198907252019022004',
+                    'dr. Sigit Dwiyanto' => '198903142022031005',
                 ];
 
                 $d['nip_dokter'] = $doctorNipMap[$d['dokter_nama']] ?? 'Unknown';
@@ -1673,9 +1673,9 @@ class PasienKominfoController extends Controller
         // Daftar nama dokter yang ingin dihitung
         $doctors = [
             'dr. Cempaka Nova Intani, Sp.P, FISR., MM.',
-            'dr. AGIL DANANJAYA, Sp.P',
-            'dr. FILLY ULFA KUSUMAWARDANI',
-            'dr. SIGIT DWIYANTO',
+            'dr. Agil Dananjaya, Sp.P',
+            'dr. Filly Ulfa Kusumawardani',
+            'dr. Sigit Dwiyanto',
         ];
 
         // Filter dan format ulang data

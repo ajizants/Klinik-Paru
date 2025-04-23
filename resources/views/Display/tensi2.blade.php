@@ -9,14 +9,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700;900&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ asset('vendor/plugins/fontawesome-free/css/all.min.css') }}">
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="{{ asset('vendor/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
     <!-- Theme style -->
-    <link type="text/css" rel="stylesheet" href="{{ asset('css/display.css') }}">
-    <link type="text/css" rel="stylesheet" href="{{ asset('css/display.css') }}">
+    {{-- <link type="text/css" rel="stylesheet" href="{{ asset('css/display.css') }}"> --}}
     <!-- jQuery -->
     <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap 4 -->
@@ -27,107 +22,101 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js "
         integrity="sha512-eVL5Lb9al9FzgR63gDs1MxcDS2wFu3loYAgjIH0+Hg38tCS8Ag62dwKyH+wzDb+QauDpEZjXbMn11blw8cbTJQ=="
         crossorigin=" anonymousÂ&nbsp;"></script>
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            /* margin-top: 75px; */
+        }
+        }
 
+        .table-container {
+            max-height: 40vh;
+            /* Set max height untuk auto scroll */
+            overflow: hidden;
+            /* Sembunyikan scroll bar */
+            position: relative;
+            /* Untuk posisi absolut */
+        }
+
+        .table-auto {
+            animation: scroll 50s linear infinite;
+            -webkit-animation: scroll 50s linear infinite;
+            animation-delay: 5s;
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateY(0);
+            }
+
+            85% {
+                transform: translateY(-100%);
+            }
+
+            86% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .marquee-container {
+            width: 80%;
+            overflow: hidden;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .marquee {
+            font-size: 30px;
+            font-weight: bold;
+            color: #1602fb;
+        }
+    </style>
 </head>
 
 <body>
     <header class="container-fluid  bg-primary mt-2">
         <h1 class="font-weight-bold text-center" style="font-size: 3rem">RUANG TENSI</h1>
     </header>
-    <div class="container-fluid row px-2 mx-2">
-        <div class="col-7">
-            <div class="card card-primary"> {{-- Dipanggil --}}
-                <div class="card-header d-flex justify-content-center">
-                    <h1 class="card-title text-center font-weight-bold"
-                        style="font-size: 2rem !important; text-align: center !important;">SEDANG
-                        DIPANGGIL</h1>
-                </div>
-                <div class="card-body p-0">
-                    <div class="row">
-                        <div class="col">
-                            <div class="card card-dark mb-0">
-                                <div class="card-header d-flex justify-content-center">
-                                    <h1 class="card-title" style="font-size: 3rem;">Loket Pendaftaran 1</h1>
-                                </div>
-                                <div class="card-body p-0">
+    <div class="container-fluid">
+        <div class="card card-primary">
+            <div class="card-header d-flex justify-content-center">
+                <h1 class="card-title text-center font-weight-bold"
+                    style="font-size: 2rem !important; text-align: center !important;">SEDANG DIPANGGIL</h1>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered text-center">
+                    <tbody>
+                        <tr>
+                            @foreach ($sedangDipanggil as $item)
+                                <td class="font-weight-bold" style="font-size: 3rem;">
                                     <div class="text-center py-4">
                                         <span id="notif_loket_1" class="font-weight-bold"
-                                            style="font-size: 19rem; height: auto; line-height: 1;">
-                                            {{ $loket1['antrean_nomor'] ?? '-' }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card card-dark mb-0">
-                                <div class="card-header d-flex justify-content-center">
-                                    <h3 class="card-title" style="font-size: 3rem;">Loket Pendaftaran 2</h3>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="text-center py-4">
-                                        <span id="notif_loket_2" class="font-weight-bold"
-                                            style="font-size: 19rem; height: auto; line-height: 1;">
-                                            {{ $loket2['antrean_nomor'] ?? '-' }}
+                                            style="font-size: 10rem; height: auto; line-height: 1;">
+                                            {{ $item['pasien_nama'] ?? '-' }}
                                         </span>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card card-primary"> {{-- Selesai --}}
-                <div class="card-header d-flex justify-content-center">
-                    <h1 class="card-title text-center font-weight-bold"
-                        style="font-size: 2rem !important; text-align: center !important;">DAFTAR
-                        SELESAI</h1>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover mb-0" id="headerSelesai"
-                            style="width:100%">
-                            <thead class="bg bg-dark" style="font-size: 1.5rem;">
-                                <tr>
-                                    <th class="col-2">Antrean</th>
-                                    <th class="col-2">Loket</th>
-                                    <th class="col-2">Ket</th>
-                                    <th class="col-3">Jam</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                    <div class="table-responsive table-container" style=" font-size: 1.5rem;">
-                        @php
-                            $scrol = isset($listSelesai) && count($listSelesai) >= 7 ? 'table-auto' : '';
-                        @endphp
-
-                        <table class="table table-bordered table-striped table-hover {{ $scrol }}"
-                            id="listSelesai" style="width:100%;">
-                            @if (empty($listSelesai))
-                                <tbody>
-                                    <tr>
-                                        <td colspan="3" class="text-center">Tidak ada antrian</td>
-                                    </tr>
-                                </tbody>
-                            @else
-                                <tbody>
-                                    @foreach ($listSelesai as $item)
-                                        <tr>
-                                            <td class="col-2">{{ $item['antrean_nomor'] }}</td>
-                                            <td class="col-2">{{ $item['menuju_ke'] }}</td>
-                                            <td class="col-2">Selesai di Daftar</td>
-                                            <td class="col-3">{{ $item['created_at'] }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            @endif
-                        </table>
-                    </div>
-                </div>
+                                    <div class="text-center py-4">
+                                        <span id="notif_loket_1" class="font-weight-bold"
+                                            style="font-size: 5rem; height: auto; line-height: 1;">
+                                            {{ $item['kelurahan'] ?? '-' }}
+                                        </span>
+                                    </div>
+                                </td>
+                            @endforeach
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="col-5">
-            <div class="card card-primary"> {{-- Tunggu --}}
+        <div class="row">
+            <div class="card card-primary col"> {{-- Tunggu --}}
                 <div class="card-header d-flex justify-content-center">
                     <h1 class="card-title text-center font-weight-bold"
                         style="font-size: 2rem !important; text-align: center !important;">DAFTAR
@@ -139,16 +128,16 @@
                             style="width:100%">
                             <thead class="bg bg-dark" style="font-size: 1.5rem;">
                                 <tr>
-                                    <th class="col-2">Antrean</th>
-                                    <th class="col-2">Jaminan</th>
-                                    <th class="col-3">Keterangan</th>
+                                    <th class="col-3">Nama</th>
+                                    <th class="col-2">Loket</th>
+                                    <th class="col-3">Ket</th>
                                 </tr>
                             </thead>
                         </table>
                     </div>
-                    <div class="table-responsive table-container" style="height: 23.3rem; font-size: 1.5rem;">
+                    <div class="table-responsive" style="height: 27rem; overflow-y: hidden; font-size: 1.5rem">
                         @php
-                            $scrol = isset($listTunggu) && count($listTunggu) >= 7 ? 'table-auto' : '';
+                            $scrol = isset($listTunggu) && count($listTunggu) >= 4 ? 'table-auto' : '';
                         @endphp
 
                         <table class="table table-bordered table-striped table-hover {{ $scrol }}"
@@ -176,8 +165,8 @@
                                             @endphp
                                         @endif
                                         <tr>
-                                            <td class="col-2">{{ $item['antrean_angka'] }}</td>
-                                            <td class="col-2">{{ $item['penjamin_nama'] }}</td>
+                                            <td class="col-3">{{ $item['pasien_nama'] }}</td>
+                                            <td class="col-2">{{ $item['ruang_nama'] }}</td>
                                             <td class="col-3 {{ $bg }}">{{ $item['keterangan'] }}</td>
                                         </tr>
                                     @endforeach
@@ -187,10 +176,59 @@
                     </div>
                 </div>
             </div>
-            <div class="card card-primary"> {{-- Jadwal --}}
+            <div class="card card-primary col"> {{-- Selesai --}}
                 <div class="card-header d-flex justify-content-center">
                     <h1 class="card-title text-center font-weight-bold"
-                        style="font-size: 2rem !important; text-align: center !important;">JADWAL PRAKTIK DOKTER</h1>
+                        style="font-size: 2rem !important; text-align: center !important;">DAFTAR
+                        SELESAI</h1>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover mb-0" id="headerSelesai"
+                            style="width:100%">
+                            <thead class="bg bg-dark" style="font-size: 1.5rem;">
+                                <tr>
+                                    <th class="col-3">Nama</th>
+                                    <th class="col-2">Loket</th>
+                                    <th class="col-3">Jam</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="table-responsive" style="height: 27rem; overflow-y: hidden; font-size: 1.5rem">
+                        @php
+                            $scrol = isset($listSelesai) && count($listSelesai) >= 4 ? 'table-auto' : '';
+                        @endphp
+
+                        <table class="table table-bordered table-striped table-hover {{ $scrol }}"
+                            id="listSelesai" style="width:100%;">
+                            @if (empty($listSelesai))
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3" class="text-center">Tidak ada antrian</td>
+                                    </tr>
+                                </tbody>
+                            @else
+                                <tbody>
+                                    @foreach ($listSelesai as $item)
+                                        <tr>
+                                            <td class="col-3">{{ $item['pasien_nama'] }}</td>
+                                            <td class="col-2">{{ $item['ruang_nama'] }}</td>
+                                            <td class="col-3">{{ $item['created_at_log'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            @endif
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-primary col"> {{-- Jadwal --}}
+                <div class="card-header d-flex justify-content-center">
+                    <h1 class="card-title text-center font-weight-bold"
+                        style="font-size: 2rem !important; text-align: center !important;">JADWAL PRAKTIK DOKTER
+                    </h1>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -206,7 +244,7 @@
                             </thead>
                         </table>
                     </div>
-                    <div class="table-responsive" style="height: 23.3rem; overflow-y: hidden; font-size: 1.5rem">
+                    <div class="table-responsive" style="height: 27rem; overflow-y: hidden; font-size: 1.5rem">
                         <table class="table-auto table table-bordered table-striped table-hover" id="listJadwal"
                             style="width:100%">
                             <tbody id="listJadwal">
@@ -227,7 +265,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
     <footer class="container-fluid fixed-bottom bg-primary">
@@ -353,8 +390,8 @@
                     tableBody.appendChild(row);
                 });
 
-                if (data.length >= 7) {
-                    document.querySelector("#listTunggu").style.animation = 'scroll 30s linear infinite';
+                if (data.length >= 5) {
+                    document.querySelector("#listTunggu").style.animation = 'scroll 50s linear infinite';
                 } else {
                     document.querySelector("#listTunggu").style.animation = 'none';
                 }
@@ -400,8 +437,8 @@
                     tableBody.appendChild(row);
                 });
 
-                if (data.length >= 7) {
-                    document.querySelector("#listSelesai").style.animation = 'scroll 30s linear infinite';
+                if (data.length >= 5) {
+                    document.querySelector("#listSelesai").style.animation = 'scroll 50s linear infinite';
                 } else {
                     document.querySelector("#listSelesai").style.animation = 'none';
                 }
@@ -461,20 +498,10 @@
             $('#socket-id').html(sessionID)
             console.log("Socket ID : " + sessionID)
         });
-        let count = 0;
         socketIO.on('reload', (msg) => {
             if (msg == 'paru_ruang_tensi') {
                 // reload_table();
                 getList();
-                count++;
-                if (count == 1) {
-                    alert('Tensi 1' + count)
-                } else if (count == 2) {
-                    alert('Tensi 1' + count)
-                } else if (count == 3) {
-                    alert('Tensi 1' + count)
-                    count = 0
-                }
             }
         });
     </script>
