@@ -85,7 +85,7 @@
         <h1 class="font-weight-bold text-center" style="font-size: 3rem">RUANG TENSI</h1>
     </header>
     <div class="container-fluid">
-        <div class="card card-primary">
+        {{-- <div class="card card-primary">
             <div class="card-header d-flex justify-content-center">
                 <h1 class="card-title text-center font-weight-bold"
                     style="font-size: 2rem !important; text-align: center !important;">SEDANG DIPANGGIL</h1>
@@ -95,7 +95,7 @@
                     <tbody>
                         <tr>
                             @foreach ($sedangDipanggil as $item)
-                                <td class="font-weight-bold" style="font-size: 3rem;">
+                                <td class="font-weight-bold" style="font-size: 3rem;" widht="33.33%">
                                     <div class="text-center py-4">
                                         <span id="notif_loket_1" class="font-weight-bold"
                                             style="font-size: 10rem; height: auto; line-height: 1;">
@@ -114,7 +114,38 @@
                     </tbody>
                 </table>
             </div>
+        </div> --}}
+        <div class="card card-primary">
+            <div class="card-header d-flex justify-content-center">
+                <h1 class="card-title text-center font-weight-bold" style="font-size: 2rem !important;">SEDANG DIPANGGIL
+                </h1>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered text-center">
+                    <tbody>
+                        <tr>
+                            @foreach ($sedangDipanggil as $item)
+                                <td class="font-weight-bold" style="font-size: calc(2vw + 1rem); width: 33.33%;">
+                                    <div class="text-center py-4">
+                                        <span id="notif_loket_1" class="font-weight-bold"
+                                            style="font-size: calc(5vw + 2rem); height: auto; line-height: 1;">
+                                            {{ $item['pasien_nama'] ?? '-' }}
+                                        </span>
+                                    </div>
+                                    <div class="text-center py-4">
+                                        <span id="notif_loket_1" class="font-weight-bold"
+                                            style="font-size: calc(3vw + 1rem); height: auto; line-height: 1;">
+                                            {{ $item['kelurahan'] ?? '-' }}
+                                        </span>
+                                    </div>
+                                </td>
+                            @endforeach
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
         <div class="row">
             <div class="card card-primary col"> {{-- Tunggu --}}
                 <div class="card-header d-flex justify-content-center">
