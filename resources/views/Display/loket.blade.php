@@ -31,6 +31,10 @@
         .fs3 {
             font-size: 3rem !important;
         }
+
+        .fs2 {
+            font-size: 2rem !important;
+        }
     </style>
 
 </head>
@@ -292,12 +296,14 @@
                     const noUrut = document.createElement("td");
                     noUrut.textContent = item.antrean_angka;
                     row.appendChild(noUrut);
-                    noUrut.classList.add("col-2 fs3");
+                    noUrut.classList.add("fs3");
+                    noUrut.classList.add("col-2");
 
                     const penjamin = document.createElement("td");
                     penjamin.textContent = item.penjamin_nama;
                     row.appendChild(penjamin);
-                    penjamin.classList.add("col-2 fs3");
+                    penjamin.classList.add("fs3");
+                    penjamin.classList.add("col-2");
 
                     const status = document.createElement("td");
                     status.textContent = item.keterangan;
