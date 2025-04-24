@@ -383,6 +383,11 @@
             document.getElementById("jam_penyerahan").value = jamPenyerahan;
 
         })
+
+        //close setelah cetak
+        window.onafterprint = function() {
+            window.close();
+        }
     </script>
 
 
