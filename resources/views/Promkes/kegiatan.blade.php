@@ -15,6 +15,11 @@
                     <div class="card-body p-2">
                         <form class="form-group col" id="formKegiatanLain">
                             @csrf
+                            <div class="form-group" hidden>
+                                <input id="id" class="form-control border border-primary" placeholder="id"
+                                    readonly>
+                            </div>
+
                             <div class="form-group">
                                 <label for="pegawai">Nama Petugas</label>
                                 <select id="pegawai" class="form-control select2bs4 border border-primary">
@@ -28,82 +33,88 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="tglKegiatan">Tanggal :</label>
-                                <input id="tglKegiatan" type="date" class="form-control-sm col border border-primary"
-                                    value="{{ now()->format('Y-m-d') }}" />
+                                <label for="pasien">Nama Pasien :</label>
+                                <input id="pasien" type="text"
+                                    class="form-control-sm col border border-primary" />
+                            </div>
+                            <div class="form-group">
+                                <label for="noHp">No HP :</label>
+                                <input id="noHp" type="text"
+                                    class="form-control-sm col border border-primary" />
                             </div>
 
-                            <div class="form-group">
-                                <label for="kegiatan">Kegiatan</label>
-                                <input id="kegiatan" class="form-control border border-primary">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="jumlah">Jumlah</label>
-                                <div class="row">
-                                    <input id="idKegiatan" class="col-2 form-control border border-primary"
-                                        placeholder="idKegiatan" readonly hidden>
-                                    <input id="jumlah" type="number" class="col form-control border border-primary"
-                                        placeholder="Jumlah" required>
+                            <div class="form-group form-row">
+                                <div class="form-group col">
+                                    <label for="td">TD :</label>
+                                    <input id="td" type="text"
+                                        class="form-control-sm col border border-primary" />
+                                </div>
+                                <div class="form-group col">
+                                    <label for="nadi">Nadi :</label>
+                                    <input id="nadi" type="text"
+                                        class="form-control-sm col border border-primary" />
                                 </div>
                             </div>
+
                             <div class="form-group">
-                                <label for="kegLain">Keterangan/Kegiatan Lain</label>
-                                <textarea id="kegLain" class="form-control border border-primary" placeholder="Keterangan/Kegiatan Lain"></textarea>
+                                <label for="konsultasi">Konsultasi :</label>
+                                <textarea id="konsultasi" class="form-control border border-primary" rows="4"
+                                    placeholder="Tuliskan Data Hasil Konsultasi"></textarea>
                             </div>
 
                             <button type="button" class="btn btn-success d-flex justify-content-center mb-2 col"
-                                onclick="validasiKegiatanLain();">
+                                onclick="validasiPromkes();">
                                 Simpan Kegiatan
                             </button>
-                            <div class="accordion" id="accordionExample">
-                                <div class="card">
-                                    <a class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
-                                        id="headingOne" data-target="#caraCariDataKegiatan" aria-expanded="true"
-                                        aria-controls="caraCariDataKegiatan">
-                                        <strong>Klik Untuk Melihat Cara Pencarian Data Kegiatan</strong>
-                                    </a>
-                                    <div id="caraCariDataKegiatan" class="collapse" aria-labelledby="headingOne"
-                                        data-parent="#accordionExample">
-                                        <div class="card-body p-1">
-                                            <ul class="list-decimal list-outside space-y-2 ml-6">
-                                                <li>Pertama pilih Nama Petugas</li>
-                                                <li>Lalu, silahkan pilih tanggal bebas, patokannya adalah bulannya.
-                                                </li>
-                                                <li><strong>Contoh:</strong> Jika ingin mencari data Kegiatan Bulan
-                                                    Maret 2025 maka
-                                                    bisa memilih tanggal 10 Maret 2025 atau 25 Maret 2025</li>
-                                                <li>Lalu Klik Tombol "Cari Data Kegiatan"</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-form-label">Tanggal Kegiatan:</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="far fa-calendar-alt"></i>
-                                        </span>
-                                    </div>
-                                    <input type="text" class="form-control float-right" id="tglEkin">
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-info d-flex justify-content-center mb-2 col"
-                                onclick="cariDataKegiatanPerOrang();">
-                                Cari Data Kegiatan
-                            </button>
+
                         </form>
                     </div>
                 </div>
 
                 <!-- Tabel Data -->
-                <div class="col-sm p-0 ml-2 card card-orange">
+                <div class="col-sm p-0 ml-sm-2 card card-lime">
                     <div class="card-header">
-                        <h3 class="card-title">Data Transaksi Pekerjaan Lain</h3>
+                        <h3 class="card-title">Data Transaksi Promkes</h3>
                     </div>
                     <div class="card-body p-2">
+                        <div class="accordion" id="accordionExample">
+                            <div class="card">
+                                <a class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
+                                    id="headingOne" data-target="#caraCariDataKegiatan" aria-expanded="true"
+                                    aria-controls="caraCariDataKegiatan">
+                                    <strong>Klik Untuk Melihat Cara Pencarian Data Kegiatan</strong>
+                                </a>
+                                <div id="caraCariDataKegiatan" class="collapse" aria-labelledby="headingOne"
+                                    data-parent="#accordionExample">
+                                    <div class="card-body p-1">
+                                        <ul class="list-decimal list-outside space-y-2 ml-6">
+                                            <li>Pertama pilih Nama Petugas</li>
+                                            <li>Lalu, silahkan pilih tanggal bebas, patokannya adalah bulannya.
+                                            </li>
+                                            <li><strong>Contoh:</strong> Jika ingin mencari data Kegiatan Bulan
+                                                Maret 2025 maka
+                                                bisa memilih tanggal 10 Maret 2025 atau 25 Maret 2025</li>
+                                            <li>Lalu Klik Tombol "Cari Data Kegiatan"</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-row">
+                            <label class="col-form-label col-sm-2">Tanggal Kegiatan:</label>
+                            <div class="input-group col-sm-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="far fa-calendar-alt"></i>
+                                    </span>
+                                </div>
+                                <input type="text" class="form-control float-right" id="tglEkin">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-info d-flex justify-content-center mb-2 col"
+                            onclick="cariDataKegiatanPerOrang();">
+                            Cari Data Kegiatan
+                        </button>
                         <div class="table-responsive">
                             @include('Template.Table.loading')
                             <table id="tabelKegLain" class="table table-striped" style="width:100%" cellspacing="0">
@@ -111,10 +122,10 @@
                                     <tr>
                                         <th class="col-1">Aksi</th>
                                         <th class="col-1">Tgl</th>
-                                        <th class="col-1">NIP</th>
-                                        <th class="col-1">NAMA</th>
-                                        <th class="col-1">KEGIATAN</th>
-                                        <th class="col-1">QTY</th>
+                                        <th class="col-1">No Hp</th>
+                                        <th class="col-1">Nama</th>
+                                        <th class="col-1">Konsultasi</th>
+                                        <th class="col-1">Petugas</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -128,26 +139,45 @@
 
     <!-- Script Validasi dan Simpan -->
     <script type="text/javascript">
-        function validasiKegiatanLain() {
+        function validasiPromkes() {
             var pegawai = $('#pegawai').val();
-            var tglKegiatan = $('#tglKegiatan').val();
-            var kegiatan = $('#kegiatan').val();
-            var kegLain = $('#kegLain').val();
-            var jumlah = $('#jumlah').val();
-            var idKegiatan = $('#idKegiatan').val();
+            var pasien = $('#pasien').val();
+            var konsultasi = $('#konsultasi').val();
+            var td = $('#td').val();
+            var nadi = $('#nadi').val();
+            var noHp = $('#noHp').val();
+            var id = $('#id').val();
 
-            if (!pegawai || !tglKegiatan || !kegiatan || !jumlah) {
+            if (!pegawai || !pasien || !konsultasi) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Perhatian',
-                    text: 'Data belum lengkap, silahkan lengkapi terlebih dahulu',
+                    text: 'Data pegawai/pasien belum lengkap, silahkan lengkapi terlebih dahulu',
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'OK'
                 });
                 return;
             }
 
-            simpanKegiatanLain(pegawai, tglKegiatan, kegiatan, kegLain, jumlah, idKegiatan);
+            const dataPut = {
+                pegawai: pegawai,
+                pasien: pasien,
+                konsultasi: konsultasi,
+                td: td,
+                nadi: nadi,
+                noHp: noHp,
+                id: id
+            }
+            const dataStore = {
+                pegawai: pegawai,
+                pasien: pasien,
+                konsultasi: konsultasi,
+                td: td,
+                nadi: nadi,
+                noHp: noHp,
+            }
+
+            simpan(dataPut, dataStore, id);
         }
 
         function drawTabelKegiatanLain(dataTabel) {
@@ -196,32 +226,20 @@
             });
         }
 
-        async function simpanKegiatanLain(pegawai, tglKegiatan, kegiatan, kegLain, jumlah, idKegiatan) {
+        async function simpan(dataPut, data, id) {
+            console.log("🚀 ~ simpan ~ data:", data)
+            // return
             tampilkanLoading();
             let url;
             let type;
-            let data = [];
-            if (idKegiatan != '') {
-                url = "/api/ekin/poin";
+            if (id != '') {
+                url = "/api/ekin/";
                 type = "PUT";
-                data = {
-                    pegawai: pegawai,
-                    tglKegiatan: tglKegiatan,
-                    kegiatan: kegiatan,
-                    kegLain: kegLain,
-                    jumlah: jumlah,
-                    id: idKegiatan
-                }
+                data = dataPut
             } else {
-                url = "/api/ekin/poin"
+                url = "/api/ekin/"
                 type = "POST";
-                data = {
-                    pegawai: pegawai,
-                    tglKegiatan: tglKegiatan,
-                    kegiatan: kegiatan,
-                    kegLain: kegLain,
-                    jumlah: jumlah
-                }
+                data = dataStore
             }
             $.ajax({
                 url: url,

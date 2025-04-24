@@ -29,22 +29,24 @@
 
 
             // Inisialisasi tglAwal dan tglAkhir sebagai objek Moment.js
-            // tglAwal = moment().subtract(30, "days").format("YYYY-MM-DD");
+            // tglAwal = moment().subtract(30, "days").format("DD-MM-YYYY");
             tglAwal = moment().subtract(0, "days").format("YYYY-MM-DD");
             tglAkhir = moment().subtract(0, "days").format("YYYY-MM-DD");
+            tglAwalE = moment().subtract(0, "days").format("DD/MM/YYYY");
+            tglAkhirE = moment().subtract(0, "days").format("DD/MM/YYYY");
             console.log("🚀 ~ tglAwal:", tglAwal)
             console.log("🚀 ~ tglAkhir:", tglAkhir)
             // Menetapkan nilai ke input tanggal
-            $("#tglEkin").val(tglAwal + " to " + tglAkhir);
+            $("#tglEkin").val(tglAwalE + " to " + tglAkhirE);
 
             // Date range picker
             $("#tglEkin").daterangepicker({
-                startDate: tglAwal,
-                endDate: tglAkhir,
+                startDate: tglAwalE,
+                endDate: tglAkhirE,
                 autoApply: true,
                 locale: {
-                    format: "YYYY-MM-DD",
-                    separator: " to ",
+                    format: "DD/MM/YYYY",
+                    separator: "  s.d.  ",
                     applyLabel: "Apply",
                     cancelLabel: "Cancel",
                     customRangeLabel: "Custom Range",
@@ -58,7 +60,8 @@
                 console.log("🚀 ~ $ ~ tglAkhir:", tglAkhir)
 
                 // Update nilai input dengan tanggal yang baru dipilih
-                $(this).val(tglAwal + " to " + tglAkhir);
+                $(this).val(picker.startDate.format("DD-MM-YYYY") + " s.d. " + picker.endDate.format(
+                    "DD-MM-YYYY"));
             });
 
         });

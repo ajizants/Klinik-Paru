@@ -23,6 +23,7 @@ use App\Http\Controllers\NoAntrianController;
 use App\Http\Controllers\PasienKominfoController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PendaftaranController;
+use App\Http\Controllers\PromkesController;
 use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\RoMasterController;
 use App\Http\Controllers\ROTransaksiController;
@@ -62,7 +63,7 @@ Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);
 
 Route::get('/diagnosa_icd_x', function (Request $request) {
     $search = $request->get('search', '');
-    $limit = $request->get('limit', 20);
+    $limit  = $request->get('limit', 20);
 
     $diagnosas = DiagnosaIcdXModel::where(function ($query) use ($search) {
         $query->where('diagnosa', 'like', '%' . $search . '%')
@@ -389,5 +390,11 @@ Route::post('SuratKontrol/get_data', [ApiKominfoController::class, 'getDataSurat
 Route::post('SuratKontrol/detail', [ApiKominfoController::class, 'getDetailSuratKontrol']);
 Route::get('SuratKontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakSuratKontrol']);
 Route::post('bpjs/get_data', [ApiKominfoController::class, 'getDataSEPSK']);
+
+//promkes
+Route::post('promkes', [PromkesController::class, 'store']);
+Route::get('promkes/{id}', [PromkesController::class, 'show']);
+Route::put('promkes/{id}', [PromkesController::class, 'update']);
+Route::delete('promkes/{id}', [PromkesController::class, 'destroy']);
 
 // });
