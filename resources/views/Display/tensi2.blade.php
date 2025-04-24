@@ -10,9 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
-    <!-- Theme style -->
-    {{-- <link type="text/css" rel="stylesheet" href="{{ asset('css/display.css') }}"> --}}
-    <!-- jQuery -->
     <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap 4 -->
     <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>

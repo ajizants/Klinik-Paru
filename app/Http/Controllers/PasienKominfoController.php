@@ -1655,7 +1655,7 @@ class PasienKominfoController extends Controller
         $model = new KominfoModel();
         $data = $model->getGrafikDokter($params)['data'];
         // return $data;
-        $pasien = $this->filterData($model->getTungguPoli($params)['data']);
+        $pasien = $this->filterData($model->getTungguPoli($params)['data']['data']);
         // return $pasien;
 
         $formattedData = $this->filterData($data);

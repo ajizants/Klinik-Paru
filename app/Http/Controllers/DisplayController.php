@@ -286,58 +286,176 @@ class DisplayController extends Controller
 
         return view('Display.lab', compact('title', 'tungguLab', 'tungguRo'));
     }
-    public function poli($id)
-    {
-        // Akses video dari folder yang di-share di jaringan
-        $videos = null;
-        switch ($id) {
-            case "agil":
-                $dokter = 'dr. AGIL DANANJAYA, Sp.P';
-                break;
-            case "nova":
-                $dokter = 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.';
-                break;
-            case "filly":
-                $dokter = 'dr. FILLY ULFA KUSUMAWARDANI';
-                break;
-            case "sigit":
-                $dokter = 'dr. SIGIT DWIYANTO';
-                break;
-            default:
-                abort(404, 'Dokter tidak ditemukan');
-        }
-        $title = 'Tunggu Poli ' . $dokter;
-        // return $dokter;
-        $params = [
-            'no_rm' => '',
-            'tanggal_awal' => Carbon::now()->format('Y-m-d'),
-            'tanggal_akhir' => Carbon::now()->format('Y-m-d'),
-        ];
-        $dataPendaftaran = [];
-        $listTunggu = [];
-        $client = new KominfoModel();
-        $dataPendaftaran = $client->pendaftaranRequest($params);
-        // return $dataPendaftaran;
-        $dataPendaftaran = ["error" => "Server error: `POST https:\/\/kkpm.banyumaskab.go.id\/api_kkpm\/v1\/pendaftaran\/data_pendaftaran` resulted in a `500 Internal Server Error` response:\n\n<div style=\"border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;\">\n\n<h4>A PHP Error was encountered<\/h4>\n\n<p>S (truncated...)\n"];
-        if (is_array($dataPendaftaran) && !isset($dataPendaftaran['error'])) {
-            $listTunggu = array_filter($dataPendaftaran, function ($item) use ($dokter) {
-                return $item['dokter_nama'] === $dokter && $item['status_pulang'] === 'Belum Pulang';
-            });
-        }
-        // Mengubah hasil array filter menjadi object (Collection)
-        $listTunggu = collect(array_values($listTunggu));
+    // public function poli($id)
+    // {
+    //     switch ($id) {
+    //         case "agil":
+    //             $dokter = 'dr. Agil Dananjaya, Sp.P';
+    //             break;
+    //         case "nova":
+    //             $dokter = 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.';
+    //             break;
+    //         case "filly":
+    //             $dokter = 'dr. Filly Ulfa Kusumawardani';
+    //             break;
+    //         case "sigit":
+    //             $dokter = 'dr. Sigit Dwiyanto';
+    //             break;
+    //         default:
+    //             abort(404, 'Dokter tidak ditemukan');
+    //     }
+    //     $title = 'Tunggu Poli ' . $dokter;
+    //     // return $dokter;
+    //     $params = [
+    //         'no_rm' => '',
+    //         'tanggal_awal' => Carbon::now()->format('Y-m-d'),
+    //         'tanggal_akhir' => Carbon::now()->format('Y-m-d'),
+    //     ];
+    //     $params2 = [
+    //         'no_rm' => '',
+    //         'tgl_awal' => Carbon::now()->format('Y-m-d'),
+    //         'tgl_akhir' => Carbon::now()->format('Y-m-d'),
+    //     ];
+    //     $dataPendaftaran = [];
+    //     $listTunggu = [];
+    //     $client = new KominfoModel();
+    //     $dataPendaftaran = $client->pendaftaranRequest($params);
+    //     $data = $client->getTungguPoli($params2);
+    //     // return $dataPendaftaran;
+    //     if (is_array($dataPendaftaran) && !isset($dataPendaftaran['error'])) {
+    //         $listTunggu = array_filter($dataPendaftaran, function ($item) use ($dokter) {
+    //             return $item['dokter_nama'] === $dokter && $item['status_pulang'] === 'Belum Pulang';
+    //         });
+    //     }
+    //     // Mengubah hasil array filter menjadi object (Collection)
+    //     $listTunggu = collect(array_values($listTunggu));
+    //     $dataAtas = $data['data2']['data'];
+    //     // return $dataAtas;
+    //     return $listTunggu;
 
-        // Mengembalikan sebagai objek
-        // return $listTunggu;
+    //     return view('Display.poli', compact('title', 'videos', 'listTunggu', 'dokter'));
+    // }
 
-        return view('Display.poli', compact('title', 'videos', 'listTunggu', 'dokter'));
-    }
     public function rme()
     {
 
         $title = 'Grafik Penggunaan RME ';
 
         return view('Laporan.dokter')->with('title', $title);
+    }
+
+    public function poli($id)
+    {
+        $dokter = $this->getDokterName($id);
+        $title = 'Tunggu Poli ' . $dokter;
+
+        $listTunggu = $this->getListTungguByDokter($dokter);
+        // $dataAtas = $this->getDataAtas();
+        $dataPanggil = $this->getDataPanggilPoli($id);
+        $client = new KominfoModel();
+        $jadwal = $client->jadwalPoli($params = []);
+
+        // return $listTunggu;
+
+        // Jika ingin kembalikan ke tampilan:
+        return view('Display.poli', compact('title', 'listTunggu', 'dokter', 'dataPanggil', 'jadwal', 'id'));
+        // return view('Display.poli', compact('title', 'listTunggu', 'dokter', 'dataAtas', 'dataPanggil'));
+    }
+
+/**
+ * Ambil nama dokter berdasarkan ID
+ */
+    private function getDokterName($id)
+    {
+        return match ($id) {
+            "agil" => 'dr. Agil Dananjaya, Sp.P',
+            "nova" => 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.',
+            "filly" => 'dr. Filly Ulfa Kusumawardani',
+            "sigit" => 'dr. Sigit Dwiyanto',
+            default => abort(404, 'Dokter tidak ditemukan'),
+        };
+    }
+
+/**
+ * Ambil daftar pasien yang belum pulang berdasarkan nama dokter
+ */
+    private function getListTungguByDokter($dokter)
+    {
+        $params = [
+            'no_rm' => '',
+            'tanggal_awal' => Carbon::now()->format('Y-m-d'),
+            'tanggal_akhir' => Carbon::now()->format('Y-m-d'),
+        ];
+        $client = new KominfoModel();
+        $dataPendaftaran = $client->pendaftaranRequest($params);
+
+        if (is_array($dataPendaftaran) && !isset($dataPendaftaran['error'])) {
+            $listTunggu = array_filter($dataPendaftaran, function ($item) use ($dokter) {
+                return $item['dokter_nama'] === $dokter && $item['status_pulang'] === 'Belum Pulang';
+            });
+
+            return collect(array_values($listTunggu));
+        }
+
+        return collect();
+    }
+
+/**
+ * Ambil data atas dari KominfoModel
+ */
+    private function getDataAtas()
+    {
+        $params2 = [
+            'no_rm' => '',
+            'tgl_awal' => Carbon::now()->format('Y-m-d'),
+            'tgl_akhir' => Carbon::now()->format('Y-m-d'),
+        ];
+        $client = new KominfoModel();
+        $data = $client->getTungguPoli($params2);
+
+        return $data['data2']['data'] ?? [];
+    }
+    private function getDataPanggilPoli($id)
+    {
+        $params2 = [
+            'no_rm' => '',
+            'tgl_awal' => Carbon::now()->format('Y-m-d'),
+            'tgl_akhir' => Carbon::now()->format('Y-m-d'),
+        ];
+        $client = new KominfoModel();
+        $data = $client->getTungguPoli($params2);
+        $data = $data['data3']['data'];
+        $ruangPeriksa = [
+            'filly' => 'Ruang Periksa 1',
+            'nova' => 'Ruang Periksa 2',
+            'sigit' => 'Ruang Periksa 3',
+            'agil' => 'Ruang Periksa 4',
+        ];
+        $ruang = $ruangPeriksa[$id];
+
+        // dd($data);
+        //filter berdasarkan menuju_ke
+        $data = array_filter($data, function ($item) use ($ruang) {
+            return $item['menuju_ke'] === $ruang;
+        });
+        $data = array_values($data);
+
+        return $data[0] ?? [];
+    }
+
+    public function listTungguPoli($id)
+    {
+        $dokter = $this->getDokterName($id);
+        $listTunggu = $this->getListTungguByDokter($dokter);
+        // $dataAtas = $this->getDataAtas();
+        $dataPanggil = $this->getDataPanggilPoli($id);
+        $res = [
+            // 'dataAtas' => $dataAtas,
+            'dataPanggil' => $dataPanggil,
+            'tunggu' => $listTunggu,
+        ];
+
+        return response()->json($res);
     }
 
 }

@@ -62,7 +62,7 @@ Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);
 
 Route::get('/diagnosa_icd_x', function (Request $request) {
     $search = $request->get('search', '');
-    $limit  = $request->get('limit', 20);
+    $limit = $request->get('limit', 20);
 
     $diagnosas = DiagnosaIcdXModel::where(function ($query) use ($search) {
         $query->where('diagnosa', 'like', '%' . $search . '%')
@@ -357,6 +357,7 @@ Route::get('list/tunggu/lab', [DisplayController::class, 'tungguLab']);
 Route::get('list/tunggu/ro', [DisplayController::class, 'tungguRo']);
 Route::get('list/tunggu/farmasi', [DisplayController::class, 'listTungguFarmasi']);
 Route::get('list/tunggu/loket', [DisplayController::class, 'listTungguLoket']);
+Route::get('list/tunggu/poli/{id}', [DisplayController::class, 'listTungguPoli']);
 
 //Surat Medis
 Route::get('surat/medis/{id}/{tgl}', [SuratController::class, 'cetakSM']);
