@@ -27,6 +27,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js "
         integrity="sha512-eVL5Lb9al9FzgR63gDs1MxcDS2wFu3loYAgjIH0+Hg38tCS8Ag62dwKyH+wzDb+QauDpEZjXbMn11blw8cbTJQ=="
         crossorigin=" anonymousÂ&nbsp;"></script>
+    <style>
+        .fs3 {
+            font-size: 3rem !important;
+        }
+    </style>
 
 </head>
 
@@ -171,9 +176,9 @@
                                             @endphp
                                         @endif
                                         <tr>
-                                            <td class="col-2" style="font-size: 3rem">{{ $item['antrean_angka'] }}
+                                            <td class="col-2 fs3">{{ $item['antrean_angka'] }}
                                             </td>
-                                            <td class="col-2" style="font-size: 3rem">{{ $item['penjamin_nama'] }}
+                                            <td class="col-2 fs3">{{ $item['penjamin_nama'] }}
                                             </td>
                                             <td class="col-3 {{ $bg }}">{{ $item['keterangan'] }}</td>
                                         </tr>
@@ -287,12 +292,12 @@
                     const noUrut = document.createElement("td");
                     noUrut.textContent = item.antrean_angka;
                     row.appendChild(noUrut);
-                    noUrut.classList.add("col-2");
+                    noUrut.classList.add("col-2 fs3");
 
                     const penjamin = document.createElement("td");
                     penjamin.textContent = item.penjamin_nama;
                     row.appendChild(penjamin);
-                    penjamin.classList.add("col-2");
+                    penjamin.classList.add("col-2 fs3");
 
                     const status = document.createElement("td");
                     status.textContent = item.keterangan;

@@ -1532,10 +1532,10 @@ class KominfoModel extends Model
 
         foreach ($jadwal as $index => $row) {
             $html .= '<tr>
-            <td class="border px-4 py-2 col-1">' . ($index + 1) . '</td>
-            <td class="border px-4 py-2 col-5">' . $row['dokter'] . '</td>
-            <td class="border px-4 py-2 col-3">' . $row['hari'] . '</td>
-            <td class="border px-4 py-2">' . $row['jam'] . '</td>
+            <td class="border px-4 py-2 fs3 col-1">' . ($index + 1) . '</td>
+            <td class="border px-4 py-2 fs3 col-5">' . $row['dokter'] . '</td>
+            <td class="border px-4 py-2 fs3 col-3">' . $row['hari'] . '</td>
+            <td class="border px-4 py-2 fs3">' . $row['jam'] . '</td>
           </tr>';
         }
 
