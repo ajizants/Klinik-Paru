@@ -377,6 +377,16 @@
                         <p>Hasil Penunjang</p>
                     </a>
                 </li>
+                <!-- Promkes -->
+                @php
+                    $roleHasilPenunjang = ['tamu', 'igd', 'admin', 'nakes', 'dokter', 'perawat'];
+                @endphp
+                <li class="nav-item @if (!in_array(Auth::user()->role, $roleHasilPenunjang)) non-aktif @endif">
+                    <a class="nav-link" href="{{ url('/Promkes') }}">
+                        <i class="fa-solid fa-laptop-medical nav-icon"></i>
+                        <p>Promkes</p>
+                    </a>
+                </li>
 
                 <!-- Laporan Section -->
                 <li class="nav-header">LAPORAN</li>

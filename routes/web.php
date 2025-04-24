@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasienKominfoController;
+use App\Http\Controllers\PromkesController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\TataUsahaController;
 use Illuminate\Support\Facades\Route;
@@ -116,5 +117,8 @@ Route::middleware('auth')->group(function () {
     Route::get('TataUsaha/keuangan', [TataUsahaController::class, 'keuangan'])->name('tu.keuangan')->middleware('role:tu');
     Route::get('TataUsaha/belanja', [TataUsahaController::class, 'belanja'])->name('tu.belanja')->middleware('role:tu');
     Route::get('TataUsaha/report', [TataUsahaController::class, 'report'])->name('tu.report')->middleware('role:tu');
+
+    //Prokes
+    Route::get('Promkes', [PromkesController::class, 'index'])->name('promkes');
 
 });
