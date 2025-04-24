@@ -148,7 +148,7 @@
                             $scrol = isset($listTunggu) && count($listTunggu) >= 4 ? 'table-auto' : '';
                         @endphp
 
-                        @if (empty($listTunggu) && $listTunggu == null && $listTunggu == '[]')
+                        @if (empty($listTunggu) || count($listTunggu) === 0)
                             <table class="table table-bordered table-striped table-hover" id="listTunggu"
                                 style="width:100%">
                                 <tbody>
