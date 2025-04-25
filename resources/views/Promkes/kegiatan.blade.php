@@ -46,7 +46,7 @@
                             <div class="form-group form-row">
                                 <div class="form-group col">
                                     <div class="input-group input-group-sm">
-                                        <input type="text" inputmode="numeric" id="td"
+                                        <input type="text" id="td"
                                             class="form-control col border border-primary"
                                             aria-describedby="inputGroup-sizing-sm" placeholder="TD" step="1" />
                                         <div class="input-group-append">
