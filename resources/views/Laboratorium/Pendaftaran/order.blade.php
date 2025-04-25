@@ -217,9 +217,9 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             window.print();
-            window.onafterprint = function() {
-                window.close();
-            };
+            window.addEventListener('afterprint', () => {
+                window.close(); // ini akan berhasil kalau dibuka dari window.open()
+            });
         });
     </script>
 
