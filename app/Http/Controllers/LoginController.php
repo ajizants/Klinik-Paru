@@ -33,6 +33,7 @@ class LoginController extends Controller
             if (!str_ends_with($email, '@rsparu.com')) {
                 $email .= '@rsparu.com';
             }
+            // dd($email);
 
             $go = "";
             switch ($email) {
@@ -57,11 +58,11 @@ class LoginController extends Controller
                 case 'farmasi@rsparu.com':
                     $go = '/farmasi';
                     break;
+                case 'promkes@rsparu.com':
+                    $go = '/Promkes';
+                    break;
                 case 'dataanalis@rsparu.com' || 'admin@rsparu.com':
                     $go = '/Pusat-Data';
-                    break;
-                case 'promkes@rsparu.com' || 'admin@rsparu.com':
-                    $go = '/Promkes';
                     break;
                 default:
                     $go = '/home';
