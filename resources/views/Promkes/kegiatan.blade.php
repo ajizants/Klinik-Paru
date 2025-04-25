@@ -21,7 +21,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="pegawai">Nama Petugas</label>
+                                {{-- <label for="pegawai">Nama Petugas</label> --}}
                                 <select id="pegawai" class="form-control select2bs4 border border-primary">
                                     <option value="">--Pilih Petugas--</option>
                                     @foreach (collect($pegawai)->sortBy('nama') as $item)
@@ -33,33 +33,47 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="pasien">Nama Pasien :</label>
-                                <input id="pasien" type="text"
+                                {{-- <label for="pasien">Nama Pasien :</label> --}}
+                                <input id="pasien" type="text" placeholder="Nama Pasien"
                                     class="form-control-sm col border border-primary" />
                             </div>
                             <div class="form-group">
-                                <label for="noHp">No HP :</label>
-                                <input id="noHp" type="text"
+                                {{-- <label for="noHp">No HP :</label> --}}
+                                <input id="noHp" type="text" placeholder="No HP"
                                     class="form-control-sm col border border-primary" />
                             </div>
 
                             <div class="form-group form-row">
                                 <div class="form-group col">
-                                    <label for="td">TD :</label>
-                                    <input id="td" type="text"
-                                        class="form-control-sm col border border-primary" />
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" inputmode="numeric" id="td"
+                                            class="form-control col border border-primary"
+                                            aria-describedby="inputGroup-sizing-sm" placeholder="TD" step="1" />
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">
+                                                mmHg
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-group col">
-                                    <label for="nadi">Nadi :</label>
-                                    <input id="nadi" type="text"
-                                        class="form-control-sm col border border-primary" />
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" inputmode="numeric" id="nadi"
+                                            class="form-control col border border-primary"
+                                            aria-describedby="inputGroup-sizing-sm" placeholder="Nadi" step="1" />
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">
+                                                X/mnt
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="konsultasi">Konsultasi :</label>
+                                {{-- <label for="konsultasi">Konsultasi :</label> --}}
                                 <textarea id="konsultasi" class="form-control border border-primary" rows="4"
-                                    placeholder="Tuliskan Data Hasil Konsultasi"></textarea>
+                                    placeholder="Tuliskan hasil konsultasi atau pemeriksaan lain di sini"></textarea>
                             </div>
 
                             <button type="button" class="btn btn-success d-flex justify-content-center mb-2 col"
@@ -77,29 +91,6 @@
                         <h3 class="card-title">Data Transaksi Promkes</h3>
                     </div>
                     <div class="card-body p-2">
-                        <div class="accordion" id="accordionExample">
-                            <div class="card">
-                                <a class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
-                                    id="headingOne" data-target="#caraCariDataKegiatan" aria-expanded="true"
-                                    aria-controls="caraCariDataKegiatan">
-                                    <strong>Klik Untuk Melihat Cara Pencarian Data Kegiatan</strong>
-                                </a>
-                                <div id="caraCariDataKegiatan" class="collapse" aria-labelledby="headingOne"
-                                    data-parent="#accordionExample">
-                                    <div class="card-body p-1">
-                                        <ul class="list-decimal list-outside space-y-2 ml-6">
-                                            <li>Pertama pilih Nama Petugas</li>
-                                            <li>Lalu, silahkan pilih tanggal bebas, patokannya adalah bulannya.
-                                            </li>
-                                            <li><strong>Contoh:</strong> Jika ingin mencari data Kegiatan Bulan
-                                                Maret 2025 maka
-                                                bisa memilih tanggal 10 Maret 2025 atau 25 Maret 2025</li>
-                                            <li>Lalu Klik Tombol "Cari Data Kegiatan"</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="form-group form-row">
                             <label class="col-form-label col-sm-2">Tanggal Kegiatan:</label>
                             <div class="input-group col-sm-3">
@@ -112,7 +103,7 @@
                             </div>
                         </div>
                         <button type="button" class="btn btn-info d-flex justify-content-center mb-2 col"
-                            onclick="cariDataKegiatanPerOrang();">
+                            onclick="cariDataKegiatan(tglAwal, tglAkhir);">
                             Cari Data Kegiatan
                         </button>
                         <div class="table-responsive">
@@ -122,8 +113,8 @@
                                     <tr>
                                         <th class="col-1">Aksi</th>
                                         <th class="col-1">Tgl</th>
-                                        <th class="col-1">No Hp</th>
                                         <th class="col-1">Nama</th>
+                                        <th class="col-1">No Hp</th>
                                         <th class="col-1">Konsultasi</th>
                                         <th class="col-1">Petugas</th>
                                     </tr>
@@ -139,6 +130,47 @@
 
     <!-- Script Validasi dan Simpan -->
     <script type="text/javascript">
+        function drawTabelKegiatanLain(dataTabel) {
+            if ($.fn.DataTable.isDataTable('#tabelKegLain')) {
+                $('#tabelKegLain').DataTable().clear().destroy();
+            }
+
+            $('#tabelKegLain').DataTable({
+                data: dataTabel,
+                columns: [{
+                        data: 'aksi'
+                    },
+                    {
+                        data: 'tanggal'
+                    },
+                    {
+                        data: 'pasien'
+                    },
+                    {
+                        data: 'noHp'
+                    },
+                    {
+                        data: 'hasilPromkes'
+                    },
+                    {
+                        data: 'petugas.biodata.nama'
+                    },
+                ],
+                paging: true,
+                order: [
+                    [1, "asc"]
+                ],
+                lengthMenu: [
+                    [5, 10, 25, 50, -1],
+                    [5, 10, 25, 50, "All"]
+                ],
+                pageLength: 5,
+                responsive: true,
+                autoWidth: false,
+                scrollX: true
+            });
+        }
+
         function validasiPromkes() {
             var pegawai = $('#pegawai').val();
             var pasien = $('#pasien').val();
@@ -166,8 +198,10 @@
                 td: td,
                 nadi: nadi,
                 noHp: noHp,
+                _method: 'PUT',
                 id: id
             }
+
             const dataStore = {
                 pegawai: pegawai,
                 pasien: pasien,
@@ -180,70 +214,22 @@
             simpan(dataPut, dataStore, id);
         }
 
-        function drawTabelKegiatanLain(dataTabel) {
-            if ($.fn.DataTable.isDataTable('#tabelKegLain')) {
-                $('#tabelKegLain').DataTable().clear().destroy();
-            }
-            const role = $("#roleUser").val();
-            dataTabel.forEach(item => {
-                if (role !== 'admin') {
-                    item.aksi = "Hub admin";
-                }
-            })
-            $('#tabelKegLain').DataTable({
-                data: dataTabel,
-                columns: [{
-                        data: 'aksi'
-                    },
-                    {
-                        data: 'tanggal'
-                    },
-                    {
-                        data: 'nip'
-                    },
-                    {
-                        data: 'nama'
-                    },
-                    {
-                        data: 'kegiatan'
-                    },
-                    {
-                        data: 'jumlah'
-                    },
-                ],
-                paging: true,
-                order: [
-                    [1, "asc"]
-                ],
-                lengthMenu: [
-                    [5, 10, 25, 50, -1],
-                    [5, 10, 25, 50, "All"]
-                ],
-                pageLength: 5,
-                responsive: true,
-                autoWidth: false,
-                scrollX: true
-            });
-        }
-
-        async function simpan(dataPut, data, id) {
-            console.log("🚀 ~ simpan ~ data:", data)
+        async function simpan(dataPut, dataStore, id) {
             // return
-            tampilkanLoading();
             let url;
-            let type;
+            let data;
             if (id != '') {
-                url = "/api/ekin/";
-                type = "PUT";
+                url = "/api/promkes/" + id;
                 data = dataPut
+                tampilkanLoading('Mengubah data...');
             } else {
-                url = "/api/ekin/"
-                type = "POST";
+                url = "/api/promkes"
                 data = dataStore
+                tampilkanLoading('Menyimpan data...');
             }
             $.ajax({
                 url: url,
-                type: type,
+                type: "POST",
                 data: data,
                 dataType: "JSON",
                 headers: {
@@ -252,59 +238,47 @@
                 success: function(data) {
                     console.log("🚀 ~ simpanKegiatanLain ~ data:", data)
                     if (data.error) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Perhatian',
-                            text: data.error,
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK'
-                        });
+                        tampilkanEror(data.error);
                     } else {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: 'Data berhasil disimpan',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK'
-                        });
+                        tampilkanSuccess(data.message);
 
                         // reset form setelah simpan
                         document.getElementById("formKegiatanLain").reset();
-                        $('#tglKegiatan').val(new Date().toISOString().split('T')[0]);
                         $('#pegawai').trigger('change');
-                        $('#kegiatan').trigger('change');
 
 
-                        const dataTabel = data.table;
+                        const dataTabel = data.table || [];
                         drawTabelKegiatanLain(dataTabel);
                     }
                 },
                 error: function(xhr, status, error) {
                     console.log(error);
-                    tampilkanEror(error);
+                    tampilkanEror(xhr.responseJSON);
                 }
             });
         }
 
-        function editKegiatan(button) {
-            console.log("🚀 ~ editKegiatan ~ button:", button)
+        function editPromkes(button) {
+            console.log("🚀 ~ editPromkes ~ button:", button)
             var id = $(button).attr('data-id');
-            var pegawai = $(button).attr('data-nip');
-            var tglKegiatan = $(button).attr('data-tanggal');
-            var kegiatan = $(button).attr('data-kegiatan');
-            var kegLain = $(button).attr('data-keterangan');
-            var jumlah = $(button).attr('data-jumlah');
+            var pegawai = $(button).attr('data-pegawai');
+            var pasien = $(button).attr('data-pasien');
+            var noHp = $(button).attr('data-noHp');
+            var td = $(button).attr('data-td');
+            var nadi = $(button).attr('data-nadi');
+            var konsultasi = $(button).attr('data-konsultasi');
 
-            $('#idKegiatan').val(id);
+            $('#id').val(id);
             $('#pegawai').val(pegawai).trigger('change');
-            $('#tglKegiatan').val(tglKegiatan);
-            $('#kegiatan').val(kegiatan).trigger('change');
-            $('#kegLain').val(kegLain);
-            $('#jumlah').val(jumlah);
-
+            $('#pasien').val(pasien);
+            $('#noHp').val(noHp);
+            $('#td').val(td);
+            $('#nadi').val(nadi);
+            $('#konsultasi').val(konsultasi);
+            scrollToTop();
         }
 
-        function deleteKegiatan(id) {
+        function deletePromkes(id) {
 
             Swal.fire({
                 title: 'Apakah anda yakin?',
@@ -317,7 +291,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "api/ekin/poin/" + id,
+                        url: "api/promkes/" + id,
                         type: "DELETE",
                         dataType: "JSON",
                         headers: {
@@ -328,7 +302,7 @@
                             if (data.error) {
                                 tampilkanEror(data.error);
                             } else {
-                                tampilkanSuccess('Data berhasil dihapus');
+                                tampilkanSuccess(data.delete);
                                 const dataTabel = data.table;
                                 drawTabelKegiatanLain(dataTabel);
                             }
@@ -341,6 +315,7 @@
                                 errorMessage = xhr.responseJSON.message;
                             } else if (xhr.status === 404) {
                                 errorMessage = 'Data tidak ditemukan.';
+                                drawTabelKegiatanLain([]);
                             } else if (xhr.status === 500) {
                                 errorMessage = 'Kesalahan server. Silakan coba lagi nanti.';
                             }
@@ -352,34 +327,31 @@
             })
         }
 
-        function cariDataKegiatanPerOrang() {
-            let pegawai = $('#pegawai').val();
-            let tglKegiatan = $('#tglKegiatan').val();
-            let roleUser = $('#roleUser').val();
-            console.log("🚀 ~ cariDataKegiatanPerOrang ~ pegawai:", pegawai);
-            console.log("🚀 ~ cariDataKegiatanPerOrang ~ tglKegiatan:", tglKegiatan);
+        function cariDataKegiatan(tglAwal, tglAkhir) {
+            console.log("🚀 ~ cariDataKegiatan ~ tglAkhir:", tglAkhir)
+            console.log("🚀 ~ cariDataKegiatan ~ tglAwal:", tglAwal)
+
 
             $.ajax({
-                url: "api/ekin/poin/cari",
+                url: "api/promkes/cari",
                 type: "POST",
                 dataType: "JSON",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 data: {
-                    pegawai: pegawai,
-                    tglKegiatan: tglKegiatan,
-                    roleUser: roleUser
+                    tglAwal: tglAwal,
+                    tglAkhir: tglAkhir
                 },
                 success: function(data) {
                     console.log("🚀 ~ cariDataKegiatanPerOrang ~ data:", data);
-                    const dataTabel = data.table;
+                    const dataTabel = data.data;
                     drawTabelKegiatanLain(dataTabel);
                 },
                 error: function(xhr, status, error) {
                     console.error("❌ ~ Error Hapus:", error);
                     // Coba ambil pesan dari respon jika tersedia
-                    let errorMessage = 'Terjadi kesalahan saat menghapus data.' + error;
+                    let errorMessage = 'Terjadi kesalahan saat mencari data.' + error + xhr.responseJSON;
                     if (xhr.responseJSON && xhr.responseJSON.message) {
                         errorMessage = xhr.responseJSON.message;
                     } else if (xhr.status === 404) {
@@ -394,6 +366,7 @@
         }
 
         let dataKegiatan = @json($hasilKegiatan);
+        console.log("🚀 ~ dataKegiatan:", dataKegiatan)
         document.addEventListener('DOMContentLoaded',
             function() {
                 drawTabelKegiatanLain(dataKegiatan);

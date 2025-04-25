@@ -11,10 +11,16 @@ class PromkesModel extends Model
     protected $table = 't_promkes_luar';
 
     protected $fillable = [
-        'id',
-        'tanggal',
-        'tempat',
-        'keterangan',
-        'keterangan2',
+        'pasien',
+        'noHp',
+        'td',
+        'nadi',
+        'konsultasi',
+        'pegawai',
     ];
+
+    public function petugas()
+    {
+        return $this->belongsTo(PegawaiModel::class, 'pegawai', 'nip');
+    }
 }

@@ -63,7 +63,7 @@ Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);
 
 Route::get('/diagnosa_icd_x', function (Request $request) {
     $search = $request->get('search', '');
-    $limit  = $request->get('limit', 20);
+    $limit = $request->get('limit', 20);
 
     $diagnosas = DiagnosaIcdXModel::where(function ($query) use ($search) {
         $query->where('diagnosa', 'like', '%' . $search . '%')
@@ -393,8 +393,9 @@ Route::post('bpjs/get_data', [ApiKominfoController::class, 'getDataSEPSK']);
 
 //promkes
 Route::post('promkes', [PromkesController::class, 'store']);
+Route::post('promkes/cari', [PromkesController::class, 'data']);
 Route::get('promkes/{id}', [PromkesController::class, 'show']);
-Route::put('promkes/{id}', [PromkesController::class, 'update']);
+Route::put('promkes/{promkesModel}', [PromkesController::class, 'update']);
 Route::delete('promkes/{id}', [PromkesController::class, 'destroy']);
 
 // });
