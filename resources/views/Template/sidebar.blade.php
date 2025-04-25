@@ -379,7 +379,7 @@
                 </li>
                 <!-- Promkes -->
                 @php
-                    $roleHasilPenunjang = ['tamu', 'igd', 'admin', 'nakes', 'dokter', 'perawat'];
+                    $roleHasilPenunjang = ['tamu', 'promkes', 'admin', 'nakes', 'dokter', 'perawat'];
                 @endphp
                 <li class="nav-item @if (!in_array(Auth::user()->role, $roleHasilPenunjang)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/Promkes') }}">

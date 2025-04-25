@@ -60,6 +60,9 @@ class LoginController extends Controller
                 case 'dataanalis@rsparu.com' || 'admin@rsparu.com':
                     $go = '/Pusat-Data';
                     break;
+                case 'promkes@rsparu.com' || 'admin@rsparu.com':
+                    $go = '/Promkes';
+                    break;
                 default:
                     $go = '/home';
             }
