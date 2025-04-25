@@ -39,7 +39,7 @@
                             </div>
                             <div class="form-group">
                                 {{-- <label for="noHp">No HP :</label> --}}
-                                <input id="noHp" type="text" placeholder="No HP"
+                                <input id="noHp" type="text" placeholder="No HP" inputmode="numeric"
                                     class="form-control-sm col border border-primary" />
                             </div>
 
