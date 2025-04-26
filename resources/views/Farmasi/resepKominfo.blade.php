@@ -75,8 +75,18 @@
                                     <td class="px-2 align-top"></td>
                                     <td class="px-2 align-top">Dokter</td>
                                     <td class="px-2 align-top">:</td>
-                                    <td class="px-2 align-top"><input style="width: 100%;" type="text"
-                                            value="{{ $cppt['dokter_nama'] }}"></td>
+                                    <td class="px-2 align-top">
+                                        @if (
+                                            $cppt['penjamin_nama'] === 'BPJS' &&
+                                                ($cppt['dokter_nama'] === 'dr. Filly Ulfa Kusumawardani' || $cppt['dokter_nama'] === 'dr. Sigit Dwiyanto'))
+                                            <input style="width: 100%;" type="text"
+                                                value="dr. Agil Dananjaya, Sp.P" />
+                                        @else
+                                            <input style="width: 100%;" type="text"
+                                                value="{{ $cppt['dokter_nama'] }}">
+                                        @endif
+
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="px-2 align-top">Alergi</td>
@@ -181,8 +191,16 @@
                                         <br>
                                         <br>
                                         <br>
-                                        <input style="width: 100%; text-align: center;" type="text"
-                                            value="{{ $cppt['dokter_nama'] }}">
+                                        @if (
+                                            $cppt['penjamin_nama'] === 'BPJS' &&
+                                                ($cppt['dokter_nama'] === 'dr. Filly Ulfa Kusumawardani' || $cppt['dokter_nama'] === 'dr. Sigit Dwiyanto'))
+                                            <input style="width: 100%; text-align: center;" type="text"
+                                                value="dr. Agil Dananjaya, Sp.P" />
+                                        @else
+                                            <input style="width: 100%; text-align: center;" type="text"
+                                                value="{{ $cppt['dokter_nama'] }}">
+                                        @endif
+
                                     </td>
                                     <td class="border" style="vertical-align: top;font-weight: bold;" width="33%">
                                         Paraf Petugas Farmasi
@@ -199,7 +217,8 @@
                                         <br>
                                         <br>
                                         <br>
-                                        <input style="width: 100%; text-align: center;" type="text" value="">
+                                        <input style="width: 100%; text-align: center;" type="text"
+                                            value="">
                                     </td>
                                 </tr>
                             </tbody>
