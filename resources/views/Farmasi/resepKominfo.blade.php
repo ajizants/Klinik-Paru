@@ -75,7 +75,8 @@
                                     <td class="px-2 align-top"></td>
                                     <td class="px-2 align-top">Dokter</td>
                                     <td class="px-2 align-top">:</td>
-                                    <td class="px-2 align-top">{{ $cppt['dokter_nama'] }}</td>
+                                    <td class="px-2 align-top"><input style="width: 100%;" type="text"
+                                            value="{{ $cppt['dokter_nama'] }}"></td>
                                 </tr>
                                 <tr>
                                     <td class="px-2 align-top">Alergi</td>
