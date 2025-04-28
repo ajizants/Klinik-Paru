@@ -1238,7 +1238,6 @@ class PasienKominfoController extends Controller
 
         $model = new KominfoModel();
         $data = $model->cpptRequest($params);
-        // return $data;
 
         if (isset($data['response']['data']) && is_array($data['response']['data'])) {
             $filteredData = array_filter(array_map(function ($d) use ($ruang) {
@@ -1265,8 +1264,16 @@ class PasienKominfoController extends Controller
                     // dd($d['igd_selesai']);
                     // }
 
-                    $igd = IGDTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
-                    $d['status'] = $igd ? 'sudah' : 'belum';
+                    $jumlahPermintaan = count($d['tindakan']);
+
+                    $igd = IGDTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->get();
+                    if ($jumlahPermintaan == count($igd)) {
+                        $d['status'] = 'sudah';
+                    } else {
+                        $d['status'] = 'belum';
+                    }
+                    $d['jmlPerminttanIgd'] = $jumlahPermintaan;
+                    $d['jmlIgd'] = count($igd);
                     if (empty($d['tindakan'])) {
                         return null;
                     }
