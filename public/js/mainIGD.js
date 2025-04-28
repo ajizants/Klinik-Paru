@@ -219,7 +219,7 @@ function selesai() {
 }
 
 function updateAntrian() {
-    antrian("igd");
+    // antrian("igd");
     antrianAll("igd");
 }
 let namaPetugasSebelumnya;

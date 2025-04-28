@@ -17,12 +17,6 @@
             if (msg == "paru_ruang_poli") {
                 antrian("igd");
             }
-            if (msg == "paru_notifikasi_ruang_poli") {
-                const notif = new Audio("/audio/dingdong.mp3");
-                notif.load();
-                notif.play();
-                antrian("igd");
-            }
             if (msg == "paru_notifikasi_ruang_tensi_1") {
                 const notif = new Audio("/audio/dingdong.mp3");
                 notif.load();
