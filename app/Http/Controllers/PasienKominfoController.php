@@ -1267,13 +1267,14 @@ class PasienKominfoController extends Controller
                     $jumlahPermintaan = count($d['tindakan']);
 
                     $igd = IGDTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->get();
-                    if ($jumlahPermintaan == count($igd)) {
-                        $d['status'] = 'sudah';
-                    } else {
+                    $jumlahIgd = count($igd);
+                    if ($jumlahIgd < $jumlahPermintaan) {
                         $d['status'] = 'belum';
+                    } else {
+                        $d['status'] = 'sudah';
                     }
                     $d['jmlPerminttanIgd'] = $jumlahPermintaan;
-                    $d['jmlIgd'] = count($igd);
+                    $d['jmlIgd'] = $jumlahIgd;
                     if (empty($d['tindakan'])) {
                         return null;
                     }
