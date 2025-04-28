@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DataAnalisController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\EkinController;
@@ -122,3 +123,8 @@ Route::middleware('auth')->group(function () {
     Route::get('Promkes', [PromkesController::class, 'index'])->name('promkes');
 
 });
+
+//Booking
+Route::get('Pendaftaran/Online', [BookingController::class, 'index'])->name('pendaftaranOnline');
+Route::get('/register-patient', [BookingController::class, 'create'])->name('patient.create');
+Route::post('/register-patient', [BookingController::class, 'store'])->name('patient.register');
