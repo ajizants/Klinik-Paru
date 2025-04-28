@@ -217,8 +217,8 @@
                                         <br>
                                         <br>
                                         <br>
-                                        <input style="width: 100%; text-align: center;" type="text"
-                                            value="">
+                                        <input style="width: 100%; text-align: center; margin-bottom: 15px;"
+                                            type="text" value="{{ ucwords(strtolower($cppt['pasien_nama'])) }}">
                                     </td>
                                 </tr>
                             </tbody>
