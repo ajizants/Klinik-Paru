@@ -724,6 +724,8 @@
                     return response.json();
                 })
                 .then(result => {
+                    console.log("🚀 ~ cetakNoAntrian ~ data:", data);
+                    var no_rm = data.pasien_no_rm;
                     // Jika verifikasi berhasil, langsung cetak tanpa pertanyaan
                     // Swal.fire({
                     //     icon: "success",
@@ -731,13 +733,22 @@
                     //     showConfirmButton: false,
                     //     timer: 2000,
                     // }).then(() => {
-                    console.log("🚀 ~ cetakNoAntrian ~ data:", data);
-                    var no_rm = data.pasien_no_rm;
                     // submitKominfo(no_rm, data);
-                    cetakNoAntrian(data);
-
-
+                    // cetakNoAntrian(data);
                     // });
+                    Swal.fire({
+                        icon: "question",
+                        title: "Lanjutkan Cetak No Antrian?",
+                        showCancelButton: true,
+                        confirmButtonText: "Ya",
+                        cancelButtonText: "Batal",
+                        allowOutsideClick: false,
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            cetakNoAntrian(data);
+                        }
+                    })
+
                 })
                 .catch(error => {
                     console.error('Error executing automation script:', error);
@@ -776,16 +787,29 @@
                 .then(result => {
                     // Jika verifikasi berhasil, langsung cetak tanpa pertanyaan
                     // Swal.fire({
+                    console.log("🚀 ~ cetakNoAntrian ~ data:", data);
+                    var no_rm = data.pasien_no_rm;
                     //     icon: "success",
                     //     title: "Verifikasi Berhasil...!!!",
                     //     showConfirmButton: false,
                     //     timer: 2000,
                     // }).then(() => {
-                    console.log("🚀 ~ cetakNoAntrian ~ data:", data);
-                    var no_rm = data.pasien_no_rm;
                     // submitKominfo(no_rm, data);
-                    cetakNoAntrian(data);
+                    // cetakNoAntrian(data);
                     // });
+
+                    Swal.fire({
+                        icon: "question",
+                        title: "Lanjutkan Cetak No Antrian?",
+                        showCancelButton: true,
+                        confirmButtonText: "Ya",
+                        cancelButtonText: "Batal",
+                        allowOutsideClick: false,
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            cetakNoAntrian(data);
+                        }
+                    })
                 })
                 .catch(error => {
                     console.error('Error executing automation script:', error);
@@ -897,18 +921,7 @@
                             text: result.message,
                         });
                     }
-                    Swal.fire({
-                        icon: "question",
-                        title: "Lanjutkan Cetak No Antrian?",
-                        showCancelButton: true,
-                        confirmButtonText: "Ya",
-                        cancelButtonText: "Batal",
-                        allowOutsideClick: false,
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            cetakNoAntrian(data);
-                        }
-                    })
+                    cetakNoAntrian(data);
                     console.log("🚀 ~ submitKominfo ~ result:", result);
                 })
                 .catch(error => {
