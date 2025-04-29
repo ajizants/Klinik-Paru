@@ -48,7 +48,12 @@ class FarmasiController extends Controller
     public function cetakResepKominnfo($norm, $tanggal)
     {
         $dataArray = $this->cariObats($norm, $tanggal);
-        // return $data;
+        // return $dataArray;
+
+        if (is_null($dataArray)) {
+            return view('Template.404', ['message' => 'Data Resep Pasien No RM: ' . $norm . ' Pada Tanggal: ' . $tanggal . ' tidak ditemukan...!!']);
+            // abort(404, 'Data Resep Pasien No RM: ' . $norm . ' Pada Tanggal: ' . $tanggal . ' tidak ditemukan...!!');
+        }
 
         // $dataArray = json_decode($data->getContent(), true);
 
@@ -103,8 +108,10 @@ class FarmasiController extends Controller
 
         // Pastikan data CPPT tersedia
         $cppt = $data['response']['data'][0] ?? null;
+
+        // Kembalikan null saja kalau tidak ada
         if (!$cppt || !isset($cppt['no_reg'])) {
-            return response()->json(['error' => 'Data CPPT tidak ditemukan atau tidak valid'], 404);
+            return null;
         }
 
         // Periksa resep obat dari CPPT

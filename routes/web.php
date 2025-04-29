@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DataAnalisController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\EkinController;
@@ -8,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasienKominfoController;
+use App\Http\Controllers\PendaftaranOnlineController;
 use App\Http\Controllers\PromkesController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\TataUsahaController;
@@ -125,6 +125,7 @@ Route::middleware('auth')->group(function () {
 });
 
 //Booking
-Route::get('Pendaftaran/Online', [BookingController::class, 'index'])->name('pendaftaranOnline');
-Route::get('/register-patient', [BookingController::class, 'create'])->name('patient.create');
-Route::post('/register-patient', [BookingController::class, 'store'])->name('patient.register');
+Route::get('/pemesanan /Data', [PendaftaranOnlineController::class, 'index'])->name('pendaftaranOnline');
+Route::get('/pemesanan/pasien_baru ', [PendaftaranOnlineController::class, 'createBaru'])->name('patient_baru.create');
+Route::get('/pemesanan/pasien_lama ', [PendaftaranOnlineController::class, 'createLama'])->name('patient_lama.create');
+Route::post('/pemesanan', [PendaftaranOnlineController::class, 'store'])->name('patient.register');
