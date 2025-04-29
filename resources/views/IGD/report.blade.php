@@ -129,6 +129,13 @@
                                             <th class="col-3">Input Kunjungan</th>
                                             <th class="col-3">Input Pasien Baru</th>
                                         </tr>
+                                        {{-- <tr>
+                                            <th class="">No</th>
+                                            <th class="">Nama</th>
+                                            <th class="col-3">Input Data SIM RS</th>
+                                            <th class="col-3">Input Pasien Lama</th>
+                                            <th class="col-3">Input Pasien Baru</th>
+                                        </tr> --}}
                                     </thead>
                                 </table>
                             </div>
