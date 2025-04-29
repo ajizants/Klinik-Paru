@@ -736,18 +736,21 @@
                     // submitKominfo(no_rm, data);
                     // cetakNoAntrian(data);
                     // });
-                    Swal.fire({
-                        icon: "question",
-                        title: "Lanjutkan Cetak No Antrian?",
-                        showCancelButton: true,
-                        confirmButtonText: "Ya",
-                        cancelButtonText: "Batal",
-                        allowOutsideClick: false,
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            cetakNoAntrian(data);
-                        }
-                    })
+                    setTimeout(() => {
+                        Swal.fire({
+                            icon: "question",
+                            title: "Lanjutkan Cetak No Antrian?",
+                            showCancelButton: true,
+                            confirmButtonText: "Ya",
+                            cancelButtonText: "Batal",
+                            allowOutsideClick: false,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                cetakNoAntrian(data);
+                            }
+                        })
+                    }, 3000);
+
 
                 })
                 .catch(error => {
@@ -798,18 +801,20 @@
                     // cetakNoAntrian(data);
                     // });
 
-                    Swal.fire({
-                        icon: "question",
-                        title: "Lanjutkan Cetak No Antrian?",
-                        showCancelButton: true,
-                        confirmButtonText: "Ya",
-                        cancelButtonText: "Batal",
-                        allowOutsideClick: false,
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            cetakNoAntrian(data);
-                        }
-                    })
+                    setTimeout(() => {
+                        Swal.fire({
+                            icon: "question",
+                            title: "Lanjutkan Cetak No Antrian?",
+                            showCancelButton: true,
+                            confirmButtonText: "Ya",
+                            cancelButtonText: "Batal",
+                            allowOutsideClick: false,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                cetakNoAntrian(data);
+                            }
+                        })
+                    }, 3000);
                 })
                 .catch(error => {
                     console.error('Error executing automation script:', error);
