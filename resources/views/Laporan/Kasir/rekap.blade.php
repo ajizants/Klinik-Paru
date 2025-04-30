@@ -288,26 +288,7 @@
             <h5 class="m-0 font-weight-bold">Rekap Jumlah Pasien</h5>
         </div>
         <div class="card-body mb-2">
-
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover" id="total" width="100%" cellspacing="0">
-                    <thead class="bg bg-teal table-bordered border-warning">
-                        <tr>
-                            <th class="text-center">Jumlah No Antri</th>
-                            <th class="text-center">Jumlah Pasien</th>
-                            <th class="text-center">Pasien Batal</th>
-                            <th class="text-center">Pasien Skip</th>
-                            <th class="text-center">Pasien BPJS</th>
-                            <th class="text-center">Pasien UMUM</th>
-                            <th class="text-center">Pasien LAMA</th>
-                            <th class="text-center">Pasien BARU</th>
-                            <th class="text-center">Pasien OTS</th>
-                            <th class="text-center">Pasien JKN</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-bordered border-warning">
-                    </tbody>
-                </table>
+            <div class="table-responsive" id="tabelJumlah">
             </div>
         </div>
     </div>

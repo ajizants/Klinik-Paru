@@ -903,99 +903,210 @@ async function reportKunjungan(tglAwal, tglAkhir) {
         });
 }
 
-async function reportPendaftaran(tglAwal, tglAkhir) {
-    const formattedTglAwal = formatDate(new Date(tglAwal));
-    const formattedTglAkhir = formatDate(new Date(tglAkhir));
+// async function reportPendaftaran(tglAwal, tglAkhir) {
+//     const formattedTglAwal = formatDate(new Date(tglAwal));
+//     const formattedTglAkhir = formatDate(new Date(tglAkhir));
 
-    // Destroy existing DataTable if initialized
-    if ($.fn.DataTable.isDataTable("#report")) {
-        $("#report").DataTable().destroy();
+//     // Destroy existing DataTable if initialized
+//     if ($.fn.DataTable.isDataTable("#report")) {
+//         $("#report").DataTable().destroy();
+//     }
+//     if ($.fn.DataTable.isDataTable("#total")) {
+//         $("#total").DataTable().destroy();
+//     }
+
+//     try {
+//         const response = await $.ajax({
+//             url: "/api/kominfo/pendaftaran/report",
+//             type: "POST",
+//             data: {
+//                 tanggal_awal: tglAwal,
+//                 tanggal_akhir: tglAkhir,
+//                 no_rm: "",
+//             },
+//         });
+
+//         const { data: pendaftaran, total } = response;
+
+//         // Process pendaftaran data
+//         pendaftaran.forEach((item) => {
+//             const nama_pasien = item.pasien_nama.replace(/'/g, "\\'");
+//             const isBPJS = item.penjamin_nama === "BPJS";
+
+//             item.aksi = `
+//                 <button type="button" class="btn btn-sm btn-primary mr-2 mb-2"
+//                         onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak">Label</button>
+//                 <button type="button" class="btn btn-sm btn-${item.check_in} mr-2 mb-2" id="checkin" placeholder="Selesai"
+//                         data-toggle="modal" data-target="#modalSep"
+//                         onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}', '${item.penjamin_nama}', '${item.no_trans}', '${item.no_sep}', this)">
+//                         <i class="fa-regular fa-square-check"></i></button>
+//                 <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" placeholder="Resume"
+//                    href="/api/resume/${item.pasien_no_rm}/${item.tanggal}" target="_blank">Resume</a>
+//             `;
+
+//             item.status = item.check_in === "danger" ? "Belum" : "Selesai";
+//         });
+
+//         // Initialize DataTable for #total
+//         $("#total")
+//             .DataTable({
+//                 data: [total],
+//                 columns: [
+//                     { data: "jumlah_no_antrian", className: "text-center" },
+//                     { data: "jumlah_pasien", className: "text-center" },
+//                     { data: "jumlah_pasien_batal", className: "text-center" },
+//                     { data: "jumlah_nomor_skip", className: "text-center" },
+//                     { data: "jumlah_BPJS", className: "text-center" },
+//                     { data: "jumlah_UMUM", className: "text-center" },
+//                     { data: "jumlah_pasien_LAMA", className: "text-center" },
+//                     { data: "jumlah_pasien_BARU", className: "text-center" },
+//                     { data: "jumlah_daftar_OTS", className: "text-center" },
+//                     { data: "jumlah_daftar_JKN", className: "text-center" },
+//                 ],
+//                 autoWidth: false,
+//                 ordering: false,
+//                 paging: true,
+//                 searching: false,
+//                 lengthChange: false,
+//                 buttons: [
+//                     {
+//                         extend: "excelHtml5",
+//                         text: "Excel",
+//                         title: `Laporan Pendaftaran Tanggal: ${formattedTglAwal} s.d. ${formattedTglAkhir}`,
+//                         filename: `Laporan_Pendaftaran_${formattedTglAwal}_sd_${formattedTglAkhir}`,
+//                     },
+//                     {
+//                         extend: "colvis",
+//                         text: "Tampilkan Kolom",
+//                     },
+//                 ],
+//             })
+//             .buttons()
+//             .container()
+//             .appendTo("#total_wrapper .col-md-6:eq(0)");
+
+//         Swal.close();
+//     } catch (error) {
+//         console.error("Error:", error);
+//         Swal.fire({
+//             icon: "error",
+//             title: "Terjadi kesalahan saat mengambil data",
+//             text: error.responseJSON?.message || error.statusText,
+//         });
+//     }
+// }
+
+function reportPendaftaran(tglAwal, tglAkhir) {
+    prosesCariDataLaporan = true;
+    console.log(
+        "🚀 ~ reportPendaftaran ~ prosesCariDataLaporan:",
+        prosesCariDataLaporan
+    );
+    var tglA = formatDate(new Date(tglAwal));
+    var tglB = formatDate(new Date(tglAkhir));
+
+    if ($.fn.DataTable.isDataTable("#rekapTotal")) {
+        var tabletindakan = $("#rekapTotal").DataTable();
+        tabletindakan.destroy();
     }
-    if ($.fn.DataTable.isDataTable("#total")) {
-        $("#total").DataTable().destroy();
-    }
 
-    try {
-        const response = await $.ajax({
-            url: "/api/kominfo/pendaftaran/report",
-            type: "POST",
-            data: {
-                tanggal_awal: tglAwal,
-                tanggal_akhir: tglAkhir,
-                no_rm: "",
-            },
-        });
+    $.ajax({
+        url: "/api/kominfo/pendaftaran/report",
+        type: "post",
+        data: {
+            tanggal_awal: tglAwal,
+            tanggal_akhir: tglAkhir,
+            no_rm: "",
+        },
+        success: function (response) {
+            var pendaftaran = response["data"];
+            var total = response["total"];
+            var html = response["html"];
+            // console.log("🚀 ~ reportPendaftaran ~ total:", total);
+            // console.log("🚀 ~ reportPendaftaran ~ $data:", pendaftaran);
 
-        const { data: pendaftaran, total } = response;
+            pendaftaran.forEach(function (item, index) {
+                var nama_pasien = item.pasien_nama.replace(/'/g, "\\'");
+                let resume;
+                if (item.penjamin_nama == "BPJS") {
+                    resume = "";
+                } else {
+                    resume = "hidden";
+                }
+                item.aksi = `
 
-        // Process pendaftaran data
-        pendaftaran.forEach((item) => {
-            const nama_pasien = item.pasien_nama.replace(/'/g, "\\'");
-            const isBPJS = item.penjamin_nama === "BPJS";
+                            <button type="button" class="btn btn-sm btn-primary mr-2 mb-2"
+                                    onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak">Label</button>
+                            <button type="button" class="btn btn-sm btn-${item.check_in} mr-2 mb-2" id="checkin" placeholder="Selesai" data-toggle="modal"
+                                    data-target="#modalSep" onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}','${item.penjamin_nama}','${item.no_reg}','${item.no_sep}',this)">
+                                    <i class="fa-regular fa-square-check"></i></button>
+                            <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" placeholder="Resume"
+                                    href="/api/resume/${item.pasien_no_rm}/${item.tanggal}" target="_blank">Resume</a>
+                            <a type="button" class="btn btn-sm btn-${item.statusDaftar} mr-2 mb-2" placeholder="Resume"
+                            data-norm="${item.pasien_no_rm}"
+                            data-notrans="${item.no_reg}"
+                            data-no_urut="${item.antrean_nomor}"
+                            data-tgltrans="${item.waktu_verifikasi}"
+                                    onclick="daftarkan(this)">Daftarkan</a>
+                            `;
+                if (item.check_in == "danger") {
+                    item.status = "Belum";
+                } else {
+                    item.status = "Selesai";
+                }
+            });
+            // Inisialisasi DataTable
 
-            item.aksi = `
-                <button type="button" class="btn btn-sm btn-primary mr-2 mb-2"
-                        onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak">Label</button>
-                <button type="button" class="btn btn-sm btn-${item.check_in} mr-2 mb-2" id="checkin" placeholder="Selesai" 
-                        data-toggle="modal" data-target="#modalSep" 
-                        onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}', '${item.penjamin_nama}', '${item.no_trans}', '${item.no_sep}', this)">
-                        <i class="fa-regular fa-square-check"></i></button>
-                <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" placeholder="Resume"
-                   href="/api/resume/${item.pasien_no_rm}/${item.tanggal}" target="_blank">Resume</a>
-            `;
+            $("#tabelJumlah").html(html);
+            $("#rekapTotal")
+                .DataTable({
+                    autoWidth: false,
+                    ordering: false,
+                    paging: false,
+                    searching: false,
+                    info: false,
+                    lengthChange: false,
+                    buttons: [
+                        {
+                            extend: "excelHtml5",
+                            text: "Excel",
+                            title:
+                                "Laporan Jumlah Pendaftaran Tanggal: " +
+                                tglA +
+                                " s.d. " +
+                                tglB,
+                            filename:
+                                "Laporan Jumlah Pendaftaran Tanggal " +
+                                tglA +
+                                " s.d. " +
+                                tglB,
+                        },
+                        {
+                            extend: "colvis",
+                            text: "Tampilkan Kolom",
+                        },
+                    ],
+                })
+                .buttons()
+                .container()
+                .appendTo("#rekapTotal_wrapper .col-md-6:eq(0)");
 
-            item.status = item.check_in === "danger" ? "Belum" : "Selesai";
-        });
-
-        // Initialize DataTable for #total
-        $("#total")
-            .DataTable({
-                data: [total],
-                columns: [
-                    { data: "jumlah_no_antrian", className: "text-center" },
-                    { data: "jumlah_pasien", className: "text-center" },
-                    { data: "jumlah_pasien_batal", className: "text-center" },
-                    { data: "jumlah_nomor_skip", className: "text-center" },
-                    { data: "jumlah_BPJS", className: "text-center" },
-                    { data: "jumlah_UMUM", className: "text-center" },
-                    { data: "jumlah_pasien_LAMA", className: "text-center" },
-                    { data: "jumlah_pasien_BARU", className: "text-center" },
-                    { data: "jumlah_daftar_OTS", className: "text-center" },
-                    { data: "jumlah_daftar_JKN", className: "text-center" },
-                ],
-                autoWidth: false,
-                ordering: false,
-                paging: true,
-                searching: false,
-                lengthChange: false,
-                buttons: [
-                    {
-                        extend: "excelHtml5",
-                        text: "Excel",
-                        title: `Laporan Pendaftaran Tanggal: ${formattedTglAwal} s.d. ${formattedTglAkhir}`,
-                        filename: `Laporan_Pendaftaran_${formattedTglAwal}_sd_${formattedTglAkhir}`,
-                    },
-                    {
-                        extend: "colvis",
-                        text: "Tampilkan Kolom",
-                    },
-                ],
-            })
-            .buttons()
-            .container()
-            .appendTo("#total_wrapper .col-md-6:eq(0)");
-
-        Swal.close();
-    } catch (error) {
-        console.error("Error:", error);
-        Swal.fire({
-            icon: "error",
-            title: "Terjadi kesalahan saat mengambil data",
-            text: error.responseJSON?.message || error.statusText,
-        });
-    }
+            Swal.close();
+            setTimeout(function () {
+                prosesCariDataLaporan = false;
+            }, 3000);
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            Swal.fire({
+                icon: "error",
+                title:
+                    "Terjadi kesalahan saat mengambil data pasien...!!!\n" +
+                    error,
+            });
+        },
+    });
 }
-
 function formatDate(date) {
     // Convert the input to a Date object if it isn't already
     if (!(date instanceof Date)) {
