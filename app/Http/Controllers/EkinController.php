@@ -25,6 +25,7 @@ class EkinController extends Controller
         $modelKegiatanLain = new PegawaiKegiatanModel();
         $auth = auth()->user()->role;
         $hasilKegiatan = $modelKegiatanLain->allData([], $auth);
+        // return $hasilKegiatan;
 
         $tablePegawai = $model->dataPegawai();
 

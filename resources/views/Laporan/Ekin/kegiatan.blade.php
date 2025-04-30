@@ -181,7 +181,7 @@
                 ],
                 paging: true,
                 order: [
-                    [1, "asc"]
+                    [1, "dsc"]
                 ],
                 lengthMenu: [
                     [5, 10, 25, 50, -1],

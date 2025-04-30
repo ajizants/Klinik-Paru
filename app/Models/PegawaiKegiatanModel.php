@@ -93,6 +93,7 @@ class PegawaiKegiatanModel extends Model
             $tglAkhir = Carbon::now()->endOfMonth()->toDateString();
             $hasilKegiatan = $this->with('user.biodata')
                 ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
+                ->orderBy('created_at', 'desc')
                 ->get();
         } else if ($request['pegawai'] === null) {
             $tgl = $request['tglKegiatan'] ?? Carbon::now()->toDateString();
@@ -102,6 +103,7 @@ class PegawaiKegiatanModel extends Model
             $nip = $request['pegawai'] ?? '';
             $hasilKegiatan = PegawaiKegiatanModel::with('user.biodata')
                 ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
+                ->orderBy('created_at', 'desc')
                 ->get();
         } else {
             $tgl = $request['tglKegiatan'] ?? Carbon::now()->toDateString();
@@ -111,6 +113,7 @@ class PegawaiKegiatanModel extends Model
             $nip = $request['pegawai'] ?? '';
             $hasilKegiatan = PegawaiKegiatanModel::with('user.biodata')
                 ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
+                ->orderBy('created_at', 'desc')
                 ->where('nip', $nip)
                 ->get();
         }
