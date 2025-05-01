@@ -1299,7 +1299,7 @@ class KominfoModel extends Model
         $tanggal = $tgl . ' - ' . $tgl;
 
         if (! $cookie) {
-            dd($cookie);
+            // dd($cookie);
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
             $cookie        = $loginResponse['cookies'][0] ?? null;
 

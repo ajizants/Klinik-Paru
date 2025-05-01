@@ -212,37 +212,48 @@
                     @endif
                 </div>
             </div>
-            <div class="bg-primary text-center">
-                <h2 class="text-center mt-2 mb-0">JADWAL PRAKTIK DOKTER</h2>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover mb-0" id="header" style="width:100%">
-                    <thead class="bg bg-dark">
-                        <tr>
-                            <th class="col-1">No</th>
-                            <th class="col-2">Hari</th>
-                            <th class="col-2">Waktu</th>
-                            <th class="col-5">Dokter</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-            <div class="table-responsive" style="min-height: 25vh; overflow-y: hidden; font-size: 1.5rem">
-                <table class="table-auto table table-bordered table-striped table-hover" id="listJadwal"
-                    style="width:100%">
-                    <tbody id="listJadwal">
-                        @foreach ($jadwal as $item)
-                            <td class="col-1">{{ $loop->iteration }}</td>
-                            <td class="col-2">{{ $item['nama_hari'] }}</td>
-                            <td class="col-2">
-                                {{ \Carbon\Carbon::createFromTimestamp($item['waktu_mulai_poli'])->format('H:i') }} -
-                                {{ \Carbon\Carbon::createFromTimestamp($item['waktu_selesai_poli'])->format('H:i') }}
-                            </td>
-                            <td class="col-5">{{ $item['admin_nama'] }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <div class="card card-primary"> {{-- Jadwal --}}
+                <div class="card-header d-flex justify-content-center">
+                    <h1 class="card-title text-center font-weight-bold"
+                        style="font-size: 2rem !important; text-align: center !important;">JADWAL PRAKTIK DOKTER</h1>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover mb-0" id="header"
+                            style="width:100%">
+                            <thead class="bg bg-dark" style="font-size: 1.5rem">
+                                <tr>
+                                <tr>
+                                    <th class="col-1">No</th>
+                                    <th class="col-5">Dokter</th>
+                                    <th class="col-3">Hari</th>
+                                    <th>Waktu</th>
+                                </tr>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="table-responsive" style="height: 23.3rem; overflow-y: hidden; font-size: 2rem">
+                        {{-- <table class="table-auto table table-bordered table-striped table-hover" id="listJadwal"
+                            style="width:100%">
+                            <tbody id="listJadwal">
+                                @foreach ($jadwal as $item)
+                                    <td class="col-1">{{ $loop->iteration }}</td>
+                                    <td class="col-2">{{ $item['nama_hari'] }}</td>
+                                    <td>
+                                        <!-- Convert and display waktu_mulai_poli and waktu_selesai_poli -->
+                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_mulai_poli'])->format('H:i') }}
+                                        -
+                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_selesai_poli'])->format('H:i') }}
+                                    </td>
+                                    <td class="col-5">{{ $item['admin_nama'] }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table> --}}
+                        {!! $jadwal !!}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
