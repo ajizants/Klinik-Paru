@@ -361,7 +361,7 @@
                                         <div class="form-group col mb-2 d-flex justify-content-center">
                                             <input type="text" id="norm"
                                                 class="form-control form-control-lg col-md-7 text-center"
-                                                placeholder="Masukan No RM"
+                                                placeholder="{{ $id_server }}. Masukan No RM"
                                                 style="height: 80px; font-size: 30px; padding: 20px;"
                                                 {{-- tambahkan batasan 6 angka --}}
                                                 onkeyup="if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,'')" />

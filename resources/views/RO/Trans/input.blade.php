@@ -440,7 +440,7 @@
                                             </select>
                                         </div>
                                         <label class="col-sm-1 text-right col-form-label"
-                                            for="p_rontgen">Petugas</label>
+                                            for="p_rontgen">Radiografer</label>
                                         <div class="col-sm-2">
                                             <select id="p_rontgen" name="p_rontgen" class="form-control select2bs4"
                                                 required="">
@@ -452,11 +452,11 @@
                                             </select>
                                         </div>
                                         <label class="col-sm-1 text-right col-form-label"
-                                            for="p_rontgen_evaluator">Evaluator</label>
+                                            for="p_rontgen_evaluator">Petugas CR</label>
                                         <div class="col-sm-2">
                                             <select id="p_rontgen_evaluator" name="p_rontgen_evaluator"
                                                 class="form-control select2bs4" required="">
-                                                <option value="">--Evaluator--</option>
+                                                <option value="">--Petugas CR--</option>
                                                 @foreach ($radiografer as $rad)
                                                     <option value="{{ $rad->nip }}">{{ $rad->gelar_d }}
                                                         {{ $rad->nama }} {{ $rad->gelar_b }}</option>

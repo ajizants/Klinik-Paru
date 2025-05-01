@@ -3,9 +3,12 @@ namespace App\Http\Controllers;
 
 use App\Models\IGDTransModel;
 use App\Models\KasirAddModel;
+use App\Models\KasirPenutupanKasModel;
+use App\Models\KasirSetoranModel;
 use App\Models\KasirTransModel;
 use App\Models\KominfoModel;
 use App\Models\LaboratoriumHasilModel;
+use App\Models\LayananKelasModel;
 use App\Models\LayananModel;
 use App\Models\ROTransaksiModel;
 use Carbon\Carbon;
@@ -15,6 +18,93 @@ use Illuminate\Support\Facades\Log;
 
 class KasirController extends Controller
 {
+    public function kasir()
+    {
+        $title   = 'KASIR';
+        $layanan = LayananModel::where('status', 'like', '%1%')
+            ->orderBy('grup', 'asc')
+            ->orderBy('kelas', 'asc')
+            ->get();
+        // return $layanan;
+        return view('Kasir.main', compact('layanan'))->with('title', $title);
+    }
+    public function masterKasir()
+    {
+        $title = 'Master Kasir';
+        // $layanan = LayananModel::with('grup')->where('status', 'like', '%1%')->get();
+        $layanan = LayananModel::with('grup')->get();
+        $kelas   = LayananKelasModel::get();
+        // return $layanan;
+        return view('Kasir.Master.main', compact('layanan', 'kelas'))->with('title', $title);
+    }
+    public function rekapKasir()
+    {
+        $title = 'LAPORAN KASIR';
+        $date  = date('Y-m-d');
+        // Mendapatkan tahun sekarang
+        $currentYear = \Carbon\Carbon::now()->year;
+
+        // Membuat array tahun untuk 5 tahun terakhir
+        $listYear = [];
+        for ($i = 0; $i < 5; $i++) {
+            $listYear[] = $currentYear - $i;
+        }
+
+        // dd($year);
+        $model  = new KasirAddModel();
+        $params = [
+            'tglAwal'  => $date,
+            'tglAkhir' => $date,
+        ];
+        $perItem = $model->pendapatanPerItem($params);
+        // $perItem = array_map(function ($item) {
+        //     return (object) $item;
+        // }, $perItem);
+        // return $perItem;
+        $perRuang = $model->pendapatanPerRuang($params);
+        // $perRuang = array_map(function ($item) {
+        //     return (object) $item;
+        // }, $perRuang);
+
+        $kasir           = new KasirTransModel();
+        $pendapatanTotal = $kasir->pendapatan($currentYear);
+        // return $pendapatanTotal;
+        return view('Laporan.Kasir.rekap', compact('perItem', 'perRuang', 'listYear', 'pendapatanTotal', 'title'));
+    }
+
+    public function laporanPage()
+    {
+        $title = 'LAPORAN KASIR';
+        // Mendapatkan tahun sekarang
+        $currentYear = \Carbon\Carbon::now()->year;
+
+        // Membuat array tahun untuk 5 tahun terakhir
+        $listYear = [];
+        for ($i = 0; $i < 5; $i++) {
+            $listYear[] = $currentYear - $i;
+        }
+
+        return view('Laporan.Kasir.pendapatan')->with('title', $title)->with('listYear', $listYear);
+    }
+    public function pendapatanLain()
+    {
+        $title = 'PENDAPATAN LAIN';
+        // Mendapatkan tahun sekarang
+        $currentYear = \Carbon\Carbon::now()->year;
+        // $currentYear = 2024;
+
+        // Membuat array tahun untuk 5 tahun terakhir
+        $listYear = [];
+        for ($i = 0; $i < 5; $i++) {
+            $listYear[] = $currentYear - $i;
+        }
+        $data         = KasirSetoranModel::where('tanggal', 'like', '%' . $currentYear . '%')->get();
+        $dataTutupKas = KasirPenutupanKasModel::all();
+
+        return view('Kasir.PendapatanLain.main', compact('data', 'listYear', 'dataTutupKas'))->with('title', $title);
+    }
+
+    // fungsi logika
     public function tagihan(Request $request)
     {
         // dd($request->all());

@@ -1,7 +1,7 @@
 @extends('Template.lte')
 
 @section('content')
-    @include('Laboratorium.RiwayatLab.input')
+    @include('Laboratorium.Laporan.input')
 
 
     <!-- my script -->

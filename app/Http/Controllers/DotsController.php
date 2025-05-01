@@ -7,6 +7,7 @@ use App\Models\DotsModel;
 use App\Models\DotsObatModel;
 use App\Models\DotsTransModel;
 use App\Models\KominfoModel;
+use App\Models\PegawaiKegiatanModel;
 use App\Models\PegawaiModel;
 use Carbon\Carbon;
 use Exception;
@@ -15,6 +16,51 @@ use Illuminate\Http\Request;
 
 class DotsController extends Controller
 {
+    private function pasienTB()
+    {
+        $pasienTB = DotsModel::with(['dokter.biodata', 'diagnosa', 'pengobatan'])->get()->map(function ($d) {
+            $d['diagnosa'] = $d->diagnosa->diagnosa ?? '-';
+
+            $d['status'] = $this->getStatusPengobatan($d['statusPengobatan']);
+
+            $d['hasilPengobatan'] = $d->pengobatan->nmBlnKe ?? "Belum Ada Pengobatan";
+
+            $d['ket'] = $d['ket'] ?? '-';
+
+            return $d;
+        });
+
+        return $pasienTB;
+    }
+
+    public function dots()
+    {
+        $title   = 'Dots Center';
+        $pModel  = new PegawaiModel();
+        $dokter  = $pModel->olahPegawai([1, 7, 8]);
+        $perawat = $pModel->olahPegawai([10, 14, 15, 23]);
+        $pegawai = $pModel->olahPegawai([]);
+        $bulan   = DotsBlnModel::all();
+        $obat    = DotsObatModel::all();
+        $dxMed   = DiagnosaModel::all();
+        // dd($dxMed);
+        $pasienTB = $this->pasienTB();
+        // return $pasienTB;
+        // Converting arrays to objects for use in the view
+        $dokter = array_map(function ($item) {
+            return (object) $item;
+        }, $dokter);
+
+        $perawat = array_map(function ($item) {
+            return (object) $item;
+        }, $perawat);
+
+        $modelKegiatan = new PegawaiKegiatanModel();
+        $hasilKegiatan = $modelKegiatan->allData();
+        return view('DotsCenter.Trans.main', compact('bulan', 'obat', 'dxMed', 'dokter', 'perawat', 'pegawai', 'pasienTB', 'hasilKegiatan'))
+            ->with('title', $title);
+    }
+
     public function Ptb(Request $request)
     {
         $norm    = $request->input('norm');

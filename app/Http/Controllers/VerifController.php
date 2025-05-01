@@ -7,6 +7,12 @@ use Illuminate\Support\Facades\Http;
 
 class VerifController extends Controller
 {
+    public function verif($id_server)
+    {
+        $title = 'Anjungan Mandiri';
+
+        return view('Dispenser.anjunganMandiri', compact('id_server'))->with('title', $title);
+    }
     public function frista(Request $request)
     {
         ini_set('max_execution_time', 400);
@@ -30,8 +36,8 @@ class VerifController extends Controller
         // Mengembalikan hasil sebagai JSON
         return response()->json([
             'success' => $response->successful(),
-            'output' => $response->json('output'),
-            'error' => $response->json('error'),
+            'output'  => $response->json('output'),
+            'error'   => $response->json('error'),
         ]);
     }
     public function afterapp(Request $request)
@@ -58,8 +64,8 @@ class VerifController extends Controller
         // Mengembalikan hasil sebagai JSON
         return response()->json([
             'success' => $response->successful(),
-            'output' => $response->json('output'),
-            'error' => $response->json('error'),
+            'output'  => $response->json('output'),
+            'error'   => $response->json('error'),
         ]);
     }
     public function index(Request $request)
@@ -67,9 +73,9 @@ class VerifController extends Controller
         ini_set('max_execution_time', 400);
 
         // Ambil parameter dari request
-        $username = env('FRISTA_USERNAME');
-        $password = env('FRISTA_PASSWORD');
-        $nik = $request->input('nik');
+        $username  = env('FRISTA_USERNAME');
+        $password  = env('FRISTA_PASSWORD');
+        $nik       = $request->input('nik');
         $id_server = $request->input('id_server');
 
         // URL API Flask di Windows
@@ -84,15 +90,15 @@ class VerifController extends Controller
         $response = Http::timeout(600)->post($apiUrl, [
             'username' => $username,
             'password' => $password,
-            'nik' => $nik,
+            'nik'      => $nik,
         ]);
         // dd($response);
 
         // Mengembalikan hasil sebagai JSON
         return response()->json([
             'success' => $response->successful(),
-            'output' => $response->json('output'),
-            'error' => $response->json('error'),
+            'output'  => $response->json('output'),
+            'error'   => $response->json('error'),
         ]);
     }
     public function fingerprint(Request $request)
@@ -100,8 +106,8 @@ class VerifController extends Controller
         ini_set('max_execution_time', 400);
 
         // Ambil parameter dari request
-        $username = env('FRISTA_USERNAME');
-        $password = env('FRISTA_PASSWORD');
+        $username  = env('FRISTA_USERNAME');
+        $password  = env('FRISTA_PASSWORD');
         $id_number = $request->input('id_number');
         $id_server = $request->input('id_server');
 
@@ -114,8 +120,8 @@ class VerifController extends Controller
 
         // Kirim permintaan ke API Flask dengan waktu timeout yang diperpanjang
         $response = Http::timeout(600)->post($apiUrl, [
-            'username' => $username,
-            'password' => $password,
+            'username'  => $username,
+            'password'  => $password,
             'id_number' => $id_number,
         ]);
         // dd($response);
@@ -123,8 +129,8 @@ class VerifController extends Controller
         // Mengembalikan hasil sebagai JSON
         return response()->json([
             'success' => $response->successful(),
-            'output' => $response->json('output'),
-            'error' => $response->json('error'),
+            'output'  => $response->json('output'),
+            'error'   => $response->json('error'),
         ]);
     }
 
@@ -303,10 +309,10 @@ class VerifController extends Controller
         // Ambil cookie dari browser
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
 
-        if (!$cookie) {
+        if (! $cookie) {
             // Jika cookie tidak ada, lakukan login
             $loginResponse = $client->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie di browser
@@ -315,20 +321,20 @@ class VerifController extends Controller
             }
         }
 
-        $params = $request->all();
+        $params            = $request->all();
         $pendaftaranOnline = $client->pendaftaranRequest($params);
-        $noAntri = $request->input('noAntrian') ?? null;
+        $noAntri           = $request->input('noAntrian') ?? null;
 
-        if (!empty($noAntri)) {
+        if (! empty($noAntri)) {
             $pendaftaranOnline = array_filter($pendaftaranOnline, function ($d) use ($noAntri) {
                 return $d['antrean_nomor'] === $noAntri;
             });
             $pendaftaranOnline = array_values($pendaftaranOnline);
         }
 
-        $data_pendaftaran = $pendaftaranOnline[0] ?? null;
-        $keterangan = $data_pendaftaran['keterangan'] ?? null;
-        $pasien_no_rm = $request->input('pasien_no_rm') ?? $data_pendaftaran['pasien_no_rm'] ?? null;
+        $data_pendaftaran     = $pendaftaranOnline[0] ?? null;
+        $keterangan           = $data_pendaftaran['keterangan'] ?? null;
+        $pasien_no_rm         = $request->input('pasien_no_rm') ?? $data_pendaftaran['pasien_no_rm'] ?? null;
         $jenis_kunjungan_nama = $data_pendaftaran['jenis_kunjungan_nama'] ?? null;
 
         // Menentukan jenis_kunjungan_id
@@ -350,7 +356,7 @@ class VerifController extends Controller
         }
 
         $penjamin_nama = $data_pendaftaran['penjamin_nama'] ?? null;
-        $penjamin_id = ($penjamin_nama == "BPJS") ? 2 : 1;
+        $penjamin_id   = ($penjamin_nama == "BPJS") ? 2 : 1;
 
         $log_id = $data_pendaftaran['log_id'] ?? null;
 
@@ -358,12 +364,12 @@ class VerifController extends Controller
         if ($keterangan == "MENUNGGU DIPANGGIL LOKET PENDAFTARAN" || $keterangan == "SKIP LOKET PENDAFTARAN") {
             $panggil = $client->panggil(['cookie' => $cookie], $log_id, $request->input('loket'));
             $antrian = $client->get_data_antrian(['cookie' => $cookie], $request->input('noAntri'));
-            $log_id = $antrian['data'][0]['log_id'] ?? null; // Memastikan ada data
+            $log_id  = $antrian['data'][0]['log_id'] ?? null; // Memastikan ada data
         }
 
-        $pasien = $client->getDataByRM(['cookie' => $cookie], $pasien_no_rm);
-        $data_pasien = $pasien['data'] ?? null;
-        $pasien_id = $data_pasien['id'] ?? null;
+        $pasien       = $client->getDataByRM(['cookie' => $cookie], $pasien_no_rm);
+        $data_pasien  = $pasien['data'] ?? null;
+        $pasien_id    = $data_pasien['id'] ?? null;
         $dokterBefore = $client->getDokterBefore(['cookie' => $cookie], $pasien_id);
 
         $dokter = isset($data_pendaftaran['dokter_nama']) && $data_pendaftaran['dokter_nama'] !== 0
@@ -371,52 +377,52 @@ class VerifController extends Controller
         : $dokterBefore;
 
         $tglKunjungan = $pendaftaranOnline[0]['tanggal'] ?? null;
-        $date = new \DateTime($tglKunjungan);
-        $dayOfWeek = $date->format('N');
+        $date         = new \DateTime($tglKunjungan);
+        $dayOfWeek    = $date->format('N');
 
         $reqJadwal = [
-            'no_hari' => $dayOfWeek,
+            'no_hari'    => $dayOfWeek,
             'admin_nama' => $dokter,
         ];
 
         $jadwal = $client->jadwalPoli($reqJadwal)[0] ?? null;
 
         $form_data = [
-            'log_id' => $log_id ?? null,
-            'ruang_id_selanjutnya' => 2,
-            'penjamin_id' => $penjamin_id,
-            'penjamin_nomor' => $data_pendaftaran['penjamin_nomor'] ?? '',
-            'jenis_kunjungan_id' => $jenis_kunjungan_id,
-            'nomor_referensi' => $data_pendaftaran['nomor_referensi'] ?? '',
-            'daftar_by' => $data_pendaftaran['daftar_by'] ?? null,
-            'pasien_lama_baru' => $data_pendaftaran['pasien_lama_baru'] ?? 'LAMA',
-            'dokter_id' => $jadwal['admin_id'] ?? null,
-            'jadwal_umum_khusus' => 'UMUM',
-            'jadwal_id' => $jadwal['id'] ?? null,
-            'poli_sub_id' => $jadwal['poli_sub_id'] ?? null,
-            'no_telp' => $data_pasien['pasien_no_hp'] ?? null,
-            'pasien_id' => $data_pasien['id'] ?? null,
-            'pasien_no_rm' => $data_pasien['pasien_no_rm'] ?? null,
-            'pasien_nik' => $data_pasien['pasien_nik'] ?? null,
-            'pasien_no_kk' => $data_pasien['pasien_no_kk'] ?? null,
-            'pasien_nama' => $data_pasien['pasien_nama'] ?? null,
-            'jenis_kelamin_id' => $data_pasien['jenis_kelamin_id'] ?? null,
-            'pasien_tempat_lahir' => $data_pasien['pasien_tempat_lahir'] ?? null,
-            'pasien_tgl_lahir' => $data_pasien['pasien_tgl_lahir'] ?? null,
-            'pasien_no_hp' => $data_pasien['pasien_no_hp'] ?? null,
-            'pasien_alamat' => $data_pasien['pasien_alamat'] ?? null,
-            'pasien_kode_pos' => $data_pasien['pasien_kode_pos'] ?? null,
-            'provinsi_id' => $data_pasien['provinsi_id'] ?? null,
-            'kabupaten_id' => $data_pasien['kabupaten_id'] ?? null,
-            'kecamatan_id' => $data_pasien['kecamatan_id'] ?? null,
-            'kelurahan_id' => $data_pasien['kelurahan_id'] ?? null,
-            'pasien_rt' => $data_pasien['pasien_rt'] ?? null,
-            'pasien_rw' => $data_pasien['pasien_rw'] ?? null,
-            'agama_id' => $data_pasien['agama_id'] ?? null,
-            'goldar_id' => $data_pasien['goldar_id'] ?? null,
-            'status_kawin_id' => $data_pasien['status_kawin_id'] ?? null,
-            'pendidikan_id' => $data_pasien['pendidikan_id'] ?? null,
-            'pasien_penanggung_jawab_nama' => $data_pasien['pasien_penanggung_jawab_nama'] ?? null,
+            'log_id'                        => $log_id ?? null,
+            'ruang_id_selanjutnya'          => 2,
+            'penjamin_id'                   => $penjamin_id,
+            'penjamin_nomor'                => $data_pendaftaran['penjamin_nomor'] ?? '',
+            'jenis_kunjungan_id'            => $jenis_kunjungan_id,
+            'nomor_referensi'               => $data_pendaftaran['nomor_referensi'] ?? '',
+            'daftar_by'                     => $data_pendaftaran['daftar_by'] ?? null,
+            'pasien_lama_baru'              => $data_pendaftaran['pasien_lama_baru'] ?? 'LAMA',
+            'dokter_id'                     => $jadwal['admin_id'] ?? null,
+            'jadwal_umum_khusus'            => 'UMUM',
+            'jadwal_id'                     => $jadwal['id'] ?? null,
+            'poli_sub_id'                   => $jadwal['poli_sub_id'] ?? null,
+            'no_telp'                       => $data_pasien['pasien_no_hp'] ?? null,
+            'pasien_id'                     => $data_pasien['id'] ?? null,
+            'pasien_no_rm'                  => $data_pasien['pasien_no_rm'] ?? null,
+            'pasien_nik'                    => $data_pasien['pasien_nik'] ?? null,
+            'pasien_no_kk'                  => $data_pasien['pasien_no_kk'] ?? null,
+            'pasien_nama'                   => $data_pasien['pasien_nama'] ?? null,
+            'jenis_kelamin_id'              => $data_pasien['jenis_kelamin_id'] ?? null,
+            'pasien_tempat_lahir'           => $data_pasien['pasien_tempat_lahir'] ?? null,
+            'pasien_tgl_lahir'              => $data_pasien['pasien_tgl_lahir'] ?? null,
+            'pasien_no_hp'                  => $data_pasien['pasien_no_hp'] ?? null,
+            'pasien_alamat'                 => $data_pasien['pasien_alamat'] ?? null,
+            'pasien_kode_pos'               => $data_pasien['pasien_kode_pos'] ?? null,
+            'provinsi_id'                   => $data_pasien['provinsi_id'] ?? null,
+            'kabupaten_id'                  => $data_pasien['kabupaten_id'] ?? null,
+            'kecamatan_id'                  => $data_pasien['kecamatan_id'] ?? null,
+            'kelurahan_id'                  => $data_pasien['kelurahan_id'] ?? null,
+            'pasien_rt'                     => $data_pasien['pasien_rt'] ?? null,
+            'pasien_rw'                     => $data_pasien['pasien_rw'] ?? null,
+            'agama_id'                      => $data_pasien['agama_id'] ?? null,
+            'goldar_id'                     => $data_pasien['goldar_id'] ?? null,
+            'status_kawin_id'               => $data_pasien['status_kawin_id'] ?? null,
+            'pendidikan_id'                 => $data_pasien['pendidikan_id'] ?? null,
+            'pasien_penanggung_jawab_nama'  => $data_pasien['pasien_penanggung_jawab_nama'] ?? null,
             'pasien_penanggung_jawab_no_hp' => $data_pasien['pasien_penanggung_jawab_no_hp'] ?? null,
         ];
 
@@ -433,11 +439,11 @@ class VerifController extends Controller
         // Ambil cookie dari browser
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
 
-        if (!$cookie) {
+        if (! $cookie) {
             dd("masuk");
             // Jika cookie tidak ada, lakukan login
             $loginResponse = $client->login();
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie di browser
@@ -447,13 +453,13 @@ class VerifController extends Controller
         }
 
         // return $cookie;
-        $params = $request->all();
+        $params            = $request->all();
         $pendaftaranOnline = $client->pendaftaranRequest($params);
-        $data_pendaftaran = $pendaftaranOnline[0] ?? null;
+        $data_pendaftaran  = $pendaftaranOnline[0] ?? null;
         // return $pendaftaranOnline;
         $keterangan = $data_pendaftaran['keterangan'] ?? null;
         // return $data_pendaftaran;
-        $pasien_no_rm = $data_pendaftaran['pasien_no_rm'] ?? null;
+        $pasien_no_rm         = $data_pendaftaran['pasien_no_rm'] ?? null;
         $jenis_kunjungan_nama = $data_pendaftaran['jenis_kunjungan_nama'] ?? null;
         // dd($jenis_kunjungan_nama);
 
@@ -476,8 +482,8 @@ class VerifController extends Controller
             dd("logid null");
             // Gunakan cookie yang ada untuk mengambil data antrian
             $antrian = $client->get_data_antrian(['cookie' => $cookie], $request->input('noAntri'));
-            // return $antrian;
-            // Ambil log_id dari data antrian
+                                                                                                   // return $antrian;
+                                                                                                   // Ambil log_id dari data antrian
             $log_id = isset($antrian['data'][0]['log_id']) ? $antrian['data'][0]['log_id'] : null; // Memastikan ada data
         }
 
@@ -487,58 +493,58 @@ class VerifController extends Controller
             $panggil = $client->panggil(['cookie' => $cookie], $log_id);
             // <-----proses submit-----> //
             $antrian = $client->get_data_antrian(['cookie' => $cookie], $request->input('noAntri'));
-            // return $antrian;
-            // Ambil log_id dari data antrian
+                                                                                                   // return $antrian;
+                                                                                                   // Ambil log_id dari data antrian
             $log_id = isset($antrian['data'][0]['log_id']) ? $antrian['data'][0]['log_id'] : null; // Memastikan ada data
-            // return $log_id; //246758
+                                                                                                   // return $log_id; //246758
         }
         // return $log_id;
 
-        $pasien = $client->getDataByRM(['cookie' => $cookie], $pasien_no_rm);
+        $pasien      = $client->getDataByRM(['cookie' => $cookie], $pasien_no_rm);
         $data_pasien = $pasien['data'] ?? null;
         // return $data_pasien;
 
         $form_data = [
-            'log_id' => $log_id ?? null,
-            'ruang_id_selanjutnya' => 2,
-            'poli_sub_id' => 1,
-            'dokter_id' => $data_pasien['dokter_id'] ?? null,
-            'penjamin_id' => 1, //2 bpjs
-            'penjamin_nomor' => $data_pendaftaran['penjamin_nomor'] ?? null,
-            'jenis_kunjungan_id' => $jenis_kunjungan_id ?? null,
-            'nomor_referensi' => $data_pendaftaran['nomor_referensi'] ?? null,
-            'daftar_by' => $data_pendaftaran['daftar_by'] ?? null,
-            'pasien_lama_baru' => $data_pendaftaran['pasien_lama_baru'] ?? null,
+            'log_id'                        => $log_id ?? null,
+            'ruang_id_selanjutnya'          => 2,
+            'poli_sub_id'                   => 1,
+            'dokter_id'                     => $data_pasien['dokter_id'] ?? null,
+            'penjamin_id'                   => 1, //2 bpjs
+            'penjamin_nomor'                => $data_pendaftaran['penjamin_nomor'] ?? null,
+            'jenis_kunjungan_id'            => $jenis_kunjungan_id ?? null,
+            'nomor_referensi'               => $data_pendaftaran['nomor_referensi'] ?? null,
+            'daftar_by'                     => $data_pendaftaran['daftar_by'] ?? null,
+            'pasien_lama_baru'              => $data_pendaftaran['pasien_lama_baru'] ?? null,
 
-            'jadwal_umum_khusus' => $data_pasien['jadwal_umum_khusus'] ?? null,
-            'jadwal_id' => $data_pasien['jadwal_id'] ?? null,
+            'jadwal_umum_khusus'            => $data_pasien['jadwal_umum_khusus'] ?? null,
+            'jadwal_id'                     => $data_pasien['jadwal_id'] ?? null,
 
-            'no_telp' => $data_pasien['pasien_no_hp'] ?? null,
-            'pasien_id' => $data_pasien['id'] ?? null,
-            'pasien_no_rm' => $data_pasien['pasien_no_rm'] ?? null,
-            'pasien_nik' => $data_pasien['pasien_nik'] ?? null,
-            'pasien_no_kk' => $data_pasien['pasien_no_kk'] ?? null,
-            'pasien_nama' => $data_pasien['pasien_nama'] ?? null,
-            'jenis_kelamin_id' => $data_pasien['jenis_kelamin_id'] ?? null,
-            'pasien_tempat_lahir' => $data_pasien['pasien_tempat_lahir'] ?? null,
-            'pasien_tgl_lahir' => $data_pasien['pasien_tgl_lahir'] ?? null,
-            'pasien_no_hp' => $data_pasien['pasien_no_hp'] ?? null,
-            'pasien_alamat' => $data_pasien['pasien_alamat'] ?? null,
-            'pasien_kode_pos' => $data_pasien['pasien_kode_pos'] ?? null,
-            'provinsi_id' => $data_pasien['provinsi_id'] ?? null,
-            'kabupaten_id' => $data_pasien['kabupaten_id'] ?? null,
-            'kecamatan_id' => $data_pasien['kecamatan_id'] ?? null,
-            'kelurahan_id' => $data_pasien['kelurahan_id'] ?? null,
-            'pasien_rt' => $data_pasien['pasien_rt'] ?? null,
-            'pasien_rw' => $data_pasien['pasien_rw'] ?? null,
-            'agama_id' => $data_pasien['agama_id'] ?? null,
-            'goldar_id' => $data_pasien['goldar_id'] ?? null,
-            'status_kawin_id' => $data_pasien['status_kawin_id'] ?? null,
-            'pendidikan_id' => $data_pasien['pendidikan_id'] ?? null,
-            'pasien_penanggung_jawab_nama' => $data_pasien['pasien_penanggung_jawab_nama'] ?? null,
+            'no_telp'                       => $data_pasien['pasien_no_hp'] ?? null,
+            'pasien_id'                     => $data_pasien['id'] ?? null,
+            'pasien_no_rm'                  => $data_pasien['pasien_no_rm'] ?? null,
+            'pasien_nik'                    => $data_pasien['pasien_nik'] ?? null,
+            'pasien_no_kk'                  => $data_pasien['pasien_no_kk'] ?? null,
+            'pasien_nama'                   => $data_pasien['pasien_nama'] ?? null,
+            'jenis_kelamin_id'              => $data_pasien['jenis_kelamin_id'] ?? null,
+            'pasien_tempat_lahir'           => $data_pasien['pasien_tempat_lahir'] ?? null,
+            'pasien_tgl_lahir'              => $data_pasien['pasien_tgl_lahir'] ?? null,
+            'pasien_no_hp'                  => $data_pasien['pasien_no_hp'] ?? null,
+            'pasien_alamat'                 => $data_pasien['pasien_alamat'] ?? null,
+            'pasien_kode_pos'               => $data_pasien['pasien_kode_pos'] ?? null,
+            'provinsi_id'                   => $data_pasien['provinsi_id'] ?? null,
+            'kabupaten_id'                  => $data_pasien['kabupaten_id'] ?? null,
+            'kecamatan_id'                  => $data_pasien['kecamatan_id'] ?? null,
+            'kelurahan_id'                  => $data_pasien['kelurahan_id'] ?? null,
+            'pasien_rt'                     => $data_pasien['pasien_rt'] ?? null,
+            'pasien_rw'                     => $data_pasien['pasien_rw'] ?? null,
+            'agama_id'                      => $data_pasien['agama_id'] ?? null,
+            'goldar_id'                     => $data_pasien['goldar_id'] ?? null,
+            'status_kawin_id'               => $data_pasien['status_kawin_id'] ?? null,
+            'pendidikan_id'                 => $data_pasien['pendidikan_id'] ?? null,
+            'pasien_penanggung_jawab_nama'  => $data_pasien['pasien_penanggung_jawab_nama'] ?? null,
             'pasien_penanggung_jawab_no_hp' => $data_pasien['pasien_penanggung_jawab_no_hp'] ?? null,
 
-            'pasien_daftar_by' => $data_pasien['pasien_daftar_by'] ?? null,
+            'pasien_daftar_by'              => $data_pasien['pasien_daftar_by'] ?? null,
         ];
 
         return $form_data;

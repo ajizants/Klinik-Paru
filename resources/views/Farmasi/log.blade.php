@@ -215,7 +215,6 @@
     @include('Template.footer')
 
     </div>
-    @include('Template.script')
 
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>

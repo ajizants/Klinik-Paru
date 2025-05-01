@@ -27,7 +27,7 @@
                     </a>
                     <ul class="nav nav-treeview" style="display: none;">
                         <li class="nav-item ml-4">
-                            <a class="nav-link" target="_blank" href="{{ url('/verif/1') }}">
+                            <a class="nav-link" target="_blank" href="{{ url('/verif/2') }}">
                                 <i class="fa-solid fa-tv nav-icon"></i>
                                 <p>Ambil Antrian</p>
                             </a>
@@ -113,19 +113,19 @@
                     </a>
                     <ul class="nav nav-treeview" style="display: none;">
                         <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/igd') }}" id="masukIGD">
+                            <a class="nav-link" href="{{ url('/Igd') }}" id="masukIGD">
                                 <i class="nav-icon fas fa-edit"></i>
                                 <p>Input Tindakan</p>
                             </a>
                         </li>
                         <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/gudangIGD') }}">
+                            <a class="nav-link" href="{{ url('/Igd/Gudang') }}">
                                 <i class="fa-solid fa-database nav-icon"></i>
                                 <p>Master Tindakan</p>
                             </a>
                         </li>
                         <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/askep') }}">
+                            <a class="nav-link" href="{{ url('/Askep') }}">
                                 <i class="fa-solid fa-file-pen nav-icon"></i>
                                 <p>ASKEP</p>
                             </a>
@@ -169,19 +169,19 @@
                     </a>
                     <ul class="nav nav-treeview" style="display: none;">
                         <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/gizi') }}">
+                            <a class="nav-link" href="{{ url('/Gizi') }}">
                                 <i class="nav-icon fas fa-edit"></i>
                                 <p>Input Gizi</p>
                             </a>
                         </li>
                         <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/masterGizi') }}">
+                            <a class="nav-link" href="{{ url('/Gizi/Master') }}">
                                 <i class="fa-solid fa-database nav-icon"></i>
                                 <p>Master Gizi</p>
                             </a>
                         </li>
                         <li class="nav-item  ml-4"">
-                            <a class="nav-link" href="{{ url('/riwayatGizi') }}">
+                            <a class="nav-link" href="{{ url('/Gizi/Riwayat') }}">
                                 <i class="fa-solid fa-chart-column nav-icon"></i>
                                 <p>Riwayat Transaksi Gizi</p>
                             </a>
@@ -219,25 +219,25 @@
                     </a>
                     <ul class="nav nav-treeview" style="display: none;">
                         <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/lab') }}">
+                            <a class="nav-link" href="{{ url('/Laboratorium/Pendaftaran') }}">
                                 <i class="fa-solid fa-user-pen nav-icon"></i>
                                 <p>Pendaftaran Lab</p>
                             </a>
                         </li>
                         <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/hasilLab') }}">
+                            <a class="nav-link" href="{{ url('/Laboratorium/Hasil') }}">
                                 <i class="nav-icon fas fa-edit"></i>
                                 <p>Input Hasil Lab</p>
                             </a>
                         </li>
                         <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/masterLab') }}">
+                            <a class="nav-link" href="{{ url('/Laboratorium/Master') }}">
                                 <i class="fa-solid fa-database nav-icon"></i>
                                 <p>Master Lab</p>
                             </a>
                         </li>
                         <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/riwayatLab') }}">
+                            <a class="nav-link" href="{{ url('/Laboratorium/Laporan') }}">
                                 <i class="fa-solid fa-chart-column nav-icon"></i>
                                 <p>Laporan Laboratorium</p>
                             </a>
@@ -256,19 +256,19 @@
                     </a>
                     <ul class="nav nav-treeview" style="display: none;">
                         <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/ro') }}">
+                            <a class="nav-link" href="{{ url('/Radiologi') }}">
                                 <i class="fa-regular nav-icon fas fa-edit"></i>
                                 <p>Input Radiologi</p>
                             </a>
                         </li>
                         <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/masterRo') }}">
+                            <a class="nav-link" href="{{ url('/Radiologi/Master') }}">
                                 <i class="fa-solid fa-database nav-icon"></i>
                                 <p>Master Radiologi</p>
                             </a>
                         </li>
                         <li class="nav-item ml-4">
-                            <a class="nav-link" href="{{ url('/riwayatRo') }}">
+                            <a class="nav-link" href="{{ url('/Radiologi/Laporan') }}">
                                 <i class="fa-solid fa-chart-column nav-icon"></i>
                                 <p>Laporan Radiologi</p>
                             </a>
@@ -391,15 +391,15 @@
                 <!-- Laporan Section -->
                 <li class="nav-header">LAPORAN</li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/Pusat-Data') }}">
+                    <a class="nav-link" href="{{ url('/Pusat_Data') }}">
                         <i class="fa-solid fa-database nav-icon"></i>
                         <p>Pusat Data</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/report') }}">
+                    <a class="nav-link" href="{{ url('/igd/poin') }}">
                         <i class="fa-solid fa-chart-column nav-icon"></i>
-                        <p>Laporan Petugas</p>
+                        <p>Poin Pegawai</p>
                     </a>
                 </li>
                 <li class="nav-item">

@@ -15,10 +15,11 @@
                             <a href="{{ url('/Laporan/Pendaftaran') }}" class="nav-link "><b>Laporan Pendaftaran</b></a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ url('/Laporan/Lab') }}" class="nav-link "><b>Laporan Laboratorium</b></a>
+                            <a href="{{ url('/Laboratorium/Laporan') }}" class="nav-link "><b>Laporan
+                                    Laboratorium</b></a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ url('/Laporan/Lab') }}" class="nav-link "><b>Laporan Radiologi</b></a>
+                            <a href="{{ url('/Radiologi/Laporan') }}" class="nav-link "><b>Laporan Radiologi</b></a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ url('/kasir/report') }}" class="nav-link "><b>Laporan Kasir</b></a>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\DataPasienModel;
 use App\Models\KominfoModel;
 use App\Models\KunjunganModel;
+use App\Models\PegawaiModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -11,6 +12,26 @@ use Illuminate\Support\Str;
 
 class PendaftaranController extends Controller
 {
+
+    public function pendaftaran()
+    {
+        $title = 'PENDAFTARAN';
+        $model = new PegawaiModel;
+        $admin = $model->olahPegawai([10, 15]);
+
+        $admin = array_map(function ($item) {
+            return (object) $item;
+        }, $admin);
+
+        return view('Pendaftaran.main', compact('admin'))->with('title', $title);
+    }
+
+    public function laporanPendaftaran()
+    {
+        $title = 'Laporan Pendaftaran';
+
+        return view('Laporan.Pendaftaran.main')->with('title', $title);
+    }
 
     public function label($norm)
     {
