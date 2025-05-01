@@ -19,18 +19,18 @@ class LoginController extends Controller
     {
         $email = $request->input('email');
 
-        if (!str_ends_with($email, '@rsparu.com')) {
+        if (! str_ends_with($email, '@rsparu.com')) {
             $email .= '@rsparu.com';
         }
 
         $data = [
-            'email' => $email,
+            'email'    => $email,
             'password' => $request->input('password'),
         ];
 
         if (Auth::attempt($data)) {
             $email = $request->input('email');
-            if (!str_ends_with($email, '@rsparu.com')) {
+            if (! str_ends_with($email, '@rsparu.com')) {
                 $email .= '@rsparu.com';
             }
             // dd($email);
@@ -41,19 +41,19 @@ class LoginController extends Controller
                     $go = '/E-kinerja';
                     break;
                 case 'tindakan@rsparu.com':
-                    $go = '/igd';
+                    $go = '/Igd';
                     break;
                 case 'kasir@rsparu.com':
                     $go = '/kasir';
                     break;
                 case 'radiologi@rsparu.com':
-                    $go = '/ro';
+                    $go = '/Radiologi';
                     break;
                 case 'dots@rsparu.com':
                     $go = '/dots';
                     break;
                 case 'lab@rsparu.com':
-                    $go = '/lab';
+                    $go = '/Laboratorium/Pendaftaran';
                     break;
                 case 'farmasi@rsparu.com':
                     $go = '/farmasi';
@@ -62,7 +62,7 @@ class LoginController extends Controller
                     $go = '/Promkes';
                     break;
                 case 'dataanalis@rsparu.com' || 'admin@rsparu.com':
-                    $go = '/Pusat-Data';
+                    $go = '/Pusat_Data';
                     break;
                 default:
                     $go = '/home';
