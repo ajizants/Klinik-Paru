@@ -314,7 +314,7 @@
                 </li>
                 <!-- TU Section -->
                 @php
-                    $roleKasir = ['admin', 'tu', 'kasir'];
+                    $roleKasir = ['admin', 'tu', 'kasir', 'atk'];
                 @endphp
                 <li class="nav-item @if (!in_array(Auth::user()->role, $roleKasir)) non-aktif @endif">
                     <a href="" class="nav-link">
@@ -322,6 +322,12 @@
                         <p>Tata Usaha <i class="right fas fa-angle-left"></i></p>
                     </a>
                     <ul class="nav nav-treeview" style="display: none;">
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('Gudang/ATK') }}">
+                                <i class="fa-solid fa-warehouse nav-icon"></i>
+                                <p>Gudang ATK</p>
+                            </a>
+                        </li>
                         <li class="nav-item ml-4">
                             <a class="nav-link" href="{{ url('TataUsaha/surat') }}">
                                 <i class="fa-solid fa-envelope nav-icon"></i>

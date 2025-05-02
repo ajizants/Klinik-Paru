@@ -5,6 +5,7 @@ use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\DotsController;
 use App\Http\Controllers\EkinController;
 use App\Http\Controllers\FarmasiController;
+use App\Http\Controllers\GudangATKController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IgdController;
 use App\Http\Controllers\JadwalController;
@@ -129,5 +130,8 @@ Route::middleware('auth')->group(function () {
 
     //Prokes
     Route::get('Promkes', [PromkesController::class, 'index'])->name('promkes');
+
+    //gudang atk
+    Route::get('Gudang/ATK', [GudangATKController::class, 'index'])->name('gudangATK')->middleware('role:atk');
 
 });
