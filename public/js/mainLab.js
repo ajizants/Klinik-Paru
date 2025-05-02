@@ -770,16 +770,16 @@ function cetakPermintaan(notrans, tglTrans, norm) {
             notrans = notrans ? notrans : $("#notrans").val();
             norm = norm ? norm : $("#norm").val();
             tglTrans = tglTrans ? tglTrans : $("#tgltrans").val();
-            window.open(
-                "api/lab/cetakPermintaan/" +
-                    notrans +
-                    "/" +
-                    norm +
-                    "/" +
-                    tglTrans,
-                "_blank",
-                "noopener noreferrer"
-            );
+            const baseUrl = window.location.origin;
+            const url =
+                baseUrl +
+                "/api/lab/cetakPermintaan/" +
+                notrans +
+                "/" +
+                norm +
+                "/" +
+                tglTrans;
+            window.open(url, "_blank", "noopener noreferrer");
         }
     });
 }
