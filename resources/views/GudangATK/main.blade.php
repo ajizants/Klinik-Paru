@@ -134,15 +134,20 @@
             $('#modalKeluarAtk').modal('show');
         }
 
-        function editAtk(button, title, btn) {
+        function editAtk(button, ket, title, btn) {
             const idBarang = button.dataset.id;
             const namaBarang = button.dataset.nama;
-            console.log("Keluar ATK:", idBarang, namaBarang);
-            $('#keluarIdBarang').val(idBarang);
-            $('#keluarNamaBarang').val(namaBarang);
-            $('#modalKeluarAtkLabel').text(title);
-            $('#btnKeluar').text(btn);
-            $('#modalKeluarAtk').modal('show');
+            const jumlah = button.dataset.jumlah;
+            const id = button.dataset.id;
+            $('#tambahid').val(id);
+            $('#tambahIdBarang').val(idBarang);
+            $('#tambahNamaBarang').val(namaBarang);
+            $('#tambahJumlah').val(jumlah);
+            $('#modalTambahAtkLabel').text(title);
+            $('#btnTambah').text(btn);
+            $('#modalTambahAtk').modal('show');
+            console.log("Edit ATK:", idBarang, namaBarang, jumlah, id);
+
         }
 
         function tambahAtkBaru() {

@@ -234,23 +234,6 @@
                         </table>
                     </div>
                     <div class="table-responsive" style="height: 23.3rem; overflow-y: hidden; font-size: 2rem">
-                        {{-- <table class="table-auto table table-bordered table-striped table-hover" id="listJadwal"
-                            style="width:100%">
-                            <tbody id="listJadwal">
-                                @foreach ($jadwal as $item)
-                                    <td class="col-1">{{ $loop->iteration }}</td>
-                                    <td class="col-2">{{ $item['nama_hari'] }}</td>
-                                    <td>
-                                        <!-- Convert and display waktu_mulai_poli and waktu_selesai_poli -->
-                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_mulai_poli'])->format('H:i') }}
-                                        -
-                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_selesai_poli'])->format('H:i') }}
-                                    </td>
-                                    <td class="col-5">{{ $item['admin_nama'] }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table> --}}
                         {!! $jadwal !!}
                     </div>
                 </div>

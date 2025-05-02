@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\GudangAtkKeluarModel;
@@ -14,27 +13,28 @@ class GudangATKController extends Controller
      */
     public function index()
     {
-        $title = 'Gudang ATK';
-        $model = new GudangAtkModel();
-        $tglAwal = date('Y-m-01') . ' 00:00:00'; // Tanggal 1 awal bulan sekarang
-        $tglAkhir = date('Y-m-t') . ' 23:59:59'; // Tanggal terakhir di bulan sekarang
+        $title    = 'Gudang ATK';
+        $model    = new GudangAtkModel();
+        $tglAwal  = date('Y-m-01') . ' 00:00:00'; // Tanggal 1 awal bulan sekarang
+        $tglAkhir = date('Y-m-t') . ' 23:59:59';  // Tanggal terakhir di bulan sekarang
 
         $params = [
-            'tglAwal' => $tglAwal,
+            'tglAwal'  => $tglAwal,
             'tglAkhir' => $tglAkhir,
         ];
         $atkKeluar = $model->getAtkKeluar($params);
-        $atkMasuk = $model->getAtkMasuk($params);
-        $listAtk = GudangAtkModel::select('idBarang')->distinct()->get();
+        $atkMasuk  = $model->getAtkMasuk($params);
+        $listAtk   = GudangAtkModel::select('idBarang')->distinct()->get();
 
-        $tableStok = $model->getStokAtk($params);
-        $tableAtkMasuk = $this->generateTable($atkMasuk, 'tableAtkMasuk');
+        $tableStok      = $model->getStokAtk($params);
+        $tableAtkMasuk  = $this->generateTable($atkMasuk, 'tableAtkMasuk');
         $tableAtkKeluar = $this->generateTable($atkKeluar, 'tableAtkKeluar');
         return view('GudangATK.main', compact('tableStok', 'tableAtkMasuk', 'tableAtkKeluar', 'listAtk'))->with('title', $title);
     }
     private function generateTable($data, $tableId)
     {
         // Generate HTML tabel
+        $ket  = $tableId == 'tableAtkMasuk' ? 'Masuk' : 'Keluar';
         $html = '<table class="table table-bordered" id="' . $tableId . '" style="width: 100%;">';
         $html .= '<thead>
                     <tr>
@@ -52,8 +52,21 @@ class GudangATKController extends Controller
         foreach ($data as $item) {
             $html .= '<tr>';
             $html .= '<td>
-                        <button class="btn btn-sm btn-warning" data-id="' . $item['idBarang'] . '" onclick="editAtk(this,"Edit ATK","Update")">Edit</button>
-                        <button class="btn btn-sm btn-danger" data-id="' . $item['idBarang'] . '" onclick="hapusAtk(this)">Hapus</button>
+                        <button class="btn btn-sm btn-warning"
+                        data-id="' . $item['id'] . '"
+                        data-idBarang="' . $item['idBarang'] . '"
+                        data-namaBarang="' . $item['namaBarang'] . '"
+                        data-jumlah="' . $item['jumlah'] . '"
+                        data-keterangan="' . $item['keterangan'] . '"
+                        onclick="editAtk(this,' . $ket . ', \'Edit ATK\', \'Update\')">Edit</button>
+
+                        <button class="btn btn-sm btn-danger"
+                        data-id="' . $item['id'] . '"
+                        data-idBarang="' . $item['idBarang'] . '"
+                        data-namaBarang="' . $item['namaBarang'] . '"
+                        data-jumlah="' . $item['jumlah'] . '"
+                        data-keterangan="' . $item['keterangan'] . '"
+                        onclick="hapusAtk(this,' . $ket . ')">Hapus</button>
                      </td>';
             $html .= '<td>' . $item['idBarang'] . '</td>';
             $html .= '<td>' . $item['NamaBarang'] . '</td>';
@@ -71,10 +84,10 @@ class GudangATKController extends Controller
     public function addAtk(Request $request)
     {
         try {
-            $model = new GudangAtkModel();
-            $model->idBarang = $request->idBarang;
+            $model             = new GudangAtkModel();
+            $model->idBarang   = $request->idBarang;
             $model->NamaBarang = $request->NamaBarang;
-            $model->jumlah = $request->jumlah;
+            $model->jumlah     = $request->jumlah;
             $model->keterangan = $request->keterangan;
             $model->save();
 
@@ -86,7 +99,7 @@ class GudangATKController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menyimpan data',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -95,16 +108,16 @@ class GudangATKController extends Controller
         try {
             $data = GudangAtkModel::where('id', $request->id)->first();
 
-            if (!$data) {
+            if (! $data) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Data tidak ditemukan untuk Barang: ' . $request->namaBarang . ' ID: ' . $request->idBarang,
                 ], 404);
             }
 
-            $data->idBarang = $request->idBarang;
+            $data->idBarang   = $request->idBarang;
             $data->namaBarang = $request->namaBarang;
-            $data->jumlah = $request->jumlah;
+            $data->jumlah     = $request->jumlah;
             $data->keterangan = $request->keterangan;
             $data->save();
 
@@ -115,7 +128,7 @@ class GudangATKController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat memperbarui data',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -125,7 +138,7 @@ class GudangATKController extends Controller
         try {
             $data = GudangAtkModel::where('id', $request->id)->first();
 
-            if (!$data) {
+            if (! $data) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Data tidak ditemukan untuk Barang: ' . $request->namaBarang . ' ID: ' . $request->idBarang,
@@ -141,7 +154,7 @@ class GudangATKController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menghapus data',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -149,10 +162,10 @@ class GudangATKController extends Controller
     public function keluarAtk(Request $request)
     {
         try {
-            $model = new GudangAtkKeluarModel();
-            $model->idBarang = $request->idBarang;
+            $model             = new GudangAtkKeluarModel();
+            $model->idBarang   = $request->idBarang;
             $model->NamaBarang = $request->NamaBarang;
-            $model->jumlah = $request->jumlah;
+            $model->jumlah     = $request->jumlah;
             $model->keterangan = $request->keterangan;
             $model->save();
 
@@ -164,7 +177,7 @@ class GudangATKController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menyimpan data',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -173,16 +186,16 @@ class GudangATKController extends Controller
         try {
             $data = GudangAtkKeluarModel::where('id', $request->id)->first();
 
-            if (!$data) {
+            if (! $data) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Data tidak ditemukan untuk Barang: ' . $request->namaBarang . ' ID: ' . $request->idBarang,
                 ], 404);
             }
 
-            $data->idBarang = $request->idBarang;
+            $data->idBarang   = $request->idBarang;
             $data->namaBarang = $request->namaBarang;
-            $data->jumlah = $request->jumlah;
+            $data->jumlah     = $request->jumlah;
             $data->keterangan = $request->keterangan;
             $data->save();
 
@@ -193,7 +206,7 @@ class GudangATKController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat memperbarui data',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -203,7 +216,7 @@ class GudangATKController extends Controller
         try {
             $data = GudangAtkKeluarModel::where('id', $request->id)->first();
 
-            if (!$data) {
+            if (! $data) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Data tidak ditemukan untuk Barang: ' . $request->namaBarang . ' ID: ' . $request->idBarang,
@@ -219,7 +232,7 @@ class GudangATKController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat memperbarui data',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }

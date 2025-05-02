@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class GudangAtkModel extends Model
 {
     use HasFactory;
-    protected $table = 'gudang_atk';
+    protected $table    = 'gudang_atk';
     protected $fillable = [
         'id',
         'idBarang',
@@ -19,15 +18,15 @@ class GudangAtkModel extends Model
 
     public function getStokAtk($params)
     {
-        $dataAtk = $this->whereBetween('created_at', [$params['tglAwal'], $params['tglAkhir']])->get();
+        $dataAtk       = $this->whereBetween('created_at', [$params['tglAwal'], $params['tglAkhir']])->get();
         $dataAtkKeluar = $this->getAtkKeluar($params);
-        $table = $this->generateTableStokAtk($dataAtk, $dataAtkKeluar);
+        $table         = $this->generateTableStokAtk($dataAtk, $dataAtkKeluar);
         return $table;
     }
     public function getAtkKeluar($params)
     {
         $modelAtkKeluar = new GudangAtkKeluarModel();
-        $dataAtkKeluar = $modelAtkKeluar->whereBetween('created_at', [$params['tglAwal'], $params['tglAkhir']])->get();
+        $dataAtkKeluar  = $modelAtkKeluar->whereBetween('created_at', [$params['tglAwal'], $params['tglAkhir']])->get();
         return $dataAtkKeluar;
     }
     public function getAtkMasuk($params)
@@ -42,11 +41,11 @@ class GudangAtkModel extends Model
         $masuk = [];
         foreach ($dataAtk as $item) {
             $id = $item->idBarang;
-            if (!isset($masuk[$id])) {
+            if (! isset($masuk[$id])) {
                 $masuk[$id] = [
-                    'idBarang' => $id,
+                    'idBarang'   => $id,
                     'NamaBarang' => $item->NamaBarang,
-                    'masuk' => 0,
+                    'masuk'      => 0,
                 ];
             }
             $masuk[$id]['masuk'] += $item->jumlah;
@@ -56,11 +55,11 @@ class GudangAtkModel extends Model
         $keluar = [];
         foreach ($dataAtkKeluar as $item) {
             $id = $item->idBarang;
-            if (!isset($keluar[$id])) {
+            if (! isset($keluar[$id])) {
                 $keluar[$id] = [
-                    'idBarang' => $id,
+                    'idBarang'   => $id,
                     'NamaBarang' => $item->NamaBarang,
-                    'keluar' => 0,
+                    'keluar'     => 0,
                 ];
             }
             $keluar[$id]['keluar'] += $item->jumlah;
@@ -70,22 +69,22 @@ class GudangAtkModel extends Model
         $barangList = [];
         foreach ($masuk as $id => $item) {
             $barangList[$id] = [
-                'idBarang' => $id,
+                'idBarang'   => $id,
                 'NamaBarang' => $item['NamaBarang'],
-                'masuk' => $item['masuk'],
-                'keluar' => isset($keluar[$id]) ? $keluar[$id]['keluar'] : 0,
+                'masuk'      => $item['masuk'],
+                'keluar'     => isset($keluar[$id]) ? $keluar[$id]['keluar'] : 0,
             ];
             $barangList[$id]['sisa'] = $barangList[$id]['masuk'] - $barangList[$id]['keluar'];
         }
 
         foreach ($keluar as $id => $item) {
-            if (!isset($barangList[$id])) {
+            if (! isset($barangList[$id])) {
                 $barangList[$id] = [
-                    'idBarang' => $id,
+                    'idBarang'   => $id,
                     'NamaBarang' => $item['NamaBarang'],
-                    'masuk' => 0,
-                    'keluar' => $item['keluar'],
-                    'sisa' => 0 - $item['keluar'],
+                    'masuk'      => 0,
+                    'keluar'     => $item['keluar'],
+                    'sisa'       => 0 - $item['keluar'],
                 ];
             }
         }
@@ -106,8 +105,8 @@ class GudangAtkModel extends Model
         foreach ($barangList as $item) {
             $html .= '<tr>
                         <td>
-                            <button class="btn btn-sm btn-success" data-id="' . $item['idBarang'] . '" data-nama="' . $item['NamaBarang'] . '" onclick="tambahAtk(this,"Form Tambah ATK","Tambah")">Tambah</button>
-                            <button class="btn btn-sm btn-danger" data-id="' . $item['idBarang'] . '" data-nama="' . $item['NamaBarang'] . '" onclick="keluarAtk(this,"Form Keluarkan ATK","Keluarkan")">Keluarkan</button>
+                            <button class="btn btn-sm btn-success" data-id="' . $item['idBarang'] . '" data-nama="' . $item['NamaBarang'] . '" onclick="tambahAtk(this,\'Form Tambah ATK\',\'Tambah\')">Tambah</button>
+                            <button class="btn btn-sm btn-danger" data-id="' . $item['idBarang'] . '" data-nama="' . $item['NamaBarang'] . '" onclick="keluarAtk(this,\'Form Keluarkan ATK\',\'Keluarkan\')")">Keluarkan</button>
                         </td>
                         <td>' . $item['idBarang'] . '</td>
                         <td>' . $item['NamaBarang'] . '</td>
