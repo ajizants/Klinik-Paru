@@ -225,28 +225,13 @@ function reportPoinDots() {
             tglAkhir: selesaiTgl,
         },
         success: function (response) {
-            // response.forEach(function (item, index) {
-            //     item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
-            //     const lama = item.jumlahLama;
-            //     const baru = item.jumlahBaru;
-            //     item.tampilLama = lama - baru;
-            //     item.tampilBaru = item.jumlahBaru;
-            //     item.tampilInput = item.jumlahLama;
-            // });
-
-            // $("#reportDots")
-            //     .DataTable({
-            //         data: response,
-            //         columns: [
-            //             { data: "no" },
-            //             // { data: "nip" },
-            //             { data: "nama" },
-            //             { data: "tampilInput" },
-            //             { data: "tampilLama" },
-            //             { data: "tampilBaru" },
-            //         ],
             response.forEach(function (item, index) {
                 item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
+                const lama = item.jumlahLama;
+                const baru = item.jumlahBaru;
+                item.tampilLama = lama - baru;
+                item.tampilBaru = item.jumlahBaru;
+                item.tampilInput = item.jumlahLama;
             });
 
             $("#reportDots")
@@ -256,9 +241,24 @@ function reportPoinDots() {
                         { data: "no" },
                         // { data: "nip" },
                         { data: "nama" },
-                        { data: "jumlahLama" },
-                        { data: "jumlahBaru" },
+                        { data: "tampilInput" },
+                        { data: "tampilLama" },
+                        { data: "tampilBaru" },
                     ],
+                    // response.forEach(function (item, index) {
+                    //     item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
+                    // });
+
+                    // $("#reportDots")
+                    //     .DataTable({
+                    //         data: response,
+                    //         columns: [
+                    //             { data: "no" },
+                    //             // { data: "nip" },
+                    //             { data: "nama" },
+                    //             { data: "jumlahLama" },
+                    //             { data: "jumlahBaru" },
+                    //         ],
                     order: [0, "asc"],
                     lengthChange: false,
                     autoWidth: false,
