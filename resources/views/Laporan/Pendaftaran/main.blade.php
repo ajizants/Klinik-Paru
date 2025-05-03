@@ -36,6 +36,11 @@
                     Cari Data Rencana Kontrol
                 </button>
             </div>
+            <div class="mx-2">
+                <button type="button" class="btn btn-lime" onclick="jumlahTindakan(); toggleSections('#tab_5');">
+                    Cari Data Jumlah Tindakan
+                </button>
+            </div>
         </div>
     </div>
     <div class="card shadow mb-4">
@@ -58,13 +63,17 @@
                         <a type="button" class="nav-link" onclick="toggleSections('#tab_4');"><b>Rencana Kontrol
                                 Pasien</b></a>
                     </li>
-
+                    <li class="nav-item">
+                        <a type="button" class="nav-link" onclick="toggleSections('#tab_5');"><b>Rekap Jumlah
+                                Tindakan</b></a>
+                    </li>
                 </ul>
             </div>
             @include('Laporan.Pendaftaran.kunjungan')
             @include('Laporan.Pendaftaran.faskesPerujuk')
             @include('Laporan.Pendaftaran.rencanaKontrol')
             @include('Laporan.Pendaftaran.listSEP')
+            @include('Laporan.Pendaftaran.jmlTindakan')
         </div>
     </div>
 
@@ -101,7 +110,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="selesai();">Simpan</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal"
+                        onclick="selesai();">Simpan</button>
                     <button type="button" class="btn btn-danger"data-dismiss="modal">Batal</button>
                 </div>
             </div>

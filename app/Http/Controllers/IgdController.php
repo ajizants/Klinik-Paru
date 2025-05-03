@@ -589,4 +589,61 @@ class IgdController extends Controller
 
         return response()->json($query, 200, [], JSON_PRETTY_PRINT);
     }
+
+    public function getRekapJumlahTindakan(Request $request)
+    {
+        $tglAwal  = $request->input('tglAwal') . ' 00:00:00';
+        $tglAkhir = $request->input('tglAkhir') . ' 23:59:59';
+
+        $data = IGDTransModel::with('tindakan')
+            ->whereBetween('created_at', [$tglAwal, $tglAkhir])
+            ->get();
+
+        $rekap = [];
+
+        foreach ($data as $item) {
+            $kdTindakan = $item->kdTind;
+            $nmTindakan = $item->tindakan->nmTindakan ?? '-';
+
+            if (! isset($rekap[$kdTindakan])) {
+                $rekap[$kdTindakan] = [
+                    'kdTindakan' => $kdTindakan,
+                    'nmTindakan' => $nmTindakan,
+                    'jumlah'     => 0,
+                ];
+            }
+
+            $rekap[$kdTindakan]['jumlah']++;
+        }
+
+        $result = array_values($rekap);
+
+        // Bangun tabel HTML
+        $table = '<table class="table table-sm table-bordered table-hover table-striped" id="tableRekapJumlahTindakan" cellspacing="0">';
+        $table .= '<thead class="bg bg-orange">';
+        $table .= '<tr>
+                <th>No</th>
+                <th>Kode Tindakan</th>
+                <th>Nama Tindakan</th>
+                <th>Jumlah</th>
+              </tr></thead><tbody>';
+
+        foreach ($result as $i => $row) {
+            $table .= '<tr>
+                    <td>' . ($i + 1) . '</td>
+                    <td>' . $row['kdTindakan'] . '</td>
+                    <td>' . $row['nmTindakan'] . '</td>
+                    <td>' . $row['jumlah'] . '</td>
+                   </tr>';
+        }
+
+        $table .= '</tbody></table>';
+
+        // Return JSON dengan data mentah dan HTML tabel
+        return response()->json([
+            'data' => $result,
+            'html' => $table,
+        ], 200, [], JSON_PRETTY_PRINT);
+    }
+
 }
