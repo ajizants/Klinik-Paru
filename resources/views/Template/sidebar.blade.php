@@ -403,7 +403,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/igd/poin') }}">
+                    <a class="nav-link" href="{{ url('/Igd/Poin') }}">
                         <i class="fa-solid fa-chart-column nav-icon"></i>
                         <p>Poin Pegawai</p>
                     </a>
