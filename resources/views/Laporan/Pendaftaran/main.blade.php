@@ -37,7 +37,7 @@
                 </button>
             </div>
             <div class="mx-2">
-                <button type="button" class="btn btn-lime" onclick="jumlahTindakan(); toggleSections('#tab_5');">
+                <button type="button" class="btn btn-lime bg-orange" onclick="jumlahTindakan(); toggleSections('#tab_5');">
                     Cari Data Jumlah Tindakan
                 </button>
             </div>
