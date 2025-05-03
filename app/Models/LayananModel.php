@@ -25,6 +25,7 @@ class LayananModel extends Model
     {
         $data = LayananModel::where('status', "1")
             ->whereIn('kelas', $kelas)
+            ->whereNot('idLayanan', 165)
         // ->whereIn('kelas', 'like', '%' . $kelas . '%')
             ->get();
 

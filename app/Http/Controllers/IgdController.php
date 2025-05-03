@@ -23,7 +23,7 @@ class IgdController extends Controller
         $dokter   = $pModel->olahPegawai([1, 7, 8]);
         $perawat  = $pModel->olahPegawai([10, 14, 15, 23]);
         $lModel   = new LayananModel();
-        $tindakan = $lModel->layanans([2, 3, 5, 6, 10]);
+        $tindakan = $lModel->layanans([2, 3, 5, 6]);
         $bmhp     = BMHPModel::all();
         $dxMed    = DiagnosaModel::all();
 
