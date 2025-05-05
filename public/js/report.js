@@ -311,4 +311,5 @@ $(document).ready(function () {
     reportPoin();
     reportPoinPetugas();
     reportPoinDots();
+    CariPoinJaspel();
 });

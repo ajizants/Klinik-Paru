@@ -42,6 +42,7 @@
                                     <option value="Input TCM">Input TCM</option>
                                     <option value="Input SITB">Input SITB</option>
                                     <option value="Konseling VCT">Konseling VCT</option>
+                                    <option value="Konseling PITC">Konseling PITC</option>
                                     <option value="Konsultasi Pasien">Konsultasi Pasien</option>
                                     <option value="Lainnya">Lainnya (tambahkan di keterangan)</option>
                                 </select>

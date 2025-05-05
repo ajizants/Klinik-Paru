@@ -19,6 +19,10 @@ class PegawaiKegiatanModel extends Model
     {
         return $this->belongsTo(PegawaiModel::class, 'nip', 'nip');
     }
+    public function biodata()
+    {
+        return $this->belongsTo(BiodataModel::class, 'nip', 'nip');
+    }
 
     public function rekap(array $request)
     {
