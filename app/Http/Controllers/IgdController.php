@@ -724,7 +724,7 @@ class IgdController extends Controller
 
         // Bangun HTML gabungan
         $html = '<table border="1" cellpadding="8" cellspacing="0" id="tablePoinJaspel">';
-        $html .= '<thead><tr><th>NO.</th><th>JENIS PELAYANAN</th>';
+        $html .= '<thead><tr><th>NO.</th><th class="col-2" width="20%">JENIS PELAYANAN</th>';
 
         foreach ($allNama as $nama) {
             $html .= '<th>' . htmlspecialchars($nama) . '</th>';

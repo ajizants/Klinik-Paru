@@ -65,7 +65,6 @@
 
                                     // Inisialisasi DataTable
                                     $('#tablePoinJaspel').DataTable({
-                                            lengthChange: false,
                                             buttons: [{
                                                     extend: "copyHtml5",
                                                     text: "Salin",
