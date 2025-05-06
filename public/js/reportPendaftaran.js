@@ -1,10 +1,10 @@
 const baseUrl = window.location.origin;
 function cetak(norm) {
     // console.log("🚀 ~ cetak ~ norm:", norm);
-    window.open("http://rsparu.kkpm.local/Cetak/Label3/norm/" + norm);
+    // window.open("http://rsparu.kkpm.local/Cetak/Label3/norm/" + norm);
 
-    // window.open(`${baseUrl}/api/pendaftaran/cetak/label/${norm}`);
-    // window.open(`${baseUrl}/api/pendaftaran/cetak/rm/${norm}`);
+    window.open(`${baseUrl}/api/pendaftaran/cetak/label/${norm}`);
+    window.open(`${baseUrl}/api/pendaftaran/cetak/rm/${norm}`);
 }
 
 function checkEnter(event) {

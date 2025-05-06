@@ -3,9 +3,12 @@
 
 <head>
     <title>RM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             font-size: 12pt;
+            margin: 0;
+            padding: 0;
         }
 
         table tr td {
@@ -13,33 +16,36 @@
             padding-bottom: 10px;
         }
 
-        .cusMargin025 {
-            -webkit-margin-after: 0.25em;
-            -webkit-margin-before: 0.25em;
-        }
-
-        h3 {
-            font-size: 18pt;
-        }
-
-        h2 {
-            font-size: 20pt;
-        }
-
-        h5 {
-            font-size: 12pt;
-        }
-
         table.uraian td {
             padding-top: 5px;
             padding-bottom: 5px;
         }
 
-        .bordered {
-            border-bottom: 1px solid black;
+        .anukertas {
+            width: 220mm;
+            height: 330mm;
+            border: 1px solid black;
+            margin: 10mm 0 0 20mm;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+
+        @media print {
+            @page {
+                size: 220mm 330mm portrait;
+                margin: 0;
+            }
+
+            .no-print-border {
+                border: none !important;
+            }
+
+            body {
+                margin: 0;
+            }
         }
     </style>
-    <script src="https://cdn.tailwindcss.com"></script>
     {{-- buatkan scrit untuk cetak saat selesai load --}}
     <script>
         window.onload = function() {
@@ -49,12 +55,23 @@
         window.onafterprint = function() {
             window.close();
         }
+
+        // saat menekan tombol p lakukan cetak
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "p" || event.keyCode === 80) { // Check for Enter key
+                event.preventDefault(); // Prevent the default action (optional)
+                // Your code to execute on Enter key press
+                console.log("Enter key pressed!");
+                window.print();
+            }
+        })
     </script>
 
 </head>
 
-<body>
-    <div style="border:1px solid black; padding:10px; overflow: auto; height: 100%; max-width:210mm;">
+<body class="text-black flex justify-center">
+    {{-- <div class="border border-black no-print-border" style="width: 220mm; height: 330mm;"> --}}
+    <div class="anukertas">
         <table width="100%">
             <tr>
                 <td
@@ -181,7 +198,7 @@
             <tr>
                 <td>Pekerjaan</td>
                 <td>:</td>
-                <td colspan="5">{{ $pekerjaan ?? '-' }}</td>
+                <td colspan="5">{{ $pekerjaan_nama ?? '' }}</td>
             </tr>
             <tr>
                 <td>Status</td>
@@ -202,7 +219,8 @@
 
         <p style="text-align:justify">
             &emsp;&emsp;&emsp; Dengan ini saya menyatakan setuju untuk dilakukan dalam upaya kesembuhan /
-            keselamatan jiwa saya serta identitas diri saya telah saya berikan dengan sebenar-benarnya tanpa kebohongan.
+            keselamatan jiwa saya serta identitas diri saya telah saya berikan dengan sebenar-benarnya tanpa
+            kebohongan.
         </p>
 
         <br /><br />
@@ -217,6 +235,7 @@
             </tr>
         </table>
     </div>
+    {{-- </div> --}}
 </body>
 
 </html>
