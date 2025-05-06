@@ -76,16 +76,17 @@ class PendaftaranController extends Controller
         ];
 
         return view('Pendaftaran.Cetak.label', $dataArray);
+        // return view('Pendaftaran.Cetak.labelPdf', $dataArray);
 
-        $pdf = Pdf::loadView('Pendaftaran.Cetak.label', $dataArray)
-            ->setPaper([0, 0, 600, 500]) // 211mm x 135mm in points
+        $pdf = Pdf::loadView('Pendaftaran.Cetak.labelPdf', $dataArray)
             ->setOptions([
                 'defaultPaperSize' => 'custom',
                 'isHtml5ParserEnabled' => true,
                 'isRemoteEnabled' => true,
-                'dpi' => 96,
+                'dpi' => 100,
                 'defaultFont' => 'sans-serif',
-            ]);
+            ])
+            ->setPaper([0, 0, 600, 500]); // 211mm x 135mm in points
 
         return $pdf->stream('label.pdf'); // bisa juga ->download()
     }
