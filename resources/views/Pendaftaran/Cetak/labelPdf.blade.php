@@ -18,7 +18,7 @@
         }
 
         @page {
-            size: 220mm 145mm;
+            size: 220mm 330mm;
             margin: 0;
         }
 
@@ -35,7 +35,7 @@
 
         .page-wrapper {
             width: 220mm;
-            height: 145mm;
+            height: 330mm;
             margin: 0 auto;
             padding: 0;
         }
