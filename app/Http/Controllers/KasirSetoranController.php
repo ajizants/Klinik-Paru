@@ -99,8 +99,8 @@ class KasirSetoranController extends Controller
                 'nipKepala' => '198810162019021002'];
         } else {
             $pimpinan = [
-                'kepala'    => 'dr. ANWAR',
-                'nipKepala' => 'nip'];
+                'kepala'    => 'dr. ANWAR HUDIONO, M.P.H.',
+                'nipKepala' => '198212242010011022'];
         }
 
         return $pimpinan;
