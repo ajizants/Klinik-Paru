@@ -120,12 +120,12 @@
                     $sisaKas = $totalPendapatanSekarang - $totalPengeluaranSekarang;
                     if ($sisaKas == 0) {
                         $sisaKas = '-';
+                    } else {
+                        $sisaKas = number_format($sisaKas, 0, ',', '.') . ',00';
                     }
                 @endphp
-                <p>Rp. <span><input type="text" name="sisa_kas" id="sisa_kas"
-                            value={{ number_format($sisaKas, 0, ',', '.') . ',00' }}></span></p>
-                <p>Rp. <span><input type="text" name="dalam_kas" id="dalam_kas"
-                            value={{ number_format($sisaKas, 0, ',', '.') . ',00' }}></span>
+                <p>Rp. <span><input type="text" name="sisa_kas" id="sisa_kas" value={{ $sisaKas }}></span></p>
+                <p>Rp. <span><input type="text" name="dalam_kas" id="dalam_kas" value={{ $sisaKas }}></span>
                 </p>
             </div>
         </div>
@@ -138,7 +138,7 @@
             </div>
             <div class=" ">
                 <p>Rp. <span><input type="text" name="tunai" id="tunai"
-                            value={{ number_format($sisaKas, 0, ',', '.') . ',00' }}></span></span>
+                            value={{ $sisaKas }}></span></span>
                 </p>
                 <p>Rp. <span><input type="text" name="saldo_bank" id="saldo_bank" value="-"></span></p>
                 <p>Rp. <span><input type="text" name="surat_berharga" id="surat_berharga" value="-"></span></p>
