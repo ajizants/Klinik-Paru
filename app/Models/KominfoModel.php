@@ -18,15 +18,15 @@ class KominfoModel extends Model
     {
         // return ($params);
         $tanggal = $params['tanggal'];
-        $ruang = $params['ruang'];
-        $params = [
-            'tanggal_awal' => $tanggal,
+        $ruang   = $params['ruang'];
+        $params  = [
+            'tanggal_awal'  => $tanggal,
             'tanggal_akhir' => $tanggal,
-            'no_rm' => '',
+            'no_rm'         => '',
         ];
         $data = $this->pendaftaranRequest($params);
 
-        if (!isset($data) || !is_array($data)) {
+        if (! isset($data) || ! is_array($data)) {
             return response()->json(['error' => 'Invalid data format'], 500);
         }
 
@@ -36,14 +36,14 @@ class KominfoModel extends Model
 
         $doctorNipMap = [
             'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
-            'dr. AGIL DANANJAYA, Sp.P' => '9',
-            'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
-            'dr. SIGIT DWIYANTO' => '198903142022031005',
+            'dr. AGIL DANANJAYA, Sp.P'                  => '9',
+            'dr. FILLY ULFA KUSUMAWARDANI'              => '198907252019022004',
+            'dr. SIGIT DWIYANTO'                        => '198903142022031005',
         ];
         $tes = $filteredData;
 
         foreach ($filteredData as &$item) {
-            $norm = $item['pasien_no_rm'];
+            $norm        = $item['pasien_no_rm'];
             $dokter_nama = $item['dokter_nama'];
 
             try {
@@ -54,38 +54,38 @@ class KominfoModel extends Model
                         // $foto = ROTransaksiHasilModel::where('norm', $norm)
                         $foto = RoHasilModel::where('norm', $norm)
                             ->whereDate('tanggal', $tanggal)->first();
-                        $item['status'] = !$tsRo && !$foto ? 'Tidak Ada Transaksi' :
-                        ($tsRo && !$foto ? 'Belum Upload Foto Thorax' : 'Sudah Selesai');
+                        $item['status'] = ! $tsRo && ! $foto ? 'Tidak Ada Transaksi' :
+                        ($tsRo && ! $foto ? 'Belum Upload Foto Thorax' : 'Sudah Selesai');
                         break;
 
                     case 'igd':
                         $ts = IGDTransModel::with('transbmhp')->where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' :
+                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' :
                         ($ts->transbmhp == null ? 'Belum Ada Transaksi BMHP' : 'Sudah Selesai');
                         break;
 
                     case 'farmasi':
                         $ts = FarmasiModel::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
                         break;
 
                     case 'dots':
                         $ts = DotsTransModel::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
                         break;
 
                     case 'lab':
                         $ts = LaboratoriumKunjunganModel::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
                         break;
                     case 'kasir':
                         $ts = KasirTransModel::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = !$ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
                         break;
 
                     default:
@@ -102,7 +102,7 @@ class KominfoModel extends Model
         return response()->json([
             'metadata' => [
                 'message' => 'Data Pasien Ditemukan',
-                'code' => 200,
+                'code'    => 200,
             ],
             'response' => [
                 'data' => $filteredData,
@@ -127,9 +127,9 @@ class KominfoModel extends Model
         try {
             // Lakukan permintaan POST dengan otentikasi dasar
             $response = $client->request('POST', $url, [
-                'auth' => [$username, $password],
+                'auth'        => [$username, $password],
                 'form_params' => $params,
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
             ]);
@@ -145,7 +145,7 @@ class KominfoModel extends Model
             }
 
             $res = array_map(function ($d) {
-                $statusPulang = !is_null($d["loket_farmasi_menunggu_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
+                $statusPulang = ! is_null($d["loket_farmasi_menunggu_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
                 // $statusPulang = !is_null($d["ruang_poli_selesai_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
                 $alamat = $d['kelurahan_nama'] . ', ' .
                     $d['pasien_rt'] . '/' .
@@ -159,44 +159,44 @@ class KominfoModel extends Model
                 $notrans = $d['tanggal'] < '2024-12-19' ? $d['no_trans'] : $d['no_reg'];
 
                 return [
-                    "status_pulang" => $statusPulang,
-                    "no_reg" => $d["no_reg"] ?? 0,
-                    "id" => $d["id"] ?? 0,
-                    "no_trans" => $d["no_trans"] ?? 0,
-                    "notrans" => $notrans,
-                    "antrean_nomor" => $d["antrean_nomor"] ?? 0,
-                    "tanggal" => $d["tanggal"] ?? 0,
-                    "penjamin_nama" => $d["penjamin_nama"] ?? 0,
-                    "penjamin_nomor" => $d["penjamin_nomor"] ?? 0,
-                    "jenis_kunjungan_nama" => $d["jenis_kunjungan_nama"] ?? 0,
-                    "nomor_referensi" => $d["nomor_referensi"] ?? 0,
-                    "pasien_nik" => $d["pasien_nik"] ?? 0,
-                    "pasien_nama" => $d["pasien_nama"] ?? 0,
-                    "pasien_no_rm" => $d["pasien_no_rm"] ?? 0,
-                    "pasien_tgl_lahir" => $d["pasien_tgl_lahir"] ?? 0,
-                    "jenis_kelamin_nama" => $d["jenis_kelamin_nama"] ?? 0,
-                    "pasien_lama_baru" => $d["pasien_lama_baru"] ?? 0,
+                    "status_pulang"            => $statusPulang,
+                    "no_reg"                   => $d["no_reg"] ?? 0,
+                    "id"                       => $d["id"] ?? 0,
+                    "no_trans"                 => $d["no_trans"] ?? 0,
+                    "notrans"                  => $notrans,
+                    "antrean_nomor"            => $d["antrean_nomor"] ?? 0,
+                    "tanggal"                  => $d["tanggal"] ?? 0,
+                    "penjamin_nama"            => $d["penjamin_nama"] ?? 0,
+                    "penjamin_nomor"           => $d["penjamin_nomor"] ?? 0,
+                    "jenis_kunjungan_nama"     => $d["jenis_kunjungan_nama"] ?? 0,
+                    "nomor_referensi"          => $d["nomor_referensi"] ?? 0,
+                    "pasien_nik"               => $d["pasien_nik"] ?? 0,
+                    "pasien_nama"              => $d["pasien_nama"] ?? 0,
+                    "pasien_no_rm"             => $d["pasien_no_rm"] ?? 0,
+                    "pasien_tgl_lahir"         => $d["pasien_tgl_lahir"] ?? 0,
+                    "jenis_kelamin_nama"       => $d["jenis_kelamin_nama"] ?? 0,
+                    "pasien_lama_baru"         => $d["pasien_lama_baru"] ?? 0,
                     "rs_paru_pasien_lama_baru" => $d["rs_paru_pasien_lama_baru"] ?? 0,
-                    "poli_nama" => $d["poli_nama"] ?? 0,
-                    "poli_sub_nama" => $d["poli_sub_nama"] ?? 0,
-                    "dokter_nama" => $d["dokter_nama"] ?? 0,
-                    "daftar_by" => $d["daftar_by"] ?? 0,
-                    "waktu_daftar" => $d["waktu_daftar"] ?? 0,
-                    "waktu_verifikasi" => $d["waktu_verifikasi"] ?? 0,
-                    "admin_pendaftaran" => $d["admin_pendaftaran"] ?? 0,
-                    "log_id" => $d["log_id"] ?? 0,
-                    "keterangan" => $d["keterangan"] ?? 0,
-                    "keterangan_urutan" => $d["keterangan_urutan"] ?? 0,
-                    "pasien_umur" => ($d["pasien_umur_tahun"] ?? 0) . " Thn " . ($d["pasien_umur_bulan"] ?? 0) . " Bln ",
-                    "pasien_umur_tahun" => $d["pasien_umur_tahun"] ?? 0,
-                    "pasien_umur_bulan" => $d["pasien_umur_bulan"] ?? 0,
-                    "pasien_umur_hari" => $d["pasien_umur_hari"] ?? 0,
-                    "pasien_alamat" => $alamat ?? 0,
-                    "pasien_alamat_min" => $alamatMin ?? 0,
-                    "pasien_alamat_pang" => $alamatPang ?? 0,
-                    "kabupaten" => $d["kabupaten_nama"] ?? 0,
-                    "kecamatan" => $d["kecamatan_nama"] ?? 0,
-                    "kelurahan" => $d["kelurahan_nama"] ?? 0,
+                    "poli_nama"                => $d["poli_nama"] ?? 0,
+                    "poli_sub_nama"            => $d["poli_sub_nama"] ?? 0,
+                    "dokter_nama"              => $d["dokter_nama"] ?? 0,
+                    "daftar_by"                => $d["daftar_by"] ?? 0,
+                    "waktu_daftar"             => $d["waktu_daftar"] ?? 0,
+                    "waktu_verifikasi"         => $d["waktu_verifikasi"] ?? 0,
+                    "admin_pendaftaran"        => $d["admin_pendaftaran"] ?? 0,
+                    "log_id"                   => $d["log_id"] ?? 0,
+                    "keterangan"               => $d["keterangan"] ?? 0,
+                    "keterangan_urutan"        => $d["keterangan_urutan"] ?? 0,
+                    "pasien_umur"              => ($d["pasien_umur_tahun"] ?? 0) . " Thn " . ($d["pasien_umur_bulan"] ?? 0) . " Bln ",
+                    "pasien_umur_tahun"        => $d["pasien_umur_tahun"] ?? 0,
+                    "pasien_umur_bulan"        => $d["pasien_umur_bulan"] ?? 0,
+                    "pasien_umur_hari"         => $d["pasien_umur_hari"] ?? 0,
+                    "pasien_alamat"            => $alamat ?? 0,
+                    "pasien_alamat_min"        => $alamatMin ?? 0,
+                    "pasien_alamat_pang"       => $alamatPang ?? 0,
+                    "kabupaten"                => $d["kabupaten_nama"] ?? 0,
+                    "kecamatan"                => $d["kecamatan_nama"] ?? 0,
+                    "kelurahan"                => $d["kelurahan_nama"] ?? 0,
                 ];
             }, $data['response']['data']);
 
@@ -223,9 +223,9 @@ class KominfoModel extends Model
         try {
             // Lakukan permintaan POST dengan otentikasi dasar
             $response = $client->request('POST', $url, [
-                'auth' => [$username, $password],
+                'auth'        => [$username, $password],
                 'form_params' => $params,
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
             ]);
@@ -239,7 +239,7 @@ class KominfoModel extends Model
             if ($data['metadata']['code'] == 201) {
                 return [
                     'error' => $data['metadata']['message'],
-                    'code' => $data['metadata']['code'],
+                    'code'  => $data['metadata']['code'],
                 ];
             }
             // Periksa apakah data berhasil di-decode menjadi array
@@ -248,7 +248,7 @@ class KominfoModel extends Model
             }
 
             $res = array_map(function ($d) {
-                $statusPulang = !is_null($d["loket_farmasi_menunggu_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
+                $statusPulang = ! is_null($d["loket_farmasi_menunggu_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
                 // $statusPulang = !is_null($d["ruang_poli_selesai_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
                 $alamat = $d['kelurahan_nama'] . ', ' .
                     $d['pasien_rt'] . '/' .
@@ -260,13 +260,13 @@ class KominfoModel extends Model
                 $alamatPang = 'Desa ' . $d['kelurahan_nama'] . ', Kecamatan ' .
                     $d['kecamatan_nama'];
                 $notrans = $d['tanggal'] < '2024-12-19' ? $d['no_trans'] : $d['no_reg'];
-                $check = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
+                $check   = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
                 // jika $check null
                 $checkRm = $check->waktu_selesai_rm ?? null;
-                $igd = $check->waktu_selesai_igd ?? null;
+                $igd     = $check->waktu_selesai_igd ?? null;
 
-                $checkIn = $checkRm == null ? 'danger' : 'success';
-                $noSep = $check->no_sep ?? "";
+                $checkIn    = $checkRm == null ? 'danger' : 'success';
+                $noSep      = $check->no_sep ?? "";
                 $checkInIGD = $igd == null ? 'danger' : 'success';
 
                 $pendaftaranLocal = KunjunganModel::where('norm', $d['pasien_no_rm'])
@@ -282,52 +282,52 @@ class KominfoModel extends Model
 
                 // dd($results);
 
-                $cekDaftar = $pendaftaranLocal != null || $pendaftaranLocal != "" ? 'success' : 'warning';
+                $cekDaftar = $pendaftaranLocal != null || $pendaftaranLocal != "" ? 'lime' : 'warning';
 
                 return [
-                    "check_in" => $checkIn,
-                    "statusDaftar" => $cekDaftar,
-                    "igd_selesai" => $checkInIGD,
-                    "status_pulang" => $statusPulang,
-                    "no_sep" => $noSep,
-                    "no_reg" => $d["no_reg"] ?? 0,
-                    "id" => $d["id"] ?? 0,
-                    "no_trans" => $d["no_trans"] ?? 0,
-                    "antrean_nomor" => $d["antrean_nomor"] ?? 0,
-                    "tanggal" => $d["tanggal"] ?? 0,
-                    "penjamin_nama" => $d["penjamin_nama"] ?? 0,
-                    "penjamin_nomor" => $d["penjamin_nomor"] ?? 0,
-                    "jenis_kunjungan_nama" => $d["jenis_kunjungan_nama"] ?? 0,
-                    "nomor_referensi" => $d["nomor_referensi"] ?? 0,
-                    "pasien_nik" => $d["pasien_nik"] ?? 0,
-                    "pasien_nama" => $d["pasien_nama"] ?? 0,
-                    "pasien_no_rm" => $d["pasien_no_rm"] ?? 0,
-                    "pasien_tgl_lahir" => $d["pasien_tgl_lahir"] ?? 0,
-                    "jenis_kelamin_nama" => $d["jenis_kelamin_nama"] ?? 0,
-                    "pasien_lama_baru" => $d["pasien_lama_baru"] ?? 0,
+                    "check_in"                 => $checkIn,
+                    "statusDaftar"             => $cekDaftar,
+                    "igd_selesai"              => $checkInIGD,
+                    "status_pulang"            => $statusPulang,
+                    "no_sep"                   => $noSep,
+                    "no_reg"                   => $d["no_reg"] ?? 0,
+                    "id"                       => $d["id"] ?? 0,
+                    "no_trans"                 => $d["no_trans"] ?? 0,
+                    "antrean_nomor"            => $d["antrean_nomor"] ?? 0,
+                    "tanggal"                  => $d["tanggal"] ?? 0,
+                    "penjamin_nama"            => $d["penjamin_nama"] ?? 0,
+                    "penjamin_nomor"           => $d["penjamin_nomor"] ?? 0,
+                    "jenis_kunjungan_nama"     => $d["jenis_kunjungan_nama"] ?? 0,
+                    "nomor_referensi"          => $d["nomor_referensi"] ?? 0,
+                    "pasien_nik"               => $d["pasien_nik"] ?? 0,
+                    "pasien_nama"              => $d["pasien_nama"] ?? 0,
+                    "pasien_no_rm"             => $d["pasien_no_rm"] ?? 0,
+                    "pasien_tgl_lahir"         => $d["pasien_tgl_lahir"] ?? 0,
+                    "jenis_kelamin_nama"       => $d["jenis_kelamin_nama"] ?? 0,
+                    "pasien_lama_baru"         => $d["pasien_lama_baru"] ?? 0,
                     "rs_paru_pasien_lama_baru" => $d["rs_paru_pasien_lama_baru"] ?? 0,
-                    "poli_nama" => $d["poli_nama"] ?? 0,
-                    "poli_sub_nama" => $d["poli_sub_nama"] ?? 0,
-                    "dokter_nama" => $d["dokter_nama"] ?? 0,
-                    "daftar_by" => $d["daftar_by"] ?? 0,
-                    "waktu_daftar" => $d["waktu_daftar"] ?? 0,
-                    "waktu_verifikasi" => $d["waktu_verifikasi"] ?? 0,
-                    "admin_pendaftaran" => $d["admin_pendaftaran"] ?? 0,
-                    "log_id" => $d["log_id"] ?? 0,
-                    "keterangan" => $d["keterangan"] ?? 0,
-                    "keterangan_urutan" => $d["keterangan_urutan"] ?? 0,
-                    "pasien_umur" => ($d["pasien_umur_tahun"] ?? 0) . " Thn " . ($d["pasien_umur_bulan"] ?? 0) . " Bln ",
-                    "pasien_umur_tahun" => $d["pasien_umur_tahun"] ?? 0,
-                    "pasien_umur_bulan" => $d["pasien_umur_bulan"] ?? 0,
-                    "pasien_umur_hari" => $d["pasien_umur_hari"] ?? 0,
-                    "pasien_alamat" => $alamat ?? 0,
-                    "pasien_alamat_min" => $alamatMin ?? 0,
-                    "pasien_alamat_pang" => $alamatPang ?? 0,
+                    "poli_nama"                => $d["poli_nama"] ?? 0,
+                    "poli_sub_nama"            => $d["poli_sub_nama"] ?? 0,
+                    "dokter_nama"              => $d["dokter_nama"] ?? 0,
+                    "daftar_by"                => $d["daftar_by"] ?? 0,
+                    "waktu_daftar"             => $d["waktu_daftar"] ?? 0,
+                    "waktu_verifikasi"         => $d["waktu_verifikasi"] ?? 0,
+                    "admin_pendaftaran"        => $d["admin_pendaftaran"] ?? 0,
+                    "log_id"                   => $d["log_id"] ?? 0,
+                    "keterangan"               => $d["keterangan"] ?? 0,
+                    "keterangan_urutan"        => $d["keterangan_urutan"] ?? 0,
+                    "pasien_umur"              => ($d["pasien_umur_tahun"] ?? 0) . " Thn " . ($d["pasien_umur_bulan"] ?? 0) . " Bln ",
+                    "pasien_umur_tahun"        => $d["pasien_umur_tahun"] ?? 0,
+                    "pasien_umur_bulan"        => $d["pasien_umur_bulan"] ?? 0,
+                    "pasien_umur_hari"         => $d["pasien_umur_hari"] ?? 0,
+                    "pasien_alamat"            => $alamat ?? 0,
+                    "pasien_alamat_min"        => $alamatMin ?? 0,
+                    "pasien_alamat_pang"       => $alamatPang ?? 0,
                 ];
             }, $data['response']['data']);
 
             $no_rm = $params['no_rm'];
-            if (!empty($no_rm)) {
+            if (! empty($no_rm)) {
                 // dd($no_rm);
                 // Filter data berdasarkan no_rm
                 $res = array_filter($res, function ($d) use ($no_rm) {
@@ -360,9 +360,9 @@ class KominfoModel extends Model
         try {
             // Lakukan permintaan POST dengan otentikasi dasar
             $response = $client->request('POST', $url, [
-                'auth' => [$username, $password],
+                'auth'        => [$username, $password],
                 'form_params' => $params,
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
             ]);
@@ -381,16 +381,16 @@ class KominfoModel extends Model
     public function rekapFaskesPerujuk(array $params)
     {
         $client = new Client();
-        $url = 'https://kkpm.banyumaskab.go.id/api_kkpm/v1/SEP/jumlah_rujukan_asal';
+        $url    = 'https://kkpm.banyumaskab.go.id/api_kkpm/v1/SEP/jumlah_rujukan_asal';
 
         $username = env('API_USERNAME', '');
         $password = env('API_PASSWORD', '');
 
         try {
             $response = $client->request('POST', $url, [
-                'auth' => [$username, $password],
+                'auth'        => [$username, $password],
                 'form_params' => $params,
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
             ]);
@@ -416,9 +416,9 @@ class KominfoModel extends Model
         try {
             // Lakukan permintaan POST dengan otentikasi dasar
             $response = $client->request('POST', $url, [
-                'auth' => [$username, $password],
+                'auth'        => [$username, $password],
                 'form_params' => $params,
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
             ]);
@@ -467,9 +467,9 @@ class KominfoModel extends Model
         try {
             // Lakukan permintaan POST dengan otentikasi dasar
             $response = $client->request('POST', $url, [
-                'auth' => [$username, $password],
+                'auth'        => [$username, $password],
                 'form_params' => $params,
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
             ]);
@@ -510,10 +510,10 @@ class KominfoModel extends Model
         try {
             // Lakukan permintaan POST dengan otentikasi dasar
             $response = $client->request('POST', $url, [
-                'timeout' => 200,
-                'auth' => [$username, $password],
+                'timeout'     => 200,
+                'auth'        => [$username, $password],
                 'form_params' => $data,
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
             ]);
@@ -555,10 +555,10 @@ class KominfoModel extends Model
         try {
             // Lakukan permintaan POST dengan otentikasi dasar
             $response = $client->request('POST', $url, [
-                'timeout' => 200,
-                'auth' => [$username, $password],
+                'timeout'     => 200,
+                'auth'        => [$username, $password],
                 'form_params' => $data,
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
             ]);
@@ -580,49 +580,49 @@ class KominfoModel extends Model
                     $data['response']['data']['kabupaten_nama'] . ', ' .
                     $data['response']['data']['provinsi_nama'];
                 $res = [
-                    "pasien_nik" => $data['response']['data']['pasien_nik'],
-                    "pasien_no_kk" => $data['response']['data']['pasien_no_kk'],
-                    "pasien_nama" => $data['response']['data']['pasien_nama'],
-                    "pasien_no_rm" => $data['response']['data']['pasien_no_rm'],
-                    "jenis_kelamin_id" => $data['response']['data']['jenis_kelamin_id'],
-                    "jenis_kelamin_nama" => $data['response']['data']['jenis_kelamin_nama'],
-                    "pasien_tempat_lahir" => $data['response']['data']['pasien_tempat_lahir'],
-                    "pasien_tgl_lahir" => $data['response']['data']['pasien_tgl_lahir'],
-                    "pasien_no_hp" => $data['response']['data']['pasien_no_hp'],
-                    "pasien_domisili" => $data['response']['data']['pasien_alamat'],
+                    "pasien_nik"                    => $data['response']['data']['pasien_nik'],
+                    "pasien_no_kk"                  => $data['response']['data']['pasien_no_kk'],
+                    "pasien_nama"                   => $data['response']['data']['pasien_nama'],
+                    "pasien_no_rm"                  => $data['response']['data']['pasien_no_rm'],
+                    "jenis_kelamin_id"              => $data['response']['data']['jenis_kelamin_id'],
+                    "jenis_kelamin_nama"            => $data['response']['data']['jenis_kelamin_nama'],
+                    "pasien_tempat_lahir"           => $data['response']['data']['pasien_tempat_lahir'],
+                    "pasien_tgl_lahir"              => $data['response']['data']['pasien_tgl_lahir'],
+                    "pasien_no_hp"                  => $data['response']['data']['pasien_no_hp'],
+                    "pasien_domisili"               => $data['response']['data']['pasien_alamat'],
                     // "pasien_alamat" => ($data['response']['data']['kelurahan_nama']) . ', ' . ($data['response']['data']['pasien_rt']) . '/' . ($data['response']['data']['pasien_rw']) . ', ' . ($data['response']['data']['kecamatan_nama']) . ', ' . ($data['response']['data']['kabupaten_nama']) . ', ' . ($data['response']['data']['provinsi_nama']),
-                    "pasien_alamat" => $alamat,
-                    "pasien_kode_pos" => $data['response']['data']['pasien_kode_pos'],
-                    "provinsi_id" => $data['response']['data']['provinsi_id'],
-                    "provinsi_nama" => $data['response']['data']['provinsi_nama'],
-                    "kabupaten_id" => $data['response']['data']['kabupaten_id'],
-                    "kabupaten_nama" => $data['response']['data']['kabupaten_nama'],
-                    "kecamatan_id" => $data['response']['data']['kecamatan_id'],
-                    "kecamatan_nama" => $data['response']['data']['kecamatan_nama'],
-                    "kelurahan_id" => $data['response']['data']['kelurahan_id'],
-                    "kelurahan_nama" => $data['response']['data']['kelurahan_nama'],
-                    "pasien_rt" => $data['response']['data']['pasien_rt'],
-                    "pasien_rw" => $data['response']['data']['pasien_rw'],
-                    "penjamin_id" => $data['response']['data']['penjamin_id'],
-                    "penjamin_nama" => $data['response']['data']['penjamin_nama'],
-                    "penjamin_nomor" => $data['response']['data']['penjamin_nomor'],
-                    "agama_id" => $data['response']['data']['agama_id'],
-                    "agama_nama" => $data['response']['data']['agama_nama'],
-                    "rs_paru_agama_id" => $data['response']['data']['rs_paru_agama_id'],
-                    "goldar_id" => $data['response']['data']['goldar_id'],
-                    "goldar_nama" => $data['response']['data']['goldar_nama'],
-                    "status_kawin_id" => $data['response']['data']['status_kawin_id'],
-                    "status_kawin_nama" => $data['response']['data']['status_kawin_nama'],
-                    "rs_paru_status_kawin" => $data['response']['data']['rs_paru_status_kawin'],
-                    "pendidikan_id" => $data['response']['data']['pendidikan_id'],
-                    "pendidikan_nama" => $data['response']['data']['pendidikan_nama'],
-                    "pekerjaan_nama" => $data['response']['data']['pekerjaan_nama'] ?? "-",
-                    "rs_paru_pendidikan_id" => $data['response']['data']['rs_paru_pendidikan_id'],
-                    "pasien_daftar_by" => $data['response']['data']['pasien_daftar_by'],
-                    "pasien_penanggung_jawab_nama" => $data['response']['data']['pasien_penanggung_jawab_nama'],
+                    "pasien_alamat"                 => $alamat,
+                    "pasien_kode_pos"               => $data['response']['data']['pasien_kode_pos'],
+                    "provinsi_id"                   => $data['response']['data']['provinsi_id'],
+                    "provinsi_nama"                 => $data['response']['data']['provinsi_nama'],
+                    "kabupaten_id"                  => $data['response']['data']['kabupaten_id'],
+                    "kabupaten_nama"                => $data['response']['data']['kabupaten_nama'],
+                    "kecamatan_id"                  => $data['response']['data']['kecamatan_id'],
+                    "kecamatan_nama"                => $data['response']['data']['kecamatan_nama'],
+                    "kelurahan_id"                  => $data['response']['data']['kelurahan_id'],
+                    "kelurahan_nama"                => $data['response']['data']['kelurahan_nama'],
+                    "pasien_rt"                     => $data['response']['data']['pasien_rt'],
+                    "pasien_rw"                     => $data['response']['data']['pasien_rw'],
+                    "penjamin_id"                   => $data['response']['data']['penjamin_id'],
+                    "penjamin_nama"                 => $data['response']['data']['penjamin_nama'],
+                    "penjamin_nomor"                => $data['response']['data']['penjamin_nomor'],
+                    "agama_id"                      => $data['response']['data']['agama_id'],
+                    "agama_nama"                    => $data['response']['data']['agama_nama'],
+                    "rs_paru_agama_id"              => $data['response']['data']['rs_paru_agama_id'],
+                    "goldar_id"                     => $data['response']['data']['goldar_id'],
+                    "goldar_nama"                   => $data['response']['data']['goldar_nama'],
+                    "status_kawin_id"               => $data['response']['data']['status_kawin_id'],
+                    "status_kawin_nama"             => $data['response']['data']['status_kawin_nama'],
+                    "rs_paru_status_kawin"          => $data['response']['data']['rs_paru_status_kawin'],
+                    "pendidikan_id"                 => $data['response']['data']['pendidikan_id'],
+                    "pendidikan_nama"               => $data['response']['data']['pendidikan_nama'],
+                    "pekerjaan_nama"                => $data['response']['data']['pekerjaan_nama'] ?? "-",
+                    "rs_paru_pendidikan_id"         => $data['response']['data']['rs_paru_pendidikan_id'],
+                    "pasien_daftar_by"              => $data['response']['data']['pasien_daftar_by'],
+                    "pasien_penanggung_jawab_nama"  => $data['response']['data']['pasien_penanggung_jawab_nama'],
                     "pasien_penanggung_jawab_no_hp" => $data['response']['data']['pasien_penanggung_jawab_no_hp'],
-                    "created_at" => $data['response']['data']['created_at'],
-                    "created_at_tanggal" => $data['response']['data']['created_at_tanggal'],
+                    "created_at"                    => $data['response']['data']['created_at'],
+                    "created_at_tanggal"            => $data['response']['data']['created_at_tanggal'],
                 ];
             }
 
@@ -650,9 +650,9 @@ class KominfoModel extends Model
         try {
             // Lakukan permintaan POST dengan otentikasi dasar
             $response = $client->request('POST', $url, [
-                'timeout' => 200,
+                'timeout'     => 200,
                 'form_params' => $data,
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
             ]);
@@ -675,8 +675,8 @@ class KominfoModel extends Model
 
     public function waktuLayananRequest(array $params)
     {
-        $client = new Client();
-        $url = 'https://kkpm.banyumaskab.go.id/api_kkpm/v1/pendaftaran/data_pendaftaran';
+        $client   = new Client();
+        $url      = 'https://kkpm.banyumaskab.go.id/api_kkpm/v1/pendaftaran/data_pendaftaran';
         $username = env('API_USERNAME', '');
         $password = env('API_PASSWORD', '');
         // dd($params);
@@ -684,9 +684,9 @@ class KominfoModel extends Model
         try {
             // Lakukan permintaan POST dengan otentikasi dasar
             $response = $client->request('POST', $url, [
-                'auth' => [$username, $password],
+                'auth'        => [$username, $password],
                 'form_params' => $params,
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
             ]);
@@ -695,12 +695,12 @@ class KominfoModel extends Model
             $body = $response->getBody();
 
             // Konversi response body ke array
-            $mentah = json_decode($body, true);
+            $mentah       = json_decode($body, true);
             $responseData = $mentah['response']['data'];
 
             // dd($mentah);
             // Filter data sesuai dengan kondisi
-            if (!isset($params['no_rm']) || empty($params['no_rm'])) {
+            if (! isset($params['no_rm']) || empty($params['no_rm'])) {
                 $data = array_filter($responseData, function ($message) {
                     return $message['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
                 });
@@ -724,17 +724,17 @@ class KominfoModel extends Model
 
                 // $tunggu_panggil_daftar = ($message["daftar_by"] == "JKN") ? 2 : max(0, round((strtotime($message["loket_pendaftaran_panggil_waktu"]) - strtotime($message["loket_pendaftaran_skip_waktu"] ?? $mulaiPanggil)) / 60, 2));
                 $tunggu_panggil_daftar = max(0, round((strtotime($message["loket_pendaftaran_panggil_waktu"]) - strtotime($message["loket_pendaftaran_skip_waktu"] ?? $mulaiPanggil)) / 60, 2));
-                $lama_daftar = max(0, round((strtotime($message["loket_pendaftaran_selesai_waktu"]) - strtotime($message["loket_pendaftaran_panggil_waktu"])) / 60, 2));
+                $lama_daftar           = max(0, round((strtotime($message["loket_pendaftaran_selesai_waktu"]) - strtotime($message["loket_pendaftaran_panggil_waktu"])) / 60, 2));
 
-                $selesaiRm = KunjunganWaktuSelesai::where('norm', $message['pasien_no_rm'])->whereDate('waktu_selesai_rm', $message['tanggal'])->first();
-                $Rmdata = $selesaiRm ? true : false;
+                $selesaiRm       = KunjunganWaktuSelesai::where('norm', $message['pasien_no_rm'])->whereDate('waktu_selesai_rm', $message['tanggal'])->first();
+                $Rmdata          = $selesaiRm ? true : false;
                 $waktuSelesaiIgd = 0;
                 if (is_null($selesaiRm)) {
                     $waktuSelesaiRM = $message["loket_pendaftaran_selesai_waktu"];
-                    $lamaSelesaiRM = 0;
+                    $lamaSelesaiRM  = 0;
                 } else {
-                    $waktuSelesaiRM = date('Y-m-d H:i:s', strtotime($selesaiRm->waktu_selesai_rm));
-                    $lamaSelesaiRM = max(0, round((strtotime($selesaiRm->waktu_selesai_rm) - strtotime($message["loket_pendaftaran_panggil_waktu"])) / 60, 2));
+                    $waktuSelesaiRM  = date('Y-m-d H:i:s', strtotime($selesaiRm->waktu_selesai_rm));
+                    $lamaSelesaiRM   = max(0, round((strtotime($selesaiRm->waktu_selesai_rm) - strtotime($message["loket_pendaftaran_panggil_waktu"])) / 60, 2));
                     $waktuSelesaiIgd = date('Y-m-d H:i:s', strtotime($selesaiRm->waktu_selesai_igd));
                 }
 
@@ -750,7 +750,7 @@ class KominfoModel extends Model
                 // Menentukan durasi poli
                 $durasi_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["loket_pendaftaran_selesai_waktu"])) / 60, 2));
                 $tunggu_poli = max(0, round((strtotime($message["ruang_poli_panggil_waktu"]) - strtotime($message["ruang_poli_skip_waktu"] ?? $message["ruang_tensi_selesai_waktu"])) / 60, 2));
-                $lama_poli = max(0, round((strtotime($message["ruang_poli_selesai_waktu"]) - strtotime($message["ruang_poli_panggil_waktu"])) / 60, 2));
+                $lama_poli   = max(0, round((strtotime($message["ruang_poli_selesai_waktu"]) - strtotime($message["ruang_poli_panggil_waktu"])) / 60, 2));
                 // dd($tunggu_poli);
                 // Tentukan waktu panggil farmasi
                 $panggilFarmasi = isset($message["ruang_poli_selesai_waktu"])
@@ -761,18 +761,18 @@ class KominfoModel extends Model
                 $panggilFarmasi = $panggilFarmasi->format('Y-m-d H:i:s');
 
                 // Inisialisasi waktu tunggu lainnya
-                $tunggu_igd = $tunggu_farmasi = $tunggu_kasir = 0;
-                $statusPulang = !is_null($message["ruang_poli_selesai_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
-                $lama_pelayanan_tiap_pasien = !is_null($message["ruang_poli_selesai_waktu"]) ? max(0, round((strtotime($message["ruang_poli_selesai_waktu"]) - strtotime($message["loket_pendaftaran_selesai_waktu"])) / 60, 2)) : 0;
+                $tunggu_igd                 = $tunggu_farmasi                 = $tunggu_kasir                 = 0;
+                $statusPulang               = ! is_null($message["ruang_poli_selesai_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
+                $lama_pelayanan_tiap_pasien = ! is_null($message["ruang_poli_selesai_waktu"]) ? max(0, round((strtotime($message["ruang_poli_selesai_waktu"]) - strtotime($message["loket_pendaftaran_selesai_waktu"])) / 60, 2)) : 0;
 
                 $roData = ROTransaksiModel::where('norm', $message['pasien_no_rm'])
                     ->whereDate('tgltrans', $message['tanggal'])->first();
-                $Rdata = $roData ? true : false;
+                $Rdata     = $roData ? true : false;
                 $selesaiRo = $panggilRo = $lama_ro = 0;
                 if ($roData && $roData->created_at) {
                     $selesaiRo = date('Y-m-d H:i:s', strtotime($roData->updated_at));
                     $panggilRo = date('Y-m-d H:i:s', strtotime($roData->created_at));
-                    $lama_ro = max(0, round((strtotime($roData->updated_at) - strtotime($roData->created_at)) / 60, 2));
+                    $lama_ro   = max(0, round((strtotime($roData->updated_at) - strtotime($roData->created_at)) / 60, 2));
                 }
 
                 $labData = LaboratoriumKunjunganModel::where('norm', $message['pasien_no_rm'])
@@ -786,18 +786,18 @@ class KominfoModel extends Model
                 if ($labData && $labData->created_at) {
                     $panggilLab = date('Y-m-d H:i:s', strtotime($labData->created_at));
                     $selesaiLab = date('Y-m-d H:i:s', strtotime($labData->waktu_selesai ?: $labData->updated_at));
-                    $lama_lab = max(0, round((strtotime($selesaiLab) - strtotime($panggilLab)) / 60, 2));
+                    $lama_lab   = max(0, round((strtotime($selesaiLab) - strtotime($panggilLab)) / 60, 2));
                 }
 
                 $igdData = IGDTransModel::where('norm', $message['pasien_no_rm'])->whereDate('created_at', $message['tanggal'])->first();
                 // dd($igdData);
-                $igd = $igdData ? true : false;
+                $igd        = $igdData ? true : false;
                 $panggilIgd = $selesaiIgd = $lama_igd = 0;
                 // Periksa data IGD
                 if ($igdData && $igdData->updated_at) {
-                    $panggilIgd = date('Y-m-d H:i:s', strtotime($igdData->created_at));
-                    $selesaiIgd = $waktuSelesaiIgd ?: date('Y-m-d H:i:s', strtotime($igdData->updated_at));
-                    $lama_igd = max(0, round((strtotime($selesaiIgd) - strtotime($panggilIgd)) / 60, 2));
+                    $panggilIgd     = date('Y-m-d H:i:s', strtotime($igdData->created_at));
+                    $selesaiIgd     = $waktuSelesaiIgd ?: date('Y-m-d H:i:s', strtotime($igdData->updated_at));
+                    $lama_igd       = max(0, round((strtotime($selesaiIgd) - strtotime($panggilIgd)) / 60, 2));
                     $panggilFarmasi = $selesaiIgd;
                 }
 
@@ -807,117 +807,117 @@ class KominfoModel extends Model
                 }
 
                 // Menentukan waktu tunggu lab dan rontgen dan poli
-                $selesaiTensi = strtotime($message['ruang_tensi_selesai_waktu']);
-                $panggilPoli = strtotime($message['ruang_poli_panggil_waktu']) ?: null;
-                $selesaiPoli = strtotime($message['ruang_poli_selesai_waktu']) ?: null;
+                $selesaiTensi  = strtotime($message['ruang_tensi_selesai_waktu']);
+                $panggilPoli   = strtotime($message['ruang_poli_panggil_waktu']) ?: null;
+                $selesaiPoli   = strtotime($message['ruang_poli_selesai_waktu']) ?: null;
                 $panggilLabMat = strtotime($panggilLab);
-                $panggilRoMat = strtotime($panggilRo);
+                $panggilRoMat  = strtotime($panggilRo);
                 $selesaiLabMat = strtotime($selesaiLab);
-                $selesaiRoMat = strtotime($selesaiRo);
-                $tunggu_lab = $tunggu_ro = 0;
+                $selesaiRoMat  = strtotime($selesaiRo);
+                $tunggu_lab    = $tunggu_ro    = 0;
 
                 if ($Ldata && $Rdata) {
                     $waktuTunggu = $this->urutan($panggilPoli, $panggilLabMat, $panggilRoMat, $selesaiTensi);
-                    $tunggu_lab = $waktuTunggu['tunggu_lab'];
-                    $tunggu_ro = $waktuTunggu['tunggu_ro'];
+                    $tunggu_lab  = $waktuTunggu['tunggu_lab'];
+                    $tunggu_ro   = $waktuTunggu['tunggu_ro'];
                     $tunggu_poli = $waktuTunggu['tunggu_poli'];
 
                 } elseif ($Ldata) {
-                    if (!is_null($panggilPoli) && $panggilPoli < $panggilLabMat) {
+                    if (! is_null($panggilPoli) && $panggilPoli < $panggilLabMat) {
                         $tunggu_lab = max(0, round(($panggilLabMat - $selesaiPoli) / 60, 2));
                     } else {
-                        $tunggu_lab = max(0, round(($panggilLabMat - $selesaiTensi) / 60, 2));
+                        $tunggu_lab  = max(0, round(($panggilLabMat - $selesaiTensi) / 60, 2));
                         $tunggu_poli = max(0, round(($panggilPoli - $selesaiLabMat) / 60, 2));
                     }
                 } elseif ($Rdata) {
                     if (strtotime($message['ruang_poli_panggil_waktu']) < $panggilRoMat) {
                         $tunggu_ro = max(0, round(($panggilRoMat - $selesaiTensi) / 60, 2));
                     } else {
-                        $tunggu_ro = max(0, round(($panggilRoMat - $selesaiPoli) / 60, 2));
+                        $tunggu_ro   = max(0, round(($panggilRoMat - $selesaiPoli) / 60, 2));
                         $tunggu_poli = max(0, round($panggilPoli - $selesaiRoMat) / 60, 2);
                     }
                 }
                 return [
-                    "oke" => $oke,
-                    "ro_kominfo" => !is_null($message["ruang_rontgen_panggil_waktu"]),
-                    "lab_kominfo" => !is_null($message["ruang_laboratorium_panggil_waktu"]),
+                    "oke"                   => $oke,
+                    "ro_kominfo"            => ! is_null($message["ruang_rontgen_panggil_waktu"]),
+                    "lab_kominfo"           => ! is_null($message["ruang_laboratorium_panggil_waktu"]),
 
-                    "rm" => $Rmdata,
-                    "rodata" => $Rdata,
-                    "labdata" => $Ldata,
-                    "igddata" => $igd,
+                    "rm"                    => $Rmdata,
+                    "rodata"                => $Rdata,
+                    "labdata"               => $Ldata,
+                    "igddata"               => $igd,
 
                     "lama_pelayanan_pasien" => $lama_pelayanan_tiap_pasien,
-                    "no_reg" => $message["no_reg"] ?? 0,
-                    "no_trans" => $message["no_trans"] ?? 0,
-                    "daftar_by" => $message["daftar_by"] ?? 0,
-                    "antrean_nomor" => $message["antrean_nomor"] ?? 0,
-                    "tanggal" => $message["tanggal"] ?? 0,
-                    "penjamin_nama" => $message["penjamin_nama"] ?? 0,
-                    "status_pasien" => $message["pasien_lama_baru"] ?? 0,
-                    "pasien_no_rm" => $message["pasien_no_rm"] ?? 0,
-                    "pasien_nama" => $message["pasien_nama"] ?? 0,
-                    'pasien_umur' => ($message["pasien_umur_tahun"] ?? 0) . " Thn " . ($message["pasien_umur_bulan"] ?? 0) . " Bln ",
-                    "jenis_kelamin" => $message["jenis_kelamin_nama"] ?? 0,
-                    "poli_nama" => $message["poli_nama"] ?? 0,
-                    "dokter_nama" => $message["dokter_nama"] ?? 0,
+                    "no_reg"                => $message["no_reg"] ?? 0,
+                    "no_trans"              => $message["no_trans"] ?? 0,
+                    "daftar_by"             => $message["daftar_by"] ?? 0,
+                    "antrean_nomor"         => $message["antrean_nomor"] ?? 0,
+                    "tanggal"               => $message["tanggal"] ?? 0,
+                    "penjamin_nama"         => $message["penjamin_nama"] ?? 0,
+                    "status_pasien"         => $message["pasien_lama_baru"] ?? 0,
+                    "pasien_no_rm"          => $message["pasien_no_rm"] ?? 0,
+                    "pasien_nama"           => $message["pasien_nama"] ?? 0,
+                    'pasien_umur'           => ($message["pasien_umur_tahun"] ?? 0) . " Thn " . ($message["pasien_umur_bulan"] ?? 0) . " Bln ",
+                    "jenis_kelamin"         => $message["jenis_kelamin_nama"] ?? 0,
+                    "poli_nama"             => $message["poli_nama"] ?? 0,
+                    "dokter_nama"           => $message["dokter_nama"] ?? 0,
 
-                    "waktu_daftar" => $message["waktu_daftar"] ?? 0,
-                    "ambil_no" => $message["loket_pendaftaran_menunggu_waktu"] ?? 0,
-                    "mulai_panggil" => $mulaiPanggil ?? 0,
+                    "waktu_daftar"          => $message["waktu_daftar"] ?? 0,
+                    "ambil_no"              => $message["loket_pendaftaran_menunggu_waktu"] ?? 0,
+                    "mulai_panggil"         => $mulaiPanggil ?? 0,
 
-                    "status_pulang" => $statusPulang,
+                    "status_pulang"         => $statusPulang,
 
-                    "tunggu_daftar" => $tunggu_panggil_daftar ?? 0,
-                    "pendaftaran_panggil" => $message["loket_pendaftaran_panggil_waktu"] ?? 0,
-                    "pendaftaran_skip" => $message["loket_pendaftaran_skip_waktu"] ?? 0,
-                    "pendaftaran_selesai" => $message["loket_pendaftaran_selesai_waktu"] ?? 0,
-                    "lama_pendaftaran" => $lama_daftar ?? 0,
-                    "waktu_selesai_rm" => $waktuSelesaiRM ?? 0,
-                    "tunggu_rm" => $lamaSelesaiRM ?? 0,
+                    "tunggu_daftar"         => $tunggu_panggil_daftar ?? 0,
+                    "pendaftaran_panggil"   => $message["loket_pendaftaran_panggil_waktu"] ?? 0,
+                    "pendaftaran_skip"      => $message["loket_pendaftaran_skip_waktu"] ?? 0,
+                    "pendaftaran_selesai"   => $message["loket_pendaftaran_selesai_waktu"] ?? 0,
+                    "lama_pendaftaran"      => $lama_daftar ?? 0,
+                    "waktu_selesai_rm"      => $waktuSelesaiRM ?? 0,
+                    "tunggu_rm"             => $lamaSelesaiRM ?? 0,
 
-                    "tunggu_tensi" => $tunggu_tensi ?? 0,
-                    "tensi_panggil" => $message["ruang_tensi_panggil_waktu"] ?? 0,
-                    "tensi_skip" => $message["ruang_tensi_skip_waktu"] ?? 0,
-                    "tensi_selesai" => $message["ruang_tensi_selesai_waktu"] ?? 0,
-                    "lama_tensi" => $lama_tensi ?? 0,
+                    "tunggu_tensi"          => $tunggu_tensi ?? 0,
+                    "tensi_panggil"         => $message["ruang_tensi_panggil_waktu"] ?? 0,
+                    "tensi_skip"            => $message["ruang_tensi_skip_waktu"] ?? 0,
+                    "tensi_selesai"         => $message["ruang_tensi_selesai_waktu"] ?? 0,
+                    "lama_tensi"            => $lama_tensi ?? 0,
 
-                    "durasi_poli" => $durasi_poli ?? 0,
-                    "tunggu_poli" => $tunggu_poli ?? 0,
-                    "poli_panggil" => $message["ruang_poli_panggil_waktu"] ?? 0,
-                    "poli_skip" => $message["ruang_poli_skip_waktu"] ?? 0,
-                    "poli_selesai" => $message["ruang_poli_selesai_waktu"] ?? 0,
-                    "lama_poli" => $lama_poli ?? 0,
+                    "durasi_poli"           => $durasi_poli ?? 0,
+                    "tunggu_poli"           => $tunggu_poli ?? 0,
+                    "poli_panggil"          => $message["ruang_poli_panggil_waktu"] ?? 0,
+                    "poli_skip"             => $message["ruang_poli_skip_waktu"] ?? 0,
+                    "poli_selesai"          => $message["ruang_poli_selesai_waktu"] ?? 0,
+                    "lama_poli"             => $lama_poli ?? 0,
 
-                    "tunggu_lab" => $tunggu_lab ?? 0,
-                    "laboratorium_panggil" => $panggilLab ?? $message["ruang_laboratorium_panggil_waktu"] ?? 0,
-                    "laboratorium_skip" => $message["ruang_laboratorium_skip_waktu"] ?? 0,
-                    "laboratorium_selesai" => $selesaiLab ?? $message["ruang_laboratorium_selesai_waktu"] ?? 0,
-                    "selesai_lab" => $selesaiLab,
-                    "tunggu_hasil_lab" => $lama_lab,
+                    "tunggu_lab"            => $tunggu_lab ?? 0,
+                    "laboratorium_panggil"  => $panggilLab ?? $message["ruang_laboratorium_panggil_waktu"] ?? 0,
+                    "laboratorium_skip"     => $message["ruang_laboratorium_skip_waktu"] ?? 0,
+                    "laboratorium_selesai"  => $selesaiLab ?? $message["ruang_laboratorium_selesai_waktu"] ?? 0,
+                    "selesai_lab"           => $selesaiLab,
+                    "tunggu_hasil_lab"      => $lama_lab,
 
-                    "tunggu_ro" => $tunggu_ro ?? 0,
-                    "rontgen_panggil" => $panggilRo ?? $message["ruang_rontgen_panggil_waktu"] ?? 0,
-                    "rontgen_skip" => $message["ruang_rontgen_skip_waktu"] ?? 0,
-                    "rontgen_selesai" => $selesaiRo ?? $message["ruang_rontgen_selesai_waktu"] ?? 0,
-                    "selesai_ro" => $selesaiRo,
-                    "tunggu_hasil_ro" => $lama_ro,
+                    "tunggu_ro"             => $tunggu_ro ?? 0,
+                    "rontgen_panggil"       => $panggilRo ?? $message["ruang_rontgen_panggil_waktu"] ?? 0,
+                    "rontgen_skip"          => $message["ruang_rontgen_skip_waktu"] ?? 0,
+                    "rontgen_selesai"       => $selesaiRo ?? $message["ruang_rontgen_selesai_waktu"] ?? 0,
+                    "selesai_ro"            => $selesaiRo,
+                    "tunggu_hasil_ro"       => $lama_ro,
 
-                    "tunggu_igd" => $tunggu_igd ?? 0,
-                    "igd_panggil" => $panggilIgd ?? $message["ruang_igd_panggil_waktu"] ?? $panggilIgd,
-                    "igd_skip" => $selesaiIgd ?? $message["ruang_igd_skip_waktu"] ?? 0,
-                    "igd_selesai" => $message["ruang_igd_selesai_waktu"] ?? $selesaiIgd,
-                    "lama_igd" => $lama_igd,
+                    "tunggu_igd"            => $tunggu_igd ?? 0,
+                    "igd_panggil"           => $panggilIgd ?? $message["ruang_igd_panggil_waktu"] ?? $panggilIgd,
+                    "igd_skip"              => $selesaiIgd ?? $message["ruang_igd_skip_waktu"] ?? 0,
+                    "igd_selesai"           => $message["ruang_igd_selesai_waktu"] ?? $selesaiIgd,
+                    "lama_igd"              => $lama_igd,
 
-                    "tunggu_kasir" => $tunggu_kasir ?? 0,
-                    "kasir_panggil" => $message["loket_kasir_panggil_waktu"] ?? 0,
-                    "kasir_skip" => $message["loket_kasir_skip_waktu"] ?? 0,
-                    "kasir_selesai" => $message["loket_kasir_selesai_waktu"] ?? 0,
+                    "tunggu_kasir"          => $tunggu_kasir ?? 0,
+                    "kasir_panggil"         => $message["loket_kasir_panggil_waktu"] ?? 0,
+                    "kasir_skip"            => $message["loket_kasir_skip_waktu"] ?? 0,
+                    "kasir_selesai"         => $message["loket_kasir_selesai_waktu"] ?? 0,
 
-                    "tunggu_farmasi" => $tunggu_farmasi ?? 0,
-                    "farmasi_panggil" => $message["loket_farmasi_panggil_waktu"] ?? $panggilFarmasi,
-                    "farmasi_skip" => $message["loket_farmasi_skip_waktu"] ?? 0,
-                    "farmasi_selesai" => $message["loket_farmasi_selesai_waktu"] ?? 0,
+                    "tunggu_farmasi"        => $tunggu_farmasi ?? 0,
+                    "farmasi_panggil"       => $message["loket_farmasi_panggil_waktu"] ?? $panggilFarmasi,
+                    "farmasi_skip"          => $message["loket_farmasi_skip_waktu"] ?? 0,
+                    "farmasi_selesai"       => $message["loket_farmasi_selesai_waktu"] ?? 0,
                 ];
             }, $data);
             $res = array_values($res);
@@ -933,14 +933,14 @@ class KominfoModel extends Model
     {
 
         $waktuArray = [
-            'panggilPoli' => $panggilPoli,
+            'panggilPoli'   => $panggilPoli,
             'panggilLabMat' => $panggilLabMat,
-            'panggilRoMat' => $panggilRoMat,
+            'panggilRoMat'  => $panggilRoMat,
         ];
 
         // // Filter array untuk menghapus nilai yang null, kosong, atau 0
         $waktuArray = array_filter($waktuArray, function ($value) {
-            return !is_null($value) && $value !== '' && $value !== 0;
+            return ! is_null($value) && $value !== '' && $value !== 0;
         });
 
         // Urutkan array berdasarkan waktu
@@ -954,14 +954,14 @@ class KominfoModel extends Model
 
         // Tentukan waktu yang lebih awal dan selisih antar waktu
         $waktuPertama = $kunciUrut[0];
-        $waktuKedua = $kunciUrut[1];
+        $waktuKedua   = $kunciUrut[1];
         // $waktuKetiga = $kunciUrut[2];
 
         $selisih0_1 = max(0, round(($waktuUrut[0] - $selesaiTensi) / 60, 2));
         $selisih1_2 = max(0, round(($waktuUrut[1] - $waktuUrut[0]) / 60, 2));
         if (count($waktuArray) > 2) {
-            // Mengambil waktu urut yang sudah diurutkan
-            $waktuUrut = array_values($waktuArray); // Mengambil nilai dari array yang sudah diurutkan
+                                                     // Mengambil waktu urut yang sudah diurutkan
+            $waktuUrut  = array_values($waktuArray); // Mengambil nilai dari array yang sudah diurutkan
             $selisih2_3 = max(0, round(($waktuUrut[2] - $waktuUrut[1]) / 60, 2));
         } else {
             $selisih2_3 = 0;
@@ -975,49 +975,49 @@ class KominfoModel extends Model
             if ($waktuKedua == 'panggilLabMat') {
                 // dd("waktu kedua lab");
                 $tunggu_lab = $selisih1_2;
-                $tunggu_ro = $selisih2_3;
+                $tunggu_ro  = $selisih2_3;
             } elseif ($waktuKedua == 'panggilRoMat') {
                 // dd("waktu kedua ro");
-                $tunggu_ro = $selisih1_2;
+                $tunggu_ro  = $selisih1_2;
                 $tunggu_lab = $selisih2_3;
             }
         } elseif ($waktuPertama == 'panggilLabMat') {
             // dd("waktu pertama lab");
             $tunggu_lab = $selisih0_1;
             if ($waktuKedua == 'panggilRoMat') {
-                $tunggu_ro = $selisih1_2;
+                $tunggu_ro   = $selisih1_2;
                 $tunggu_poli = $selisih2_3;
             } elseif ($waktuKedua == 'panggilPoli') {
                 $tunggu_poli = $selisih1_2;
-                $tunggu_ro = $selisih2_3;
-                $tunggu_lab = $selisih2_3;
+                $tunggu_ro   = $selisih2_3;
+                $tunggu_lab  = $selisih2_3;
             }
         } else {
             // dd("waktu pertama ro");
             $tunggu_ro = $selisih0_1;
             if ($waktuKedua == 'panggilLabMat') {
-                $tunggu_lab = $selisih1_2;
+                $tunggu_lab  = $selisih1_2;
                 $tunggu_poli = $selisih2_3;
             } elseif ($waktuKedua == 'panggilPoli') {
                 $tunggu_poli = $selisih1_2;
-                $tunggu_lab = $selisih2_3;
+                $tunggu_lab  = $selisih2_3;
             }
         }
 
         return [
             'tunggu_poli' => $tunggu_poli,
-            'tunggu_lab' => $tunggu_lab,
-            'tunggu_ro' => $tunggu_ro,
+            'tunggu_lab'  => $tunggu_lab,
+            'tunggu_ro'   => $tunggu_ro,
         ];
     }
     public function resep_obat($pendaftaran_id)
     {
         $client = new Client();
-        $url = 'https://kkpm.banyumaskab.go.id/administrator/loket_farmasi/lihat_resep?pendaftaran_id=' . $pendaftaran_id;
+        $url    = 'https://kkpm.banyumaskab.go.id/administrator/loket_farmasi/lihat_resep?pendaftaran_id=' . $pendaftaran_id;
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
-        if (!$cookie) {
+        if (! $cookie) {
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
@@ -1028,10 +1028,10 @@ class KominfoModel extends Model
         $response = $client->request('GET', $url, [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
-                'Cookie' => $cookie,
-                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-                'Referer' => 'https://kkpm.banyumaskab.go.id/',
-                'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Cookie'       => $cookie,
+                'User-Agent'   => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                'Referer'      => 'https://kkpm.banyumaskab.go.id/',
+                'Accept'       => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             ],
         ]);
 
@@ -1056,21 +1056,21 @@ class KominfoModel extends Model
         // dd("masuk");
         $username = $username ?? env('USERNAME_KOMINFO', '');
         $password = env('PASSWORD_KOMINFO', '');
-        $client = new Client();
-        $url = env('BASR_URL_KOMINFO', '') . '/auth/login';
+        $client   = new Client();
+        $url      = env('BASR_URL_KOMINFO', '') . '/auth/login';
 
         $response = $client->request('POST', $url, [
             'form_params' => [
                 'admin_username' => $username,
                 'admin_password' => $password,
             ],
-            'headers' => [
+            'headers'     => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
             ],
         ]);
         if ($response->getStatusCode() != 200) {
             return [
-                'data' => json_decode($response->getBody(), true),
+                'data'    => json_decode($response->getBody(), true),
                 'cookies' => [],
             ];
         }
@@ -1088,19 +1088,19 @@ class KominfoModel extends Model
         //     'updated_at' => now(),
         // ]);
         if (isset($cookies[0])) {
-            // Set cookie di browser
+                                                                                  // Set cookie di browser
             setcookie('kominfo_cookie', $cookies[0], time() + (86400 * 30), "/"); // Cookie akan kedaluwarsa dalam 30 hari
         }
 
         return [
-            'data' => json_decode($response->getBody(), true),
+            'data'    => json_decode($response->getBody(), true),
             'cookies' => $cookies,
         ];
     }
     public function get_data_antrian(array $data, $pasien_no_rm = null)
     {
         $client = new Client();
-        $url = env('BASR_URL_KOMINFO', '') . '/loket_pendaftaran/get_data';
+        $url    = env('BASR_URL_KOMINFO', '') . '/loket_pendaftaran/get_data';
 
         // Persiapkan form_params dengan parameter length dan pasien_no_rm
         $form_params = [
@@ -1114,9 +1114,9 @@ class KominfoModel extends Model
 
         $response = $client->request('POST', $url, [
             'form_params' => $form_params,
-            'headers' => [
+            'headers'     => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
-                'Cookie' => $data['cookie'],
+                'Cookie'       => $data['cookie'],
             ],
         ]);
 
@@ -1128,15 +1128,15 @@ class KominfoModel extends Model
     public function panggil(array $data, $log_id = null, $loket)
     {
         $client = new Client();
-        $url = env('BASR_URL_KOMINFO', '') . '/' . $loket . '/panggil';
+        $url    = env('BASR_URL_KOMINFO', '') . '/' . $loket . '/panggil';
 
         $response = $client->request('POST', $url, [
             'form_params' => [
                 'log_id' => $log_id,
             ],
-            'headers' => [
+            'headers'     => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
-                'Cookie' => $data['cookie'],
+                'Cookie'       => $data['cookie'],
             ],
         ]);
         $body = $response->getBody();
@@ -1146,15 +1146,15 @@ class KominfoModel extends Model
     public function getDataByRM(array $data, $pasien_no_rm = null)
     {
         $client = new Client();
-        $url = env('BASR_URL_KOMINFO', '') . '/data_pasien/getDataByRM';
+        $url    = env('BASR_URL_KOMINFO', '') . '/data_pasien/getDataByRM';
 
         $response = $client->request('POST', $url, [
             'form_params' => [
                 'pasien_no_rm' => $pasien_no_rm,
             ],
-            'headers' => [
+            'headers'     => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
-                'Cookie' => $data['cookie'],
+                'Cookie'       => $data['cookie'],
             ],
         ]);
         $body = $response->getBody();
@@ -1172,13 +1172,13 @@ class KominfoModel extends Model
 
         $response = $client->request('POST', $url, [
             'form_params' => $form_data,
-            'headers' => [
+            'headers'     => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
-                'Cookie' => $data['cookie'],
+                'Cookie'       => $data['cookie'],
             ],
         ]);
 
-        $body = $response->getBody();
+        $body         = $response->getBody();
         $responseData = json_decode($body, true);
 
         return $responseData;
@@ -1187,19 +1187,19 @@ class KominfoModel extends Model
     public function getDokterBefore(array $data, $pasien_id = null)
     {
         $client = new Client();
-        $url = env('BASR_URL_KOMINFO', '') . '/loket_pendaftaran/kunjunganDokterSebelumnya';
+        $url    = env('BASR_URL_KOMINFO', '') . '/loket_pendaftaran/kunjunganDokterSebelumnya';
 
         $response = $client->request('POST', $url, [
             'form_params' => [
                 'pasien_id' => $pasien_id,
             ],
-            'headers' => [
+            'headers'     => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
-                'Cookie' => $data['cookie'],
+                'Cookie'       => $data['cookie'],
             ],
         ]);
 
-        $body = $response->getBody();
+        $body         = $response->getBody();
         $responseData = json_decode($body, true);
 
         // Cek apakah data tersedia
@@ -1224,10 +1224,10 @@ class KominfoModel extends Model
         $client = new Client();
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
 
-        if (!$cookie) {
+        if (! $cookie) {
             // Authenticate if no cookie is found
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
@@ -1236,29 +1236,29 @@ class KominfoModel extends Model
             }
         }
 
-        $url = env('BASR_URL_KOMINFO', '') . '/ruang_tensi/get_data?id_ruang_tensi=2';
+        $url  = env('BASR_URL_KOMINFO', '') . '/ruang_tensi/get_data?id_ruang_tensi=2';
         $url2 = env('BASR_URL_KOMINFO', '') . '/display_tv/ruang_tensi_get_data';
 
         try {
             $response = $client->request('POST', $url, [
                 'form_params' => [
                     'id_ruang_tensi' => 2,
-                    'length' => 1000,
+                    'length'         => 1000,
                 ],
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
             ]);
             $response2 = $client->request('POST', $url2, [
                 'form_params' => [
-                    'draw' => 3,
-                    'start' => 0,
+                    'draw'   => 3,
+                    'start'  => 0,
                     'length' => 10,
                 ],
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
             ]);
 
@@ -1272,14 +1272,14 @@ class KominfoModel extends Model
                 return response()->json(['error' => 'Internal Server Error'], 500);
             }
 
-            $body = (string) $response->getBody();
-            $data = json_decode($body, true);
+            $body  = (string) $response->getBody();
+            $data  = json_decode($body, true);
             $body2 = (string) $response2->getBody();
             $data2 = json_decode($body2, true);
 
             return [
                 'dataAtas' => $data2,
-                'data' => $data,
+                'data'     => $data,
             ];
 
         } catch (\GuzzleHttp\Exception\RequestException $e) {
@@ -1295,14 +1295,14 @@ class KominfoModel extends Model
 
     public function getTungguFaramsi($tanggal = null, $cookie = null)
     {
-        $client = new Client();
-        $tgl = $tanggal ?? date('Y-m-d');
+        $client  = new Client();
+        $tgl     = $tanggal ?? date('Y-m-d');
         $tanggal = $tgl . ' - ' . $tgl;
 
-        if (!$cookie) {
+        if (! $cookie) {
             // dd($cookie);
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/");
@@ -1317,11 +1317,11 @@ class KominfoModel extends Model
             $response = $client->request('POST', $url, [
                 'form_params' => [
                     'tanggal' => $tanggal,
-                    'length' => 1000,
+                    'length'  => 1000,
                 ],
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
             ]);
 
@@ -1345,13 +1345,13 @@ class KominfoModel extends Model
     }
     public function loket_pendaftaran_get_data($tanggal = null, $cookie = null)
     {
-        $client = new Client();
-        $tgl = $tanggal ?? date('Y-m-d');
+        $client  = new Client();
+        $tgl     = $tanggal ?? date('Y-m-d');
         $tanggal = $tgl . ' - ' . $tgl;
 
-        if (!$cookie) {
+        if (! $cookie) {
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/");
@@ -1366,11 +1366,11 @@ class KominfoModel extends Model
             $response = $client->request('POST', $url, [
                 'form_params' => [
                     'tanggal' => $tanggal,
-                    'length' => 1000,
+                    'length'  => 1000,
                 ],
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
             ]);
 
@@ -1395,16 +1395,16 @@ class KominfoModel extends Model
 
     public function getTungguLoket()
     {
-        $client = new Client();
-        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
-        $tgl = date('Y-m-d');
+        $client  = new Client();
+        $cookie  = $_COOKIE['kominfo_cookie'] ?? null;
+        $tgl     = date('Y-m-d');
         $tanggal = $tgl . ' - ' . $tgl;
         // dd($cookie);
 
-        if (!$cookie) {
+        if (! $cookie) {
             // Authenticate if no cookie is found
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
@@ -1419,11 +1419,11 @@ class KominfoModel extends Model
             $response = $client->request('POST', $url, [
                 'form_params' => [
                     'tanggal' => $tanggal,
-                    'length' => 1000,
+                    'length'  => 1000,
                 ],
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
             ]);
             // dd($response);
@@ -1452,16 +1452,16 @@ class KominfoModel extends Model
     }
     public function getDataLoket()
     {
-        $client = new Client();
-        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
-        $tgl = date('Y-m-d');
+        $client  = new Client();
+        $cookie  = $_COOKIE['kominfo_cookie'] ?? null;
+        $tgl     = date('Y-m-d');
         $tanggal = $tgl . ' - ' . $tgl;
         // dd($cookie);
 
-        if (!$cookie) {
+        if (! $cookie) {
             // Authenticate if no cookie is found
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
@@ -1476,11 +1476,11 @@ class KominfoModel extends Model
             $response = $client->request('POST', $url, [
                 'form_params' => [
                     'tanggal' => $tanggal,
-                    'length' => 1000,
+                    'length'  => 1000,
                 ],
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
             ]);
             // dd($response);
@@ -1521,18 +1521,18 @@ class KominfoModel extends Model
         $jadwal = [
             [
                 "dokter" => $dokter,
-                "hari" => "Senin - Kamis",
-                "jam" => "07:15 - 14:15",
+                "hari"   => "Senin - Kamis",
+                "jam"    => "07:15 - 14:15",
             ],
             [
                 "dokter" => $dokter,
-                "hari" => "Jumat",
-                "jam" => "07:15 - 11:15",
+                "hari"   => "Jumat",
+                "jam"    => "07:15 - 11:15",
             ],
             [
                 "dokter" => $dokter,
-                "hari" => "Sabtu",
-                "jam" => "07:15 - 12:45",
+                "hari"   => "Sabtu",
+                "jam"    => "07:15 - 12:45",
             ]];
 
         $html = '<table class="table-auto table table-bordered table-striped table-hover">
@@ -1560,7 +1560,7 @@ class KominfoModel extends Model
             // Kembalikan dalam format 'Y-m-d' (YYYY-MM-DD)
             return $date->format('Y-m-d');
         } catch (Exception $e) {
-            // Jika parsing gagal, tangani kesalahan
+                         // Jika parsing gagal, tangani kesalahan
             return null; // Atau kembalikan nilai default
         }
     }
@@ -1570,20 +1570,20 @@ class KominfoModel extends Model
         // return $params;
         $client = new Client();
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
-        if (!$params) {
-            $tgl = date('Y-m-d');
+        if (! $params) {
+            $tgl     = date('Y-m-d');
             $tanggal = $tgl . ' - ' . $tgl;
         } else {
-            $tgl_awal = $params['tgl_awal'];
+            $tgl_awal  = $params['tgl_awal'];
             $tgl_akhir = $params['tgl_akhir'];
-            $tanggal = $this->formatTanggal($tgl_awal) . ' - ' . $this->formatTanggal($tgl_akhir);
+            $tanggal   = $this->formatTanggal($tgl_awal) . ' - ' . $this->formatTanggal($tgl_akhir);
         }
         // return $tanggal;
 
-        if (!$cookie) {
+        if (! $cookie) {
             // Authenticate if no cookie is found
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
@@ -1598,11 +1598,11 @@ class KominfoModel extends Model
             $response = $client->request('POST', $url, [
                 'form_params' => [
                     'tanggal' => $tanggal,
-                    'length' => 1000,
+                    'length'  => 1000,
                 ],
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
             ]);
             // dd($response);
@@ -1633,20 +1633,20 @@ class KominfoModel extends Model
         // return $params;
         $client = new Client();
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
-        if (!$params) {
-            $tgl = date('Y-m-d');
+        if (! $params) {
+            $tgl     = date('Y-m-d');
             $tanggal = $tgl . ' - ' . $tgl;
         } else {
-            $tgl_awal = $params['tgl_awal'];
+            $tgl_awal  = $params['tgl_awal'];
             $tgl_akhir = $params['tgl_akhir'];
-            $tanggal = $this->formatTanggal($tgl_awal) . ' - ' . $this->formatTanggal($tgl_akhir);
+            $tanggal   = $this->formatTanggal($tgl_awal) . ' - ' . $this->formatTanggal($tgl_akhir);
         }
         // return $tanggal;
 
-        if (!$cookie) {
+        if (! $cookie) {
             // Authenticate if no cookie is found
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
@@ -1655,7 +1655,7 @@ class KominfoModel extends Model
             }
         }
 
-        $url = env('BASR_URL_KOMINFO', '') . '/ruang_poli/get_data?poli_sub_id=1';
+        $url  = env('BASR_URL_KOMINFO', '') . '/ruang_poli/get_data?poli_sub_id=1';
         $url2 = env('BASR_URL_KOMINFO', '') . '/ruang_poli/data_atas?poli_sub_id=1';
         $url3 = env('BASR_URL_KOMINFO', '') . '/display_tv/ruang_poli_get_data';
 
@@ -1683,11 +1683,11 @@ class KominfoModel extends Model
             $response3 = $client->request('POST', $url3, [
                 'form_params' => [
                     'tanggal' => $tanggal,
-                    'length' => 1000,
+                    'length'  => 1000,
                 ],
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
             ]);
             // dd($response);
@@ -1734,15 +1734,15 @@ class KominfoModel extends Model
         // return $params;
         $client = new Client();
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
-        if (!$id) {
+        if (! $id) {
             return null;
         }
         // return $tanggal;
 
-        if (!$cookie) {
+        if (! $cookie) {
             // Authenticate if no cookie is found
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
@@ -1758,9 +1758,9 @@ class KominfoModel extends Model
                 'form_params' => [
                     'pendaftaran_id' => $id,
                 ],
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
             ]);
 
@@ -1796,10 +1796,10 @@ class KominfoModel extends Model
     {
         $client = new Client();
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
-        if (!$cookie) {
+        if (! $cookie) {
             // Authenticate if no cookie is found
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
@@ -1812,27 +1812,27 @@ class KominfoModel extends Model
 
         try {
             $response = $client->request('POST', $url, [
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
                 'form_params' => [
-                    'draw' => 3,
-                    'columns' => [
+                    'draw'       => 3,
+                    'columns'    => [
                         ['data' => '', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
                         ['data' => 'admin_nama', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
                         ['data' => 'loket_nama', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
                         ['data' => 'created_at', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
                         ['data' => 'id', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
                     ],
-                    'start' => 0,
-                    'length' => 200,
-                    'search' => [
+                    'start'      => 0,
+                    'length'     => 200,
+                    'search'     => [
                         'value' => '',
                         'regex' => false,
                     ],
-                    'loket_id' => '',
-                    'admin_id' => '',
+                    'loket_id'   => '',
+                    'admin_id'   => '',
                     'created_at' => '',
                 ],
             ]);
@@ -1862,10 +1862,10 @@ class KominfoModel extends Model
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
         $tglSep = $params["tanggal_awal"] . ' - ' . $params["tanggal_akhir"];
 
-        if (!$cookie) {
+        if (! $cookie) {
             // Authenticate if no cookie is found
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
@@ -1880,41 +1880,41 @@ class KominfoModel extends Model
         $columns = [];
         for ($i = 0; $i < 3; $i++) { // Sesuaikan jumlah kolom sesuai kebutuhan
             $columns[] = [
-                'data' => ($i === 0) ? '' : 'id',
-                'name' => '',
+                'data'       => ($i === 0) ? '' : 'id',
+                'name'       => '',
                 'searchable' => true,
-                'orderable' => false,
-                'search' => ['value' => '', 'regex' => false],
+                'orderable'  => false,
+                'search'     => ['value' => '', 'regex' => false],
             ];
         }
 
         try {
             $response = $client->request('POST', $url, [
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
                 'form_params' => [
-                    'draw' => 2,
-                    'columns' => $columns,
-                    'start' => 0,
-                    'length' => 100,
-                    'search' => [
+                    'draw'               => 2,
+                    'columns'            => $columns,
+                    'start'              => 0,
+                    'length'             => 100,
+                    'search'             => [
                         'value' => '',
                         'regex' => false,
                     ],
-                    'tanggal' => $tglSep,
-                    'antrean_nomor' => '',
-                    'no_reg' => '',
-                    'daftar_by' => '',
-                    'penjamin_id' => 2,
-                    'nomor_referensi' => '',
-                    'penjamin_nomor' => '',
+                    'tanggal'            => $tglSep,
+                    'antrean_nomor'      => '',
+                    'no_reg'             => '',
+                    'daftar_by'          => '',
+                    'penjamin_id'        => 2,
+                    'nomor_referensi'    => '',
+                    'penjamin_nomor'     => '',
                     'jenis_kunjungan_id' => '',
-                    'pasien' => '',
-                    'pasien_nik' => '',
-                    'no_sep' => '',
-                    'tanggal_sep' => $tglSep,
+                    'pasien'             => '',
+                    'pasien_nik'         => '',
+                    'no_sep'             => '',
+                    'tanggal_sep'        => $tglSep,
                 ],
             ]);
 
@@ -1942,10 +1942,10 @@ class KominfoModel extends Model
         $client = new Client();
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
 
-        if (!$cookie) {
+        if (! $cookie) {
             // Authenticate if no cookie is found
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
@@ -1960,7 +1960,7 @@ class KominfoModel extends Model
             $response = $client->request('POST', $url, [
                 'headers' => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
             ]);
 
@@ -1988,10 +1988,10 @@ class KominfoModel extends Model
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
         $tglSep = $params["tanggal_awal"] . ' - ' . $params["tanggal_akhir"];
 
-        if (!$cookie) {
+        if (! $cookie) {
             // Authenticate if no cookie is found
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/");
@@ -2006,40 +2006,40 @@ class KominfoModel extends Model
         $columns = [];
         for ($i = 0; $i < 3; $i++) { // Sesuaikan jumlah kolom sesuai kebutuhan
             $columns[] = [
-                'data' => ($i === 0) ? '' : 'id',
-                'name' => '',
+                'data'       => ($i === 0) ? '' : 'id',
+                'name'       => '',
                 'searchable' => true,
-                'orderable' => false,
-                'search' => ['value' => '', 'regex' => false],
+                'orderable'  => false,
+                'search'     => ['value' => '', 'regex' => false],
             ];
         }
 
         try {
             $response = $client->request('POST', $url, [
-                'headers' => [
+                'headers'     => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
                 'form_params' => [
-                    'draw' => 2,
-                    'columns' => $columns,
-                    'start' => 0,
-                    'length' => 100,
-                    'search' => [
+                    'draw'                    => 2,
+                    'columns'                 => $columns,
+                    'start'                   => 0,
+                    'length'                  => 100,
+                    'search'                  => [
                         'value' => '',
                         'regex' => false,
                     ],
-                    'tanggal' => '',
-                    'antrean_nomor' => '',
-                    'no_reg' => '',
-                    'daftar_by' => '',
-                    'penjamin_id' => 2,
-                    'nomor_referensi' => '',
-                    'penjamin_nomor' => '',
-                    'jenis_kunjungan_id' => '',
-                    'pasien' => '',
-                    'pasien_nik' => '',
-                    'no_surat_kontrol' => '',
+                    'tanggal'                 => '',
+                    'antrean_nomor'           => '',
+                    'no_reg'                  => '',
+                    'daftar_by'               => '',
+                    'penjamin_id'             => 2,
+                    'nomor_referensi'         => '',
+                    'penjamin_nomor'          => '',
+                    'jenis_kunjungan_id'      => '',
+                    'pasien'                  => '',
+                    'pasien_nik'              => '',
+                    'no_surat_kontrol'        => '',
                     'tanggal_rencana_kontrol' => $tglSep,
                 ],
             ]);
@@ -2069,10 +2069,10 @@ class KominfoModel extends Model
         $client = new Client();
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
 
-        if (!$cookie) {
+        if (! $cookie) {
             // Authenticate if no cookie is found
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
-            $cookie = $loginResponse['cookies'][0] ?? null;
+            $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
                 setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
@@ -2087,7 +2087,7 @@ class KominfoModel extends Model
             $response = $client->request('POST', $url, [
                 'headers' => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Cookie' => $cookie,
+                    'Cookie'       => $cookie,
                 ],
             ]);
 
@@ -2113,10 +2113,10 @@ class KominfoModel extends Model
     {
 
         // dd($params);
-        $tglAwal = $request['tanggal_awal'] ?? Carbon::now()->format('Y-m-d');
+        $tglAwal  = $request['tanggal_awal'] ?? Carbon::now()->format('Y-m-d');
         $tglAkhir = $request['tanggal_akhir'] ?? Carbon::now()->format('Y-m-d');
-        $params = [
-            'tanggal_awal' => $tglAwal,
+        $params   = [
+            'tanggal_awal'  => $tglAwal,
             'tanggal_akhir' => $tglAkhir,
         ];
 
@@ -2172,25 +2172,25 @@ class KominfoModel extends Model
 
         // Build response
         $jumlah = [
-            'jumlah_no_antrian' => (int) count($dataPendaftaranResponse),
-            'jumlah_no_menunggu' => (int) $jumlahTunggu,
-            'jumlah_pasien' => (int) count($filteredData),
+            'jumlah_no_antrian'   => (int) count($dataPendaftaranResponse),
+            'jumlah_no_menunggu'  => (int) $jumlahTunggu,
+            'jumlah_pasien'       => (int) count($filteredData),
             'jumlah_pasien_batal' => (int) $jumlahBatal,
-            'jumlah_nomor_skip' => (int) $jumlahSkip,
-            'jumlah_BPJS' => (int) $jumlahBPJS,
-            'jumlah_BPJS_2' => (int) $jumlahBPJS2,
-            'jumlah_UMUM' => (int) $jumlahUMUM,
-            'jumlah_pasien_LAMA' => (int) $jumlahLama,
-            'jumlah_pasien_BARU' => (int) $jumlahBaru,
-            'jumlah_daftar_OTS' => (int) $jumlahOTS,
-            'jumlah_daftar_JKN' => (int) $jumlahJKN,
+            'jumlah_nomor_skip'   => (int) $jumlahSkip,
+            'jumlah_BPJS'         => (int) $jumlahBPJS,
+            'jumlah_BPJS_2'       => (int) $jumlahBPJS2,
+            'jumlah_UMUM'         => (int) $jumlahUMUM,
+            'jumlah_pasien_LAMA'  => (int) $jumlahLama,
+            'jumlah_pasien_BARU'  => (int) $jumlahBaru,
+            'jumlah_daftar_OTS'   => (int) $jumlahOTS,
+            'jumlah_daftar_JKN'   => (int) $jumlahJKN,
         ];
 
         $data = array_values($filteredData);
 
         $res = [
             "total" => $jumlah,
-            "data" => $data,
+            "data"  => $data,
         ];
 
         return response()->json($res);

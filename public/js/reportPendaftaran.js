@@ -312,22 +312,28 @@ function reportPendaftaran(tglAwal, tglAkhir) {
 
                 const checkIn =
                     item.check_in == "success" ? "Selesai" : "Belum Selesai";
+                const disabled = item.check_in == "success" ? "disabled" : "";
+                const disabled2 = item.statusDaftar == "lime" ? "disabled" : "";
+                const daftar =
+                    item.statusDaftar == "lime" ? "Terdaftar" : "Daftarkan";
                 item.aksi = `
-                            <button type="button" class="btn btn-sm btn-${item.check_in} mr-2 mb-2" id="checkin" placeholder="Selesai" data-toggle="modal"
-                                    data-target="#modalSep" onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}','${item.penjamin_nama}','${item.no_reg}','${item.no_sep}',this)">
+                            <button type="button" class="btn btn-sm btn-${item.check_in} mr-2 mb-2" 
+                                    ${disabled} id="checkin" placeholder="Selesai" data-toggle="modal"
+                                    data-target="#modalSep" 
+                                    onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}','${item.penjamin_nama}','${item.no_reg}','${item.no_sep}',this)">
                                     ${checkIn}</button>
+                            <button type="button" class="btn btn-sm bg-${item.statusDaftar} mr-2 mb-2" ${disabled2}
+                                    data-norm="${item.pasien_no_rm}"
+                                    data-notrans="${item.no_reg}"
+                                    data-no_urut="${item.antrean_nomor}"
+                                    data-tgltrans="${item.waktu_verifikasi}"
+                                    onclick="daftarkan(this)">${daftar}</button>
                             <button type="button" class="btn btn-sm btn-primary mr-2 mb-2"
                                     onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak">Label</button>
                             <button type="button" class="btn btn-sm btn-info mr-2 mb-2"
                                     onclick="cetakBiodata('${item.pasien_no_rm}')" placeholder="Cetak">Biodata</button>
                             <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" placeholder="Resume"
                                     href="/api/resume/${item.pasien_no_rm}/${item.tanggal}" target="_blank">Resume</a>
-                            <a type="button" class="btn btn-sm btn-${item.statusDaftar} mr-2 mb-2" placeholder="Resume"
-                            data-norm="${item.pasien_no_rm}"
-                            data-notrans="${item.no_reg}"
-                            data-no_urut="${item.antrean_nomor}"
-                            data-tgltrans="${item.waktu_verifikasi}"
-                                    onclick="daftarkan(this)">Daftarkan</a>
                             `;
                 if (item.check_in == "danger") {
                     item.status = "Belum";

@@ -10,8 +10,8 @@
     {{-- @vite('resources/css/app.css') --}}
 </head>
 
-<body class="text-black">
-    <div class="conatiner m-3 pt-2">
+<body class="text-black flex justify-center">
+    <div class="conatiner m-3 pt-2 w-[22cm] h-[33cm]">
         <h1 class="text-center font-bold text-sm">DAFTAR REKAPITULASI PENERIMAAN DAN PENYETORAN </h1>
         <h1 class="text-center font-bold text-sm">BLUD PELAYANAN KESEHATAN</h1>
         <h1 class="text-center font-bold text-sm">TAHUN {{ $tahun }}</h1>
@@ -88,28 +88,7 @@
             </tbody>
         </table>
         <!-- Tanda Tangan -->
-        <div class="text-xs flex justify-between">
-            <div class="w-1/2 text-center">
-                <p>Mengetahui,</p>
-                <p>Plt. Kepala KKPM PURWOKERTO</p>
-                <div class="h-16"></div>
-                <p><u>dr. RENDI RETISSU</u></p>
-                <p>NIP: 19881016 201902 1 002</p>
-            </div>
-            <div class="w-1/2 text-center">
-                <p>Purwokerto,
-                    {{-- @php
-                    $date = Carbon\Carbon::now();
-                    $tglAkhir = \Carbon\Carbon::create($date)->lastOfMonth()->locale('id')->isoFormat('DD MMMM YYYY');
-                @endphp --}}
-                    {{ \Carbon\Carbon::create($tglAkhir)->lastOfMonth()->locale('id')->isoFormat('DD MMMM YYYY') }}</p>
-
-                <p>Bendahara Penerimaan / Kasir</p>
-                <div class="h-16"></div>
-                <p><u>NASIRIN</u></p>
-                <p>NIP: 196906022007011039</p>
-            </div>
-        </div>
+        @include('Laporan.Kasir.ttd')
     </div>
 </body>
 

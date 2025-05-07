@@ -9,8 +9,8 @@
     {{-- @vite('resources/css/app.css') --}}
 </head>
 
-<body class="text-black">
-    <div class="wrapper m-3 pt-2">
+<body class="text-black flex justify-center">
+    <div class="wrapper m-3 pt-2 w-[22cm] h-[33cm]">
         <h1 class="text-center font-bold text-sm">BUKU KAS UMUM PENERIMAAN
         </h1>
         <h1 class="text-center font-bold text-sm">{{ $blnTahun }}</h1>
@@ -24,7 +24,7 @@
             </div>
             <div class=" ">
                 <p>: KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A KABUPATEN BANYUMAS</p>
-                <p>: dr. RENDI RETISSU</p>
+                <p>: {{ $kepala }}</p>
                 <p>: Nasirin</p>
             </div>
         </div>
@@ -148,22 +148,7 @@
         <br>
 
         <!-- Tanda Tangan -->
-        <div class="text-xs flex justify-between">
-            <div class="w-1/2 text-center">
-                <p>Mengetahui,</p>
-                <p>Plt. Kepala KKPM PURWOKERTO</p>
-                <div class="h-16"></div>
-                <p><u>dr. RENDI RETISSU</u></p>
-                <p>NIP: 19881016 201902 1 002</p>
-            </div>
-            <div class="w-1/2 text-center">
-                <p>Purwokerto, {{ $tglAkhir }}</p>
-                <p>Bendahara Penerimaan / Kasir</p>
-                <div class="h-16"></div>
-                <p><u>NASIRIN</u></p>
-                <p>NIP: 196906022007011039</p>
-            </div>
-        </div>
+        @include('Laporan.Kasir.ttd')
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
