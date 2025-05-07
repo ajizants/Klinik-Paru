@@ -600,7 +600,7 @@
                             data-saldo_kas="${item.saldo_kas}"
                             data-selisih_saldo="${item.selisih_saldo}"
                              onclick="deletePenutupanKas(this,${item.id})"><i class="fas fa-trash"></i></a>
-                            <a href="/api/kasir/penutupanKas/cetak/${item.id}/${item.tanggal_sekarang}" class="btn btn-info my-1" ><i class="fas fa-print"></i></a>
+                            <a href="/api/kasir/penutupanKas/cetak/${item.id}/${item.tanggal_sekarang}" target="_blank" class="btn btn-info my-1" ><i class="fas fa-print"></i></a>
                             `;
             });
 

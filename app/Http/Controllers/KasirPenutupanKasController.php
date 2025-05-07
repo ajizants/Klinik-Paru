@@ -83,7 +83,24 @@ class KasirPenutupanKasController extends Controller
         $res = $this->prosesJumlah($res);
         // return $res;
 
-        return view('Laporan.Kasir.cetakPenutupanKas', compact('res', 'title'));
+        $blnTahun        = Carbon::create($tahun, $bulan)->isoFormat('MMMM YYYY');
+        $blnTahunCompare = Carbon::create('2025', '05')->isoFormat('MMMM YYYY');
+        if ($blnTahun < $blnTahunCompare) {
+            // $pimpinan = [
+            //     'kepala'    => 'dr. RENDI RETISSU',
+            //     'nipKepala' => '198810162019021002'];
+            $kepala    = 'dr. RENDI RETISSU';
+            $nipKepala = '198810162019021002';
+        } else {
+            // $pimpinan = [
+            //     'kepala'    => 'dr. ANWAR',
+            //     'nipKepala' => 'nip'];
+            $kepala    = 'dr. ANWAR';
+            $nipKepala = 'nip';
+        }
+        $tglAkhir = \Carbon\Carbon::create($tahun, $bulan, 1)->lastOfMonth()->locale('id')->isoFormat('DD MMMM YYYY');
+
+        return view('Laporan.Kasir.cetakPenutupanKas', compact('res', 'title', 'kepala', 'nipKepala', 'blnTahun', 'tglAkhir'));
     }
 
     public function cetakRegTupan($bulan, $tahun)

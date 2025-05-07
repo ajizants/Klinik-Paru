@@ -301,23 +301,7 @@
             </div>
         </div>
         <!-- Tanda Tangan -->
-        <div class="text-xs flex justify-between mt-8">
-            <div class="w-1/2 text-center">
-                <p>Mengetahui,</p>
-                <p>Plt. Kepala KKPM PURWOKERTO</p>
-                <div class="h-16"></div>
-                <p><u>dr. RENDI RETISSU</u></p>
-                <p>NIP: 19881016 201902 1 002</p>
-            </div>
-            <div class="w-1/2 text-center">
-                <p>Purwokerto,
-                    {{ \Carbon\Carbon::parse($res->tanggal_sekarang)->locale('id')->isoFormat('DD MMMM YYYY') }}</p>
-                <p>Bendahara Penerimaan / Kasir</p>
-                <div class="h-16"></div>
-                <p><u>NASIRIN</u></p>
-                <p>NIP: 196906022007011039</p>
-            </div>
-        </div>
+        @include('Laporan.Kasir.ttd')
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
