@@ -200,14 +200,14 @@
     <script src="{{ asset('js/reportPendaftaran.js') }}"></script>
     <script>
         socketIO.on("reload", (msg) => {
-            if (msg == "paru_ruang_tensi") {
+            if (msg == "paru_loket_pendaftaran") {
                 const notif = new Audio("/audio/dingdong.mp3");
                 notif.load();
                 notif.play();
-                if (prosesPanggilFungsi == false) {
-                    console.log("🚀 ~ socketIO.on ~ prosesPanggilFungsi:", prosesPanggilFungsi)
-                    reportPendaftaran(tglAwal, tglAkhir);
-                }
+                // if (prosesPanggilFungsi == false) {
+                //     console.log("🚀 ~ socketIO.on ~ prosesPanggilFungsi:", prosesPanggilFungsi)
+                reportPendaftaran(tglAwal, tglAkhir);
+                // }
             }
         });
 
