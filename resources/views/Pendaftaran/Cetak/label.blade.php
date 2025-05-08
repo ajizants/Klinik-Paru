@@ -6,68 +6,64 @@
     <style>
         @media print {
             @page {
-                size: 210mm 145mm;
+                size: 211mm 135mm;
+                margin: 0px;
+                padding: 0px;
                 size: portrait;
-                /* margin: 2mm; */
+                /* Atur margin 0 agar layout presisi */
             }
 
-            .no-print-border {
-                border: none !important;
+            body {
+                margin: 0px;
+                /* Pastikan tidak ada margin tambahan dari body */
+                padding: 0px;
             }
 
-            .box {
-                display: inline-block;
-                width: 50mm;
-                height: 17mm;
-                margin-top: 0;
-                margin-right: 1.5mm;
-                margin-left: 1.5mm;
-                margin-bottom: 3.5mm;
-                vertical-align: top;
-            }
-
+            /* Box styling tetap */
+            .box,
             .box2 {
                 display: inline-block;
                 width: 50mm;
-                height: 17mm;
-                margin-top: 0;
-                margin-right: 1.5mm;
-                margin-left: 1.5mm;
-                margin-bottom: 3mm;
+                height: 16mm;
+                /* Disesuaikan agar muat 7 baris */
+                margin: 2mm 3mm 2mm 0;
+                padding-left: 1mm;
+                padding-top: 3mm;
                 vertical-align: top;
+                border: 1px solid black;
+                box-sizing: border-box;
+            }
+
+            .box2 {
+                margin-bottom: 2mm;
             }
         }
 
-        .box {
-            display: inline-block;
-            width: 50mm;
-            height: 17mm;
-            margin-top: 0;
-            margin-right: 1.5mm;
-            margin-left: 1.5mm;
-            margin-bottom: 3.5mm;
-            vertical-align: top;
-        }
 
+        .box,
         .box2 {
             display: inline-block;
             width: 50mm;
             height: 17mm;
-            margin-top: 0;
-            margin-right: 1.5mm;
-            margin-left: 1.5mm;
-            margin-bottom: 3mm;
+            margin: 2mm 3mm 2mm 0mm;
+            padding-left: 1mm;
+            padding-top: 1mm;
             vertical-align: top;
+            border: 1px solid black;
+        }
+
+        .box2 {
+            margin-bottom: 2.5mm;
         }
     </style>
     <script>
-        window.onload = function() {
-            window.print();
-        }
-        // tutup jendela saat selesai cetak
-        window.onafterprint = function() {
-            window.close();
-        }
+        // window.onload = function() {
+        //     window.print();
+        // }
+        // // tutup jendela saat selesai cetak
+        // window.onafterprint = function() {
+        //     window.close();
+        // }
 
         // saat menekan tombol p lakukan cetak
         document.addEventListener("keydown", function(event) {
@@ -83,61 +79,61 @@
 
 </head>
 
-<body class="text-black flex justify-center" style="font-size: 8pt;">
-    <div class="border border-black no-print-border" style="width: 220mm; height: 145mm;">
-        @foreach ($pasien as $item)
-            <div class="box pl-1 border border-black no-print-border">
-                <table border="1">
-                    <tr>
-                        <td>
-                            <b>{{ $item['norm'] }}</b>
-                            / {{ $item['jkel'] }}
-                            / {{ \Carbon\Carbon::parse($item['tgllahir'])->format('d-m-Y') }}
-                        </td>
+<body class="text-black " style="font-size: 8pt; color: red">
+    {{-- <div class="border border-black no-print-border"> --}}
+    @foreach ($pasien as $item)
+        <div class="box pl-1 border border-black no-print-border">
+            <table border="1">
+                <tr>
+                    <td>
+                        <b>{{ $item['norm'] }}</b>
+                        / {{ $item['jkel'] }}
+                        / {{ \Carbon\Carbon::parse($item['tgllahir'])->format('d-m-Y') }}
+                    </td>
 
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>
-                                {{ $item['sebutan'] }}.
-                                {{ strlen($item['nama']) > 23 ? substr($item['nama'], 0, 20) . '...' : $item['nama'] }}
-                            </b>
+                </tr>
+                <tr>
+                    <td>
+                        <b>
+                            {{ $item['sebutan'] }}.
+                            {{ strlen($item['nama']) > 23 ? substr($item['nama'], 0, 20) . '...' : $item['nama'] }}
+                        </b>
 
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>{{ $item['alamat'] }}</td>
-                    </tr>
-                </table>
-            </div>
-        @endforeach
-        @foreach ($pasien2 as $item)
-            <div class="box2 pl-1 border border-black no-print-border">
-                <table border="1">
-                    <tr>
-                        <td>
-                            <b>{{ $item['norm'] }}</b>
-                            / {{ $item['jkel'] }}
-                            / {{ \Carbon\Carbon::parse($item['tgllahir'])->format('d-m-Y') }}
-                        </td>
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{ $item['alamat'] }}</td>
+                </tr>
+            </table>
+        </div>
+    @endforeach
+    @foreach ($pasien2 as $item)
+        <div class="box2 pl-1 border border-black no-print-border">
+            <table border="1">
+                <tr>
+                    <td>
+                        <b>{{ $item['norm'] }}</b>
+                        / {{ $item['jkel'] }}
+                        / {{ \Carbon\Carbon::parse($item['tgllahir'])->format('d-m-Y') }}
+                    </td>
 
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>
-                                {{ $item['sebutan'] }}.
-                                {{ strlen($item['nama']) > 23 ? substr($item['nama'], 0, 20) . '...' : $item['nama'] }}
-                            </b>
+                </tr>
+                <tr>
+                    <td>
+                        <b>
+                            {{ $item['sebutan'] }}.
+                            {{ strlen($item['nama']) > 23 ? substr($item['nama'], 0, 20) . '...' : $item['nama'] }}
+                        </b>
 
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>{{ $item['alamat'] }}</td>
-                    </tr>
-                </table>
-            </div>
-        @endforeach
-    </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{ $item['alamat'] }}</td>
+                </tr>
+            </table>
+        </div>
+    @endforeach
+    {{-- </div> --}}
 </body>
 
 </html>

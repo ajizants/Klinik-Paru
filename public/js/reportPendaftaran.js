@@ -1,7 +1,23 @@
 const baseUrl = window.location.origin;
+// function cetak(norm) {
+//     // window.open("http://rsparu.kkpm.local/Cetak/Label3/norm/" + norm);
+//     window.open(`${baseUrl}/api/pendaftaran/cetak/label/${norm}`);
+// }
 function cetak(norm) {
-    // window.open("http://rsparu.kkpm.local/Cetak/Label3/norm/" + norm);
-    window.open(`${baseUrl}/api/pendaftaran/cetak/label/${norm}`);
+    tampilkanLoading();
+    $.ajax({
+        url: "/api/pendaftaran/cetak/label/" + norm,
+        type: "get",
+        success: function (response) {
+            console.log("🚀 ~ cetak ~ response:", response);
+            const url =
+                "http://rsparu.kkpm.local/Cetak/Label4?" + $.param(response);
+            window.open(url);
+            console.log("🚀 ~ cetak ~ url:", url);
+            Swal.close();
+        },
+    });
+    // window.open(`${baseUrl}/api/pendaftaran/cetak/label/${norm}`);
 }
 function cetakBiodata(norm) {
     // window.open("http://rsparu.kkpm.local/Cetak/rm/norm/" + norm);
@@ -14,176 +30,186 @@ function checkEnter(event) {
     }
 }
 
-function daftarkan(button) {
-    var norm = $(button).data("norm");
-    var notrans = $(button).data("notrans");
-    var no_urut = $(button).data("no_urut");
-    var tgltrans = $(button).data("tgltrans");
-    tampilkanLoading();
-    $.ajax({
-        url: "/api/pendaftaran/pasien/" + norm,
-        type: "get",
-        success: function (response) {
-            const pekerjaan = response.pekerjaan || "";
-            const ibu = response.ibuKandung || "";
-            const pjwb = response.pjwb || "";
-            const statusPasien = response.pasien === null ? "Baru" : "Lama";
-            const judul = "Lengkapi Pendaftaran Pasien " + statusPasien;
-            Swal.fire({
-                title: judul,
-                html: `
-                    <label for="selectPekerjaan" class="swal2-label">Pekerjaan:</label>
-                    <input id="pekerjaan" name="pekerjaan" type="text" class="swal2-input mb-2 col-10" placeholder="Nama Pekerjaan" value="${pekerjaan}">
-                    <select id="selectPekerjaan" class="swal2-select select2 col-10">
-                        <option value="">-- Pilih Pekerjaan --</option>
-                        <option value="Belum/Tidak Bekerja">Belum/Tidak Bekerja</option>
-                        <option value="Akuntan">Akuntan</option>
-                        <option value="Analis">Analis</option>
-                        <option value="Apoteker">Apoteker</option>
-                        <option value="Arsitek">Arsitek</option>
-                        <option value="Buruh">Buruh</option>
-                        <option value="Desainer">Desainer</option>
-                        <option value="Dokter">Dokter</option>
-                        <option value="Dosen">Dosen</option>
-                        <option value="Guru">Guru</option>
-                        <option value="Ibu Rumah Tangga">Ibu Rumah Tangga</option>
-                        <option value="Montir">Montir</option>
-                        <option value="Nelayan">Nelayan</option>
-                        <option value="Notaris">Notaris</option>
-                        <option value="Ojek Online">Ojek Online</option>
-                        <option value="PNS">PNS</option>
-                        <option value="PPPK">PPPK</option>
-                        <option value="Pedagang">Pedagang</option>
-                        <option value="Pegawai Swasta">Pegawai Swasta</option>
-                        <option value="Pelajar/Mahasiswa">Pelajar/Mahasiswa</option>
-                        <option value="Pengacara">Pengacara</option>
-                        <option value="Perawat">Perawat</option>
-                        <option value="Petani">Petani</option>
-                        <option value="Polri">Polri</option>
-                        <option value="Programmer">Programmer</option>
-                        <option value="Security">Security</option>
-                        <option value="Seniman/Artis">Seniman/Artis</option>
-                        <option value="Sopir">Sopir</option>
-                        <option value="TNI">TNI</option>
-                        <option value="Teknisi">Teknisi</option>
-                        <option value="Wiraswasta">Wiraswasta</option>
-                        <option value="Lainnya">Lainnya</option>
-                    </select>
-                                        
-                    <label for="ibu" class="swal2-label mt-4">Nama Ibu:</label>
-                    <input id="ibu" type="text" class="swal2-input mt-0 col-10" placeholder="Nama Ibu Kandung" value="${ibu}">
-                    <button class="btn btn-success mt-3" id="btnSama">Klik Jika Sama Dengan Penanggung Jawab: ${pjwb}</button>
-                `,
-                didOpen: () => {
-                    // Inisialisasi select2
-                    $("#selectPekerjaan").select2({
-                        dropdownParent: $(".swal2-popup"),
-                        width: "100%",
-                        placeholder: "-- Pilih Pekerjaan --",
-                    });
-
-                    // Atur selected value jika ada
-                    if (pekerjaan) {
-                        $("#selectPekerjaan").val(pekerjaan).trigger("change");
-                    }
-
-                    // Ketika user memilih pekerjaan, isi ke input text
-                    $("#selectPekerjaan").on("change", function () {
-                        $("#pekerjaan").val($(this).val());
-                    });
-
-                    $("#btnSama").on("click", function () {
-                        $("#ibu").val(pjwb);
-                    });
-                },
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Daftarkan",
-                cancelButtonText: "Batal",
-                preConfirm: () => {
-                    const pekerjaan = $("#pekerjaan").val();
-                    const ibu = $("#ibu").val();
-                    return { pekerjaan, ibu };
-                },
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const pekerjaan = result.value.pekerjaan;
-                    const ibu = result.value.ibu;
-                    tampilkanLoading("Sedang mendaftarkan pasien...");
-                    $.ajax({
-                        url: "/api/pendaftaran/pasien/daftar",
-                        type: "post",
-                        data: {
-                            norm: norm,
-                            notrans: notrans,
-                            no_urut: no_urut,
-                            tgltrans: tgltrans,
-                            pekerjaan: pekerjaan,
-                            ibu: ibu,
-                            statusPasien: statusPasien,
-                        },
-                        success: function (response) {
-                            Toast.fire({
-                                icon: "success",
-                                title: response.message,
-                            });
-                            reportPendaftaran(tglAwal, tglAkhir);
-                            if (statusPasien === "Baru") {
-                                window.open(
-                                    `${baseUrl}/api/pendaftaran/cetak/rm/${norm}`
-                                );
-                            }
-                        },
-                        error: function (error) {
-                            console.error(error);
-                            Swal.fire(
-                                "Gagal",
-                                "Terjadi kesalahan saat menyimpan data" +
-                                    error.responseJSON.message,
-                                "error"
-                            );
-                        },
-                    });
-                }
-            });
-        },
-        error: function () {
-            Swal.fire("Error", "Gagal mengambil data pasien", "error");
-        },
-    });
-}
-
 // function daftarkan(button) {
 //     var norm = $(button).data("norm");
 //     var notrans = $(button).data("notrans");
 //     var no_urut = $(button).data("no_urut");
 //     var tgltrans = $(button).data("tgltrans");
-//     // alert(tgltrans);
-//     // return;
-//     tampilkanLoading("Sedang mendaftarakan ke aplikasi RSPARU...!!!");
-//     try {
-//         $.ajax({
-//             url: "/api/pendaftaran/pasien/daftar",
-//             type: "post",
-//             data: {
-//                 norm: norm,
-//                 notrans: notrans,
-//                 no_urut: no_urut,
-//                 tgltrans: tgltrans,
-//             },
-//             success: function (response) {
-//                 Toast.fire({
-//                     icon: "success",
-//                     title: response.message,
-//                 });
-//                 reportPendaftaran(tglAwal, tglAkhir);
-//             },
-//         });
-//     } catch (error) {
-//         console.error(error);
-//     }
+//     tampilkanLoading();
+//     $.ajax({
+//         url: "/api/pendaftaran/pasien/" + norm,
+//         type: "get",
+//         success: function (response) {
+//             const pekerjaan = response.pekerjaan || "";
+//             const ibu = response.ibuKandung || "";
+//             const pjwb = response.pjwb || "";
+//             const statusPasien = response.pasien === null ? "Baru" : "Lama";
+//             const judul = "Lengkapi Pendaftaran Pasien " + statusPasien;
+//             Swal.fire({
+//                 title: judul,
+//                 html: `
+//                     <label for="selectPekerjaan" class="swal2-label">Pekerjaan:</label>
+//                     <input id="pekerjaan" name="pekerjaan" type="text" class="swal2-input mb-2 col-10" placeholder="Nama Pekerjaan" value="${pekerjaan}">
+//                     <select id="selectPekerjaan" class="swal2-select select2 col-10">
+//                         <option value="">-- Pilih Pekerjaan --</option>
+//                         <option value="Belum/Tidak Bekerja">Belum/Tidak Bekerja</option>
+//                         <option value="Akuntan">Akuntan</option>
+//                         <option value="Analis">Analis</option>
+//                         <option value="Apoteker">Apoteker</option>
+//                         <option value="Arsitek">Arsitek</option>
+//                         <option value="Buruh">Buruh</option>
+//                         <option value="Desainer">Desainer</option>
+//                         <option value="Dokter">Dokter</option>
+//                         <option value="Dosen">Dosen</option>
+//                         <option value="Guru">Guru</option>
+//                         <option value="Ibu Rumah Tangga">Ibu Rumah Tangga</option>
+//                         <option value="Montir">Montir</option>
+//                         <option value="Nelayan">Nelayan</option>
+//                         <option value="Notaris">Notaris</option>
+//                         <option value="Ojek Online">Ojek Online</option>
+//                         <option value="PNS">PNS</option>
+//                         <option value="PPPK">PPPK</option>
+//                         <option value="Pedagang">Pedagang</option>
+//                         <option value="Pegawai Swasta">Pegawai Swasta</option>
+//                         <option value="Pelajar/Mahasiswa">Pelajar/Mahasiswa</option>
+//                         <option value="Pengacara">Pengacara</option>
+//                         <option value="Perawat">Perawat</option>
+//                         <option value="Petani">Petani</option>
+//                         <option value="Polri">Polri</option>
+//                         <option value="Programmer">Programmer</option>
+//                         <option value="Security">Security</option>
+//                         <option value="Seniman/Artis">Seniman/Artis</option>
+//                         <option value="Sopir">Sopir</option>
+//                         <option value="TNI">TNI</option>
+//                         <option value="Teknisi">Teknisi</option>
+//                         <option value="Wiraswasta">Wiraswasta</option>
+//                         <option value="Lainnya">Lainnya</option>
+//                     </select>
+
+//                     <label for="ibu" class="swal2-label mt-4">Nama Ibu:</label>
+//                     <input id="ibu" type="text" class="swal2-input mt-0 col-10" placeholder="Nama Ibu Kandung" value="${ibu}">
+//                     <button class="btn btn-success mt-3" id="btnSama">Klik Jika Sama Dengan Penanggung Jawab: ${pjwb}</button>
+//                 `,
+//                 didOpen: () => {
+//                     // Inisialisasi select2
+//                     $("#selectPekerjaan").select2({
+//                         dropdownParent: $(".swal2-popup"),
+//                         width: "100%",
+//                         placeholder: "-- Pilih Pekerjaan --",
+//                     });
+
+//                     // Atur selected value jika ada
+//                     if (pekerjaan) {
+//                         $("#selectPekerjaan").val(pekerjaan).trigger("change");
+//                     }
+
+//                     // Ketika user memilih pekerjaan, isi ke input text
+//                     $("#selectPekerjaan").on("change", function () {
+//                         $("#pekerjaan").val($(this).val());
+//                     });
+
+//                     $("#btnSama").on("click", function () {
+//                         $("#ibu").val(pjwb);
+//                     });
+//                 },
+//                 showCancelButton: true,
+//                 confirmButtonColor: "#3085d6",
+//                 cancelButtonColor: "#d33",
+//                 confirmButtonText: "Daftarkan",
+//                 cancelButtonText: "Batal",
+//                 preConfirm: () => {
+//                     const pekerjaan = $("#pekerjaan").val();
+//                     const ibu = $("#ibu").val();
+//                     return { pekerjaan, ibu };
+//                 },
+//             }).then((result) => {
+//                 if (result.isConfirmed) {
+//                     const pekerjaan = result.value.pekerjaan;
+//                     const ibu = result.value.ibu;
+//                     tampilkanLoading("Sedang mendaftarkan pasien...");
+//                     $.ajax({
+//                         url: "/api/pendaftaran/pasien/daftar",
+//                         type: "post",
+//                         data: {
+//                             norm: norm,
+//                             notrans: notrans,
+//                             no_urut: no_urut,
+//                             tgltrans: tgltrans,
+//                             pekerjaan: pekerjaan,
+//                             ibu: ibu,
+//                             statusPasien: statusPasien,
+//                         },
+//                         success: function (response) {
+//                             Toast.fire({
+//                                 icon: "success",
+//                                 title: response.message,
+//                             });
+//                             reportPendaftaran(tglAwal, tglAkhir);
+//                             if (statusPasien === "Baru") {
+//                                 window.open(
+//                                     `${baseUrl}/api/pendaftaran/cetak/rm/${norm}`
+//                                 );
+//                             }
+//                         },
+//                         error: function (error) {
+//                             console.error(error);
+//                             Swal.fire(
+//                                 "Gagal",
+//                                 "Terjadi kesalahan saat menyimpan data" +
+//                                     error.responseJSON.message,
+//                                 "error"
+//                             );
+//                         },
+//                     });
+//                 }
+//             });
+//         },
+//         error: function () {
+//             Swal.fire("Error", "Gagal mengambil data pasien", "error");
+//         },
+//     });
 // }
+
+function daftarkan(button) {
+    var norm = $(button).data("norm");
+    var notrans = $(button).data("notrans");
+    var no_urut = $(button).data("no_urut");
+    var tgltrans = $(button).data("tgltrans");
+    var statusPasien = $(button).data("pasien_lama_baru");
+    // alert(tgltrans);
+    // return;
+    Toast.fire({
+        iconHtml:
+            '<span class="spinner-border spinner-border-sm text-light" role="status"></span>',
+        title: "Sedang memproses...",
+        timer: 0, // jangan auto-close
+        showConfirmButton: false,
+    });
+
+    try {
+        $.ajax({
+            url: "/api/pendaftaran/pasien/daftar",
+            type: "post",
+            data: {
+                norm: norm,
+                notrans: notrans,
+                no_urut: no_urut,
+                tgltrans: tgltrans,
+                statusPasien: statusPasien,
+            },
+            success: function (response) {
+                Toast.fire({
+                    icon: "success",
+                    title: response.message,
+                });
+                // reportPendaftaran(tglAwal, tglAkhir);
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        Swal.fire("Gagal", "Terjadi kesalahan saat menyimpan data", "error");
+    }
+}
 
 function selesai(norm, notrans) {
     var norm = norm ? norm : $("#norm").val();
@@ -229,6 +255,7 @@ function isiForm(norm, nama, jaminan, notrans, nosep, btn) {
     $("#noSep").val(nosep);
     btn.classList.remove("btn-danger");
     btn.classList.add("btn-success");
+    daftarkan(btn);
 }
 
 function segarkan() {
@@ -287,7 +314,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
     }
 
     $.ajax({
-        url: "/api/kominfo/pendaftaran/report",
+        url: "/api/pendaftaran/report",
         type: "post",
         data: {
             tanggal_awal: tglAwal,
@@ -311,7 +338,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                 }
 
                 const checkIn =
-                    item.check_in == "success" ? "Selesai" : "Belum Selesai";
+                    item.check_in == "success" ? "Selesai" : "Belum";
                 const disabled = item.check_in == "success" ? "disabled" : "";
                 const disabled2 = item.statusDaftar == "lime" ? "disabled" : "";
                 const daftar =
@@ -319,6 +346,11 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                 item.aksi = `
                             <button type="button" class="btn btn-sm btn-${item.check_in} mr-2 mb-2" 
                                     ${disabled} id="checkin" placeholder="Selesai" data-toggle="modal"
+                                    data-norm="${item.pasien_no_rm}"
+                                    data-notrans="${item.no_reg}"
+                                    data-no_urut="${item.antrean_nomor}"
+                                    data-tgltrans="${item.waktu_verifikasi}"
+                                    data-pasien_lama_baru="${item.pasien_lama_baru}"
                                     data-target="#modalSep" 
                                     onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}','${item.penjamin_nama}','${item.no_reg}','${item.no_sep}',this)">
                                     ${checkIn}</button>
@@ -327,6 +359,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                                     data-notrans="${item.no_reg}"
                                     data-no_urut="${item.antrean_nomor}"
                                     data-tgltrans="${item.waktu_verifikasi}"
+                                    data-pasien_lama_baru="${item.pasien_lama_baru}"
                                     onclick="daftarkan(this)">${daftar}</button>
                             <button type="button" class="btn btn-sm btn-primary mr-2 mb-2"
                                     onclick="cetak('${item.pasien_no_rm}')" placeholder="Cetak">Label</button>
@@ -472,17 +505,14 @@ async function rekapFaskesPerujuk() {
 
     try {
         // Fetch data dari API
-        const response = await fetch(
-            "/api/kominfo/pendaftaran/faskes_perujuk",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    tanggal_awal: tglAwal,
-                    tanggal_akhir: tglAkhir,
-                }),
-            }
-        );
+        const response = await fetch("/api/pendaftaran/faskes_perujuk", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                tanggal_awal: tglAwal,
+                tanggal_akhir: tglAkhir,
+            }),
+        });
 
         // Cek jika response tidak OK
         if (!response.ok) {
@@ -561,7 +591,7 @@ function rencanaKontrolPasien() {
     // console.log("🚀 ~ rencanaKontrolPasien ~ tglB:", tglB);
 
     $.ajax({
-        url: "/api/kominfo/data_rencana_kontrol",
+        url: "/api/pendaftaran/data_rencana_kontrol",
         type: "POST",
         dataType: "json",
         contentType: "application/json",
