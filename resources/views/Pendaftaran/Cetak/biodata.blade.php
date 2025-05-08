@@ -6,7 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-size: 12pt;
+            font-size: 11pt;
             margin: 0;
             padding: 0;
         }
@@ -22,10 +22,10 @@
         }
 
         .anukertas {
-            width: 220mm;
-            height: 330mm;
+            width: 205mm;
+            height: 280mm;
             border: 1px solid black;
-            margin: 10mm 0 0 20mm;
+            margin: 5mm 5mm 0 20mm;
             padding: 16px;
             box-sizing: border-box;
         }
@@ -33,7 +33,7 @@
 
         @media print {
             @page {
-                size: 220mm 330mm portrait;
+                size: 205mm 280mm portrait;
                 margin: 0;
             }
 
@@ -48,13 +48,13 @@
     </style>
     {{-- buatkan scrit untuk cetak saat selesai load --}}
     <script>
-        window.onload = function() {
-            window.print();
-        }
-        // tutup jendela saat selesai cetak
-        window.onafterprint = function() {
-            window.close();
-        }
+        // window.onload = function() {
+        //     window.print();
+        // }
+        // // tutup jendela saat selesai cetak
+        // window.onafterprint = function() {
+        //     window.close();
+        // }
 
         // saat menekan tombol p lakukan cetak
         document.addEventListener("keydown", function(event) {
@@ -229,7 +229,7 @@
                 <td width="65%" align="center"></td>
                 <td align="center">
                     Purwokerto, {{ \Carbon\Carbon::parse($created_at_tanggal)->translatedFormat('d-M-Y') }}
-                    <br /><br /><br /><br /><br /><br /><br />
+                    <br /><br /><br /><br /><br /><br />
                     <pre>(                      )</pre>
                 </td>
             </tr>
