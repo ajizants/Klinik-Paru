@@ -44,6 +44,7 @@ class EkinController extends Controller
         if (empty($data['response']['data'])) {
             return $poinKominfo;
         }
+        $poinKominfo = $this->prosesPoinKominfo($data);
 
         // Filter data yang bukan "Ruang Poli" dan admin_nama mengandung $nama
         $filteredData = collect($data['response']['data'])->filter(function ($item) use ($nama) {
@@ -68,9 +69,9 @@ class EkinController extends Controller
         // return $poinKominfo;
         $tensi1 = $poinKominfo['ruangtensi1'] ?? 0;
         $tensi2 = $poinKominfo['ruangtensi2'] ?? 0;
+        $pasienBaru = $poinKominfo['petugasassessmentawal'] ?? 0;
         $anamnesa = $tensi1 + $tensi2;
-        $pasienBaru = ceil($anamnesa / 2); // Membulatkan ke atas
-        $pasienLama = floor($anamnesa / 2);
+        $pasienLama = $anamnesa - $pasienBaru;
 
         $poinKominfo = [
             "anamnesa" => $anamnesa == 0 ? '-' : $anamnesa,
@@ -81,6 +82,72 @@ class EkinController extends Controller
         ];
 
         return $poinKominfo;
+    }
+
+    private function prosesPoinKominfo($data)
+    {
+
+        // Step 1: Filter data (hilangkan entri "Ruang Poli")
+        $filteredData = array_filter($data['response']['data'], function ($item) {
+            return $item['ruang_nama'] !== 'Ruang Poli';
+        });
+
+        // Step 2: Buat map sementara berdasarkan ruang dan admin
+        $grouped = [];
+        foreach ($filteredData as $item) {
+            $ruang = $item['ruang_nama'];
+            $admin = $item['admin_nama'];
+            $jumlah = (int) $item['jumlah'];
+
+            $grouped[$ruang][$admin] = ($grouped[$ruang][$admin] ?? 0) + $jumlah;
+        }
+
+        // Step 3: Tambahkan ruang baru "Anamnesa pasien lama"
+        $anamnesaLama = [];
+        $tensi = $grouped['Ruang Tensi 1'] ?? [];
+        $awal = $grouped['Petugas Assessment Awal'] ?? [];
+
+        foreach ($tensi as $admin => $jumlahTensi) {
+            if (isset($awal[$admin])) {
+                $selisih = $jumlahTensi - $awal[$admin];
+                if ($selisih > 0) {
+                    $anamnesaLama[] = [
+                        'ruang_nama' => 'Anamnesa pasien lama',
+                        'admin_nama' => $admin,
+                        'jumlah' => $selisih,
+                    ];
+                }
+            } else {
+                // Jika hanya ada di tensi, tetap masukkan
+                $anamnesaLama[] = [
+                    'ruang_nama' => 'Anamnesa pasien lama',
+                    'admin_nama' => $admin,
+                    'jumlah' => $jumlahTensi,
+                ];
+            }
+        }
+
+        // Step 4: Mapping nama ruang yang lain
+        $namaBaru = [
+            'Ruang Tensi 1' => 'Timbang dan Tensi',
+            'Petugas Assessment Awal' => 'Anamnesa pasien baru',
+            'Ruang Poli (Perawat Poli)' => 'Asisten dokter',
+            'Ruang Poli (Dokter CPPT)' => 'Pemeriksaan dokter',
+            // Tambahkan mapping lainnya jika ada
+        ];
+
+        $mappedData = array_map(function ($item) use ($namaBaru) {
+            if (isset($namaBaru[$item['ruang_nama']])) {
+                $item['ruang_nama'] = $namaBaru[$item['ruang_nama']];
+            }
+            return $item;
+        }, $filteredData);
+
+        // Step 5: Gabungkan hasil mapping dengan Anamnesa pasien lama
+        $finalData = array_merge($mappedData, $anamnesaLama);
+
+        // Step 6: Replace data asli
+        $data['response']['data'] = array_values($finalData);
     }
 
     private function poinIGD(Request $request)
@@ -135,6 +202,7 @@ class EkinController extends Controller
         $poinIgd = $this->poinIGD(new Request($params));
 
         $poinKominfo = $this->poinKominfo(new Request($params));
+        // return $poinKominfo;
 
         if ($request->input('nip') == '199806222022031007') {
             $inputPitc = $this->poinInputHiv(new Request($params));

@@ -1,4 +1,22 @@
 function setTransaksi(button, ruang) {
+    document.getElementById("form_identitas").reset();
+    document.getElementById("form_pembayaran").reset();
+    tabelPemeriksaan(itemPemeriksaan, "item", "pilih-semua");
+    $("#harga_2").val(1);
+
+    if ($.fn.DataTable.isDataTable("#dataTagihan")) {
+        let tableTrans = $("#dataTagihan").DataTable();
+        tableTrans.clear().destroy();
+    }
+    $("#dataTagihan").DataTable({
+        scrollY: "200px",
+    });
+    $("#divHapus").html("");
+
+    document.getElementById("tgltrans").value = new Date()
+        .toISOString()
+        .split("T")[0];
+
     console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi);
     var norm = $(button).data("norm");
     var nama = $(button).data("nama");
@@ -70,8 +88,10 @@ function cariTagihan(norm, tgl) {
                 const tindakan = response.tindakan;
                 const ro = response.ro;
                 const lab = response.lab;
+                const dokter = response.pasien.dokter_nama;
                 pilihPemeriksaan(tindakan, "igd");
                 pilihPemeriksaan(ro, "ro");
+                pilihPemeriksaan(lab, "lab");
                 pilihPemeriksaan(lab, "lab");
             },
             error: function (xhr, status, error) {
@@ -85,11 +105,11 @@ function cariTagihan(norm, tgl) {
     }
 }
 function pilihPemeriksaan(data, ruang) {
-    //checked pemeriksaan sesuai forech data
+    let checkbox;
+    let id;
+
     if (data && Array.isArray(data)) {
         data.forEach((item) => {
-            let checkbox;
-            let id;
             switch (ruang) {
                 case "lab":
                     id = item.kdPemeriksaan;

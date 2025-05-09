@@ -29,7 +29,7 @@ Route::get('cariSisa2/{year}', [IgdController::class, 'cariKunjunganPerBulan']);
 //Poin
 Route::post('cariPoin', [IgdController::class, 'cariPoin']);
 Route::post('cariPoinTotal', [IgdController::class, 'cariPoinTotal']);
-//jumalh pemeriksaan
+//jumalh Poin format jaspel
 Route::get('getRekapJumlahPoin/{bln}/{tahun}', [IgdController::class, 'poinPegawai']);
 
 //jumalh pemeriksaan

@@ -797,9 +797,10 @@ class IgdController extends Controller
         $model = new KominfoModel();
         $data = $model->poinRequest($params);
         $items = $data['response']['data'] ?? [];
+        // return $items;
 
         $items = array_filter($items, function ($item) {
-            return in_array($item['ruang_nama'], ['Ruang Tensi 1', 'Ruang Poli (Perawat Poli)']);
+            return in_array($item['ruang_nama'], ['Ruang Tensi 1', 'Ruang Poli (Perawat Poli)', 'Petugas Assessment Awal']);
         });
 
         $items = array_map(function ($item) {
@@ -813,6 +814,7 @@ class IgdController extends Controller
 
         $result = [
             'Anamnesa pasien lama' => [],
+            'Anamnesa pasien lama2' => [],
             'Anamnesa pasien baru' => [],
             'Asisten dokter' => [],
             'Timbang dan tensi' => [],
@@ -823,15 +825,31 @@ class IgdController extends Controller
             $admin = $item['admin_nama'];
             $jumlah = (int) $item['jumlah'];
             $ruang = $item['ruang_nama'];
+            if ($ruang === 'Ruang Tensi 1') {
+                $jumlahLama = (int) $item['jumlah'];
+            }
 
             if ($ruang === 'Ruang Tensi 1') {
-                $half = (int) floor($jumlah / 2);
-                $result['Anamnesa pasien lama'][$admin] = ($result['Anamnesa pasien lama'][$admin] ?? 0) + $half;
-                $result['Anamnesa pasien baru'][$admin] = ($result['Anamnesa pasien baru'][$admin] ?? 0) + ($jumlah - $half);
+                // $half = (int) floor($jumlah / 2);
+                // $result['Anamnesa pasien lama'][$admin] = ($result['Anamnesa pasien lama'][$admin] ?? 0) + $half;
+                // $result['Anamnesa pasien baru'][$admin] = ($result['Anamnesa pasien baru'][$admin] ?? 0) + ($jumlah - $half);
+
+                $result['Anamnesa pasien lama2'][$admin] = ($result['Ruang Tensi 1'][$admin] ?? 0) + $jumlah;
                 $result['Timbang dan tensi'][$admin] = ($result['Timbang dan tensi'][$admin] ?? 0) + $jumlah;
                 $result['Input data'][$admin] = ($result['Input data'][$admin] ?? 0) + $jumlah;
+            } elseif ($ruang === 'Petugas Assessment Awal') {
+                $result['Anamnesa pasien baru'][$admin] = ($result['Petugas Assessment Awal'][$admin] ?? 0) + $jumlah;
             } elseif ($ruang === 'Ruang Poli (Perawat Poli)') {
                 $result['Asisten dokter'][$admin] = ($result['Asisten dokter'][$admin] ?? 0) + $jumlah;
+            }
+        }
+        // $result['Anamnesa pasien lama2'] = [];
+
+        foreach ($result['Anamnesa pasien lama2'] as $nama => $nilaiLama) {
+            if (isset($result['Anamnesa pasien baru'][$nama])) {
+                $result['Anamnesa pasien lama'][$nama] = $nilaiLama - $result['Anamnesa pasien baru'][$nama];
+            } else {
+                $result['Anamnesa pasien lama'][$nama] = $nilaiLama;
             }
         }
 

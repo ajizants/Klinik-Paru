@@ -450,10 +450,10 @@ function handleError(
 
 function handleDokterPemeriksaan(dokter) {
     const dokterMapping = {
-        "dr. AGIL DANANJAYA, Sp.P": 3,
+        "dr. Agil Dananjaya, Sp.P": 3,
         "dr. Cempaka Nova Intani, Sp.P, FISR., MM.": 3,
-        "dr. SIGIT DWIYANTO": 4,
-        "dr. FILLY ULFA KUSUMAWARDANI": 4,
+        "dr. Sigit Dwiyanto": 4,
+        "dr. Filly Ulfa Kusumawardani": 4,
     };
 
     if (dokter in dokterMapping) {

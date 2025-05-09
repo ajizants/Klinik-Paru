@@ -1433,32 +1433,114 @@ class PasienKominfoController extends Controller
         return response()->json(['error' => 'Internal Server Error'], 500);
     }
 
+    // public function rekapPoin(Request $request)
+    // {
+    //     $params = $request->only(['tanggal_awal', 'tanggal_akhir']);
+
+    //     $model = new KominfoModel();
+
+    //     // Ambil data dari model
+    //     $data = $model->poinRequest($params);
+
+    //     // Step 1: Filter data (hilangkan entri "Ruang Poli")
+    //     $filteredData = array_filter($data['response']['data'], function ($item) {
+    //         return $item['ruang_nama'] !== 'Ruang Poli';
+    //     });
+
+    //     // Step 2: Mapping nama ruang
+    //     $namaBaru = [
+    //         'Ruang Tensi 1' => 'Timbang dan Tensi',
+    //         'Petugas Assessment Awal' => 'Anamnesa pasien baru',
+    //         'Ruang Poli (Perawat Poli)' => 'Asisten dokter',
+    //         'Ruang Poli (Dokter CPPT)' => 'Pemeriksaan dokter',
+    //         // Tambahkan mapping lainnya jika ada
+    //     ];
+
+    //     $mappedData = array_map(function ($item) use ($namaBaru) {
+    //         if (isset($namaBaru[$item['ruang_nama']])) {
+    //             $item['ruang_nama'] = $namaBaru[$item['ruang_nama']];
+    //         }
+    //         return $item;
+    //     }, $filteredData);
+
+    //     // Step 3: Replace data asli dengan yang sudah difilter dan dimapping
+    //     $data['response']['data'] = array_values($mappedData); // array_values agar reindex array numerik
+
+    //     return response()->json($data);
+    // }
+
     public function rekapPoin(Request $request)
     {
         $params = $request->only(['tanggal_awal', 'tanggal_akhir']);
 
         $model = new KominfoModel();
 
-        // Retrieve the data from the model
+        // Ambil data dari model
         $data = $model->poinRequest($params);
 
-        // Filter out the "Ruang Poli" entries
+        // Step 1: Filter data (hilangkan entri "Ruang Poli")
         $filteredData = array_filter($data['response']['data'], function ($item) {
             return $item['ruang_nama'] !== 'Ruang Poli';
         });
 
-        // Prepare the response
-        $response = [
-            'metadata' => [
-                'code' => 200,
-                'message' => 'Data ditemukan!',
-            ],
-            'response' => [
-                'data' => array_values($filteredData), // Re-index the array
-            ],
+        // Step 2: Buat map sementara berdasarkan ruang dan admin
+        $grouped = [];
+        foreach ($filteredData as $item) {
+            $ruang = $item['ruang_nama'];
+            $admin = $item['admin_nama'];
+            $jumlah = (int) $item['jumlah'];
+
+            $grouped[$ruang][$admin] = ($grouped[$ruang][$admin] ?? 0) + $jumlah;
+        }
+
+        // Step 3: Tambahkan ruang baru "Anamnesa pasien lama"
+        $anamnesaLama = [];
+        $tensi = $grouped['Ruang Tensi 1'] ?? [];
+        $awal = $grouped['Petugas Assessment Awal'] ?? [];
+
+        foreach ($tensi as $admin => $jumlahTensi) {
+            if (isset($awal[$admin])) {
+                $selisih = $jumlahTensi - $awal[$admin];
+                if ($selisih > 0) {
+                    $anamnesaLama[] = [
+                        'ruang_nama' => 'Anamnesa pasien lama',
+                        'admin_nama' => $admin,
+                        'jumlah' => $selisih,
+                    ];
+                }
+            } else {
+                // Jika hanya ada di tensi, tetap masukkan
+                $anamnesaLama[] = [
+                    'ruang_nama' => 'Anamnesa pasien lama',
+                    'admin_nama' => $admin,
+                    'jumlah' => $jumlahTensi,
+                ];
+            }
+        }
+
+        // Step 4: Mapping nama ruang yang lain
+        $namaBaru = [
+            'Ruang Tensi 1' => 'Timbang dan Tensi',
+            'Petugas Assessment Awal' => 'Anamnesa pasien baru',
+            'Ruang Poli (Perawat Poli)' => 'Asisten dokter',
+            'Ruang Poli (Dokter CPPT)' => 'Pemeriksaan dokter',
+            // Tambahkan mapping lainnya jika ada
         ];
 
-        return response()->json($response);
+        $mappedData = array_map(function ($item) use ($namaBaru) {
+            if (isset($namaBaru[$item['ruang_nama']])) {
+                $item['ruang_nama'] = $namaBaru[$item['ruang_nama']];
+            }
+            return $item;
+        }, $filteredData);
+
+        // Step 5: Gabungkan hasil mapping dengan Anamnesa pasien lama
+        $finalData = array_merge($mappedData, $anamnesaLama);
+
+        // Step 6: Replace data asli
+        $data['response']['data'] = array_values($finalData);
+
+        return response()->json($data);
     }
 
     public function rekapPoinPecah(Request $request)
