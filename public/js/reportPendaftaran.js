@@ -300,6 +300,7 @@ function tes() {
 }
 
 function reportPendaftaran(tglAwal, tglAkhir) {
+    if (prosesCariDataLaporan == true) return;
     prosesCariDataLaporan = true;
     console.log(
         "🚀 ~ reportPendaftaran ~ prosesCariDataLaporan:",
@@ -478,7 +479,11 @@ function reportPendaftaran(tglAwal, tglAkhir) {
             Swal.close();
             setTimeout(function () {
                 prosesCariDataLaporan = false;
-            }, 3000);
+                console.log(
+                    "🚀 ~ prosesCariDataLaporan:",
+                    prosesCariDataLaporan
+                );
+            }, 2000);
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
