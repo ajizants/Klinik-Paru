@@ -484,6 +484,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                     prosesCariDataLaporan
                 );
             }, 2000);
+            scrollToTop();
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
