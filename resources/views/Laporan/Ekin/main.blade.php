@@ -9,14 +9,17 @@
                         id="link_tab_1"><b>Rekap Poin</b></a>
                 </li>
                 <li class="nav-item">
-                    <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#tab_2')"
-                        id="link_tab_1"><b>Kepegawaian</b></a>
+                    <a type="button" class="nav-link border border-primary"
+                        onclick=" toggleSections('#tab_2'), $('#pegawaiTable').DataTable().columns.adjust().draw();"
+                        id="link_tab_1"><b>Bukti Dukung Ekin</b></a>
                 </li>
                 <li class="nav-item">
-                    <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#tab_3')"><b>Kegiatan
+                    <a type="button" class="nav-link border border-primary"
+                        onclick=" toggleSections('#tab_3'),$('#tabelKegLain').DataTable().columns.adjust().draw();"><b>Kegiatan
                             Lain</b></a>
                 </li>
             </ul>
+
             <div id="tab_1">
                 @include('Laporan.Ekin.reportIGD')
             </div>
@@ -190,7 +193,6 @@
                         [5, 10, 25, 50, -1],
                         [5, 10, 25, 50, "All"]
                     ],
-                    pageLength: 5,
                     responsive: true,
                     autoWidth: false,
                     scrollX: true
