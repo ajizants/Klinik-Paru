@@ -402,16 +402,16 @@
                         <p>Pusat Data</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link" href="{{ url('/Igd/Poin') }}">
                         <i class="fa-solid fa-chart-column nav-icon"></i>
                         <p>Poin Pegawai</p>
                     </a>
-                </li>
+                </li> --}}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/E-kinerja') }}">
                         <i class="fa-solid fa-chart-line  nav-icon"></i>
-                        <p>Laporan Kinerja</p>
+                        <p>Laporan Kinerja Pegawai</p>
                     </a>
                 </li>
 

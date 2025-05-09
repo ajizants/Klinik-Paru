@@ -6,15 +6,24 @@
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a type="button" class="nav-link border border-primary active bg-blue" onclick=" toggleSections('#tab_1')"
+                        id="link_tab_1"><b>Rekap Poin</b></a>
+                </li>
+                <li class="nav-item">
+                    <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#tab_2')"
                         id="link_tab_1"><b>Kepegawaian</b></a>
                 </li>
                 <li class="nav-item">
-                    <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#tab_2')"><b>Kegiatan
+                    <a type="button" class="nav-link border border-primary" onclick=" toggleSections('#tab_3')"><b>Kegiatan
                             Lain</b></a>
                 </li>
             </ul>
-            @include('Laporan.Ekin.daftarPegawai')
-            <div id="tab_2" style="display: none">
+            <div id="tab_1">
+                @include('Laporan.Ekin.reportIGD')
+            </div>
+            <div id="tab_2"style="display: none">
+                @include('Laporan.Ekin.daftarPegawai')
+            </div>
+            <div id="tab_3" style="display: none">
                 @include('Laporan.Ekin.kegiatan')
             </div>
         </div>

@@ -852,6 +852,7 @@ class IgdController extends Controller
                 $result['Anamnesa pasien lama'][$nama] = $nilaiLama;
             }
         }
+        unset($result['Anamnesa pasien lama2']);
 
         return $result;
     }
