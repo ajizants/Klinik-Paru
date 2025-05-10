@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApiKominfo;
+use App\Models\KasirTransModel;
 use App\Models\KominfoModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -224,8 +225,8 @@ class ApiKominfoController extends Controller
         $model = new KominfoModel();
         // dd($params);
         $data = $model->getDetailSEP($no_sep);
-        // return response()->json($detailSEP);
         $detailSEP = $data['data'];
+        // return response()->json($detailSEP);
 
         //     // Buat QR Code dengan logo
         //     $qrCode = QrCode::format('svg') // atau svg
@@ -247,6 +248,102 @@ class ApiKominfoController extends Controller
         // return view('Laporan.Pasien.sepPdf', compact('detailSEP', 'qrCodeBase64'));
         // Generate the PDF with the converted PNG QR code
         $pdf = PDF::loadView('Laporan.Pasien.sepPdf', compact('detailSEP', 'qrCodeBase64'));
+
+        return $pdf->stream($judul . '.pdf'); // Generate the PDF with the converted PNG QR code
+
+    }
+    public function cetakSEPBilling(string $no_sep)
+    {
+        $model = new KominfoModel();
+        // dd($params);
+        $data = $model->getDetailSEP($no_sep);
+        $detailSEP = $data['data'];
+        // return response()->json($detailSEP);
+
+        // $norm = $detailSEP['peserta']['noMr'];
+        $norm = '029729';
+        $tglKunjungan = $detailSEP['tglSep'];
+
+        $dataTagihan = KasirTransModel::with('item.layanan')
+            ->where('norm', $norm)
+            ->whereBetween('created_at', [
+                $tglKunjungan . ' 00:00:00',
+                $tglKunjungan . ' 23:59:59',
+            ])->first();
+        // return response()->json($dataTagihan);
+        $rincian = array_values($dataTagihan->toArray()['item']);
+
+        $lab = array_filter($rincian, function ($item) {
+            return stripos($item['layanan']['kelas'], 9) !== false;
+        });
+        if (count($lab) == 0) {
+            $lab = null;
+            $$totalLab = 0;
+        };
+        $lab = array_values($lab);
+        $totalLab = 0;
+        foreach ($lab as $item) {
+            $totalLab += $item['totalHarga'];
+        }
+
+        // return $lab;
+
+        $ro = array_filter($rincian, function ($item) {
+            return stripos($item['layanan']['kelas'], 8) !== false;
+        });
+        if (count($ro) == 0) {
+            $ro = null;
+            $$totalRo = 0;
+        };
+        $ro = array_values($ro);
+        $totalRo = 0;
+        foreach ($ro as $item) {
+            $totalRo += $item['totalHarga'];
+        }
+
+        $tindakan = array_filter($rincian, function ($item) {
+            // Casting ke int untuk memastikan tipe
+            return in_array((int) $item['layanan']['kelas'], [5, 6, 7], true);
+        });
+        if (count($tindakan) == 0) {
+            $tindakan = null;
+            $$totalTindakan = 0;
+        };
+        $tindakan = array_values($tindakan);
+        $totalTindakan = 0;
+        foreach ($tindakan as $item) {
+            $totalTindakan += $item['totalHarga'];
+        }
+        // return $ro;
+
+        $obat = array_filter($rincian, function ($item) {
+            return $item['layanan']['idLayanan'] == 2;
+        });
+
+        if (count($obat) == 0) {
+            $obat = null;
+            $$totalObat = 0;
+        };
+        // return $obat;
+        $totalObat = $obat[0]['totalHarga'];
+
+        $noKartu = $detailSEP['peserta']['noKartu'];
+        $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=' . urlencode($noKartu) . '&size=100x100';
+
+        $qrCodeBase64 = base64_encode(file_get_contents($qrCodeUrl));
+        //buat judul, yaitu 6 digit terakhir dari noSEP
+        $judul = substr($detailSEP['noSep'], -6);
+
+        return view('Laporan.Pasien.sepBilling',
+            compact('detailSEP', 'qrCodeBase64', 'dataTagihan', 'lab',
+                'totalLab', 'totalRo', 'ro', 'totalTindakan', 'tindakan',
+                'totalObat', 'obat'
+            ));
+        $pdf = PDF::loadView('Laporan.Pasien.sepBilling',
+            compact('detailSEP', 'qrCodeBase64', 'dataTagihan', 'lab',
+                'totalLab', 'totalRo', 'ro', 'totalTindakan', 'tindakan',
+                'totalObat', 'obat'
+            ));
 
         return $pdf->stream($judul . '.pdf'); // Generate the PDF with the converted PNG QR code
 

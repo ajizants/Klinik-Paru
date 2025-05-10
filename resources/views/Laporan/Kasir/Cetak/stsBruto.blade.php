@@ -70,7 +70,7 @@
             </tbody>
         </table>
         <!-- Tanda Tangan -->
-        @include('Laporan.Kasir.ttd')
+        @include('Laporan.Kasir.Cetak.ttd')
     </div>
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {

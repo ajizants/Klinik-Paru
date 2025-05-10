@@ -89,7 +89,6 @@ Route::middleware('auth')->group(function () {
     Route::get('kasir', [KasirController::class, 'kasir'])->name('kasir')->middleware('role:kasir');
     Route::get('kasir/master', [KasirController::class, 'masterKasir'])->name('kasir')->middleware('role:kasir');
     Route::get('kasir/report', [KasirController::class, 'rekapKasir'])->name('rekapKasir')->middleware('role:kasir');
-    Route::get('kasir/pendapatan', [KasirController::class, 'laporanPage'])->name('rekapKasir')->middleware('role:kasir');
     Route::get('kasir/pendapatan/lain', [KasirController::class, 'pendapatanLain'])->name('rekapKasir')->middleware('role:kasir');
 
     //Laborat

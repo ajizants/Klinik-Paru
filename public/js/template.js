@@ -152,7 +152,7 @@ var Toast = Swal.mixin({
     timer: 3000,
 });
 
-function toggleSections(sectionToShow) {
+function toggleSections(sectionToShow, idTable = null) {
     console.log("🚀 ~ toggleSections ~ sectionToShow:", sectionToShow);
     var sections = [
         "#dAntrian",
@@ -204,6 +204,9 @@ function toggleSections(sectionToShow) {
             $(section).hide();
         }
     });
+    if (idTable !== null) {
+        $(idTable).DataTable().columns.adjust().draw();
+    }
 }
 
 function enterCariRM(event, ruang) {

@@ -25,16 +25,16 @@ class FarmasiController extends Controller
 
     public function farmasi()
     {
-        $title    = 'FARMASI';
-        $pModel   = new PegawaiModel();
-        $dokter   = $pModel->olahPegawai([1, 7, 8]);
-        $perawat  = $pModel->olahPegawai([10, 14, 15, 23]);
-        $lModel   = new LayananModel();
+        $title = 'FARMASI';
+        $pModel = new PegawaiModel();
+        $dokter = $pModel->olahPegawai([1, 7, 8]);
+        $perawat = $pModel->olahPegawai([10, 14, 15, 23]);
+        $lModel = new LayananModel();
         $tindakan = $lModel->layanans([2, 3, 5, 6, 10]);
-        $bmhp     = BMHPModel::all();
-        $dxMed    = DiagnosaModel::all();
-        $model    = new IGDTransModel();
-        $dataIgd  = $model->getPelaksanaLast();
+        $bmhp = BMHPModel::all();
+        $dxMed = DiagnosaModel::all();
+        $model = new IGDTransModel();
+        $dataIgd = $model->getPelaksanaLast();
 
         $dokter = array_map(function ($item) {
             return (object) $item;
@@ -54,7 +54,7 @@ class FarmasiController extends Controller
 
     public function obats(Request $request)
     {
-        $norm    = $request->input('norm');
+        $norm = $request->input('norm');
         $tanggal = $request->input('tanggal');
         return response()->json($this->cariObats($norm, $tanggal));
         // return $this->cariObats($norm, $tanggal);
@@ -66,17 +66,20 @@ class FarmasiController extends Controller
         // $dataArray = json_decode($data->getContent(), true);
 
         // return $dataArray;
-        $obats        = $dataArray['obats'] ?? null;
+        $obats = $dataArray['obats'] ?? null;
         $tindakanList = $dataArray['tindakan'] ?? null;
         // dd($tindakanList);
-        $cppt         = $dataArray['cppt'] ?? null;
-        $notrans      = $cppt['no_reg'];
+        $cppt = $dataArray['cppt'] ?? null;
+        $notrans = $cppt['no_reg'];
         $waktuSelesai = $this->selesaiFarmasi($norm, $notrans);
-        $waktu        = $waktuSelesai['message'];
-        $noSep        = $waktuSelesai['data']->no_sep ?? null;
-        return view('Laporan.obat', compact('tindakanList', 'obats', 'cppt', 'noSep'))->with([
-            'title' => "Obat Terpakai",
+        $waktu = $waktuSelesai['message'];
+        $noSep = $waktuSelesai['data']->no_sep ?? null;
+        return view('Farmasi.Cetak.resepInternal', compact('tindakanList', 'obats', 'cppt', 'noSep'))->with([
+            'title' => "Resep Internal",
         ]);
+        // return view('Laporan.obat', compact('tindakanList', 'obats', 'cppt', 'noSep'))->with([
+        //     'title' => "Obat Terpakai",
+        // ]);
     }
     public function cetakResepKominnfo($norm, $tanggal)
     {
@@ -91,39 +94,39 @@ class FarmasiController extends Controller
         // $dataArray = json_decode($data->getContent(), true);
 
         // return $dataArray;
-        $obats        = $dataArray['obats'] ?? null;
+        $obats = $dataArray['obats'] ?? null;
         $tindakanList = $dataArray['tindakan'] ?? null;
         // dd($tindakanList);
-        $cppt         = $dataArray['cppt'] ?? null;
-        $notrans      = $cppt['no_reg'];
+        $cppt = $dataArray['cppt'] ?? null;
+        $notrans = $cppt['no_reg'];
         $waktuSelesai = $this->selesaiFarmasi($norm, $notrans);
-        $waktu        = $waktuSelesai['message'];
-        $noSep        = $waktuSelesai['data']->no_sep ?? null;
+        $waktu = $waktuSelesai['message'];
+        $noSep = $waktuSelesai['data']->no_sep ?? null;
         // return $cppt;
         $dataDx = $cppt['diagnosa'];
-        $dxs    = [];
+        $dxs = [];
         // return $dataDx;
 
         foreach ($dataDx as $dx) {
-            $kdDx  = $dx['kode_diagnosa'];
+            $kdDx = $dx['kode_diagnosa'];
             $dxMap = DiagnosaMapModel::where('kdDx', $kdDx)->first();
-            $nmDX  = $dxMap != null ? $dxMap->mapping : $dx['nama_diagnosa'];
+            $nmDX = $dxMap != null ? $dxMap->mapping : $dx['nama_diagnosa'];
             $dxs[] = [
                 'kode_diagnosa' => $dx['kode_diagnosa'],
                 'nama_diagnosa' => $dx['nama_diagnosa'],
-                'nmDx'          => $nmDX,
+                'nmDx' => $nmDX,
             ];
         }
-        return view('Farmasi.resepKominfo', compact('tindakanList', 'obats', 'cppt', 'noSep', 'dxs'))->with([
+        return view('Farmasi.Cetak.resepKominfo', compact('tindakanList', 'obats', 'cppt', 'noSep', 'dxs'))->with([
             'title' => "Resep BPJS",
         ]);
 
         return [
             'tindakan' => $tindakanList,
-            'obats'    => $obats,
-            'cppt'     => $cppt,
-            'noSep'    => $noSep,
-            'dxs'      => $dxs,
+            'obats' => $obats,
+            'cppt' => $cppt,
+            'noSep' => $noSep,
+            'dxs' => $dxs,
         ];
     }
 
@@ -131,24 +134,24 @@ class FarmasiController extends Controller
     {
 
         $params = [
-            'tanggal_awal'  => $tanggal,
+            'tanggal_awal' => $tanggal,
             'tanggal_akhir' => $tanggal,
-            'no_rm'         => $norm ?? '',
+            'no_rm' => $norm ?? '',
         ];
         $model = new KominfoModel();
-        $data  = $model->cpptRequest($params);
+        $data = $model->cpptRequest($params);
         // dd($data);
 
         // Pastikan data CPPT tersedia
         $cppt = $data['response']['data'][0] ?? null;
 
         // Kembalikan null saja kalau tidak ada
-        if (! $cppt || ! isset($cppt['no_reg'])) {
+        if (!$cppt || !isset($cppt['no_reg'])) {
             return null;
         }
 
         // Periksa resep obat dari CPPT
-        $obats  = [];
+        $obats = [];
         $dObats = [];
         if (is_array($cppt) && isset($cppt['resep_obat'])) {
             $dObats = $cppt['resep_obat'];
@@ -157,25 +160,25 @@ class FarmasiController extends Controller
         }
         $dObats = array_filter($dObats, function ($item) {
             // Pastikan 'resep_obat_detail' ada dan tidak kosong
-            if (is_array($item) && isset($item['resep_obat_detail']) && ! empty($item['resep_obat_detail'])) {
+            if (is_array($item) && isset($item['resep_obat_detail']) && !empty($item['resep_obat_detail'])) {
                 return true;
             }
-            if (is_object($item) && isset($item->resep_obat_detail) && ! empty($item->resep_obat_detail)) {
+            if (is_object($item) && isset($item->resep_obat_detail) && !empty($item->resep_obat_detail)) {
                 return true;
             }
             return false;
         });
         foreach ($dObats as $obat) {
             $obats[] = [
-                'no_resep'          => $obat['no_resep'],
-                'jumlah_puyer'      => $obat['jumlah_puyer'],
-                'signa'             => $obat['signa_1'] . ' X ' . $obat['signa_2'] . ' ' . $obat['aturan_pakai'],
-                'ket'               => $obat['keterangan'],
+                'no_resep' => $obat['no_resep'],
+                'jumlah_puyer' => $obat['jumlah_puyer'],
+                'signa' => $obat['signa_1'] . ' X ' . $obat['signa_2'] . ' ' . $obat['aturan_pakai'],
+                'ket' => $obat['keterangan'],
                 'resep_obat_detail' => $obat['resep_obat_detail'],
             ];
         }
 
-        $noReg     = $cppt['no_reg'];
+        $noReg = $cppt['no_reg'];
         $tindakans = IGDTransModel::with(['tindakan', 'transbmhp.bmhp'])
             ->where('notrans', $noReg)
             ->get();
@@ -186,24 +189,24 @@ class FarmasiController extends Controller
             foreach ($item->transbmhp as $trans) {
                 $bmhps[] = [
                     'kdBmhp' => $trans->kdBmhp,
-                    'qty'    => $trans->jml,
-                    'bmhp'   => $trans->bmhp->nmObat ?? '',
+                    'qty' => $trans->jml,
+                    'bmhp' => $trans->bmhp->nmObat ?? '',
                 ];
             }
             $tindakanList[] = [
-                'id'       => $item->id,
-                'notrans'  => $item->notrans,
-                'norm'     => $item->norm,
-                'kdTind'   => $item->kdTind,
+                'id' => $item->id,
+                'notrans' => $item->notrans,
+                'norm' => $item->norm,
+                'kdTind' => $item->kdTind,
                 'tindakan' => $item->tindakan->nmTindakan ?? '',
-                'bmhps'    => $bmhps,
+                'bmhps' => $bmhps,
             ];
         }
 
         return [
             'tindakan' => $tindakanList,
-            'obats'    => $obats,
-            'cppt'     => $cppt,
+            'obats' => $obats,
+            'cppt' => $cppt,
         ];
     }
 
@@ -213,15 +216,15 @@ class FarmasiController extends Controller
         $dataObat = $this->cariObats($norm, $tanggal);
         // return $dataObat;
         $obats = $dataObat['obats'] ?? null;
-        $cppt  = $dataObat['cppt'] ?? null;
+        $cppt = $dataObat['cppt'] ?? null;
         foreach ($obats as &$obat) {
             $obat['nama_pasien'] = $cppt['pasien_nama'] ?? null;
-            $obat['no_rm']       = $cppt['pasien_no_rm'] ?? null;
-            $obat['tgl_lahir']   = $cppt['pasien_tgl_lahir'] ?? null;
-            $obat['alamat']      = $cppt['kelurahan_nama'] . ', ' . $cppt['pasien_rt'] . '/' . $cppt['pasien_rw'] . ', ' . $cppt['kecamatan_nama'] . ', ' . $cppt['kabupaten_nama'];
+            $obat['no_rm'] = $cppt['pasien_no_rm'] ?? null;
+            $obat['tgl_lahir'] = $cppt['pasien_tgl_lahir'] ?? null;
+            $obat['alamat'] = $cppt['kelurahan_nama'] . ', ' . $cppt['pasien_rt'] . '/' . $cppt['pasien_rw'] . ', ' . $cppt['kecamatan_nama'] . ', ' . $cppt['kabupaten_nama'];
             // Tambahkan "/ hisap" jika mengandung kata "puff"
             if (isset($obat['signa']) && str_contains(strtolower($obat['signa']), 'puff')) {
-                if (! str_contains(strtolower($obat['signa']), 'hisap')) {
+                if (!str_contains(strtolower($obat['signa']), 'hisap')) {
                     $obat['signa'] .= ' / Hisap';
                 }
             }
@@ -236,16 +239,16 @@ class FarmasiController extends Controller
 
     public function panggil4(Request $request)
     {
-        $log_id  = $request->input('log_id');
-        $norm    = $request->input('norm');
+        $log_id = $request->input('log_id');
+        $norm = $request->input('norm');
         $notrans = $request->input('notrans');
-                                             // session()->forget('cookie_farmasi');
+        // session()->forget('cookie_farmasi');
         $cookie = session('cookie_farmasi'); // Retrieve the cookie from the session
-                                             // dd($cookie);
+        // dd($cookie);
 
-        if (! $cookie) {
+        if (!$cookie) {
             $cookie = $this->loginAndStoreCookie();
-            if (! $cookie) {
+            if (!$cookie) {
                 return response()->json(['message' => 'Login gagal'], 401);
             }
         }
@@ -261,7 +264,7 @@ class FarmasiController extends Controller
             }
 
             $antrian = $this->antrianFarmasi(now()->toDateString(), $norm, $cookie);
-            $log_id  = $antrian['log_id'] ?? null;
+            $log_id = $antrian['log_id'] ?? null;
             if ($antrian === null || $antrian['log_id'] === null) {
                 return response()->json(['message' => 'Tidak Ada Antrian di tanggal ' . now()->toDateString()], 404);
             }
@@ -276,7 +279,7 @@ class FarmasiController extends Controller
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             return response()->json([
                 'message' => 'Request gagal',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -285,11 +288,11 @@ class FarmasiController extends Controller
     {
         $log_id = $request->input('log_id');
         $cookie = session('cookie_farmasi'); // Retrieve the cookie from the session
-                                             // dd($cookie);
+        // dd($cookie);
 
-        if (! $cookie) {
+        if (!$cookie) {
             $cookie = $this->loginAndStoreCookie();
-            if (! $cookie) {
+            if (!$cookie) {
                 return response()->json(['message' => 'Login gagal'], 401);
             }
         }
@@ -309,7 +312,7 @@ class FarmasiController extends Controller
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             return response()->json([
                 'message' => 'Request gagal',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -317,38 +320,38 @@ class FarmasiController extends Controller
     public function pulangkan(Request $request)
     {
         $cookie = session('cookie_farmasi'); // Retrieve the cookie from the session
-        if (! $cookie) {
+        if (!$cookie) {
             $cookie = $this->loginAndStoreCookie();
-            if (! $cookie) {
+            if (!$cookie) {
                 return response()->json(['message' => 'Login gagal'], 401);
             }
         }
         // dd($cookie);
-        $log_id  = $request->input('log_id');
-        $norm    = $request->input('norm');
+        $log_id = $request->input('log_id');
+        $norm = $request->input('norm');
         $notrans = $request->input('notrans');
-        $url     = env('BASR_URL_KOMINFO', '') . '/loket_farmasi/selesai';
+        $url = env('BASR_URL_KOMINFO', '') . '/loket_farmasi/selesai';
 
         try {
             $response = $this->sendRequest($url, $cookie, [
-                'log_id'               => $log_id,
+                'log_id' => $log_id,
                 'ruang_id_selanjutnya' => 'Pulang',
             ]);
 
             if ($response->getStatusCode() !== 200) {
                 return response()->json(['message' => 'Request gagal'], 500);
             }
-            $waktu      = $this->selesaiFarmasi($norm, $notrans);
+            $waktu = $this->selesaiFarmasi($norm, $notrans);
             $resKominfo = json_decode($response->getBody(), true);
-            $msg        = [
+            $msg = [
                 'message' => $waktu,
-                'data'    => $resKominfo,
+                'data' => $resKominfo,
             ];
             return response()->json($msg, 200, [], JSON_PRETTY_PRINT);
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             return response()->json([
                 'message' => 'Request gagal',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -366,9 +369,9 @@ class FarmasiController extends Controller
                 $data->waktu_selesai_farmasi = now();
             } else {
                 // Jika entri belum ada, buat entri baru
-                $data                        = new KunjunganWaktuSelesai;
-                $data->norm                  = $norm;
-                $data->notrans               = $notrans;
+                $data = new KunjunganWaktuSelesai;
+                $data->norm = $norm;
+                $data->notrans = $notrans;
                 $data->waktu_selesai_farmasi = now();
 
             }
@@ -383,7 +386,7 @@ class FarmasiController extends Controller
 
             $res = [
                 'message' => $msg,
-                'data'    => $data,
+                'data' => $data,
             ];
 
             return $res;
@@ -397,11 +400,11 @@ class FarmasiController extends Controller
     // private function antrianFarmasi($tgl, $norm = null, $cookie = null)
     private function antrianFarmasi($tgl, $cookie = null)
     {
-        $tgl   = $tgl ?? now()->toDateString();
+        $tgl = $tgl ?? now()->toDateString();
         $model = new KominfoModel();
 
         $daftarTunggu = $model->getTungguFaramsi($tgl, $cookie);
-        $lists        = $daftarTunggu['data'];
+        $lists = $daftarTunggu['data'];
 
         if (empty($lists)) {
             return response()->json(['message' => 'Tidak Ada Antrian di tanggal ' . $tgl], 404);
@@ -419,7 +422,7 @@ class FarmasiController extends Controller
 
     private function loginAndStoreCookie()
     {
-        $model         = new KominfoModel();
+        $model = new KominfoModel();
         $loginResponse = $model->login(197609262011012003, env('PASSWORD_KOMINFO', ''));
 
         $cookieFar = $loginResponse['cookies'][0] ?? null;
@@ -436,9 +439,9 @@ class FarmasiController extends Controller
 
         return $client->request('POST', $url, [
             'form_params' => $params,
-            'headers'     => [
+            'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
-                'Cookie'       => $cookie,
+                'Cookie' => $cookie,
             ],
         ]);
     }
@@ -456,18 +459,18 @@ class FarmasiController extends Controller
         $res = [];
         foreach ($daftariwayat as $d) {
             $res[] = [
-                "notrans"       => $d["notrans"] ?? "null",
-                "norm"          => $d["norm"] ?? "null",
-                "nourut"        => $d["nourut"] ?? "null",
-                "noasuransi"    => $d["noasuransi"] ?? "null",
-                "layanan"       => $d["kelompok"]["kelompok"] ?? "null",
-                "biaya"         => $d["kelompok"]["biaya"] ?? "null",
-                "noktp"         => $d["biodata"]["noktp"] ?? "null",
-                "namapasien"    => $d["biodata"]["nama"] ?? "null",
-                "alamatpasien"  => $d["biodata"]["alamat"] ?? "null",
-                "rtrwpasien"    => $d["biodata"]["rtrw"] ?? "null",
+                "notrans" => $d["notrans"] ?? "null",
+                "norm" => $d["norm"] ?? "null",
+                "nourut" => $d["nourut"] ?? "null",
+                "noasuransi" => $d["noasuransi"] ?? "null",
+                "layanan" => $d["kelompok"]["kelompok"] ?? "null",
+                "biaya" => $d["kelompok"]["biaya"] ?? "null",
+                "noktp" => $d["biodata"]["noktp"] ?? "null",
+                "namapasien" => $d["biodata"]["nama"] ?? "null",
+                "alamatpasien" => $d["biodata"]["alamat"] ?? "null",
+                "rtrwpasien" => $d["biodata"]["rtrw"] ?? "null",
                 "kelaminpasien" => $d["biodata"]["jeniskel"] ?? "null",
-                "tgllahir"      => $d["biodata"]["tgllahir"] ?? "null",
+                "tgllahir" => $d["biodata"]["tgllahir"] ?? "null",
             ];
         }
         if ($daftariwayat->isEmpty()) {
@@ -482,8 +485,8 @@ class FarmasiController extends Controller
     public function datatransaksi(Request $request)
     {
         $notrans = $request->input('notrans');
-        $norm    = $request->input('norm');
-        $tgl     = $request->input('tgl');
+        $norm = $request->input('norm');
+        $tgl = $request->input('tgl');
 
         $datatransaksi = FarmasiModel::with(['obat', 'petugasPegawai', 'dokterPegawai'])
             ->where('notrans', 'LIKE', '%' . $notrans . '%')
@@ -495,18 +498,18 @@ class FarmasiController extends Controller
         $formattedData = [];
         foreach ($datatransaksi as $transaksi) {
             $transaksi['tglTrans'] = $transaksi->created_at->format('d-m-Y');
-            $formattedData[]       = [
-                'idAptk'     => $transaksi->idAptk,
-                'notrans'    => $transaksi->notrans,
-                'norm'       => $transaksi->norm,
-                'qty'        => $transaksi->jumlah,
-                'total'      => $transaksi->total,
-                'idObat'     => $transaksi->product_id,
+            $formattedData[] = [
+                'idAptk' => $transaksi->idAptk,
+                'notrans' => $transaksi->notrans,
+                'norm' => $transaksi->norm,
+                'qty' => $transaksi->jumlah,
+                'total' => $transaksi->total,
+                'idObat' => $transaksi->product_id,
                 'product_id' => $transaksi->obat->product_id,
-                'nmObat'     => $transaksi->obat->nmObat,
-                'petugas'    => $transaksi->petugasPegawai->gelar_d . ' ' . $transaksi->petugasPegawai->nama . ' ' . $transaksi->petugasPegawai->gelar_b,
-                'dokter'     => $transaksi->dokterPegawai->gelar_d . ' ' . $transaksi->dokterPegawai->nama . ' ' . $transaksi->dokterPegawai->gelar_b,
-                'tglTrans'   => $transaksi->tglTrans,
+                'nmObat' => $transaksi->obat->nmObat,
+                'petugas' => $transaksi->petugasPegawai->gelar_d . ' ' . $transaksi->petugasPegawai->nama . ' ' . $transaksi->petugasPegawai->gelar_b,
+                'dokter' => $transaksi->dokterPegawai->gelar_d . ' ' . $transaksi->dokterPegawai->nama . ' ' . $transaksi->dokterPegawai->gelar_b,
+                'tglTrans' => $transaksi->tglTrans,
             ];
         }
 
@@ -521,22 +524,22 @@ class FarmasiController extends Controller
             ->get();
         $res = [];
         foreach ($data as $item) {
-            $item['norm']     = substr($item->notrans, 0, 6);
+            $item['norm'] = substr($item->notrans, 0, 6);
             $item['tglTrans'] = $item->created_at->format('d-m-Y');
 
             $res[] = [
-                "id"        => $item->id,
-                "notrans"   => $item->notrans,
-                "norm"      => $item->norm,
-                "tgltrans"  => $item->tgltrans,
+                "id" => $item->id,
+                "notrans" => $item->notrans,
+                "norm" => $item->norm,
+                "tgltrans" => $item->tgltrans,
                 "tgl_lahir" => $item->tgl_lahir,
-                "umur"      => $item->umur,
-                "gender"    => $item->gender,
-                "alamat"    => $item->alamat,
-                "nohp"      => $item->nohp,
-                "tindakan"  => $item->tindakan->nmTindakan,
-                "biaya"     => $item->biaya,
-                "total"     => $item->total,
+                "umur" => $item->umur,
+                "gender" => $item->gender,
+                "alamat" => $item->alamat,
+                "nohp" => $item->nohp,
+                "tindakan" => $item->tindakan->nmTindakan,
+                "biaya" => $item->biaya,
+                "total" => $item->total,
             ];
         }
         // return response()->json($res, 200, [], JSON_PRETTY_PRINT);
@@ -545,14 +548,14 @@ class FarmasiController extends Controller
     public function simpanFarmasi(Request $request)
     {
         // Mengambil nilai dari input pengguna
-        $notrans    = $request->input('notrans');
-        $norm       = $request->input('norm');
-        $idFarmasi  = $request->input('idFarmasi');
-        $idObat     = $request->input('product_id');
-        $qty        = $request->input('qty');
-        $total      = $request->input('total');
-        $petugas    = $request->input('petugas');
-        $dokter     = $request->input('dokter');
+        $notrans = $request->input('notrans');
+        $norm = $request->input('norm');
+        $idFarmasi = $request->input('idFarmasi');
+        $idObat = $request->input('product_id');
+        $qty = $request->input('qty');
+        $total = $request->input('total');
+        $petugas = $request->input('petugas');
+        $dokter = $request->input('dokter');
         $created_at = Carbon::now()->toDateString();
 
         // Pastikan $kdTind memiliki nilai yang valid sebelum menyimpan data
@@ -560,13 +563,13 @@ class FarmasiController extends Controller
             // Membuat instance dari model KunjunganTindakan
             $kunjunganFarmasi = new FarmasiModel();
             // Mengatur nilai-nilai kolom
-            $kunjunganFarmasi->notrans    = $notrans;
-            $kunjunganFarmasi->norm       = $norm;
+            $kunjunganFarmasi->notrans = $notrans;
+            $kunjunganFarmasi->norm = $norm;
             $kunjunganFarmasi->product_id = $idFarmasi;
-            $kunjunganFarmasi->jumlah     = $qty;
-            $kunjunganFarmasi->total      = $total;
-            $kunjunganFarmasi->petugas    = $petugas;
-            $kunjunganFarmasi->dokter     = $dokter;
+            $kunjunganFarmasi->jumlah = $qty;
+            $kunjunganFarmasi->total = $total;
+            $kunjunganFarmasi->petugas = $petugas;
+            $kunjunganFarmasi->dokter = $dokter;
             $kunjunganFarmasi->created_at = $created_at;
             // $kunjunganFarmasi->updated_at = $updated_at;
 
@@ -592,7 +595,7 @@ class FarmasiController extends Controller
         if ($updatKeluarFarmasi) {
             $updatKeluarFarmasi->update([
                 'keluar' => $updatKeluarFarmasi->keluar + $qty,
-                'sisa'   => $this->calculateSisa($updatKeluarFarmasi->stokBaru, $updatKeluarFarmasi->masuk, $updatKeluarFarmasi->keluar + $qty),
+                'sisa' => $this->calculateSisa($updatKeluarFarmasi->stokBaru, $updatKeluarFarmasi->masuk, $updatKeluarFarmasi->keluar + $qty),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -603,7 +606,7 @@ class FarmasiController extends Controller
         if ($updateKeluar) {
             $updateKeluar->update([
                 'keluar' => $updateKeluar->keluar + $qty,
-                'sisa'   => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar + $qty),
+                'sisa' => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar + $qty),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -622,10 +625,10 @@ class FarmasiController extends Controller
         // dd($farmasi);
         if ($farmasi) {
             // Mengambil nilai jumlah yang akan dihapus dari transaksi farmasi
-            $jumlahDihapus   = $farmasi->jumlah;
-            $product_id      = $farmasi->product_id;
+            $jumlahDihapus = $farmasi->jumlah;
+            $product_id = $farmasi->product_id;
             $gudangFarmasiIn = GudangFarmasiInStokModel::where('id', $product_id)->first();
-            $idGudang        = $gudangFarmasiIn->product_id;
+            $idGudang = $gudangFarmasiIn->product_id;
             // dd($idGudang);
             $gudangFarmasi = GudangFarmasiModel::where('product_id', $idGudang)->first();
             // dd($gudangFarmasi);
@@ -633,7 +636,7 @@ class FarmasiController extends Controller
             if ($gudangFarmasi) {
                 $gudangFarmasi->update([
                     'keluar' => $gudangFarmasi->keluar - $jumlahDihapus,
-                    'sisa'   => $this->calculateSisa($gudangFarmasi->stokBaru, $gudangFarmasi->masuk, $gudangFarmasi->keluar - $jumlahDihapus),
+                    'sisa' => $this->calculateSisa($gudangFarmasi->stokBaru, $gudangFarmasi->masuk, $gudangFarmasi->keluar - $jumlahDihapus),
                 ]);
             } else {
                 return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -643,7 +646,7 @@ class FarmasiController extends Controller
                 $gudangFarmasiIn->update([
                     'keluar' => intval($gudangFarmasiIn->keluar) - intval($jumlahDihapus),
 
-                    'sisa'   => $this->calculateSisa($gudangFarmasiIn->stokBaru, $gudangFarmasiIn->masuk, intval($gudangFarmasiIn->keluar) - intval($jumlahDihapus)),
+                    'sisa' => $this->calculateSisa($gudangFarmasiIn->stokBaru, $gudangFarmasiIn->masuk, intval($gudangFarmasiIn->keluar) - intval($jumlahDihapus)),
                 ]);
             } else {
                 return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -662,35 +665,35 @@ class FarmasiController extends Controller
     {
         $idAptk = $request->input('idAptk');
 
-        $notrans    = $request->input('notrans');
-        $norm       = $request->input('norm');
-        $idFarmasi  = $request->input('idFarmasi');
-        $idObat     = $request->input('product_id');
-        $qty        = $request->input('qty');
-        $total      = $request->input('total');
-        $petugas    = $request->input('petugas');
-        $dokter     = $request->input('dokter');
+        $notrans = $request->input('notrans');
+        $norm = $request->input('norm');
+        $idFarmasi = $request->input('idFarmasi');
+        $idObat = $request->input('product_id');
+        $qty = $request->input('qty');
+        $total = $request->input('total');
+        $petugas = $request->input('petugas');
+        $dokter = $request->input('dokter');
         $updated_at = Carbon::now()->toDateString();
 
         $farmasi = FarmasiModel::find($idAptk);
         // dd($farmasi);
         if ($farmasi) {
             // Mengambil nilai jumlah yang akan dihapus dari transaksi farmasi
-            $qtyup     = $farmasi->jumlah;
+            $qtyup = $farmasi->jumlah;
             $qtyupdate = intval($qtyup) - intval($qty);
             // dd($qtyupdate);
             $farmasi->update(['jumlah' => $qty, 'total' => $total]);
             $product_id = $farmasi->product_id;
 
             $gudangFarmasiIn = GudangFarmasiInStokModel::where('id', $product_id)->first();
-            $idGudang        = $gudangFarmasiIn->product_id;
-            $gudangFarmasi   = GudangFarmasiModel::where('product_id', $idGudang)->first();
+            $idGudang = $gudangFarmasiIn->product_id;
+            $gudangFarmasi = GudangFarmasiModel::where('product_id', $idGudang)->first();
 
             //update stok farmasi
             if ($gudangFarmasi) {
                 $gudangFarmasi->update([
                     'keluar' => $gudangFarmasi->keluar - $qtyupdate,
-                    'sisa'   => $this->calculateSisa($gudangFarmasi->stokBaru, $gudangFarmasi->masuk, $gudangFarmasi->keluar - $qtyupdate),
+                    'sisa' => $this->calculateSisa($gudangFarmasi->stokBaru, $gudangFarmasi->masuk, $gudangFarmasi->keluar - $qtyupdate),
                 ]);
             } else {
                 return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -701,7 +704,7 @@ class FarmasiController extends Controller
                 $gudangFarmasiIn->update([
                     'keluar' => intval($gudangFarmasiIn->keluar) - intval($qtyupdate),
 
-                    'sisa'   => $this->calculateSisa($gudangFarmasiIn->stokBaru, $gudangFarmasiIn->masuk, intval($gudangFarmasiIn->keluar) - intval($qtyupdate)),
+                    'sisa' => $this->calculateSisa($gudangFarmasiIn->stokBaru, $gudangFarmasiIn->masuk, intval($gudangFarmasiIn->keluar) - intval($qtyupdate)),
                 ]);
             } else {
                 return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -727,9 +730,9 @@ class FarmasiController extends Controller
             // Iterasi melalui setiap baris data dan memperbarui stok_awal dan mengosongkan masuk, keluar, stok_akhir
             foreach ($gudangData as $gudangRow) {
                 $gudangRow->update([
-                    'stok_awal'  => $gudangRow->stok_akhir,
-                    'masuk'      => 0,
-                    'keluar'     => 0,
+                    'stok_awal' => $gudangRow->stok_akhir,
+                    'masuk' => 0,
+                    'keluar' => 0,
                     'stok_akhir' => null,
                 ]);
             }
@@ -758,21 +761,21 @@ class FarmasiController extends Controller
             // Mengubah data ke dalam bentuk array
             $dataToInsert = $gudangData->map(function ($row) {
                 return [
-                    'product_id'   => $row->product_id,
-                    'idObat'       => $row->idObat,
-                    'nmObat'       => $row->nmObat,
-                    'jenis'        => $row->jenis,
-                    'pabrikan'     => $row->pabrikan,
-                    'sediaan'      => $row->sediaan,
-                    'sumber'       => $row->sumber,
-                    'supplier'     => $row->supplier,
+                    'product_id' => $row->product_id,
+                    'idObat' => $row->idObat,
+                    'nmObat' => $row->nmObat,
+                    'jenis' => $row->jenis,
+                    'pabrikan' => $row->pabrikan,
+                    'sediaan' => $row->sediaan,
+                    'sumber' => $row->sumber,
+                    'supplier' => $row->supplier,
                     'tglPembelian' => $row->tglPembelian,
-                    'stok_awal'    => $row->stok_awal,
-                    'masuk'        => $row->masuk,
-                    'keluar'       => $row->keluar,
-                    'stok_akhir'   => $row->stok_akhir,
-                    'created_at'   => now(),
-                    'updated_at'   => now(),
+                    'stok_awal' => $row->stok_awal,
+                    'masuk' => $row->masuk,
+                    'keluar' => $row->keluar,
+                    'stok_akhir' => $row->stok_akhir,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ];
             })->toArray();
 

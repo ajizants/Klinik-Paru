@@ -8,10 +8,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     {{-- @vite('resources/css/app.css') --}}
+
 </head>
 
 <body class="text-black flex justify-center">
-    <div class="conatiner m-3 pt-2 w-[22cm] h-[33cm]">
+    <div class="conatiner m-3 pt-2 w-[33cm] h-[22cm]">
         <h1 class="text-center font-bold text-sm">DAFTAR REKAPITULASI PENERIMAAN DAN PENYETORAN </h1>
         <h1 class="text-center font-bold text-sm">Periode Tanggal: {{ $tglAwalIdn }} s.d. {{ $tglAkhirIdn }}</h1>
         <br>
@@ -126,7 +127,7 @@
         </script>
 
         <!-- Tanda Tangan -->
-        @include('Laporan.Kasir.ttd')
+        @include('Laporan.Kasir.Cetak.ttd')
     </div>
 </body>
 

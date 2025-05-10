@@ -301,7 +301,7 @@
             </div>
         </div>
         <!-- Tanda Tangan -->
-        @include('Laporan.Kasir.ttd')
+        @include('Laporan.Kasir.Cetak.ttd')
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

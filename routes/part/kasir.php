@@ -33,6 +33,8 @@ Route::get('/pendapatan/item/{tahun}', [KasirController::class, 'pendapatanPerIt
 Route::post('/pendapatan/item', [KasirController::class, 'pendapatanPerItem']);
 Route::post('/pendapatan/item/bulanan', [KasirController::class, 'pendapatanPerItemBulanan']);
 Route::post('/pendapatan/ruang', [KasirController::class, 'pendapatanPerRuang']);
+
+//cetakan
 Route::get('cetakSBS/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakSBS']);
 Route::get('cetakBAPH/{tgl}/{tahun}/{jaminan}', [KasirController::class, 'cetakBAPH']);
 Route::get('stsBruto/{bln}/{tahun}/{jaminan}', [KasirSetoranController::class, 'stsBruto']);

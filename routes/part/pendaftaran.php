@@ -23,6 +23,7 @@ Route::get('pendaftaran/pasien/{norm}', [PendaftaranController::class, 'showPasi
 Route::post('sep/get_data', [ApiKominfoController::class, 'getDataSEP']);
 Route::post('sep/detail', [ApiKominfoController::class, 'getDetailSEP']);
 Route::get('sep/cetak/{no_sep}', [ApiKominfoController::class, 'cetakSEP']);
+Route::get('sep/billing/cetak/{no_sep}', [ApiKominfoController::class, 'cetakSEPBilling']);
 Route::post('SuratKontrol/get_data', [ApiKominfoController::class, 'getDataSuratKontrol']);
 Route::post('SuratKontrol/detail', [ApiKominfoController::class, 'getDetailSuratKontrol']);
 Route::get('SuratKontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakSuratKontrol']);
