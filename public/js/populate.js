@@ -531,7 +531,7 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
         ];
     } else {
         aksiColumns = [
-            { data: "aksi", className: "p-2 text-center", title: "Aksi" },
+            { data: "aksi", className: "p-2 text-center col-1", title: "Aksi" },
         ];
     }
     const ketColumns = [
@@ -607,8 +607,20 @@ function processResponse(response, ruang, statusFilter) {
             item.status_pulang === "Sudah Pulang" &&
             item.penjamin_nama === "UMUM"
     );
+    const daftarTungguBpjs = data.filter(
+        (item) =>
+            item.status === "Tidak Ada Transaksi" &&
+            item.status_pulang === "Sudah Pulang" &&
+            item.penjamin_nama === "BPJS"
+    );
 
-    return { data, dataSelesai, daftarTunggu, daftarTungguUmum };
+    return {
+        data,
+        dataSelesai,
+        daftarTunggu,
+        daftarTungguUmum,
+        daftarTungguBpjs,
+    };
 }
 
 function generateActionLink(item, ruang, statusFilter) {
@@ -693,17 +705,18 @@ function generateActionLink(item, ruang, statusFilter) {
             ${linkLog}
             ${linkCppt}</div>`,
         kasir:
-            item.status === "Sudah Selesai"
-                ? createLink("fas fa-pen-to-square", "setTransaksi", ruang) +
-                  createLink(
-                      "fa-solid fa-volume-high",
-                      "celuk",
-                      ruang,
-                      "ml-3 btn-warning"
-                  )
-                : item.status === "Tidak Ada Transaksi"
-                ? createLink("fas fa-pen-to-square", "setTransaksi", ruang)
-                : `<a></a>`,
+            // item.status === "Sudah Selesai"
+            //     ?
+            createLink("fas fa-pen-to-square", "setTransaksi", ruang) +
+            createLink(
+                "fa-solid fa-volume-high",
+                "celuk",
+                ruang,
+                "ml-3 btn-warning"
+            ),
+        // : item.status === "Tidak Ada Transaksi"
+        // ? createLink("fas fa-pen-to-square", "setTransaksi", ruang)
+        // : `<a></a>`
         farmasi:
             item.status === "Sudah Selesai"
                 ? createLink(
@@ -1104,8 +1117,13 @@ function antrianAll(ruang) {
 
     fetchDataAntrianAll(tanggal, ruang, function (response) {
         $("#loadingSpinner").hide();
-        const { data, dataSelesai, daftarTunggu, daftarTungguUmum } =
-            processResponse(response, ruang, "Sudah Selesai");
+        const {
+            data,
+            dataSelesai,
+            daftarTunggu,
+            daftarTungguUmum,
+            daftarTungguBpjs,
+        } = processResponse(response, ruang, "Sudah Selesai");
         // console.log("🚀 ~ daftarTunggu:", daftarTunggu);
         // console.log("🚀 ~ dataSelesai:", dataSelesai);
         // console.log("🚀 ~ data:", data);
@@ -1125,6 +1143,12 @@ function antrianAll(ruang) {
             initializeDataTable(
                 "#dataAntrian",
                 daftarTungguUmum,
+                getColumnDefinitions("status", ruang),
+                ruang
+            );
+            initializeDataTable(
+                "#dataAntrianBpjs",
+                daftarTungguBpjs,
                 getColumnDefinitions("status", ruang),
                 ruang
             );

@@ -480,7 +480,7 @@
                         <td class="text-left">Obat Kronis</td>
                         <td class="text-center">:</td>
                         <td class="text-center">Rp.</td>
-                        <td class="text-right"> {{ number_format($totalObat, 0, ',', '.') . ',-' }}</td>
+                        <td class="text-right"> {{ number_format($totalObatKronis, 0, ',', '.') . ',-' }}</td>
                     </tr>
                     <tr class="border-b border-black">
                         <td class="text-left"> {{ $no++ }}. </td>
@@ -491,7 +491,7 @@
                             $totalTagihan =
                                 15000 + 50000 + $totalLab + $totalRo + $totalTindakan + $totalObat + $totalObat;
                         @endphp
-                        <td class="text-right"> {{ number_format($totalTagihan, 0, ',', '.') . ',-' }}</td>
+                        <td class="text-right"> {{ number_format($totalbmhp, 0, ',', '.') . ',-' }}</td>
                     </tr>
                     <tr class="">
                         <td class="text-right pr-4" colspan="2">Total Tagihan</td>
