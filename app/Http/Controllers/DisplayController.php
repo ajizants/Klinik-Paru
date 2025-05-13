@@ -166,6 +166,8 @@ class DisplayController extends Controller
         $listSelesai = $data['selesai'];
         ///ambil 3 data dari dataAtas
         $sedangDipanggil = array_slice($dataAtas, 0, 3);
+        // return $sedangDipanggil;
+        // $sedangDipanggil = [];
 
         $compact = compact('title', 'listTunggu', 'listSelesai', 'sedangDipanggil', 'jumlahMenunggu', 'jumlahSelesai');
         // return $compact;
@@ -173,7 +175,7 @@ class DisplayController extends Controller
         $params = [];
         $jadwal = $client->jadwalPoli($params);
 
-        return view('Display.tensi2', $compact)->with('jadwal', $jadwal);
+        return view('Display.tensi', $compact)->with('jadwal', $jadwal);
     }
 
     public function tungguLab()
