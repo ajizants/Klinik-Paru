@@ -517,7 +517,7 @@ class DotsController extends Controller
         $mulaiTgl = $request->input('tglAwal', now()->toDateString());
         $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
 
-        $data = DotsTransModel::with(['pasien', 'obat', 'dok.biodata']) // asumsi relasi sudah dibuat
+        $data = DotsTransModel::with(['pasien', 'obat', 'dok.biodata', 'pet.biodata']) // asumsi relasi sudah dibuat
             ->whereBetween('nxKontrol', [$mulaiTgl, $selesaiTgl])
             ->get();
         // return response()->json($data, 200, [], JSON_PRETTY_PRINT);
@@ -541,6 +541,7 @@ class DotsController extends Controller
                         <th>Pengobatan</th>
                         <th>Obat</th>
                         <th>Dokter</th>
+                        <th class="col-1">Petugas</th>
                     </tr>
                 </thead>
                 <tbody>';
@@ -556,7 +557,8 @@ class DotsController extends Controller
                     <td>' . htmlspecialchars($row->pasien->noHP ?? '-') . '</td>
                     <td>' . htmlspecialchars($row->blnKe ?? '-') . '</td>
                     <td>' . htmlspecialchars($row->terapi ?? '-') . '</td>
-                    <td>' . htmlspecialchars($row->dok->biodata->nama ?? '-') . '</td>
+                    <td class="col-2">' . htmlspecialchars($row->dok->biodata->nama ?? '-') . '</td>
+                    <td class="col-2">' . htmlspecialchars($row->pet->biodata->nama ?? '-') . '</td>
                   </tr>';
         }
 

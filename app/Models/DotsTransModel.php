@@ -33,6 +33,10 @@ class DotsTransModel extends Model
     {
         return $this->hasOne(PegawaiModel::class, 'nip', 'petugas');
     }
+    public function pet()
+    {
+        return $this->hasOne(PegawaiModel::class, 'nip', 'petugas');
+    }
     public function obat()
     {
         return $this->HasOne(DotsObatModel::class, 'id', 'terapi');
