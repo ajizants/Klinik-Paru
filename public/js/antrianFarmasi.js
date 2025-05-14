@@ -76,7 +76,7 @@ function processResponseFar(response) {
             </a>
             `;
         const bpjsBtn = `
-            <a type="button" onclick="isiObat('${item.pasien_no_rm}', '${item.log_id}', '${item.no_reg}')"
+            <a type="button" ${commonAttributes} onclick="isiObat(this)"
                 class="btn bg-lime"
                 data-toggle="tooltip" data-placement="top" title="Isi Obat">
                 <i class="fa-solid fa-tablets"></i>
@@ -118,12 +118,104 @@ function processResponseFar(response) {
     });
 }
 
-function isiObat(no_rm, log_id, no_reg) {
-    $("#no_rm").val(no_rm);
-    $("#log_id").val(log_id);
-    $("#no_reg").val(no_reg);
-    $("#modalIsiObat").modal("show");
-    tampilkanEror("Sementara Belum tersedia");
+function isiObat(btn) {
+    console.log("🚀 ~ isiObat ~ btn:", btn);
+    $("#norm_bpjs").val(btn.getAttribute("data-norm"));
+    $("#layanan_bpjs").val(btn.getAttribute("data-layanan"));
+    $("#nama_bpjs").val(btn.getAttribute("data-nama"));
+    $("#tgltrans_bpjs").val(btn.getAttribute("data-tgltrans"));
+    $("#notrans_bpjs").val(btn.getAttribute("data-notrans"));
+
+    $("#modalInputObat").modal("show");
+}
+
+function simpanTagihan() {
+    const notrans = $("#notrans_bpjs").val();
+    const norm = $("#norm_bpjs").val();
+    const jaminan = $("#layanan_bpjs").val();
+    const nama = $("#nama_bpjs").val();
+    const tgltrans = $("#tgltrans_bpjs").val();
+    const obat = $("#obat_bpjs").val();
+    const bmhp = $("#bmhp_bpjs").val();
+    const obatKronis = $("#obatKronis_bpjs").val();
+
+    const dataTerpilih = [];
+
+    if (obat !== "") {
+        dataTerpilih.push({
+            idLayanan: 2,
+            norm: norm,
+            notrans: notrans,
+            qty: 1,
+            harga: obat,
+            jaminan: jaminan,
+        });
+    }
+
+    if (bmhp !== "") {
+        dataTerpilih.push({
+            idLayanan: 229,
+            norm: norm,
+            notrans: notrans,
+            qty: 1,
+            harga: bmhp,
+            jaminan: jaminan,
+        });
+    }
+
+    if (obatKronis !== "") {
+        dataTerpilih.push({
+            idLayanan: 228,
+            norm: norm,
+            notrans: notrans,
+            qty: 1,
+            harga: obatKronis,
+            jaminan: jaminan,
+        });
+    }
+
+    // Kirim data ke server
+    fetch("/api/kasir/item/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            notrans: notrans,
+            norm: norm,
+            nama: nama,
+            umur: "",
+            jk: "",
+            alamat: "",
+            jaminan: jaminan,
+            dataTerpilih: dataTerpilih,
+        }),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                console.log("Response status:", response.status);
+                console.log("Response status text:", response.statusText);
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data);
+            Swal.fire({
+                icon: "success",
+                title: data.message,
+            });
+        })
+        .catch((error) => {
+            console.error(
+                "There has been a problem with your fetch operation:",
+                error
+            );
+            Swal.fire({
+                icon: "error",
+                title: "Terjadi masalah: " + error.message,
+            });
+        });
 }
 
 function initializeDataAntrianFar(response) {

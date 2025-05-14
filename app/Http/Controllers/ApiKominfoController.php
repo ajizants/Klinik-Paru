@@ -30,10 +30,10 @@ class ApiKominfoController extends Controller
     public function data_rencana_kontrol(Request $request)
     {
         $model = new ApiKominfo();
-        $data  = $model->data_pasien_kontrol($request->all());
+        $data = $model->data_pasien_kontrol($request->all());
 
         // Cek jika data kosong atau tidak valid
-        if (! $data || count($data) == 0) {
+        if (!$data || count($data) == 0) {
             return response()->json([
                 'html' => '<p class="text-center text-danger">Tidak ada data tersedia</p>',
                 'data' => [],
@@ -86,9 +86,9 @@ class ApiKominfoController extends Controller
 
     public function poliDokter()
     {
-        $model        = new KominfoModel();
-        $res          = $model->getAkssLoket();
-        $data         = $res['data'];
+        $model = new KominfoModel();
+        $res = $model->getAkssLoket();
+        $data = $res['data'];
         $jadwalDokter = array_filter($data, function ($item) {
             return stripos($item['admin_nama'], 'dr. ') !== false;
         });
@@ -120,14 +120,14 @@ class ApiKominfoController extends Controller
 
     public function getDataSEP(Request $request)
     {
-        $model  = new KominfoModel();
+        $model = new KominfoModel();
         $params = [
-            'tanggal_awal'  => $request->input('tanggal_awal') ?? date('Y-m-d'),
+            'tanggal_awal' => $request->input('tanggal_awal') ?? date('Y-m-d'),
             'tanggal_akhir' => $request->input('tanggal_akhir') ?? date('Y-m-d'),
         ];
         // dd($params);
         $data = $model->getDataSEP($params);
-        $res  = $data['data'];
+        $res = $data['data'];
         // tambahkan aksi di $res
         foreach ($res as &$item) {
             $item['aksi'] = '
@@ -139,24 +139,24 @@ class ApiKominfoController extends Controller
     }
     public function getDataSEPSK(Request $request)
     {
-        $model  = new KominfoModel();
+        $model = new KominfoModel();
         $params = [
-            'tanggal_awal'  => $request->input('tanggal_awal') ?? date('Y-m-d'),
+            'tanggal_awal' => $request->input('tanggal_awal') ?? date('Y-m-d'),
             'tanggal_akhir' => $request->input('tanggal_akhir') ?? date('Y-m-d'),
         ];
 
         // Ambil data SEP
         $data = $model->getDataSEP($params);
-        $res  = $data['data'];
+        $res = $data['data'];
 
         // Ambil data Surat Kontrol
         $dataSurat = $model->getDataSuratKontrol($params);
-        $resSurat  = $dataSurat['data'];
+        $resSurat = $dataSurat['data'];
 
         // Index data surat kontrol berdasarkan pasien_nik untuk efisiensi pencarian
         $suratKontrolMap = [];
         foreach ($resSurat as $surat) {
-            $nik                   = $surat['pasien_nik'];
+            $nik = $surat['pasien_nik'];
             $suratKontrolMap[$nik] = $surat; // Jika 1 pasien hanya 1 surat. Kalau lebih, bisa ubah jadi array.
         }
 
@@ -171,11 +171,11 @@ class ApiKominfoController extends Controller
                 $noSurat = $suratKontrolMap[$nik]['no_surat_kontrol']; // Atau 'no_surat_kontrol' kalau kamu pakai itu
                 $aksi .= '<a href="' . url('api/SuratKontrol/cetak/' . $noSurat) . '" target="_blank" class="btn btn-sm btn-success mt-2">S.Kontrol</a>';
                 // Tambahkan data Surat Kontrol ke dalam data SEP
-                $item['no_surat_kontrol']               = $surat['no_surat_kontrol'] ?? null;
-                $item['tanggal_rencana_kontrol']        = $surat['tanggal_rencana_kontrol'] ?? null;
-                $item['tanggal_tampil']                 = $surat['tanggal_tampil'] ?? null;
+                $item['no_surat_kontrol'] = $surat['no_surat_kontrol'] ?? null;
+                $item['tanggal_rencana_kontrol'] = $surat['tanggal_rencana_kontrol'] ?? null;
+                $item['tanggal_tampil'] = $surat['tanggal_tampil'] ?? null;
                 $item['tanggal_rencana_kontrol_tampil'] = $surat['tanggal_rencana_kontrol_tampil'] ?? null;
-                $item['detail_surat_kontrol']           = '
+                $item['detail_surat_kontrol'] = '
                             <p>No Surat Kontrol: <br>' . ($surat['no_surat_kontrol'] ?? '-') . '</p>
 
                             <p>Rencana Kontrol: <br>' . ($surat['tanggal_rencana_kontrol_tampil'] ?? '-') . '</p>
@@ -183,9 +183,9 @@ class ApiKominfoController extends Controller
 
             } else {
                 // Kalau tidak ada surat kontrol, tetap null
-                $item['no_surat_kontrol']               = null;
-                $item['tanggal_rencana_kontrol']        = null;
-                $item['tanggal_tampil']                 = null;
+                $item['no_surat_kontrol'] = null;
+                $item['tanggal_rencana_kontrol'] = null;
+                $item['tanggal_tampil'] = null;
                 $item['tanggal_rencana_kontrol_tampil'] = null;
 
                 // Tampilkan info kosong di detail
@@ -196,9 +196,9 @@ class ApiKominfoController extends Controller
                                                 ';
             }
 
-            $sepTanggal       = $item['tanggal_sep'] ?? null;
+            $sepTanggal = $item['tanggal_sep'] ?? null;
             $sepTanggalTampil = $item['tanggal_sep_tampil'] ?? '-';
-            $tanggalTampil    = $item['tanggal_tampil'] ?? '-';
+            $tanggalTampil = $item['tanggal_tampil'] ?? '-';
 
             $item['detail_sep'] = '
                                         <p>No SEP: <br>' . ($item['no_sep'] ?? '-') . '</p>
@@ -214,7 +214,7 @@ class ApiKominfoController extends Controller
 
     public function getDetailSEP(Request $request)
     {
-        $model  = new KominfoModel();
+        $model = new KominfoModel();
         $no_sep = $request->input('no_sep');
         // dd($params);
         $data = $model->getDetailSEP($no_sep);
@@ -224,7 +224,7 @@ class ApiKominfoController extends Controller
     {
         $model = new KominfoModel();
         // dd($params);
-        $data      = $model->getDetailSEP($no_sep);
+        $data = $model->getDetailSEP($no_sep);
         $detailSEP = $data['data'];
         // return response()->json($detailSEP);
 
@@ -238,7 +238,7 @@ class ApiKominfoController extends Controller
         //     $base64QrCode = base64_encode($qrCode);
         //     $qrCodeImage = 'data:image/png;base64,' . $base64QrCode;
 
-        $noKartu   = $detailSEP['peserta']['noKartu'];
+        $noKartu = $detailSEP['peserta']['noKartu'];
         $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=' . urlencode($noKartu) . '&size=100x100';
 
         $qrCodeBase64 = base64_encode(file_get_contents($qrCodeUrl));
@@ -256,12 +256,12 @@ class ApiKominfoController extends Controller
     {
         $model = new KominfoModel();
         // dd($params);
-        $data      = $model->getDetailSEP($no_sep);
+        $data = $model->getDetailSEP($no_sep);
         $detailSEP = $data['data'];
         // return response()->json($detailSEP);
 
-        $norm = $detailSEP['peserta']['noMr'];
-        // $norm         = '029740';
+        // $norm = $detailSEP['peserta']['noMr'];
+        $norm = '029762';
         $tglKunjungan = $detailSEP['tglSep'];
 
         $dataTagihan = KasirTransModel::with('item.layanan')
@@ -274,17 +274,23 @@ class ApiKominfoController extends Controller
         $rincian = array_values($dataTagihan->toArray()['item']);
 
         $lab = array_filter($rincian, function ($item) {
-            return stripos($item['layanan']['kelas'], 9) !== false;
+            return stripos($item['layanan']['kelas'], 9) !== false && $item['layanan']['idLayanan'] !== 131 && $item['layanan']['idLayanan'] !== 214;
         });
         if (count($lab) == 0) {
-            $lab       = null;
-            $$totalLab = 0;
-        } else {
-            $lab      = array_values($lab);
+            $lab = null;
             $totalLab = 0;
-            foreach ($lab as $item) {
+        } else {
+            $lab = array_values($lab);
+            $totalLab = 0;
+
+            foreach ($lab as &$item) {
+                // Hapus teks dalam tanda kurung dari nmLayanan
+                $item['layanan']['nmLayanan'] = preg_replace('/\s*\(.*?\)/', '', $item['layanan']['nmLayanan']);
+
+                // Hitung total harga
                 $totalLab += $item['totalHarga'];
             }
+            unset($item); // Hindari referensi yang tidak disengaja
         }
         // return $lab;
 
@@ -292,10 +298,10 @@ class ApiKominfoController extends Controller
             return stripos($item['layanan']['kelas'], 8) !== false;
         });
         if (count($ro) == 0) {
-            $ro      = null;
+            $ro = null;
             $totalRo = 0;
         } else {
-            $ro      = array_values($ro);
+            $ro = array_values($ro);
             $totalRo = 0;
             foreach ($ro as $item) {
                 $totalRo += $item['totalHarga'];
@@ -307,11 +313,11 @@ class ApiKominfoController extends Controller
             return in_array((int) $item['layanan']['kelas'], [5, 6, 7], true);
         });
         if (count($tindakan) == 0) {
-            $tindakan      = null;
+            $tindakan = null;
             $totalTindakan = 0;
         } else {
 
-            $tindakan      = array_values($tindakan);
+            $tindakan = array_values($tindakan);
             $totalTindakan = 0;
             foreach ($tindakan as $item) {
                 $totalTindakan += $item['totalHarga'];
@@ -325,11 +331,11 @@ class ApiKominfoController extends Controller
         // return $obat;
 
         if (count($obat) == 0) {
-            $obat      = null;
+            $obat = null;
             $totalObat = 0;
         } else {
             // return $obat;
-            $obat      = array_values($obat);
+            $obat = array_values($obat);
             $totalObat = $obat[0]['totalHarga'];
         }
         $obatKronis = array_filter($rincian, function ($item) {
@@ -337,10 +343,10 @@ class ApiKominfoController extends Controller
         });
 
         if (count($obatKronis) == 0) {
-            $obatKronis      = null;
+            $obatKronis = null;
             $totalObatKronis = 0;
         } else {
-            $obatKronis      = array_values($obatKronis);
+            $obatKronis = array_values($obatKronis);
             $totalObatKronis = $obatKronis[0]['totalHarga'];
             // return $obatKronis;
         }
@@ -349,15 +355,15 @@ class ApiKominfoController extends Controller
         });
 
         if (count($bmhp) == 0) {
-            $bmhp      = null;
+            $bmhp = null;
             $totalbmhp = 0;
         } else {
             // return $bmhp;
-            $bmhp      = array_values($bmhp);
+            $bmhp = array_values($bmhp);
             $totalbmhp = $bmhp[0]['totalHarga'];
         }
 
-        $noKartu   = $detailSEP['peserta']['noKartu'];
+        $noKartu = $detailSEP['peserta']['noKartu'];
         $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=' . urlencode($noKartu) . '&size=100x100';
 
         $qrCodeBase64 = base64_encode(file_get_contents($qrCodeUrl));
@@ -381,14 +387,14 @@ class ApiKominfoController extends Controller
 
     public function getDataSuratKontrol(Request $request)
     {
-        $model  = new KominfoModel();
+        $model = new KominfoModel();
         $params = [
-            'tanggal_awal'  => $request->input('tanggal_awal') ?? date('Y-m-d'),
+            'tanggal_awal' => $request->input('tanggal_awal') ?? date('Y-m-d'),
             'tanggal_akhir' => $request->input('tanggal_akhir') ?? date('Y-m-d'),
         ];
         // dd($params);
         $data = $model->getDataSuratKontrol($params);
-        $res  = $data['data'];
+        $res = $data['data'];
         // tambahkan aksi di $res
         foreach ($res as &$item) {
             $item['aksi'] = '
@@ -400,7 +406,7 @@ class ApiKominfoController extends Controller
     }
     public function getDetailSuratKontrol(Request $request)
     {
-        $model           = new KominfoModel();
+        $model = new KominfoModel();
         $no_SuratKontrol = $request->input('no_SuratKontrol');
         // dd($params);
         $data = $model->getDetailSuratKontrol($no_SuratKontrol);
@@ -410,7 +416,7 @@ class ApiKominfoController extends Controller
     {
         $model = new KominfoModel();
         // dd($params);
-        $data               = $model->getDetailSuratKontrol($no_SuratKontrol);
+        $data = $model->getDetailSuratKontrol($no_SuratKontrol);
         $detailSuratKontrol = $data['data'];
         // return response()->json($detailSuratKontrol);
 

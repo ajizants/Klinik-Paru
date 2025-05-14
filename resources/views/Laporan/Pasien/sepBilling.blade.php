@@ -157,24 +157,28 @@
                 /* bisa ganti ke 0.85-0.95 sesuai selera */
             }
 
-            .pembungkus {
-                padding: 1rem;
-                border: 1px solid black;
-                box-sizing: border-box;
-                width: 22cm;
-                height: 13.8cm;
-                margin: 0.2cm;
+            @page {
+                .pembungkus {
+                    padding: 1rem;
+                    border: 1px solid black;
+                    box-sizing: border-box;
+                    width: 22cm;
+                    height: 13.8cm;
+                    margin: 0.2cm;
+                }
+
+                .pembungkus2 {
+                    padding: 1rem;
+                    border: 1px solid black;
+                    box-sizing: border-box;
+                    width: 22cm;
+                    height: 25cm;
+                    /* lebih panjang */
+                    margin: 0.2cm;
+                }
             }
 
-            .pembungkus2 {
-                padding: 1rem;
-                border: 1px solid black;
-                box-sizing: border-box;
-                width: 22cm;
-                height: 25cm;
-                /* lebih panjang */
-                margin: 0.2cm;
-            }
+
 
         }
     </style>
@@ -259,7 +263,7 @@
             <table style="margin-top: 0px">
                 <tr>
                     <td width="55%">
-                        <div style="font-size: 7pt">
+                        <div style="font-size: 5pt;margin-left: 10px;">
                             <p class="my-0">*Saya menyetujui BPJS Kesehatan untuk:</p>
                             <ul class="list-disc mt-0">
                                 <li>membuka dan atau menggunakan informasi medis Pasien untuk keperluan administrasi,
@@ -297,13 +301,12 @@
                     </td>
                     <td width="10%"></td>
                     <td>
-                        <div class="text-left mt-4 text-sm">
+                        <div class="text-left text-sm">
                             <p class="font-semibold mb-0">Persetujuan</p>
                             <p class="font-semibold mt-0">Pasien/Keluarga Pasien</p>
                             {{-- {!! $qrCode !!} --}}
-                            {{-- <img src="data:image/png;base64,{{ $qrCode }}" alt="QR Code" style="height: 100px;"> --}}
 
-                            <img src="data:image/png;base64,{{ $qrCodeBase64 }}" alt="QR Code" width="90">
+                            <img src="data:image/png;base64,{{ $qrCodeBase64 }}" alt="QR Code" width="50">
 
                             <p class="mt-2">{{ $detailSEP['peserta']['nama'] }}</p>
                         </div>
@@ -493,7 +496,7 @@
                         @endphp
                         <td class="text-right"> {{ number_format($totalbmhp, 0, ',', '.') . ',-' }}</td>
                     </tr>
-                    <tr class="">
+                    <tr class="font-bold">
                         <td class="text-right pr-4" colspan="2">Total Tagihan</td>
                         <td class="text-center">:</td>
                         <td class="text-center">Rp.</td>
