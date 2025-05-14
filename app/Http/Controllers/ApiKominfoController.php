@@ -164,13 +164,13 @@ class ApiKominfoController extends Controller
         foreach ($res as &$item) {
             $nik = $item['pasien_nik'];
 
-            $aksi = '<a href="' . url('api/sep/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-primary mt-2">SEP</a>
-            <a href="' . url('api/sep/billing/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-warning mt-2">SEP & Billing</a> ';
+            $aksi = '<a href="' . url('api/sep/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-primary mt-2 col">SEP</a>
+            <a href="' . url('api/sep/billing/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-warning mt-2 col">SEP & Billing</a> ';
 
             // Cek apakah ada surat kontrol untuk NIK tersebut
             if (isset($suratKontrolMap[$nik])) {
                 $noSurat = $suratKontrolMap[$nik]['no_surat_kontrol']; // Atau 'no_surat_kontrol' kalau kamu pakai itu
-                $aksi .= '<a href="' . url('api/SuratKontrol/cetak/' . $noSurat) . '" target="_blank" class="btn btn-sm btn-success mt-2">S.Kontrol</a>';
+                $aksi .= '<a href="' . url('api/SuratKontrol/cetak/' . $noSurat) . '" target="_blank" class="btn btn-sm btn-success mt-2 col">S.Kontrol</a>';
                 // Tambahkan data Surat Kontrol ke dalam data SEP
                 $item['no_surat_kontrol'] = $surat['no_surat_kontrol'] ?? null;
                 $item['tanggal_rencana_kontrol'] = $surat['tanggal_rencana_kontrol'] ?? null;

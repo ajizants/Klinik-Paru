@@ -6,7 +6,7 @@
         <table class="table table-bordered table-hover dataTable dtr-inline" id="tableSEP" cellspacing="0">
             <thead class="bg bg-teal table-bordered border-warning">
                 <tr>
-                    <th class="col">Cetak</th>
+                    <th class="col-2">Aksi</th>
                     <th>Urut</th>
                     <th>Tanggal</th>
                     <th>Detail SEP</th>
@@ -17,7 +17,6 @@
                     <th class="col-2">Nama Pasien</th>
                     <th>Poli</th>
                     <th class="col-3">Dokter</th>
-                    <th>Status</th>
                 </tr>
             </thead>
             <tbody class="table-bordered border-warning">

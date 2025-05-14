@@ -3,8 +3,8 @@
 @section('content')
     {{-- Data per pasien --}}
     <div class="container-fluid">
-        <div class="row">
-            <label class="col-form-label">Rentang Tanggal :</label>
+        <div class="form-row">
+            <label class="col-form-label">Tanggal :</label>
             <div class="form-group col-3">
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -16,55 +16,71 @@
                 </div>
             </div>
             <div class="mx-2">
-                <button type="button" class="btn btn-success" onclick="segarkan(); toggleSections('#tab_1');">
+                <button type="button" class="btn btn-success"
+                    onclick="segarkan(); setLinkActive('btn1'); toggleSections('#tab_1');">
                     Cari Data Kujungan
                 </button>
             </div>
             <div class="mx-2">
                 <button type="button" class="btn btn-primary"
-                    onclick=" cariDataSEP(tglAwal, tglAkhir); toggleSections('#tab_2');">
+                    onclick=" cariDataSEP(tglAwal, tglAkhir); setLinkActive('btn2'); toggleSections('#tab_2');">
                     Cari Data SEP & SK
                 </button>
             </div>
             <div class="mx-2">
-                <button type="button" class="btn btn-warning" onclick="rekapFaskesPerujuk(); toggleSections('#tab_3');">
-                    Cari Data Faskes Perujuk
+                <button type="button" class="btn btn-warning"
+                    onclick="rekapFaskesPerujuk(); setLinkActive('btn3'); toggleSections('#tab_3');">
+                    Cari Faskes Perujuk
                 </button>
             </div>
             <div class="mx-2">
-                <button type="button" class="btn btn-info" onclick="rencanaKontrolPasien(); toggleSections('#tab_4');">
-                    Cari Data Rencana Kontrol
+                <button type="button" class="btn btn-info"
+                    onclick="rencanaKontrolPasien(); setLinkActive('btn4'); toggleSections('#tab_4');">
+                    Cari Rencana Kontrol
                 </button>
             </div>
             <div class="mx-2">
-                <button type="button" class="btn btn-lime bg-orange" onclick="jumlahTindakan(); toggleSections('#tab_5');">
-                    Cari Data Jumlah Tindakan
+                <button type="button" class="btn btn-lime bg-orange"
+                    onclick="jumlahTindakan(); setLinkActive('btn5'); toggleSections('#tab_5');">
+                    Cari Jumlah Tindakan
                 </button>
             </div>
         </div>
+        <script>
+            function setLinkActive(id) {
+                //remove semua class active dan bg-blue di element yang memiliki class nav-link
+                $('.nav-link').removeClass('active bg-blue');
+                //tambah class active dan bg-blue di element yang memiliki id yang sama dengan id parameter
+                $('#' + id).addClass('active bg-blue');
+            }
+        </script>
     </div>
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="row ml-1">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a type="button" class="nav-link active bg-blue" onclick="toggleSections('#tab_1');"><b>Rekap
+                        <a type="button" id="btn1" class="nav-link active bg-blue"
+                            onclick="toggleSections('#tab_1');"><b>Rekap
                                 Kunjungan</b></a>
                     </li>
                     <li class="nav-item">
-                        <a type="button" class="nav-link" onclick="toggleSections('#tab_2');"><b>SEP & Surat
+                        <a type="button" id="btn2" class="nav-link" onclick="toggleSections('#tab_2');"><b>SEP & Surat
                                 Kontrol</b></a>
                     </li>
                     <li class="nav-item">
-                        <a type="button" class="nav-link" onclick="toggleSections('#tab_3');"><b>Rekap Jumlah Faskes
+                        <a type="button" id="btn3" class="nav-link" onclick="toggleSections('#tab_3');"><b>Rekap
+                                Jumlah Faskes
                                 Perujuk</b></a>
                     </li>
                     <li class="nav-item">
-                        <a type="button" class="nav-link" onclick="toggleSections('#tab_4');"><b>Rencana Kontrol
+                        <a type="button" id="btn4" class="nav-link" onclick="toggleSections('#tab_4');"><b>Rencana
+                                Kontrol
                                 Pasien</b></a>
                     </li>
                     <li class="nav-item">
-                        <a type="button" class="nav-link" onclick="toggleSections('#tab_5');"><b>Rekap Jumlah
+                        <a type="button" id="btn5" class="nav-link" onclick="toggleSections('#tab_5');"><b>Rekap
+                                Jumlah
                                 Tindakan</b></a>
                     </li>
                 </ul>
@@ -105,7 +121,8 @@
                         </div>
                         <div class="form-group">
                             <label for="noSep">No. SEP</label>
-                            <input type="text" class="form-control" id="noSep" required onkeyup="checkEnter(event)">
+                            <input type="text" class="form-control" id="noSep" required
+                                onkeyup="checkEnter(event)">
                         </div>
                     </form>
                 </div>
@@ -265,9 +282,6 @@
                                 },
                                 {
                                     data: "jenis_kunjungan_nama"
-                                },
-                                {
-                                    data: "penjamin_nama"
                                 },
                                 {
                                     data: "daftar_by"
