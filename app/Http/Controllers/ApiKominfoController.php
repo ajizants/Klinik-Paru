@@ -164,7 +164,8 @@ class ApiKominfoController extends Controller
         foreach ($res as &$item) {
             $nik = $item['pasien_nik'];
 
-            $aksi = '<a href="' . url('api/sep/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-primary mt-2">SEP</a> ';
+            $aksi = '<a href="' . url('api/sep/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-primary mt-2">SEP</a>
+            <a href="' . url('api/sep/billing/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-warning mt-2">SEP & Billing</a> ';
 
             // Cek apakah ada surat kontrol untuk NIK tersebut
             if (isset($suratKontrolMap[$nik])) {
@@ -260,8 +261,8 @@ class ApiKominfoController extends Controller
         $detailSEP = $data['data'];
         // return response()->json($detailSEP);
 
-        // $norm = $detailSEP['peserta']['noMr'];
-        $norm = '029762';
+        $norm = $detailSEP['peserta']['noMr'];
+        // $norm = '029762';
         $tglKunjungan = $detailSEP['tglSep'];
 
         $dataTagihan = KasirTransModel::with('item.layanan')
@@ -271,96 +272,111 @@ class ApiKominfoController extends Controller
                 $tglKunjungan . ' 23:59:59',
             ])->first();
         // return response()->json($dataTagihan);
-        $rincian = array_values($dataTagihan->toArray()['item']);
-
-        $lab = array_filter($rincian, function ($item) {
-            return stripos($item['layanan']['kelas'], 9) !== false && $item['layanan']['idLayanan'] !== 131 && $item['layanan']['idLayanan'] !== 214;
-        });
-        if (count($lab) == 0) {
+        if (!isset($dataTagihan)) {
             $lab = null;
             $totalLab = 0;
-        } else {
-            $lab = array_values($lab);
-            $totalLab = 0;
-
-            foreach ($lab as &$item) {
-                // Hapus teks dalam tanda kurung dari nmLayanan
-                $item['layanan']['nmLayanan'] = preg_replace('/\s*\(.*?\)/', '', $item['layanan']['nmLayanan']);
-
-                // Hitung total harga
-                $totalLab += $item['totalHarga'];
-            }
-            unset($item); // Hindari referensi yang tidak disengaja
-        }
-        // return $lab;
-
-        $ro = array_filter($rincian, function ($item) {
-            return stripos($item['layanan']['kelas'], 8) !== false;
-        });
-        if (count($ro) == 0) {
             $ro = null;
             $totalRo = 0;
-        } else {
-            $ro = array_values($ro);
-            $totalRo = 0;
-            foreach ($ro as $item) {
-                $totalRo += $item['totalHarga'];
-            }
-        }
-
-        $tindakan = array_filter($rincian, function ($item) {
-            // Casting ke int untuk memastikan tipe
-            return in_array((int) $item['layanan']['kelas'], [5, 6, 7], true);
-        });
-        if (count($tindakan) == 0) {
             $tindakan = null;
             $totalTindakan = 0;
-        } else {
-
-            $tindakan = array_values($tindakan);
-            $totalTindakan = 0;
-            foreach ($tindakan as $item) {
-                $totalTindakan += $item['totalHarga'];
-            }
-            // return $ro;
-        }
-
-        $obat = array_filter($rincian, function ($item) {
-            return $item['layanan']['idLayanan'] == 2;
-        });
-        // return $obat;
-
-        if (count($obat) == 0) {
             $obat = null;
             $totalObat = 0;
-        } else {
-            // return $obat;
-            $obat = array_values($obat);
-            $totalObat = $obat[0]['totalHarga'];
-        }
-        $obatKronis = array_filter($rincian, function ($item) {
-            return $item['layanan']['idLayanan'] == 228;
-        });
-
-        if (count($obatKronis) == 0) {
             $obatKronis = null;
             $totalObatKronis = 0;
-        } else {
-            $obatKronis = array_values($obatKronis);
-            $totalObatKronis = $obatKronis[0]['totalHarga'];
-            // return $obatKronis;
-        }
-        $bmhp = array_filter($rincian, function ($item) {
-            return $item['layanan']['idLayanan'] == 229;
-        });
-
-        if (count($bmhp) == 0) {
             $bmhp = null;
             $totalbmhp = 0;
         } else {
-            // return $bmhp;
-            $bmhp = array_values($bmhp);
-            $totalbmhp = $bmhp[0]['totalHarga'];
+            $rincian = array_values($dataTagihan->toArray()['item']);
+
+            $lab = array_filter($rincian, function ($item) {
+                return stripos($item['layanan']['kelas'], 9) !== false && $item['layanan']['idLayanan'] !== 131 && $item['layanan']['idLayanan'] !== 214;
+            });
+            if (count($lab) == 0) {
+                $lab = null;
+                $totalLab = 0;
+            } else {
+                $lab = array_values($lab);
+                $totalLab = 0;
+
+                foreach ($lab as &$item) {
+                    // Hapus teks dalam tanda kurung dari nmLayanan
+                    $item['layanan']['nmLayanan'] = preg_replace('/\s*\(.*?\)/', '', $item['layanan']['nmLayanan']);
+
+                    // Hitung total harga
+                    $totalLab += $item['totalHarga'];
+                }
+                unset($item); // Hindari referensi yang tidak disengaja
+            }
+            // return $lab;
+
+            $ro = array_filter($rincian, function ($item) {
+                return stripos($item['layanan']['kelas'], 8) !== false;
+            });
+            if (count($ro) == 0) {
+                $ro = null;
+                $totalRo = 0;
+            } else {
+                $ro = array_values($ro);
+                $totalRo = 0;
+                foreach ($ro as $item) {
+                    $totalRo += $item['totalHarga'];
+                }
+            }
+
+            $tindakan = array_filter($rincian, function ($item) {
+                // Casting ke int untuk memastikan tipe
+                return in_array((int) $item['layanan']['kelas'], [5, 6, 7], true);
+            });
+            if (count($tindakan) == 0) {
+                $tindakan = null;
+                $totalTindakan = 0;
+            } else {
+
+                $tindakan = array_values($tindakan);
+                $totalTindakan = 0;
+                foreach ($tindakan as $item) {
+                    $totalTindakan += $item['totalHarga'];
+                }
+                // return $ro;
+            }
+
+            $obat = array_filter($rincian, function ($item) {
+                return $item['layanan']['idLayanan'] == 2;
+            });
+            // return $obat;
+
+            if (count($obat) == 0) {
+                $obat = null;
+                $totalObat = 0;
+            } else {
+                // return $obat;
+                $obat = array_values($obat);
+                $totalObat = $obat[0]['totalHarga'];
+            }
+            $obatKronis = array_filter($rincian, function ($item) {
+                return $item['layanan']['idLayanan'] == 228;
+            });
+
+            if (count($obatKronis) == 0) {
+                $obatKronis = null;
+                $totalObatKronis = 0;
+            } else {
+                $obatKronis = array_values($obatKronis);
+                $totalObatKronis = $obatKronis[0]['totalHarga'];
+                // return $obatKronis;
+            }
+            $bmhp = array_filter($rincian, function ($item) {
+                return $item['layanan']['idLayanan'] == 229;
+            });
+
+            if (count($bmhp) == 0) {
+                $bmhp = null;
+                $totalbmhp = 0;
+            } else {
+                // return $bmhp;
+                $bmhp = array_values($bmhp);
+                $totalbmhp = $bmhp[0]['totalHarga'];
+            }
         }
 
         $noKartu = $detailSEP['peserta']['noKartu'];

@@ -367,7 +367,7 @@
                                     <!-- Alamat -->
                                     <div class="w-[10%]">Alamat</div>
                                     <div class="w-[5%] text-center">:</div>
-                                    <div class="w-[50%]">{{ $dataTagihan['alamat'] }}</div>
+                                    <div class="w-[50%]">{{ $dataTagihan['alamat'] ?? '-' }}</div>
                                 </div>
                             </div>
                         </td>
@@ -395,10 +395,10 @@
                         <td class="text-center">Rp.</td>
                         <td class="text-right">50.000,-</td>
                     </tr>
-                    @if ($lab != null)
-                        <tr class="border-b border-black">
-                            <td class="text-left"> {{ $no++ }}. </td>
-                            <td class="text-left pr-4"> Laboratorium
+                    <tr class="border-b border-black">
+                        <td class="text-left"> {{ $no++ }}. </td>
+                        <td class="text-left pr-4"> Laboratorium
+                            @if ($lab != null)
                                 <table class="w-full table-auto">
                                     <tbody>
                                         @foreach ($lab as $item)
@@ -411,18 +411,18 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                            </td>
-                            <td class="text-center align-bottom">:</td>
-                            <td class="text-center align-bottom">Rp.</td>
-                            <td class="text-right align-bottom">
-                                {{ number_format($totalLab, 0, ',', '.') . ',-' }}
-                            </td>
-                        </tr>
-                    @endif
-                    @if ($ro != null)
-                        <tr class="border-b border-black">
-                            <td class="text-left"> {{ $no++ }}. </td>
-                            <td class="text-left pr-4"> Radiologi
+                            @endif
+                        </td>
+                        <td class="text-center align-bottom">:</td>
+                        <td class="text-center align-bottom">Rp.</td>
+                        <td class="text-right align-bottom">
+                            {{ number_format($totalLab, 0, ',', '.') . ',-' }}
+                        </td>
+                    </tr>
+                    <tr class="border-b border-black">
+                        <td class="text-left"> {{ $no++ }}. </td>
+                        <td class="text-left pr-4"> Radiologi
+                            @if ($ro != null)
                                 <table class="w-full table-auto mr-2">
                                     <tbody>
                                         @foreach ($ro as $item)
@@ -435,22 +435,22 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                            </td>
-                            <td class="text-center align-bottom">
-                                :
-                            </td>
-                            <td class="text-center align-bottom">
-                                Rp.
-                            </td>
-                            <td class="text-right align-bottom">
-                                {{ number_format($totalRo, 0, ',', '.') . ',-' }}
-                            </td>
-                        </tr>
-                    @endif
-                    @if ($tindakan != null)
-                        <tr class="border-b border-black">
-                            <td class="text-left"> {{ $no++ }}. </td>
-                            <td class="text-left pr-4"> Tindakan
+                            @endif
+                        </td>
+                        <td class="text-center align-bottom">
+                            :
+                        </td>
+                        <td class="text-center align-bottom">
+                            Rp.
+                        </td>
+                        <td class="text-right align-bottom">
+                            {{ number_format($totalRo, 0, ',', '.') . ',-' }}
+                        </td>
+                    </tr>
+                    <tr class="border-b border-black">
+                        <td class="text-left"> {{ $no++ }}. </td>
+                        <td class="text-left pr-4"> Tindakan
+                            @if ($tindakan != null)
                                 <table class="w-full table-auto mr-2">
                                     <tbody>
                                         @foreach ($tindakan as $item)
@@ -463,14 +463,14 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                            </td>
-                            <td class="text-center align-bottom">:</td>
-                            <td class="text-center align-bottom">Rp.</td>
-                            <td class="text-right align-bottom">
-                                {{ number_format($totalTindakan, 0, ',', '.') . ',-' }}
-                            </td>
-                        </tr>
-                    @endif
+                            @endif
+                        </td>
+                        <td class="text-center align-bottom">:</td>
+                        <td class="text-center align-bottom">Rp.</td>
+                        <td class="text-right align-bottom">
+                            {{ number_format($totalTindakan, 0, ',', '.') . ',-' }}
+                        </td>
+                    </tr>
                     <tr class="border-b border-black">
                         <td class="text-left"> {{ $no++ }}. </td>
                         <td class="text-left">Obat</td>
