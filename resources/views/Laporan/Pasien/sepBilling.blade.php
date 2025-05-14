@@ -379,13 +379,13 @@
             @endphp
             <table class="w-full table-auto mt-2">
                 <tbody>
-                    <tr class="border-b border-black">
+                    {{-- <tr class="border-b border-black">
                         <td class="text-left"> {{ $no++ }}. </td>
                         <td class="text-left">Biaya Rekam Medis Rawat Jalan</td>
                         <td class="text-center">:</td>
                         <td class="text-center">Rp.</td>
                         <td class="text-right">15.000,-</td>
-                    </tr>
+                    </tr> --}}
                     <tr class="border-b border-black">
                         <td class="text-left">
                             {{ $no++ }}.
