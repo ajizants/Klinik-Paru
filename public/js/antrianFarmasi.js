@@ -75,6 +75,13 @@ function processResponseFar(response) {
                 <i class="fa-solid fa-right-from-bracket"></i>
             </a>
             `;
+        const bpjsBtn = `
+            <a type="button" onclick="isiObat('${item.pasien_no_rm}', '${item.log_id}', '${item.no_reg}')"
+                class="btn bg-lime"
+                data-toggle="tooltip" data-placement="top" title="Isi Obat">
+                <i class="fa-solid fa-tablets"></i>
+            </a>
+            `;
 
         const panggilBtn = `<button class="panggil btn btn-success"
                 onclick="panggil('${item.log_id}','${item.pasien_no_rm}', '${item.tanggal}')"
@@ -91,6 +98,7 @@ function processResponseFar(response) {
             item.aksi = `
              ${inputBtn}
              ${ctkRspBtn}
+             ${bpjsBtn}
             `;
         } else if (item.keterangan === "SEDANG DIPANGGIL") {
             item.aksi = `
@@ -104,9 +112,18 @@ function processResponseFar(response) {
             ${inputBtn}
             ${panggilBtn}
             ${ctkRspBtn}
+            ${bpjsBtn}
             `;
         }
     });
+}
+
+function isiObat(no_rm, log_id, no_reg) {
+    $("#no_rm").val(no_rm);
+    $("#log_id").val(log_id);
+    $("#no_reg").val(no_reg);
+    $("#modalIsiObat").modal("show");
+    tampilkanEror("Sementara Belum tersedia");
 }
 
 function initializeDataAntrianFar(response) {

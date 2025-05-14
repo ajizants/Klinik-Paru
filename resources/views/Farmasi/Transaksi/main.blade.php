@@ -8,6 +8,7 @@
 
 
 
+
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/antrianFarmasi.js') }}"></script>

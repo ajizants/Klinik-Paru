@@ -690,6 +690,101 @@ function rencanaKontrolPasien() {
             });
         },
     });
+
+    $.ajax({
+        url: "/api/dots/rencana_kontrol",
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({
+            tglAwal: tglAwal,
+            tglAkhir: tglAkhir,
+        }),
+        beforeSend: function () {
+            Swal.fire({
+                title: "Mengambil data...",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+        },
+        success: function (result) {
+            // console.log("🚀 ~ response data:", result);
+
+            // Pastikan data tidak kosong
+            if (!result.html || result.html.trim() === "") {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Data kosong atau tidak valid!",
+                });
+                return;
+            }
+
+            // Masukkan data ke dalam div
+            $("#divRencanaKontrolTB").html(result.html);
+
+            // Pastikan elemen tabel ada sebelum inisialisasi DataTables
+            if ($("#rencanaKontroTB").length) {
+                // Hapus DataTables lama jika sudah ada
+                if ($.fn.DataTable.isDataTable("#rencanaKontroTB")) {
+                    $("#rencanaKontroTB").DataTable().destroy();
+                }
+
+                // Inisialisasi ulang DataTables
+                var table = $("#rencanaKontroTB").DataTable({
+                    responsive: true,
+                    lengthChange: false,
+                    autoWidth: true,
+                    searching: true,
+                    paging: true,
+                    order: [[1, "asc"]],
+                    info: true,
+                    language: {
+                        search: "Cari:",
+                        lengthMenu: "Tampilkan _MENU_ data",
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                        infoEmpty: "Tidak ada data tersedia",
+                        zeroRecords: "Tidak ada data yang cocok",
+                        paginate: {
+                            first: "Awal",
+                            last: "Akhir",
+                            next: "→",
+                            previous: "←",
+                        },
+                    },
+                    buttons: [
+                        {
+                            extend: "copyHtml5",
+                            text: "Salin",
+                        },
+                        {
+                            extend: "excel",
+                            text: "Download",
+                            title: `Data Pasien Baru & Kunjungan Ulang ${tglAwal} s.d. ${tglAkhir}`,
+                            filename: `Data_Analisis_Biaya_Pasien_${tglAwal}_${tglAkhir}`,
+                            exportOptions: { columns: ":visible" },
+                        },
+                    ],
+                });
+
+                // Tambahkan tombol ekspor ke dalam wrapper DataTables
+                table
+                    .buttons()
+                    .container()
+                    .appendTo("#rencanaKontroTB_wrapper .col-md-6:eq(0)");
+            }
+
+            Swal.close();
+        },
+        error: function (xhr, status, error) {
+            console.error("🚨 Error:", error);
+            Swal.fire({
+                icon: "error",
+                title: `Terjadi kesalahan saat mengambil data...!!!\n${xhr.status} - ${xhr.statusText}`,
+            });
+        },
+    });
 }
 function jumlahTindakan() {
     $.ajax({

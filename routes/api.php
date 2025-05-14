@@ -119,6 +119,7 @@ Route::post('simpan/kunjungan/dots', [DotsController::class, 'simpanKunjungan'])
 Route::get('deletePTB', [DotsController::class, 'deletePTB']);
 Route::get('editPTB', [DotsController::class, 'editPTB']);
 Route::post('poinDots', [DotsController::class, 'poinPetugas']);
+Route::post('dots/rencana_kontrol', [DotsController::class, 'rencanaKontrol']);
 
 //farmasi0
 Route::get('stokbmhp', [StokController::class, 'stokbmhp']);

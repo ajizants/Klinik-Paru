@@ -25,6 +25,10 @@ class DotsTransModel extends Model
     {
         return $this->hasOne(PegawaiModel::class, 'nip', 'dokter');
     }
+    public function dok()
+    {
+        return $this->hasOne(PegawaiModel::class, 'nip', 'dokter');
+    }
     public function petugas()
     {
         return $this->hasOne(PegawaiModel::class, 'nip', 'petugas');
