@@ -59,5 +59,8 @@ Route::post('rekap/lab/jumlah_pemeriksaan', [LaboratoriumController::class, 'jum
 Route::post('rekap/lab/waktu_pemeriksaan', [LaboratoriumController::class, 'waktu_pemeriksaan']);
 Route::get('lab/cetakPermintaan/{notras}/{norm}/{tgl}', [LaboratoriumController::class, 'cetakPermintaan']);
 
+Route::post('lab/laporan/kunjungan', [LaboratoriumController::class, 'rekapKunjunganLab']);
+Route::post('lab/laporan/kunjungan/item', [LaboratoriumController::class, 'rekapKunjunganLabItem']);
+
 Route::post('addHasilLab', [LaboratoriumController::class, 'addHasil']);
 Route::post('cariRiwayatLab', [LaboratoriumController::class, 'riwayat']);
