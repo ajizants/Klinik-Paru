@@ -931,31 +931,60 @@ class LaboratoriumController extends Controller
     }
     public function rekapKunjunganLabItem(Request $request)
     {
-        $tglAwal = $request->input('tglAwal') ?? Carbon::now()->format('Y-m-d');
-        $tglAkhir = $request->input('tglAkhir') ?? Carbon::now()->format('Y-m-d');
+        $mulaiTgl = $request->input('tglAwal', now()->toDateString());
+        $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
 
-        $tglAwal = $tglAwal . ' 00:00:00';
-        $tglAkhir = $tglAkhir . ' 23:59:59';
-        // return $request->all();
-        $data = LaboratoriumHasilModel::whereBetween('created_at', [$tglAwal, $tglAkhir])
-            ->orderBy('created_at')
-            ->with('pasien')
+        $labHasilPemeriksaan = DB::table('t_kunjungan_lab_hasil')
+            ->select(
+                DB::raw('COUNT(t_kunjungan_lab_hasil.idLab) AS jumlah'),
+                'kasir_m_layanan.nmLayanan AS nama_layanan',
+                'kasir_m_layanan.idLayanan AS kode_layanan',
+                't_kunjungan_lab.layanan AS jaminan'
+            )
+            ->join('kasir_m_layanan', 't_kunjungan_lab_hasil.idLayanan', '=', 'kasir_m_layanan.idLayanan')
+            ->join('t_kunjungan_lab', 't_kunjungan_lab_hasil.notrans', '=', 't_kunjungan_lab.notrans')
+            ->whereBetween(DB::raw('DATE(t_kunjungan_lab_hasil.created_at)'), [$mulaiTgl, $selesaiTgl])
+            ->groupBy('kasir_m_layanan.idLayanan', 'kasir_m_layanan.nmLayanan', 't_kunjungan_lab.layanan')
             ->get();
-        return $data;
-        if ($data->isEmpty()) {
-            return response()->json(['message' => 'Data transaksi tidak ditemukan'], 404, [], JSON_PRETTY_PRINT);
-        }
-        return $data;
-        // Hitung jumlah berdasarkan pembiayaan
-        $jumlahBpjs = $data->where('layanan', 'BPJS')->count();
-        $jumlahUmum = $data->where('layanan', 'UMUM')->count();
 
-        return response()->json([
-            'total' => $data->count(),
-            'jumlah_bpjs' => $jumlahBpjs,
-            'jumlah_umum' => $jumlahUmum,
-            'data' => $data,
-        ], 200, [], JSON_PRETTY_PRINT);
+        // Bangun HTML tabel
+        $html = '<div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Rekap Kunjungan Lab per Layanan</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th style="width: 10px;">#</th>
+                        <th>Nama Layanan</th>
+                        <th>Kode Layanan</th>
+                        <th>Jaminan</th>
+                        <th>Jumlah</th>
+                    </tr>
+                </thead>
+                <tbody>';
+
+        if ($labHasilPemeriksaan->isEmpty()) {
+            $html .= '<tr><td colspan="5" class="text-center">Tidak ada data</td></tr>';
+        } else {
+            foreach ($labHasilPemeriksaan as $index => $item) {
+                $html .= '<tr>
+                        <td>' . ($index + 1) . '</td>
+                        <td>' . $item->nama_layanan . '</td>
+                        <td>' . $item->kode_layanan . '</td>
+                        <td>' . $item->jaminan . '</td>
+                        <td>' . $item->jumlah . '</td>
+                    </tr>';
+            }
+        }
+
+        $html .= '    </tbody>
+            </table>
+        </div>
+    </div>';
+
+        return response($html);
     }
 
 }
