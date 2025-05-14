@@ -128,10 +128,6 @@
         }
 
         function cariDataKunjunganLabItem(tglAwal, tglAkhir) {
-            var table = $('#jumlahLabTable').DataTable();
-            table.destroy();
-            table.clear();
-            alert(tglAwal + ' - ' + tglAkhir)
 
             $.ajax({
                 url: "/api/lab/laporan/kunjungan/item",
