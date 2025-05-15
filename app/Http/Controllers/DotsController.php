@@ -160,9 +160,9 @@ class DotsController extends Controller
     {
         $doctorNipMap = [
             'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
-            'dr. AGIL DANANJAYA, Sp.P' => '9',
-            'dr. FILLY ULFA KUSUMAWARDANI' => '198907252019022004',
-            'dr. SIGIT DWIYANTO' => '198903142022031005',
+            'dr. Agil Dananjaya, Sp.P' => '9',
+            'dr. Filly Ulfa Kusumawardani' => '198907252019022004',
+            'dr. Sigit Dwiyanto' => '198903142022031005',
         ];
 
         return array_map(function ($d) use ($doctorNipMap) {

@@ -89,7 +89,9 @@
             @include('Laporan.Pendaftaran.faskesPerujuk')
             @include('Laporan.Pendaftaran.rencanaKontrol')
             @include('Laporan.Pendaftaran.listSEP')
-            @include('Laporan.Pendaftaran.jmlTindakan')
+            <div class="" id="tab_5" style="display: none;">
+                @include('PusatData.jmlTindakan')
+            </div>
         </div>
     </div>
 

@@ -994,10 +994,11 @@ function pasienPulang(button, text) {
 }
 
 function setTransaksi(button, ruang) {
-    // console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi);
+    console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi);
     var norm = $(button).data("norm");
     var nama = $(button).data("nama");
     var dokter = $(button).data("kddokter");
+    console.log("🚀 ~ setTransaksi ~ dokter:", dokter);
     var alamat = $(button).data("alamat");
     var layanan = $(button).data("layanan");
     var notrans = $(button).data("notrans");

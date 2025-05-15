@@ -1,5 +1,5 @@
-    <div class="card card-orange">
-        <div class="card-header bg-lime">
+    <div class="card card-warning">
+        <div class="card-header">
             <h4 class="card-title font-weight-bold">Data Jumlah Kunjungan Radiologi</h4>
         </div>
         <div class="card-body shadow">

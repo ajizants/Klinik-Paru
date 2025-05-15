@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a type="button" class="nav-link active bg-blue" onclick="toggleSections('#tab_1');"><b>Kunjungan</b></a>
+                <a type="button" class="nav-link active bg-blue" onclick="toggleSections('#tab_1');"><b>Biaya</b></a>
             </li>
             <li class="nav-item">
                 <a type="button" class="nav-link " onclick="toggleSections('#tab_2');"><b>Faskes
@@ -22,27 +22,37 @@
                         Radiologi</b></a>
             </li>
             <li class="nav-item">
-                <a href="{{ url('/Laporan/Pendaftaran') }}" class="nav-link "><b>Laporan Pendaftaran</b></a>
-            </li>
-            {{-- <li class="nav-item">
-                <a href="{{ url('/Laboratorium/Laporan') }}" class="nav-link "><b>Laporan
-                        Laboratorium</b></a>
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_6'); "><b>Laporan
+                        Pendaftaran</b></a>
             </li>
             <li class="nav-item">
-                <a href="{{ url('/Radiologi/Laporan') }}" class="nav-link "><b>Laporan Radiologi</b></a>
-            </li> --}}
+                <a href="{{ url('/Laporan/Pendaftaran') }}" class="nav-link "><b>Pendaftaran</b></a>
+            </li>
             <li class="nav-item">
-                <a href="{{ url('/kasir/report') }}" class="nav-link "><b>Laporan Kasir</b></a>
+                <a href="{{ url('/kasir/report') }}" class="nav-link "><b>Kasir</b></a>
             </li>
         </ul>
     </div>
-    @include('PusatData.input')
+    <div class="container-fluid mt-1" id="tab_1">
+        @include('PusatData.biaya')
+    </div>
+    <div class="container-fluid mt-1" id="tab_2" style="display: none;">
+        @include('PusatData.faskesPerujuk')
+    </div>
+    <div class="container-fluid mt-1" id="tab_3" style="display: none;">
+        @include('PusatData.jmlTindakan')
+    </div>
     <div class="container-fluid mt-1" id="tab_4" style="display: none;">
         @include('PusatData.lab')
     </div>
     <div class="container-fluid mt-1" id="tab_5" style="display: none;">
         @include('PusatData.ro')
     </div>
+    <div class="container-fluid mt-1" id="tab_6" style="display: none;">
+        @include('PusatData.pendaftaran')
+    </div>
+
+
 
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
@@ -443,10 +453,11 @@
             tglAkhir = moment().subtract(0, "days").format("YYYY-MM-DD");
 
             // Menetapkan nilai ke input tanggal
-            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo").val(tglAwal + " to " + tglAkhir);
+            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo, #tglTindakan, #tglKunjPend").val(tglAwal + " to " +
+                tglAkhir);
 
             // Date range picker
-            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo").daterangepicker({
+            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo, #tglTindakan, #tglKunjPend").daterangepicker({
                 startDate: tglAwal,
                 endDate: tglAkhir,
                 autoApply: true,
@@ -459,7 +470,7 @@
                 },
             });
 
-            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo").on(
+            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo, #tglTindakan, #tglKunjPend").on(
                 "apply.daterangepicker",
                 function(ev, picker) {
                     tglAwal = picker.startDate.format("YYYY-MM-DD");
