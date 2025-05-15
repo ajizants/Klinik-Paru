@@ -59,6 +59,12 @@
                                 <p>Display Farmasi</p>
                             </a>
                         </li>
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" target="_blank" href="{{ url('display/dokter') }}">
+                                <i class="fa-solid fa-tv nav-icon"></i>
+                                <p>Jumlah Tiap Dokter</p>
+                            </a>
+                        </li>
 
                         <li class="nav-item ml-4">
                             <a href="" class="nav-link">
