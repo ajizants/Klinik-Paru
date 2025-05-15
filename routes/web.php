@@ -53,6 +53,7 @@ Route::get('display/farmasi', [DisplayController::class, 'farmasi'])->name('farm
 Route::get('display/tensi', [DisplayController::class, 'tensi'])->name('tensi');
 Route::get('display/lab', [DisplayController::class, 'lab'])->name('lab');
 Route::get('display/poli/{id}', [DisplayController::class, 'poli'])->name('poli');
+Route::get('display/dokter', [DisplayController::class, 'dokter'])->name('dokter');
 Route::get('grafik/dokter', [DisplayController::class, 'rme'])->name('rme');
 
 //Booking

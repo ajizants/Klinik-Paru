@@ -201,6 +201,7 @@ Route::get('list/tunggu/ro', [DisplayController::class, 'tungguRo']);
 Route::get('list/tunggu/farmasi', [DisplayController::class, 'listTungguFarmasi']);
 Route::get('list/tunggu/loket', [DisplayController::class, 'listTungguLoket']);
 Route::get('list/tunggu/poli/{id}', [DisplayController::class, 'listTungguPoli']);
+Route::get('list/tunggu/dokter', [DisplayController::class, 'dataJumlahTiapdokter']);
 
 //Surat Medis
 Route::get('surat/medis/{id}/{tgl}', [SuratController::class, 'cetakSM']);

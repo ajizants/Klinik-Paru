@@ -460,4 +460,101 @@ class DisplayController extends Controller
         return response()->json($res);
     }
 
+    public function dokter()
+    {
+        $title = 'Jumlah Antrian Poli';
+        $data = $this->dataJumlahTiapdokter();
+
+        return view('Display.dokter', compact('title', 'data'));
+    }
+
+    private function getListTungguPoli()
+    {
+        $params = [
+            'no_rm' => '',
+            'tgl_awal' => Carbon::now()->format('Y-m-d'),
+            'tgl_akhir' => Carbon::now()->format('Y-m-d'),
+        ];
+        // $params = [
+        //     'no_rm' => '',
+        //     'tgl_awal' => '2025-03-01',
+        //     'tgl_akhir' => '2025-03-01',
+        // ];
+        $client = new KominfoModel();
+        $dataPendaftaran = $client->tungguPoli($params);
+        // dd($dataPendaftaran);
+        return $dataPendaftaran['data'];
+
+    }
+
+    public function dataJumlahTiapdokter()
+    {
+        $agil = $this->getDokterName('agil');
+        $sigit = $this->getDokterName('sigit');
+        $filly = $this->getDokterName('filly');
+        $nova = $this->getDokterName('nova');
+
+        $data = $this->getListTungguPoli();
+
+        if (is_array($data) && !isset($data['error'])) {
+            $listAgil = array_filter($data, function ($item) use ($agil) {
+                return $item['dokter_nama'] === $agil;
+            });
+            $listSigit = array_filter($data, function ($item) use ($sigit) {
+                return $item['dokter_nama'] === $sigit;
+            });
+            $listFilly = array_filter($data, function ($item) use ($filly) {
+                return $item['dokter_nama'] === $filly;
+            });
+            $listNova = array_filter($data, function ($item) use ($nova) {
+                return $item['dokter_nama'] === $nova;
+            });
+
+            $listTungguAgil = array_filter($data, function ($item) use ($agil) {
+                return $item['dokter_nama'] === $agil && $item['keterangan'] === 'MENUNGGU DIPANGGIL';
+            });
+            $listTungguSigit = array_filter($data, function ($item) use ($sigit) {
+                return $item['dokter_nama'] === $sigit && $item['keterangan'] === 'MENUNGGU DIPANGGIL';
+            });
+            $listTungguFilly = array_filter($data, function ($item) use ($filly) {
+                return $item['dokter_nama'] === $filly && $item['keterangan'] === 'MENUNGGU DIPANGGIL';
+            });
+            $listTungguNova = array_filter($data, function ($item) use ($nova) {
+                return $item['dokter_nama'] === $nova && $item['keterangan'] === 'MENUNGGU DIPANGGIL';
+            });
+
+            // return collect(array_values($listTunggu));
+        }
+
+        //carikan jumlah masing msing list tunggu
+        $listTungguAgil = count($listTungguAgil);
+        $listTungguSigit = count($listTungguSigit);
+        $listTungguFilly = count($listTungguFilly);
+        $listTungguNova = count($listTungguNova);
+
+        $listAgil = count($listAgil);
+        $listSigit = count($listSigit);
+        $listFilly = count($listFilly);
+        $listNova = count($listNova);
+
+        $listSelesaiAgil = $listAgil - $listTungguAgil;
+        $listSelesaiSigit = $listSigit - $listTungguSigit;
+        $listSelesaiFilly = $listFilly - $listTungguFilly;
+        $listSelesaiNova = $listNova - $listTungguNova;
+
+        return [
+            'listTungguAgil' => $listTungguAgil,
+            'listTungguSigit' => $listTungguSigit,
+            'listTungguFilly' => $listTungguFilly,
+            'listTungguNova' => $listTungguNova,
+            'listAgil' => $listAgil,
+            'listSigit' => $listSigit,
+            'listFilly' => $listFilly,
+            'listNova' => $listNova,
+            'listSelesaiAgil' => $listSelesaiAgil,
+            'listSelesaiSigit' => $listSelesaiSigit,
+            'listSelesaiFilly' => $listSelesaiFilly,
+            'listSelesaiNova' => $listSelesaiNova,
+        ];
+    }
 }
