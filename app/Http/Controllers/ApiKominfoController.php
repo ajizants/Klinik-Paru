@@ -227,7 +227,7 @@ class ApiKominfoController extends Controller
         // dd($params);
         $data = $model->getDetailSEP($no_sep);
         $detailSEP = $data['data'];
-        // return response()->json($detailSEP);
+        return response()->json($detailSEP);
 
         //     // Buat QR Code dengan logo
         //     $qrCode = QrCode::format('svg') // atau svg

@@ -114,9 +114,9 @@ Route::middleware('auth')->group(function () {
     Route::get('Diagnosa/Mapping', [HomeController::class, 'mappingDx'])->name('mappingDx')->middleware('role:dokter,perawat');
 
     //analisis data
-    Route::get('Pusat_Data', [DataAnalisController::class, 'index'])->name('pusatData')->middleware('role:analitik');
-    Route::get('analisis/pendaftaran', [DataAnalisController::class, 'analisisPendaftaran'])->name('analisisPendaftaran')->middleware('role:analitik');
-    Route::get('analisis/riwayat', [DataAnalisController::class, 'analisisRiwayat'])->name('analisisRiwayat')->middleware('role:analitik');
+    Route::get('Pusat_Data', [DataAnalisController::class, 'index'])->name('pusatData');
+    Route::get('analisis/pendaftaran', [DataAnalisController::class, 'analisisPendaftaran'])->name('analisisPendaftaran');
+    Route::get('analisis/riwayat', [DataAnalisController::class, 'analisisRiwayat'])->name('analisisRiwayat');
 
     //jadwal kerja
     Route::get('jadwal', [JadwalController::class, 'index'])->name('viewJadwal');

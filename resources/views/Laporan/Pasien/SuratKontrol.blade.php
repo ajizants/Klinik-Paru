@@ -76,7 +76,8 @@
             <tr>
                 <td class="w-1/6">Tgl.Lahir</td>
                 <td class="my-0 py-0">
-                    : {{ $detailSuratKontrol['sep']['peserta']['tglLahir'] }}
+                    :
+                    {{ \Carbon\Carbon::parse($detailSuratKontrol['sep']['peserta']['tglLahir'])->locale('id')->isoFormat('DD MMMM Y') }}
                 </td>
             </tr>
             <tr>
@@ -93,6 +94,17 @@
                     {{ \Carbon\Carbon::parse($detailSuratKontrol['tglRencanaKontrol'])->locale('id')->isoFormat('DD MMMM Y') }}
                 </td>
             </tr>
+            <tr>
+                <td class="w-1/6">Masa Berlaku Rujukan</td>
+                <td class="my-0 py-0">
+                    :
+                    {{ \Carbon\Carbon::parse($detailSuratKontrol['sep']['provPerujuk']['tglRujukan'])->addDays(90)->locale('id')->isoFormat('DD MMMM Y') }}
+                </td>
+            </tr>
+
+            <tr>
+                <td class="mt-2" colspan="2">Demikian atas bantuanya, diucapkan banyak terima kasih.</td>
+            </tr>
 
         </table>
         <div class="flex items-center justify-between align-top">
@@ -102,7 +114,8 @@
                 <br>
                 <br>
                 <p class="text-xs">Tgl.Entri: {{ $detailSuratKontrol['tglTerbit'] }} | Tgl.Cetak:
-                    {{ \Carbon\Carbon::now() }}</p>
+                    {{ \Carbon\Carbon::now() }} | Tgl.Rujukan:
+                    {{ $detailSuratKontrol['sep']['provPerujuk']['tglRujukan'] }}</p>
             </div>
             <div class="mx-24">
                 <h6>Mengetahui DPJP,</h6>
@@ -125,12 +138,12 @@
         })
 
         // load langsung cetak
-        document.addEventListener("DOMContentLoaded", function() {
-            window.print();
-            window.onafterprint = function() {
-                window.close();
-            }
-        })
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     window.print();
+        //     window.onafterprint = function() {
+        //         window.close();
+        //     }
+        // })
     </script>
 </body>
 
