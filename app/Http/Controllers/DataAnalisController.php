@@ -122,8 +122,9 @@ class DataAnalisController extends Controller
             'tanggal_awal'  => date('Y-m-d'),
             'tanggal_akhir' => date('Y-m-d'),
         ];
-        $data = $this->getData($params);
+        // $data = $this->getData($params);
         // dd($data);
+        return view('PusatData.main')->with('title', $title);
         return view('PusatData.main', compact('data'))->with('title', $title);
     }
 

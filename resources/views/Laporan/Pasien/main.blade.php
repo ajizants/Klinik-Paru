@@ -24,12 +24,214 @@
         </div>
     </div>
 
+    {{-- buatkan modalIdentitas --}}
+    <div class="modal fade" id="modalIdentitas" tabindex="-1" role="dialog" aria-labelledby="modalIdentitasLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalIdentitasLabel">Identitas Pasien</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formIdentitas">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>NIK</label>
+                                <input readonly type="text" class="form-control" name="pasien_nik" id="pasien_nik">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>No. KK</label>
+                                <input readonly type="text" class="form-control" name="pasien_no_kk" id="pasien_no_kk">
+                            </div>
+                        </div>
 
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Nama</label>
+                                <input readonly type="text" class="form-control" name="pasien_nama" id="pasien_nama">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>No. RM</label>
+                                <input readonly type="text" class="form-control" name="pasien_no_rm" id="pasien_no_rm">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label>Jenis Kelamin</label>
+                                <input readonly type="text" class="form-control" name="jenis_kelamin_nama"
+                                    id="jenis_kelamin">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Tempat Lahir</label>
+                                <input readonly type="text" class="form-control" name="pasien_tempat_lahir"
+                                    id="tempat_lahir">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Tanggal Lahir</label>
+                                <input readonly type="date" class="form-control" name="pasien_tgl_lahir"
+                                    id="tanggal_lahir">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>No. HP</label>
+                                <input readonly type="text" class="form-control" name="pasien_no_hp" id="no_hp">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Status Kawin</label>
+                                <input readonly type="text" class="form-control" name="status_kawin_nama"
+                                    id="status_kawin">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Alamat Domisili</label>
+                            <input readonly type="text" class="form-control" name="pasien_domisili" id="domisili">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Alamat Lengkap</label>
+                            <input readonly type="text" class="form-control" name="pasien_alamat" id="alamat">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label>Provinsi</label>
+                                <input readonly type="text" class="form-control" name="provinsi_nama" id="provinsi">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Kabupaten</label>
+                                <input readonly type="text" class="form-control" name="kabupaten_nama"
+                                    id="kabupaten">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Kecamatan</label>
+                                <input readonly type="text" class="form-control" name="kecamatan_nama"
+                                    id="kecamatan">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Kelurahan</label>
+                                <input readonly type="text" class="form-control" name="kelurahan_nama"
+                                    id="kelurahan">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-2">
+                                <label>RT</label>
+                                <input readonly type="text" class="form-control" name="pasien_rt" id="rt">
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label>RW</label>
+                                <input readonly type="text" class="form-control" name="pasien_rw" id="rw">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Agama</label>
+                                <input readonly type="text" class="form-control" name="agama_nama" id="agama">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Gol. Darah</label>
+                                <input readonly type="text" class="form-control" name="goldar_nama" id="gol_darah">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Pendidikan</label>
+                                <input readonly type="text" class="form-control" name="pendidikan_nama"
+                                    id="pendidikan">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Pekerjaan</label>
+                                <input readonly type="text" class="form-control" name="pekerjaan_nama"
+                                    id="pekerjaan">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Penjamin</label>
+                                <input readonly type="text" class="form-control" name="penjamin_nama" id="penjamin">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>No. Penjamin</label>
+                                <input readonly type="text" class="form-control" name="penjamin_nomor"
+                                    id="penjamin_nomor">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Daftar By</label>
+                                <input readonly type="text" class="form-control" name="pasien_daftar_by"
+                                    id="daftar_by">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Tanggal Registrasi</label>
+                                <input readonly type="date" class="form-control" name="created_at_tanggal"
+                                    id="created_at">
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- end modal -->
 
 
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
     <script>
+        let pasien_no_rm = "";
+
+        function lihatIdentitas(no_rm) {
+            // Ambil nilai dari input form saat ini
+            const current_rm = $("#pasien_no_rm").val();
+
+            // Jika nomor RM yang diklik sama dengan yang sudah diisi, tampilkan modal langsung
+            if (current_rm === no_rm) {
+                $("#modalIdentitas").modal("show");
+                return;
+            }
+
+            // Simpan nomor RM yang baru ke variabel global
+            pasien_no_rm = no_rm;
+            tampilkanLoading("Sedangan mengambil data pasien...");
+            // Lakukan request ke API untuk ambil data baru
+            $.ajax({
+                url: "/api/pasienKominfo",
+                method: "POST",
+                data: {
+                    no_rm: no_rm
+                },
+                success: function(response) {
+                    Swal.close();
+                    // Isi form dengan data dari response
+                    for (let key in response) {
+                        $(`#formIdentitas [name="${key}"]`).val(response[key]);
+                    }
+
+                    // Tampilkan modal setelah form terisi
+                    $("#modalIdentitas").modal("show");
+                },
+                error: function(xhr) {
+                    alert("Gagal mengambil data pasien.");
+                }
+            });
+        }
+
+
         function cariRiwayat(tglAwal, tglAkhir) {
             console.log("🚀 ~ cariRiwayat ~ tglAkhir:", tglAkhir)
             console.log("🚀 ~ cariRiwayat ~ tglAwal:", tglAwal)
@@ -414,6 +616,7 @@
                     Swal.close();
                     console.log("🚀 ~ riwayatKunjungan ~ response:", response);
                     tabelRiwayatKunjungan(response); // Menampilkan tabel
+                    document.getElementById("formIdentitas").reset();
                 },
                 error: function(xhr) {
                     console.error("Error:", xhr.responseText);
@@ -468,7 +671,7 @@
                 let identitas = `
             <div class="row">
                 <div class="col-md-4 col-sm-6 col-12 mb-2">
-                    <p><strong>NO RM:</strong> ${item.pasien_no_rm} <a class="font-weight-bold mx-2" href="/RO/Hasil/${item.pasien_no_rm}" target="_blank">Lihat Hasil Penunjang</a></p>
+                    <p><strong>NO RM:</strong> ${item.pasien_no_rm}</p>
                     <p><strong>Nama:</strong> ${item.pasien_nama}</p>
                 </div>
                 <div class="col-md-4 col-sm-6 col-12 mb-2">
@@ -479,6 +682,14 @@
                     <p><strong>Kelamin:</strong> ${item.jenis_kelamin_nama}</p>
                     <p><strong>Alamat:</strong> ${item.alamat}</p>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                    <a type="button" class="btn btn-warning font-weight-bold mx-2" href="/RO/Hasil/${item.pasien_no_rm}" target="_blank">Lihat Hasil Penunjang</a>
+                </div>
+                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                    <a type="button" class="btn btn-danger font-weight-bold mx-2"  onclick="lihatIdentitas('${item.pasien_no_rm}')">Lihat Identitas</a>
+                </div>                
             </div>`;
 
                 $("#identitas").html(identitas);
@@ -578,6 +789,8 @@
                 scrollX: true
             });
         }
+
+
 
 
         var tglAwal;
