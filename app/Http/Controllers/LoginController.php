@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\LoginLogModel;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -29,6 +31,18 @@ class LoginController extends Controller
         ];
 
         if (Auth::attempt($data)) {
+            $user = Auth::user();
+
+            $log = LoginLogModel::create([
+                'user_id'      => $user->id,
+                'ip_address'   => $request->ip(),
+                'user_agent'   => $request->header('User-Agent'),
+                'logged_in_at' => now(),
+            ]);
+
+            // Simpan ID log di session
+            session(['login_log_id' => $log->id]);
+
             $email = $request->input('email');
             if (! str_ends_with($email, '@rsparu.com')) {
                 $email .= '@rsparu.com';
@@ -100,7 +114,15 @@ class LoginController extends Controller
 
     public function actionlogout()
     {
+        $logId = session('login_log_id');
+
+        if ($logId) {
+            LoginLogModel::where('id', $logId)->update([
+                'logged_out_at' => now(),
+            ]);
+        }
         Auth::logout();
+        session()->forget('login_log_id');
         return redirect('/');
     }
 }
