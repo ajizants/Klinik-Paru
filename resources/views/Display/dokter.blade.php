@@ -225,7 +225,36 @@
             </div>
         </div>
     </div>
-    @include('Display.footer')
+    <footer class="container-fluid fixed-bottom bg-primary">
+        <marquee class="marquee my-1" style="font-size: 2rem !important; color: #ffffff">
+            "Kamu bukan hanya perawat, kamu adalah pahlawan yang bekerja dengan hati."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Meski lelah, senyummu menyembuhkan. Terima kasih telah bertahan sejauh ini."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Setiap langkahmu dalam merawat pasien adalah bukti ketulusan dan keberanian."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Perjuanganmu hari ini menyelamatkan masa depan banyak orang. Tetap semangat!"
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Di balik APD dan rasa lelahmu, ada hati yang tak pernah lelah memberi."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Jangan lupa, kamu berharga. Dunia butuh lebih banyak perawat sepertimu."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Hari ini mungkin melelahkan, tapi ingat, kamu sedang membuat perbedaan."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Bangga menjadi perawat, karena di tanganmu ada harapan bagi banyak nyawa."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Semangatmu adalah inspirasi. Jangan berhenti merawat dengan cinta."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Setiap tetes keringatmu adalah bukti perjuangan yang mulia."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Tidak semua orang bisa melakukan pekerjaanmu. Terima kasih, Perawat Hebat!"
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Tetap kuat, tetap tersenyum. Kamu adalah cahaya di tengah gelapnya kesakitan pasien."
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            "Kita mungkin lelah, tapi kita tidak sendiri. Satu tim, satu hati, satu misi."
+        </marquee>
+    </footer>
+
 
     <script type="text/javascript">
         async function getList() {

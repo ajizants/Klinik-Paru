@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('kominfo/pendaftaran', [PasienKominfoController::class, 'pendaftaranFilter']); //cari No RM
 Route::post('pendaftaran/report', [PasienKominfoController::class, 'reportPendaftaran']);
+Route::get('pendaftaran/report/{tahun}', [PasienKominfoController::class, 'reportPusatDataPendaftaran']);
 Route::get('resume/{no_rm}/{tgl}', [PasienKominfoController::class, 'resumePasien']);
 Route::post('kominfo/antrian/log', [PasienKominfoController::class, 'logAntrian']);
 Route::post('pendaftaran/faskes_perujuk', [PasienKominfoController::class, 'rekapFaskesPerujuk']);

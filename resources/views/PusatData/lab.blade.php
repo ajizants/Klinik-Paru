@@ -53,7 +53,20 @@
 
             <div class="table-responsive pt-2 px-2" id="divJumlahLab">
             </div>
+            <div class="card mt-4">
+                <div class="card-header">Grafik Kunjungan Laboratorium</div>
+                <div class="card-body">
+                    <canvas id="kunjunganLineChart" height="300"></canvas>
+                </div>
+            </div>
+
             <div class="table-responsive pt-2 px-2" id="divJumlahLabItem">
+            </div>
+            <div class="card mt-4">
+                <div class="card-header">Grafik Kunjungan Laboratorium</div>
+                <div class="card-body">
+                    <canvas id="chartLabItem" width="100%" height="50"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -115,6 +128,54 @@
                     // Menambahkan tombol ekspor ke dalam wrapper DataTables
                     table.buttons().container().appendTo("#jumlahLabTable_wrapper .col-md-6:eq(0)");
 
+                    const ctx = document.getElementById('kunjunganLineChart').getContext('2d');
+
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: response.chart.labels,
+                            datasets: [{
+                                    label: 'BPJS',
+                                    data: response.chart.datasets[0].data,
+                                    borderColor: '#36A2EB',
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    tension: 0.3,
+                                    fill: true
+                                },
+                                {
+                                    label: 'UMUM',
+                                    data: response.chart.datasets[1].data,
+                                    borderColor: '#FF6384',
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    tension: 0.3,
+                                    fill: true
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Grafik Kunjungan Laboratorium per Bulan'
+                                },
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
                     Swal.close();
                 },
                 error: function(xhr, status, error) {
@@ -183,6 +244,44 @@
                     // Menambahkan tombol ekspor ke dalam wrapper DataTables
                     table.buttons().container().appendTo("#jumlahLabItemTable_wrapper .col-md-6:eq(0)");
 
+                    // Buat chart menggunakan data.chart
+                    const ctx = document.getElementById('chartLabItem').getContext('2d');
+
+                    new Chart(ctx, {
+                        type: 'bar', // bisa juga 'line' atau 'bar'
+                        data: {
+                            labels: response.chart.labels,
+                            datasets: response.chart.datasets.map((ds, index) => ({
+                                ...ds,
+                                backgroundColor: warna(index),
+                                borderColor: warna(index),
+                                borderWidth: 1
+                            }))
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false,
+                                }
+                            },
+                            interaction: {
+                                mode: 'nearest',
+                                axis: 'x',
+                                intersect: false
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+
                     Swal.close();
                 },
                 error: function(xhr, status, error) {
@@ -193,5 +292,13 @@
                     });
                 }
             })
+        }
+
+        function warna(index) {
+            const warnaDasar = [
+                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                '#FF9F40', '#00BFFF', '#DC143C', '#008000', '#800080'
+            ];
+            return warnaDasar[index % warnaDasar.length];
         }
     </script>

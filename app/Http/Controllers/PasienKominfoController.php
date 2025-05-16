@@ -184,215 +184,416 @@ class PasienKominfoController extends Controller
         return response()->json($res);
 
     }
+    // public function reportPendaftaran(Request $request)
+    // {
+    //     // ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
+    //     // ini_set('memory_limit', '512M');
+    //     $params = $request->all();
+    //     $kominfo = new KominfoModel();
+    //     $dataPendaftaranResponse = $kominfo->pendaftaranRequest($params);
+    //     // return $dataPendaftaranResponse;
+
+    //     $jumlah_no_antrian = count($dataPendaftaranResponse);
+    //     if (isset($dataPendaftaranResponse['code']) && $dataPendaftaranResponse['code'] == 201) {
+    //         $jumlah_no_antrian = 0;
+    //     }
+
+    //     // Debugging: print the data received
+    //     // return $dataPendaftaranResponse;
+
+    //     // Filter data dengan keterangan "SELESAI DOPANGGIL PENDAFTARAN"
+    //     // $filteredData = $dataPendaftaranResponse;
+    //     $filteredData = array_filter($dataPendaftaranResponse, function ($item) {
+    //         return isset($item['keterangan']) && $item['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
+    //     });
+
+    //     // Debugging: print the filtered data
+    //     // dd($filteredData);
+
+    //     // Hitung jumlah berdasarkan penjamin_nama
+    //     $jumlahBPJS = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
+    //     }));
+    //     $jumlahBPJS2 = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
+    //     }));
+    //     $jumlahUMUM = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
+    //     }));
+
+    //     // Hitung jumlah berdasarkan pasien_lama_baru
+    //     $jumlahLama = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'LAMA';
+    //     }));
+    //     $jumlahLamaUmum = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'LAMA' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
+    //     }));
+
+    //     $jumlahLamaBpjs = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'LAMA' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
+    //     }));
+    //     $jumlahLamaBpjs2 = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'LAMA' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
+    //     }));
+
+    //     $jumlahBaru = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'BARU';
+    //     }));
+
+    //     $jumlahBaruUmum = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'BARU' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
+    //     }));
+    //     $jumlahBaruBpjs = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'BARU' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
+    //     }));
+    //     $jumlahBaruBpjs2 = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'BARU' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
+    //     }));
+
+    //     // Hitung jumlah berdasarkan daftar_by
+    //     $jumlahOTS = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['daftar_by']) && $item['daftar_by'] === 'OTS';
+    //     }));
+    //     $jumlahOTSUmum = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['daftar_by']) && $item['daftar_by'] === 'OTS' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
+    //     }))
+    //     ;
+    //     $jumlahOTSBpjs = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['daftar_by']) && $item['daftar_by'] === 'OTS' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
+    //     }));
+    //     $jumlahOTSBpjs2 = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['daftar_by']) && $item['daftar_by'] === 'OTS' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
+    //     }));
+
+    //     $jumlahJKN = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['daftar_by']) && $item['daftar_by'] === 'JKN';
+    //     }));
+    //     $jumlahJKNUmum = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['daftar_by']) && $item['daftar_by'] === 'JKN' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
+    //     }));
+    //     $jumlahJKNBpjs = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['daftar_by']) && $item['daftar_by'] === 'JKN' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
+    //     }));
+    //     $jumlahJKNBpjs2 = count(array_filter($filteredData, function ($item) {
+    //         return isset($item['daftar_by']) && $item['daftar_by'] === 'JKN' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
+    //     }));
+
+    //     $jumlahBatal = count(array_filter($dataPendaftaranResponse, function ($item) {
+    //         return isset($item['keterangan']) && strpos($item['keterangan'], 'DIBATALKAN PADA') !== false;
+    //     }));
+    //     $jumlahBatalUmum = count(array_filter($dataPendaftaranResponse, function ($item) {
+    //         return isset($item['keterangan']) && strpos($item['keterangan'], 'DIBATALKAN PADA') !== false && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
+    //     }));
+    //     $jumlahBatalBpjs = count(array_filter($dataPendaftaranResponse, function ($item) {
+    //         return isset($item['keterangan']) && strpos($item['keterangan'], 'DIBATALKAN PADA') !== false && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
+    //     }));
+    //     $jumlahBatalBpjs2 = count(array_filter($dataPendaftaranResponse, function ($item) {
+    //         return isset($item['keterangan']) && strpos($item['keterangan'], 'DIBATALKAN PADA') !== false && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
+    //     }));
+
+    //     $jumlahNoUmum = count(array_filter($dataPendaftaranResponse, function ($item) {
+    //         return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
+    //     }));
+    //     $jumlahNoBpjs = count(array_filter($dataPendaftaranResponse, function ($item) {
+    //         return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
+    //     }));
+    //     $jumlahNoBpjs2 = count(array_filter($dataPendaftaranResponse, function ($item) {
+    //         return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
+    //     }));
+
+    //     // Build response
+    //     $jumlah = [
+    //         'jumlah_no_antrian' => (int) $jumlah_no_antrian,
+    //         'jumlah_no_umum' => (int) $jumlahNoUmum,
+    //         'jumlah_no_bpjs' => (int) $jumlahNoBpjs,
+    //         'jumlah_no_bpjs2' => (int) $jumlahNoBpjs2,
+    //         'jumlah_pasien' => (int) count($filteredData),
+    //         'jumlah_pasien_batal' => (int) $jumlahBatal,
+    //         'jumlah_pasien_batal_UMUM' => (int) $jumlahBatalUmum,
+    //         'jumlah_pasien_batal_BPJS' => (int) $jumlahBatalBpjs,
+    //         'jumlah_pasien_batal_BPJS_2' => (int) $jumlahBatalBpjs2,
+    //         'jumlah_UMUM' => (int) $jumlahUMUM,
+    //         'jumlah_BPJS' => (int) $jumlahBPJS,
+    //         'jumlah_BPJS_2' => (int) $jumlahBPJS2,
+    //         'jumlah_pasien_LAMA' => (int) $jumlahLama,
+    //         'jumlah_pasien_LAMA_UMUM' => (int) $jumlahLamaUmum,
+    //         'jumlah_pasien_LAMA_BPJS' => (int) $jumlahLamaBpjs,
+    //         'jumlah_pasien_LAMA_BPJS_2' => (int) $jumlahLamaBpjs2,
+    //         'jumlah_pasien_BARU' => (int) $jumlahBaru,
+    //         'jumlah_pasien_BARU_UMUM' => (int) $jumlahBaruUmum,
+    //         'jumlah_pasien_BARU_BPJS' => (int) $jumlahBaruBpjs,
+    //         'jumlah_pasien_BARU_BPJS_2' => (int) $jumlahBaruBpjs2,
+    //         'jumlah_daftar_OTS' => (int) $jumlahOTS,
+    //         'jumlah_daftar_OTS_UMUM' => (int) $jumlahOTSUmum,
+    //         'jumlah_daftar_OTS_BPJS' => (int) $jumlahOTSBpjs,
+    //         'jumlah_daftar_OTS_BPJS_2' => (int) $jumlahOTSBpjs2,
+    //         'jumlah_daftar_JKN' => (int) $jumlahJKN,
+    //         'jumlah_daftar_JKN_UMUM' => (int) $jumlahJKNUmum,
+    //         'jumlah_daftar_JKN_BPJS' => (int) $jumlahJKNBpjs,
+    //         'jumlah_daftar_JKN_BPJS_2' => (int) $jumlahJKNBpjs2,
+    //     ];
+
+    //     $rows = [
+    //         'Jumlah No Antrian' => [
+    //             'total' => $jumlah_no_antrian,
+    //             'bpjs' => $jumlahNoBpjs,
+    //             'bpjs2' => $jumlahNoBpjs2,
+    //             'umum' => $jumlahNoUmum,
+    //         ],
+    //         'Jumlah Pasien' => [
+    //             'total' => count($filteredData),
+    //             'bpjs' => $jumlahBPJS,
+    //             'bpjs2' => $jumlahBPJS2,
+    //             'umum' => $jumlahUMUM,
+    //         ],
+    //         'Pasien Lama' => [
+    //             'total' => $jumlahLama,
+    //             'bpjs' => $jumlahLamaBpjs,
+    //             'bpjs2' => $jumlahLamaBpjs2,
+    //             'umum' => $jumlahLamaUmum,
+    //         ],
+    //         'Pasien Baru' => [
+    //             'total' => $jumlahBaru,
+    //             'bpjs' => $jumlahBaruBpjs,
+    //             'bpjs2' => $jumlahBaruBpjs2,
+    //             'umum' => $jumlahBaruUmum,
+    //         ],
+    //         'Jumlah Pasien Batal' => [
+    //             'total' => $jumlahBatal,
+    //             'bpjs' => $jumlahBatalBpjs,
+    //             'bpjs2' => $jumlahBatalBpjs2,
+    //             'umum' => $jumlahBatalUmum,
+    //         ],
+    //         'Daftar OTS' => [
+    //             'total' => $jumlahOTS,
+    //             'bpjs' => $jumlahOTSBpjs,
+    //             'bpjs2' => $jumlahOTSBpjs2,
+    //             'umum' => $jumlahOTSUmum,
+    //         ],
+    //         'Daftar JKN' => [
+    //             'total' => $jumlahJKN,
+    //             'bpjs' => $jumlahJKNBpjs,
+    //             'bpjs2' => $jumlahJKNBpjs2,
+    //             'umum' => $jumlahJKNUmum,
+    //         ],
+    //     ];
+
+    //     $html = '<table class="table table-bordered table-hover dataTable dtr-inline" id="rekapTotal" width="100%" cellspacing="0">';
+    //     $html .= '
+    //         <thead class="bg bg-teal table-bordered border-warning">
+    //             <tr>
+    //                 <th rowspan="2" class="align-middle">Keterangan</th>
+    //                 <th rowspan="2" class="text-center align-middle">Total</th>
+    //                 <th colspan="3" class="text-center">Jaminan</th>
+    //             </tr>
+    //             <tr>
+    //                 <th class="text-center">BPJS</th>
+    //                 <th class="text-center">BPJS PERIODE 2</th>
+    //                 <th class="text-center">UMUM</th>
+    //             </tr>
+    //         </thead>
+    //         <tbody>';
+
+    //     foreach ($rows as $label => $data) {
+    //         $html .= '<tr>';
+    //         $html .= '<td>' . $label . '</td>';
+    //         $html .= '<td class="text-center">' . $data['total'] . '</td>';
+    //         $html .= '<td class="text-center">' . $data['bpjs'] . '</td>';
+    //         $html .= '<td class="text-center">' . $data['bpjs2'] . '</td>';
+    //         $html .= '<td class="text-center">' . $data['umum'] . '</td>';
+    //         $html .= '</tr>';
+    //     }
+
+    //     $html .= '</tbody></table>';
+
+    //     $data = array_values($filteredData);
+
+    //     $res = [
+    //         "total" => $jumlah,
+    //         "data" => $data,
+    //         "html" => $html,
+    //     ];
+
+    //     return response()->json($res);
+    // }
+
     public function reportPendaftaran(Request $request)
     {
-        // ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
-        // ini_set('memory_limit', '512M');
         $params = $request->all();
         $kominfo = new KominfoModel();
-        $dataPendaftaranResponse = $kominfo->pendaftaranRequest($params);
-        // return $dataPendaftaranResponse;
+        $data = $kominfo->pendaftaranRequest($params);
 
-        $jumlah_no_antrian = count($dataPendaftaranResponse);
-        if (isset($dataPendaftaranResponse['code']) && $dataPendaftaranResponse['code'] == 201) {
-            $jumlah_no_antrian = 0;
+        $res = $this->reportPendaftaranProses($data);
+
+        return response()->json($res);
+
+    }
+    public function reportPusatDataPendaftaran($tahun)
+    {
+        $kominfo = new KominfoModel();
+        $result = [];
+
+        for ($bulan = 1; $bulan <= 12; $bulan++) {
+            // Format bulan dengan leading zero, misal: 01, 02, ..., 12
+            $bulanFormatted = str_pad($bulan, 2, '0', STR_PAD_LEFT);
+
+            // Buat tanggal awal dan akhir bulan
+            $tanggal_awal = "$tahun-$bulanFormatted-01";
+            $tanggal_akhir = date("Y-m-t", strtotime($tanggal_awal)); // tanggal akhir bulan
+
+            // Siapkan parameter untuk request
+            $params = [
+                'tanggal_awal' => $tanggal_awal,
+                'tanggal_akhir' => $tanggal_akhir,
+                'no_rm' => '',
+            ];
+
+            // Ambil data dari model
+            $data = $kominfo->pendaftaranRequest($params);
+
+            // Proses data jika perlu
+            $res = $this->reportPendaftaranProses($data);
+
+            // Simpan hasil ke dalam array result
+            $result[$bulanFormatted] = $res;
         }
 
-        // Debugging: print the data received
-        // return $dataPendaftaranResponse;
+        return response()->json($result);
+    }
 
-        // Filter data dengan keterangan "SELESAI DOPANGGIL PENDAFTARAN"
-        // $filteredData = $dataPendaftaranResponse;
-        $filteredData = array_filter($dataPendaftaranResponse, function ($item) {
-            return isset($item['keterangan']) && $item['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
-        });
+    public function reportPendaftaranProses($data)
+    {
 
-        // Debugging: print the filtered data
-        // dd($filteredData);
+        $jumlah_no_antrian = is_array($data) ? count($data) : 0;
+        if (isset($data['code']) && $data['code'] == 201) {
+            $jumlah_no_antrian = 0;
+            $data = []; // Tidak ada data valid
+        }
 
-        // Hitung jumlah berdasarkan penjamin_nama
-        $jumlahBPJS = count(array_filter($filteredData, function ($item) {
-            return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
-        }));
-        $jumlahBPJS2 = count(array_filter($filteredData, function ($item) {
-            return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
-        }));
-        $jumlahUMUM = count(array_filter($filteredData, function ($item) {
-            return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
-        }));
+        $filtered = array_filter($data, fn($item) => ($item['keterangan'] ?? '') === 'SELESAI DIPANGGIL LOKET PENDAFTARAN');
 
-        // Hitung jumlah berdasarkan pasien_lama_baru
-        $jumlahLama = count(array_filter($filteredData, function ($item) {
-            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'LAMA';
-        }));
-        $jumlahLamaUmum = count(array_filter($filteredData, function ($item) {
-            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'LAMA' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
-        }));
+        $countIf = fn($list, $callback) => count(array_filter($list, $callback));
 
-        $jumlahLamaBpjs = count(array_filter($filteredData, function ($item) {
-            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'LAMA' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
-        }));
-        $jumlahLamaBpjs2 = count(array_filter($filteredData, function ($item) {
-            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'LAMA' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
-        }));
+        $penjamins = ['UMUM', 'BPJS', 'BPJS PERIODE 2'];
+        $statuses = ['LAMA', 'BARU'];
+        $daftarBy = ['OTS', 'JKN'];
 
-        $jumlahBaru = count(array_filter($filteredData, function ($item) {
-            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'BARU';
-        }));
-
-        $jumlahBaruUmum = count(array_filter($filteredData, function ($item) {
-            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'BARU' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
-        }));
-        $jumlahBaruBpjs = count(array_filter($filteredData, function ($item) {
-            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'BARU' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
-        }));
-        $jumlahBaruBpjs2 = count(array_filter($filteredData, function ($item) {
-            return isset($item['pasien_lama_baru']) && $item['pasien_lama_baru'] === 'BARU' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
-        }));
-
-        // Hitung jumlah berdasarkan daftar_by
-        $jumlahOTS = count(array_filter($filteredData, function ($item) {
-            return isset($item['daftar_by']) && $item['daftar_by'] === 'OTS';
-        }));
-        $jumlahOTSUmum = count(array_filter($filteredData, function ($item) {
-            return isset($item['daftar_by']) && $item['daftar_by'] === 'OTS' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
-        }))
-        ;
-        $jumlahOTSBpjs = count(array_filter($filteredData, function ($item) {
-            return isset($item['daftar_by']) && $item['daftar_by'] === 'OTS' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
-        }));
-        $jumlahOTSBpjs2 = count(array_filter($filteredData, function ($item) {
-            return isset($item['daftar_by']) && $item['daftar_by'] === 'OTS' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
-        }));
-
-        $jumlahJKN = count(array_filter($filteredData, function ($item) {
-            return isset($item['daftar_by']) && $item['daftar_by'] === 'JKN';
-        }));
-        $jumlahJKNUmum = count(array_filter($filteredData, function ($item) {
-            return isset($item['daftar_by']) && $item['daftar_by'] === 'JKN' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
-        }));
-        $jumlahJKNBpjs = count(array_filter($filteredData, function ($item) {
-            return isset($item['daftar_by']) && $item['daftar_by'] === 'JKN' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
-        }));
-        $jumlahJKNBpjs2 = count(array_filter($filteredData, function ($item) {
-            return isset($item['daftar_by']) && $item['daftar_by'] === 'JKN' && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
-        }));
-
-        $jumlahBatal = count(array_filter($dataPendaftaranResponse, function ($item) {
-            return isset($item['keterangan']) && strpos($item['keterangan'], 'DIBATALKAN PADA') !== false;
-        }));
-        $jumlahBatalUmum = count(array_filter($dataPendaftaranResponse, function ($item) {
-            return isset($item['keterangan']) && strpos($item['keterangan'], 'DIBATALKAN PADA') !== false && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
-        }));
-        $jumlahBatalBpjs = count(array_filter($dataPendaftaranResponse, function ($item) {
-            return isset($item['keterangan']) && strpos($item['keterangan'], 'DIBATALKAN PADA') !== false && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
-        }));
-        $jumlahBatalBpjs2 = count(array_filter($dataPendaftaranResponse, function ($item) {
-            return isset($item['keterangan']) && strpos($item['keterangan'], 'DIBATALKAN PADA') !== false && isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
-        }));
-
-        $jumlahNoUmum = count(array_filter($dataPendaftaranResponse, function ($item) {
-            return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'UMUM';
-        }));
-        $jumlahNoBpjs = count(array_filter($dataPendaftaranResponse, function ($item) {
-            return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS';
-        }));
-        $jumlahNoBpjs2 = count(array_filter($dataPendaftaranResponse, function ($item) {
-            return isset($item['penjamin_nama']) && $item['penjamin_nama'] === 'BPJS PERIODE 2';
-        }));
-
-        // Build response
-        $jumlah = [
-            'jumlah_no_antrian' => (int) $jumlah_no_antrian,
-            'jumlah_no_umum' => (int) $jumlahNoUmum,
-            'jumlah_no_bpjs' => (int) $jumlahNoBpjs,
-            'jumlah_no_bpjs2' => (int) $jumlahNoBpjs2,
-            'jumlah_pasien' => (int) count($filteredData),
-            'jumlah_pasien_batal' => (int) $jumlahBatal,
-            'jumlah_pasien_batal_UMUM' => (int) $jumlahBatalUmum,
-            'jumlah_pasien_batal_BPJS' => (int) $jumlahBatalBpjs,
-            'jumlah_pasien_batal_BPJS_2' => (int) $jumlahBatalBpjs2,
-            'jumlah_UMUM' => (int) $jumlahUMUM,
-            'jumlah_BPJS' => (int) $jumlahBPJS,
-            'jumlah_BPJS_2' => (int) $jumlahBPJS2,
-            'jumlah_pasien_LAMA' => (int) $jumlahLama,
-            'jumlah_pasien_LAMA_UMUM' => (int) $jumlahLamaUmum,
-            'jumlah_pasien_LAMA_BPJS' => (int) $jumlahLamaBpjs,
-            'jumlah_pasien_LAMA_BPJS_2' => (int) $jumlahLamaBpjs2,
-            'jumlah_pasien_BARU' => (int) $jumlahBaru,
-            'jumlah_pasien_BARU_UMUM' => (int) $jumlahBaruUmum,
-            'jumlah_pasien_BARU_BPJS' => (int) $jumlahBaruBpjs,
-            'jumlah_pasien_BARU_BPJS_2' => (int) $jumlahBaruBpjs2,
-            'jumlah_daftar_OTS' => (int) $jumlahOTS,
-            'jumlah_daftar_OTS_UMUM' => (int) $jumlahOTSUmum,
-            'jumlah_daftar_OTS_BPJS' => (int) $jumlahOTSBpjs,
-            'jumlah_daftar_OTS_BPJS_2' => (int) $jumlahOTSBpjs2,
-            'jumlah_daftar_JKN' => (int) $jumlahJKN,
-            'jumlah_daftar_JKN_UMUM' => (int) $jumlahJKNUmum,
-            'jumlah_daftar_JKN_BPJS' => (int) $jumlahJKNBpjs,
-            'jumlah_daftar_JKN_BPJS_2' => (int) $jumlahJKNBpjs2,
+        $result = [
+            'jumlah_no_antrian' => $jumlah_no_antrian,
+            'jumlah_pasien' => count($filtered),
+            'jumlah_pasien_batal' => $countIf($data, fn($d) => str_contains($d['keterangan'] ?? '', 'DIBATALKAN PADA')),
         ];
 
+        // Batal per penjamin
+        foreach ($penjamins as $penjamin) {
+            $key = strtolower(str_replace(' ', '_', $penjamin));
+            $result["jumlah_no_{$key}"] = $countIf($data, fn($d) => ($d['penjamin_nama'] ?? '') === $penjamin);
+            $result["jumlah_pasien_batal_{$key}"] = $countIf($data, fn($d) =>
+                str_contains($d['keterangan'] ?? '', 'DIBATALKAN PADA') && ($d['penjamin_nama'] ?? '') === $penjamin
+            );
+            $result["jumlah_{$key}"] = $countIf($filtered, fn($d) => ($d['penjamin_nama'] ?? '') === $penjamin);
+        }
+
+        // Status LAMA/BARU per penjamin
+        foreach ($statuses as $status) {
+            $status_key = strtolower($status);
+            $result["jumlah_pasien_{$status_key}"] = $countIf($filtered, fn($d) => ($d['pasien_lama_baru'] ?? '') === $status);
+
+            foreach ($penjamins as $penjamin) {
+                $penjamin_key = strtolower(str_replace(' ', '_', $penjamin));
+                $result["jumlah_pasien_{$status_key}_{$penjamin_key}"] = $countIf($filtered, fn($d) =>
+                    ($d['pasien_lama_baru'] ?? '') === $status && ($d['penjamin_nama'] ?? '') === $penjamin
+                );
+            }
+        }
+
+        // Daftar_by: OTS / JKN
+        foreach ($daftarBy as $method) {
+            $method_key = strtolower($method);
+            $result["jumlah_{$method_key}"] = $countIf($filtered, fn($d) => ($d['daftar_by'] ?? '') === $method);
+
+            foreach ($penjamins as $penjamin) {
+                $penjamin_key = strtolower(str_replace(' ', '_', $penjamin));
+                $result["jumlah_{$method_key}_{$penjamin_key}"] = $countIf($filtered, fn($d) =>
+                    ($d['daftar_by'] ?? '') === $method && ($d['penjamin_nama'] ?? '') === $penjamin
+                );
+            }
+        }
+
+        $html = $this->getTablePendaftaran($result);
+
+        $res = [
+            "total" => $result,
+            "data" => array_values($filtered),
+            "html" => $html,
+        ];
+
+        return $res;
+    }
+
+    private function getTablePendaftaran($data)
+    {
+        // dd($data);
         $rows = [
-            'Jumlah No Antrian' => [
-                'total' => $jumlah_no_antrian,
-                'bpjs' => $jumlahNoBpjs,
-                'bpjs2' => $jumlahNoBpjs2,
-                'umum' => $jumlahNoUmum,
+            'jumlah_no_antrian' => [
+                'total' => $data['jumlah_no_antrian'],
+                'bpjs' => $data['jumlah_no_bpjs'],
+                'bpjs2' => $data['jumlah_no_bpjs_periode_2'],
+                'umum' => $data['jumlah_no_umum'],
             ],
-            'Jumlah Pasien' => [
-                'total' => count($filteredData),
-                'bpjs' => $jumlahBPJS,
-                'bpjs2' => $jumlahBPJS2,
-                'umum' => $jumlahUMUM,
+            'jumlah_pasien' => [
+                'total' => $data['jumlah_pasien'],
+                'bpjs' => $data['jumlah_bpjs'],
+                'bpjs2' => $data['jumlah_bpjs_periode_2'],
+                'umum' => $data['jumlah_umum'],
             ],
-            'Pasien Lama' => [
-                'total' => $jumlahLama,
-                'bpjs' => $jumlahLamaBpjs,
-                'bpjs2' => $jumlahLamaBpjs2,
-                'umum' => $jumlahLamaUmum,
+            'pasien_lama' => [
+                'total' => $data['jumlah_pasien_lama'],
+                'bpjs' => $data['jumlah_pasien_lama_bpjs'],
+                'bpjs2' => $data['jumlah_pasien_lama_bpjs_periode_2'],
+                'umum' => $data['jumlah_pasien_lama_umum'],
             ],
-            'Pasien Baru' => [
-                'total' => $jumlahBaru,
-                'bpjs' => $jumlahBaruBpjs,
-                'bpjs2' => $jumlahBaruBpjs2,
-                'umum' => $jumlahBaruUmum,
+            'pasien_baru' => [
+                'total' => $data['jumlah_pasien_baru'],
+                'bpjs' => $data['jumlah_pasien_baru_bpjs'],
+                'bpjs2' => $data['jumlah_pasien_baru_bpjs_periode_2'],
+                'umum' => $data['jumlah_pasien_baru_umum'],
             ],
-            'Jumlah Pasien Batal' => [
-                'total' => $jumlahBatal,
-                'bpjs' => $jumlahBatalBpjs,
-                'bpjs2' => $jumlahBatalBpjs2,
-                'umum' => $jumlahBatalUmum,
+            'jumlah_pasien_batal' => [
+                'total' => $data['jumlah_pasien_batal'],
+                'bpjs' => $data['jumlah_pasien_batal_bpjs'],
+                'bpjs2' => $data['jumlah_pasien_batal_bpjs_periode_2'],
+                'umum' => $data['jumlah_pasien_batal_umum'],
             ],
-            'Daftar OTS' => [
-                'total' => $jumlahOTS,
-                'bpjs' => $jumlahOTSBpjs,
-                'bpjs2' => $jumlahOTSBpjs2,
-                'umum' => $jumlahOTSUmum,
+            'daftar_ots' => [
+                'total' => $data['jumlah_ots'],
+                'bpjs' => $data['jumlah_ots_bpjs'],
+                'bpjs2' => $data['jumlah_ots_bpjs_periode_2'],
+                'umum' => $data['jumlah_ots_umum'],
             ],
-            'Daftar JKN' => [
-                'total' => $jumlahJKN,
-                'bpjs' => $jumlahJKNBpjs,
-                'bpjs2' => $jumlahJKNBpjs2,
-                'umum' => $jumlahJKNUmum,
+            'daftar_jkn' => [
+                'total' => $data['jumlah_jkn'],
+                'bpjs' => $data['jumlah_jkn_bpjs'],
+                'bpjs2' => $data['jumlah_jkn_bpjs_periode_2'],
+                'umum' => $data['jumlah_jkn_umum'],
             ],
         ];
 
         $html = '<table class="table table-bordered table-hover dataTable dtr-inline" id="rekapTotal" width="100%" cellspacing="0">';
         $html .= '
-            <thead class="bg bg-teal table-bordered border-warning">
-                <tr>
-                    <th rowspan="2" class="align-middle">Keterangan</th>
-                    <th rowspan="2" class="text-center align-middle">Total</th>
-                    <th colspan="3" class="text-center">Jaminan</th>
-                </tr>
-                <tr>
-                    <th class="text-center">BPJS</th>
-                    <th class="text-center">BPJS PERIODE 2</th>
-                    <th class="text-center">UMUM</th>
-                </tr>
-            </thead>
-            <tbody>';
+                    <thead class="bg bg-teal table-bordered border-warning">
+                        <tr>
+                            <th rowspan="2" class="align-middle">Keterangan</th>
+                            <th rowspan="2" class="text-center align-middle">Total</th>
+                            <th colspan="3" class="text-center">Jaminan</th>
+                        </tr>
+                        <tr>
+                            <th class="text-center">BPJS</th>
+                            <th class="text-center">BPJS PERIODE 2</th>
+                            <th class="text-center">UMUM</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
 
         foreach ($rows as $label => $data) {
             $html .= '<tr>';
@@ -405,17 +606,9 @@ class PasienKominfoController extends Controller
         }
 
         $html .= '</tbody></table>';
-
-        $data = array_values($filteredData);
-
-        $res = [
-            "total" => $jumlah,
-            "data" => $data,
-            "html" => $html,
-        ];
-
-        return response()->json($res);
+        return $html;
     }
+
     private function generateQrCodeWithLogo($dokter, $no_rm, $nama)
     {
         // Data untuk QR Code (misalnya tanda tangan)

@@ -902,6 +902,62 @@ class LaboratoriumController extends Controller
         return $results;
     }
 
+    // public function rekapKunjunganLab(Request $request)
+    // {
+    //     $tglAwal = $request->input('tglAwal') ?? Carbon::now()->startOfYear()->format('Y-m-d');
+    //     $tglAkhir = $request->input('tglAkhir') ?? Carbon::now()->endOfYear()->format('Y-m-d');
+
+    //     $tglAwal = $tglAwal . ' 00:00:00';
+    //     $tglAkhir = $tglAkhir . ' 23:59:59';
+
+    //     $data = LaboratoriumKunjunganModel::select(
+    //         DB::raw("DATE_FORMAT(updated_at, '%Y-%m') as bulan"),
+    //         DB::raw("SUM(CASE WHEN layanan = 'BPJS' THEN 1 ELSE 0 END) as jumlah_bpjs"),
+    //         DB::raw("SUM(CASE WHEN layanan = 'UMUM' THEN 1 ELSE 0 END) as jumlah_umum"),
+    //         DB::raw("COUNT(*) as total")
+    //     )
+    //         ->whereBetween('updated_at', [$tglAwal, $tglAkhir])
+    //         ->groupBy(DB::raw("DATE_FORMAT(updated_at, '%Y-%m')"))
+    //         ->orderBy(DB::raw("DATE_FORMAT(updated_at, '%Y-%m')"))
+    //         ->get();
+
+    //     if ($data->isEmpty()) {
+    //         return response()->json(['message' => 'Data transaksi tidak ditemukan'], 404, [], JSON_PRETTY_PRINT);
+    //     }
+
+    //     // Buat HTML tabel
+    //     $html = '<table id="jumlahLabTable" class="table table-bordered table-striped dataTable no-footer dtr-inline"
+    //                 aria-describedby="jumlahLabTable">';
+    //     $html .= '
+    //     <thead class="thead-dark">
+    //         <tr>
+    //             <th>#</th>
+    //             <th>Bulan</th>
+    //             <th>Jumlah BPJS</th>
+    //             <th>Jumlah Umum</th>
+    //             <th>Total</th>
+    //         </tr>
+    //     </thead>
+    //     <tbody>';
+    //     $i = 1;
+    //     foreach ($data as $row) {
+    //         $html .= '<tr>';
+    //         $html .= '<td>' . $i++ . '</td>';
+    //         $html .= '<td>' . date('F Y', strtotime($row->bulan . '-01')) . '</td>';
+    //         $html .= '<td>' . $row->jumlah_bpjs . '</td>';
+    //         $html .= '<td>' . $row->jumlah_umum . '</td>';
+    //         $html .= '<td>' . $row->total . '</td>';
+    //         $html .= '</tr>';
+    //     }
+
+    //     $html .= '</tbody></table>';
+
+    //     return response()->json([
+    //         'rekap_bulanan' => $data,
+    //         'html' => $html,
+    //     ], 200, [], JSON_PRETTY_PRINT);
+    // }
+
     public function rekapKunjunganLab(Request $request)
     {
         $tglAwal = $request->input('tglAwal') ?? Carbon::now()->startOfYear()->format('Y-m-d');
@@ -927,18 +983,18 @@ class LaboratoriumController extends Controller
 
         // Buat HTML tabel
         $html = '<table id="jumlahLabTable" class="table table-bordered table-striped dataTable no-footer dtr-inline"
-                    aria-describedby="jumlahLabTable">';
+                aria-describedby="jumlahLabTable">';
         $html .= '
-        <thead class="thead-dark">
-            <tr>
-                <th>#</th>
-                <th>Bulan</th>
-                <th>Jumlah BPJS</th>
-                <th>Jumlah Umum</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>';
+    <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>Bulan</th>
+            <th>Jumlah BPJS</th>
+            <th>Jumlah Umum</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>';
         $i = 1;
         foreach ($data as $row) {
             $html .= '<tr>';
@@ -949,12 +1005,39 @@ class LaboratoriumController extends Controller
             $html .= '<td>' . $row->total . '</td>';
             $html .= '</tr>';
         }
-
         $html .= '</tbody></table>';
+
+        // Struktur data untuk Chart.js
+        $labels = [];
+        $bpjs = [];
+        $umum = [];
+
+        foreach ($data as $row) {
+            $labels[] = date('M Y', strtotime($row->bulan . '-01'));
+            $bpjs[] = (int) $row->jumlah_bpjs;
+            $umum[] = (int) $row->jumlah_umum;
+        }
+
+        $chart = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'BPJS',
+                    'data' => $bpjs,
+                    'backgroundColor' => '#36A2EB',
+                ],
+                [
+                    'label' => 'UMUM',
+                    'data' => $umum,
+                    'backgroundColor' => '#FF6384',
+                ],
+            ],
+        ];
 
         return response()->json([
             'rekap_bulanan' => $data,
             'html' => $html,
+            'chart' => $chart,
         ], 200, [], JSON_PRETTY_PRINT);
     }
 
@@ -1046,6 +1129,99 @@ class LaboratoriumController extends Controller
     //     ], 200, [], JSON_PRETTY_PRINT);
     // }
 
+    // public function rekapKunjunganLabItem(Request $request)
+    // {
+    //     $mulaiTgl = $request->input('tglAwal', now()->startOfYear()->toDateString());
+    //     $selesaiTgl = $request->input('tglAkhir', now()->endOfYear()->toDateString());
+
+    //     $labHasilPemeriksaan = DB::table('t_kunjungan_lab_hasil')
+    //         ->select(
+    //             DB::raw("DATE_FORMAT(t_kunjungan_lab_hasil.created_at, '%Y-%m') as bulan"),
+    //             'kasir_m_layanan.nmLayanan AS nama_layanan',
+    //             'kasir_m_layanan.idLayanan AS kode_layanan',
+    //             't_kunjungan_lab.layanan AS jaminan',
+    //             DB::raw('COUNT(t_kunjungan_lab_hasil.idLab) AS jumlah')
+    //         )
+    //         ->join('kasir_m_layanan', 't_kunjungan_lab_hasil.idLayanan', '=', 'kasir_m_layanan.idLayanan')
+    //         ->join('t_kunjungan_lab', 't_kunjungan_lab_hasil.notrans', '=', 't_kunjungan_lab.notrans')
+    //         ->whereBetween(DB::raw('DATE(t_kunjungan_lab_hasil.created_at)'), [$mulaiTgl, $selesaiTgl])
+    //         ->groupBy('bulan', 'kode_layanan', 'nama_layanan', 'jaminan')
+    //         ->orderBy('bulan')
+    //         ->get();
+
+    //     // Ambil semua bulan unik
+    //     $bulanUnik = collect($labHasilPemeriksaan)->pluck('bulan')->unique()->sort()->values();
+
+    //     // Struktur data per layanan
+    //     $grouped = [];
+
+    //     foreach ($labHasilPemeriksaan as $item) {
+    //         $key = $item->kode_layanan;
+    //         if (!isset($grouped[$key])) {
+    //             $grouped[$key] = [
+    //                 'nama_layanan' => $item->nama_layanan,
+    //                 'kode_layanan' => $item->kode_layanan,
+    //                 'data' => [],
+    //             ];
+    //         }
+
+    //         $grouped[$key]['data'][$item->bulan][$item->jaminan] = $item->jumlah;
+    //     }
+
+    //     // Buat HTML
+    //     $html = '<div class="card">
+    //     <div class="card-header">
+    //         <h3 class="card-title">Rekap Kunjungan Lab per Bulan dan Layanan</h3>
+    //     </div>
+    //     <div class="card-body">
+    //         <table id="jumlahLabItemTable" class="table table-bordered table-striped dataTable no-footer dtr-inline"
+    //             aria-describedby="jumlahLabItemTable">
+    //             <thead>
+    //                 <tr>
+    //                     <th style="width: 10px;">#</th>
+    //                     <th>Nama Layanan</th>
+    //                     <th>Kode Layanan</th>';
+
+    //     foreach ($bulanUnik as $bulan) {
+    //         $shortMonth = strtoupper(date('M', strtotime($bulan . '-01')));
+    //         $html .= "<th>BPJS ($shortMonth)</th><th>UMUM ($shortMonth)</th>";
+    //     }
+
+    //     $html .= '</tr>
+    //             </thead>
+    //             <tbody>';
+
+    //     if (empty($grouped)) {
+    //         $html .= '<tr><td colspan="' . (3 + count($bulanUnik) * 2) . '" class="text-center">Tidak ada data</td></tr>';
+    //     } else {
+    //         $i = 1;
+    //         foreach ($grouped as $data) {
+    //             $html .= '<tr>';
+    //             $html .= '<td>' . $i++ . '</td>';
+    //             $html .= '<td>' . $data['nama_layanan'] . '</td>';
+    //             $html .= '<td>' . $data['kode_layanan'] . '</td>';
+
+    //             foreach ($bulanUnik as $bulan) {
+    //                 $bpjs = $data['data'][$bulan]['BPJS'] ?? 0;
+    //                 $umum = $data['data'][$bulan]['UMUM'] ?? 0;
+    //                 $html .= "<td>$bpjs</td><td>$umum</td>";
+    //             }
+
+    //             $html .= '</tr>';
+    //         }
+    //     }
+
+    //     $html .= '    </tbody>
+    //         </table>
+    //     </div>
+    // </div>';
+
+    //     return response()->json([
+    //         'data' => $labHasilPemeriksaan,
+    //         'html' => $html,
+    //     ], 200, [], JSON_PRETTY_PRINT);
+    // }
+
     public function rekapKunjunganLabItem(Request $request)
     {
         $mulaiTgl = $request->input('tglAwal', now()->startOfYear()->toDateString());
@@ -1066,11 +1242,9 @@ class LaboratoriumController extends Controller
             ->orderBy('bulan')
             ->get();
 
-        // Ambil semua bulan unik
         $bulanUnik = collect($labHasilPemeriksaan)->pluck('bulan')->unique()->sort()->values();
-
-        // Struktur data per layanan
         $grouped = [];
+        $datasets = [];
 
         foreach ($labHasilPemeriksaan as $item) {
             $key = $item->kode_layanan;
@@ -1081,11 +1255,29 @@ class LaboratoriumController extends Controller
                     'data' => [],
                 ];
             }
-
             $grouped[$key]['data'][$item->bulan][$item->jaminan] = $item->jumlah;
+
+            // Dataset untuk chart
+            $chartKey = $item->kode_layanan . ' - ' . $item->nama_layanan . ' (' . $item->jaminan . ')';
+            if (!isset($datasets[$chartKey])) {
+                $datasets[$chartKey] = [
+                    'label' => $chartKey,
+                    'data' => array_fill_keys($bulanUnik->all(), 0),
+                ];
+            }
+            $datasets[$chartKey]['data'][$item->bulan] = $item->jumlah;
         }
 
-        // Buat HTML
+        // Final format datasets for chart
+        $formattedDatasets = [];
+        foreach ($datasets as $ds) {
+            $formattedDatasets[] = [
+                'label' => $ds['label'],
+                'data' => array_values($ds['data']),
+            ];
+        }
+
+        // Build HTML
         $html = '<div class="card">
         <div class="card-header">
             <h3 class="card-title">Rekap Kunjungan Lab per Bulan dan Layanan</h3>
@@ -1134,9 +1326,12 @@ class LaboratoriumController extends Controller
     </div>';
 
         return response()->json([
-            'data' => $labHasilPemeriksaan,
             'html' => $html,
-        ], 200, [], JSON_PRETTY_PRINT);
+            'chart' => [
+                'labels' => $bulanUnik,
+                'datasets' => $formattedDatasets,
+            ],
+        ]);
     }
 
 }

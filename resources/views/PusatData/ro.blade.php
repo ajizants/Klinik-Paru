@@ -53,14 +53,26 @@
 
             <div class="table-responsive pt-2 px-2" id="divJumlahRo">
             </div>
+            <div class="card mt-4">
+                <div class="card-header">Grafik Kunjungan Radiologi</div>
+                <div class="card-body">
+                    <canvas id="rekapRoChart" height="300"></canvas>
+                </div>
+            </div>
             <div class="table-responsive pt-2 px-2" id="divJumlahRoItem">
+            </div>
+            <div class="card mt-4">
+                <div class="card-header">Grafik Pemeriksaan Radiologi</div>
+                <div class="card-body">
+                    <canvas id="chartRoItem" height="100"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         function cariDataKunjunganRo(tglAwal, tglAkhir) {
-            tampilkanLoading("Sedangan Mencari Data Kunjungan Rooratorium...");
+            tampilkanLoading("Sedangan Mencari Data Kunjungan Radiologi...");
             cariDataKunjunganRoItem(tglAwal, tglAkhir);
 
             $.ajax({
@@ -102,9 +114,9 @@
                         }, {
                             extend: "excel", // Tombol ekspor ke Excel
                             text: "Download",
-                            title: "Data Jumlah Kunjung Rooratorium " + tglAwal + " s.d. " +
+                            title: "Data Jumlah Kunjung Radiologi " + tglAwal + " s.d. " +
                                 tglAkhir,
-                            filename: "Data Jumlah Kunjung Rooratorium" + tglAwal + "_" +
+                            filename: "Data Jumlah Kunjung Radiologi" + tglAwal + "_" +
                                 tglAkhir,
                             exportOptions: {
                                 columns: ":visible",
@@ -115,6 +127,53 @@
                     // Menambahkan tombol ekspor ke dalam wrapper DataTables
                     table.buttons().container().appendTo("#jumlahRoTable_wrapper .col-md-6:eq(0)");
 
+                    const ctx = document.getElementById('rekapRoChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: response.chart.labels,
+                            datasets: [{
+                                    label: 'BPJS',
+                                    data: response.chart.datasets[0].data,
+                                    borderColor: '#36A2EB',
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    tension: 0.3,
+                                    fill: true
+                                },
+                                {
+                                    label: 'UMUM',
+                                    data: response.chart.datasets[1].data,
+                                    borderColor: '#FF6384',
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    tension: 0.3,
+                                    fill: true
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Grafik Kunjungan Laboratorium per Bulan'
+                                },
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
                     Swal.close();
                 },
                 error: function(xhr, status, error) {
@@ -181,6 +240,43 @@
 
                     // Menambahkan tombol ekspor ke dalam wrapper DataTables
                     table.buttons().container().appendTo("#jumlahRoItemTable_wrapper .col-md-6:eq(0)");
+                    // Buat chart menggunakan data.chart
+                    const ctx = document.getElementById('chartRoItem').getContext('2d');
+
+                    new Chart(ctx, {
+                        type: 'bar', // bisa juga 'line' atau 'bar'
+                        data: {
+                            labels: response.chart.labels,
+                            datasets: response.chart.datasets.map((ds, index) => ({
+                                ...ds,
+                                backgroundColor: warna(index),
+                                borderColor: warna(index),
+                                borderWidth: 1
+                            }))
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false,
+                                }
+                            },
+                            interaction: {
+                                mode: 'nearest',
+                                axis: 'x',
+                                intersect: false
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
 
                     Swal.close();
                 },
