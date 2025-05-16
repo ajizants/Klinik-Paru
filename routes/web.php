@@ -18,6 +18,7 @@ use App\Http\Controllers\PromkesController;
 use App\Http\Controllers\ROTransaksiController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\TataUsahaController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifController;
 use Illuminate\Support\Facades\Route;
 
@@ -134,4 +135,5 @@ Route::middleware('auth')->group(function () {
     //gudang atk
     Route::get('Gudang/ATK', [GudangATKController::class, 'index'])->name('gudangATK')->middleware('role:atk');
 
+    Route::get('userOnline', [UserController::class, 'indexUserOnline'])->name('indexUserOnline')->middleware('role:admin');
 });
