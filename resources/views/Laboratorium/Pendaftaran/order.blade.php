@@ -123,7 +123,8 @@
                         :
                     </td>
                     <td width="26%" class="my-0 py-0" style=" text-align: left;">
-                        {{ $dataCppt['pasien_no_rm'] }} / {{ $tahun }} / {{ $tglLahir }}
+                        {{ $dataCppt['pasien_no_rm'] }} / {{ $tahun }} / {{ $tglLahir }} /
+                        {{ $dataCppt['penjamin_nama'] }}
                     </td>
                     <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
                         Tanggal</td>
