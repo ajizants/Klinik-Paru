@@ -7,19 +7,16 @@
             <!-- Input Group -->
             <div class="col-md-4 col-sm-6">
                 <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="far fa-calendar-alt"></i>
-                            </span>
-                        </div>
-                        <input type="text" class="form-control" id="tglKunjPend">
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-form"
-                            onclick="reportPendaftaran(
-                                    $('#tglKunjPend').data('daterangepicker').startDate.format('YYYY-MM-DD'),
-                                    $('#tglKunjPend').data('daterangepicker').endDate.format('YYYY-MM-DD')
-                                )">Cari</button>
+                    <div class="d-flex align-items-center">
+                        <select id="tahunPendaftaran" class="form-control form-control-sm mr-2">
+                            @for ($year = date('Y'); $year >= 2021; $year--)
+                                <option value="{{ $year }}">{{ $year }}</option>
+                            @endfor
+                        </select>
+                        <button class="btn btn-sm btn-success"
+                            onclick="reportPendaftaran(document.getElementById('tahunPendaftaran').value)">Cari</button>
                     </div>
+
                 </div>
             </div>
 
@@ -27,8 +24,8 @@
             <div class="col-md-8">
                 <div class="accordion" id="accordionExample">
                     <div class="card">
-                        <a class="btn btn-link text-left w-100" type="button" data-toggle="collapse" id="headingOne"
-                            data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <a class="btn btn-link text-left w-100 p-1" type="button" data-toggle="collapse"
+                            id="headingOne" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                             <strong>Klik Untuk Melihat Cara Pencarian Data</strong>
                         </a>
                         <div id="collapseOne" class="collapse" aria-labelledby="headingOne"
@@ -72,51 +69,56 @@
 </div>
 
 <script>
-    function reportPendaftaran(tglAwal, tglAkhir) {
+    function reportPendaftaran(tahun) {
         tampilkanLoading("Memuat data jumlah pendaftaran...");
 
         $.ajax({
-            url: "/api/pendaftaran/report",
-            type: "post",
-            data: {
-                tanggal_awal: tglAwal,
-                tanggal_akhir: tglAkhir,
-                no_rm: "",
-            },
+            url: "/api/pendaftaran/report/" + tahun,
+            type: "GET",
             success: function(response) {
-                var html = response["html"];
-                // Inisialisasi DataTable
+                let combinedHtml = "";
 
-                $("#divTabelJumlahPendaftaran").html(html);
-                $("#jumlahPendaftaranTable")
-                    .DataTable({
-                        autoWidth: false,
-                        ordering: false,
-                        paging: false,
-                        searching: false,
-                        info: false,
-                        lengthChange: false,
-                        buttons: [{
-                                extend: "excelHtml5",
-                                text: "Excel",
-                                title: "Laporan Jumlah Pendaftaran Tanggal: " +
-                                    tglAwal +
-                                    " s.d. " +
-                                    tglAkhir,
-                                filename: "Laporan Jumlah Pendaftaran Tanggal " +
-                                    tglAwal +
-                                    " s.d. " +
-                                    tglAkhir,
-                            },
-                            {
-                                extend: "colvis",
-                                text: "Tampilkan Kolom",
-                            },
-                        ],
-                    })
-                    .buttons()
-                    .container()
-                    .appendTo("#rekapTotal_wrapper .col-md-6:eq(0)");
+                // Loop hanya pada response.html
+                for (const bulan in response.html) {
+                    if (response.html.hasOwnProperty(bulan)) {
+                        combinedHtml += `<h5 class="mt-4 mb-2">Bulan ${bulan}</h5>`;
+                        combinedHtml += response.html[bulan];
+                    }
+                }
+
+                $("#divTabelJumlahPendaftaran").html(combinedHtml);
+
+                for (const bulan in response.html) {
+                    if (response.html.hasOwnProperty(bulan)) {
+                        const tableId =
+                            `#rekapTotal${bulan.replace(".", "")}`; // remove dot from ID if exists
+                        $(tableId)
+                            .DataTable({
+                                autoWidth: false,
+                                ordering: false,
+                                paging: false,
+                                searching: false,
+                                info: false,
+                                lengthChange: false,
+                                buttons: [{
+                                        extend: "excelHtml5",
+                                        text: "Excel",
+                                        title: "Laporan Jumlah Pendaftaran Bulan " + bulan + " (" +
+                                            tglAwal + " s.d. " + tglAkhir + ")",
+                                        filename: "Laporan_Jumlah_Pendaftaran_Bulan_" + bulan +
+                                            "_" + tglAwal + "_sd_" + tglAkhir,
+                                    },
+                                    {
+                                        extend: "colvis",
+                                        text: "Tampilkan Kolom",
+                                    },
+                                ],
+                            })
+                            .buttons()
+                            .container()
+                            .appendTo(`${tableId}_wrapper .col-md-6:eq(0)`);
+                    }
+                }
 
                 Swal.close();
             },
@@ -130,4 +132,62 @@
             },
         });
     }
+    // function reportPendaftaran(tglAwal, tglAkhir) {
+    //     tampilkanLoading("Memuat data jumlah pendaftaran...");
+
+    //     $.ajax({
+    //         url: "/api/pendaftaran/report",
+    //         type: "post",
+    //         data: {
+    //             tanggal_awal: tglAwal,
+    //             tanggal_akhir: tglAkhir,
+    //             no_rm: "",
+    //         },
+    //         success: function(response) {
+    //             var html = response["html"];
+    //             // Inisialisasi DataTable
+
+    //             $("#divTabelJumlahPendaftaran").html(html);
+    //             $("#jumlahPendaftaranTable")
+    //                 .DataTable({
+    //                     autoWidth: false,
+    //                     ordering: false,
+    //                     paging: false,
+    //                     searching: false,
+    //                     info: false,
+    //                     lengthChange: false,
+    //                     buttons: [{
+    //                             extend: "excelHtml5",
+    //                             text: "Excel",
+    //                             title: "Laporan Jumlah Pendaftaran Tanggal: " +
+    //                                 tglAwal +
+    //                                 " s.d. " +
+    //                                 tglAkhir,
+    //                             filename: "Laporan Jumlah Pendaftaran Tanggal " +
+    //                                 tglAwal +
+    //                                 " s.d. " +
+    //                                 tglAkhir,
+    //                         },
+    //                         {
+    //                             extend: "colvis",
+    //                             text: "Tampilkan Kolom",
+    //                         },
+    //                     ],
+    //                 })
+    //                 .buttons()
+    //                 .container()
+    //                 .appendTo("#rekapTotal_wrapper .col-md-6:eq(0)");
+
+    //             Swal.close();
+    //         },
+    //         error: function(xhr, status, error) {
+    //             console.error("Error:", error);
+    //             Swal.fire({
+    //                 icon: "error",
+    //                 title: "Terjadi kesalahan saat mengambil data pasien...!!!\n" +
+    //                     error,
+    //             });
+    //         },
+    //     });
+    // }
 </script>

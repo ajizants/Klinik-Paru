@@ -433,7 +433,7 @@ class PasienKominfoController extends Controller
         $kominfo = new KominfoModel();
         $result  = [];
 
-        for ($bulan = 1; $bulan <= 12; $bulan++) {
+        for ($bulan = 1; $bulan <= 2; $bulan++) {
             // Format bulan dengan leading zero, misal: 01, 02, ..., 12
             $bulanFormatted = str_pad($bulan, 2, '0', STR_PAD_LEFT);
 
@@ -452,16 +452,18 @@ class PasienKominfoController extends Controller
             $data = $kominfo->pendaftaranRequest($params);
 
             // Proses data jika perlu
-            $res = $this->reportPendaftaranProses($data);
+            $res = $this->reportPendaftaranProses($data, $bulanFormatted);
 
-            // Simpan hasil ke dalam array result
-            $result[$bulanFormatted] = $res;
+            // Simpan hasil ke dalam array result dengan struktur baru
+            $result['html'][$bulanFormatted]  = $res['html'];
+            $result['total'][$bulanFormatted] = $res['total'];
+
         }
 
         return response()->json($result);
     }
 
-    public function reportPendaftaranProses($data)
+    public function reportPendaftaranProses($data, $bulan = null)
     {
 
         $jumlah_no_antrian = is_array($data) ? count($data) : 0;
@@ -520,7 +522,7 @@ class PasienKominfoController extends Controller
             }
         }
 
-        $html = $this->getTablePendaftaran($result);
+        $html = $this->getTablePendaftaran($result, $bulan);
 
         $res = [
             "total" => $result,
@@ -531,47 +533,50 @@ class PasienKominfoController extends Controller
         return $res;
     }
 
-    private function getTablePendaftaran($data)
+    private function getTablePendaftaran($data, $id)
     {
         // dd($data);
+        $id   = $id !== null ? $id : '';
         $rows = [
-            'jumlah_no_antrian'   => [
+            'Jumlah No Antrian' => [
                 'total' => $data['jumlah_no_antrian'],
                 'bpjs'  => $data['jumlah_no_bpjs'],
                 'bpjs2' => $data['jumlah_no_bpjs_periode_2'],
                 'umum'  => $data['jumlah_no_umum'],
             ],
-            'jumlah_pasien'       => [
+            'Pasien Terdaftar'  => [
                 'total' => $data['jumlah_pasien'],
                 'bpjs'  => $data['jumlah_bpjs'],
                 'bpjs2' => $data['jumlah_bpjs_periode_2'],
                 'umum'  => $data['jumlah_umum'],
             ],
-            'pasien_lama'         => [
-                'total' => $data['jumlah_pasien_lama'],
-                'bpjs'  => $data['jumlah_pasien_lama_bpjs'],
-                'bpjs2' => $data['jumlah_pasien_lama_bpjs_periode_2'],
-                'umum'  => $data['jumlah_pasien_lama_umum'],
-            ],
-            'pasien_baru'         => [
-                'total' => $data['jumlah_pasien_baru'],
-                'bpjs'  => $data['jumlah_pasien_baru_bpjs'],
-                'bpjs2' => $data['jumlah_pasien_baru_bpjs_periode_2'],
-                'umum'  => $data['jumlah_pasien_baru_umum'],
-            ],
-            'jumlah_pasien_batal' => [
+            'Pasien Batal'      => [
                 'total' => $data['jumlah_pasien_batal'],
                 'bpjs'  => $data['jumlah_pasien_batal_bpjs'],
                 'bpjs2' => $data['jumlah_pasien_batal_bpjs_periode_2'],
                 'umum'  => $data['jumlah_pasien_batal_umum'],
             ],
-            'daftar_ots'          => [
+
+            'Paien Lama'        => [
+                'total' => $data['jumlah_pasien_lama'],
+                'bpjs'  => $data['jumlah_pasien_lama_bpjs'],
+                'bpjs2' => $data['jumlah_pasien_lama_bpjs_periode_2'],
+                'umum'  => $data['jumlah_pasien_lama_umum'],
+            ],
+            'Pasien Baru'       => [
+                'total' => $data['jumlah_pasien_baru'],
+                'bpjs'  => $data['jumlah_pasien_baru_bpjs'],
+                'bpjs2' => $data['jumlah_pasien_baru_bpjs_periode_2'],
+                'umum'  => $data['jumlah_pasien_baru_umum'],
+            ],
+
+            'Daftar OTS'        => [
                 'total' => $data['jumlah_ots'],
                 'bpjs'  => $data['jumlah_ots_bpjs'],
                 'bpjs2' => $data['jumlah_ots_bpjs_periode_2'],
                 'umum'  => $data['jumlah_ots_umum'],
             ],
-            'daftar_jkn'          => [
+            'Daftar JKN'        => [
                 'total' => $data['jumlah_jkn'],
                 'bpjs'  => $data['jumlah_jkn_bpjs'],
                 'bpjs2' => $data['jumlah_jkn_bpjs_periode_2'],
@@ -579,7 +584,7 @@ class PasienKominfoController extends Controller
             ],
         ];
 
-        $html = '<table class="table table-bordered table-hover dataTable dtr-inline" id="rekapTotal" width="100%" cellspacing="0">';
+        $html = '<table class="table table-bordered table-hover dataTable dtr-inline" id="rekapTotal.' . $id . '" width="100%" cellspacing="0">';
         $html .= '
                     <thead class="bg bg-teal table-bordered border-warning">
                         <tr>

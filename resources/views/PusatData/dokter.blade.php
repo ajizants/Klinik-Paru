@@ -7,21 +7,16 @@
                 <!-- Input Group -->
                 <div class="col-md-4 col-sm-6">
                     <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                {{-- <span class="input-group-text">
-                                    <i class="far fa-calendar-alt"></i>
-                                </span> --}}
-                                <select name="tahun" id="tahun" class="form-control bg bg-warning m-2">
-                                    <option value="">-- Pilih Tahun --</option>
-                                    @for ($year = date('Y'); $year >= 2021; $year--)
-                                        <option value="{{ $year }}">{{ $year }}</option>
-                                    @endfor
-                                </select>
-                            </div>
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-form"
+                        <div class="d-flex align-items-center">
+                            <select id="tahun" class="form-control form-control-sm mr-2">
+                                @for ($year = date('Y'); $year >= 2021; $year--)
+                                    <option value="{{ $year }}">{{ $year }}</option>
+                                @endfor
+                            </select>
+                            <button class="btn btn-sm btn-success"
                                 onclick="cariDataDokterPeriksa(document.getElementById('tahun').value)">Cari</button>
                         </div>
+
                     </div>
                 </div>
 
@@ -29,7 +24,7 @@
                 <div class="col-md-8">
                     <div class="accordion" id="accordionExample">
                         <div class="card">
-                            <a class="btn btn-link text-left w-100" type="button" data-toggle="collapse"
+                            <a class="btn btn-link text-left w-100 p-1" type="button" data-toggle="collapse"
                                 id="headingOne" data-target="#collapseOne" aria-expanded="true"
                                 aria-controls="collapseOne">
                                 <strong>Klik Untuk Melihat Cara Pencarian Data</strong>
@@ -123,23 +118,8 @@
                         type: 'line',
                         data: {
                             labels: response.chart.labels,
-                            datasets: [{
-                                    label: 'BPJS',
-                                    data: response.chart.datasets[0].data,
-                                    borderColor: '#36A2EB',
-                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                    tension: 0.3,
-                                    fill: true
-                                },
-                                {
-                                    label: 'UMUM',
-                                    data: response.chart.datasets[1].data,
-                                    borderColor: '#FF6384',
-                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                    tension: 0.3,
-                                    fill: true
-                                }
-                            ]
+                            datasets: response.chart
+                                .datasets // langsung gunakan semua datasets dari backend
                         },
                         options: {
                             responsive: true,
@@ -156,6 +136,10 @@
                                 tooltip: {
                                     mode: 'index',
                                     intersect: false
+                                },
+                                legend: {
+                                    display: true,
+                                    position: 'top'
                                 }
                             },
                             scales: {
@@ -165,6 +149,7 @@
                             }
                         }
                     });
+
                     Swal.close();
                 },
                 error: function(xhr, status, error) {
