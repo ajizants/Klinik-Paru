@@ -433,7 +433,7 @@ class PasienKominfoController extends Controller
         $kominfo = new KominfoModel();
         $result  = [];
 
-        for ($bulan = 1; $bulan <= 2; $bulan++) {
+        for ($bulan = 1; $bulan <= 12; $bulan++) {
             // Format bulan dengan leading zero, misal: 01, 02, ..., 12
             $bulanFormatted = str_pad($bulan, 2, '0', STR_PAD_LEFT);
 
