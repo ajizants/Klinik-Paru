@@ -439,4 +439,185 @@ class ApiKominfoController extends Controller
         return view('Laporan.Pasien.SuratKontrol', compact('detailSuratKontrol'));
     }
 
+    public function getJumlahPemeriksaanDokter($tahun, $bln)
+    {
+        $kominfo = new KominfoModel();
+        $result = [];
+
+        for ($bulan = 1; $bulan <= $bln; $bulan++) {
+            $bulanFormatted = str_pad($bulan, 2, '0', STR_PAD_LEFT);
+            $tanggal_awal = "$tahun-$bulanFormatted-01";
+            $tanggal_akhir = date("Y-m-t", strtotime($tanggal_awal));
+
+            $params = [
+                'tanggal_awal' => $tanggal_awal,
+                'tanggal_akhir' => $tanggal_akhir,
+                'no_rm' => '',
+            ];
+            // $params = [
+            //     'tanggal_awal' => '2025-07-01',
+            //     'tanggal_akhir' => '2025-07-31',
+            //     'no_rm' => '',
+            // ];
+
+            $response = $kominfo->poinRequest($params);
+            // dd($response);
+
+            if ($response['metadata']['code'] == 201) {
+                // Tidak ada data, buat dummy entri dengan jumlah 0
+                $res = [[
+                    "ruang_nama" => "Ruang Poli (Dokter CPPT)",
+                    "admin_nama" => "dr. Agil Dananjaya, Sp.P",
+                    "jumlah" => 0,
+                ], [
+                    "ruang_nama" => "Ruang Poli (Dokter CPPT)",
+                    "admin_nama" => "dr. Cempaka Nova Intani, Sp.P, FISR., MM.",
+                    "jumlah" => 0,
+                ], [
+                    "ruang_nama" => "Ruang Poli (Dokter CPPT)",
+                    "admin_nama" => "dr. Filly Ulfa Kusumawardani",
+                    "jumlah" => 0,
+                ], [
+                    "ruang_nama" => "Ruang Poli (Dokter CPPT)",
+                    "admin_nama" => "dr. Sigit Dwiyanto",
+                    "jumlah" => 0,
+                ]];
+            } else {
+                // Ambil dan filter data yang sesuai
+                $data = $response['response']['data'];
+                $res = array_filter($data, function ($item) {
+                    return
+                    ($item['ruang_nama'] ?? '') === 'Ruang Poli (Dokter CPPT)' &&
+                    strtoupper($item['admin_nama'] ?? '') !== 'AJI SANTOSO';
+                });
+
+                // Jika setelah filter kosong, tetap tambahkan entri default
+                if (empty($res)) {
+                    $res = [[
+                        "ruang_nama" => "Ruang Poli (Dokter CPPT)",
+                        "admin_nama" => "dr. Agil Dananjaya, Sp.P",
+                        "jumlah" => 0,
+                    ], [
+                        "ruang_nama" => "Ruang Poli (Dokter CPPT)",
+                        "admin_nama" => "dr. Cempaka Nova Intani, Sp.P, FISR., MM.",
+                        "jumlah" => 0,
+                    ], [
+                        "ruang_nama" => "Ruang Poli (Dokter CPPT)",
+                        "admin_nama" => "dr. Filly Ulfa Kusumawardani",
+                        "jumlah" => 0,
+                    ], [
+                        "ruang_nama" => "Ruang Poli (Dokter CPPT)",
+                        "admin_nama" => "dr. Sigit Dwiyanto",
+                        "jumlah" => 0,
+                    ]];
+                }
+            }
+
+            // Simpan hasil
+            $result[$bulanFormatted] = array_values($res); // reset key numerik
+        }
+
+        $html = $this->generatejmlDokterPeriksaTable($result, $tahun);
+        $chart = $this->generatejmlDokterPeriksaChart($result, $tahun);
+        $res = [
+            'html' => $html,
+            'chart' => $chart,
+        ];
+
+        return response()->json($res, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function generatejmlDokterPeriksaTable($data, $tahun)
+    {
+        // Ambil semua nama dokter unik dari seluruh bulan
+        $dokterSet = [];
+        foreach ($data as $bulan => $entries) {
+            foreach ($entries as $entry) {
+                $dokterSet[$entry['admin_nama']] = true;
+            }
+        }
+
+        // Urutkan nama dokter
+        $dokterList = array_keys($dokterSet);
+        sort($dokterList);
+
+        // Mulai bangun HTML tabel
+        $html = '<table class="table table-bordered">';
+        $html .= '<thead><tr>';
+        $html .= '<th>Bulan-Tahun</th>';
+
+        // Buat header dinamis dari nama dokter
+        foreach ($dokterList as $dokter) {
+            $html .= '<th>' . htmlspecialchars($dokter) . '</th>';
+        }
+        $html .= '</tr></thead><tbody>';
+
+        // Bangun baris-baris data
+        foreach ($data as $bulan => $entries) {
+            $html .= '<tr>';
+            $html .= '<td>' . $bulan . '-' . $tahun . '</td>';
+
+            // Buat mapping nama dokter → jumlah untuk bulan ini
+            $jumlahMap = [];
+            foreach ($entries as $entry) {
+                $jumlahMap[$entry['admin_nama']] = $entry['jumlah'];
+            }
+
+            // Cetak kolom jumlah berdasarkan urutan dokter
+            foreach ($dokterList as $dokter) {
+                $jumlah = $jumlahMap[$dokter] ?? 0;
+                $html .= '<td>' . htmlspecialchars($jumlah) . '</td>';
+            }
+
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody></table>';
+
+        return $html;
+    }
+
+    public function generatejmlDokterPeriksaChart($data, $tahun)
+    {
+        $labels = [];
+        $dokterData = [];
+
+        foreach ($data as $bulan => $entries) {
+            $label = "$tahun-" . str_pad($bulan, 2, '0', STR_PAD_LEFT);
+            $labels[] = $label;
+
+            foreach ($entries as $entry) {
+                $nama = $entry['admin_nama'];
+                $jumlah = (int) $entry['jumlah'];
+                // Inisialisasi array jika belum ada
+                if (!isset($dokterData[$nama])) {
+                    $dokterData[$nama] = [];
+                }
+                // Masukkan data jumlah untuk bulan ini
+                $dokterData[$nama][] = $jumlah;
+            }
+
+            // Pastikan semua dokter memiliki jumlah bulan yang sama (isi 0 jika tidak ada)
+            foreach ($dokterData as $nama => &$dataArr) {
+                if (count($dataArr) < count($labels)) {
+                    $dataArr[] = 0;
+                }
+            }
+        }
+
+        // Format akhir datasets
+        $datasets = [];
+        foreach ($dokterData as $nama => $dataArr) {
+            $datasets[] = [
+                'label' => $nama,
+                'data' => $dataArr,
+            ];
+        }
+
+        return [
+            'labels' => $labels,
+            'datasets' => $datasets,
+        ];
+    }
+
 }

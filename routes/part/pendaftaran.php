@@ -29,3 +29,5 @@ Route::post('SuratKontrol/get_data', [ApiKominfoController::class, 'getDataSurat
 Route::post('SuratKontrol/detail', [ApiKominfoController::class, 'getDetailSuratKontrol']);
 Route::get('SuratKontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakSuratKontrol']);
 Route::post('bpjs/get_data', [ApiKominfoController::class, 'getDataSEPSK']);
+
+Route::get('laporan/dokter_periksa/{tahun}/{bln}', [ApiKominfoController::class, 'getJumlahPemeriksaanDokter']);

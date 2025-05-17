@@ -26,6 +26,10 @@
                         Pendaftaran</b></a>
             </li>
             <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_7'); "><b>Laporan
+                        Dokter</b></a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ url('/Laporan/Pendaftaran') }}" class="nav-link "><b>Pendaftaran</b></a>
             </li>
             <li class="nav-item">
@@ -50,6 +54,9 @@
     </div>
     <div class="container-fluid mt-1" id="tab_6" style="display: none;">
         @include('PusatData.pendaftaran')
+    </div>
+    <div class="container-fluid mt-1" id="tab_7" style="display: none;">
+        @include('PusatData.dokter')
     </div>
 
 
@@ -453,24 +460,26 @@
             tglAkhir = moment().subtract(0, "days").format("YYYY-MM-DD");
 
             // Menetapkan nilai ke input tanggal
-            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo, #tglTindakan, #tglKunjPend").val(tglAwal + " to " +
+            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo, #tglTindakan, #tglKunjPend, #tglDokter").val(
+                tglAwal + " to " +
                 tglAkhir);
 
             // Date range picker
-            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo, #tglTindakan, #tglKunjPend").daterangepicker({
-                startDate: tglAwal,
-                endDate: tglAkhir,
-                autoApply: true,
-                locale: {
-                    format: "YYYY-MM-DD",
-                    separator: " s.d. ",
-                    applyLabel: "Pilih",
-                    cancelLabel: "Batal",
-                    customRangeLabel: "Custom Range",
-                },
-            });
+            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo, #tglTindakan, #tglKunjPend, #tglDokter")
+                .daterangepicker({
+                    startDate: tglAwal,
+                    endDate: tglAkhir,
+                    autoApply: true,
+                    locale: {
+                        format: "YYYY-MM-DD",
+                        separator: " s.d. ",
+                        applyLabel: "Pilih",
+                        cancelLabel: "Batal",
+                        customRangeLabel: "Custom Range",
+                    },
+                });
 
-            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo, #tglTindakan, #tglKunjPend").on(
+            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo, #tglTindakan, #tglKunjPend, #tglDokter").on(
                 "apply.daterangepicker",
                 function(ev, picker) {
                     tglAwal = picker.startDate.format("YYYY-MM-DD");
