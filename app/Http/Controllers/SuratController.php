@@ -216,7 +216,7 @@ class SuratController extends Controller
         // Ubah setiap kata pada 'hasil' menjadi huruf kapital semua
         $pasien->hasil = strtoupper($pasien->hasil);
 
-        return view('Laporan.SuratMedis.suratMedis', compact('pasien'));
+        return view('SuratMedis.suratMedis', compact('pasien'));
     }
 
 }
