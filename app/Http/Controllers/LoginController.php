@@ -125,4 +125,20 @@ class LoginController extends Controller
         session()->forget('login_log_id');
         return redirect('/');
     }
+
+    public function logoutSession()
+    {
+        $logId = session('login_log_id');
+
+        if ($logId) {
+            LoginLogModel::where('id', $logId)->update([
+                'logged_out_at' => now(),
+            ]);
+        }
+
+        Auth::logout();
+        session()->flush(); // hapus semua session
+        return redirect('/')->with('message', 'Sesi Anda telah habis, silakan login kembali.');
+    }
+
 }

@@ -40,6 +40,8 @@ Route::post('actionlogin', [LoginController::class, 'actionlogin'])->name('actio
 Route::get('home', [HomeController::class, 'home'])->name('home')->middleware('auth');
 Route::get('actionlogout', [LoginController::class, 'actionlogout'])->name('actionlogout')->middleware('auth');
 
+Route::get('/logout-session', [LoginController::class, 'logoutSession'])->name('logout.session');
+
 Route::get('forbidden', [HomeController::class, 'forbidden'])->name('forbidden')->middleware('auth');
 Route::get('lte', [HomeController::class, 'lte'])->name('lte');
 

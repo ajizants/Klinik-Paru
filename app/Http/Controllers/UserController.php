@@ -33,7 +33,7 @@ class UserController extends Controller
     }
     public function userOnline()
     {
-        $logs = LoginLogModel::with('user')->orderby('logged_out_at', 'asc')->get();
+        $logs = LoginLogModel::with('user')->orderby('logged_in_at', 'desc')->get();
         $html = '
         <table class="table table-bordered table-striped" id="tableUserOnline">
             <thead>
