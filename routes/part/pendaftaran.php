@@ -21,6 +21,10 @@ Route::get('pendaftaran/cetak/rm/{norm}', [PendaftaranController::class, 'biodat
 Route::post('pendaftaran/pasien/daftar', [PendaftaranController::class, 'daftar']);
 Route::get('pendaftaran/pasien/{norm}', [PendaftaranController::class, 'showPasien']);
 
+Route::get('pendaftaran/getPendaftaranPerKecamatanBulanan/{tahun}', [PendaftaranController::class, 'getPendaftaranPerKecamatanBulanan']);
+Route::get('pendaftaran/getPendaftaranPerKecamatanTahunan/{tahun}', [PendaftaranController::class, 'getPendaftaranPerKecamatanTahunan']);
+Route::get('pendaftaran/getPendaftaranPerKecamatan/{tahun}', [PendaftaranController::class, 'getPendaftaranPerKecamatan']);
+
 Route::post('sep/get_data', [ApiKominfoController::class, 'getDataSEP']);
 Route::post('sep/detail', [ApiKominfoController::class, 'getDetailSEP']);
 Route::get('sep/cetak/{no_sep}', [ApiKominfoController::class, 'cetakSEP']);

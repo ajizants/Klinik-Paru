@@ -11,27 +11,31 @@
                         Perujuk</b></a>
             </li>
             <li class="nav-item">
-                <a type="button" class="nav-link " onclick="toggleSections('#tab_3'); "><b>Data IGD</b></a>
-            </li>
-            <li class="nav-item">
-                <a type="button" class="nav-link " onclick="toggleSections('#tab_4'); "><b>Laporan
-                        Laboratorium</b></a>
-            </li>
-            <li class="nav-item">
-                <a type="button" class="nav-link " onclick="toggleSections('#tab_5'); "><b>Laporan
-                        Radiologi</b></a>
-            </li>
-            <li class="nav-item">
-                <a type="button" class="nav-link " onclick="toggleSections('#tab_6'); "><b>Laporan
-                        Pendaftaran</b></a>
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_3'); "><b>Tindakan</b></a>
             </li>
             <li class="nav-item">
                 <a type="button" class="nav-link " onclick="toggleSections('#tab_7'); "><b>Laporan
                         Dokter</b></a>
             </li>
             <li class="nav-item">
-                <a href="{{ url('/Laporan/Pendaftaran') }}" class="nav-link "><b>Pendaftaran</b></a>
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_4'); "><b>
+                        Laboratorium</b></a>
             </li>
+            <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_5'); "><b>
+                        Radiologi</b></a>
+            </li>
+            <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_6'); "><b>
+                        Pendaftaran</b></a>
+            </li>
+            <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_8'); "><b>Kunjungan per Wilayah</b></a>
+            </li>
+            {{--             
+            <li class="nav-item">
+                <a href="{{ url('/Laporan/Pendaftaran') }}" class="nav-link "><b>Pendaftaran</b></a>
+            </li> --}}
             <li class="nav-item">
                 <a href="{{ url('/kasir/report') }}" class="nav-link "><b>Kasir</b></a>
             </li>
@@ -54,6 +58,9 @@
     </div>
     <div class="container-fluid mt-1" id="tab_6" style="display: none;">
         @include('PusatData.pendaftaran')
+    </div>
+    <div class="container-fluid mt-1" id="tab_8" style="display: none;">
+        @include('PusatData.wilayah')
     </div>
     <div class="container-fluid mt-1" id="tab_7" style="display: none;">
         @include('PusatData.dokter')

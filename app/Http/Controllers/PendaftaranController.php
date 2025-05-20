@@ -8,6 +8,7 @@ use App\Models\PegawaiModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PendaftaranController extends Controller
@@ -569,5 +570,131 @@ class PendaftaranController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function getPendaftaranPerKecamatan($tahun)
+    {
+        $bulana = $this->getPendaftaranPerKecamatanBulanan($tahun);
+        $tahunan = $this->getPendaftaranPerKecamatanTahunan($tahun);
+        return response()->json([
+            'bulanan' => $bulana,
+            'tahunan' => $tahunan,
+        ]);
+    }
+
+    public function getPendaftaranPerKecamatanBulanan($tahun)
+    {
+
+        $query = DB::table('t_kunjungan')
+            ->join('m_pasien', 't_kunjungan.norm', '=', 'm_pasien.norm')
+            ->join('m_kabupaten', 'm_pasien.kkabupaten', '=', 'm_kabupaten.kdKab')
+            ->join('m_kecamatan', 'm_pasien.kkecamatan', '=', 'm_kecamatan.kdKec')
+            ->select(
+                DB::raw("DATE_FORMAT(t_kunjungan.tgltrans, '%Y-%m') AS tgl"),
+                'm_pasien.kkabupaten AS kode_Kab',
+                'm_kabupaten.kabupaten AS Kabupaten',
+                'm_pasien.kkecamatan AS kode_Kec',
+                'm_kecamatan.kecamatan AS Kecamatan',
+                DB::raw('COUNT(*) AS Jumlah_Kunjungan'),
+                DB::raw("SUM(CASE WHEN t_kunjungan.kkelompok = '1' THEN 1 ELSE 0 END) AS UMUM"),
+                DB::raw("SUM(CASE WHEN t_kunjungan.kkelompok = '2' THEN 1 ELSE 0 END) AS BPJS")
+            );
+
+        if ($tahun && strtolower($tahun) !== 'all') {
+            $query->whereYear('t_kunjungan.tgltrans', $tahun);
+        }
+
+        $data = $query
+            ->groupBy(
+                DB::raw("DATE_FORMAT(t_kunjungan.tgltrans, '%Y-%m')"),
+                'm_pasien.kkabupaten',
+                'm_kabupaten.kabupaten',
+                'm_pasien.kkecamatan',
+                'm_kecamatan.kecamatan'
+            )
+            ->orderBy(DB::raw("DATE_FORMAT(t_kunjungan.tgltrans, '%Y-%m')"))
+            ->orderBy('m_kabupaten.kabupaten')
+            ->orderBy('m_kecamatan.kecamatan')
+            ->get();
+
+        $html = $this->generateTable($data, 'tablePendaftaranPerKecamatanBulanan');
+
+        return $html;
+    }
+
+    public function getPendaftaranPerKecamatanTahunan($tahun)
+    {
+
+        $query = DB::table('t_kunjungan')
+            ->join('m_pasien', 't_kunjungan.norm', '=', 'm_pasien.norm')
+            ->join('m_kabupaten', 'm_pasien.kkabupaten', '=', 'm_kabupaten.kdKab')
+            ->join('m_kecamatan', 'm_pasien.kkecamatan', '=', 'm_kecamatan.kdKec')
+            ->select(
+                DB::raw("DATE_FORMAT(t_kunjungan.tgltrans, '%Y') AS tgl"),
+                'm_pasien.kkabupaten AS kode_Kab',
+                'm_kabupaten.kabupaten AS Kabupaten',
+                'm_pasien.kkecamatan AS kode_Kec',
+                'm_kecamatan.kecamatan AS Kecamatan',
+                DB::raw('COUNT(*) AS Jumlah_Kunjungan'),
+                DB::raw("SUM(CASE WHEN t_kunjungan.kkelompok = '1' THEN 1 ELSE 0 END) AS UMUM"),
+                DB::raw("SUM(CASE WHEN t_kunjungan.kkelompok = '2' THEN 1 ELSE 0 END) AS BPJS")
+            );
+
+        if ($tahun && strtolower($tahun) !== 'all') {
+            $query->whereYear('t_kunjungan.tgltrans', $tahun);
+        }
+
+        $data = $query
+            ->groupBy(
+                DB::raw("DATE_FORMAT(t_kunjungan.tgltrans, '%Y')"),
+                'm_pasien.kkabupaten',
+                'm_kabupaten.kabupaten',
+                'm_pasien.kkecamatan',
+                'm_kecamatan.kecamatan'
+            )
+            ->orderBy(DB::raw("DATE_FORMAT(t_kunjungan.tgltrans, '%Y')"))
+            ->orderBy('m_kabupaten.kabupaten')
+            ->orderBy('m_kecamatan.kecamatan')
+            ->get();
+
+        $html = $this->generateTable($data, 'tablePendaftaranPerKecamatanTahunan');
+
+        return $html;
+    }
+
+    private function generateTable($data, $idTable)
+    {
+        // Buat HTML table
+        // $html = '<table border="1" cellpadding="8" cellspacing="0">';
+        $html = '<table class="table table-bordered table-hover dataTable dtr-inline" id="' . $idTable . '">
+                <thead class="bg bg-info">
+                    <tr>
+                        <th>Bulan</th>
+                        <th>Kode Kab</th>
+                        <th>Kabupaten</th>
+                        <th>Kode Kec</th>
+                        <th>Kecamatan</th>
+                        <th>Jumlah Kunjungan</th>
+                        <th>UMUM</th>
+                        <th>BPJS</th>
+                    </tr>
+                </thead>';
+        $html .= '<tbody>';
+
+        foreach ($data as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . htmlspecialchars($row->tgl) . '</td>';
+            $html .= '<td>' . htmlspecialchars($row->kode_Kab) . '</td>';
+            $html .= '<td>' . htmlspecialchars($row->Kabupaten) . '</td>';
+            $html .= '<td>' . htmlspecialchars($row->kode_Kec) . '</td>';
+            $html .= '<td>' . htmlspecialchars($row->Kecamatan) . '</td>';
+            $html .= '<td>' . $row->Jumlah_Kunjungan . '</td>';
+            $html .= '<td>' . $row->UMUM . '</td>';
+            $html .= '<td>' . $row->BPJS . '</td>';
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody></table>';
+        return $html;
     }
 }
