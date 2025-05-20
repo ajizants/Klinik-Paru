@@ -2,12 +2,13 @@
 
 @section('content')
     <div class="container-fluid">
+        <h2 class="font-weight-bold text-center">Pusat Data</h2>
+        <h3 class="font-weight-bold text-center">Selamat Datang di Menu Pusat Data KKPM</h3>
+    </div>
+    <div class="container-fluid">
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a type="button" class="nav-link active bg-blue" onclick="toggleSections('#tab_1');"><b>Biaya</b></a>
-            </li>
-            <li class="nav-item">
-                <a type="button" class="nav-link " onclick="toggleSections('#tab_2');"><b>Faskes
+                <a type="button" class="nav-link active bg-blue" onclick="toggleSections('#tab_2');"><b>Faskes
                         Perujuk</b></a>
             </li>
             <li class="nav-item">
@@ -32,8 +33,10 @@
             <li class="nav-item">
                 <a type="button" class="nav-link " onclick="toggleSections('#tab_8'); "><b>Kunjungan per Wilayah</b></a>
             </li>
-            {{--             
             <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_1');"><b>Biaya</b></a>
+            </li>
+            {{-- <li class="nav-item">
                 <a href="{{ url('/Laporan/Pendaftaran') }}" class="nav-link "><b>Pendaftaran</b></a>
             </li> --}}
             <li class="nav-item">
@@ -66,8 +69,6 @@
         @include('PusatData.dokter')
     </div>
 
-
-
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('vendor/plugins/chart.js/Chart.min.js') }}"></script>
@@ -76,7 +77,6 @@
         var tglAwal;
         var tglAkhir;
         var myChart;
-
 
         function cariDataKunjungan(tglAwal, tglAkhir) {
             Swal.fire({
@@ -272,7 +272,6 @@
             });
         }
 
-
         function formatDate(date) {
             // Convert the input to a Date object if it isn't already
             if (!(date instanceof Date)) {
@@ -381,7 +380,6 @@
             Swal.close();
         }
 
-
         function tabelIgd(data, tahun) {
             // Jika data bukan array, konversikan menjadi array
             if (!Array.isArray(data)) {
@@ -453,8 +451,6 @@
         $("#year-selector").on("change", function() {
             getChartData();
         });
-
-
 
         window.addEventListener("load", function() {
             setTodayDate();
