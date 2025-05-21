@@ -117,9 +117,9 @@ class DataAnalisController extends Controller
 
     public function index()
     {
-        $title  = 'Data Analis';
+        $title = 'Data Analis';
         $params = [
-            'tanggal_awal'  => date('Y-m-d'),
+            'tanggal_awal' => date('Y-m-d'),
             'tanggal_akhir' => date('Y-m-d'),
         ];
         // $data = $this->getData($params);
@@ -131,7 +131,7 @@ class DataAnalisController extends Controller
     public function DataBiayaKunjungan(Request $request)
     {
         $params = $request->all();
-        $data   = $this->getData($params);
+        $data = $this->getData($params);
         // return response()->json($data);
 
         $html = '<table id="kunjunganTable" class="table table-bordered table-striped">';
@@ -142,6 +142,7 @@ class DataAnalisController extends Controller
                     <th class="align-item-center" rowspan="2">Tanggal Pertama</th>
                     <th class="align-item-center" rowspan="2">Tanggal Kedua</th>
                     <th class="align-item-center" rowspan="2">Kelurahan</th>
+                    <th class="align-item-center" rowspan="2">Kecamatan</th>
                     <th class="align-item-center" rowspan="2">Kabupaten</th>
                     <th class="align-item-center" rowspan="2">Tagihan Baru</th>
                     <th class="text-center" colspan="3">Jaminan</th>
@@ -164,6 +165,7 @@ class DataAnalisController extends Controller
             $html .= '<td>' . $item['tanggal_baru'] . '</td>';
             $html .= '<td>' . $item['tanggal_kontrol_pertama'] . '</td>';
             $html .= '<td>' . $item['kelurahan'] . '</td>';
+            $html .= '<td>' . $item['kecamatan'] . '</td>';
             $html .= '<td>' . $item['kabupaten'] . '</td>';
             $html .= '<td>' . $item['tagihan_baru'] . '</td>';
             $html .= '<td>' . $item['jaminan_saat_baru'] . '</td>';
@@ -180,13 +182,13 @@ class DataAnalisController extends Controller
     public function faskesPerujuk(Request $request)
     {
         $params = [
-            'tanggal_sep_awal'  => $request->input('tanggal_awal'),
+            'tanggal_sep_awal' => $request->input('tanggal_awal'),
             'tanggal_sep_akhir' => $request->input('tanggal_akhir'),
-            'order_by'          => 'jumlah_rujukan',
-            'order_jenis'       => 'desc',
+            'order_by' => 'jumlah_rujukan',
+            'order_jenis' => 'desc',
         ];
         $model = new KominfoModel();
-        $data  = $model->rekapFaskesPerujuk($params)['response']['data_rujukan'];
+        $data = $model->rekapFaskesPerujuk($params)['response']['data_rujukan'];
         // return $data;
 
         $html = '<table id="faskesPerujukTable" class="table table-bordered table-striped">';
@@ -214,8 +216,9 @@ class DataAnalisController extends Controller
 
     public function getData(array $params)
     {
-        $kominfo                 = new KominfoModel();
+        $kominfo = new KominfoModel();
         $dataPendaftaranResponse = $kominfo->pendaftaran($params);
+        // dd($dataPendaftaranResponse);
 
         // Filter hanya yang memiliki status "SELESAI DIPANGGIL LOKET PENDAFTARAN"
         $filteredData = array_filter($dataPendaftaranResponse, fn($item) =>
@@ -223,29 +226,30 @@ class DataAnalisController extends Controller
         );
 
         // Ambil semua notrans untuk mengurangi query
-        $notransList        = array_column($filteredData, 'notrans');
+        $notransList = array_column($filteredData, 'notrans');
         $dataBiayaKunjungan = KasirTransModel::whereIn('notrans', $notransList)->get()->keyBy('notrans');
 
         $data = array_map(function ($item) use ($dataBiayaKunjungan) {
             $notrans = $item['notrans'];
-            $biaya   = $dataBiayaKunjungan[$notrans] ?? null;
+            $biaya = $dataBiayaKunjungan[$notrans] ?? null;
 
             return [
-                'status_pulang'    => $item['status_pulang'],
-                'no_reg'           => $item['no_reg'],
-                'id'               => $item['id'],
-                'tanggal'          => $item['tanggal'],
-                'pasien_no_rm'     => $item['pasien_no_rm'],
+                'status_pulang' => $item['status_pulang'],
+                'no_reg' => $item['no_reg'],
+                'id' => $item['id'],
+                'tanggal' => $item['tanggal'],
+                'pasien_no_rm' => $item['pasien_no_rm'],
                 'pasien_lama_baru' => $item['pasien_lama_baru'],
-                'pasien_nama'      => $item['pasien_nama'],
-                'pasien_alamat'    => $item['pasien_alamat'],
-                'notrans'          => $item['notrans'],
-                'jaminan'          => $item['penjamin_nama'],
-                'tagihan'          => $biaya->tagihan ?? "0 - BPJS",
-                'bayar'            => $biaya->bayar ?? "0 - BPJS",
-                'kembalian'        => $biaya->kembalian ?? "0 - BPJS",
-                'kabupaten'        => $item['kabupaten'],
-                'kelurahan'        => $item['kelurahan'],
+                'pasien_nama' => $item['pasien_nama'],
+                'pasien_alamat' => $item['pasien_alamat'],
+                'notrans' => $item['notrans'],
+                'jaminan' => $item['penjamin_nama'],
+                'tagihan' => $biaya->tagihan ?? "0 - BPJS",
+                'bayar' => $biaya->bayar ?? "0 - BPJS",
+                'kembalian' => $biaya->kembalian ?? "0 - BPJS",
+                'kabupaten' => $item['kabupaten'],
+                'kecamatan' => $item['kecamatan'],
+                'kelurahan' => $item['kelurahan'],
             ];
         }, $filteredData);
 
@@ -256,25 +260,28 @@ class DataAnalisController extends Controller
             $no_rm = $item['pasien_no_rm'];
 
             if ($item['pasien_lama_baru'] === 'BARU') {
-                $counts['baru'][$no_rm]['jumlah_baru']  = ($counts['baru'][$no_rm]['jumlah_baru'] ?? 0) + 1;
+                $counts['baru'][$no_rm]['jumlah_baru'] = ($counts['baru'][$no_rm]['jumlah_baru'] ?? 0) + 1;
                 $counts['baru'][$no_rm]['tagihan_baru'] = ($counts['baru'][$no_rm]['tagihan_baru'] ?? 0) + floatval($item['tagihan']);
 
-                if (! isset($counts['baru'][$no_rm]['tanggal_baru']) || $item['tanggal'] < $counts['baru'][$no_rm]['tanggal_baru']) {
+                if (!isset($counts['baru'][$no_rm]['tanggal_baru']) || $item['tanggal'] < $counts['baru'][$no_rm]['tanggal_baru']) {
                     $counts['baru'][$no_rm]['tanggal_baru'] = $item['tanggal'];
                 }
 
-                if (! isset($counts['baru'][$no_rm]['jaminan_baru'])) {
+                if (!isset($counts['baru'][$no_rm]['jaminan_baru'])) {
                     $counts['baru'][$no_rm]['jaminan_baru'] = $item['jaminan'];
                 }
 
-                if (! isset($counts['baru'][$no_rm]['pasien_nama'])) {
+                if (!isset($counts['baru'][$no_rm]['pasien_nama'])) {
                     $counts['baru'][$no_rm]['pasien_nama'] = $item['pasien_nama'];
                 }
-                if (! isset($counts['baru'][$no_rm]['kabupaten'])) {
+                if (!isset($counts['baru'][$no_rm]['kabupaten'])) {
                     $counts['baru'][$no_rm]['kabupaten'] = $item['kabupaten'];
                 }
-                if (! isset($counts['baru'][$no_rm]['kelurahan'])) {
+                if (!isset($counts['baru'][$no_rm]['kelurahan'])) {
                     $counts['baru'][$no_rm]['kelurahan'] = $item['kelurahan'];
+                }
+                if (!isset($counts['baru'][$no_rm]['kecamatan'])) {
+                    $counts['baru'][$no_rm]['kecamatan'] = $item['kecamatan'];
                 }
 
             }
@@ -282,7 +289,7 @@ class DataAnalisController extends Controller
             if ($item['pasien_lama_baru'] === 'LAMA') {
                 $counts['lama'][$no_rm]['jumlah_lama'] = ($counts['lama'][$no_rm]['jumlah_lama'] ?? 0) + 1;
                 // Simpan tanggal kontrol pertama
-                if (! isset($counts['lama'][$no_rm]['tanggal_kontrol_pertama'])) {
+                if (!isset($counts['lama'][$no_rm]['tanggal_kontrol_pertama'])) {
                     $counts['lama'][$no_rm]['tanggal_kontrol_pertama'] = $item['tanggal'];
                 } else {
                     $counts['lama'][$no_rm]['tanggal_kontrol_pertama'] = min(
@@ -304,19 +311,21 @@ class DataAnalisController extends Controller
 
         // Gabungkan hasil ke dalam detail
         $detail = array_map(fn($no_rm, $dataBaru) => [
-            'no_rm'                   => $no_rm,
-            'nama'                    => $dataBaru['pasien_nama'],
-            'kabupaten'               => $dataBaru['kabupaten'],
-            'kelurahan'               => $dataBaru['kelurahan'],
-            'jumlah_total_kunjungan'  => $counts['total'][$no_rm],
+            'no_rm' => $no_rm,
+            'nama' => $dataBaru['pasien_nama'],
+            'kabupaten' => $dataBaru['kabupaten'],
+            'kecamatan' => $dataBaru['kecamatan'],
+            'kelurahan' => $dataBaru['kelurahan'],
+            'jumlah_total_kunjungan' => $counts['total'][$no_rm],
             'tanggal_kontrol_pertama' => $counts['lama'][$no_rm]['tanggal_kontrol_pertama'] ?? "-",
-            'tanggal_baru'            => $dataBaru['tanggal_baru'],
-            'tagihan_baru'            => number_format($dataBaru['tagihan_baru'], 2, '.', ''),
-            'jaminan_saat_baru'       => $dataBaru['jaminan_baru'],
-            'jaminan_lama_umum'       => $counts['lama'][$no_rm]['jaminan_lama_umum'] ?? 0,
-            'jaminan_lama_bpjs'       => $counts['lama'][$no_rm]['jaminan_lama_bpjs'] ?? 0,
-            'jumlah_baru'             => $dataBaru['jumlah_baru'],
-            'datang_lagi'             => $counts['total'][$no_rm] - $dataBaru['jumlah_baru'],
+            'tanggal_baru' => $dataBaru['tanggal_baru'],
+            'tagihan_baru' => $dataBaru['tagihan_baru'],
+            // 'tagihan_baru' => number_format($dataBaru['tagihan_baru'], 2, '.', ''),
+            'jaminan_saat_baru' => $dataBaru['jaminan_baru'],
+            'jaminan_lama_umum' => $counts['lama'][$no_rm]['jaminan_lama_umum'] ?? 0,
+            'jaminan_lama_bpjs' => $counts['lama'][$no_rm]['jaminan_lama_bpjs'] ?? 0,
+            'jumlah_baru' => $dataBaru['jumlah_baru'],
+            'datang_lagi' => $counts['total'][$no_rm] - $dataBaru['jumlah_baru'],
         ], array_keys($counts['baru']), $counts['baru']);
 
         $totalMuncul = array_sum(array_column($detail, 'jumlah_total_kunjungan'));
@@ -324,16 +333,16 @@ class DataAnalisController extends Controller
         $res =
             [
             'total_pasien_baru' => count($counts['baru']),
-            'total_kemunculan'  => $totalMuncul,
-            'detail'            => $detail,
+            'total_kemunculan' => $totalMuncul,
+            'detail' => $detail,
         ];
         return $res;
     }
 
     private function jumlahKunjungan(Request $request)
     {
-        $tglAwal  = Carbon::parse($request->input('tglAwal'))->startOfDay(); // 00:00:00
-        $tglAkhir = Carbon::parse($request->input('tglAkhir'))->endOfDay();  // 23:59:59
+        $tglAwal = Carbon::parse($request->input('tglAwal'))->startOfDay(); // 00:00:00
+        $tglAkhir = Carbon::parse($request->input('tglAkhir'))->endOfDay(); // 23:59:59
 
         $data = KunjunganWaktuSelesai::whereBetween('created_at', [$tglAwal, $tglAkhir])->get();
 
@@ -342,14 +351,14 @@ class DataAnalisController extends Controller
 
     public function kunjunganLab(Request $request)
     {
-        $tglAkhir         = Carbon::parse($request->input('tglAkhir'))->endOfDay();  // 23:59:59
-        $tglAwal          = Carbon::parse($request->input('tglAwal'))->startOfDay(); // 00:00:00
+        $tglAkhir = Carbon::parse($request->input('tglAkhir'))->endOfDay(); // 23:59:59
+        $tglAwal = Carbon::parse($request->input('tglAwal'))->startOfDay(); // 00:00:00
         $dataKunjunganLab = LaboratoriumKunjunganModel::whereBetween('created_at', [$tglAwal, $tglAkhir])->get();
-        $dataHasilLab     = LaboratoriumHasilModel::whereBetween('created_at', [$tglAwal, $tglAkhir])->get();
+        $dataHasilLab = LaboratoriumHasilModel::whereBetween('created_at', [$tglAwal, $tglAkhir])->get();
 
         return response()->json([
             'kunjungan' => $dataKunjunganLab,
-            'hasil'     => $dataHasilLab,
+            'hasil' => $dataHasilLab,
         ], 200);
     }
 
