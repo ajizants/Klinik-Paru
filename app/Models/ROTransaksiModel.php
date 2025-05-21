@@ -78,4 +78,9 @@ class ROTransaksiModel extends Model
     {
         return $this->hasOne(KunjunganModel::class, 'notrans', 'notrans');
     }
+
+    public function konsulRo()
+    {
+        return $this->belongsTo(KunjunganWaktuSelesai::class, 'notrans', 'notrans');
+    }
 }

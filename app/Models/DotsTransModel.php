@@ -50,6 +50,10 @@ class DotsTransModel extends Model
     {
         return $this->hasOne(DotsBlnModel::class, 'id', 'blnKe');
     }
+    public function bulan()
+    {
+        return $this->belongsTo(DotsBlnModel::class, 'kdBln');
+    }
 
     public function poinPetugas($mulaiTgl, $selesaiTgl, $petugas = null)
     {

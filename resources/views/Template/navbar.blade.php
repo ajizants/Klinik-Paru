@@ -29,7 +29,7 @@
             <ul class="navbar-nav ml-auto" style="color: rgba(255,255,255,.75);hover:color: rgba(255,255,255,1)">
                 <!-- Navbar Search -->
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a class="nav-link" href="{{ url('/userOnline') }}">
+                    <a class="nav-link" href="{{ url('/users') }}">
                         <i class="fa-solid fa-user"></i>
                     </a>
                 </li>

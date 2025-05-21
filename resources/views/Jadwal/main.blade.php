@@ -264,7 +264,7 @@
                 success: function(response) {
                     console.log(response);
                     if (response.success) {
-                        tampilkanSuccess(response.message);
+                        tampilkanSukses(response.message);
                         ["dokter", "perawat", "analis"].forEach(jabatan => {
                             drawTable(response.data, jabatan, `table_${jabatan}`);
                         });
@@ -300,7 +300,7 @@
                 success: function(response) {
                     console.log(response);
                     if (response.success) {
-                        tampilkanSuccess(response.message);
+                        tampilkanSukses(response.message);
                         ["dokter", "perawat", "analis"].forEach(jabatan => {
                             drawTable(response.data, jabatan, `table_${jabatan}`);
                         });

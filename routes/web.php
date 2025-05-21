@@ -137,5 +137,10 @@ Route::middleware('auth')->group(function () {
     //gudang atk
     Route::get('Gudang/ATK', [GudangATKController::class, 'index'])->name('gudangATK')->middleware('role:atk');
 
-    Route::get('userOnline', [UserController::class, 'indexUserOnline'])->name('indexUserOnline')->middleware('role:admin');
+    //user
+    Route::get('users', [UserController::class, 'index'])->name('index')->middleware('role:admin');
+    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::get('/user/online', [UserController::class, 'userOnline'])->name('users.online');
+
 });

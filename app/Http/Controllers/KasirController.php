@@ -123,7 +123,7 @@ class KasirController extends Controller
         }
         // return $dataTind;
 
-        $ro = ROTransaksiModel::with(['foto'])->where('notrans', $notrans)->get();
+        $ro = ROTransaksiModel::with(['foto', 'konsulRo'])->where('notrans', $notrans)->get();
         // return $ro;
         $dataRO = [];
         foreach ($ro as $item) {
@@ -133,10 +133,12 @@ class KasirController extends Controller
                 'tgltrans' => $item->tgltrans,
                 'kdFoto' => $item->kdFoto,
                 'ro' => $item->foto->nmFoto,
+                'konsul' => $item->konsulRo->konsul_ro,
                 'tarif' => $item->foto->tarif,
 
             ];
         }
+
         // return $dataRO;
         $lab = LaboratoriumHasilModel::with(['pemeriksaan'])->where('notrans', $notrans)->get();
         // return $lab;

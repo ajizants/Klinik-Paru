@@ -363,7 +363,7 @@ function tampilkanEror(msg = "") {
     });
 }
 
-function tampilkanSuccess(msg = "") {
+function tampilkanSukses(msg = "") {
     Swal.fire({
         icon: "success",
         title: msg,

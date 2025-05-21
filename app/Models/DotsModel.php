@@ -8,7 +8,7 @@ class DotsModel extends Model
 {
     use HasFactory;
 
-    protected $table      = 'm_dots_pasien';
+    protected $table = 'm_dots_pasien';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -30,6 +30,15 @@ class DotsModel extends Model
         'petugas',
         'dokter',
     ];
+
+    public function lastKontrol()
+    {
+        return $this->hasOne(DotsTransModel::class, 'norm', 'norm')->latestOfMany();
+    }
+    public function lastKontrolWithBln()
+    {
+        return $this->hasOne(DotsTransModel::class, 'norm', 'norm')->latestOfMany()->with('bulan');
+    }
 
     public function biodata()
     {
@@ -59,23 +68,23 @@ class DotsModel extends Model
 
     public function pasienTB()
     {
-        $Ptb      = $this->all();
+        $Ptb = $this->all();
         $pasienTB = [];
 
         foreach ($Ptb as $d) {
             $kdDiag = $d['kdDx'];
 
-            $dx            = DiagnosaModel::where('kdDiag', $kdDiag)->first();
+            $dx = DiagnosaModel::where('kdDiag', $kdDiag)->first();
             $d['diagnosa'] = $dx['diagnosa'] ?? 'Unknown Diagnosis';
 
             if ($d['hasilBerobat'] === null) {
                 $d['statusPengobatan'] = "Belum Ada Pengobatan";
             } else {
-                $status                = DotsBlnModel::where('id', $d['hasilBerobat'])->first();
+                $status = DotsBlnModel::where('id', $d['hasilBerobat'])->first();
                 $d['statusPengobatan'] = $status['nmBlnKe'] ?? 'Unknown Status';
             }
-            $dataDokter      = PegawaiModel::with('biodata')->where('nip', $d->dokter)->first();
-            $namaDokter      = $dataDokter->gelar_d . " " . $dataDokter->biodata->nama . " " . $dataDokter->gelar_b;
+            $dataDokter = PegawaiModel::with('biodata')->where('nip', $d->dokter)->first();
+            $namaDokter = $dataDokter->gelar_d . " " . $dataDokter->biodata->nama . " " . $dataDokter->gelar_b;
             $d['namaDokter'] = $namaDokter;
 
             $pasienTB[] = $d;

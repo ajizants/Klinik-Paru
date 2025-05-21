@@ -291,7 +291,7 @@
                 success: function(response) {
                     console.log("🚀 ~ simpanPendLain ~ response:", response)
                     if (response.status == 'success') {
-                        tampilkanSuccess(response.message);
+                        tampilkanSukses(response.message);
 
                         dataPendLain = response.data
                         drawTable(
@@ -464,7 +464,7 @@
                     success: function(result) {
                         // Tampilkan pesan sukses
                         if (result.status === 'success') {
-                            tampilkanSuccess(result.message);
+                            tampilkanSukses(result.message);
                             const data = result.data;
                             drawTabelPenutupanKas(data);
                         } else {
@@ -517,7 +517,7 @@
                             success: function(result) {
                                 // Tampilkan pesan sukses
                                 if (result.status === 'success') {
-                                    tampilkanSuccess(result.message);
+                                    tampilkanSukses(result.message);
                                     const data = result.data
                                     drawTabelPenutupanKas(data);
                                 } else {

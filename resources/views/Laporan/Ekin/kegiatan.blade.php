@@ -309,7 +309,7 @@
                             if (data.error) {
                                 tampilkanEror(data.error);
                             } else {
-                                tampilkanSuccess('Data berhasil dihapus');
+                                tampilkanSukses('Data berhasil dihapus');
                                 const dataTabel = data.table;
                                 drawTabelKegiatanLain(dataTabel);
                             }

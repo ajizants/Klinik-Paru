@@ -240,7 +240,7 @@
                     if (data.error) {
                         tampilkanEror(data.error);
                     } else {
-                        tampilkanSuccess(data.message);
+                        tampilkanSukses(data.message);
 
                         // reset form setelah simpan
                         document.getElementById("formKegiatanLain").reset();
@@ -302,7 +302,7 @@
                             if (data.error) {
                                 tampilkanEror(data.error);
                             } else {
-                                tampilkanSuccess(data.delete);
+                                tampilkanSukses(data.delete);
                                 const dataTabel = data.table;
                                 drawTabelKegiatanLain(dataTabel);
                             }

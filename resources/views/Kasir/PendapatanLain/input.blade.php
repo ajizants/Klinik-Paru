@@ -44,7 +44,7 @@
                                                                     if (response == false) {
                                                                         tampilkanEror("Data tidak ditemukan...!");
                                                                     } else {
-                                                                        tampilkanSuccess("Data ditemukan...!");
+                                                                        tampilkanSukses("Data ditemukan...!");
                                                                         const pendapatan = formatRupiah(response.jumlah)
                                                                         document.getElementById("pendapatan").value = pendapatan;
                                                                         document.getElementById("noSbs").value = response.nomor;

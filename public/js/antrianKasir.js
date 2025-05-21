@@ -83,20 +83,32 @@ function cariTagihan(norm, tgl) {
                 tgl: tgl,
             },
             success: function (response) {
-                console.log(response);
+                // console.log(response);
                 $("#loadingSpinner").hide();
                 const tindakan = response.tindakan;
                 const ro = response.ro;
+                // console.log("🚀 ~ cariTagihan ~ ro:", ro);
+                const konsulRo = response.ro[0].konsul;
+                // console.log("🚀 ~ cariTagihan ~ konsulRo:", konsulRo);
                 const lab = response.lab;
                 const dokter = response.pasien.dokter_nama;
                 pilihPemeriksaan(tindakan, "igd");
                 pilihPemeriksaan(ro, "ro");
                 pilihPemeriksaan(lab, "lab");
                 pilihPemeriksaan(lab, "lab");
+                if (konsulRo === "1") {
+                    // console.log("🚀 ~ cariTagihan ~ konsulRo:", konsulRo);
+                    checkbox = document.getElementById("71");
+                    checkbox.checked = true;
+                }
             },
             error: function (xhr, status, error) {
                 console.log(error);
                 $("#loadingSpinner").hide();
+                tampilkanEror(
+                    "Terjadi kesalahan saat mengambil data. Silakan coba lagi." +
+                        error
+                );
             },
         });
     } catch (error) {
