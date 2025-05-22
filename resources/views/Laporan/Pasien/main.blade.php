@@ -412,6 +412,11 @@
                                 data: "ket_status_pasien_pulang",
                                 className: "px-0 col-3",
                                 label: "Status Pulang"
+                            },
+                            {
+                                data: "subjek",
+                                className: "px-0 col-3",
+                                label: "Data Subjektif"
                             }
                         ],
                         autoWidth: true,

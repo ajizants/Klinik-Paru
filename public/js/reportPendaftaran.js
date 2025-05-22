@@ -338,15 +338,13 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                     resume = "hidden";
                 }
 
-                const checkIn =
-                    item.check_in == "success" ? "Selesai" : "Belum";
-                const disabled = item.check_in == "success" ? "disabled" : "";
-                const disabled2 = item.statusDaftar == "lime" ? "disabled" : "";
+                const checkIn = item.check_in == "success" ? "Edit" : "Belum";
+                const disabled = item.statusDaftar == "lime" ? "disabled" : "";
                 const daftar =
                     item.statusDaftar == "lime" ? "Terdaftar" : "Daftarkan";
                 item.aksi = `
                             <button type="button" class="btn btn-sm btn-${item.check_in} mr-2 mb-2" 
-                                    ${disabled} id="checkin" placeholder="Selesai" data-toggle="modal"
+                                    id="checkin" placeholder="Selesai" data-toggle="modal"
                                     data-norm="${item.pasien_no_rm}"
                                     data-notrans="${item.no_reg}"
                                     data-no_urut="${item.antrean_nomor}"
@@ -355,7 +353,7 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                                     data-target="#modalSep" 
                                     onclick="isiForm('${item.pasien_no_rm}', '${nama_pasien}','${item.penjamin_nama}','${item.no_reg}','${item.no_sep}',this)">
                                     ${checkIn}</button>
-                            <button type="button" class="btn btn-sm bg-${item.statusDaftar} mr-2 mb-2" ${disabled2}
+                            <button type="button" class="btn btn-sm bg-${item.statusDaftar} mr-2 mb-2" ${disabled}
                                     data-norm="${item.pasien_no_rm}"
                                     data-notrans="${item.no_reg}"
                                     data-no_urut="${item.antrean_nomor}"

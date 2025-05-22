@@ -46,6 +46,7 @@
                         <th>Diagnosa 3</th>
                         <th class="col-3">Dokter</th>
                         <th class="px-0 col-3">Status</th>
+                        <th class="px-0 col-3">DS</th>
                     </tr>
                 </thead>
                 <tbody class="table-bordered border-warning">
