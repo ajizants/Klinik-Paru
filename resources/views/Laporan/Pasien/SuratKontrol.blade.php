@@ -8,9 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @page {
-            size: 22cm 12cm;
+            size: 22cm 29, 7cm;
             /* lebar x tinggi */
-            margin: 0.2cm;
+            margin: 0.3cm;
             /* atur sesuai kebutuhan */
         }
 
@@ -94,16 +94,17 @@
                     {{ \Carbon\Carbon::parse($detailSuratKontrol['tglRencanaKontrol'])->locale('id')->isoFormat('DD MMMM Y') }}
                 </td>
             </tr>
-            <tr>
-                <td class="w-1/6">Masa Berlaku Rujukan</td>
-                <td class="my-0 py-0">
-                    :
-                    {{ \Carbon\Carbon::parse($detailSuratKontrol['sep']['provPerujuk']['tglRujukan'])->addDays(90)->locale('id')->isoFormat('DD MMMM Y') }}
-                </td>
-            </tr>
+
 
             <tr>
                 <td class="mt-2" colspan="2">Demikian atas bantuanya, diucapkan banyak terima kasih.</td>
+            </tr>
+            <tr>
+                <td class="mt-3 w-1/6 font-semibold">* Masa Berlaku Rujukan</td>
+                <td class="my-0 py-0 font-semibold">
+                    :
+                    {{ \Carbon\Carbon::parse($detailSuratKontrol['sep']['provPerujuk']['tglRujukan'])->addDays(85)->locale('id')->isoFormat('DD MMMM Y') }}
+                </td>
             </tr>
 
         </table>

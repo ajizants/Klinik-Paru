@@ -439,6 +439,7 @@ class KasirController extends Controller
     public function kunjungan(Request $request)
     {
         $notrans = $request->input('notrans');
+        // return response()->json(['message' => 'Data tidak ditemukan'], 404);
         $data = KasirTransModel::with(['item.layanan'])->where('notrans', $notrans)->first();
         if ($data == null) {
             return response()->json(['message' => 'Data tidak ditemukan'], 404);

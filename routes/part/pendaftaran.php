@@ -35,3 +35,5 @@ Route::get('SuratKontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class,
 Route::post('bpjs/get_data', [ApiKominfoController::class, 'getDataSEPSK']);
 
 Route::get('laporan/dokter_periksa/{tahun}/{bln}', [ApiKominfoController::class, 'getJumlahPemeriksaanDokter']);
+
+Route::get('bpjs/waktu_tunggu/{tahun}', [ApiKominfoController::class, 'reportPusatDataWaktuTunggu']);

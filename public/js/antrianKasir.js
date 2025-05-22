@@ -88,7 +88,14 @@ function cariTagihan(norm, tgl) {
                 const tindakan = response.tindakan;
                 const ro = response.ro;
                 // console.log("🚀 ~ cariTagihan ~ ro:", ro);
-                const konsulRo = response.ro[0].konsul;
+                if (ro && ro.length > 0) {
+                    const konsulRo = response.ro[0].konsul;
+                    if (konsulRo === "1") {
+                        // console.log("🚀 ~ cariTagihan ~ konsulRo:", konsulRo);
+                        checkbox = document.getElementById("71");
+                        checkbox.checked = true;
+                    }
+                }
                 // console.log("🚀 ~ cariTagihan ~ konsulRo:", konsulRo);
                 const lab = response.lab;
                 const dokter = response.pasien.dokter_nama;
@@ -96,11 +103,6 @@ function cariTagihan(norm, tgl) {
                 pilihPemeriksaan(ro, "ro");
                 pilihPemeriksaan(lab, "lab");
                 pilihPemeriksaan(lab, "lab");
-                if (konsulRo === "1") {
-                    // console.log("🚀 ~ cariTagihan ~ konsulRo:", konsulRo);
-                    checkbox = document.getElementById("71");
-                    checkbox.checked = true;
-                }
             },
             error: function (xhr, status, error) {
                 console.log(error);
@@ -125,6 +127,7 @@ function pilihPemeriksaan(data, ruang) {
             switch (ruang) {
                 case "lab":
                     id = item.kdPemeriksaan;
+                    alert(id);
                     checkbox = document.getElementById(id);
                     break;
                 case "ro":
