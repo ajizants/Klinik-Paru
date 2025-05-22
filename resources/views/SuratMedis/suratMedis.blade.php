@@ -7,10 +7,21 @@
     <title>Surat Medis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* .wrapper {
-            width: 21cm;
-        } */
+        ol {
+            list-style-type: decimal !important;
+            padding-left: 1.5rem !important;
+        }
+
+        ul {
+            list-style-type: disc !important;
+            padding-left: 1.5rem !important;
+        }
+
+        li {
+            display: list-item !important;
+        }
     </style>
+
 </head>
 
 <body class="text-black">
@@ -136,15 +147,25 @@
                                 dipergunakan
                                 sebagaimana mestinya.
                             </p>
-
-
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="my-3 mx-3">
+                            <p class="text-md text-justify">
+                                <strong>Catatan :</strong>
+                            </p>
+                            <div class="mx-4 text-justify list-decimal list-inside" id="catatan">
+                                {!! $pasien['catatan'] !!}
+                            </div>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="3" class="text-center">
                         <!-- Tanda Tangan -->
-                        <div class="flex justify-between">
+                        <div class="flex justify-between mt-5">
                             <div class="w-1/2 text-center">
 
                             </div>

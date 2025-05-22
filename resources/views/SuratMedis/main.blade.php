@@ -62,7 +62,8 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalCreateSuratLabel">Formulir Pembuatan Surat</h5>
+                    <h5 class="modal-title" id="modalCreateSuratLabel">Formulir Pembuatan Surat : <input type="text"
+                            id="noSurat"></h5>
                 </div>
                 <div class="modal-body">
                     @csrf
@@ -217,7 +218,27 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <input type="text" id="noSurat">
+                                <div class="form-group col">
+                                    <label for="catatan" class="col-form-label font-weight-bold">Catatan
+                                        :</label>
+                                    <textarea id="catatan" name="catatan" placeholder="Tuliskan Catatan Jika ada"></textarea>
+                                </div>
+                                <script type="text/javascript">
+                                    $(function() {
+                                        $('#catatan').summernote({
+                                            height: 200,
+                                            toolbar: [
+                                                ['style', ['style']],
+                                                ['font', ['bold', 'underline', 'clear']],
+                                                ['color', ['color']],
+                                                ['para', ['ul', 'ol', 'paragraph']],
+                                                ['table', ['table']],
+                                                ['insert', ['link', 'picture', 'video']],
+                                                ['view', ['fullscreen', 'codeview', 'help']]
+                                            ]
+                                        });
+                                    })
+                                </script>
                             </div>
                         </div>
                     </form>
@@ -539,6 +560,8 @@
             var tb = $("#tb").val();
             var nadi = $("#nadi").val();
             var pekerjaan = $("#pekerjaan").val();
+            var catatan = $("#catatan").summernote("code");
+
 
             Swal.fire({
                 icon: "info",
@@ -569,7 +592,8 @@
                         bb: bb,
                         tb: tb,
                         nadi: nadi,
-                        pekerjaan: pekerjaan
+                        pekerjaan: pekerjaan,
+                        catatan: catatan
                     }),
                 })
                 .then((response) => {
