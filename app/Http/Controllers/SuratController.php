@@ -204,20 +204,23 @@ class SuratController extends Controller
     {
         $title = 'SURAT MEDIS';
         $pasien = SuratMedis::with('dok.biodata', 'adm.biodata')->where('id', $id)->where('tanggal', $tgl)->first();
+        $norm = $pasien->norm;
+        $model = new KominfoModel();
+        $param = [
+            'no_rm' => $norm,
+            'tanggal_awal' => $tgl,
+            'tanggal_akhir' => $tgl,
+        ];
+        $cppt = $model->cpptRequest($param)['response']['data'];
+        // return $cppt;
         // return $pasien;
-        // dd([
-        //     'dokter' => $pasien->dokter,
-        //     'dokter_biodata' => $pasien->dok->biodata ?? 'No biodata',
-        //     'petugas' => $pasien->petugas,
-        //     'petugas_biodata' => $pasien->adm->biodata ?? 'No biodata',
-        // ]);
 
         // Ubah setiap kata pada 'keperluan' menjadi huruf kapital di awal
         $pasien->keperluan = ucwords(strtolower($pasien['keperluan']));
         // Ubah setiap kata pada 'hasil' menjadi huruf kapital semua
         $pasien->hasil = strtoupper($pasien->hasil);
 
-        return view('SuratMedis.suratMedis', compact('pasien'));
+        return view('SuratMedis.suratMedis', compact('pasien', 'title', 'cppt'));
     }
 
 }

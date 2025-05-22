@@ -63,7 +63,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalCreateSuratLabel">Formulir Pembuatan Surat : <input type="text"
-                            id="noSurat"></h5>
+                            id="noSurat" readonly></h5>
                 </div>
                 <div class="modal-body">
                     @csrf
@@ -122,6 +122,12 @@
                                     <input id="alamat" class="form-control bg-white" placeholder="Alamat Pasien" />
                                 </div>
                                 <div class="form-group col-6 col-md-2">
+                                    <label for="pekerjaan" class="col-form-label font-weight-bold mb-0">Pekerjaan
+                                        :</label>
+                                    <input type="text" id="pekerjaan" class="form-control bg-white"
+                                        placeholder="Tanggal Transaksi" />
+                                </div>
+                                {{-- <div class="form-group col-6 col-md-2">
                                     <label for="tgltrans" class="col-form-label font-weight-bold mb-0">TD
                                         :</label>
                                     <div class="input-group">
@@ -140,7 +146,17 @@
                                             <span class="input-group-text">kg</span>
                                         </div>
                                     </div>
-                                </div>
+                                </div> 
+                                <div class="form-group col-6 col-md-2">
+                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Nadi
+                                        :</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Nadi" id="nadi">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">x/mnt</span>
+                                        </div>
+                                    </div>
+                                </div> --}}
                                 <div class="form-group col-6 col-md-2">
                                     <label for="tgltrans" class="col-form-label font-weight-bold mb-0">TB
                                         :</label>
@@ -151,16 +167,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group col-6 col-md-2">
-                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Nadi
-                                        :</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Nadi" id="nadi">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">x/mnt</span>
-                                        </div>
-                                    </div>
-                                </div>
+
 
                                 <div class="form-grup col-12 col-md-4">
                                     <label for="keperluan"
@@ -168,12 +175,6 @@
                                         :</label>
                                     <input id="keperluan" class="form-control bg-white"
                                         placeholder="Keterangan/Keperluan Surat" />
-                                </div>
-                                <div class="form-group col-12 col-md-4">
-                                    <label for="pekerjaan" class="col-form-label font-weight-bold mb-0">Pekerjaan
-                                        :</label>
-                                    <input type="text" id="pekerjaan" class="form-control bg-white"
-                                        placeholder="Tanggal Transaksi" />
                                 </div>
 
                                 <div class="form-group col-6 col-md-2">
@@ -472,22 +473,22 @@
                     id: "keperluan",
                     label: "Keperluan"
                 },
-                {
-                    id: "td",
-                    label: "Tensi Darah"
-                },
-                {
-                    id: "bb",
-                    label: "Berat Badan"
-                },
+                // {
+                //     id: "td",
+                //     label: "Tensi Darah"
+                // },
+                // {
+                //     id: "bb",
+                //     label: "Berat Badan"
+                // },
                 {
                     id: "tb",
                     label: "Tinggi Badan"
                 },
-                {
-                    id: "nadi",
-                    label: "Nadi"
-                },
+                // {
+                //     id: "nadi",
+                //     label: "Nadi"
+                // },
                 {
                     id: "noSurat",
                     label: "No Surat"
@@ -555,10 +556,10 @@
             var keperluan = $("#keperluan").val();
             var petugas = $("#petugas").val();
             var dokter = $("#dokter").val();
-            var td = $("#td").val();
-            var bb = $("#bb").val();
+            // var td = $("#td").val();
+            // var bb = $("#bb").val();
             var tb = $("#tb").val();
-            var nadi = $("#nadi").val();
+            // var nadi = $("#nadi").val();
             var pekerjaan = $("#pekerjaan").val();
             var catatan = $("#catatan").summernote("code");
 
@@ -588,10 +589,10 @@
                         keperluan: keperluan,
                         petugas: petugas,
                         dokter: dokter,
-                        td: td,
-                        bb: bb,
+                        // td: td,
+                        // bb: bb,
+                        // nadi: nadi,
                         tb: tb,
-                        nadi: nadi,
                         pekerjaan: pekerjaan,
                         catatan: catatan
                     }),

@@ -110,7 +110,8 @@
                                     <td class="text-center w-2">:</td>
                                     <td>
                                         <input class="w-16" type="text" name="tensi" id="tensi"
-                                            value="{{ $pasien['td'] }}"> mmHg
+                                            value="{{ $pasien['td'] == '-' ? $cppt[0]['objek_tekanan_darah'] : $pasien['td'] }}">
+                                        mmHg
                                     </td>
                                 </tr>
                                 <tr>
@@ -118,7 +119,8 @@
                                     <td class="text-center w-2">:</td>
                                     <td>
                                         <input class="w-16" type="text" name="nadi" id="nadi"
-                                            value="{{ $pasien['nadi'] }}"> x/menit
+                                            value="{{ $pasien['nadi'] == '-' ? $cppt[0]['objek_nadi'] : $pasien['nadi'] }}">
+                                        x/menit
                                     </td>
                                 </tr>
                                 <tr>
@@ -126,7 +128,8 @@
                                     <td class="text-center w-2">:</td>
                                     <td>
                                         <input class="w-16" type="text" name="berat badan" id="bb"
-                                            value="{{ $pasien['bb'] }}"> kg
+                                            value="{{ $pasien['bb'] == '-' ? $cppt[0]['objek_bb'] : $pasien['bb'] }}">
+                                        kg
                                     </td>
                                 </tr>
                                 <tr>
@@ -134,7 +137,8 @@
                                     <td class="text-center w-2">:</td>
                                     <td>
                                         <input class="w-16" type="text" name="Tinggi Badan" id="tb"
-                                            value="{{ $pasien['tb'] }}"> cm
+                                            value="{{ $pasien['tb'] == '-' ? $cppt[0]['objek_tb'] : $pasien['tb'] }}">
+                                        cm
                                     </td>
                                 </tr>
                             </table>
