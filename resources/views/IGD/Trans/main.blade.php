@@ -11,7 +11,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const audio = document.getElementById("morning-audio");
-            audio.volume = 0.5; // Atur volume ke 50%
+            audio.volume = 0.7; // Atur volume ke 50%
 
             function checkAndPlayAudio() {
                 // localStorage.setItem("audioPlayedDate", "");
