@@ -127,7 +127,7 @@ function pilihPemeriksaan(data, ruang) {
             switch (ruang) {
                 case "lab":
                     id = item.kdPemeriksaan;
-                    alert(id);
+                    // alert(id);
                     checkbox = document.getElementById(id);
                     break;
                 case "ro":

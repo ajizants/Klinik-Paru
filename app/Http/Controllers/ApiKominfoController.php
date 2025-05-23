@@ -150,52 +150,56 @@ class ApiKominfoController extends Controller
         $res = $data['data'];
 
         // Ambil data Surat Kontrol
-        $dataSurat = $model->getDataSuratKontrol($params);
-        $resSurat = $dataSurat['data'];
+        // $dataSurat = $model->getDataSuratKontrol($params);
+        // $resSurat = $dataSurat['data'];
 
         // Index data surat kontrol berdasarkan pasien_nik untuk efisiensi pencarian
-        $suratKontrolMap = [];
-        foreach ($resSurat as $surat) {
-            $nik = $surat['pasien_nik'];
-            $suratKontrolMap[$nik] = $surat; // Jika 1 pasien hanya 1 surat. Kalau lebih, bisa ubah jadi array.
-        }
+        // $suratKontrolMap = [];
+        // foreach ($resSurat as $surat) {
+        //     $nik = $surat['pasien_nik'];
+        //     $suratKontrolMap[$nik] = $surat; // Jika 1 pasien hanya 1 surat. Kalau lebih, bisa ubah jadi array.
+        // }
 
         // Tambahkan aksi ke data SEP
         foreach ($res as &$item) {
             $nik = $item['pasien_nik'];
+            $noSurat = $item['no_surat_kontrol'];
+            $hidden = $noSurat == "" ? "hidden" : "";
 
             $aksi = '<a href="' . url('api/sep/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-primary mt-2 col">SEP</a>
-            <a href="' . url('api/sep/billing/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-warning mt-2 col">SEP & Billing</a> ';
+            <a href="' . url('api/sep/billing/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-warning mt-2 col">SEP & Billing</a>
+            <a href="' . url('api/SuratKontrol/cetak/' . $noSurat) . '" ' . $hidden . ' target="_blank" class="btn btn-sm btn-success mt-2 col">S.Kontrol</a>
+            ';
 
-            // Cek apakah ada surat kontrol untuk NIK tersebut
-            if (isset($suratKontrolMap[$nik])) {
-                $noSurat = $suratKontrolMap[$nik]['no_surat_kontrol']; // Atau 'no_surat_kontrol' kalau kamu pakai itu
-                $aksi .= '<a href="' . url('api/SuratKontrol/cetak/' . $noSurat) . '" target="_blank" class="btn btn-sm btn-success mt-2 col">S.Kontrol</a>';
-                // Tambahkan data Surat Kontrol ke dalam data SEP
-                $item['no_surat_kontrol'] = $surat['no_surat_kontrol'] ?? null;
-                $item['tanggal_rencana_kontrol'] = $surat['tanggal_rencana_kontrol'] ?? null;
-                $item['tanggal_tampil'] = $surat['tanggal_tampil'] ?? null;
-                $item['tanggal_rencana_kontrol_tampil'] = $surat['tanggal_rencana_kontrol_tampil'] ?? null;
-                $item['detail_surat_kontrol'] = '
-                            <p>No Surat Kontrol: <br>' . ($surat['no_surat_kontrol'] ?? '-') . '</p>
+            // // Cek apakah ada surat kontrol untuk NIK tersebut
+            // if (isset($suratKontrolMap[$nik])) {
+            //     // $noSurat = $suratKontrolMap[$nik]['no_surat_kontrol']; // Atau 'no_surat_kontrol' kalau kamu pakai itu
+            //     // $aksi .= '<a href="' . url('api/SuratKontrol/cetak/' . $noSurat) . '" target="_blank" class="btn btn-sm btn-success mt-2 col">S.Kontrol</a>';
+            //     // Tambahkan data Surat Kontrol ke dalam data SEP
+            //     $item['no_surat_kontrol'] = $surat['no_surat_kontrol'] ?? null;
+            //     $item['tanggal_rencana_kontrol'] = $surat['tanggal_rencana_kontrol'] ?? null;
+            //     $item['tanggal_tampil'] = $surat['tanggal_tampil'] ?? null;
+            //     $item['tanggal_rencana_kontrol_tampil'] = $surat['tanggal_rencana_kontrol_tampil'] ?? null;
+            //     $item['detail_surat_kontrol'] = '
+            //                 <p>No Surat Kontrol: <br>' . ($surat['no_surat_kontrol'] ?? '-') . '</p>
 
-                            <p>Rencana Kontrol: <br>' . ($surat['tanggal_rencana_kontrol_tampil'] ?? '-') . '</p>
-                        ';
+            //                 <p>Rencana Kontrol: <br>' . ($surat['tanggal_rencana_kontrol_tampil'] ?? '-') . '</p>
+            //             ';
 
-            } else {
-                // Kalau tidak ada surat kontrol, tetap null
-                $item['no_surat_kontrol'] = null;
-                $item['tanggal_rencana_kontrol'] = null;
-                $item['tanggal_tampil'] = null;
-                $item['tanggal_rencana_kontrol_tampil'] = null;
+            // } else {
+            //     // Kalau tidak ada surat kontrol, tetap null
+            //     $item['no_surat_kontrol'] = null;
+            //     $item['tanggal_rencana_kontrol'] = null;
+            //     $item['tanggal_tampil'] = null;
+            //     $item['tanggal_rencana_kontrol_tampil'] = null;
 
-                // Tampilkan info kosong di detail
-                $item['detail_surat_kontrol'] = '
-                                                    <p>No Surat Kontrol: -</p>
+            //     // Tampilkan info kosong di detail
+            //     $item['detail_surat_kontrol'] = '
+            //                                         <p>No Surat Kontrol: -</p>
 
-                                                    <p>Tanggal Rencana Kontrol: -</p>
-                                                ';
-            }
+            //                                         <p>Tanggal Rencana Kontrol: -</p>
+            //                                     ';
+            // }
 
             $sepTanggal = $item['tanggal_sep'] ?? null;
             $sepTanggalTampil = $item['tanggal_sep_tampil'] ?? '-';
@@ -206,6 +210,11 @@ class ApiKominfoController extends Controller
 
                                         <p>Tanggal SEP: <br>' . $sepTanggalTampil . '</p>
                                     ';
+            $item['detail_surat_kontrol'] = '
+                                            <p>No Surat Kontrol: <br>' . ($item['no_surat_kontrol'] ?? '-') . '</p>
+
+                                            <p>Rencana Kontrol: <br>' . ($item['tanggal_rencana_kontrol_tampil'] ?? '-') . '</p>
+                                            ';
 
             $item['aksi'] = $aksi;
         }
@@ -699,5 +708,19 @@ class ApiKominfoController extends Controller
         }
 
         return response()->json($result);
+    }
+
+    public function cetakSM($norm, $tgl)
+    {
+        $title = 'Surat Rujukan';
+        $model = new KominfoModel();
+        $param = [
+            'no_rm' => $norm,
+            'tanggal_awal' => $tgl,
+            'tanggal_akhir' => $tgl,
+        ];
+        $cppt = $model->cpptRequest($param)['response']['data'];
+
+        return view('SuratMedis.suratMedis', compact('title', 'cppt'));
     }
 }

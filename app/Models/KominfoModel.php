@@ -1957,7 +1957,8 @@ class KominfoModel extends Model
             }
         }
 
-        $url = env('BASR_URL_KOMINFO', '') . '/sep/get_dataSEP';
+        // $url = env('BASR_URL_KOMINFO', '') . '/sep/get_dataSEP'; //lama
+        $url = env('BASR_URL_KOMINFO', '') . '/sep/get_data';
 
         // Format request sesuai dengan yang Anda inginkan
         $columns = [];
