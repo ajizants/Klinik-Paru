@@ -175,12 +175,36 @@
                     <img src="{{ asset('img/banyumas.png') }}" class="w-14" alt="banyumas" />
                 </div>
                 <!-- Teks di tengah -->
-                <div class="w-[100%] text-center scale-[0.9]">
+                <div class="w-[70%] text-center scale-[0.9]">
                     <p class="text-sm mb-0">PEMERINTAH KABUPATEN BANYUMAS</p>
                     <p class="text-sm font-semibold mb-0">DINAS KESEHATAN</p>
                     <p class="text-sm font-bold mb-0">KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A</p>
                     <p class="text-xs">Jln. A. Yani Nomor 33 Purwokerto Timur, Banyumas, Jawa Tengah</p>
                     <p class="text-xs">Kode Pos 53111, Telepon (0281) 635658, Pos-el bkpm_purwokerto@yahoo.com</p>
+                </div>
+                <div class="w-[30%] flex justify-center items-center">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="text-left pt-2">
+                                    Code RS : 3302040
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left pt-2">
+                                    Tanggal :
+                                    {{ Carbon\Carbon::parse($detailSEP['tglSep'])->locale('id')->isoFormat('DD MMMM Y') }}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-left" colspan="2">
+                                    No. SEP :
+                                    {{ $detailSEP['noSep'] }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <table class="w-full table-auto">
@@ -352,7 +376,7 @@
                         <td class="text-center">Rp.</td>
                         @php
                             $totalTagihan =
-                                15000 + 50000 + $totalLab + $totalRo + $totalTindakan + $totalObat + $totalObat;
+                                50000 + $totalLab + $totalRo + $totalTindakan + $totalObat + $totalObatKronis;
                         @endphp
                         <td class="text-right"> {{ number_format($totalbmhp, 0, ',', '.') . ',-' }}</td>
                     </tr>
@@ -362,7 +386,7 @@
                         <td class="text-center">Rp.</td>
                         @php
                             $totalTagihan =
-                                15000 + 50000 + $totalLab + $totalRo + $totalTindakan + $totalObat + $totalObat;
+                                50000 + $totalLab + $totalRo + $totalTindakan + $totalObat + $totalObatKronis;
                         @endphp
                         <td class="text-right"> {{ number_format($totalTagihan, 0, ',', '.') . ',-' }}</td>
                     </tr>
