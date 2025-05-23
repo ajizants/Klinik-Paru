@@ -4,29 +4,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SEP: {{ $detailSEP['peserta']['nama'] }}</title>
+    <title> {{ $detailSuratKontrol['sep']['peserta']['nama'] }}</title>
 
     <style>
-        /* @page {
-            .pembungkus {
-                padding: 1rem;
-                border: 1px solid black;
-                box-sizing: border-box;
-
-                size: 22cm 13.8cm;
-                margin: 0.2cm 0.2cm 0.2cm 0.2cm;
-            }
-
-            .pembungkus2 {
-                padding: 1rem;
-                border: 1px solid black;
-                box-sizing: border-box;
-                width: 22cm;
-                height: auto;
-                margin: 0.2cm 0.2cm 0.2cm 0.2cm;
-            }
-        } */
-
         .pembungkus {
             padding: 1rem;
             border: 1px solid black;
@@ -190,129 +170,108 @@
     <div class="kertas">
 
         <div class="pembungkus mt-3">
-            <table>
-                <tr>
-                    <td width="40%"><img src="{{ asset('img/BPJS_Kesehatan.png') }}" alt="bpjslogo" class="h-70px"></td>
-                    <td>
-                        <div class="mx-3" style="margin-top: 8px;">
-                            <h3 class="text-lg font-semibold">SURAT ELEGIBILITAS PESERTA</h3>
-                            <h4 class="text-base">KKPM PURWOKERTO</h4>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-            <table class="text-sm" style="margin-top: 10px;">
-                <tr>
-                    <td class="font-bold">No. SEP</td>
-                    <td>: {{ $detailSEP['noSep'] }}</td>
-                </tr>
-                <tr>
-                    <td class="font-bold">Tgl. SEP</td>
-                    <td>: {{ Carbon\Carbon::parse($detailSEP['tglSep'])->locale('id')->isoFormat('DD MMMM Y') }}</td>
-                    <td class="font-bold">Peserta</td>
-                    <td>: {{ $detailSEP['peserta']['jnsPeserta'] }}</td>
-                </tr>
-                <tr>
-                    <td class="font-bold">No. Kartu</td>
-                    <td>: {{ $detailSEP['peserta']['noKartu'] }} (MR.{{ $detailSEP['peserta']['noMr'] }})</td>
-                </tr>
-                <tr>
-                    <td class="font-bold">Nama Peserta</td>
-                    <td>: {{ $detailSEP['peserta']['nama'] }}</td>
-                    <td class="font-bold">Jns. Rawat</td>
-                    <td>: {{ $detailSEP['jnsPelayanan'] }}</td>
-                </tr>
-                <tr>
-                    <td class="font-bold">Tgl. Lahir</td>
-                    <td>: {{ $detailSEP['peserta']['tglLahir'] }} Kelamin: {{ $detailSEP['peserta']['kelamin'] }}</td>
-                    <td class="font-bold">Jns. Kunjungan</td>
-                    <td>: - {{ $detailSEP['tujuanKunj']['nama'] }}</td>
-                </tr>
-                <tr>
-                    <td class="font-bold">No. Telepon</td>
-                    <td>: {{ $detailSEP['peserta']['no_telepon'] ?? '-' }}</td>
-                    <td class="font-bold"></td>
-                    <td>: - {{ $detailSEP['flagProcedure']['nama'] }}</td>
-                </tr>
-                <tr>
-                    <td class="font-bold">Sub/Spesialis</td>
-                    <td>: {{ $detailSEP['poli'] }}</td>
-                    <td class="font-bold">Poli Perujuk</td>
-                    <td>: -</td>
-                </tr>
-                <tr>
-                    <td class="font-bold">Dokter</td>
-                    <td>: {{ $detailSEP['dpjp']['nmDPJP'] }}</td>
-                    <td class="font-bold">Kls. Hak</td>
-                    <td>: {{ $detailSEP['kelasRawat'] }}</td>
-                </tr>
-                <tr>
-                    <td class="font-bold">Faskes Perujuk</td>
-                    <td>: -</td>
-                    <td class="font-bold">Kls. Rawat</td>
-                    <td>: {{ $detailSEP['kelasRawat'] }}</td>
-                </tr>
-                <tr>
-                    <td class="font-bold " width="20%">Diagnosa Awal</td>
-                    <td class=>: {{ $detailSEP['diagnosa'] }}</td>
-                    <td class="font-bold">Penjamin</td>
-                    <td>: {{ $detailSEP['penjamin'] ?? '-' }}</td>
-                </tr>
-            </table>
-            <p class="mb-0 font-semibold mt-3 text-xs">Catatan:</p>
-            <table style="margin-top: 0px">
-                <tr>
-                    <td width="55%">
-                        <div style="font-size: 5pt;margin-left: 10px;">
-                            <p class="my-0">*Saya menyetujui BPJS Kesehatan untuk:</p>
-                            <ul class="list-disc mt-0">
-                                <li>membuka dan atau menggunakan informasi medis Pasien untuk keperluan administrasi,
-                                    pembayaran
-                                    asuransi atau jaminan pembiayaan kesehatan</li>
-                                <li>memberikan akses informasi medis atau riwayat pelayanan kepada dokter/tenaga medis
-                                    pada
-                                    KKPM
-                                    PURWOKERTO untuk kepentingan pemeliharaan kesehatan, pengobatan, penyembuhan, dan
-                                    perawatan
-                                    Pasien</li>
-                            </ul>
+            <div class="p-4 w-full">
+                <div class="flex items-center justify-between align-top">
+                    <!-- Logo -->
+                    <img src="{{ asset('img/BPJS_Kesehatan.png') }}" alt="bpjslogo" style="height: 60px;">
 
-                            <p class="mb-0">*Saya mengetahui dan memahami:</p>
-                            <ul class="list-disc mt-0">
-                                <li>Rumah Sakit dapat melakukan koordinasi dengan PT Jasa Raharja / PT Taspen / PT
-                                    ASABRI /
-                                    BPJS
-                                    Ketenagakerjaan atau Penjamin lainnya, jika Peserta merupakan pasien yang mengalami
-                                    kecelakaan
-                                    lalulintas dan/atau kecelakaan kerja</li>
-                                <li>SEP bukan sebagai bukti penjaminan peserta</li>
-                            </ul>
-                            <p class="my-0">**Dengan tampilnya luaran SEP elektronik ini merupakan hasil validasi
-                                terhadap
-                                eligibilitas
-                                Pasien
-                                secara elektronik (validasi finger print atau biometrik / sistem validasi lain) dan
-                                selanjutnya
-                                Pasien dapat mengakses pelayanan kesehatan rujukan sesuai ketentuan berlaku. Kebenaran
-                                dan
-                                keaslian
-                                atas informasi data Pasien menjadi tanggung jawab penuh FKRTL</p>
-                        </div>
-                    </td>
-                    <td width="10%"></td>
-                    <td>
-                        <div class="text-left text-sm">
-                            <p class="font-semibold mb-0">Persetujuan</p>
-                            <p class="font-semibold mt-0">Pasien/Keluarga Pasien</p>
-                            {{-- {!! $qrCode !!} --}}
+                    <!-- Judul Tengah -->
+                    <div class="flex-1 mx-5 text-left self-center">
+                        <h3 class="text-lg font-semibold">SURAT RENCANA KONTROL</h3>
+                        <h4 class="text-base font-medium">KKPM PURWOKERTO</h4>
+                    </div>
 
-                            <img src="data:image/png;base64,{{ $qrCodeBase64 }}" alt="QR Code" width="50">
+                    <!-- Nomor Surat di Ujung Kanan -->
+                    <div class="text-right align-top">
+                        <h3 class="text-lg font-semibold">No. {{ $detailSuratKontrol['noSuratKontrol'] }}</h3>
+                        <h4 class="text-base font-medium text-white">.</h4>
+                    </div>
+                </div>
 
-                            <p class="mt-2">{{ $detailSEP['peserta']['nama'] }}</p>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+                <table class="w-full table-auto m-6">
+                    <tr>
+                        <td class="w-1/6">Kepada Yth</td>
+                        <td class="my-0 py-0">
+                            {{ $detailSuratKontrol['namaDokter'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/6"></td>
+                        <td class="my-0 py-0">
+                            Sp./Sub. {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['poliRujukan']['nama'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/6" colspan="2">Mohon Pemeriksaan dan Penanganan Lebih Lanjut :</td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/6">No.Kartu</td>
+                        <td class="my-0 py-0">
+                            : {{ $detailSuratKontrol['sep']['peserta']['noKartu'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/6">Nama Peserta</td>
+                        <td class="my-0 py-0">
+                            : {{ $detailSuratKontrol['sep']['peserta']['nama'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/6">Tgl.Lahir</td>
+                        <td class="my-0 py-0">
+                            :
+                            {{ \Carbon\Carbon::parse($detailSuratKontrol['sep']['peserta']['tglLahir'])->locale('id')->isoFormat('DD MMMM Y') }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/6">Diagnosa</td>
+                        <td class="my-0 py-0">
+                            : {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['diagnosa']['kode'] }} -
+                            {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['diagnosa']['nama'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/6">Rencana Kontrol</td>
+                        <td class="my-0 py-0">
+                            :
+                            {{ \Carbon\Carbon::parse($detailSuratKontrol['tglRencanaKontrol'])->locale('id')->isoFormat('DD MMMM Y') }}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="mt-2" colspan="2">Demikian atas bantuanya, diucapkan banyak terima kasih.</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="mt-3 w-1/6 font-semibold">
+                            * Masa Berlaku Rujukan
+                            {{-- </td> --}}
+                            {{-- <td class="my-0 py-0 font-semibold"> --}}
+                            :
+                            {{ \Carbon\Carbon::parse($detailSuratKontrol['sep']['provPerujuk']['tglRujukan'])->addDays(85)->locale('id')->isoFormat('DD MMMM Y') }}
+                        </td>
+                    </tr>
+
+                </table>
+                <div class="flex items-center justify-between align-top">
+                    <div>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <p class="text-xs">Tgl.Entri: {{ $detailSuratKontrol['tglTerbit'] }} | Tgl.Cetak:
+                            {{ \Carbon\Carbon::now() }} | Tgl.Rujukan:
+                            {{ $detailSuratKontrol['sep']['provPerujuk']['tglRujukan'] }}</p>
+                    </div>
+                    <div class="mx-24">
+                        <h6>Mengetahui DPJP,</h6>
+                        <br>
+                        <br>
+                        <br>
+                        <p>{{ $detailSuratKontrol['namaDokterPembuat'] }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="pembungkus2 mt-3">
             <div class="relative w-full border-b border-black flex items-center">
@@ -333,11 +292,17 @@
                 <tbody>
                     <tr>
                         <td class="text-left pt-2">
-                            Tanggal Layanan :
-                            {{ Carbon\Carbon::parse($detailSEP['tglSep'])->locale('id')->isoFormat('DD MMMM Y') }}
+                            Tanggal :
+                            {{ Carbon\Carbon::parse($detailSuratKontrol['sep']['tglSep'])->locale('id')->isoFormat('DD MMMM Y') }}
                         </td>
                         <td class="text-right pt-2">
                             Code RS : 3302040
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left" colspan="2">
+                            No. SEP :
+                            {{ $detailSuratKontrol['sep']['noSep'] }}
                         </td>
                     </tr>
                     <tr>

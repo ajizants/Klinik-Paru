@@ -268,125 +268,24 @@ class ApiKominfoController extends Controller
         // dd($params);
         $data = $model->getDetailSEP($no_sep);
         $detailSEP = $data['data'];
-        // return response()->json($detailSEP);
-
         $norm = $detailSEP['peserta']['noMr'];
-        // $norm = '029762';
         $tglKunjungan = $detailSEP['tglSep'];
 
-        $dataTagihan = KasirTransModel::with('item.layanan')
-            ->where('norm', $norm)
-            ->whereBetween('created_at', [
-                $tglKunjungan . ' 00:00:00',
-                $tglKunjungan . ' 23:59:59',
-            ])->first();
-        // return response()->json($dataTagihan);
-        if (!isset($dataTagihan)) {
-            $lab = null;
-            $totalLab = 0;
-            $ro = null;
-            $totalRo = 0;
-            $tindakan = null;
-            $totalTindakan = 0;
-            $obat = null;
-            $totalObat = 0;
-            $obatKronis = null;
-            $totalObatKronis = 0;
-            $bmhp = null;
-            $totalbmhp = 0;
-        } else {
-            $rincian = array_values($dataTagihan->toArray()['item']);
+        $dataTagihan = $this->getDataTagihan($norm, $tglKunjungan);
+        dd($dataTagihan);
 
-            $lab = array_filter($rincian, function ($item) {
-                return stripos($item['layanan']['kelas'], 9) !== false && $item['layanan']['idLayanan'] !== 131 && $item['layanan']['idLayanan'] !== 214;
-            });
-            if (count($lab) == 0) {
-                $lab = null;
-                $totalLab = 0;
-            } else {
-                $lab = array_values($lab);
-                $totalLab = 0;
-
-                foreach ($lab as &$item) {
-                    // Hapus teks dalam tanda kurung dari nmLayanan
-                    $item['layanan']['nmLayanan'] = preg_replace('/\s*\(.*?\)/', '', $item['layanan']['nmLayanan']);
-
-                    // Hitung total harga
-                    $totalLab += $item['totalHarga'];
-                }
-                unset($item); // Hindari referensi yang tidak disengaja
-            }
-            // return $lab;
-
-            $ro = array_filter($rincian, function ($item) {
-                return stripos($item['layanan']['kelas'], 8) !== false;
-            });
-            if (count($ro) == 0) {
-                $ro = null;
-                $totalRo = 0;
-            } else {
-                $ro = array_values($ro);
-                $totalRo = 0;
-                foreach ($ro as $item) {
-                    $totalRo += $item['totalHarga'];
-                }
-            }
-
-            $tindakan = array_filter($rincian, function ($item) {
-                // Casting ke int untuk memastikan tipe
-                return in_array((int) $item['layanan']['kelas'], [5, 6, 7], true);
-            });
-            if (count($tindakan) == 0) {
-                $tindakan = null;
-                $totalTindakan = 0;
-            } else {
-
-                $tindakan = array_values($tindakan);
-                $totalTindakan = 0;
-                foreach ($tindakan as $item) {
-                    $totalTindakan += $item['totalHarga'];
-                }
-                // return $ro;
-            }
-
-            $obat = array_filter($rincian, function ($item) {
-                return $item['layanan']['idLayanan'] == 2;
-            });
-            // return $obat;
-
-            if (count($obat) == 0) {
-                $obat = null;
-                $totalObat = 0;
-            } else {
-                // return $obat;
-                $obat = array_values($obat);
-                $totalObat = $obat[0]['totalHarga'];
-            }
-            $obatKronis = array_filter($rincian, function ($item) {
-                return $item['layanan']['idLayanan'] == 228;
-            });
-
-            if (count($obatKronis) == 0) {
-                $obatKronis = null;
-                $totalObatKronis = 0;
-            } else {
-                $obatKronis = array_values($obatKronis);
-                $totalObatKronis = $obatKronis[0]['totalHarga'];
-                // return $obatKronis;
-            }
-            $bmhp = array_filter($rincian, function ($item) {
-                return $item['layanan']['idLayanan'] == 229;
-            });
-
-            if (count($bmhp) == 0) {
-                $bmhp = null;
-                $totalbmhp = 0;
-            } else {
-                // return $bmhp;
-                $bmhp = array_values($bmhp);
-                $totalbmhp = $bmhp[0]['totalHarga'];
-            }
-        }
+        $lab = $dataTagihan['lab'];
+        $totalLab = $dataTagihan['totalLab'];
+        $ro = $dataTagihan['ro'];
+        $totalRo = $dataTagihan['totalRo'];
+        $tindakan = $dataTagihan['tindakan'];
+        $totalTindakan = $dataTagihan['totalTindakan'];
+        $obat = $dataTagihan['obat'];
+        $totalObat = $dataTagihan['totalObat'];
+        $obatKronis = $dataTagihan['obatKronis'];
+        $totalObatKronis = $dataTagihan['totalObatKronis'];
+        $bmhp = $dataTagihan['bmhp'];
+        $totalbmhp = $dataTagihan['totalbmhp'];
 
         $noKartu = $detailSEP['peserta']['noKartu'];
         $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=' . urlencode($noKartu) . '&size=100x100';
@@ -395,12 +294,12 @@ class ApiKominfoController extends Controller
         //buat judul, yaitu 6 digit terakhir dari noSEP
         $judul = substr($detailSEP['noSep'], -6);
 
-        return view('Laporan.Pasien.sepBilling',
+        return view('Laporan.Pasien.billingSEP',
             compact('detailSEP', 'qrCodeBase64', 'dataTagihan', 'lab',
                 'totalLab', 'totalRo', 'ro', 'totalTindakan', 'tindakan',
                 'totalObat', 'obat', 'totalObatKronis', 'totalbmhp'
             ));
-        $pdf = PDF::loadView('Laporan.Pasien.sepBilling',
+        $pdf = PDF::loadView('Laporan.Pasien.billingSEP',
             compact('detailSEP', 'qrCodeBase64', 'dataTagihan', 'lab',
                 'totalLab', 'totalRo', 'ro', 'totalTindakan', 'tindakan',
                 'totalObat', 'obat', 'totalObatKronis', 'totalbmhp'
@@ -408,6 +307,150 @@ class ApiKominfoController extends Controller
 
         return $pdf->stream($judul . '.pdf'); // Generate the PDF with the converted PNG QR code
 
+    }
+    public function cetakBilling(string $no_sep)
+    {
+        $model = new KominfoModel();
+        // dd($params);
+        $data = $model->getDetailSEP($no_sep);
+        $detailSEP = $data['data'];
+        $norm = $detailSEP['peserta']['noMr'];
+        $tglKunjungan = $detailSEP['tglSep'];
+
+        $dataTagihan = $this->getDataTagihan($norm, $tglKunjungan);
+
+        $lab = $dataTagihan['lab'];
+        $totalLab = $dataTagihan['totalLab'];
+        $ro = $dataTagihan['ro'];
+        $totalRo = $dataTagihan['totalRo'];
+        $tindakan = $dataTagihan['tindakan'];
+        $totalTindakan = $dataTagihan['totalTindakan'];
+        $obat = $dataTagihan['obat'];
+        $totalObat = $dataTagihan['totalObat'];
+        $obatKronis = $dataTagihan['obatKronis'];
+        $totalObatKronis = $dataTagihan['totalObatKronis'];
+        $bmhp = $dataTagihan['bmhp'];
+        $totalbmhp = $dataTagihan['totalbmhp'];
+
+        $noKartu = $detailSEP['peserta']['noKartu'];
+        $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=' . urlencode($noKartu) . '&size=100x100';
+
+        $qrCodeBase64 = base64_encode(file_get_contents($qrCodeUrl));
+        //buat judul, yaitu 6 digit terakhir dari noSEP
+        $judul = substr($detailSEP['noSep'], -6);
+
+        return view('Laporan.Pasien.billing',
+            compact('detailSEP', 'qrCodeBase64', 'dataTagihan', 'lab',
+                'totalLab', 'totalRo', 'ro', 'totalTindakan', 'tindakan',
+                'totalObat', 'obat', 'totalObatKronis', 'totalbmhp'
+            ));
+        $pdf = PDF::loadView('Laporan.Pasien.billing',
+            compact('detailSEP', 'qrCodeBase64', 'dataTagihan', 'lab',
+                'totalLab', 'totalRo', 'ro', 'totalTindakan', 'tindakan',
+                'totalObat', 'obat', 'totalObatKronis', 'totalbmhp'
+            ));
+
+        return $pdf->stream($judul . '.pdf'); // Generate the PDF with the converted PNG QR code
+
+    }
+    public function cetakBillingSuratKontrol(string $no_SuratKontrol, $norm, $tglKunjungan)
+    {
+        $model = new KominfoModel();
+        // dd($params);
+        // dd($params);
+        $data = $model->getDetailSuratKontrol($no_SuratKontrol);
+        $detailSuratKontrol = $data['data'];
+        // return response()->json($detailSuratKontrol);
+
+        // return view('Laporan.Pasien.SuratKontrol', compact('detailSuratKontrol'));
+
+        $dataTagihan = $this->getDataTagihan($norm, $tglKunjungan);
+        return response()->json($dataTagihan);
+
+        $lab = $dataTagihan['lab'];
+        $totalLab = $dataTagihan['totalLab'];
+        $ro = $dataTagihan['ro'];
+        $totalRo = $dataTagihan['totalRo'];
+        $tindakan = $dataTagihan['tindakan'];
+        $totalTindakan = $dataTagihan['totalTindakan'];
+        $obat = $dataTagihan['obat'];
+        $totalObat = $dataTagihan['totalObat'];
+        $obatKronis = $dataTagihan['obatKronis'];
+        $totalObatKronis = $dataTagihan['totalObatKronis'];
+        $bmhp = $dataTagihan['bmhp'];
+        $totalbmhp = $dataTagihan['totalbmhp'];
+
+        return view('Laporan.Pasien.billingSuratKontrol',
+            compact('detailSuratKontrol', 'dataTagihan', 'lab',
+                'totalLab', 'totalRo', 'ro', 'totalTindakan', 'tindakan',
+                'totalObat', 'obat', 'totalObatKronis', 'totalbmhp'
+            ));
+        $pdf = PDF::loadView('Laporan.Pasien.billing',
+            compact('detailSuratKontrol', 'dataTagihan', 'lab',
+                'totalLab', 'totalRo', 'ro', 'totalTindakan', 'tindakan',
+                'totalObat', 'obat', 'totalObatKronis', 'totalbmhp'
+            ));
+
+        return $pdf->stream($judul . '.pdf'); // Generate the PDF with the converted PNG QR code
+
+    }
+    public function getDataTagihan($norm, $tglKunjungan)
+    {
+
+        $dataTagihan = KasirTransModel::with('item.layanan')
+            ->where('norm', $norm)
+            ->whereBetween('created_at', [
+                $tglKunjungan . ' 00:00:00',
+                $tglKunjungan . ' 23:59:59',
+            ])->first();
+        return $dataTagihan;
+
+        $res = [
+            'data' => $dataTagihan,
+            'lab' => null,
+            'totalLab' => 0,
+            'ro' => null,
+            'totalRo' => 0,
+            'tindakan' => null,
+            'totalTindakan' => 0,
+            'obat' => null,
+            'totalObat' => 0,
+            'obatKronis' => null,
+            'totalObatKronis' => 0,
+            'bmhp' => null,
+            'totalbmhp' => 0,
+        ];
+
+        if ($dataTagihan) {
+            $rincian = array_values($dataTagihan->toArray()['item']);
+
+            [$res['lab'], $res['totalLab']] = $this->filterAndSum($rincian, function ($item) {
+                return stripos($item['layanan']['kelas'], 9) !== false
+                && !in_array($item['layanan']['idLayanan'], [131, 214]);
+            }, true);
+
+            [$res['ro'], $res['totalRo']] = $this->filterAndSum($rincian, function ($item) {
+                return stripos($item['layanan']['kelas'], 8) !== false;
+            });
+
+            [$res['tindakan'], $res['totalTindakan']] = $this->filterAndSum($rincian, function ($item) {
+                return in_array((int) $item['layanan']['kelas'], [5, 6, 7], true);
+            });
+
+            [$res['obat'], $res['totalObat']] = $this->filterAndSum($rincian, function ($item) {
+                return $item['layanan']['idLayanan'] == 2;
+            });
+
+            [$res['obatKronis'], $res['totalObatKronis']] = $this->filterAndSum($rincian, function ($item) {
+                return $item['layanan']['idLayanan'] == 228;
+            });
+
+            [$res['bmhp'], $res['totalbmhp']] = $this->filterAndSum($rincian, function ($item) {
+                return $item['layanan']['idLayanan'] == 229;
+            });
+        }
+
+        return $res;
     }
 
     public function getDataSuratKontrol(Request $request)
