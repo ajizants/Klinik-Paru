@@ -461,8 +461,17 @@ class ApiKominfoController extends Controller
             return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
         // return response()->json($detailSuratKontrol);
+        $norm = $detailSuratKontrol['sep']['data_rujukan']['rujukan']['peserta']['mr']['noMR'];
+        $tgl  = $detailSuratKontrol['sep']['tglSep'];
+        $cppt = $model->cpptRequest([
+            'no_rm'         => $norm,
+            'tanggal_awal'  => $tgl,
+            'tanggal_akhir' => $tgl,
+        ]);
+        $cppt = $cppt['response']['data'][0];
+        return response()->json($cppt);
 
-        return view('Laporan.Pasien.SuratKontrol', compact('detailSuratKontrol'));
+        return view('Laporan.Pasien.SuratKontrol', compact('detailSuratKontrol', 'cppt'));
     }
     public function suratRujukan($tgl, $norm)
     {

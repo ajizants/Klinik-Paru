@@ -76,6 +76,12 @@
                 {{ \Carbon\Carbon::parse($detailSuratKontrol['sep']['provPerujuk']['tglRujukan'])->addDays(85)->locale('id')->isoFormat('DD MMMM Y') }}
             </td>
         </tr>
+        <tr>
+            <td colspan="2" class="mt-3 w-1/6 font-semibold">
+                * Rencana Saat Kontrol :
+                {{ $cppt['rencana_tindak_lanjut'] }}
+            </td>
+        </tr>
 
     </table>
     <div class="flex items-center justify-between align-top">
