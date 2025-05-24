@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>S.PRB: {{ $cppt['pasien_nama'] }}</title>
+    <title>Surat Rujukan: {{ $cppt['pasien_nama'] }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @page {
@@ -29,28 +29,6 @@
             /* border: 1px solid black; */
         }
 
-
-        .table-bor td {
-            border: 1px solid #000000;
-            border-top: 1px solid black;
-            color: #000000;
-            padding-left: 4px;
-            padding-right: 4px;
-        }
-
-        .table-borTL td {
-            border: 1px solid #000000;
-            border-top: none !important;
-            color: #000000;
-            padding-left: 4px;
-            padding-right: 4px;
-        }
-
-        /* Apply border top in print */
-        .table-borTL td table {
-            border-top: 1px solid black !important;
-        }
-
         @media print {
             body {
                 zoom: 0.9;
@@ -67,27 +45,6 @@
                     margin: 0.2cm;
 
                 }
-            }
-
-            .table-bor td {
-                border: 1px solid #000000;
-                border-top: 1px solid black;
-                color: #000000;
-                padding-left: 4px;
-                padding-right: 4px;
-            }
-
-            .table-borTL td {
-                border: 1px solid #000000;
-                border-top: none !important;
-                color: #000000;
-                padding-left: 4px;
-                padding-right: 4px;
-            }
-
-            /* Apply border top in print */
-            .table-borTL td table {
-                border-top: 1.2px solid black !important;
             }
         }
     </style>
@@ -143,51 +100,31 @@
                         @endif
                     </p>
                     <p>Tindak lanjut yang dianjurkan :</p>
-                    <p>Dikelola sebagai Program Rujuk Balik (PRB) di PPK 1/FKTP dengan pengobatan sebagai berikut :</p>
                     @php
-                        $obats = $cppt['resep_obat'];
-                        $obatsChunks = array_chunk($obats, 10);
+                        // Misalnya $cppt adalah array atau object JSON yang memuat key 'ket_status_pasien_pulang'
+                        $ketStatus = $cppt['ket_status_pasien_pulang'] ?? '';
+
+                        // Ambil tanggal dari string misalnya: "Tanggal Kontrol : 2025-05-31"
+                        preg_match('/Tanggal Kontrol\s*:\s*(\d{4}-\d{2}-\d{2})/', $ketStatus, $matches);
+                        $tglKontrol = isset($matches[1])
+                            ? \Carbon\Carbon::parse($matches[1])->locale('id')->isoFormat('DD MMMM Y')
+                            : '-';
                     @endphp
-                    @if ($obats == null || $obats == '' || $obats == '[]')
-                        <div style="margin-left: 38px;">
-                            Tidak ada terapi / obat
-                        </div>
-                    @else
-                        <div style="margin-left: 30px; display: flex; justify-content: space-between;">
-                            @foreach ($obatsChunks as $obatsChunk)
-                                <table class="table-bor" style="margin-left: 10px; margin-right: 10px" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <td class="font-weight-bold py-1">R/</td>
-                                            <td class="font-weight-bold py-1">Nama Obat</td>
-                                            <td class="font-weight-bold py-1">Aturan Pakai</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($obatsChunk as $item)
-                                            <tr>
-                                                <td>{{ $item['no_resep'] }}</td>
-                                                <td>
-                                                    <ul style="padding-left: 20px;">
-                                                        @foreach ($item['resep_obat_detail'] as $obat)
-                                                            <li>{{ $obat['nama_obat'] }}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                </td>
-                                                <td>{{ $item['signa_1'] }} X {{ $item['signa_2'] }}
-                                                    {{ $item['aturan_pakai'] }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            @endforeach
-                        </div>
-                    @endif
-                    <p>Demikian, atas bantuan dan kerjasamanya di ucapkan terimakasih.</p>
+
+                    <ul>
+                        <li>
+                            Kontrol kembali ke KKPM tanggal {{ $tglKontrol }}
+                        </li>
+                        <li>
+                            Membuat Rujukan baru dari PPK 1 karena kondisi belum stabil, namun sudah melakukan pelayanan
+                            selama 3 bulan
+                        </li>
+                    </ul>
+
                 </div>
 
 
-                <div class="mt-4 flex items-center justify-between align-top">
+                <div class="flex items-center justify-between align-top">
                     <div>
 
                     </div>

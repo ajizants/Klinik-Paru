@@ -9,14 +9,14 @@
     <style>
         .pembungkus {
             padding: 1rem;
-            border: 1px solid black;
+            /* border: 1px solid black; */
             box-sizing: border-box;
             /* width: 95.5%; */
         }
 
         .pembungkus2 {
             padding: 1rem;
-            border: 1px solid black;
+            /* border: 1px solid black; */
             box-sizing: border-box;
             /* width: 95.5%; */
         }
@@ -140,7 +140,7 @@
             @page {
                 .pembungkus {
                     padding: 1rem;
-                    border: 1px solid black;
+                    /* border: 1px solid black; */
                     box-sizing: border-box;
                     width: 22cm;
                     height: 13.8cm;
@@ -149,7 +149,7 @@
 
                 .pembungkus2 {
                     padding: 1rem;
-                    border: 1px solid black;
+                    /* border: 1px solid black; */
                     box-sizing: border-box;
                     width: 22cm;
                     height: 25cm;

@@ -16,7 +16,7 @@
 
         .pembungkus {
             padding: 1rem;
-            border: 1px solid black;
+            /* border: 1px solid black; */
             box-sizing: border-box;
             /* width: 95.5%; */
         }
@@ -38,7 +38,7 @@
             @page {
                 .pembungkus {
                     padding: 1rem;
-                    border: 1px solid black;
+                    /* border: 1px solid black; */
                     box-sizing: border-box;
                     width: 22cm;
                     height: 13.8cm;

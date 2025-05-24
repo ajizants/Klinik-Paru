@@ -26,7 +26,7 @@
 </head>
 
 <body>
-    <div class="p-4 border border-black w-full">
+    <div class="p-4 w-full">
         <div class="mb-3 flex items-center gap-4">
             <img src="{{ asset('img/BPJS_Kesehatan.png') }}" alt="bpjslogo" class="h-[70px]">
             <div class="mx-3">

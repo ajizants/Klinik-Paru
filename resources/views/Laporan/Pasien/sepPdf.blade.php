@@ -16,7 +16,7 @@
 
         .pembungkus {
             padding: 1rem;
-            border: 1px solid black;
+            /* border: 1px solid black; */
             width: 95.5%;
             box-sizing: border-box;
         }

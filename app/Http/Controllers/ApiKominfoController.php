@@ -159,11 +159,18 @@ class ApiKominfoController extends Controller
             $aksi = '
             <a href="' . url('api/sep/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-primary mt-2 col">SEP</a>
             <a href="' . url('api/SuratKontrol/cetak/' . $noSurat) . '" ' . $hidden . ' target="_blank" class="btn btn-sm btn-success mt-2 col">S.Kontrol</a>
-            <a href="' . url('api/prb/cetak/' . $tgl . '/' . $norm) . '" target="_blank" class="btn btn-sm btn-info mt-2 col">PPK1</a>
+            <a href="' . url('api/rujukan/cetak/' . $tgl . '/' . $norm) . '" target="_blank" class="btn btn-sm bg-lime mt-2 col">Rujukan Baru</a>
+            <a href="' . url('api/prb/cetak/' . $tgl . '/' . $norm) . '" target="_blank" class="btn btn-sm btn-info mt-2 col">Surat PRB</a>
             <a href="' . url('api/billing/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-warning mt-2 col">Billing</a>
-            <a href="' . url('api/billing/sep/cetak/' . $item['no_sep']) . '"  target="_blank" class="btn btn-sm bg-lime mt-2 col">SEP & Billing</a>
-            <a href="' . url('api/billing/suratkontrol/cetak/' . $noSurat) . '" ' . $hidden . ' target="_blank" class="btn btn-sm bg-orange mt-2 col">S.Kontrol & Billing</a>
             ';
+            // $aksi = '
+            // <a href="' . url('api/sep/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-primary mt-2 col">SEP</a>
+            // <a href="' . url('api/SuratKontrol/cetak/' . $noSurat) . '" ' . $hidden . ' target="_blank" class="btn btn-sm btn-success mt-2 col">S.Kontrol</a>
+            // <a href="' . url('api/prb/cetak/' . $tgl . '/' . $norm) . '" target="_blank" class="btn btn-sm btn-info mt-2 col">PPK1</a>
+            // <a href="' . url('api/billing/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-warning mt-2 col">Billing</a>
+            // <a href="' . url('api/billing/sep/cetak/' . $item['no_sep']) . '"  target="_blank" class="btn btn-sm bg-lime mt-2 col">SEP & Billing</a>
+            // <a href="' . url('api/billing/suratkontrol/cetak/' . $noSurat) . '" ' . $hidden . ' target="_blank" class="btn btn-sm bg-orange mt-2 col">S.Kontrol & Billing</a>
+            // ';
 
             $sepTanggal = $item['tanggal_sep'] ?? null;
             $sepTanggalTampil = $item['tanggal_sep_tampil'] ?? '-';
@@ -462,6 +469,18 @@ class ApiKominfoController extends Controller
         return view('Laporan.Pasien.SuratKontrol', compact('detailSuratKontrol'));
     }
 
+    public function suratRujukanBaru($tgl, $norm)
+    {
+        $model = new KominfoModel();
+        $cppt = $model->cpptRequest([
+            'no_rm' => $norm,
+            'tanggal_awal' => $tgl,
+            'tanggal_akhir' => $tgl,
+        ]);
+        $cppt = $cppt['response']['data'][0];
+        // return response()->json($cppt);
+        return view('Laporan.Pasien.suratRujukanBaru', compact('cppt'));
+    }
     public function suratPRB($tgl, $norm)
     {
         $model = new KominfoModel();

@@ -1,17 +1,19 @@
-<div class="relative w-full border-b border-black flex items-center">
+<div class="relative w-full border-b-2 border-black flex items-center">
     <!-- Gambar -->
     <div class="absolute w-[10%] flex justify-center items-center">
-        <img src="{{ asset('img/banyumas.png') }}" class="w-14" alt="banyumas" />
+        <img src="{{ asset('img/banyumas.png') }}" class="w-20" alt="banyumas" />
     </div>
     <!-- Teks di tengah -->
-    <div class="w-[100%] text-center scale-[0.9]">
-        <p class="text-sm mb-0">PEMERINTAH KABUPATEN BANYUMAS</p>
-        <p class="text-sm font-semibold mb-0">DINAS KESEHATAN</p>
-        <p class="text-sm font-bold mb-0">KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A</p>
+    <div class="w-[100%] text-center mb-1">
+        <p class="text-md mb-0">PEMERINTAH KABUPATEN BANYUMAS</p>
+        <p class="text-md font-semibold mb-0">DINAS KESEHATAN</p>
+        <p class="text-md font-bold mb-0">KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A</p>
         <p class="text-xs">Jln. A. Yani Nomor 33 Purwokerto Timur, Banyumas, Jawa Tengah</p>
         <p class="text-xs">Kode Pos 53111, Telepon (0281) 635658, Pos-el bkpm_purwokerto@yahoo.com</p>
     </div>
 </div>
+<!-- Garis bawah tebal -->
+<div class="w-full border-t-4 border-black mt-[2px]"></div>
 <table class="w-full table-auto">
     <tbody>
         <tr>
