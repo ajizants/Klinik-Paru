@@ -159,10 +159,10 @@ class ApiKominfoController extends Controller
             $aksi = '
             <a href="' . url('api/sep/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-primary mt-2 col">SEP</a>
             <a href="' . url('api/SuratKontrol/cetak/' . $noSurat) . '" ' . $hidden . ' target="_blank" class="btn btn-sm btn-success mt-2 col">S.Kontrol</a>
-            <a href="' . url('api/billing/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-warning mt-2 col">Billing</a>
-            <a href="' . url('api/billing/sep/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm bg-lime mt-2 col">SEP & Billing</a>
-            <a href="' . url('api/billing/suratkontrol/cetak/' . $noSurat) . '" target="_blank" class="btn btn-sm bg-orange mt-2 col">S.Kontrol & Billing</a>
             <a href="' . url('api/prb/cetak/' . $tgl . '/' . $norm) . '" target="_blank" class="btn btn-sm btn-info mt-2 col">PPK1</a>
+            <a href="' . url('api/billing/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-warning mt-2 col">Billing</a>
+            <a href="' . url('api/billing/sep/cetak/' . $item['no_sep']) . '"  target="_blank" class="btn btn-sm bg-lime mt-2 col">SEP & Billing</a>
+            <a href="' . url('api/billing/suratkontrol/cetak/' . $noSurat) . '" ' . $hidden . ' target="_blank" class="btn btn-sm bg-orange mt-2 col">S.Kontrol & Billing</a>
             ';
 
             $sepTanggal = $item['tanggal_sep'] ?? null;
