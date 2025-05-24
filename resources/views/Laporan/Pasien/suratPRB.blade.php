@@ -123,25 +123,26 @@
                 <div class="w-full text-left">
                     <p>Teman Sejawat Yth,</p>
                     <p>Mohon pelayanan selanjutnya untuk penderita :</p>
-                    <p class="font-bold text-sm ml-2">Nama : {{ $cppt['pasien_nama'] }}</p>
-                    <p class="font-bold text-sm ml-2">Diagnosa :
-                        @php
-                            $dxs = $cppt['diagnosa'];
-                        @endphp
-                        @if ($dxs[0]['kode_diagnosa'] == 'Z09.8')
+                    <div class="flex text-sm font-bold ml-2">
+                        <div class="w-24">Nama</div>
+                        <div>: {{ $cppt['pasien_nama'] }}</div>
+                    </div>
+                    <div class="flex text-sm font-bold ml-2">
+                        <div class="w-24">Diagnosa</div>
+                        <div>:
+                            @php
+                                $dxs = $cppt['diagnosa'];
+                            @endphp
                             @if (empty($dxs) || count($dxs) == 0)
                                 -
+                            @elseif ($dxs[0]['kode_diagnosa'] == 'Z09.8')
+                                {{ $dxs[1]['nama_diagnosa'] ?? '-' }}
                             @else
-                                {{ $dxs[1]['nama_diagnosa'] }}
+                                {{ $dxs[0]['nama_diagnosa'] ?? '-' }}
                             @endif
-                        @else
-                            @if (empty($dxs) || count($dxs) == 0)
-                                -
-                            @else
-                                {{ $dxs[0]['nama_diagnosa'] }}
-                            @endif
-                        @endif
-                    </p>
+                        </div>
+                    </div>
+
                     <p>Tindak lanjut yang dianjurkan :</p>
                     <p>Dikelola sebagai Program Rujuk Balik (PRB) di PPK 1/FKTP dengan pengobatan sebagai berikut :</p>
                     @php
