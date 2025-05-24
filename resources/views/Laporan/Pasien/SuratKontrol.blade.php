@@ -14,10 +14,37 @@
             /* atur sesuai kebutuhan */
         }
 
+        .pembungkus {
+            padding: 1rem;
+            border: 1px solid black;
+            box-sizing: border-box;
+            /* width: 95.5%; */
+        }
+
+        .kertas {
+            width: 22cm;
+            /* atau bisa coba: 29.7cm 21cm */
+            margin: 0.2cm 0.2cm 0.2cm 0.2cm;
+            /* scale: 0.8; */
+            /* border: 1px solid black; */
+        }
+
         @media print {
             body {
                 zoom: 0.9;
                 /* bisa ganti ke 0.85-0.95 sesuai selera */
+            }
+
+            @page {
+                .pembungkus {
+                    padding: 1rem;
+                    border: 1px solid black;
+                    box-sizing: border-box;
+                    width: 22cm;
+                    height: 13.8cm;
+                    margin: 0.2cm;
+
+                }
             }
         }
     </style>
@@ -26,109 +53,13 @@
 
 </head>
 
-<body>
-    <div class="p-4 w-full">
-        <div class="flex items-center justify-between align-top">
-            <!-- Logo -->
-            <img src="{{ asset('img/BPJS_Kesehatan.png') }}" alt="bpjslogo" style="height: 60px;">
-
-            <!-- Judul Tengah -->
-            <div class="flex-1 mx-5 text-left self-center">
-                <h3 class="text-lg font-semibold">SURAT RENCANA KONTROL</h3>
-                <h4 class="text-base font-medium">KKPM PURWOKERTO</h4>
-            </div>
-
-            <!-- Nomor Surat di Ujung Kanan -->
-            <div class="text-right align-top">
-                <h3 class="text-lg font-semibold">No. {{ $detailSuratKontrol['noSuratKontrol'] }}</h3>
-                <h4 class="text-base font-medium text-white">.</h4>
-            </div>
-        </div>
-
-        <table class="w-full table-auto m-6">
-            <tr>
-                <td class="w-1/6">Kepada Yth</td>
-                <td class="my-0 py-0">
-                    {{ $detailSuratKontrol['namaDokter'] }}
-                </td>
-            </tr>
-            <tr>
-                <td class="w-1/6"></td>
-                <td class="my-0 py-0">
-                    Sp./Sub. {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['poliRujukan']['nama'] }}
-                </td>
-            </tr>
-            <tr>
-                <td class="w-1/6" colspan="2">Mohon Pemeriksaan dan Penanganan Lebih Lanjut :</td>
-            </tr>
-            <tr>
-                <td class="w-1/6">No.Kartu</td>
-                <td class="my-0 py-0">
-                    : {{ $detailSuratKontrol['sep']['peserta']['noKartu'] }}
-                </td>
-            </tr>
-            <tr>
-                <td class="w-1/6">Nama Peserta</td>
-                <td class="my-0 py-0">
-                    : {{ $detailSuratKontrol['sep']['peserta']['nama'] }}
-                </td>
-            </tr>
-            <tr>
-                <td class="w-1/6">Tgl.Lahir</td>
-                <td class="my-0 py-0">
-                    :
-                    {{ \Carbon\Carbon::parse($detailSuratKontrol['sep']['peserta']['tglLahir'])->locale('id')->isoFormat('DD MMMM Y') }}
-                </td>
-            </tr>
-            <tr>
-                <td class="w-1/6">Diagnosa</td>
-                <td class="my-0 py-0">
-                    : {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['diagnosa']['kode'] }} -
-                    {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['diagnosa']['nama'] }}
-                </td>
-            </tr>
-            <tr>
-                <td class="w-1/6">Rencana Kontrol</td>
-                <td class="my-0 py-0">
-                    :
-                    {{ \Carbon\Carbon::parse($detailSuratKontrol['tglRencanaKontrol'])->locale('id')->isoFormat('DD MMMM Y') }}
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="mt-2" colspan="2">Demikian atas bantuanya, diucapkan banyak terima kasih.</td>
-            </tr>
-            <tr>
-                <td colspan="2" class="mt-3 w-1/6 font-semibold">
-                    * Masa Berlaku Rujukan
-                    {{-- </td> --}}
-                    {{-- <td class="my-0 py-0 font-semibold"> --}}
-                    :
-                    {{ \Carbon\Carbon::parse($detailSuratKontrol['sep']['provPerujuk']['tglRujukan'])->addDays(85)->locale('id')->isoFormat('DD MMMM Y') }}
-                </td>
-            </tr>
-
-        </table>
-        <div class="flex items-center justify-between align-top">
-            <div>
-                <br>
-                <br>
-                <br>
-                <br>
-                <p class="text-xs">Tgl.Entri: {{ $detailSuratKontrol['tglTerbit'] }} | Tgl.Cetak:
-                    {{ \Carbon\Carbon::now() }} | Tgl.Rujukan:
-                    {{ $detailSuratKontrol['sep']['provPerujuk']['tglRujukan'] }}</p>
-            </div>
-            <div class="mx-24">
-                <h6>Mengetahui DPJP,</h6>
-                <br>
-                <br>
-                <br>
-                <p>{{ $detailSuratKontrol['namaDokterPembuat'] }}</p>
-            </div>
+<body class="flex justify-center">
+    <div class="kertas">
+        <div class="pembungkus mt-3">
+            @include('Laporan.Pasien.tmpSKontrol')
         </div>
     </div>
+
     <script>
         //bagaimana untuk mengecek umur dan no_sampel jika cetak dari tombol CTRL + P dan browser
         document.addEventListener("keydown", function(event) {

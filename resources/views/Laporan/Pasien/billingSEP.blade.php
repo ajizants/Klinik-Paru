@@ -405,7 +405,7 @@
                         <td class="text-left"> {{ $no++ }}. </td>
                         <td class="text-left pr-4"> Laboratorium
                             @if ($lab != null)
-                                <table class="w-full table-auto">
+                                <table class="mx-2 w-full table-auto">
                                     <tbody>
                                         @foreach ($lab as $item)
                                             <tr>
@@ -429,7 +429,7 @@
                         <td class="text-left"> {{ $no++ }}. </td>
                         <td class="text-left pr-4"> Radiologi
                             @if ($ro != null)
-                                <table class="w-full table-auto mr-2">
+                                <table class="mx-2 w-full table-auto mr-2">
                                     <tbody>
                                         @foreach ($ro as $item)
                                             <tr>
@@ -457,7 +457,7 @@
                         <td class="text-left"> {{ $no++ }}. </td>
                         <td class="text-left pr-4"> Tindakan
                             @if ($tindakan != null)
-                                <table class="w-full table-auto mr-2">
+                                <table class="mx-2 w-full table-auto mr-2">
                                     <tbody>
                                         @foreach ($tindakan as $item)
                                             <tr>

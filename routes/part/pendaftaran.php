@@ -30,12 +30,15 @@ Route::post('sep/detail', [ApiKominfoController::class, 'getDetailSEP']);
 Route::post('SuratKontrol/get_data', [ApiKominfoController::class, 'getDataSuratKontrol']);
 Route::post('SuratKontrol/detail', [ApiKominfoController::class, 'getDetailSuratKontrol']);
 
-Route::get('sep/cetak/{no_sep}', [ApiKominfoController::class, 'cetakSEP']);
-Route::get('billing/sep/cetak/{no_sep}', [ApiKominfoController::class, 'cetakSEPBilling']);
-Route::get('billing/cetak/{no_sep}', [ApiKominfoController::class, 'cetakBilling']);
-Route::get('billing/suratkontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakBillingSuratKontrol']);
-Route::get('SuratKontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakSuratKontrol']);
 Route::post('bpjs/get_data', [ApiKominfoController::class, 'getDataSEPSK']);
+
+Route::get('sep/cetak/{no_sep}', [ApiKominfoController::class, 'cetakSEP']);
+Route::get('SuratKontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakSuratKontrol']);
+Route::get('billing/cetak/{no_sep}', [ApiKominfoController::class, 'cetakBilling']);
+Route::get('prb/cetak/{tgl}/{norm}', [ApiKominfoController::class, 'suratPRB']);
+
+Route::get('billing/sep/cetak/{no_sep}', [ApiKominfoController::class, 'cetakSEPBilling']);
+Route::get('billing/suratkontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakBillingSuratKontrol']);
 
 Route::get('laporan/dokter_periksa/{tahun}/{bln}', [ApiKominfoController::class, 'getJumlahPemeriksaanDokter']);
 

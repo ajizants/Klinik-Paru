@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>S.PRB: {{ $detailSuratKontrol['sep']['peserta']['nama'] }}</title>
+    <title>S.PRB: {{ $cppt['pasien_nama'] }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @page {
@@ -14,10 +14,37 @@
             /* atur sesuai kebutuhan */
         }
 
+        .pembungkus {
+            padding: 1rem;
+            /* border: 1px solid black; */
+            box-sizing: border-box;
+            /* width: 95.5%; */
+        }
+
+        .kertas {
+            width: 22cm;
+            /* atau bisa coba: 29.7cm 21cm */
+            margin: 0.2cm 0.2cm 0.2cm 0.2cm;
+            /* scale: 0.8; */
+            /* border: 1px solid black; */
+        }
+
         @media print {
             body {
                 zoom: 0.9;
                 /* bisa ganti ke 0.85-0.95 sesuai selera */
+            }
+
+            @page {
+                .pembungkus {
+                    padding: 1rem;
+                    /* border: 1px solid black; */
+                    box-sizing: border-box;
+                    width: 22cm;
+                    height: 29.7cm;
+                    margin: 0.2cm;
+
+                }
             }
         }
     </style>
@@ -26,106 +53,101 @@
 
 </head>
 
-<body>
-    <div class="p-4 w-full">
-        <div class="flex items-center justify-between align-top">
-            <!-- Logo -->
-            <img src="{{ asset('img/BPJS_Kesehatan.png') }}" alt="bpjslogo" style="height: 60px;">
 
-            <!-- Judul Tengah -->
-            <div class="flex-1 mx-5 text-left self-center">
-                <h3 class="text-lg font-semibold">SURAT RENCANA KONTROL</h3>
-                <h4 class="text-base font-medium">KKPM PURWOKERTO</h4>
-            </div>
+<body class="flex justify-center">
+    <div class="kertas">
+        <div class="pembungkus">
+            <div class="p-4 w-full">
+                <div class="relative w-full border-b border-black flex items-center">
+                    <!-- Gambar -->
+                    <div class="absolute w-[10%] flex justify-center items-center">
+                        <img src="{{ asset('img/banyumas.png') }}" class="w-20" alt="banyumas" />
+                    </div>
+                    <!-- Teks di tengah -->
+                    <div class="w-[100%] text-center">
+                        <p class="text-md mb-0">PEMERINTAH KABUPATEN BANYUMAS</p>
+                        <p class="text-md font-semibold mb-0">DINAS KESEHATAN</p>
+                        <p class="text-md font-bold mb-0">KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A</p>
+                        <p class="text-xs">Jln. A. Yani Nomor 33 Purwokerto Timur, Banyumas, Jawa Tengah</p>
+                        <p class="text-xs">Kode Pos 53111, Telepon (0281) 635658, Pos-el bkpm_purwokerto@yahoo.com</p>
+                    </div>
+                </div>
+                <div class="w-full text-center mt-2">
+                    <h1 class="text-center font-bold text-sm">SURAT RUJUK BALIK</h1>
+                </div>
+                <div class="w-full text-left">
+                    <p>Teman Sejawat Yth,</p>
+                    <p>Mohon pelayanan selanjutnya untuk penderita :</p>
+                    <p class="font-bold text-sm ml-2">Nama : {{ $cppt['pasien_nama'] }}</p>
+                    <p class="font-bold text-sm ml-2">Diagnosa :
+                        @php
+                            $dxs = $cppt['diagnosa'];
+                        @endphp
+                        @if ($dxs[0]['kode_diagnosa'] == 'Z09.8')
+                            @if (empty($dxs) || count($dxs) == 0)
+                                -
+                            @else
+                                {{ $dxs[1]['nama_diagnosa'] }}
+                            @endif
+                        @else
+                            @if (empty($dxs) || count($dxs) == 0)
+                                -
+                            @else
+                                {{ $dxs[0]['nama_diagnosa'] }}
+                            @endif
+                        @endif
+                    </p>
+                    <p>Tindak lanjut yang dianjurkan :</p>
+                    @php
+                        // Misalnya $cppt adalah array atau object JSON yang memuat key 'ket_status_pasien_pulang'
+                        $ketStatus = $cppt['ket_status_pasien_pulang'] ?? '';
 
-            <!-- Nomor Surat di Ujung Kanan -->
-            <div class="text-right align-top">
-                <h3 class="text-lg font-semibold">No. {{ $detailSuratKontrol['noSuratKontrol'] }}</h3>
-                <h4 class="text-base font-medium text-white">.</h4>
-            </div>
-        </div>
+                        // Ambil tanggal dari string misalnya: "Tanggal Kontrol : 2025-05-31"
+                        preg_match('/Tanggal Kontrol\s*:\s*(\d{4}-\d{2}-\d{2})/', $ketStatus, $matches);
+                        $tglKontrol = isset($matches[1])
+                            ? \Carbon\Carbon::parse($matches[1])->locale('id')->isoFormat('DD MMMM Y')
+                            : '-';
+                    @endphp
 
-        <table class="w-full table-auto m-6">
-            <tr>
-                <td class="w-1/6">Kepada Yth</td>
-                <td class="my-0 py-0">
-                    {{ $detailSuratKontrol['namaDokter'] }}
-                </td>
-            </tr>
-            <tr>
-                <td class="w-1/6"></td>
-                <td class="my-0 py-0">
-                    Sp./Sub. {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['poliRujukan']['nama'] }}
-                </td>
-            </tr>
-            <tr>
-                <td class="w-1/6" colspan="2">Mohon Pemeriksaan dan Penanganan Lebih Lanjut :</td>
-            </tr>
-            <tr>
-                <td class="w-1/6">No.Kartu</td>
-                <td class="my-0 py-0">
-                    : {{ $detailSuratKontrol['sep']['peserta']['noKartu'] }}
-                </td>
-            </tr>
-            <tr>
-                <td class="w-1/6">Nama Peserta</td>
-                <td class="my-0 py-0">
-                    : {{ $detailSuratKontrol['sep']['peserta']['nama'] }}
-                </td>
-            </tr>
-            <tr>
-                <td class="w-1/6">Tgl.Lahir</td>
-                <td class="my-0 py-0">
-                    :
-                    {{ \Carbon\Carbon::parse($detailSuratKontrol['sep']['peserta']['tglLahir'])->locale('id')->isoFormat('DD MMMM Y') }}
-                </td>
-            </tr>
-            <tr>
-                <td class="w-1/6">Diagnosa</td>
-                <td class="my-0 py-0">
-                    : {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['diagnosa']['kode'] }} -
-                    {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['diagnosa']['nama'] }}
-                </td>
-            </tr>
-            <tr>
-                <td class="w-1/6">Rencana Kontrol</td>
-                <td class="my-0 py-0">
-                    :
-                    {{ \Carbon\Carbon::parse($detailSuratKontrol['tglRencanaKontrol'])->locale('id')->isoFormat('DD MMMM Y') }}
-                </td>
-            </tr>
+                    <ul>
+                        <li>
+                            Kontrol kembali ke KKPM tanggal {{ $tglKontrol }}
+                        </li>
+                        <li>
+                            Membuat Rujukan baru dari PPK 1 karena kondisi belum stabil, namun sudah melakukan pelayanan
+                            selama 3 bulan
+                        </li>
+                    </ul>
+
+                </div>
 
 
-            <tr>
-                <td class="mt-2" colspan="2">Demikian atas bantuanya, diucapkan banyak terima kasih.</td>
-            </tr>
-            <tr>
-                <td colspan="2" class="mt-3 w-1/6 font-semibold">
-                    * Masa Berlaku Rujukan
-                    {{-- </td> --}}
-                    {{-- <td class="my-0 py-0 font-semibold"> --}}
-                    :
-                    {{ \Carbon\Carbon::parse($detailSuratKontrol['sep']['provPerujuk']['tglRujukan'])->addDays(85)->locale('id')->isoFormat('DD MMMM Y') }}
-                </td>
-            </tr>
+                <div class="flex items-center justify-between align-top">
+                    <div>
 
-        </table>
-        <div class="flex items-center justify-between align-top">
-            <div>
-                <br>
-                <br>
-                <br>
-                <br>
-                <p class="text-xs">Tgl.Entri: {{ $detailSuratKontrol['tglTerbit'] }} | Tgl.Cetak:
-                    {{ \Carbon\Carbon::now() }} | Tgl.Rujukan:
-                    {{ $detailSuratKontrol['sep']['provPerujuk']['tglRujukan'] }}</p>
-            </div>
-            <div class="mx-24">
-                <h6>Mengetahui DPJP,</h6>
-                <br>
-                <br>
-                <br>
-                <p>{{ $detailSuratKontrol['namaDokterPembuat'] }}</p>
+                    </div>
+                    <div>
+                        <h6>Purwokerto,
+                            {{ \Carbon\Carbon::parse($cppt['tanggal'])->locale('id')->isoFormat('DD MMMM Y') }}</h6>
+                        <h6>Mengetahui DPJP,</h6>
+                        <br>
+                        <br>
+                        <br>
+                        @if ($cppt['dokter_nama'] == 'dr. AGIL DANANJAYA, Sp.P')
+                            {{ $cppt['dokter_nama'] }}
+                            <br>
+                            SIP. 3302/53127/03/449.1/100/DS/B/IV/2023
+                        @elseif ($cppt['dokter_nama'] == 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.')
+                            {{ $cppt['dokter_nama'] }}
+                            <br>
+                            SIP. 3302/53127/01/449.1/292/DS/P/XI/2022
+                        @else
+                            dr. AGIL DANANJAYA, Sp.P
+                            <br>
+                            SIP. 3302/53127/03/449.1/100/DS/B/IV/2023
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
     </div>
