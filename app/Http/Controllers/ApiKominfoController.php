@@ -469,7 +469,7 @@ class ApiKominfoController extends Controller
             'tanggal_akhir' => $tgl,
         ]);
         $cppt = $cppt['response']['data'][0];
-        return response()->json($cppt);
+        // return response()->json($cppt);
 
         return view('Laporan.Pasien.SuratKontrol', compact('detailSuratKontrol', 'cppt'));
     }
