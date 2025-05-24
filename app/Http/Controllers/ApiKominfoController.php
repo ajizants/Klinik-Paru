@@ -207,17 +207,10 @@ class ApiKominfoController extends Controller
         // dd($params);
         $data = $model->getDetailSEP($no_sep);
         $detailSEP = $data['data'];
+        if (empty($detailSEP)) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
         // return response()->json($detailSEP);
-
-        //     // Buat QR Code dengan logo
-        //     $qrCode = QrCode::format('svg') // atau svg
-        //         ->size(100)
-        //         ->errorCorrection('H')
-        //         ->generate($detailSEP['peserta']['noKartu']);
-
-        //     // dd($qrCode);
-        //     $base64QrCode = base64_encode($qrCode);
-        //     $qrCodeImage = 'data:image/png;base64,' . $base64QrCode;
 
         $noKartu = $detailSEP['peserta']['noKartu'];
         $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=' . urlencode($noKartu) . '&size=100x100';
@@ -464,12 +457,14 @@ class ApiKominfoController extends Controller
         // dd($params);
         $data = $model->getDetailSuratKontrol($no_SuratKontrol);
         $detailSuratKontrol = $data['data'];
-        // return response()->json($detailSuratKontrol);
+        if (empty($detailSuratKontrol)) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+        return response()->json($detailSuratKontrol);
 
         return view('Laporan.Pasien.SuratKontrol', compact('detailSuratKontrol'));
     }
-
-    public function suratRujukanBaru($tgl, $norm)
+    public function suratRujukan($tgl, $norm)
     {
         $model = new KominfoModel();
         $cppt = $model->cpptRequest([
@@ -478,9 +473,42 @@ class ApiKominfoController extends Controller
             'tanggal_akhir' => $tgl,
         ]);
         $cppt = $cppt['response']['data'][0];
-        // return response()->json($cppt);
+
+        $statusPulang = $cppt['status_pasien_pulang'];
+        $namaFaskes = '-';
+        $alasanRujuk = '-';
+
+        if (strtolower(trim($statusPulang)) === 'prb') {
+            return view('Laporan.Pasien.suratPRB', compact('cppt'));
+        }
+
+        if (strtolower($statusPulang) === 'dirujuk') {
+            $keterangan = $cppt['ket_status_pasien_pulang'];
+            preg_match('/Nama Faskes\s*:\s*(.*?),\s*Alasan Dirujuk\s*:\s*(.*)/i', $keterangan, $matches);
+            $namaFaskes = $matches[1] ?? '-';
+            $alasanRujuk = $matches[2] ?? '-';
+        }
+
+        if (strtolower(trim($alasanRujuk)) === 'prb') {
+            return view('Laporan.Pasien.suratPRB', compact('cppt'));
+        }
+
+        // Lanjut ke view lain jika bukan PRB
         return view('Laporan.Pasien.suratRujukanBaru', compact('cppt'));
     }
+
+    // public function suratRujukanBaru($tgl, $norm)
+    // {
+    //     $model = new KominfoModel();
+    //     $cppt = $model->cpptRequest([
+    //         'no_rm' => $norm,
+    //         'tanggal_awal' => $tgl,
+    //         'tanggal_akhir' => $tgl,
+    //     ]);
+    //     $cppt = $cppt['response']['data'][0];
+    //     // return response()->json($cppt);
+    //     return view('Laporan.Pasien.suratRujukanBaru', compact('cppt'));
+    // }
     public function suratPRB($tgl, $norm)
     {
         $model = new KominfoModel();
