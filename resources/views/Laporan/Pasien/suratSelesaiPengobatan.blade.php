@@ -106,6 +106,9 @@
                         <li>
                             Penderita dinyatakan selesai pengobatan dan di kelola kembali oleh PPK 1/FKTP.
                         </li>
+                        <li>
+                            Demikian, atas bantuan dan kerjasamanya di ucapkan terimakasih.
+                        </li>
                     </ul>
 
                 </div>
