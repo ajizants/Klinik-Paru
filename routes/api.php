@@ -210,8 +210,8 @@ Route::post('surat/medis', [SuratController::class, 'store']);
 Route::post('surat/medis/update', [SuratController::class, 'update']);
 Route::post('surat/medis/delete', [SuratController::class, 'destroy']);
 Route::post('surat/medis/riwayat', [SuratController::class, 'riwayat']);
-Route::post('surat/medis/riwayat', [SuratController::class, 'riwayat']);
 
+//Data Analis
 Route::post('data/analis/biaya_pasien', [DataAnalisController::class, 'DataBiayaKunjungan']);
 Route::post('data/analis/faskes_perujuk', [DataAnalisController::class, 'faskesPerujuk']);
 Route::post('data/analis/kunjungan_lab', [DataAnalisController::class, 'kunjunganLab']);

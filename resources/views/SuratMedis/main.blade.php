@@ -62,8 +62,8 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalCreateSuratLabel">Formulir Pembuatan Surat : <input type="text"
-                            id="noSurat" readonly></h5>
+                    <h5 class="modal-title" id="modalCreateSuratLabel">Formulir Pembuatan Surat :
+                        {{-- <input type="text" id="noSurat" readonly></h5> --}}
                 </div>
                 <div class="modal-body">
                     @csrf
@@ -489,10 +489,10 @@
                 //     id: "nadi",
                 //     label: "Nadi"
                 // },
-                {
-                    id: "noSurat",
-                    label: "No Surat"
-                },
+                // {
+                //     id: "noSurat",
+                //     label: "No Surat"
+                // },
                 {
                     id: "pekerjaan",
                     label: "Pekerjaan"
@@ -542,7 +542,7 @@
 
         function simpan() {
             var tglTrans = $("#tglTrans").val();
-            var noSurat = $("#noSurat").val();
+            // var noSurat = $("#noSurat").val();
             var norm = $("#norm").val();
             var nama = $("#nama").val();
             var tglLahir = $("#tglLahir").val();
@@ -578,7 +578,7 @@
                     },
                     body: JSON.stringify({
                         tglTrans: tglTrans,
-                        noSurat: noSurat,
+                        // noSurat: noSurat,
                         norm: norm,
                         nama: nama,
                         tglLahir: tglLahir,
