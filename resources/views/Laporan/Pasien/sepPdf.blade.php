@@ -196,11 +196,11 @@
                 <td>: {{ $detailSEP['penjamin'] ?? '-' }}</td>
             </tr>
         </table>
-        <p class="mb-0 font-semibold mt-3 text-xs">Catatan:</p>
+        <p class="mb-0 font-semibold mt-3 " style="font-size: 6pt">Catatan:</p>
         <table style="margin-top: 0px">
             <tr>
                 <td width="55%">
-                    <div style="font-size: 7pt">
+                    <div style="font-size: 5pt">
                         <p class="my-0">*Saya menyetujui BPJS Kesehatan untuk:</p>
                         <ul class="list-disc mt-0">
                             <li>membuka dan atau menggunakan informasi medis Pasien untuk keperluan administrasi,

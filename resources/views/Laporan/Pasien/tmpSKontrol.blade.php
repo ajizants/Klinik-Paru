@@ -26,7 +26,7 @@
         <tr>
             <td class="w-1/6"></td>
             <td class="my-0 py-0">
-                Sp./Sub. {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['poliRujukan']['nama'] }}
+                Sp./Sub. {{ $detailSuratKontrol['namaPoliTujuan'] }}
             </td>
         </tr>
         <tr>
@@ -53,9 +53,21 @@
         </tr>
         <tr>
             <td class="w-1/6">Diagnosa</td>
-            <td class="my-0 py-0">
+            {{-- <td class="my-0 py-0">
                 : {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['diagnosa']['kode'] }} -
                 {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['diagnosa']['nama'] }}
+            </td> --}}
+            <td class="my-0 py-0">
+                : @php
+                    $dxs = $cppt['diagnosa'];
+                @endphp
+                @if (empty($dxs) || count($dxs) == 0)
+                    -
+                @elseif ($dxs[0]['kode_diagnosa'] == 'Z09.8')
+                    {{ $dxs[1]['kode_diagnosa'] ?? '-' }} - {{ $dxs[1]['nama_diagnosa'] ?? '-' }}
+                @else
+                    {{ $dxs[0]['kode_diagnosa'] ?? '-' }} - {{ $dxs[0]['nama_diagnosa'] ?? '-' }}
+                @endif
             </td>
         </tr>
         <tr>

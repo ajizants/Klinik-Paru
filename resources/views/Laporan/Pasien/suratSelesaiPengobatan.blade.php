@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>S.PRB: {{ $cppt['pasien_nama'] }}</title>
+    <title>Selesai Pengobatan: {{ $cppt['pasien_nama'] }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @page {
@@ -29,28 +29,6 @@
             /* border: 1px solid black; */
         }
 
-
-        .table-bor td {
-            border: 1px solid #000000;
-            border-top: 1px solid black;
-            color: #000000;
-            padding-left: 4px;
-            padding-right: 4px;
-        }
-
-        .table-borTL td {
-            border: 1px solid #000000;
-            border-top: none !important;
-            color: #000000;
-            padding-left: 4px;
-            padding-right: 4px;
-        }
-
-        /* Apply border top in print */
-        .table-borTL td table {
-            border-top: 1px solid black !important;
-        }
-
         @media print {
             body {
                 zoom: 0.9;
@@ -67,27 +45,6 @@
                     margin: 0.2cm;
 
                 }
-            }
-
-            .table-bor td {
-                border: 1px solid #000000;
-                border-top: 1px solid black;
-                color: #000000;
-                padding-left: 4px;
-                padding-right: 4px;
-            }
-
-            .table-borTL td {
-                border: 1px solid #000000;
-                border-top: none !important;
-                color: #000000;
-                padding-left: 4px;
-                padding-right: 4px;
-            }
-
-            /* Apply border top in print */
-            .table-borTL td table {
-                border-top: 1.2px solid black !important;
             }
         }
     </style>
@@ -119,7 +76,7 @@
                 <!-- Garis bawah tebal -->
                 <div class="w-full border-t-4 border-black mt-[2px]"></div>
                 <div class="w-full text-center mt-2">
-                    <h1 class="text-center font-bold text-sm">SURAT RUJUK BALIK</h1>
+                    <h1 class="text-center font-bold text-sm">SURAT KETERANGAN SELESAI PENGOBATAN</h1>
                 </div>
                 <div class="w-full text-left">
                     <p>Teman Sejawat Yth,</p>
@@ -144,48 +101,13 @@
                         </div>
                     </div>
 
-                    <p>Tindak lanjut yang dianjurkan :</p>
-                    <p>Dikelola sebagai Program Rujuk Balik (PRB) di PPK 1/FKTP dengan pengobatan sebagai berikut :</p>
-                    @php
-                        $obats = $cppt['resep_obat'];
-                        $obatsChunks = array_chunk($obats, 10);
-                    @endphp
-                    @if ($obats == null || $obats == '' || $obats == '[]')
-                        <div style="margin-left: 38px;">
-                            Tidak ada terapi / obat
-                        </div>
-                    @else
-                        <div style="margin-left: 30px; display: flex; justify-content: space-between;">
-                            @foreach ($obatsChunks as $obatsChunk)
-                                <table class="table-bor" style="margin-left: 10px; margin-right: 10px" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <td class="font-weight-bold py-1">R/</td>
-                                            <td class="font-weight-bold py-1">Nama Obat</td>
-                                            <td class="font-weight-bold py-1">Aturan Pakai</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($obatsChunk as $item)
-                                            <tr>
-                                                <td>{{ $item['no_resep'] }}</td>
-                                                <td>
-                                                    <ul style="padding-left: 20px;">
-                                                        @foreach ($item['resep_obat_detail'] as $obat)
-                                                            <li>{{ $obat['nama_obat'] }}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                </td>
-                                                <td>{{ $item['signa_1'] }} X {{ $item['signa_2'] }}
-                                                    {{ $item['aturan_pakai'] }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            @endforeach
-                        </div>
-                    @endif
-                    <p>Demikian, atas bantuan dan kerjasamanya di ucapkan terimakasih.</p>
+                    <p>Tindak lanjut :</p>
+                    <ul>
+                        <li>
+                            Penderita dinyatakan selesai pengobatan dan di kelola kembali oleh PPK 1/FKTP.
+                        </li>
+                    </ul>
+
                 </div>
 
 

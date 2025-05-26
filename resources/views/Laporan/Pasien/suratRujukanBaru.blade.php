@@ -65,27 +65,40 @@
                     </div>
                     <!-- Teks di tengah -->
                     <div class="w-[100%] text-center mb-1">
-                        <p class="text-md mb-0">PEMERINTAH KABUPATEN BANYUMAS</p>
-                        <p class="text-md font-semibold mb-0">DINAS KESEHATAN</p>
-                        <p class="text-md font-bold mb-0">KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A</p>
-                        <p class="text-xs">Jln. A. Yani Nomor 33 Purwokerto Timur, Banyumas, Jawa Tengah</p>
-                        <p class="text-xs">Kode Pos 53111, Telepon (0281) 635658, Pos-el bkpm_purwokerto@yahoo.com</p>
+                        <p class="text-sm mb-0">PEMERINTAH KABUPATEN BANYUMAS</p>
+                        <p class="text-sm font-semibold mb-0">DINAS KESEHATAN</p>
+                        <p class="text-sm font-bold mb-0">KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A</p>
+                        <p style="font-size: 8pt;">Jln. A. Yani Nomor 33 Purwokerto Timur, Banyumas, Jawa Tengah</p>
+                        <p style="font-size: 8pt;">Kode Pos 53111, Telepon (0281) 635658, Pos-el
+                            bkpm_purwokerto@yahoo.com</p>
                     </div>
                 </div>
                 <!-- Garis bawah tebal -->
                 <div class="w-full border-t-4 border-black mt-[2px]"></div>
                 <div class="w-full text-center mt-2">
-                    <h1 class="text-center font-bold text-sm">SURAT RUJUK BALIK</h1>
+                    <h1 class="text-center font-bold text-sm">SURAT PERMOHONAN RUJUKAN BARU</h1>
                 </div>
+
+                @php
+                    // Misalnya $cppt adalah array atau object JSON yang memuat key 'ket_status_pasien_pulang'
+                    $ketStatus = $cppt['ket_status_pasien_pulang'] ?? '';
+
+                    // Ambil tanggal dari string misalnya: "Tanggal Kontrol : 2025-05-31"
+                    preg_match('/Tanggal Kontrol\s*:\s*(\d{4}-\d{2}-\d{2})/', $ketStatus, $matches);
+                    $tglKontrol = isset($matches[1])
+                        ? \Carbon\Carbon::parse($matches[1])->locale('id')->isoFormat('DD MMMM Y')
+                        : '-';
+                @endphp
+
                 <div class="w-full text-left">
                     <p>Teman Sejawat Yth,</p>
-                    <p>Mohon pelayanan selanjutnya untuk penderita :</p>
+                    <p>Mohon pelayanan untuk penderita :</p>
                     <div class="flex text-sm font-bold ml-2">
-                        <div class="w-24">Nama</div>
+                        <div class="w-28">Nama</div>
                         <div>: {{ $cppt['pasien_nama'] }}</div>
                     </div>
                     <div class="flex text-sm font-bold ml-2">
-                        <div class="w-24">Diagnosa</div>
+                        <div class="w-28">Diagnosa</div>
                         <div>:
                             @php
                                 $dxs = $cppt['diagnosa'];
@@ -99,33 +112,22 @@
                             @endif
                         </div>
                     </div>
-
-                    <p>Tindak lanjut yang dianjurkan :</p>
-                    @php
-                        // Misalnya $cppt adalah array atau object JSON yang memuat key 'ket_status_pasien_pulang'
-                        $ketStatus = $cppt['ket_status_pasien_pulang'] ?? '';
-
-                        // Ambil tanggal dari string misalnya: "Tanggal Kontrol : 2025-05-31"
-                        preg_match('/Tanggal Kontrol\s*:\s*(\d{4}-\d{2}-\d{2})/', $ketStatus, $matches);
-                        $tglKontrol = isset($matches[1])
-                            ? \Carbon\Carbon::parse($matches[1])->locale('id')->isoFormat('DD MMMM Y')
-                            : '-';
-                    @endphp
-
-                    <ul>
-                        <li>
-                            Kontrol kembali ke KKPM tanggal {{ $tglKontrol }}
-                        </li>
-                        <li>
-                            Membuat Rujukan baru dari PPK 1 karena kondisi belum stabil, namun sudah melakukan pelayanan
-                            selama 3 bulan
-                        </li>
-                    </ul>
+                    <div class="flex text-sm font-bold ml-2">
+                        <div class="w-28">Tanggal Kontrol</div>
+                        <div>:
+                            {{ $tglKontrol }}
+                        </div>
+                    </div>
+                    <p>Selama penderita belum terdaftar menjadi program rujuk balik (PRB) di PPK 1/FKTP, mohon
+                        dibuatkan rujukan baru untuk pelayanan sementara di KKPM karena kondisi belum stabil, namun
+                        sudah melakukan pelayanan
+                        selama 3 bulan.</p>
+                    <p>Demikian, atas bantuan dan kerjasamanya di ucapkan terimakasih.</p>
 
                 </div>
 
 
-                <div class="flex items-center justify-between align-top">
+                <div class="flex items-center justify-between align-top mr-10">
                     <div>
 
                     </div>
