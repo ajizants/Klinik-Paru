@@ -37,7 +37,7 @@
                                 window.open("/api/rujukan/cetak/" + tglSurat + "/" + idSurat);
                                 break;
                             case "rb":
-                                window.open("/api/rujukan_baru/cetak/" + idSurat);
+                                window.open("/api/rujukan_baru/cetak/" + tglSurat + "/" + idSurat);
                                 break;
                             case "sp":
                                 window.open("/api/rujukan/cetak/" + tglSurat + "/" + idSurat);
