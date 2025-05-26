@@ -420,6 +420,11 @@
                                 data: "subjek",
                                 className: "px-0 col-3",
                                 label: "Data Subjektif"
+                            },
+                            {
+                                data: "rencana_tindak_lanjut",
+                                className: "px-0 col-3",
+                                label: "RTL"
                             }
                         ],
                         autoWidth: true,
