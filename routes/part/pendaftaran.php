@@ -35,8 +35,10 @@ Route::post('bpjs/get_data', [ApiKominfoController::class, 'getDataSEPSK']);
 Route::get('sep/cetak/{no_sep}', [ApiKominfoController::class, 'cetakSEP']);
 Route::get('SuratKontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakSuratKontrol']);
 Route::get('SuratKontrol/cetak/{no_SuratKontrol}/{norm}', [ApiKominfoController::class, 'cetakSuratKontrol']);
-Route::get('billing/cetak/{no_sep}', [ApiKominfoController::class, 'cetakBilling']);
+
 Route::get('rujukan/cetak/{tgl}/{norm}', [ApiKominfoController::class, 'suratRujukan']);
+
+Route::get('billing/cetak/{no_sep}', [ApiKominfoController::class, 'cetakBilling']);
 Route::get('rujukan_baru/cetak/{tgl}/{norm}', [ApiKominfoController::class, 'suratRujukanBaru']);
 Route::get('prb/cetak/{tgl}/{norm}', [ApiKominfoController::class, 'suratPRB']);
 

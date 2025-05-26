@@ -454,30 +454,33 @@ class ApiKominfoController extends Controller
     public function cetakSuratKontrol(string $no_SuratKontrol, $norm = null)
     {
         $model = new KominfoModel();
-        // dd($params);
         $data = $model->getDetailSuratKontrol($no_SuratKontrol);
-        $detailSuratKontrol = $data['data'];
-        if (empty($detailSuratKontrol)) {
+        $detail = $data['data'] ?? null;
+
+        if (empty($detail)) {
             return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
-        // return response()->json($detailSuratKontrol);
-        // $norm = $norm === null ? $detailSuratKontrol['sep']['data_rujukan']['rujukan']['peserta']['mr']['noMR'] : $norm;
+
+        // Ambil norm jika belum diberikan
         if ($norm === null) {
-            // return $detailSuratKontrol['sep']['data_rujukan'];
-            $norm = $detailSuratKontrol['sep']['data_rujukan'] == [] ? null : $detailSuratKontrol['sep']['data_rujukan']['rujukan']['peserta']['mr']['noMR'];
-            return response()->json(['message' => 'Eror, silahkan tambahkan /{norm} di url. atau cetak lewat KKPM.local'], 404);
+            $norm = $detail['sep']['data_rujukan']['rujukan']['peserta']['mr']['noMR'] ?? null;
+            if ($norm === null) {
+                return response()->json(['message' => 'Eror, silahkan tambahkan /{norm} di URL atau cetak lewat KKPM.local'], 404);
+            }
         }
-        $tgl = $detailSuratKontrol['sep']['tglSep'];
-        $cppt = $model->cpptRequest([
+
+        $tgl = $detail['sep']['tglSep'] ?? null;
+        $cpptResponse = $model->cpptRequest([
             'no_rm' => $norm,
             'tanggal_awal' => $tgl,
             'tanggal_akhir' => $tgl,
         ]);
-        $cppt = $cppt['response']['data'][0]; //untuk RTL
-        // return response()->json($cppt);
+        $detailSuratKontrol = $detail;
+        $cppt = $cpptResponse['response']['data'][0] ?? null;
 
         return view('Laporan.Pasien.SuratKontrol', compact('detailSuratKontrol', 'cppt'));
     }
+
     public function suratRujukan($tgl, $norm)
     {
         $model = new KominfoModel();
@@ -490,7 +493,7 @@ class ApiKominfoController extends Controller
             return response()->json(['message' => 'Data tidak ditemukan/salah norm'], 404);
         }
         $cppt = $cppt['response']['data'][0];
-        return $cppt;
+        // return $cppt;
 
         $statusPulang = $cppt['status_pasien_pulang'];
         // dd($statusPulang);

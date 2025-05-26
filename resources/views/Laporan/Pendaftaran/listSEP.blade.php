@@ -18,8 +18,9 @@
                 <select name="Jenis Surat" id="jenisSurat" class="form-control  col-2">
                     <option value="rb">Surat Rujukan Baru</option>
                     <option value="sp">Surat Selesai Pengobatan</option>
-                    <option value="sep">SEP</option>
-                    <option value="sk">Surat Kontrol</option>
+                    <option value="prb">Surat PRB</option>
+                    {{-- <option value="sep">SEP</option> --}}
+                    {{-- <option value="sk">Surat Kontrol</option> --}}
                 </select>
                 <input type="text" name="Nomor MR" id="idSurat" placeholder="Nomor MR / No SEP"
                     class="form-control  col-3" />
@@ -34,12 +35,31 @@
                                 window.open("/api/sep/cetak/" + idSurat);
                                 break;
                             case "sk":
+                                if (String(idSurat).length > 6) {
+                                    tampilkanEror("Nomor RM salah, maksimal 6 karakter");
+                                    return; // stop eksekusi jika invalid
+                                }
                                 window.open("/api/rujukan/cetak/" + tglSurat + "/" + idSurat);
                                 break;
-                            case "rb":
+                            case "rb": //rujukan  baru
+                                if (String(idSurat).length > 6) {
+                                    tampilkanEror("Nomor RM salah, maksimal 6 karakter");
+                                    return; // stop eksekusi jika invalid
+                                }
                                 window.open("/api/rujukan_baru/cetak/" + tglSurat + "/" + idSurat);
                                 break;
-                            case "sp":
+                            case "prb": // pasien prb
+                                if (String(idSurat).length > 6) {
+                                    tampilkanEror("Nomor RM salah, maksimal 6 karakter");
+                                    return; // stop eksekusi jika invalid
+                                }
+                                window.open("/api/rujukan_baru/cetak/" + tglSurat + "/" + idSurat);
+                                break;
+                            case "sp": //surat selesai pengobatan
+                                if (String(idSurat).length > 6) {
+                                    tampilkanEror("Nomor RM salah, maksimal 6 karakter");
+                                    return; // stop eksekusi jika invalid
+                                }
                                 window.open("/api/rujukan/cetak/" + tglSurat + "/" + idSurat);
                                 break;
                         }

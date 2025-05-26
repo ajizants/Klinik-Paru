@@ -409,9 +409,12 @@
                                 className: "col-3"
                             },
                             {
-                                data: "ket_status_pasien_pulang",
+                                data: null, // gunakan null karena kita render manual
                                 className: "px-0 col-3",
-                                label: "Status Pulang"
+                                label: "Status Pulang",
+                                render: function(data, type, row) {
+                                    return `${row.ket_status_pasien_pulang} (${row.status_pasien_pulang})`;
+                                }
                             },
                             {
                                 data: "subjek",
