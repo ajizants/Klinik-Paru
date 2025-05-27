@@ -305,6 +305,7 @@ class PegawaiController extends Controller
                     <option value="PPPK"' . ($pegawai->stat_pns == 'PPPK' ? ' selected' : '') . '>PPPK</option>
                     <option value="KONTRAK"' . ($pegawai->stat_pns == 'KONTRAK' ? ' selected' : '') . '>KONTRAK</option>
                     <option value="KONTRAK BLUD"' . ($pegawai->stat_pns == 'KONTRAK BLUD' ? ' selected' : '') . '>KONTRAK BLUD</option>
+                    <option value="PENSIUNAN"' . ($pegawai->stat_pns == 'PENSIUNAN' ? ' selected' : '') . '>PENSIUNAN</option>
 
                 </select>
               </div>';

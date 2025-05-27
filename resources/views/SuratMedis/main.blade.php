@@ -55,10 +55,29 @@
             </div>
         </div>
     </div>
+    <Style>
+        .select2-container--default .select2-selection--single {
+            height: 38px !important;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
 
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 38px !important;
+            padding-left: 0;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 38px !important;
+            top: 0px;
+        }
+    </Style>
 
     <!-- Modal -->
-    <div class="modal fade show" id="modalCreateSurat" tabindex="-1" aria-labelledby="modalCreateSuratLabel">
+    <div class="modal fade show" id="modalCreateSurat">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -200,7 +219,8 @@
                                 <div class="form-group col-12 col-md-4">
                                     <label for="petugas" class="col-form-label font-weight-bold">Admin
                                         :</label>
-                                    <select id="petugas" class="form-control border border-primary" required>
+                                    <select id="petugas" aria-describedby="inputGroup-sizing-md"
+                                        class="form-control select2bs4 border border-primary">
                                         <option value="">--Pilih Petugas--</option>
                                         @foreach ($petugas as $item)
                                             <option value="{{ $item->nip }}">{{ $item->gelar_d }}
@@ -350,6 +370,7 @@
                 "surat"
             );
 
+            $("#modalCreateSurat .select2bs4").select2();
         });
 
         function creatTableDataPemohon(data) {

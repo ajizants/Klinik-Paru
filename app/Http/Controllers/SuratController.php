@@ -12,7 +12,10 @@ class SuratController extends Controller
 {
     private function pegawai($kdjab)
     {
-        $data = PegawaiModel::with(['biodata', 'jabatan'])->whereIn('kd_jab', $kdjab)->get();
+        $data = PegawaiModel::with(['biodata', 'jabatan'])
+            ->whereIn('kd_jab', $kdjab)
+            ->whereNot('kd_jab', '22')
+            ->whereNot('stat_pns', 'PENSIUNAN')->get();
 
         $pegawai = [];
         foreach ($data as $peg) {
@@ -39,6 +42,10 @@ class SuratController extends Controller
                 "nm_jabatan" => $peg["jabatan"]["nm_jabatan"] ?? null,
             ]);
         }
+        //order pegawai by nama
+        usort($pegawai, function ($a, $b) {
+            return strcmp($a['nama'], $b['nama']);
+        });
         return $pegawai;
     }
     /**
