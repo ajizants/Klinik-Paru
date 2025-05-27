@@ -560,7 +560,7 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
         surat: [
             ...aksiColumns,
             ...baseColumns,
-            ...extraColumns,
+            // ...extraColumns,
             ...commonColumns,
         ],
         lab: [
@@ -703,7 +703,17 @@ function generateActionLink(item, ruang, statusFilter) {
             "<strong>Surat</strong>"
         )}
             ${linkLog}
-            ${linkCppt}</div>`,
+            ${linkCppt}            
+                 <a type="button"
+                      data-toggle="tooltip" data-placement="right" title="Transaksi Konsul 
+                      ${item.konsul_ro === "danger" ? "Belum" : "Sudah"}"
+                      ${commonAttributes}
+                     class="aksi-button btn-sm btn-${item.konsul_ro} 
+                     py-md-0 py-1 m-1 col icon-link icon-link-hover"
+                     onclick="setKonsul(this)">Konsul RO
+                </a>
+                           
+            </div>`,
         kasir:
             // item.status === "Sudah Selesai"
             //     ?

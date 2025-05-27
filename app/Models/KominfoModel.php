@@ -283,12 +283,14 @@ class KominfoModel extends Model
                 // dd($results);
 
                 $cekDaftar = $pendaftaranLocal != null || $pendaftaranLocal != "" ? 'lime' : 'warning';
+                $konsulRo = ($check && $check->konsul_ro == 1) ? "success" : "danger";
 
                 return [
                     "check_in" => $checkIn,
                     "statusDaftar" => $cekDaftar,
                     "igd_selesai" => $checkInIGD,
                     "status_pulang" => $statusPulang,
+                    "konsul_ro" => $konsulRo,
                     "no_sep" => $noSep,
                     "no_reg" => $d["no_reg"] ?? 0,
                     "id" => $d["id"] ?? 0,
