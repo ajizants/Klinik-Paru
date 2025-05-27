@@ -74,7 +74,7 @@ class SuratController extends Controller
 
             // Ambil data dokter dan petugas berdasarkan ID jabatan tertentu
             $dokter = $this->mapToObject($this->pegawai([1, 7, 8]));
-            $petugas = $this->mapToObject($this->pegawai([10, 15]));
+            $petugas = $this->mapToObject($this->pegawai([10, 15, 23]));
 
             return compact('lists', 'pasien', 'jumlahSuratTahunIni', 'dokter', 'petugas');
         } catch (\Exception $e) {
