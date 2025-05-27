@@ -648,8 +648,6 @@
         function sukses(data) {
             console.log("🚀 ~ sukses ~ data:", data)
             var listSurat = data.lists
-            jumlahSuratTahunIni = data.noSurat
-            console.log("🚀 ~ .then ~ jumlahSuratTahunIni:", jumlahSuratTahunIni)
             generateNoSurat();
             creatTableDataPemohon(listSurat);
         }
