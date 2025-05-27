@@ -647,19 +647,22 @@
                             Rencana Tindak Lanjut (P)</div>
                         <div class="d-flex justify-between">
                             <div class="col text-center">
-                                <li style="margin-left: 38px; text-align: justify;">
+                                <li style="margin-left: 28px; text-align: justify;">
                                     {{ $resumePasien->status_pasien_pulang }},
                                     {{-- {{ $resumePasien->ket_status_pasien_pulang }} --}}
                                 </li>
-                                <li style="margin-left: 38px; text-align: justify;">
+                                <li style="margin-left: 28px; text-align: justify;">
                                     {{-- {{ $resumePasien->status_pasien_pulang }}, --}}
-                                    {{ $resumePasien->ket_status_pasien_pulang }}
+                                    <input style="border: none; width: 304px;" type="text"
+                                        value="{{ $resumePasien->ket_status_pasien_pulang }}">
+
                                 </li>
                             </div>
                             <div class="col text-center">
                                 @if ($resumePasien->rencana_tindak_lanjut != '-')
-                                    <li style="margin-left: 38px; text-align: justify;">
-                                        {{ $resumePasien->rencana_tindak_lanjut }}
+                                    <li style="margin-left: 28px; text-align: justify;">
+                                        <input style="border: none; width: 304px;" type="text"
+                                            value="{{ $resumePasien->rencana_tindak_lanjut }}">
                                     </li>
                                 @endif
                             </div>

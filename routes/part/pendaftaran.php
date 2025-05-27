@@ -48,3 +48,5 @@ Route::get('billing/suratkontrol/cetak/{no_SuratKontrol}', [ApiKominfoController
 Route::get('laporan/dokter_periksa/{tahun}/{bln}', [ApiKominfoController::class, 'getJumlahPemeriksaanDokter']);
 
 Route::get('bpjs/waktu_tunggu/{tahun}', [ApiKominfoController::class, 'reportPusatDataWaktuTunggu']);
+
+Route::get('resume/{tgl}', [PasienKominfoController::class, 'resumePasienAll']);
