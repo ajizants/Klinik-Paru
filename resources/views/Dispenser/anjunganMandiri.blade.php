@@ -312,7 +312,7 @@
             <div id="print" style="display: none;">
                 <div class="row">
                     <span>
-                        <center>KKPM</center>
+                        <center>Klinik Utama Kesehatan</center>
                     </span>
                     <span style="font-size: 12px">
                         <center><span id="tanggal_tampil_print"></span></center>
@@ -346,8 +346,7 @@
         </footer>
 
     </div>
-    </div>
-    </div>
+
     <!-- Modal -->
     <div class="modal fade" id="keyPad" data-backdrop="static">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -948,6 +947,9 @@
             var noAntri = data.antrean_nomor;
             var jenis = data.penjamin_nama;
             var no_rm = data.pasien_no_rm;
+            // var noAntri = "001";
+            // var jenis = "UMUM";
+            // var no_rm = "000001";
             var date = new Date();
 
             let options = {
@@ -976,6 +978,11 @@
                 `.jenis{font-size:20px;font-family:sans-serif;font-weight:bold; margin-top: 0px; margin-bottom: 0px;}.time{font-size:12px;font-family:sans-serif;margin-top:0px;margin-bottom:0px;}</style></head><body>`
             );
 
+            printWindow.document.write(
+                `<div style='margin-top: 2px; margin-bottom: 2px; height: 100px; '>
+                </div>`
+            );
+
             printWindow.document.write(`<p class='judul'>Klinik Utama Kesehatan</p>`);
             printWindow.document.write(`<p class='judul'>Paru Masyarakat</p>`);
             printWindow.document.write(`<h1>${noAntri}</h1>`);
@@ -983,6 +990,7 @@
             printWindow.document.write(`<p class='jenis'>${jenis}</p>`);
             printWindow.document.write(`<p class='time'>${tgl}</p>`);
             printWindow.document.write(`<p class='time'>${jam}</p>`);
+
             printWindow.document.write(`</body></html>`);
 
             printWindow.print();
