@@ -13,10 +13,12 @@
         } */
     </style>
     <script>
-        // window.print();
-        window.addEventListener('afterprint', () => {
-            window.close(); // ini akan berhasil kalau dibuka dari window.open()
-        });
+        // window.addEventListener('afterprint', () => {
+        //     window.close();
+        // });
+        window.onafterprint = function() {
+            window.close();
+        };
     </script>
 </head>
 

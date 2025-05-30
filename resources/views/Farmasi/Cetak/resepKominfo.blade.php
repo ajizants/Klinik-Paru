@@ -12,6 +12,14 @@
             width: 21cm;
         } */
     </style>
+    <script>
+        // window.addEventListener('afterprint', () => {
+        //     window.close();
+        // });
+        window.onafterprint = function() {
+            window.close();
+        };
+    </script>
 </head>
 
 <body class="text-black">

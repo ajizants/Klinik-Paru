@@ -106,7 +106,7 @@
 
 <body>
     @foreach ($semuaPasien as $data)
-        <div class="container-fluid border" style="height: 15in;">
+        <div class="container-fluid" style="height: 15in;">
             <table class="table table-borderless  " width="100%" style="color: black;">
                 <tbody>
                     <tr>
