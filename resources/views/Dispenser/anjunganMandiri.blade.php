@@ -946,7 +946,7 @@
             });
             var noAntri = data.antrean_nomor;
             var jenis = data.penjamin_nama;
-            var no_rm = data.pasien_no_rm;
+            var no_rm = data.pasien_no_rm ?? "------";
             // var noAntri = "001";
             // var jenis = "UMUM";
             // var no_rm = "000001";
@@ -988,8 +988,8 @@
             printWindow.document.write(`<h1>${noAntri}</h1>`);
             printWindow.document.write(`<h3>No RM: ${no_rm}</h3>`);
             printWindow.document.write(`<p class='jenis'>${jenis}</p>`);
-            printWindow.document.write(`<p class='time'>${tgl}</p>`);
-            printWindow.document.write(`<p class='time'>${jam}</p>`);
+            printWindow.document.write(`<p class='time'>${tgl}, ${jam}</p>`);
+            printWindow.document.write(`<p class='time'>Terimakasih sudah menunggu</p>`);
 
             printWindow.document.write(`</body></html>`);
 
@@ -1022,50 +1022,30 @@
                                     text: e.message
                                 })
                             } else {
-                                // socketIO.emit('reload', 'paru_loket_pendaftaran');
-                                // socketIO.emit('reload', 'paru_notifikasi_loket_pendaftaran');
-                                // e = {
-                                //     "code": 200,
-                                //     "message": "Berhasil mengambil nomor antrean!",
-                                //     "data": {
-                                //         "no_reg": "2024092000069",
-                                //         "antrean_angka": "069",
-                                //         "antrean_estimasi_dilayani": 1726811100,
-                                //         "penjamin_id": "1",
-                                //         "daftar_by": "OTS",
-                                //         "tanggal": "2024-09-20",
-                                //         "sesi_id": 1,
-                                //         "antrean_estimasi_dilayani_tampil": "2024-09-20 12:45:00",
-                                //         "antrean_menunggu": 0,
-                                //         "antrean_nomor": "069",
-                                //         "tanggal_tampil": "Jumat, 20 September 2024 09:11:46 WIB",
-                                //         "penjamin_nama": "UMUM",
-                                //         "antrean_menunggu_tampil": ""
-                                //     }
-                                // }
                                 result = e.data
-                                $("#tanggal_tampil_print").text(result['tanggal_tampil'])
-                                $("#antrean_nomor_print").text(result['antrean_nomor'])
-                                $("#penjamin_nama_print").text(result['penjamin_nama'])
-                                $("#antrean_menunggu_print").text(result['antrean_menunggu_tampil'])
+                                cetakNoAntrian(result)
+                                // $("#tanggal_tampil_print").text(result['tanggal_tampil'])
+                                // $("#antrean_nomor_print").text(result['antrean_nomor'])
+                                // $("#penjamin_nama_print").text(result['penjamin_nama'])
+                                // $("#antrean_menunggu_print").text(result['antrean_menunggu_tampil'])
 
-                                var divToPrint = document.getElementById('print');
-                                var newWin = window.open('', 'Print-Window');
-                                newWin.document.open();
-                                newWin.document.write('<html><body onload="window.print()">' +
-                                    divToPrint.innerHTML + '</body></html>');
-                                newWin.document.close();
+                                // var divToPrint = document.getElementById('print');
+                                // var newWin = window.open('', 'Print-Window');
+                                // newWin.document.open();
+                                // newWin.document.write('<html><body onload="window.print()">' +
+                                //     divToPrint.innerHTML + '</body></html>');
+                                // newWin.document.close();
 
-                                Swal.fire({
-                                    title: 'Mohon Tunggu',
-                                    text: "Sedang reload halaman...",
-                                    icon: 'info',
-                                    showConfirmButton: false,
-                                })
-                                setTimeout(function() {
-                                    newWin.close();
-                                    location.reload();
-                                }, 1000);
+                                // Swal.fire({
+                                //     title: 'Mohon Tunggu',
+                                //     text: "Sedang reload halaman...",
+                                //     icon: 'info',
+                                //     showConfirmButton: false,
+                                // })
+                                // setTimeout(function() {
+                                //     newWin.close();
+                                //     location.reload();
+                                // }, 1000);
                             }
                         },
                         error: function(xhr, ajaxOptions, thrownError) {

@@ -25,7 +25,26 @@ class PasienKominfoController extends Controller
         $koneksi = new KominfoModel();
 
         $noAtian = $koneksi->ambilNoRequest($penjamin_id);
-        // dd($noAtian);
+        // $noAtian = [
+        //     'code' => 200,
+        //     'message' => 'Berhasil mengambil nomor antrean!',
+        //     'data' => [
+        //         'no_reg' => '2025053000011',
+        //         'antrean_angka' => '011',
+        //         'antrean_estimasi_dilayani' => 1748566500,
+        //         'penjamin_id' => '1',
+        //         'daftar_by' => 'OTS',
+        //         'tanggal' => '2025-05-30',
+        //         'sesi_id' => 1,
+        //         'antrean_estimasi_dilayani_tampil' => '2025-05-30 07:55:00',
+        //         'antrean_menunggu' => 0,
+        //         'antrean_nomor' => '011',
+        //         'tanggal_tampil' => 'Jumat, 30 Mei 2025 08:05:03 WIB',
+        //         'penjamin_nama' => 'UMUM',
+        //         'antrean_menunggu_tampil' => '',
+        //     ],
+        // ];
+
         return response()->json($noAtian);
     }
     public function pasienKominfo(Request $request)
