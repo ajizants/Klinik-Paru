@@ -367,56 +367,92 @@
                                 </tbody>
                             </table>
                         </table>
-
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <script>
-        //buat semua checkbox ter cheked
+    {{-- <script>
+        const data = @json($cppt);
+        console.log("🚀 ~ data:", data);
+        const obats = @json($obats);
+
         document.addEventListener("DOMContentLoaded", function() {
-            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(function(checkbox) {
-                checkbox.checked = true;
-            });
+            // Cek semua checkbox
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
 
-            var now = new Date();
+            // Ambil dan konversi waktu cppt_created_at
+            const tglPenerimaan = new Date(data.cppt_created_at);
+            console.log("🚀 ~ tglPenerimaan:", tglPenerimaan);
 
-            // Jam penerimaan = sekarang
-            var jamPenerimaanJam = now.getHours();
-            var jamPenerimaanMenit = now.getMinutes();
+            // Tambah waktu random 15 - 60 menit
+            const tambahanMenit = Math.floor(Math.random() * 46) + 15; // 15-60 menit
+            const penyerahan = new Date(tglPenerimaan.getTime() + tambahanMenit * 60000);
 
-            // Tambahkan waktu random antara 15 - 60 menit untuk jam penyerahan
-            var tambahanMenit = Math.floor(Math.random() * 46) + 15; // 15-60 menit
-            var penyerahan = new Date(now.getTime() + tambahanMenit * 60000);
-
-            // Ambil jam dan menit penyerahan
-            var jamPenyerahanJam = penyerahan.getHours();
-            var jamPenyerahanMenit = penyerahan.getMinutes();
-
-            // Fungsi untuk menambahkan 0 jika satuan
-            function formatWaktu(jam, menit) {
-                return (
-                    (jam < 10 ? "0" + jam : jam) + ":" + (menit < 10 ? "0" + menit : menit)
-                );
+            // Fungsi untuk format waktu jadi HH:mm
+            function formatWaktu(date) {
+                const jam = date.getHours().toString().padStart(2, '0');
+                const menit = date.getMinutes().toString().padStart(2, '0');
+                return `${jam}:${menit}`;
             }
 
-            var jamPenerimaan = formatWaktu(jamPenerimaanJam, jamPenerimaanMenit);
-            var jamPenyerahan = formatWaktu(jamPenyerahanJam, jamPenyerahanMenit);
+            const jamPenerimaan = formatWaktu(tglPenerimaan);
+            const jamPenyerahan = formatWaktu(penyerahan);
 
-            // Set ke input
+            // Set nilai ke input
             document.getElementById("jam_penerimaan").value = jamPenerimaan;
             document.getElementById("jam_penyerahan").value = jamPenyerahan;
+        });
 
-        })
-
-        //close setelah cetak
+        // Tutup jendela setelah cetak
         window.addEventListener('afterprint', () => {
-            window.close(); // ini akan berhasil kalau dibuka dari window.open()
+            window.close();
+        });
+    </script> --}}
+    <script>
+        const data = @json($cppt);
+        console.log("🚀 ~ data:", data);
+        const obats = @json($obats);
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Centang semua checkbox
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+
+            // Ambil dan konversi waktu cppt_created_at
+            const tglPenerimaan = new Date(data.cppt_created_at);
+            console.log("🚀 ~ tglPenerimaan:", tglPenerimaan);
+
+            // Hitung tambahan menit berdasarkan jumlah obat (misalnya 5 menit per obat)
+            let tambahanMenit = obats.length * 5;
+
+            // Maksimal 60 menit
+            if (tambahanMenit > 60) tambahanMenit = 60;
+
+            // Buat waktu penyerahan dengan penambahan menit
+            const penyerahan = new Date(tglPenerimaan.getTime() + tambahanMenit * 60000);
+
+            // Fungsi format waktu HH:mm
+            function formatWaktu(date) {
+                const jam = date.getHours().toString().padStart(2, '0');
+                const menit = date.getMinutes().toString().padStart(2, '0');
+                return `${jam}:${menit}`;
+            }
+
+            const jamPenerimaan = formatWaktu(tglPenerimaan);
+            const jamPenyerahan = formatWaktu(penyerahan);
+
+            // Set nilai ke input
+            document.getElementById("jam_penerimaan").value = jamPenerimaan;
+            document.getElementById("jam_penyerahan").value = jamPenyerahan;
+        });
+
+        // Tutup jendela setelah cetak
+        window.addEventListener('afterprint', () => {
+            window.close();
         });
     </script>
+
 
 
 </body>
