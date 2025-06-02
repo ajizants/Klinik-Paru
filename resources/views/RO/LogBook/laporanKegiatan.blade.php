@@ -15,7 +15,7 @@
 
 <body class="text-black">
     <div class="wrapper m-3 pt-2">
-        <h1 class="text-center font-bold text-3xl">REKAP LAPORAN KEGIATAN HARIAN RONTGEN</h1>
+        <h1 class="text-center font-bold text-2xl">REKAP LAPORAN KEGIATAN HARIAN RONTGEN</h1>
         <h2 class="text-center font-bold text-xl">KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A KAB. BANYUMAS</h2>
         <h3 class="text-center font-bold mb-4">Bulan: {{ $blnTahun }}</h3>
 

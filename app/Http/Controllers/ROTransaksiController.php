@@ -1082,8 +1082,22 @@ class ROTransaksiController extends Controller
             </thead>
             <tbody>';
 
+        $totals = [];
+
+        foreach ($dataRadiografers as $radiografer) {
+            $nip = $radiografer['nip'];
+            $totals[$nip] = [
+                'mutu_cr' => 0,
+                'persiapan_ro' => 0,
+                'pelaksanaan_ro' => 0,
+            ];
+        }
+
+        $totalPasienSemua = 0;
+
         // Menambahkan baris per tanggal
         foreach ($prosesJumlah['persiapan_ro'] as $tanggal => $radiograferData) {
+
             $html .= '<tr>';
             $html .= '<td class="px-2 py-1 text-center border border-black">' . date('d', strtotime($tanggal)) . '</td>';
 
@@ -1128,6 +1142,10 @@ class ROTransaksiController extends Controller
                 $html .= '<td class="px-2 py-1 text-center border border-black"><input class="text-center w-16" value="' . $mutuCr . '"></td>';
                 $html .= '<td class="px-2 py-1 text-center border border-black"><input class="text-center w-16" value="' . $persiapan . '"></td>';
                 $html .= '<td class="px-2 py-1 text-center border border-black"><input class="text-center w-16" value="' . $pelaksanaan . '"></td>';
+
+                $totals[$radiograferNip]['mutu_cr'] += is_numeric($mutuCr) ? $mutuCr : 0;
+                $totals[$radiograferNip]['persiapan_ro'] += is_numeric($persiapan) ? $persiapan : 0;
+                $totals[$radiograferNip]['pelaksanaan_ro'] += is_numeric($pelaksanaan) ? $pelaksanaan : 0;
             }
 
             // Menambahkan kolom jumlah pasien (jumlah evaluator) dan catatan
@@ -1136,29 +1154,30 @@ class ROTransaksiController extends Controller
             $html .= '<td class="px-2 py-1 text-center border border-black"><input class="text-center w-32" value="-"></td>'; // Kolom catatan kosong
 
             $html .= '</tr>';
+
+            $totalPasienSemua += $totalPasien;
         }
 
-        $html .= '
-            </tbody>
-        </table>';
-
         // $html .= '
-        //     </tbody>';
-        // $html .= '
-        //     <tfoot>
-        //         <tr>
-        //             <th class="px-2 py-2 text-center border border-black">Total</th>
-        //             <th class="px-2 py-2 text-center border border-black"></th>
-        //             <th class="px-2 py-2 text-center border border-black"></th>
-        //             <th class="px-2 py-2 text-center border border-black"></th>
-        //             <th class="px-2 py-2 text-center border border-black"></th>
-        //             <th class="px-2 py-2 text-center border border-black"></th>
-        //             <th class="px-2 py-2 text-center border border-black"></th>
-        //             <th class="px-2 py-2 text-center border border-black"></th>
-        //             <th class="px-2 py-2 text-center border border-black"></th>
-        //             </tr>
-        //     </tfoot>
+        //     </tbody>
         // </table>';
+
+        $html .= '
+            </tbody>';
+        $html .= '<tfoot><tr>';
+        $html .= '<th class="px-2 py-2 text-center border border-black">Jumlah</th>';
+
+        foreach ($dataRadiografers as $radiografer) {
+            $nip = $radiografer['nip'];
+            $html .= '<th class="px-2 py-2 text-center border border-black">' . $totals[$nip]['mutu_cr'] . '</th>';
+            $html .= '<th class="px-2 py-2 text-center border border-black">' . $totals[$nip]['persiapan_ro'] . '</th>';
+            $html .= '<th class="px-2 py-2 text-center border border-black">' . $totals[$nip]['pelaksanaan_ro'] . '</th>';
+        }
+
+        $html .= '<th class="px-2 py-2 text-center border border-black">' . $totalPasienSemua . '</th>';
+        $html .= '<th class="px-2 py-2 text-center border border-black">-</th>';
+        $html .= '</tr></tfoot> ';
+        $html .= '</table>';
 
         $blnTahun = Carbon::parse($tglAkhir)->locale('id')->isoFormat('MMMM YYYY');
 
