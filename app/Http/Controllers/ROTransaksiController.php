@@ -1142,6 +1142,24 @@ class ROTransaksiController extends Controller
             </tbody>
         </table>';
 
+        // $html .= '
+        //     </tbody>';
+        // $html .= '
+        //     <tfoot>
+        //         <tr>
+        //             <th class="px-2 py-2 text-center border border-black">Total</th>
+        //             <th class="px-2 py-2 text-center border border-black"></th>
+        //             <th class="px-2 py-2 text-center border border-black"></th>
+        //             <th class="px-2 py-2 text-center border border-black"></th>
+        //             <th class="px-2 py-2 text-center border border-black"></th>
+        //             <th class="px-2 py-2 text-center border border-black"></th>
+        //             <th class="px-2 py-2 text-center border border-black"></th>
+        //             <th class="px-2 py-2 text-center border border-black"></th>
+        //             <th class="px-2 py-2 text-center border border-black"></th>
+        //             </tr>
+        //     </tfoot>
+        // </table>';
+
         $blnTahun = Carbon::parse($tglAkhir)->locale('id')->isoFormat('MMMM YYYY');
 
         return view('RO.LogBook.laporanKegiatan', compact('html', 'blnTahun', 'tglAkhir'));

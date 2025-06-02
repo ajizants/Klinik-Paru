@@ -38,8 +38,8 @@
                 <p>Mengetahui,</p>
                 <p>Plt. Kepala KKPM</p>
                 <div class="h-16"></div>
-                <p>dr. Rendi Retissu</p>
-                <p>NIP. 19881016 201902 1 002</p>
+                <p>dr. Anwar Hudiono, M.P.H.</p>
+                <p>NIP. 198212242010011022</p>
             </div>
         </div>
 
