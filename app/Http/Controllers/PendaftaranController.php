@@ -130,17 +130,18 @@ class PendaftaranController extends Controller
 
     public function generateTitle($umur, $jkel, $sKwn)
     {
+        // dd($umur, $jkel, $sKwn);
         $jkel = strtoupper(substr($jkel, 0, 1)); // L atau P
         $sKwn = strtolower($sKwn); // misal: "Belum Kawin", "Kawin", dll
 
-        if ($umur < 17) {
+        if ($umur < 14) {
             return 'An';
         }
 
         if ($jkel === 'L') {
-            return (strpos($sKwn, 'kawin') !== false) ? 'Tn' : 'Sdr';
+            return (strpos($sKwn, 'belum kawin') !== false) ? 'Sdr' : 'Tn';
         } elseif ($jkel === 'P') {
-            return (strpos($sKwn, 'kawin') !== false) ? 'Ny' : 'Nn';
+            return (strpos($sKwn, 'belum kawin') !== false) ? 'Nn' : 'Ny';
         }
 
         return 'Sdr'; // fallback
