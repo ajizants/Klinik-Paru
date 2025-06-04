@@ -825,81 +825,143 @@ class KasirController extends Controller
 
     }
 
-    public function cetakSBS($tgl, $tahun, $jaminan)
+    public function cetakSBS(Request $request)
     {
         $title = 'SBS';
+        $noSBS = $request->input('noSBS');
+        $tgl = $request->input('tgl');
+        // dd($noSBS);
 
         // Fetch data from the model
-        $model = new KasirTransModel();
-        $datas = $model->pendapatan($tahun);
+
+        $datas = KasirSetoranModel::where('noSbs', $noSBS)->get();
+        $datas = array_values($datas->toArray());
+        // return [$datas, $noSBS, $tgl];
 
         // If the data is not an array, return an error
         if (!is_array($datas)) {
             return response()->json(['error' => 'Invalid data format']);
         }
 
-        // Ensure the jaminan key exists in the data and process it
-        if (isset($datas[$jaminan])) {
-            // Convert the data to an array if it's an object
-            $jaminanData = is_object($datas[$jaminan]) ? json_decode(json_encode($datas[$jaminan]), true) : $datas[$jaminan];
+        // Filter the data by the specified date
+        $filteredData = array_filter($datas, function ($item) {
+            return isset($item['setoran']) && $item['setoran'] !== "0";
+        });
 
-            // Validate that $jaminanData is an array
-            if (!is_array($jaminanData)) {
-                return response()->json(['error' => 'Invalid jaminan data format']);
-            }
+        $doc = reset($filteredData);
+        $model = new KasirTransModel();
+        $terbilangPendapatan = $model->terbilang($doc['setoran']); // Konversi terbilang
+        // return response()->json($doc, 200, [], JSON_PRETTY_PRINT);
 
-            // Filter the data by the specified date
-            $filteredData = array_filter($jaminanData, function ($item) use ($tgl) {
-                return isset($item['tanggal']) && $item['tanggal'] === $tgl;
-            });
-
-            $doc = reset($filteredData);
-        } else {
-            // Handle the case where jaminan is not found
-            return response()->json(['error' => 'No data found for the specified jaminan']);
-        }
-
-        // return $doc;
-        // Pass the filtered data to the view
-        return view('Laporan.Kasir.Cetak.sbs', compact('doc'))->with('title', $title);
+        return view('Laporan.Kasir.Cetak.sbs', compact('doc', 'noSBS', 'tgl', 'terbilangPendapatan'))->with('title', $title);
     }
-
-    public function cetakBAPH($tgl, $tahun, $jaminan)
+    public function cetakBAPH(Request $request)
     {
         $title = 'BAPH';
+        $noSBS = $request->input('noSBS');
+        $tgl = $request->input('tgl');
+        // dd($noSBS);
 
         // Fetch data from the model
-        $model = new KasirTransModel();
-        $datas = $model->pendapatan($tahun);
+
+        $datas = KasirSetoranModel::where('noSbs', $noSBS)->get();
+        $datas = array_values($datas->toArray());
+        // return [$datas, $noSBS, $tgl];
 
         // If the data is not an array, return an error
         if (!is_array($datas)) {
             return response()->json(['error' => 'Invalid data format']);
         }
 
-        // Ensure the jaminan key exists in the data and process it
-        if (isset($datas[$jaminan])) {
-            // Convert the data to an array if it's an object
-            $jaminanData = is_object($datas[$jaminan]) ? json_decode(json_encode($datas[$jaminan]), true) : $datas[$jaminan];
+        // Filter the data by the specified date
+        $filteredData = array_filter($datas, function ($item) {
+            return isset($item['pendapatan']) && $item['pendapatan'] !== "0";
+        });
 
-            // Validate that $jaminanData is an array
-            if (!is_array($jaminanData)) {
-                return response()->json(['error' => 'Invalid jaminan data format']);
-            }
+        $doc = reset($filteredData);
+        $model = new KasirTransModel();
+        $terbilangPendapatan = $model->terbilang($doc['pendapatan']); // Konversi terbilang
+        // return response()->json($doc, 200, [], JSON_PRETTY_PRINT);
 
-            // Filter the data by the specified date
-            $filteredData = array_filter($jaminanData, function ($item) use ($tgl) {
-                return isset($item['tanggal']) && $item['tanggal'] === $tgl;
-            });
-
-            $doc = reset($filteredData);
-        } else {
-            // Handle the case where jaminan is not found
-            return response()->json(['error' => 'No data found for the specified jaminan']);
-        }
-        // Return the view with the filtered data
-        return view('Laporan.Kasir.Cetak.baph', compact('doc'))->with('title', $title);
+        return view('Laporan.Kasir.Cetak.baph', compact('doc', 'noSBS', 'tgl', 'terbilangPendapatan'))->with('title', $title);
     }
+
+    // public function cetakSBS($tgl, $tahun, $jaminan)
+    // {
+    //     $title = 'SBS';
+
+    //     // Fetch data from the model
+    //     $model = new KasirTransModel();
+    //     $datas = $model->pendapatan($tahun);
+
+    //     // If the data is not an array, return an error
+    //     if (!is_array($datas)) {
+    //         return response()->json(['error' => 'Invalid data format']);
+    //     }
+
+    //     // Ensure the jaminan key exists in the data and process it
+    //     if (isset($datas[$jaminan])) {
+    //         // Convert the data to an array if it's an object
+    //         $jaminanData = is_object($datas[$jaminan]) ? json_decode(json_encode($datas[$jaminan]), true) : $datas[$jaminan];
+
+    //         // Validate that $jaminanData is an array
+    //         if (!is_array($jaminanData)) {
+    //             return response()->json(['error' => 'Invalid jaminan data format']);
+    //         }
+
+    //         // Filter the data by the specified date
+    //         $filteredData = array_filter($jaminanData, function ($item) use ($tgl) {
+    //             return isset($item['tanggal']) && $item['tanggal'] === $tgl;
+    //         });
+
+    //         $doc = reset($filteredData);
+    //         // return response()->json($doc, 200, [], JSON_PRETTY_PRINT);
+    //     } else {
+    //         // Handle the case where jaminan is not found
+    //         return response()->json(['error' => 'No data found for the specified jaminan']);
+    //     }
+
+    //     // return $doc;
+    //     // Pass the filtered data to the view
+    //     return view('Laporan.Kasir.Cetak.sbs', compact('doc'))->with('title', $title);
+    // }
+
+    // public function cetakBAPH($tgl, $tahun, $jaminan)
+    // {
+    //     $title = 'BAPH';
+
+    //     // Fetch data from the model
+    //     $model = new KasirTransModel();
+    //     $datas = $model->pendapatan($tahun);
+
+    //     // If the data is not an array, return an error
+    //     if (!is_array($datas)) {
+    //         return response()->json(['error' => 'Invalid data format']);
+    //     }
+
+    //     // Ensure the jaminan key exists in the data and process it
+    //     if (isset($datas[$jaminan])) {
+    //         // Convert the data to an array if it's an object
+    //         $jaminanData = is_object($datas[$jaminan]) ? json_decode(json_encode($datas[$jaminan]), true) : $datas[$jaminan];
+
+    //         // Validate that $jaminanData is an array
+    //         if (!is_array($jaminanData)) {
+    //             return response()->json(['error' => 'Invalid jaminan data format']);
+    //         }
+
+    //         // Filter the data by the specified date
+    //         $filteredData = array_filter($jaminanData, function ($item) use ($tgl) {
+    //             return isset($item['tanggal']) && $item['tanggal'] === $tgl;
+    //         });
+
+    //         $doc = reset($filteredData);
+    //     } else {
+    //         // Handle the case where jaminan is not found
+    //         return response()->json(['error' => 'No data found for the specified jaminan']);
+    //     }
+    //     // Return the view with the filtered data
+    //     return view('Laporan.Kasir.Cetak.baph', compact('doc'))->with('title', $title);
+    // }
 
     public function pendapatan($tahun)
     {

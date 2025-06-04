@@ -28,7 +28,12 @@ class KasirSetoranModel extends Model
 
     public function findSetoran($nomor)
     {
-        return $this->where('noSbs', $nomor)->first();
+        return $this->where('noSbs', $nomor)->get();
+    }
+
+    public function getData($noSBS)
+    {
+        return $this->where('noSbs', $noSBS)->get();
     }
 
     // public function data($bulan, $tahun, $jaminan)

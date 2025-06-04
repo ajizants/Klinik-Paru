@@ -313,12 +313,12 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
                 </button>
                 <div class="row d-flex justify-content-center" id="divStpbSts" style="display: none !important;">
                     <a class="btn btn-sm btn-warning mr-2 mb-2"
-                        href="/api/cetakBAPH/${item.tanggal}/${tahun}/${selector}"
+                       onclick="cetakBaph('${item.nomor}','${item.tanggal}')"
                         target="_blank">
                         BAPH
                     </a>
                     <a class="btn btn-sm btn-success mr-2 mb-2 px-3"
-                        href="/api/cetakSBS/${item.tanggal}/${tahun}/${selector}"
+                        onclick="cetakSbs('${item.nomor}','${item.tanggal}')"
                         target="_blank">
                         SBS
                     </a>
@@ -335,12 +335,12 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
                 </button>
                 <div class="row d-flex justify-content-center" id="divStpbSts">
                     <a class="btn btn-sm btn-warning mr-2 mb-2"
-                        href="/api/cetakBAPH/${item.tanggal}/${tahun}/${selector}"
+                       onclick="cetakBaph('${item.nomor}','${item.tanggal}')"
                         target="_blank">
                         BAPH
                     </a>
                     <a class="btn btn-sm btn-success mr-2 mb-2 px-3"
-                        href="/api/cetakSBS/${item.tanggal}/${tahun}/${selector}"
+                        onclick="cetakSbs('${item.nomor}','${item.tanggal}')"
                         target="_blank">
                         SBS
                     </a>
@@ -388,15 +388,17 @@ function isiTabelPendapatanTotalPerHari(data, tableId, tahun, selector) {
         .appendTo(`${tableId}_wrapper .col-md-6:eq(0)`);
 }
 
-function cetakSBS() {
-    const tgl = new Date();
-    const tahun = tgl.getFullYear();
-    const bulan = String(tgl.getMonth() + 1).padStart(2, "0");
-    const tanggal = String(tgl.getDate()).padStart(2, "0");
-    const tglSBS = `${tanggal}-${bulan}-${tahun}`;
-    // console.log("🚀 ~ cetakSBS ~ tglSBS:", tglSBS);
-
-    window.open("api/cetakSBS/" + tglSBS);
+function cetakSbs(noSBS, tgl) {
+    const url = `/api/cetakSBS?noSBS=${encodeURIComponent(
+        noSBS
+    )}&tgl=${encodeURIComponent(tgl)}`;
+    window.open(url, "_blank");
+}
+function cetakBaph(noSBS, tgl) {
+    const url = `/api/cetakBAPH?noSBS=${encodeURIComponent(
+        noSBS
+    )}&tgl=${encodeURIComponent(tgl)}`;
+    window.open(url, "_blank");
 }
 
 function setorkan(button) {

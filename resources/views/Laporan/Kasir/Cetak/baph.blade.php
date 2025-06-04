@@ -46,12 +46,12 @@
                             <div class="flex py-0">
                                 <div class="w-2/6">No</div>
                                 <div class="w-1/12">:</div>
-                                <div class="flex-1">{{ $doc['nomor'] }}</div>
+                                <div class="flex-1">{{ $doc['noSbs'] }}</div>
                             </div>
                             <div class="flex py-0">
                                 <div class="w-2/6">Tanggal</div>
                                 <div class="w-1/12">:</div>
-                                <div class="flex-1">{{ $doc['tgl_nomor'] }}</div>
+                                <div class="flex-1">{{ $doc['tanggal'] }}</div>
                             </div>
                         </div>
                     </td>
@@ -63,11 +63,13 @@
                             <p class="text-md text-justify">
                                 <span class="ml-6"></span>Yang bertanda tangan di bawah ini menyatakan dengan
                                 sesungguhnya bahwa pada hari ini
-                                {{ $doc['hari'] }}, {{ $doc['tgl_setor'] }} telah melakukan serah terima
+                                {{ \Carbon\Carbon::parse($tgl)->locale('id')->isoFormat('dddd, DD MMMM YYYY') }}
+                                telah melakukan serah terima
                                 penerimaan
                                 harian BLUD Klinik Utama
                                 Kesehatan Paru Masyarakat Kelas A tanggal
-                                {{ $doc['tgl_pendapatan'] }}, dengan rincian sebagai berikut:
+                                {{ \Carbon\Carbon::parse($tgl)->locale('id')->isoFormat('DD MMMM YYYY') }}, dengan
+                                rincian sebagai berikut:
                             </p>
                             <ul class="list-decimal list-outside space-y-2 ml-6 text-justify">
                                 <li>
@@ -89,7 +91,7 @@
                                                 </td>
                                                 <td class="py-1 px-2 border border-black">
                                                     <p>Pend. Jasa Pel Rawat Jalan 1</p>
-                                                    <p>Tanggal disetorkan: {{ $doc['tgl_setor'] }}</p>
+                                                    <p>Tanggal disetorkan: {{ $doc['tanggal'] }}</p>
                                                 </td>
                                                 <td class="py-1 px-2 border border-black text-left">
                                                     {{ $doc['pendapatan'] }}</td>
@@ -98,7 +100,7 @@
                                                 <td colspan="3" class="py-1 px-2 border border-black text-right">
                                                     Terbilang</td>
                                                 <td class="py-1 px-2 border border-black text-left">
-                                                    {{ $doc['terbilang'] }}</td>
+                                                    {{ $terbilangPendapatan }}</td>
                                             </tr>
                                         </tbody>
                                     </table>

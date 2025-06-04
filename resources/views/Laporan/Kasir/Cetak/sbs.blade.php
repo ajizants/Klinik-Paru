@@ -41,12 +41,17 @@
                             <div class="flex py-0">
                                 <div class="w-1/4">No</div>
                                 <div class="w-fil mx-2">:</div>
-                                <div class="flex-1">{{ $doc['nomor'] }}</div>
+                                <div class="flex-1">{{ $doc['noSbs'] }}</div>
                             </div>
                             <div class="flex py-0">
                                 <div class="w-1/4">Tanggal</div>
                                 <div class="w-fil mx-2">:</div>
-                                <div class="flex-1">{{ $doc['tgl_nomor'] }}</div>
+                                <div class="flex-1">
+                                    {{ \Carbon\Carbon::parse($tgl)->locale('id')->isoFormat('DD MMMM YYYY') }}
+                                </div>
+                                {{-- <div class="flex-1">
+                                    {{ \Carbon\Carbon::parse($doc['tanggal'])->locale('id')->isoFormat('DD MMMM YYYY') }}
+                                </div> --}}
                             </div>
                             <div class="flex py-0">
                                 <div class="w-1/4">Bank</div>
@@ -69,12 +74,12 @@
                                 <div class="flex py-0">
                                     <div class="w-2/6">Harap diterima uang sebesar</div>
                                     <div class="w-fil mx-2">:</div>
-                                    <div class="flex-1"> {{ $doc['pendapatan'] }}</div>
+                                    <div class="flex-1">Rp. {{ number_format($doc['setoran'], 0, ',', '.') }},- </div>
                                 </div>
                                 <div class="flex py-0">
                                     <div class="w-2/6">Dengan huruf</div>
                                     <div class="w-fil mx-2">:</div>
-                                    <div class="flex-1"> {{ $doc['terbilang'] }}</div>
+                                    <div class="flex-1"> {{ $terbilangPendapatan }}</div>
                                 </div>
                             </div>
                             <br>
@@ -96,16 +101,18 @@
                                         </td>
                                         <td class="py-1 px-2 border border-black">
                                             <p>Pend. Jasa Pel Rawat Jalan 1</p>
-                                            <p>Tanggal disetorkan: {{ $doc['tgl_setor'] }}</p>
+                                            <p>Tanggal disetorkan:
+                                                {{ \Carbon\Carbon::parse($doc['tanggal'])->locale('id')->isoFormat('DD MMMM YYYY') }}
+                                            </p>
                                         </td>
                                         <td class="py-1 px-2 border border-black text-left">
-                                            {{ $doc['pendapatan'] }}</td>
+                                            Rp. {{ number_format($doc['setoran'], 0, ',', '.') }},-</td>
                                     </tr>
                                     <tr>
                                         <td colspan="3" class="py-1 px-2 border border-black text-right">
                                         </td>
                                         <td class="py-1 px-2 border border-black text-left">
-                                            {{ $doc['pendapatan'] }}</td>
+                                            Rp. {{ number_format($doc['setoran'], 0, ',', '.') }},-</td>
                                     </tr>
                                 </tbody>
                             </table>
