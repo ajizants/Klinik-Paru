@@ -138,6 +138,7 @@
             }
 
             const analisData = await analisResponse.json();
+            const tglSekarang = new Date().toISOString().split("T")[0];
 
             const data = pemeriksaan.map((item, index) => ({
                 no: index + 1,
@@ -150,6 +151,8 @@
                 idLayanan: item.pemeriksaan?.idLayanan ?? "",
                 no_reg_lab: item.pemeriksaan?.no_reg_lab ?? "",
                 no_iden_sediaan: item.pemeriksaan?.no_iden_sediaan ?? "25/K3302730/",
+                tgl_hasil: item.pemeriksaan?.tgl_hasil ?? tglSekarang,
+                alasan_periksa: item.pemeriksaan?.alasan_periksa ?? "",
                 kelas: item.pemeriksaan?.kelas ?? "",
                 kdTind: item.pemeriksaan?.kdTind ?? "",
             }));
@@ -184,16 +187,6 @@
                             inputField += "</select>";
                             return inputField;
                         },
-                    },
-                    {
-                        data: "no_reg_lab",
-                        render: (data, type, row) =>
-                            `<input type="text" class="form-control-sm col hasil" id="no_reg_lab${row.idLab}" value="${data}">`,
-                    },
-                    {
-                        data: "no_iden_sediaan",
-                        render: (data, type, row) =>
-                            `<input type="text" class="form-control-sm col hasil" id="no_iden_sediaan${row.idLab}" value="${data}">`,
                     },
                     {
                         data: "hasiLab",
@@ -298,6 +291,38 @@
                         render: (data, type, row) =>
                             `<input type="text" class="form-control-sm col hasil" id="ket${row.idLab}" value="${data}">`,
                     },
+                    {
+                        data: "no_reg_lab",
+                        render: (data, type, row) => {
+                            let noRegHtml = "";
+                            const arraykdTindakan = ["130", "131", "214"];
+                            if (arraykdTindakan.includes(row.kdTindakan)) {
+                                noRegHtml =
+                                    `<input type="text" class="form-control-sm col hasil" id="no_reg_lab${row.idLab}" value="${data}">`;
+                            } else {
+                                noRegHtml =
+                                    `<input type="text" class="form-control-sm col hasil" id="no_reg_lab${row.idLab}" value="${data}" readonly>`;
+                            }
+                            return noRegHtml;
+                        }
+                    },
+                    {
+                        data: "no_iden_sediaan",
+                        render: (data, type, row) =>
+
+                            `<input type="text" class="form-control-sm col hasil" id="no_iden_sediaan${row.idLab}" value="${data}">`,
+                    },
+                    {
+                        data: "tgl_hasil",
+                        render: (data, type, row) =>
+                            `<input type="date" class="form-control-sm col hasil" id="tgl_hasil${row.idLab}" value="${data}">`,
+                    },
+                    {
+                        data: "alasan_periksa",
+                        render: (data, type, row) =>
+                            `<input type="text" class="form-control-sm col hasil" id="alasan_periksa${row.idLab}" value="${data}">`,
+                    },
+
                 ],
                 order: [
                     [2, "desc"]
@@ -385,6 +410,8 @@
                     ket: $("#ket" + row.idLab).val(),
                     no_reg_lab: $("#no_reg_lab" + row.idLab).val(),
                     no_iden_sediaan: $("#no_iden_sediaan" + row.idLab).val(),
+                    tgl_hasil: $("#tgl_hasil" + row.idLab).val(),
+                    alasan_periksa: $("#alasan_periksa" + row.idLab).val(),
                 }))
                 .toArray();
 

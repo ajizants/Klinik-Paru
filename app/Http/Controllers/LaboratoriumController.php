@@ -490,8 +490,11 @@ class LaboratoriumController extends Controller
                             'hasil' => $data['hasil'],
                             'petugas' => $data['petugas'],
                             'ket' => $data['ket'],
-                            'no_reg_lab' => $data['no_reg_lab'],
-                            'no_iden_sediaan' => $data['no_iden_sediaan'],
+                            'no_reg_lab' => $data['no_reg_lab'] ?? '',
+                            'no_iden_sediaan' => $data['no_iden_sediaan'] ?? '',
+                            'tgl_hasil' => $data['tgl_hasil'] ?? null,
+                            'alasan_periksa' => $data['alasan_periksa'] ?? '',
+
                             // 'updated_at' => now(), // Jika ada kolom updated_at dan ingin diperbarui
                         ]);
                 } else {

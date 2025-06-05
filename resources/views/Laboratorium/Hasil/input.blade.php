@@ -70,13 +70,15 @@
                                 <table id="inputHasil" class="table table-tight">
                                     <thead>
                                         <tr>
-                                            <th>NO RM</th>
-                                            <th>Petugas</th>
+                                            <th>NoRM</th>
                                             <th>Pemeriksaan</th>
-                                            <th>No Reg Lab</th>
-                                            <th>No Sediaan</th>
+                                            <th>Petugas</th>
                                             <th>Hasil</th>
                                             <th>Ket</th>
+                                            <th>No Reg TB04</th>
+                                            <th>No Sediaan</th>
+                                            <th>Tgl Hasil</th>
+                                            <th>Alasan</th>
                                         </tr>
                                     </thead>
                                     <tbody>
