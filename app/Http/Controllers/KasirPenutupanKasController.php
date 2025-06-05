@@ -92,8 +92,8 @@ class KasirPenutupanKasController extends Controller
             $kepala = 'dr. ANWAR HUDIONO, M.P.H.';
             $nipKepala = '198212242010011022';
         }
-//         198212242010011022
-// dr. ANWAR HUDIONO, M.P.H.
+        //         198212242010011022
+        // dr. ANWAR HUDIONO, M.P.H.
         $tglAkhir = \Carbon\Carbon::create($tahun, $bulan, 1)->lastOfMonth()->locale('id')->isoFormat('DD MMMM YYYY');
 
         return view('Laporan.Kasir.Cetak.cetakPenutupanKas', compact('res', 'title', 'kepala', 'nipKepala', 'blnTahun', 'tglAkhir'));

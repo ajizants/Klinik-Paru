@@ -816,10 +816,12 @@ window.addEventListener("load", function () {
     tglAkhir = moment().subtract(0, "days").format("YYYY-MM-DD");
 
     // Menetapkan nilai ke input tanggal
-    $("#reservation, #tglJumlah").val(tglAwal + " to " + tglAkhir);
+    $("#reservation, #tglJumlah, #tglTindakan").val(
+        tglAwal + " to " + tglAkhir
+    );
 
     // Date range picker
-    $("#reservation, #tglJumlah").daterangepicker({
+    $("#reservation, #tglJumlah, #tglTindakan").daterangepicker({
         startDate: tglAwal,
         endDate: tglAkhir,
         autoApply: true,
@@ -832,7 +834,7 @@ window.addEventListener("load", function () {
         },
     });
 
-    $("#reservation, #tglJumlah").on(
+    $("#reservation, #tglJumlah, #tglTindakan").on(
         "apply.daterangepicker",
         function (ev, picker) {
             tglAwal = picker.startDate.format("YYYY-MM-DD");
