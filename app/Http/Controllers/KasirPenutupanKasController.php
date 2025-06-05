@@ -96,7 +96,7 @@ class KasirPenutupanKasController extends Controller
 // dr. ANWAR HUDIONO, M.P.H.
         $tglAkhir = \Carbon\Carbon::create($tahun, $bulan, 1)->lastOfMonth()->locale('id')->isoFormat('DD MMMM YYYY');
 
-        return view('Laporan.Kasir.cetak.cetakPenutupanKas', compact('res', 'title', 'kepala', 'nipKepala', 'blnTahun', 'tglAkhir'));
+        return view('Laporan.Kasir.Cetak.cetakPenutupanKas', compact('res', 'title', 'kepala', 'nipKepala', 'blnTahun', 'tglAkhir'));
     }
 
     public function cetakRegTupan($bulan, $tahun)
