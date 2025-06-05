@@ -83,15 +83,22 @@ class LaboratoriumController extends Controller
         // return $data;
         return view('Laboratorium.TB04Lab.main', ['data' => $data])->with('title', $title);
     }
-    public function getDataTb04()
+    public function getDataTb04($tanggal = null)
     {
+        $date = $tanggal ? Carbon::parse($tanggal) : Carbon::now();
+        //buat $tgl adalah 15 hari dari $date
+        $tglAkhir = $date->format('Y-m-d');
+        $tgl = $date->subDays(15);
+        $tglAwal = $tgl->format('Y-m-d');
+        // dd($tgl);
         $data = LaboratoriumKunjunganModel::with(['tb04' => function ($query) {
             $query->whereIn('idLayanan', [130, 131, 214]);
         }])
             ->whereHas('tb04', function ($query) {
                 $query->whereIn('idLayanan', [130, 131, 214]);
             })
-            ->whereDate('created_at', '>', '2025-05-31')
+            ->whereBetween('created_at', [$tglAwal . ' 00:00:00', $tglAkhir . ' 23:59:59'])
+            ->orderBy('created_at', 'desc')
             ->get();
 
         foreach ($data as $item) {

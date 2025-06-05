@@ -449,12 +449,13 @@
 
         function antrian() {
             $("#loadingSpinner").show();
+            const tgl = $("#tanggal").val();
             if ($.fn.DataTable.isDataTable("#antrianBelum, #antrianSudah")) {
                 $("#antrianBelum, #antrianSudah").DataTable().destroy();
             }
 
             $.ajax({
-                url: "/api/tb04/antrian",
+                url: "/api/tb04/antrian/" + tgl,
                 type: "GET",
                 success: function(response) {
                     $("#loadingSpinner").hide();
@@ -532,6 +533,9 @@
                     [5, 10, 25, 50, "All"],
                 ],
                 pageLength: 5,
+                order: [
+                    [1, "asc"]
+                ],
                 responsive: true,
             });
         }
@@ -583,6 +587,9 @@
                     [5, 10, 25, 50, "All"],
                 ],
                 pageLength: 3,
+                order: [
+                    [1, "asc"]
+                ],
                 responsive: true,
             });
         }
