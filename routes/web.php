@@ -100,6 +100,7 @@ Route::middleware('auth')->group(function () {
     Route::get('Laboratorium/Hasil', [LaboratoriumController::class, 'hasilLab'])->name('hasilLab')->middleware('role:lab');
     Route::get('Laboratorium/Laporan', [LaboratoriumController::class, 'laporan'])->name('riwayatLab')->middleware('role:lab');
     Route::get('Laboratorium/Master', [LaboratoriumController::class, 'masterLab'])->name('masterLab')->middleware('role:lab');
+    Route::get('Laboratorium/TB04', [LaboratoriumController::class, 'tb04Lab'])->name('tb04Lab')->middleware('role:lab');
 
     //RO
     Route::get('Radiologi', [ROTransaksiController::class, 'ro'])->name('ro')->middleware('role:ro');

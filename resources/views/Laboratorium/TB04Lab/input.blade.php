@@ -70,11 +70,10 @@
                                 <table id="inputHasil" class="table table-tight">
                                     <thead>
                                         <tr>
+                                            <th>NO</th>
                                             <th>NO RM</th>
-                                            <th>Petugas</th>
                                             <th>Pemeriksaan</th>
-                                            <th>No Reg Lab</th>
-                                            <th>No Sediaan</th>
+                                            <th>Petugas</th>
                                             <th>Hasil</th>
                                             <th>Ket</th>
                                         </tr>
@@ -84,12 +83,12 @@
                                 </table>
                             </div>
                             <div class="card-footer form-row d-flex justify-content-end aligment-items-center">
-                                <div class="col-3 pt-2 d-flex aligment-items-center" hidden>
-                                    <div hidden>
+                                <div class="col-3 pt-2 d-flex aligment-items-center">
+                                    <div>
                                         <b class="mr-2">Waktu Selesai Hasil:</b> <span id="waktuSelesai">-</span>
                                     </div>
                                 </div>
-                                <div class="col-auto" id="divSwitch" hidden>
+                                <div class="col-auto" id="divSwitch">
                                     <label class="switch">
                                         <input type="checkbox" id="statusSwitch">
                                         <span class="slider round"></span>

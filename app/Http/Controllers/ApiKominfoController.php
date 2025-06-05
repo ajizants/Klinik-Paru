@@ -217,7 +217,8 @@ class ApiKominfoController extends Controller
 
         $qrCodeBase64 = base64_encode(file_get_contents($qrCodeUrl));
         //buat judul, yaitu 6 digit terakhir dari noSEP
-        $judul = substr($detailSEP['noSep'], -6);
+
+        $judul = ltrim(substr($detailSEP['noSep'], -6), '0');
 
         // return view('Laporan.Pasien.sepPdf', compact('detailSEP', 'qrCodeBase64'));
         // Generate the PDF with the converted PNG QR code
@@ -256,7 +257,7 @@ class ApiKominfoController extends Controller
 
         $qrCodeBase64 = base64_encode(file_get_contents($qrCodeUrl));
         //buat judul, yaitu 6 digit terakhir dari noSEP
-        $judul = substr($detailSEP['noSep'], -6);
+        $judul = ltrim(substr($detailSEP['noSep'], -6), '0');
 
         return view('Laporan.Pasien.billingSEP',
             compact('detailSEP', 'qrCodeBase64', 'dataTagihan', 'lab',

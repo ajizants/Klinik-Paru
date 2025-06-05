@@ -54,6 +54,7 @@ Route::post('deleteLab', [LaboratoriumController::class, 'deleteLab']);
 Route::post('hasil/lab', [LaboratoriumController::class, 'hasil']);
 Route::get('hasil/lab/cetak/{notrans}/{tgl}', [LaboratoriumController::class, 'cetak'])->name('cetak-lab');
 Route::post('hasil/antrian', [LaboratoriumController::class, 'antrianHasil']);
+Route::get('tb04/antrian', [LaboratoriumController::class, 'getDataTb04']);
 Route::post('rekap/Kunjungan_Lab', [LaboratoriumController::class, 'rekapKunjungan']);
 Route::post('rekap/lab/poin', [LaboratoriumController::class, 'poinPetugas']);
 Route::post('rekap/lab/jumlah_pemeriksaan', [LaboratoriumController::class, 'jumlah_pemeriksaan']);

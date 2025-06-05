@@ -237,6 +237,12 @@
                             </a>
                         </li>
                         <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/Laboratorium/TB04') }}">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>Input TB-04 Lab</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
                             <a class="nav-link" href="{{ url('/Laboratorium/Master') }}">
                                 <i class="fa-solid fa-database nav-icon"></i>
                                 <p>Master Lab</p>

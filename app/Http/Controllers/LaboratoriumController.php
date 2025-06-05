@@ -59,7 +59,7 @@ class LaboratoriumController extends Controller
     }
     public function masterlab()
     {
-        $title = 'Master Laboratorium';
+        $title = 'Master Lab';
 
         $query = LayananModel::on('mysql')
             ->where('status', '1')
@@ -74,6 +74,83 @@ class LaboratoriumController extends Controller
         }
 
         return view('Laboratorium.MasterLab.main', ['col' => $col])->with('title', $title);
+    }
+    public function tb04Lab()
+    {
+        $title = 'TB 04';
+
+        $data = $this->getDataTb04();
+        // return $data;
+        return view('Laboratorium.TB04Lab.main', ['data' => $data])->with('title', $title);
+    }
+    public function getDataTb04()
+    {
+        $data = LaboratoriumKunjunganModel::with(['tb04' => function ($query) {
+            $query->whereIn('idLayanan', [130, 131, 214]);
+        }])
+            ->whereHas('tb04', function ($query) {
+                $query->whereIn('idLayanan', [130, 131, 214]);
+            })
+            ->whereDate('created_at', '>', '2025-05-31')
+            ->get();
+
+        foreach ($data as $item) {
+            $pemeriksaan = $item->tb04;
+            $nonNullHasilCount = 0;
+            $nmLayananList = [];
+
+            foreach ($pemeriksaan as $periksa) {
+                if (!is_null($periksa->no_reg_lab)) {
+                    $nonNullHasilCount++;
+                }
+
+                if (!empty($periksa->pemeriksaan->nmLayanan)) {
+                    $nmLayananList[] = $periksa->pemeriksaan->nmLayanan;
+                }
+            }
+
+            $item->pemeriksaan = implode(', ', $nmLayananList);
+            $item->jmlh = $pemeriksaan->count();
+
+            if ($nonNullHasilCount === 0) {
+                $item->status = 'Belum';
+            } elseif ($nonNullHasilCount < $item->jmlh) {
+                $item->status = 'Belum Lengkap';
+            } else {
+                $item->status = 'Lengkap';
+            }
+
+            $doctorNipMap = [
+                '198311142011012002' => 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.',
+                '9' => 'dr. Agil Dananjaya, Sp.P',
+                '198907252019022004' => 'dr. Filly Ulfa Kusumawardani',
+                '198903142022031005' => 'dr. Sigit Dwiyanto',
+            ];
+            $item->nama_dokter = $doctorNipMap[$item['dokter']] ?? 'Unknown';
+
+            // Tambahan properti baru
+            $item->tgl = \Carbon\Carbon::parse($item->created_at)->format('Y-m-d');
+            $item->tanggal = \Carbon\Carbon::parse($item->created_at)->format('d-m-Y');
+
+            // Bersihkan alamat dan ambil desa
+            $item->alamat = preg_replace('/, [^,]*$/', '', $item->alamat);
+            $alamatParts = explode(',', $item->alamat);
+            $item->desa = trim($alamatParts[0] ?? '');
+
+            // Buat tombol aksi
+            $item->aksi = '<a class="m-1 col btn btn-danger"
+                             data-toggle="tooltip"
+                             data-placement="right"
+                             title="Edit Hasil Lab"
+                             data-norm="' . $item->norm . '"
+                             data-nama="' . $item->nama . '"
+                             data-alamat="' . $item->alamat . '"
+                             onclick="cariTsLab(\'' . $item->norm . '\', \'' . $item->tgl . '\', \'tampil\');">
+                             <i class="fa-solid fa-file-pen"></i>
+                         </a>';
+        }
+
+        return $data;
     }
 
     public function antrianHasil(Request $request)
@@ -105,9 +182,9 @@ class LaboratoriumController extends Controller
 
                 $doctorNipMap = [
                     '198311142011012002' => 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.',
-                    '9' => 'dr. AGIL DANANJAYA, Sp.P',
-                    '198907252019022004' => 'dr. FILLY ULFA KUSUMAWARDANI',
-                    '198903142022031005' => 'dr. SIGIT DWIYANTO',
+                    '9' => 'dr. Agil Dananjaya, Sp.P',
+                    '198907252019022004' => 'dr. Filly Ulfa Kusumawardani',
+                    '198903142022031005' => 'dr. Sigit Dwiyanto',
                 ];
                 $item->nama_dokter = $doctorNipMap[$item['dokter']] ?? 'Unknown';
             }
@@ -406,6 +483,8 @@ class LaboratoriumController extends Controller
                             'hasil' => $data['hasil'],
                             'petugas' => $data['petugas'],
                             'ket' => $data['ket'],
+                            'no_reg_lab' => $data['no_reg_lab'],
+                            'no_iden_sediaan' => $data['no_iden_sediaan'],
                             // 'updated_at' => now(), // Jika ada kolom updated_at dan ingin diperbarui
                         ]);
                 } else {

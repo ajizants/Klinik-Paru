@@ -20,6 +20,12 @@ class LaboratoriumKunjunganModel extends Model
         return $this->hasMany(LaboratoriumHasilModel::class, 'notrans', 'notrans');
     }
 
+    public function tb04()
+    {
+        return $this->hasMany(LaboratoriumHasilModel::class, 'notrans', 'notrans')
+            ->whereIn('idLayanan', [130, 131, 214]);
+    }
+
     public function petugas()
     {
         return $this->belongsTo(PegawaiModel::class, 'petugas', 'nip');
