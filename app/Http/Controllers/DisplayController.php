@@ -481,19 +481,21 @@ class DisplayController extends Controller
         //     'tgl_akhir' => '2025-03-01',
         // ];
         $client = new KominfoModel();
-        // $dataPendaftaran = $client->tungguPoli($params);
-        $dataPendaftaran = $client->getTungguTensi($params);
-        // dd($dataPendaftaran['data']['data']);
+        $dataPendaftaran = $client->tungguPoli($params);
+        $data = $dataPendaftaran['data'];
 
-        $data=$dataPendaftaran['data']['data'];
+        // $dataPendaftaran = $client->getTungguTensi($params);
+        // $data = $dataPendaftaran['data']['data'];
+        // dd($dataPendaftaran['data']);
         $filteredData = array_filter($data, function ($item) {
             return isset($item['keterangan']) && $item['keterangan'] === 'SELESAI DIPANGGIL';
         });
 
-        $data=array_values($filteredData);
+        $data = array_values($filteredData);
         // dd($data);
 
-        return $dataPendaftaran['data']['data'];
+        return $dataPendaftaran['data'];
+        // return $dataPendaftaran['data']['data'];
 
     }
 
