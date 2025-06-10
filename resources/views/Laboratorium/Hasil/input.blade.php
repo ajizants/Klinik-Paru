@@ -7,12 +7,11 @@
                         <form class="form-horizontal" id="form_identitas">
                             <div class="card-body">
                                 <div class="form-group row">
-                                    <label for="norm" class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
+                                    <label for="tgltrans" class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                         :</label>
-                                    <div class="col-sm-2 input-group" style="overflow: hidden;">
-                                        <input type="text" name="norm" id="norm" class="form-control"
-                                            placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required
-                                            onkeyup="enterCariRM(event,'lab',this.value);" />
+                                    <div class="col-sm-2">
+                                        <input type="date" id="tgltrans" class="form-control bg-white"
+                                            placeholder="Tanggal Transaksi" />
                                     </div>
                                     <label for="layanan" class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
                                         :</label>
@@ -32,11 +31,12 @@
                                     </div>
                                 </div>
                                 <div class="form-group row mt-2">
-                                    <label for="tgltrans" class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
+                                    <label for="norm" class="col-sm-1 col-form-label font-weight-bold mb-0 ">No RM
                                         :</label>
-                                    <div class="col-sm-2">
-                                        <input type="date" id="tgltrans" class="form-control bg-white"
-                                            placeholder="Tanggal Transaksi" />
+                                    <div class="col-sm-2 input-group" style="overflow: hidden;">
+                                        <input type="text" name="norm" id="norm" class="form-control"
+                                            placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required
+                                            onkeyup="enterCariRM(event,'lab',this.value);" />
                                     </div>
                                     <label for="notrans" class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
                                         :</label>

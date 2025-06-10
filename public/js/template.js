@@ -230,7 +230,7 @@ function enterCariRM(event, ruang) {
         var norm = formatNorm.slice(0, 6);
 
         if (ruang == "lab") {
-            cariTsLab(norm, tgl, ruang);
+            cariTsLab(norm, tgl, "tampil");
         } else if (ruang == "dots") {
             cariPasienTb(norm, tgl, ruang);
         } else if (ruang == "gizi") {
