@@ -1814,6 +1814,89 @@ class KominfoModel extends Model
             return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
         }
     }
+    public function tungguRoLab($params)
+    {
+        // return $params;
+        $client = new Client();
+        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+        if (!$params) {
+            $tgl = date('Y-m-d');
+            $tanggal = $tgl . ' - ' . $tgl;
+        } else {
+            $tgl_awal = $params['tgl_awal'];
+            $tgl_akhir = $params['tgl_akhir'];
+            $tanggal = $this->formatTanggal($tgl_awal) . ' - ' . $this->formatTanggal($tgl_akhir);
+        }
+        // return $tanggal;
+
+        if (!$cookie) {
+            // Authenticate if no cookie is found
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+            $cookie = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+
+        $url = env('BASR_URL_KOMINFO', '') . '/ruang_laboratorium/get_data';
+        $url2 = env('BASR_URL_KOMINFO', '') . '/ruang_rontgen/get_data';
+
+        try {
+            $response = $client->request('POST', $url, [
+                'form_params' => [
+                    'tanggal' => $tanggal,
+                    'length' => 1000,
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Cookie' => $cookie,
+                ],
+            ]);
+            $response2 = $client->request('POST', $url2, [
+                'form_params' => [
+                    'tanggal' => $tanggal,
+                    'length' => 1000,
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Cookie' => $cookie,
+                ],
+            ]);
+            // dd($response);
+
+            // Check if the response status is 200
+            if ($response->getStatusCode() !== 200) {
+                Log::error('Error response body: ' . (string) $response->getBody());
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
+            if ($response2->getStatusCode() !== 200) {
+                Log::error('Error response body: ' . (string) $response->getBody());
+                return response()->json(['error' => 'Internal Server Error Data Atas'], 500);
+            }
+
+            $body = (string) $response->getBody();
+            $data = json_decode($body, true);
+            $body2 = (string) $response2->getBody();
+            $data2 = json_decode($body2, true);
+            // return $data;
+            return [
+                'data' => $data,
+                'data2' => $data2,
+            ];
+
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            // Handle network or request errors
+            Log::error('Request Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
+        } catch (\Exception $e) {
+            // Handle unexpected errors
+            Log::error('Unexpected Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
+        }
+    }
     public function getLogAntrian($id)
     {
         // return $params;

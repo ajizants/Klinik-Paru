@@ -483,19 +483,34 @@ class DisplayController extends Controller
         $client = new KominfoModel();
         $dataPendaftaran = $client->tungguPoli($params);
         $data = $dataPendaftaran['data'];
+        // $data = array_filter($dataPendaftaran['data'], function ($item) {
+        //     return isset($item['keterangan']) && $item['keterangan'] === 'SELESAI DIPANGGIL';
+        // });
 
-        // $dataPendaftaran = $client->getTungguTensi($params);
-        // $data = $dataPendaftaran['data']['data'];
-        // dd($dataPendaftaran['data']);
-        $filteredData = array_filter($data, function ($item) {
-            return isset($item['keterangan']) && $item['keterangan'] === 'SELESAI DIPANGGIL';
+        $dataPenunjang = $client->tungguRoLab($params);
+
+        $tungguLab = array_filter($dataPenunjang['data']['data'], function ($item) {
+            return isset($item['keterangan']) && $item['keterangan'] === 'MENUNGGU DIPANGGIL';
         });
 
-        $data = array_values($filteredData);
-        // dd($data);
+        $tungguRo = array_filter($dataPenunjang['data2']['data'], function ($item) {
+            return isset($item['keterangan']) && $item['keterangan'] === 'MENUNGGU DIPANGGIL';
+        });
 
-        return $dataPendaftaran['data'];
-        // return $dataPendaftaran['data']['data'];
+        // Gabungkan dan hilangkan duplikat berdasarkan pasien_no_rm + created_at
+        $combined = array_merge($data, $tungguLab, $tungguRo);
+
+        // Gunakan associative key gabungan untuk menyaring duplikat
+        $unique = [];
+        foreach ($combined as $item) {
+            $key = $item['pasien_no_rm'] . '|' . $item['created_at'];
+            if (!isset($unique[$key])) {
+                $unique[$key] = $item;
+            }
+        }
+
+        $finalData = array_values($unique);
+        return $finalData;
 
     }
 
