@@ -378,11 +378,17 @@ class LaboratoriumController extends Controller
                     $data->pemeriksaan = $pemeriksaan;
                 }
 
-                $no_reg_lab = LaboratoriumHasilModel::max('no_reg_lab');
+                $tahunSekarang = date('Y');
+
+                // Ambil no_reg_lab tertinggi untuk tahun ini
+                $no_reg_lab = LaboratoriumHasilModel::whereYear('created_at', $tahunSekarang)->max('no_reg_lab');
+
                 if ($no_reg_lab == null) {
                     $no_reg_lab = 0;
                 }
+
                 $data->no_reg_lab_next = $no_reg_lab + 1;
+                $data->tahun_registrasi = $tahunSekarang;
 
                 $lab = json_decode($data, true);
                 if ($data == null) {

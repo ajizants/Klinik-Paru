@@ -96,6 +96,9 @@
                         $("#alamat").val(data.alamat);
                         $("#notrans").val(data.notrans);
                         $("#layanan").val(data.layanan);
+                        $("#no_reg_lab_next").val(data.no_reg_lab_next);
+
+                        $("#no_reg_lab_next").html(data.no_reg_lab_next);
                         $("#dokter").val(data.dokter).trigger("change");
                         $("#analis").val(data.petugas).trigger("change");
                         var rawDateTime = data.waktu_selesai;

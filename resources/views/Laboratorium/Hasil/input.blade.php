@@ -68,7 +68,7 @@
                             </div>
                             <div class="card-body py-1">
                                 <div class="container-fluid">
-                                    <h5 class="bg-yellow font-weight-bold p-2">No Reg. laborat
+                                    <h5 class="bg-yellow font-weight-bold ml-4 p-2">No Reg. laborat
                                         Selanjutnya adalah: <span id="no_reg_lab_next"
                                             class="bg-yellow font-weight-bold mx-4"></span></h5>
                                 </div>
@@ -137,4 +137,5 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
