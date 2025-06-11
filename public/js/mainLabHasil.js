@@ -145,7 +145,7 @@ async function dataLab(pemeriksaan, notrans) {
         kelas: item.pemeriksaan?.kelas ?? "",
         kdTind: item.pemeriksaan?.kdTind ?? "",
         no_reg_lab: item.no_reg_lab ?? "",
-        no_iden_sediaan: item.no_iden_sediaan,
+        no_iden_sediaan: item.no_iden_sediaan ?? "",
         tgl_hasil: item.tgl_hasil ?? tglSekarang,
         alasan_periksa: item.alasan_periksa ?? "",
         namaFaskes: item.namaFaskes ?? "KKPM",
