@@ -149,144 +149,9 @@ async function dataLab(pemeriksaan, notrans) {
         tgl_hasil: item.tgl_hasil ?? tglSekarang,
         alasan_periksa: item.alasan_periksa ?? "",
         namaFaskes: item.namaFaskes ?? "KKPM",
+        kode_tcm: item.kode_tcm ?? "",
     }));
 
-    // const table = $("#inputHasil").DataTable({
-    //     data: data,
-    //     destroy: true,
-    //     columns: [
-    //         {
-    //             data: "no",
-    //             render: (data) =>
-    //                 `<p type="text" class="form-control-sm col hasil">${data}</p>`,
-    //         },
-    //         {
-    //             data: "norm",
-    //             render: (data) =>
-    //                 `<p type="text" class="form-control-sm col hasil">${data}</p>`,
-    //         },
-    //         {
-    //             data: "nmLayanan",
-    //             render: (data, type, row) =>
-    //                 `<p type="text" class="form-control-sm col hasil" id="layanan${row.idLayanan}" value="${row.idLayanan}" readonly>${data}</p>`,
-    //         },
-    //         {
-    //             data: "petugas",
-    //             render: (data, type, row) => {
-    //                 let inputId = "analis" + row.idLab;
-    //                 let inputField = `<select id="${inputId}" class="form-control-sm col analis">`;
-    //                 inputField += `<option value="">--- Pilih Petugas ---</option>`;
-    //                 analisData.forEach((petugas) => {
-    //                     let selected = data === petugas.nip ? "selected" : "";
-    //                     inputField += `<option value="${petugas.nip}" ${selected}>${petugas.gelar_d} ${petugas.nama} ${petugas.gelar_b}</option>`;
-    //                 });
-    //                 inputField += "</select>";
-    //                 return inputField;
-    //             },
-    //         },
-    //         {
-    //             data: "hasiLab",
-    //             render: (data, type, row) => {
-    //                 let hasilLabHtml = "";
-    //                 // switch (row.kelas) {
-    //                 switch (row.kdTind) {
-    //                     case "94":
-    //                         hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
-    //                         hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
-    //                         hasilLabHtml += `<option value="Hasil di SITB" ${
-    //                             data === "Hasil di SITB" ? "selected" : ""
-    //                         }>Hasil di SITB (TCM)</option>`;
-    //                         hasilLabHtml += `<option value="Negatif" ${
-    //                             data === "Negatif" ? "selected" : ""
-    //                         }>Negatif (BTA/TCM)</option>`;
-    //                         hasilLabHtml += `<option value="+1" ${
-    //                             data === "+1" ? "selected" : ""
-    //                         }>+ 1 (BTA)</option>`;
-    //                         hasilLabHtml += `<option value="+2" ${
-    //                             data === "+2" ? "selected" : ""
-    //                         }>+ 2 (BTA)</option>`;
-    //                         hasilLabHtml += `<option value="+3" ${
-    //                             data === "+3" ? "selected" : ""
-    //                         }>+ 3 (BTA)</option>`;
-    //                         hasilLabHtml += `<option value="+1-9" ${
-    //                             data === "+1-9" ? "selected" : ""
-    //                         }>+ 1-9 (BTA)</option>`;
-    //                         hasilLabHtml += `</select>`;
-    //                         break;
-    //                     case "93":
-    //                         hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
-    //                         hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
-    //                         hasilLabHtml += `<option value="NR" ${
-    //                             data === "NR" ? "selected" : ""
-    //                         }>Non Reaktif (HIV)</option>`;
-    //                         hasilLabHtml += `<option value="Reaktif" ${
-    //                             data === "Reaktif" ? "selected" : ""
-    //                         }>Reaktif (HIV)</option>`;
-    //                         hasilLabHtml += `<option value="Negatif" ${
-    //                             data === "Negatif" || data === "NEGATIF"
-    //                                 ? "selected"
-    //                                 : ""
-    //                         }>Negatif (Sifilis)</option>`;
-    //                         hasilLabHtml += `<option value="Positif" ${
-    //                             data === "Positif" ? "selected" : ""
-    //                         }>Positif (Sifilis)</option>`;
-    //                         hasilLabHtml += `</select>`;
-    //                         break;
-    //                     case "99":
-    //                         hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
-    //                         hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
-    //                         hasilLabHtml += `<option value="A" ${
-    //                             data === "A" ? "selected" : ""
-    //                         }>A</option>`;
-    //                         hasilLabHtml += `<option value="B" ${
-    //                             data === "B" ? "selected" : ""
-    //                         }>B</option>`;
-    //                         hasilLabHtml += `<option value="AB" ${
-    //                             data === "AB" ? "selected" : ""
-    //                         }>AB</option>`;
-    //                         hasilLabHtml += `<option value="O" ${
-    //                             data === "O" ? "selected" : ""
-    //                         }>O</option>`;
-    //                         hasilLabHtml += `</select>`;
-    //                         break;
-    //                     case "97":
-    //                         hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
-    //                         hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
-    //                         hasilLabHtml += `<option value="IGG NR, IGM NR" ${
-    //                             data === "IGG NR, IGM NR" ? "selected" : ""
-    //                         }>IGG dan IGM NR</option>`;
-    //                         hasilLabHtml += `<option value="IGG R, IGM R" ${
-    //                             data === "IGG R, IGM R" ? "selected" : ""
-    //                         }>IGG dan IGM R</option>`;
-    //                         hasilLabHtml += `<option value="IGG NR, IGM R" ${
-    //                             data === "IGG NR, IGM R" ? "selected" : ""
-    //                         }>IGG NR dan IGM R</option>`;
-    //                         hasilLabHtml += `<option value="IGG R, IGM NR" ${
-    //                             data === "IGG R, IGM NR" ? "selected" : ""
-    //                         }>IGG R dan IGM NR</option>`;
-
-    //                         hasilLabHtml += `</select>`;
-    //                         break;
-    //                     case "98":
-    //                         hasilLabHtml = `<input type="text" class="form-control-sm col hasil" id="hasil${row.idLab}" value="Terlampir">`;
-    //                         break;
-    //                     default:
-    //                         hasilLabHtml = `<input type="text" class="form-control-sm col hasil" id="hasil${row.idLab}" value="${data}">`;
-    //                 }
-    //                 return hasilLabHtml;
-    //             },
-    //         },
-    //         {
-    //             data: "ket",
-    //             render: (data, type, row) =>
-    //                 `<input type="text" class="form-control-sm col hasil" id="ket${row.idLab}" value="${data}">`,
-    //         },
-    //     ],
-    //     order: [[2, "desc"]],
-    //     scrollY: "320px",
-    //     scrollCollapse: true,
-    //     paging: false,
-    // });
     const table = $("#inputHasil").DataTable({
         data: data,
         destroy: true,
@@ -304,6 +169,7 @@ async function dataLab(pemeriksaan, notrans) {
             },
             {
                 data: "petugas",
+                width: "200px", // atur lebar kolom di sini
                 render: (data, type, row) => {
                     let inputId = "analis" + row.idLab;
                     let inputField = `<select id="${inputId}" class="form-control-sm col analis ">`;
@@ -432,7 +298,13 @@ async function dataLab(pemeriksaan, notrans) {
                     `<input type="text" class="form-control-sm col hasil" id="ket${row.idLab}" value="${data}" placeholder="Keterangan">`,
             },
             {
+                data: "tgl_hasil",
+                render: (data, type, row) =>
+                    `<input type="date" class="form-control-sm col hasil" id="tgl_hasil${row.idLab}" value="${data}">`,
+            },
+            {
                 data: "no_reg_lab",
+                width: "30px", // atur lebar kolom di sini
                 render: (data, type, row) => {
                     let noRegHtml = "";
                     const arraykdTindakan = ["130", "131", "214"];
@@ -445,7 +317,32 @@ async function dataLab(pemeriksaan, notrans) {
                 },
             },
             {
+                data: "kode_tcm",
+                width: "20px", // lebar yang masuk akal
+                render: (data, type, row) => {
+                    let kdTcm = "";
+                    const arraykdTindakan = ["130", "131", "214"];
+                    if (arraykdTindakan.includes(String(row.idLayanan))) {
+                        kdTcm = `<select class="form-control-sm col hasil" id="kode_tcm${
+                            row.idLab
+                        }">
+                            <option value="">--Pilih Kode--</option>
+                            <option value="1" ${
+                                data == "1" ? "selected" : ""
+                            }>1</option>
+                            <option value="2" ${
+                                data == "2" ? "selected" : ""
+                            }>2</option>
+                        </select>`;
+                    } else {
+                        kdTcm = `<input type="text" class="form-control-sm col hasil bg-secondary" id="kode_tcm${row.idLab}" value="" readonly>`;
+                    }
+                    return kdTcm;
+                },
+            },
+            {
                 data: "no_iden_sediaan",
+                width: "30px", // atur lebar kolom di sini
                 render: (data, type, row) => {
                     let noIdenHtml = "";
                     const arraykdTindakan = ["130", "131", "214"];
@@ -458,19 +355,31 @@ async function dataLab(pemeriksaan, notrans) {
                 },
             },
             {
-                data: "tgl_hasil",
-                render: (data, type, row) =>
-                    `<input type="date" class="form-control-sm col hasil" id="tgl_hasil${row.idLab}" value="${data}">`,
-            },
-            {
                 data: "alasan_periksa",
-                render: (data, type, row) =>
-                    `<input type="text" class="form-control-sm col hasil" id="alasan_periksa${row.idLab}" value="${data}">`,
+                render: (data, type, row) => {
+                    let input = "";
+                    const arraykdTindakan = ["130", "131", "214"];
+                    if (arraykdTindakan.includes(String(row.idLayanan))) {
+                        input = `<input type="text" class="form-control-sm col hasil" id="alasan_periksa${row.idLab}" value="${data}">`;
+                    } else {
+                        input = `<input type="text" class="form-control-sm col hasil bg-secondary" id="alasan_periksa${row.idLab}" value="" readonly>`;
+                    }
+                    return input;
+                },
             },
+
             {
                 data: "namaFaskes",
-                render: (data, type, row) =>
-                    `<input type="text" class="form-control-sm col hasil" id="namaFaskes${row.idLab}" value="${data}">`,
+                render: (data, type, row) => {
+                    let input = "";
+                    const arraykdTindakan = ["130", "131", "214"];
+                    if (arraykdTindakan.includes(String(row.idLayanan))) {
+                        input = `<input type="text" class="form-control-sm col hasil" id="namaFaskes${row.idLab}" value="${data}">`;
+                    } else {
+                        input = `<input type="text" class="form-control-sm col hasil bg-secondary" id="namaFaskes${row.idLab}" value="" readonly>`;
+                    }
+                    return input;
+                },
             },
         ],
         order: [[2, "desc"]],
@@ -557,6 +466,7 @@ function simpan() {
             tgl_hasil: $("#tgl_hasil" + row.idLab).val(),
             alasan_periksa: $("#alasan_periksa" + row.idLab).val(),
             namaFaskes: $("#namaFaskes" + row.idLab).val(),
+            kode_tcm: $("#kode_tcm" + row.idLab).val(),
         }))
         .toArray();
 

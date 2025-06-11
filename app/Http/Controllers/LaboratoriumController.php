@@ -642,6 +642,7 @@ class LaboratoriumController extends Controller
                             'tgl_hasil' => $data['tgl_hasil'] ?? null,
                             'alasan_periksa' => $data['alasan_periksa'] ?? '',
                             'namaFaskes' => $data['namaFaskes'] ?? 'KKPM',
+                            'kode_tcm' => $data['kode_tcm'] ?? '1',
 
                             // 'updated_at' => now(), // Jika ada kolom updated_at dan ingin diperbarui
                         ]);

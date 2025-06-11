@@ -160,8 +160,8 @@
                 tgl_hasil: item.tgl_hasil ?? tglSekarang,
                 alasan_periksa: item.alasan_periksa ?? "",
                 namaFaskes: item.namaFaskes ?? "KKPM",
+                kode_tcm: item.kode_tcm ?? "",
             }));
-
 
             const table = $("#inputHasil").DataTable({
                 data: data,
@@ -179,6 +179,7 @@
                     },
                     {
                         data: "petugas",
+                        width: "200px", // atur lebar kolom di sini
                         render: (data, type, row) => {
                             let inputId = "analis" + row.idLab;
                             let inputField =
@@ -208,22 +209,22 @@
                             }>Hasil di SITB (TCM)</option>`;
                                     hasilLabHtml += `<option value="Rif Sen" ${
                                 data === "Rif Sen" ? "selected" : ""
-                            }>Hasil di SITB (TCM)</option>`;
+                            }>Rif Sen (TCM)</option>`;
                                     hasilLabHtml += `<option value="Rif Res" ${
                                 data === "Rif Res" ? "selected" : ""
-                            }>Hasil di SITB (TCM)</option>`;
+                            }>Rif Res (TCM)</option>`;
                                     hasilLabHtml += `<option value="Rif Indet" ${
                                 data === "Rif Indet" ? "selected" : ""
-                            }>Hasil di SITB (TCM)</option>`;
+                            }>Rif Indet (TCM)</option>`;
                                     hasilLabHtml += `<option value="INVALID" ${
                                 data === "INVALID" ? "selected" : ""
-                            }>Hasil di SITB (TCM)</option>`;
+                            }>INVALID (TCM)</option>`;
                                     hasilLabHtml += `<option value="ERROR" ${
                                 data === "ERROR" ? "selected" : ""
-                            }>Hasil di SITB (TCM)</option>`;
+                            }>ERROR (TCM)</option>`;
                                     hasilLabHtml += `<option value="No Result" ${
                                 data === "No Result" ? "selected" : ""
-                            }>Hasil di SITB (TCM)</option>`;
+                            }>No Result (TCM)</option>`;
                                     hasilLabHtml += `<option value="Negatif" ${
                                 data === "Negatif" ? "selected" : ""
                             }>Negatif (BTA/TCM)</option>`;
@@ -316,6 +317,7 @@
                     },
                     {
                         data: "no_reg_lab",
+                        width: "30px", // atur lebar kolom di sini
                         render: (data, type, row) => {
                             let noRegHtml = "";
                             const arraykdTindakan = ["130", "131", "214"];
@@ -330,7 +332,27 @@
                         },
                     },
                     {
+                        data: "kode_tcm",
+                        width: "20px", // lebar yang masuk akal
+                        render: (data, type, row) => {
+                            return `
+                        <select class="form-control-sm col hasil" id="kode_tcm${
+                            row.idLab
+                        }">
+                            <option value="">--Pilih Kode--</option>
+                            <option value="1" ${
+                                data == "1" ? "selected" : ""
+                            }>1</option>
+                            <option value="2" ${
+                                data == "2" ? "selected" : ""
+                            }>2</option>
+                        </select>
+                    `;
+                        },
+                    },
+                    {
                         data: "no_iden_sediaan",
+                        width: "30px", // atur lebar kolom di sini
                         render: (data, type, row) => {
                             let noIdenHtml = "";
                             const arraykdTindakan = ["130", "131", "214"];
@@ -354,6 +376,7 @@
                         render: (data, type, row) =>
                             `<input type="text" class="form-control-sm col hasil" id="alasan_periksa${row.idLab}" value="${data}">`,
                     },
+
                     {
                         data: "namaFaskes",
                         render: (data, type, row) =>
@@ -448,6 +471,7 @@
                     no_iden_sediaan: $("#no_iden_sediaan" + row.idLab).val(),
                     tgl_hasil: $("#tgl_hasil" + row.idLab).val(),
                     alasan_periksa: $("#alasan_periksa" + row.idLab).val(),
+                    kode_tcm: $("#kode_tcm" + row.idLab).val(),
                 }))
                 .toArray();
 

@@ -80,9 +80,10 @@
                                             <th>Petugas</th>
                                             <th>Hasil</th>
                                             <th>Ket</th>
-                                            <th>No Reg TB04</th>
-                                            <th>No Sediaan</th>
                                             <th>Tgl Hasil</th>
+                                            <th>NoReg TB04</th>
+                                            <th>Kode</th>
+                                            <th>No Sediaan</th>
                                             <th>Alasan</th>
                                             <th>Faskes</th>
                                         </tr>
@@ -92,19 +93,19 @@
                                 </table>
                             </div>
                             <div class="card-footer form-row d-flex justify-content-end aligment-items-center">
-                                <div class="col-3 pt-2 d-flex aligment-items-center" hidden>
+                                <div class="col-3 pt-2 d-flex aligment-items-center">
                                     <div hidden>
                                         <b class="mr-2">Waktu Selesai Hasil:</b> <span id="waktuSelesai">-</span>
                                     </div>
                                 </div>
-                                <div class="col-auto" id="divSwitch" hidden>
+                                <div class="col-auto" id="divSwitch">
                                     <label class="switch">
                                         <input type="checkbox" id="statusSwitch">
                                         <span class="slider round"></span>
                                         <span id="statusLabel" class="status-text text-dark">Belum</span>
                                     </label>
                                 </div>
-                                {{-- <script>
+                                <script>
                                     // document.getElementById('statusSwitch').addEventListener('change', function() {
                                     //     var statusLabel = document.getElementById('statusLabel');
                                     //     if (this.checked) {
@@ -126,7 +127,7 @@
                                             status = "Belum";
                                         }
                                     });
-                                </script> --}}
+                                </script>
                                 <div class="col-auto">
                                     <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a>
                                 </div>
