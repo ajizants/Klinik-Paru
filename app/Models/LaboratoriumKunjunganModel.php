@@ -36,4 +36,9 @@ class LaboratoriumKunjunganModel extends Model
         return $this->belongsTo(PegawaiModel::class, 'dokter', 'nip');
     }
 
+    public function pasien()
+    {
+        return $this->belongsTo(PasienModel::class, 'norm', 'norm');
+    }
+
 }

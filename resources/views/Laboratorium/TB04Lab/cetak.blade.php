@@ -2,726 +2,375 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cetak</title>
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700;900&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ asset('vendor/plugins/fontawesome-free/css/all.min.css') }}">
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="{{ asset('vendor/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ $title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* CSS untuk mempertebal border pada tabel */
-        .table-bor th,
-        .table-bor td {
-            border: 1.2px solid black;
-            /* Mengatur ketebalan border */
+        @page {
+            width: 33cm;
+            height: 22cm;
+            margin: 0;
+            orientation: landscape;
         }
 
-        @media print {
-            .table-bor td {
-                border: 1.2px solid #000000;
-                /* Hitam dalam format hex */
-                color: #000000;
-                /* Hitam untuk teks */
-            }
+        .kertas {
+            width: 33cm;
+            /* atau bisa coba: 29.7cm 21cm */
+            margin: 0.2cm 0.2cm 0.2cm 0.2cm;
+            scale: 0.8;
+            /* border: 1px solid black; */
+        }
+
+        .table-bor td {
+            border: 1.2px solid #000000;
+            /* Hitam dalam format hex */
+            color: #000000;
+            /* Hitam untuk teks */
+        }
+
+        .table-noborder td {
+            border: none;
         }
     </style>
-    <!-- Script -->
-    <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
-    <!-- Bootstrap 4 -->
-    <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <!-- SweetAlert2 -->
-    <script src="{{ asset('vendor/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
-    <!-- InputMask -->
-    <script src="{{ asset('vendor/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('vendor/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
-    <!-- QR CODE -->
-    <script src="https://unpkg.com/html5-qrcode@2.2.1/minified/html5-qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 
-    <!-- AdminLTE App -->
-    <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
 </head>
 
-<body>
+<body class="flex justify-center">
+    <div class="relative overflow-x-auto">
+        {{-- <table class="w-full text-sm text-left  border-collapse">
+            <thead class="text-xs">
+                <tr>
+                    <td class="text-center border border-black">
+                        <h1 class="font-bold text-md whitespace-nowrap">PROGRAM TB NASIONAL</h1>
+                    </td>
+                    <td class="text-center">
+                    </td>
+                    <td class="text-center border border-black">
+                        <h1 class="font-bold text-md">TB 04</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="text-center">
+                        <h1 class="font-bold text-xl">REGISTER LABORATORIUM TB</h1>
+                    </td>
+                    <td class="text-center border border-black">
+                        <h1 class="font-bold text-md whitespace-nowrap">INDONESIA 2015</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="text-center">
+                        <h1 class="font-bold text-xl">UNTUK LABORATORIUM FASKES MIKROSKOPIS DAN TES CEPAT</h1>
+                    </td>
+                    <td></td>
+                </tr>
+            </thead>
+        </table> --}}
+        <table class="w-full text-sm text-left border-collapse mt-2">
+            <thead class="text-xs table-bor">
 
-    {{-- <div class="container"> --}}
-    <div class="container-fluid">
-        <table class="table  table-borderless " width="100%" style="color: black;">
-            <tbody>
                 <tr>
-                    <td colspan="2" width="20%"
-                        style="text-align: center; padding-top: 10px; padding-bottom: 10px">
-                        <img src="{{ asset('img/banyumas.png') }}" style="width: 100px;">
+                    <th colspan="18" style="border: none !important">
+                        <div class="grid grid-cols-[1fr_2fr_1fr] text-center text-sm">
+                            <div class="p-2 flex justify-start">
+                                <div class="px-2">
+                                    <h1 class="border border-black font-bold text-md px-2">PROGRAM TB NASIONA</h1>
+                                </div>
+                            </div>
+                            <div class="p-2">
+                                <h1 class="font-bold text-xl">REGISTER LABORATORIUM TB TAHUN<input type="text"
+                                        value="2025" class="px-1"style="width: 58px;" /></h1>
+                                <h1 class="font-bold text-xl">UNTUK LABORATORIUM FASKES MIKROSKOPIS DAN TES CEPAT</h1>
+                            </div>
+                            <div class="p-2 flex justify-end">
+                                <div class="px-2">
+                                    <h1 class="border border-black font-bold text-md px-2">TB 04</h1>
+                                    <h1 class="border border-black font-bold text-md px-2">INDONESIA 2015</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="18" style="border: none !important">
+                        <div class="w-full text-sm grid grid-cols-12 gap-y-1">
+                            <!-- Baris 1 -->
+                            <div class="col-span-2 font-medium">Nama Lab. Pemeriksa</div>
+                            <div class="col-span-4">: KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A</div>
+                            <div class="col-span-2"></div>
+                            <div class="col-span-1 text-center text-[8pt]"></div>
+                            <div class="col-span-1 text-center text-[8pt]"></div>
+                            <div class="col-span-1 text-center text-[8pt]"></div>
+
+                            <!-- Baris 2 -->
+                            <div class="col-span-2 font-medium">Kabupaten/Kota</div>
+                            <div class="col-span-4">: Banyumas</div>
+                            <div class="col-span-2 text-right px-2"></div>
+                            <div class="col-span-1 text-center text-[8pt]k"></div>
+                            <div class="col-span-1 text-center text-[8pt]k"></div>
+                            <div class="col-span-1 text-center text-[8pt]k"></div>
+
+                            <!-- Baris 3 -->
+                            <div class="col-span-2 font-medium">Provinsi</div>
+                            <div class="col-span-4">: Jawa Tengah</div>
+                            <div class="col-span-2 text-right px-2"></div>
+                            <div class="col-span-1 text-center text-[8pt]k"></div>
+                            <div class="col-span-1 text-center text-[8pt]k"></div>
+                            <div class="col-span-1 text-center text-[8pt]k"></div>
+                        </div>
+
+                    </th>
+                </tr>
+                {{-- <tr>
+                    <th colspan="18" style="border: none !important">
+                        <div class="w-full text-sm grid grid-cols-12 gap-y-1">
+                            <!-- Baris 1 -->
+                            <div class="col-span-2 font-medium">Nama Lab. Pemeriksa</div>
+                            <div class="col-span-4">: KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A</div>
+                            <div class="col-span-2"></div>
+                            <div class="col-span-1 text-center text-[8pt]">Diagnosis</div>
+                            <div class="col-span-1 text-center text-[8pt]">Follow Up</div>
+                            <div class="col-span-1 text-center text-[8pt]">Total</div>
+
+                            <!-- Baris 2 -->
+                            <div class="col-span-2 font-medium">Kabupaten/Kota</div>
+                            <div class="col-span-4">: Banyumas</div>
+                            <div class="col-span-2 text-right px-2">Jumlah Sediaan Positif *)</div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+
+                            <!-- Baris 3 -->
+                            <div class="col-span-2 font-medium">Provinsi</div>
+                            <div class="col-span-4">: Jawa Tengah</div>
+                            <div class="col-span-2 text-right px-2">Jumlah Sediaan Scanty *)</div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+
+                            <!-- Baris 4 -->
+                            <div class="col-span-2 font-medium">Tahun</div>
+                            <div class="col-span-4">: <input type="text" value="2025" class="border px-1" /></div>
+                            <div class="col-span-2 text-right px-2">Jumlah Sediaan Negatif *)</div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+
+                            <!-- Baris 5 -->
+                            <div class="col-span-2"></div>
+                            <div class="col-span-4"></div>
+                            <div class="col-span-2 text-right px-2">*direkap per lembar</div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                        </div>
+
+                    </th>
+                </tr> --}}
+
+                <tr>
+                    <th class="border border-black p-1 text-center" rowspan="2">Nomor Reg. Lab.</th>
+                    <th class="border border-black p-1 text-center" rowspan="2">Nomor Identitas
+                        Contoh
+                        Uji</th>
+                    <th class="border border-black p-1 text-center" rowspan="2">Tanggal Penerimaan
+                        Contoh
+                        Uji</th>
+                    <th class="border border-black p-1 text-center" rowspan="2">Nama Lengkap Pasien
+                    </th>
+                    <th class="border border-black p-1 text-center" rowspan="2">No Induk Kependudukan
+                    </th>
+                    <th class="border border-black p-1 text-center" rowspan="2">Umur (th)</th>
+                    <th class="border border-black p-1 text-center" rowspan="2">Alamt Lengkap</th>
+                    <th class="border border-black p-1 text-center" rowspan="2">Nama Faskes Asal
+                        Contoh
+                        Uji</th>
+                    <th class="border border-black p-1 text-center" rowspan="2">Alasan Pemeriksaan
+                        (K1)
+                    </th>
+                    <th class="border border-black p-1 text-center" rowspan="2">Alasan Pemeriksaan
+                        (K2)
+                    </th>
+                    <th class="border border-black p-1 text-center text-[7pt]" colspan="3">Hasil
+                        Pemeriksaan Mikroskopis (BTA/Lainnya)</th>
+                    <th class="border border-black p-1 text-center text-[7pt]" colspan="3">Hasil Tes
+                        Cepat Dengan Xpert</th>
+                    <th class="border border-black p-1 text-center text-[7pt]" rowspan="2">Tanda
+                        Tangan
+                    </th>
+                    <th class="border border-black p-1 text-center text-[7pt]" rowspan="2">Ket.</th>
+                </tr>
+                <tr>
+                    <th class="border border-black p-1 text-center">Tgl. Hasil</th>
+                    <th class="border border-black p-1 text-center">1</th>
+                    <th class="border border-black p-1 text-center">2</th>
+                    <th class="border border-black p-1 text-center">Tgl. Pemeriksaan</th>
+                    <th class="border border-black p-1 text-center">Hasil Pemeriksaan</th>
+                    <th class="border border-black p-1 text-center">Tgl. Hasil Dilaporkan</th>
+                </tr>
+                <tr>
+                    <th class="border border-black p-1 text-center">1</th>
+                    <th class="border border-black p-1 text-center">2</th>
+                    <th class="border border-black p-1 text-center">3</th>
+                    <th class="border border-black p-1 text-center">4</th>
+                    <th class="border border-black p-1 text-center">5</th>
+                    <th class="border border-black p-1 text-center">6</th>
+                    <th class="border border-black p-1 text-center">7</th>
+                    <th class="border border-black p-1 text-center">8</th>
+                    <th class="border border-black p-1 text-center">9</th>
+                    <th class="border border-black p-1 text-center">10</th>
+                    <th class="border border-black p-1 text-center">11</th>
+                    <th class="border border-black p-1 text-center">12</th>
+                    <th class="border border-black p-1 text-center">13</th>
+                    <th class="border border-black p-1 text-center">14</th>
+                    <th class="border border-black p-1 text-center">15</th>
+                    <th class="border border-black p-1 text-center">16</th>
+                    <th class="border border-black p-1 text-center">17</th>
+                    <th class="border border-black p-1 text-center">18</th>
+                </tr>
+            </thead>
+            <tbody class="table-bor">
+                @foreach ($data as $item)
+                    <tr>
+                        <td class="p-1 text-left">{{ $item['no_reg_lab'] ?? 'reg lab' }}</td>
+                        <td class="p-1 text-left">{{ $item['no_iden_sediaan'] ?? 'iden sediaan' }}</td>
+                        <td class="p-1 text-left">
+                            {{ \Carbon\Carbon::parse($item['tgl_terima'])->format('d-m-Y') }}
+                        </td>
+
+                        <td class="p-1 text-left">{{ $item['nama'] }} {{ $item['norm'] }}</td>
+                        <td class="p-1 text-left">{{ $item['nik'] }}</td>
+                        <td class="p-1 text-left">{{ $item['umur'] }}</td>
+                        <td class="p-1 text-left">{{ $item['alamat'] }}</td>
+                        <td class=" p-1 text-center"><input type="text" class="w-[50px] text-center"
+                                value="{{ $item['namaFaskes'] }}">
+                        </td>
+
+                        <td class="p-1 text-left">{{ $item['tb04'][0]['alasan_periksa'] ?? 'alasan1' }}</td>
+                        <td class="p-1 text-left">{{ $item['tb04'][1]['alasan_periksa'] ?? 'alasan2' }}</td>
+                        <td class="p-1 text-left">
+                            {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
+                        </td>
+
+                        @if ($item['tb04'][0]['idLayanan'] == 131)
+                            <td></td>
+                            <td></td>
+                            <td class="p-1 text-left">
+                                {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
+                            </td>
+                            <td class="p-1 text-left">
+                                {{ $item['tb04'][0]['hasil'] }} {{ $item['tb04'][0]['idLayanan'] }}
+                            </td>
+                            <td class="p-1 text-left">
+                                {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
+                            </td>
+                        @else
+                            <td class="p-1 text-left">
+                                {{ $item['tb04'][0]['hasil'] }} {{ $item['tb04'][0]['idLayanan'] }}
+                            </td>
+                            <td class="p-1 text-left">
+                                {{ $item['tb04'][1]['hasil'] ?? '' }} {{ $item['tb04'][1]['idLayanan'] ?? '' }}
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        @endif
+
+
+                        <td class=" p-1 text-center"></td>
+                        <td class=" p-1 text-center"></td>
+                    </tr>
+                @endforeach
+
+            <tfoot>
+                <tr>
+                    {{-- <td colspan="3" class="p-1 text-left">
+                        Keterangan :<br>
+                        (1) Nomor Reg. Lab :<br>
+                        Tulis nomor register Lab. Dengan 4 digit, mulai<br>
+                        dengan 0001 pada setiap permulaan tahun dan<br>
+                        tulis berurutan berdasarkan tanggal pemeriksaan<br>
+
+                        (2) No. Identitas Contoh Uji:<br>
+                        Tulis sesuai dengan formulir TB.05<br>
                     </td>
-                    <td colspan="2" width="60%">
-                        <p style="font-size: 20px; margin-bottom: -5px; text-align: center; margin-top: 0px;">
-                            PEMERINTAH KABUPATEN BANYUMAS
-                        </p>
-                        <p style="font-size: 20px; margin-bottom: -5px; text-align: center; margin-top: 0px;">
-                            DINAS KESEHATAN
-                        </p>
-                        <p
-                            style="font-size: 20px; margin-bottom: -5px; text-align: center; margin-top: 0px; font-weight: bold;">
-                            KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A
-                        </p>
-                        <p style="margin-bottom: -5px; text-align: center; margin-top: 0px;">
-                            Jalan A. Yani Nomor 33 Purwokerto Timur, Banyumas, Jawa Tengah
-                        </p>
-                        <p style="margin-bottom: -5px; text-align: center; margin-top: 0px;">
-                            Kode Pos 53111, Telepon (0281) 635658, Pos-el bkpm_purwokerto@yahoo.com
-                        </p>
+                    <td colspan="2" class="p-1 text-left"><br>
+                        (10) Alasan pemeriksan diisi dengan<br>
+                        0 untuk diagnosis<br>
+                        2 atau 3 untuk akhir tahap awal<br>
+                        5 untuk bulan kelima<br>
+                        6 atau 8 untuk akhir pengobatan<br>
                     </td>
-                    <td colspan="2" width="20%"
-                        style="text-align: center; padding-top: 10px; padding-bottom: 10px">
-                        <img src="{{ asset('img/LOGO_KKPM.png') }}" style="width: 100px;">
+                    <td colspan="4" class="p-1 text-left"><br>
+                        (12,13,14) Hasil Pemeriksaan Mikroskopis diisi dengan :<br>
+                        Tulis Neg: Tidak ditemukan BTA dalam 100 LP<br>
+                        Tulis 1+: ditemukan 10-99 BTA dalam 100 LP<br>
+                        Tulis 2+: ditemukan 1-10 BTA dalam 1 LP (periksa minimal 50 LP)<br>
+                        Tulis 3+: ditemukan ≥ 10 BTA dalam 1 LP (periksa minimal 20 LP)<br>
+                        Tulis TD: tidak dilakukan<br>
+                    </td>
+                    <td colspan="7" class="p-1 text-left"><br>
+                        (15) Hasil Pemeriksaan Test Cepat Xpert diisi dengan :<br>
+                        Neg : MTB NOT DETECTED<br>
+                        Rif Sen : MTB DETECTED, RIF RESISTENC NOT DETECTED<br>
+                        RIF Res : MTB DETECTED, RIF RESISTENC DETECTED<br>
+                        Rif Indet : MTB DETECTED, RIF RESISTENC INDETERMINANT<br>
+                        INVALID : Invalid<br>
+                        ERROR : Error<br>
+                        NO RESULT : No Result<br>
+
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="6" class="pt-0">
-                        <hr style="margin-top: 3px; margin-bottom: 0px; border: 0.5px solid black">
-                        <hr style="margin-top: 2px; margin-bottom: 0px; border: 2px solid black">
+
+                    <td colspan="19" class="p-1 text-left">Keterangan :
+                        * Formulir ini digunakan oleh laboratorium yang memiliki kemampuan melakukan pemeriksaan
+                        mikroskopis TB atau
+                        laboratorium yang melakukan mikroskopis TB dan Gen Xpert. Misalnya Puskesmas dan Rumah sakit
+                        yang memiliki alat Gen Xpert.
+                    </td> --}}
+                    <td colspan="19">
+                        <div class="w-full text-sm grid grid-cols-5 gap-y-1">
+                            <!-- Baris 1 -->
+                            <div class="col-span-2"></div>
+                            <div class="col-span-1 text-center text-[8pt]">Diagnosis</div>
+                            <div class="col-span-1 text-center text-[8pt]">Follow Up</div>
+                            <div class="col-span-1 text-center text-[8pt]">Total</div>
+
+                            <!-- Baris 2 -->
+                            <div class="col-span-2 text-right px-2">Jumlah Sediaan Positif *)</div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+
+                            <!-- Baris 3 -->
+                            <div class="col-span-2 text-right px-2">Jumlah Sediaan Scanty *)</div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+
+                            <!-- Baris 4 -->
+                            <div class="col-span-2 text-right px-2">Jumlah Sediaan Negatif *)</div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+
+                            <!-- Baris 5 -->
+                            <div class="col-span-2 text-right px-2">*direkap per lembar</div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                            <div class="col-span-1 text-center text-[8pt] border border-black"></div>
+                        </div>
                     </td>
+
                 </tr>
-                <tr>
-                    <td colspan="6" class="p-0">
-                        <p
-                            style="font-size: 20px; margin-bottom: -5px; text-align: center; padding:0;margin-top: 0px; font-weight: bold;">
-                            HASIL LABORATORIUM
-                        </p>
-                    </td>
-                </tr>
+            </tfoot>
             </tbody>
         </table>
-        {{-- identitas --}}
-        <table class="table table-borderless mb-0" width="100%">
-            <tbody>
-                <tr>
-                    <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
-                        No
-                        RM</td>
-                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
-                        :
-                    </td>
-                    <td width="26%" class="my-0 py-0" style=" text-align: left;">
-                        {{ $lab->norm }}
-                    </td>
-                    <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
-                        Tanggal</td>
-                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
-                        :
-                    </td>
-                    <td width="36%" class="my-0 py-0" style=" text-align: left;">
-                        {{ Carbon\Carbon::parse($lab->created_at)->locale('id')->isoFormat('DD MMMM Y') }} ,
-                        {{ Carbon\Carbon::parse($lab->created_at)->format('H:i') }} WIB
-                    </td>
-                </tr>
-                <tr>
-                    <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
-                        Nama
-                        Pasien</td>
-                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
-                        :
-                    </td>
-                    <td width="26%" class="my-0 py-0" style=" text-align: left;">
-                        {{ $lab->nama }}
-                    </td>
-                    <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
-                        No.
-                        Sampel</td>
-                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
-                        :
-                    </td>
-                    <td width="36%" class="my-0 py-0 px-1 border-0" style=" font-weight: bold; text-align: left;">
-                        <input type="text" name="no_sampel" id="no_sampel" style="border: none; outline: none;"
-                            class="px-2 {{ $lab->no_sampel == null || $lab->no_sampel == '' ? ' bg-warning' : '' }}"
-                            oninput="removeBgWarning('no_sampel')" value="{{ $lab->no_sampel }}" />
-
-                    </td>
-                </tr>
-                <tr>
-                    <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
-                        Umur
-                    </td>
-                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
-                        :
-                    </td>
-                    <td width="26%" class="my-0 py-0 px-1" style=" text-align: left;">
-                        {{-- {{ $resumePasien->umur }}  --}}
-                        @php
-                            // Assuming $resumePasien->umur contains "64th 11bln 10hr"
-                            $umur = $lab->umur;
-
-                            // Use regular expression to capture the year (digits followed by 'th')
-                            preg_match('/(\d+)th/', $umur, $matches);
-
-                            // If a match is found, format the output
-                            if (isset($matches[1])) {
-                                $tahun = $matches[1] . ' th'; // Add a space between the year and "th"
-                            } else {
-                                $tahun = 'N/A'; // Fallback if no match
-                            }
-                        @endphp
-
-                        {{-- <span>{{ $tahun }}</span> --}}
-                        <input type="text" name="umur" id="umur" style="border: none; outline: none;"
-                            class="px-2 {{ $lab->umur == null || $lab->umur == '' ? ' bg-warning' : '' }}"
-                            value="{{ $tahun }}" oninput="removeBgWarning('umur')" />
-
-                    </td>
-                    <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
-                        Dokter</td>
-                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
-                        :
-                    </td>
-                    <td width="36%" class="my-0 py-0" style=" text-align: left;">
-                        {{ $dokter }}
-                    </td>
-                </tr>
-
-                <tr>
-                    <td width="15%" class="my-0 py-0" style=" font-weight: bold; text-align: left;">
-                        Alamat</td>
-                    <td width="5%" class="my-0 py-0" style=" font-weight: bold; text-align: center;">
-                        :
-                    </td>
-                    <td width="26%" class="my-0 py-0" style=" text-align: left;">
-                        {{ $lab->alamat }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div style="font-size: 115%;">
-            {{-- Hematologi --}}
-            <table class="table table-bor border-dark border" width="100%" style="border-size: 2px; color: black;">
-                <thead class="">
-                    <tr style=" font-weight: bold; text-align: left;"><strong>Hematologi</strong></tr>
-                    <tr>
-                        <td class="font-weight-bold
-                        py-2">
-                            PEMERIKSAAN</td>
-                        <td class="text-center font-weight-bold py-2">
-                            HASIL</td>
-                        <td class="font-weight-bold py-2">
-                            NILAI NORMAL</td>
-                    </tr>
-
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="py-2">Hematologi Analizer 5 DIFF</td>
-                        <td class="py-2 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '160') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-2">Terlampir</td>
-                    </tr>
-                    <tr>
-                        <td class="py-2">Golongan Darah</td>
-                        <td class="py-2 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '85') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-2">-</td>
-                    </tr>
-                    <tr>
-                        <td class="py-2">Laju Endap Darah ( LED )</td>
-                        <td class="py-2 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '82') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-2 col-7">
-                            <div class="row">
-                                <div class="col-3">
-                                    <li class="p-0 m-0">Anak-anak: 0–10 mm/jam</li>
-                                </div>
-                                <div class="col">
-                                    <li class="p-0 m-0">Pria di bawah 50 tahun: 0–15 mm/jam</li>
-                                    <li class="p-0 m-0">Pria di atas 50 tahun: 0–20 mm/jam</li>
-                                </div>
-                                <div class="col">
-                                    <li class="p-0 m-0">Wanita di bawah 50 tahun: 0–20 mm/jam</li>
-                                    <li class="p-0 m-0">Wanita di atas 50 tahun: 0–30 mm/jam</li>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            {{-- Kimia Darah --}}
-            <table class="table table-bor border-dark border" width="100%" style="border-size: 2px; color: black;">
-                <thead class="">
-                    <tr style=" font-weight: bold; text-align: left;"><strong>Kimia Darah</strong></tr>
-                    <tr>
-                        <td class="font-weight-bold py-2">
-                            PEMERIKSAAN</td>
-                        <td class="text-center font-weight-bold py-2">
-                            HASIL</td>
-                        <td class="text-center font-weight-bold py-2">
-                            SATUAN</td>
-                        <td class="font-weight-bold py-2">
-                            NILAI NORMAL</td>
-                    </tr>
-
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="py-1">SGPT</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '100') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1 text-center">u/l</td>
-                        <td class="py-1">Pria: ≤ 45; Wanita: ≤ 34</td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">SGOT</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '101') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1 text-center">u/l</td>
-                        <td class="py-1">Pria: ≤ 37; Wanita: ≤ 31</td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">CHOLESTEROL</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '218' || $item['idLayanan'] == '111') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1 text-center">mg/dl</td>
-                        <td class="py-1">s/d 200 </td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">GULA DARAH</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '217' || $item['idLayanan'] == '108') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1 text-center">mg/dl</td>
-                        <td class="py-1">Puasa: 70 - 115; Sewaktu: 70 - 180</td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">TRIGLISERID</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '110') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1 text-center">mg/dl</td>
-                        <td class="py-1">s/d 150</td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">ASAM URAT</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '99' || $item['idLayanan'] == '216') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1 text-center">mg/dl</td>
-                        <td class="py-1">Pria: 3,4 - 7,0; Wanita: 2,4 - 5,7</td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">UREUM</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '97') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1 text-center">mg/dl</td>
-                        <td class="py-1 col-7">
-                            <div class="row">
-                                <div class="col-2">
-                                    <li class="p-0 m-0">Bayi: ≤ 42</li>
-                                </div>
-                                <div class="col">
-                                    <li class="p-0 m-0">Anak ≤ 6 bln: < 42; Anak> 6 bln: < 48</li>
-                                </div>
-                                <div class="col">
-                                    <li class="p-0 m-0">Dewasa ≤ 65 thn: < 50; Dewasa> 65 thn: < 70</li>
-                                </div>
-                            </div>
-                            {{-- Bayi: ≤ 42 --}}
-                        </td>
-                    </tr>
-                    {{-- <tr>
-                        <td class="py-1">Anak ≤ 6 bln: < 42; Anak> 6 bln: < 48</td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">Dewasa ≤ 65 thn: < 50; Dewasa> 65 thn: < 70</td>
-                    </tr> --}}
-                    <tr>
-                        <td class="py-1">CREATININ</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '98') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1 text-center">mg/dl</td>
-                        <td class="py-1">
-                            <div class="row">
-                                <div class="col-2">
-                                    <li class="p-0 m-0">Bayi: ≤ 12</li>
-                                </div>
-                                <div class="col">
-                                    <li class="p-0 m-0">Anak 2 - 12 bln: < 0,9; Anak> 1 thn: < 1,0</li>
-                                </div>
-                                <div class="col">
-                                    <li class="p-0 m-0">Dewasa Pria: 0,6 - 1,4; Dewasa Wanita: 0,6 - 1,2</li>
-                                </div>
-                            </div>
-                            {{-- Bayi: < 12 --}}
-                        </td>
-                    </tr>
-                    {{-- <tr>
-                        <td class="py-1">Anak 2 - 12 bln: < 0,9; Anak> 1 thn: < 1,0</td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">Dewasa Pria: 0,6 - 1,4; Dewasa Wanita: 0,6 - 1,2</td>
-                    </tr> --}}
-                </tbody>
-
-            </table>
-            {{-- BTA & TCM --}}
-            <table class="table table-bor border-dark border" width="100%" style="border-size: 2px; color: black;">
-                <thead class="">
-                    <tr style=" font-weight: bold; text-align: left;"><strong>Bakteriologi</strong></tr>
-                    <tr>
-                        <td class="font-weight-bold
-                        py-2">
-                            PEMERIKSAAN</td>
-                        <td class="text-center font-weight-bold py-2">
-                            HASIL</td>
-                        <td class="font-weight-bold py-2">
-                            NILAI NORMAL</td>
-                    </tr>
-
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="py-1">BTA 1</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '130') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1 col-7">Negatif</td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">BTA 2</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '214') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1">Negatif</td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">TCM</td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '218' || $item['idLayanan'] == '131') {
-                                        $hasil = $item['hasil'];
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            {{ $hasil }}
-                        </td>
-                        <td class="py-1">Negatif</td>
-                    </tr>
-                </tbody>
-            </table>
-            {{-- HIV $ Syph --}}
-            <table class="table table-bor border-dark border" width="100%" style="border-size: 2px; color: black;">
-                <thead class="">
-                    <tr style=" font-weight: bold; text-align: left;"><strong>Imunologi</strong></tr>
-                    <tr>
-                        <td class="font-weight-bold py-2"> PEMERIKSAAN</td>
-                        <td class="font-weight-bold py-2"> NAMA REAGENSIA</td>
-                        <td class="text-center font-weight-bold py-2"> HASIL PEMERIKSAAN</td>
-                        <td class="text-center font-weight-bold py-2"> HASIL AKHIR</td>
-                        <td class="font-weight-bold py-2"> CATATAN</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="py-1" rowspan="3">HIV</td>
-                        <td class="py-1">
-                            <input type="text" name="reagen_1" id="reagen_1"
-                                style="border: none; outline: none;" value="" class="col bg-warning"
-                                oninput="removeBgWarning('reagen_1')" />
-                        </td>
-                        <td class="py-1 text-center">
-                            <input type="checkbox" id="hiv_nr_1" name="hiv_nr_1" style="transform: scale(2);">
-                            <Label for="hiv_nr_1" class="ml-2 mr-5">Non Reaktif</Label>
-                            <input type="checkbox" id="hiv_r_1" name="hiv_r_1" style="transform: scale(2);">
-                            <Label for="hiv_r_1" class="ml-2">Reaktif</Label>
-                        <td class="py-1 pl-3" rowspan="3">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '129') {
-                                        $hasil = $item['hasil']; // Dapatkan hasil
-                                        break; // Keluar dari loop setelah menemukan item yang cocok
-                                    }
-                                }
-                            @endphp
-                            <div class="form-group">
-                                <input type="checkbox" id="kes_nr" name="kes_nr" style="transform: scale(2);"
-                                    @if ($hasil == 'NR') checked @endif>
-                                <label for="kes_nr" class="ml-2 mr-5">NON REAKTIF</label>
-                            </div>
-                            <div class="form-group">
-                                <input type="checkbox" id="kes_r" name="kes_r" style="transform: scale(2);"
-                                    @if ($hasil == 'R') checked @endif>
-                                <label for="kes_r" class="ml-2">REAKTIF</label>
-                            </div>
-                            <div class="form-group">
-                                <input type="checkbox" id="kes_inkon" name="kes_inkon" style="transform: scale(2);"
-                                    @if ($hasil == 'INK') checked @endif>
-                                <label for="kes_inkon" class="ml-2">INKONKLUSIF</label>
-                            </div>
-                        </td>
-                        <td class="py-1 col-2" style="font-size: 80%" rowspan="3">Hasil Tes Non Reaktif tidak
-                            termasuk pemaparan terhadap
-                            HIV yang terjadi
-                            baru-baru ini. (Klien mungkin sedang dalam masa jendela dari infeksi HIV)
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">
-                            <input type="text" name="reagen_2" id="reagen_2"
-                                style="border: none; outline: none;" value="" class="col bg-warning"
-                                oninput="removeBgWarning('reagen_2')" />
-                        </td>
-                        <td class="py-1 text-center">
-                            <input type="checkbox" id="hiv_nr_2" name="hiv_nr_2" style="transform: scale(2);">
-                            <Label for="hiv_nr_2" class="ml-2 mr-5">Non Reaktif</Label>
-                            <input type="checkbox" id="hiv_r_2" name="hiv_r_2" style="transform: scale(2);">
-                            <Label for="hiv_r_2" class="ml-2">Reaktif</Label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">
-                            <input type="text" name="reagen_3" id="reagen_3"
-                                style="border: none; outline: none;" value="" class="col bg-warning"
-                                oninput="removeBgWarning('reagen_3')" />
-                        </td>
-                        <td class="py-1 text-center">
-                            <input type="checkbox" id="hiv_nr_3" name="hiv_nr_3" style="transform: scale(2);">
-                            <Label for="hiv_nr_3" class="ml-2 mr-5">Non Reaktif</Label>
-                            <input type="checkbox" id="hiv_r_3" name="hiv_r_3" style="transform: scale(2);">
-                            <Label for="hiv_r_3" class="ml-2">Reaktif</Label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="py-1">SIFILIS (SIPILIS) </td>
-                        <td class="py-1">
-                            <input type="text" name="reagen_4" id="reagen_4"
-                                style="border: none; outline: none;" value="" class="col bg-warning"
-                                oninput="removeBgWarning('reagen_4')" />
-                        </td>
-                        <td class="py-1 text-center">
-                            @php
-                                $hasil = '-';
-                                foreach ($lab->pemeriksaan as $item) {
-                                    if ($item['idLayanan'] == '215') {
-                                        $hasil = $item['hasil']; // Dapatkan hasil
-                                        break; // Keluar dari loop setelah menemukan item yang cocok
-                                    }
-                                }
-                            @endphp
-                            {{-- <div class="form-group"> --}}
-                            <input type="checkbox" id="syp_neg" name="syp_neg" style="transform: scale(2);"
-                                @if ($hasil == 'Negatif') checked @endif>
-                            <label for="syp_neg" class="ml-2 mr-5">Negatif</label>
-                            {{-- </div>
-                            <div class="form-group"> --}}
-                            <input type="checkbox" id="syp_pos" name="syp_pos" style="transform: scale(2);"
-                                @if ($hasil == 'Positif') checked @endif>
-                            <label for="syp_pos" class="ml-2">Positif</label>
-                            {{-- </div> --}}
-                        </td>
-                        <td class="py-1 text-center" colspan="2">Nilai Normal: Negatif</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            {{-- Petugas --}}
-            <table class="table table-borderless" width="100%"">
-                <tbody>
-                    <tr>
-                        <td width="70%" colspan="3" class="py-6 mt-6"></td>
-                        <td class="py-2">Petugas Pemeriksa,</td>
-                    </tr>
-                    <tr>
-                        <td colspan="4" class="py-2 " height="50px"></td>
-                    </tr>
-                    <tr>
-                        <td width="70%" colspan="3" class="py-2 "></td>
-                        <td class="py-2">{{ $analis }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
     </div>
-
-    <script>
-        Swal.fire({
-            icon: 'info',
-            title: 'Untuk mencetak hasil lab, silahkan klik tombol \n "ENTER" \n pada tombol keyboard.\n\n' +
-                'Jangan Lupa Mengisikan Umur Paien dan No Sample. Terima Kasih.',
-        })
-
-        //buatkan fungsi cek, apakah umur dan no_sampel sudah diisi saat sebelum cetak
-        function cetak() {
-            var umur = document.getElementById("umur").value;
-            var no_sampel = document.getElementById("no_sampel").value;
-            if (umur == "" || no_sampel == "") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Umur dan No Sample harus diisi terlebih dahulu!',
-                }).then(() => {
-                    if (document.getElementById("no_sampel").value == "") {
-                        document.getElementById("no_sampel").focus();
-                    } else {
-                        document.getElementById("umur").focus();
-                    }
-                    return false;
-                })
-                //fokuskan pada umur dan no_sampel
-            } else {
-                window.print();
-                // window.onafterprint = function() {
-                window.close();
-                // }
-            }
-        }
-        document.getElementById("no_sampel").focus();
-
-        function removeBgWarning(id) {
-            const input = document.getElementById(id);
-            if (input.value) {
-                input.classList.remove('bg-warning');
-            } else {
-                input.classList.add('bg-warning');
-            }
-        }
-
-        //bagaimana untuk mengecek umur dan no_sampel jika cetak dari tombol CTRL + P dan browser
-        document.addEventListener("keydown", function(event) {
-            if (event.key === "Enter") {
-                cetak();
-            }
-        })
-    </script>
 </body>
 
 </html>

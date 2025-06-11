@@ -64,9 +64,14 @@
                     <div class="col p-0">
                         <div class="card card-success">
                             <div class="card-header">
-                                <h4 class="card-title">Input Hasil Pemeriksaan Laboratorium</h4>
+                                <h3 class="card-title">Input Hasil Pemeriksaan Laboratorium</h3>
                             </div>
                             <div class="card-body py-1">
+                                <div class="container-fluid">
+                                    <h5 class="bg-yellow font-weight-bold p-2">No Reg. laborat
+                                        Selanjutnya adalah: <span id="no_reg_lab_next"
+                                            class="bg-yellow font-weight-bold mx-4"></span></h5>
+                                </div>
                                 <table id="inputHasil" class="table table-tight">
                                     <thead>
                                         <tr>
@@ -79,6 +84,7 @@
                                             <th>No Sediaan</th>
                                             <th>Tgl Hasil</th>
                                             <th>Alasan</th>
+                                            <th>Faskes</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -131,5 +137,4 @@
                             </div>
                         </div>
                     </div>
-
                 </div>

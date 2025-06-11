@@ -79,6 +79,7 @@ async function cariTsLab(norm, tgl, task) {
                 $("#alamat").val(data.alamat);
                 $("#notrans").val(data.notrans);
                 $("#layanan").val(data.layanan);
+                $("#no_reg_lab_next").html(data.no_reg_lab_next);
                 $("#dokter").val(data.dokter).trigger("change");
                 $("#analis").val(data.petugas).trigger("change");
                 var rawDateTime = data.waktu_selesai;
@@ -141,12 +142,13 @@ async function dataLab(pemeriksaan, notrans) {
         ket: item.ket || "",
         idLab: item.idLab,
         idLayanan: item.pemeriksaan?.idLayanan ?? "",
-        no_reg_lab: item.pemeriksaan?.no_reg_lab ?? "",
-        no_iden_sediaan: item.pemeriksaan?.no_iden_sediaan ?? "25/K3302730/",
-        tgl_hasil: item.pemeriksaan?.tgl_hasil ?? tglSekarang,
-        alasan_periksa: item.pemeriksaan?.alasan_periksa ?? "",
         kelas: item.pemeriksaan?.kelas ?? "",
         kdTind: item.pemeriksaan?.kdTind ?? "",
+        no_reg_lab: item.no_reg_lab ?? "",
+        no_iden_sediaan: item.no_iden_sediaan,
+        tgl_hasil: item.tgl_hasil ?? tglSekarang,
+        alasan_periksa: item.alasan_periksa ?? "",
+        namaFaskes: item.namaFaskes ?? "KKPM",
     }));
 
     // const table = $("#inputHasil").DataTable({
@@ -326,6 +328,24 @@ async function dataLab(pemeriksaan, notrans) {
                             hasilLabHtml += `<option value="Hasil di SITB" ${
                                 data === "Hasil di SITB" ? "selected" : ""
                             }>Hasil di SITB (TCM)</option>`;
+                            hasilLabHtml += `<option value="Rif Sen" ${
+                                data === "Rif Sen" ? "selected" : ""
+                            }>Rif Sen (TCM)</option>`;
+                            hasilLabHtml += `<option value="Rif Res" ${
+                                data === "Rif Res" ? "selected" : ""
+                            }>Rif Res (TCM)</option>`;
+                            hasilLabHtml += `<option value="Rif Indet" ${
+                                data === "Rif Indet" ? "selected" : ""
+                            }>Rif Indet (TCM)</option>`;
+                            hasilLabHtml += `<option value="INVALID" ${
+                                data === "INVALID" ? "selected" : ""
+                            }>INVALID (TCM)</option>`;
+                            hasilLabHtml += `<option value="ERROR" ${
+                                data === "ERROR" ? "selected" : ""
+                            }>ERROR (TCM)</option>`;
+                            hasilLabHtml += `<option value="No Result" ${
+                                data === "No Result" ? "selected" : ""
+                            }>No Result (TCM)</option>`;
                             hasilLabHtml += `<option value="Negatif" ${
                                 data === "Negatif" ? "selected" : ""
                             }>Negatif (BTA/TCM)</option>`;
@@ -447,6 +467,11 @@ async function dataLab(pemeriksaan, notrans) {
                 render: (data, type, row) =>
                     `<input type="text" class="form-control-sm col hasil" id="alasan_periksa${row.idLab}" value="${data}">`,
             },
+            {
+                data: "namaFaskes",
+                render: (data, type, row) =>
+                    `<input type="text" class="form-control-sm col hasil" id="namaFaskes${row.idLab}" value="${data}">`,
+            },
         ],
         order: [[2, "desc"]],
         scrollY: "320px",
@@ -531,6 +556,7 @@ function simpan() {
             no_iden_sediaan: $("#no_iden_sediaan" + row.idLab).val(),
             tgl_hasil: $("#tgl_hasil" + row.idLab).val(),
             alasan_periksa: $("#alasan_periksa" + row.idLab).val(),
+            namaFaskes: $("#namaFaskes" + row.idLab).val(),
         }))
         .toArray();
 

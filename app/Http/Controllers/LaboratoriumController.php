@@ -83,6 +83,134 @@ class LaboratoriumController extends Controller
         // return $data;
         return view('Laboratorium.TB04Lab.main', ['data' => $data])->with('title', $title);
     }
+    public function cetakTb04($tanggal)
+    {
+        $title = 'Laporan TB 04';
+
+        // $data = LaboratoriumHasilModel::with('biodataPasien', 'pemeriksaan')
+        //     ->whereIn('idLayanan', [130, 131, 214])
+        //     ->get();
+        // return $data;
+
+        $data = $this->getDataTb04Cetak([130, 214], $tanggal)
+            ->concat($this->getDataTb04Cetak([131]), $tanggal)
+            ->values(); // mengatur ulang index Collection
+        // return $data;
+
+        $res = [];
+        foreach ($data as $item) {
+            $umur = explode('th', $item['umur']);
+            if ($item['tb04'][0]['idLayanan'] == 131) {
+                $alasanPeriksa1 = $item['tb04'][0]['alasan_periksa'];
+                $alasanPeriksa2 = '-';
+                $hasil1 = $item['tb04'][0]['hasil'];
+                $hasil2 = '-';
+            } else {
+                $alasanPeriksa1 = $item['tb04'][0]['alasan_periksa'];
+                $alasanPeriksa2 = $item['tb04'][1]['alasan_periksa'] ?? '-';
+                $hasil1 = $item['tb04'][0]['hasil'];
+                $hasil2 = $item['tb04'][1]['hasil'] ?? '-';
+
+            }
+            $res[] = [
+                'id' => $item['id'],
+                'norm' => $item['norm'],
+                'notrans' => $item['notrans'],
+                'no_reg_lab' => $item['tb04'][0]['no_reg_lab'],
+                'no_iden_sediaan' => $item['tb04'][0]['no_iden_sediaan'],
+                'tgl_terima' => $item['tanggal'],
+                'nama' => $item['nama'],
+                'nik' => $item['pasien']['noktp'],
+                'umur' => $umur[0] . ' th',
+                'alamat' => $item['alamat'],
+                'namaFaskes' => $item['namaFaskes'],
+                'tb04' => $item['tb04'],
+            ];
+        }
+        usort($res, function ($a, $b) {
+            return $a['no_reg_lab'] <=> $b['no_reg_lab'];
+        });
+
+        // return $res;
+        return view('Laboratorium.TB04Lab.cetak', ['data' => $res])->with('title', $title);
+    }
+    public function getDataTb04Cetak($filter = null, $tanggal = null)
+    {
+        $date = $tanggal ? Carbon::parse($tanggal) : Carbon::now();
+        //buat $tgl adalah 15 hari dari $date
+        $tglAkhir = $date->format('Y-m-d');
+        $tgl = $date->subDays(15);
+        $tglAwal = $tgl->format('Y-m-d');
+        // dd($tgl);
+        $data = LaboratoriumKunjunganModel::with(['tb04' => function ($query) use ($filter) {
+            $query->whereIn('idLayanan', $filter);
+        }])
+            ->whereHas('tb04', function ($query) use ($filter) {
+                $query->whereIn('idLayanan', $filter);
+            })
+            ->whereBetween('created_at', [$tglAwal . ' 00:00:00', $tglAkhir . ' 23:59:59'])
+            ->orderBy('id', 'desc')
+            ->with('pasien')
+            ->get();
+
+        foreach ($data as $item) {
+            $pemeriksaan = $item->tb04;
+            $nonNullHasilCount = 0;
+            $nmLayananList = [];
+
+            foreach ($pemeriksaan as $periksa) {
+                if (!is_null($periksa->no_reg_lab)) {
+                    $nonNullHasilCount++;
+                }
+
+                if (!empty($periksa->pemeriksaan->nmLayanan)) {
+                    $nmLayananList[] = $periksa->pemeriksaan->nmLayanan;
+                }
+            }
+
+            $item->pemeriksaan = implode(', ', $nmLayananList);
+            $item->jmlh = $pemeriksaan->count();
+
+            if ($nonNullHasilCount === 0) {
+                $item->status = 'Belum';
+            } elseif ($nonNullHasilCount < $item->jmlh) {
+                $item->status = 'Belum Lengkap';
+            } else {
+                $item->status = 'Lengkap';
+            }
+
+            $doctorNipMap = [
+                '198311142011012002' => 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.',
+                '9' => 'dr. Agil Dananjaya, Sp.P',
+                '198907252019022004' => 'dr. Filly Ulfa Kusumawardani',
+                '198903142022031005' => 'dr. Sigit Dwiyanto',
+            ];
+            $item->nama_dokter = $doctorNipMap[$item['dokter']] ?? 'Unknown';
+
+            // Tambahan properti baru
+            $item->tgl = \Carbon\Carbon::parse($item->created_at)->format('Y-m-d');
+            $item->tanggal = \Carbon\Carbon::parse($item->created_at)->format('d-m-Y');
+
+            // Bersihkan alamat dan ambil desa
+            $item->alamat = preg_replace('/, [^,]*$/', '', $item->alamat);
+            $alamatParts = explode(',', $item->alamat);
+            $item->desa = trim($alamatParts[0] ?? '');
+
+            // Buat tombol aksi
+            $item->aksi = '<a class="m-1 col btn btn-danger"
+                             data-toggle="tooltip"
+                             data-placement="right"
+                             title="Edit Hasil Lab"
+                             data-norm="' . $item->norm . '"
+                             data-nama="' . $item->nama . '"
+                             data-alamat="' . $item->alamat . '"
+                             onclick="cariTsLab(\'' . $item->norm . '\', \'' . $item->tgl . '\', \'tampil\');">
+                             <i class="fa-solid fa-file-pen"></i>
+                         </a>';
+        }
+
+        return $data;
+    }
     public function getDataTb04($tanggal = null)
     {
         $date = $tanggal ? Carbon::parse($tanggal) : Carbon::now();
@@ -99,6 +227,7 @@ class LaboratoriumController extends Controller
             })
             ->whereBetween('created_at', [$tglAwal . ' 00:00:00', $tglAkhir . ' 23:59:59'])
             ->orderBy('created_at', 'desc')
+            ->with('pasien')
             ->get();
 
         foreach ($data as $item) {
@@ -214,8 +343,14 @@ class LaboratoriumController extends Controller
         $jumlah = $data->count();
         // buatkan $noSample format 001
         $noSample = str_pad($jumlah + 1, 3, '0', STR_PAD_LEFT);
+        $no_reg_lab = LaboratoriumHasilModel::max('no_reg_lab');
+        if ($no_reg_lab == null) {
+            $no_reg_lab = 0;
+        }
+        $no_reg_lab = $no_reg_lab + 1;
         $res = [
             'noSample' => $noSample,
+            'no_reg_lab' => $no_reg_lab,
         ];
         return response()->json($res, 200, [], JSON_PRETTY_PRINT);
     }
@@ -243,6 +378,12 @@ class LaboratoriumController extends Controller
                     $data->pemeriksaan = $pemeriksaan;
                 }
 
+                $no_reg_lab = LaboratoriumHasilModel::max('no_reg_lab');
+                if ($no_reg_lab == null) {
+                    $no_reg_lab = 0;
+                }
+                $data->no_reg_lab_next = $no_reg_lab + 1;
+
                 $lab = json_decode($data, true);
                 if ($data == null) {
                     $res = [
@@ -260,6 +401,7 @@ class LaboratoriumController extends Controller
                 $data = LaboratoriumHasilModel::with('pemeriksaan')
                     ->where('notrans', 'like', '%' . $notrans . '%')
                     ->whereDate('created_at', 'like', '%' . $tgl . '%')->get();
+
                 return response()->json($data, 200, [], JSON_PRETTY_PRINT);
             }
         } catch (\Exception $e) {
@@ -494,6 +636,7 @@ class LaboratoriumController extends Controller
                             'no_iden_sediaan' => $data['no_iden_sediaan'] ?? '',
                             'tgl_hasil' => $data['tgl_hasil'] ?? null,
                             'alasan_periksa' => $data['alasan_periksa'] ?? '',
+                            'namaFaskes' => $data['namaFaskes'] ?? 'KKPM',
 
                             // 'updated_at' => now(), // Jika ada kolom updated_at dan ingin diperbarui
                         ]);

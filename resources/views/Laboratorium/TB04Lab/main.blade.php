@@ -140,6 +140,7 @@
             const analisData = await analisResponse.json();
             const tglSekarang = new Date().toISOString().split("T")[0];
 
+
             const data = pemeriksaan.map((item, index) => ({
                 no: index + 1,
                 norm: item.norm,
@@ -149,12 +150,13 @@
                 ket: item.ket || "",
                 idLab: item.idLab,
                 idLayanan: item.pemeriksaan?.idLayanan ?? "",
-                no_reg_lab: item.pemeriksaan?.no_reg_lab ?? "",
-                no_iden_sediaan: item.pemeriksaan?.no_iden_sediaan ?? "25/K3302730/",
-                tgl_hasil: item.pemeriksaan?.tgl_hasil ?? tglSekarang,
-                alasan_periksa: item.pemeriksaan?.alasan_periksa ?? "",
                 kelas: item.pemeriksaan?.kelas ?? "",
                 kdTind: item.pemeriksaan?.kdTind ?? "",
+                no_reg_lab: item.no_reg_lab ?? "",
+                no_iden_sediaan: item.no_iden_sediaan,
+                tgl_hasil: item.tgl_hasil ?? tglSekarang,
+                alasan_periksa: item.alasan_periksa ?? "",
+                namaFaskes: item.namaFaskes ?? "KKPM",
             }));
 
 
@@ -200,6 +202,24 @@
                                     hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
                                     hasilLabHtml += `<option value="Hasil di SITB" ${
                                 data === "Hasil di SITB" ? "selected" : ""
+                            }>Hasil di SITB (TCM)</option>`;
+                                    hasilLabHtml += `<option value="Rif Sen" ${
+                                data === "Rif Sen" ? "selected" : ""
+                            }>Hasil di SITB (TCM)</option>`;
+                                    hasilLabHtml += `<option value="Rif Res" ${
+                                data === "Rif Res" ? "selected" : ""
+                            }>Hasil di SITB (TCM)</option>`;
+                                    hasilLabHtml += `<option value="Rif Indet" ${
+                                data === "Rif Indet" ? "selected" : ""
+                            }>Hasil di SITB (TCM)</option>`;
+                                    hasilLabHtml += `<option value="INVALID" ${
+                                data === "INVALID" ? "selected" : ""
+                            }>Hasil di SITB (TCM)</option>`;
+                                    hasilLabHtml += `<option value="ERROR" ${
+                                data === "ERROR" ? "selected" : ""
+                            }>Hasil di SITB (TCM)</option>`;
+                                    hasilLabHtml += `<option value="No Result" ${
+                                data === "No Result" ? "selected" : ""
                             }>Hasil di SITB (TCM)</option>`;
                                     hasilLabHtml += `<option value="Negatif" ${
                                 data === "Negatif" ? "selected" : ""
@@ -289,28 +309,37 @@
                     {
                         data: "ket",
                         render: (data, type, row) =>
-                            `<input type="text" class="form-control-sm col hasil" id="ket${row.idLab}" value="${data}">`,
+                            `<input type="text" class="form-control-sm col hasil" id="ket${row.idLab}" value="${data}" placeholder="Keterangan">`,
                     },
                     {
                         data: "no_reg_lab",
                         render: (data, type, row) => {
                             let noRegHtml = "";
                             const arraykdTindakan = ["130", "131", "214"];
-                            if (arraykdTindakan.includes(row.kdTindakan)) {
+                            if (arraykdTindakan.includes(String(row.idLayanan))) {
                                 noRegHtml =
                                     `<input type="text" class="form-control-sm col hasil" id="no_reg_lab${row.idLab}" value="${data}">`;
                             } else {
                                 noRegHtml =
-                                    `<input type="text" class="form-control-sm col hasil" id="no_reg_lab${row.idLab}" value="${data}" readonly>`;
+                                    `<input type="text" class="form-control-sm col hasil bg-secondary" id="no_reg_lab${row.idLab}" value="${data}" readonly>`;
                             }
                             return noRegHtml;
-                        }
+                        },
                     },
                     {
                         data: "no_iden_sediaan",
-                        render: (data, type, row) =>
-
-                            `<input type="text" class="form-control-sm col hasil" id="no_iden_sediaan${row.idLab}" value="${data}">`,
+                        render: (data, type, row) => {
+                            let noIdenHtml = "";
+                            const arraykdTindakan = ["130", "131", "214"];
+                            if (arraykdTindakan.includes(String(row.idLayanan))) {
+                                noIdenHtml =
+                                    `<input type="text" class="form-control-sm col hasil" id="no_iden_sediaan${row.idLab}" value="${data}">`;
+                            } else {
+                                noIdenHtml =
+                                    `<input type="text" class="form-control-sm col hasil bg-secondary" id="no_iden_sediaan${row.idLab}" value="" readonly>`;
+                            }
+                            return noIdenHtml;
+                        },
                     },
                     {
                         data: "tgl_hasil",
@@ -322,7 +351,11 @@
                         render: (data, type, row) =>
                             `<input type="text" class="form-control-sm col hasil" id="alasan_periksa${row.idLab}" value="${data}">`,
                     },
-
+                    {
+                        data: "namaFaskes",
+                        render: (data, type, row) =>
+                            `<input type="text" class="form-control-sm col hasil" id="namaFaskes${row.idLab}" value="${data}">`,
+                    },
                 ],
                 order: [
                     [2, "desc"]

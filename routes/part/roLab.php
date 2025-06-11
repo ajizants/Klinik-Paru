@@ -54,12 +54,14 @@ Route::post('deleteLab', [LaboratoriumController::class, 'deleteLab']);
 Route::post('hasil/lab', [LaboratoriumController::class, 'hasil']);
 Route::get('hasil/lab/cetak/{notrans}/{tgl}', [LaboratoriumController::class, 'cetak'])->name('cetak-lab');
 Route::post('hasil/antrian', [LaboratoriumController::class, 'antrianHasil']);
-Route::get('tb04/antrian/{tanggal}', [LaboratoriumController::class, 'getDataTb04']);
 Route::post('rekap/Kunjungan_Lab', [LaboratoriumController::class, 'rekapKunjungan']);
 Route::post('rekap/lab/poin', [LaboratoriumController::class, 'poinPetugas']);
 Route::post('rekap/lab/jumlah_pemeriksaan', [LaboratoriumController::class, 'jumlah_pemeriksaan']);
 Route::post('rekap/lab/waktu_pemeriksaan', [LaboratoriumController::class, 'waktu_pemeriksaan']);
 Route::get('lab/cetakPermintaan/{notras}/{norm}/{tgl}', [LaboratoriumController::class, 'cetakPermintaan']);
+
+Route::get('tb04/antrian/{tanggal}', [LaboratoriumController::class, 'getDataTb04']);
+Route::get('tb04/cetak/{tanggal}', [LaboratoriumController::class, 'cetakTb04']);
 
 Route::post('lab/laporan/kunjungan', [LaboratoriumController::class, 'rekapKunjunganLab']);
 Route::post('lab/laporan/kunjungan/item', [LaboratoriumController::class, 'rekapKunjunganLabItem']);
