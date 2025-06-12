@@ -9,8 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @page {
-            width: 33cm;
-            height: 22cm;
+            width: 29.7cm;
+            height: 21cm;
             margin: 0.5cm 0.5cm 0.5cm 0.5cm;
             orientation: landscape;
         }
@@ -189,8 +189,8 @@
                         Asal
                         Contoh
                         Uji</th>
-                    <th class="border border-black p-1 text-center" rowspan="2" style="width: 70.5px; ">Alasan
-                        Pemeriksaan
+                    <th class="border border-black p-1 text-center" rowspan="2" style="width: 40px; ">Alasan
+                        Peme riksaan
                         (K1)
                     </th>
                     {{-- <th class="border border-black p-1 text-center" rowspan="2">Alasan Pemeriksaan
@@ -209,9 +209,9 @@
                     <th class="border border-black p-1 text-center" style="width: 90.5px;">Tgl. Hasil</th>
                     <th class="border border-black p-1 text-center">1</th>
                     <th class="border border-black p-1 text-center">2</th>
-                    <th class="border border-black p-1 text-center">Tgl. Pemeriksaan</th>
+                    <th class="border border-black p-1 text-center"style="width: 90.5px;">Tgl. Pemeriksaan</th>
                     <th class="border border-black p-1 text-center">Hasil Pemeriksaan</th>
-                    <th class="border border-black p-1 text-center">Tgl. Hasil Dilaporkan</th>
+                    <th class="border border-black p-1 text-center"style="width: 90.5px;">Tgl. Hasil Dilaporkan</th>
                 </tr>
                 <tr>
                     <th class="border border-black p-1 text-center">1</th>
@@ -259,9 +259,9 @@
                                 value="{{ $item['namaFaskes'] ?? 'KKPM' }}">
                         </td>
 
-                        <td class="p-1 text-left">{{ $item['tb04'][0]['alasan_periksa'] ?? 'alasan1' }}</td>
+                        <td class="p-1 text-center">{{ $item['tb04'][0]['alasan_periksa'] ?? 'alasan1' }}</td>
                         {{-- <td class="p-1 text-left">{{ $item['tb04'][1]['alasan_periksa'] ?? 'alasan2' }}</td> --}}
-                        <td class="p-1 text-left">
+                        <td class="p-1 text-center">
                             {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
                         </td>
 
@@ -271,19 +271,19 @@
                             <td class="p-1 text-center" style="width: 90.5px;">
                                 {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
                             </td>
-                            <td class="p-1 text-left">
+                            <td class="p-1 text-center">
                                 {{ $item['tb04'][0]['hasil'] }}
                                 {{-- {{ $item['tb04'][0]['idLayanan'] }} --}}
                             </td>
-                            <td class="p-1 text-left">
+                            <td class="p-1 text-center">
                                 {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
                             </td>
                         @else
-                            <td class="p-1 text-left">
+                            <td class="p-1 text-center">
                                 {{ $item['tb04'][0]['hasil'] }}
                                 {{-- {{ $item['tb04'][0]['idLayanan'] }} --}}
                             </td>
-                            <td class="p-1 text-left">
+                            <td class="p-1 text-center">
                                 {{ $item['tb04'][1]['hasil'] ?? '' }}
                                 {{-- {{ $item['tb04'][1]['idLayanan'] ?? '' }} --}}
                             </td>
