@@ -61,7 +61,8 @@ Route::post('rekap/lab/waktu_pemeriksaan', [LaboratoriumController::class, 'wakt
 Route::get('lab/cetakPermintaan/{notras}/{norm}/{tgl}', [LaboratoriumController::class, 'cetakPermintaan']);
 
 Route::get('tb04/antrian/{tanggal}', [LaboratoriumController::class, 'getDataTb04']);
-Route::get('tb04/cetak/{tanggal}', [LaboratoriumController::class, 'cetakTb04']);
+Route::get('tb04/cetak/{tglAwal}/{tglAkhir}', [LaboratoriumController::class, 'cetakTb04']);
+Route::post('tb04/data', [LaboratoriumController::class, 'showDataTb04']);
 
 Route::post('lab/laporan/kunjungan', [LaboratoriumController::class, 'rekapKunjunganLab']);
 Route::post('lab/laporan/kunjungan/item', [LaboratoriumController::class, 'rekapKunjunganLabItem']);

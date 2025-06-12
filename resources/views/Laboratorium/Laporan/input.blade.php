@@ -20,6 +20,12 @@
                             <b>Laporan Jumlah Pemeriksaan</b>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" type="button" onclick="toggleSections('#tab_1');">
+                            <b>Laporan TB 04</b>
+                        </a>
+                    </li>
+
                 </ul>
 
                 <div class="container-fluid mt-1" id="parameter">
@@ -95,7 +101,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Jumlah Pemeriksaan -->
+                                <!-- Jumlah Periksa -->
                                 <div class="container-fluid" id="jmlhPeriksa" style="display:none;">
                                     <div id="cariPenjamin">
                                         <a class="btn btn-success d-flex justify-content-center mx-2"
@@ -107,6 +113,24 @@
                                         <table id="tabelJumlahPeriksa" class="table table-striped pt-0 mt-0 fs-6"
                                             style="width:100%" cellspacing="0"></table>
                                     </div>
+                                </div>
+                                <!-- Jumlah Periksa -->
+                                <div class="container-fluid" id="tab_1" style="display:none;">
+                                    <div id="cariTb04">
+                                        <a class="btn btn-success d-flex justify-content-center mx-2"
+                                            onclick="cetakTb04();">
+                                            Cetak Laporan TB 04
+                                        </a>
+                                    </div>
+                                    <script>
+                                        function cetakTb04() {
+                                            var tglAwal = document.getElementById("tglAwal").value;
+                                            var tglAkhir = document.getElementById("tglAkhir").value;
+                                            // opeb 'tb04/cetak/' + tglAwal + '/' + tglAkhir; new window
+                                            window.open('/api/tb04/cetak/' + tglAwal + '/' + tglAkhir, '_blank');
+                                        }
+                                    </script>
+
                                 </div>
                             </div>
                         </form>

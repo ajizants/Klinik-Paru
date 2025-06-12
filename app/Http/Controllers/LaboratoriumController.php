@@ -79,21 +79,26 @@ class LaboratoriumController extends Controller
     {
         $title = 'TB 04';
 
-        $data = $this->getDataTb04();
+        // $data = $this->getDataTb04();
         // return $data;
-        return view('Laboratorium.TB04Lab.main', ['data' => $data])->with('title', $title);
+        // return view('Laboratorium.TB04Lab.main', ['data' => $data])->with('title', $title);
+        return view('Laboratorium.TB04Lab.main')->with('title', $title);
     }
-    public function cetakTb04($tanggal)
+    public function cetakTb04($tglAwal = null, $tglAkhir = null, $tanggal = null)
     {
         $title = 'Laporan TB 04';
 
-        // $data = LaboratoriumHasilModel::with('biodataPasien', 'pemeriksaan')
-        //     ->whereIn('idLayanan', [130, 131, 214])
-        //     ->get();
-        // return $data;
+        // $date = $tanggal ? Carbon::parse($tanggal) : Carbon::now();
+        // //buat $tgl adalah 15 hari dari $date
+        // $tglAkhir = $date->format('Y-m-d');
+        // $tgl = $date->subDays(15);
+        // $tglAwal = $tgl->format('Y-m-d');
+        // // dd($tgl);
+        $tglAwal = $tglAwal ? Carbon::parse($tglAwal)->format('Y-m-d') : Carbon::now()->subDays(15)->format('Y-m-d');
+        $tglAkhir = $tglAkhir ? Carbon::parse($tglAkhir)->format('Y-m-d') : Carbon::now()->format('Y-m-d');
 
-        $data = $this->getDataTb04Cetak([130, 214], $tanggal)
-            ->concat($this->getDataTb04Cetak([131]), $tanggal)
+        $data = $this->getDataTb04Cetak([130, 214], $tglAwal, $tglAkhir)
+            ->concat($this->getDataTb04Cetak([131]), $tglAwal, $tglAkhir)
             ->values(); // mengatur ulang index Collection
         // return $data;
 
@@ -120,6 +125,42 @@ class LaboratoriumController extends Controller
                 'no_iden_sediaan' => $item['tb04'][0]['no_iden_sediaan'],
                 'tgl_terima' => $item['tanggal'],
                 'nama' => $item['nama'],
+                'nik' => $item['pasien']['noktp'] ?? "-",
+                'umur' => $umur[0],
+                'alamat' => $item['alamat'],
+                'namaFaskes' => $item['namaFaskes'],
+                'tb04' => $item['tb04'],
+            ];
+        }
+        usort($res, function ($a, $b) {
+            return $a['no_reg_lab'] <=> $b['no_reg_lab'];
+        });
+        $tahun = Carbon::parse($tglAwal)->format('Y');
+
+        // return $res;
+        return view('Laboratorium.TB04Lab.cetak', ['data' => $res, 'tglAwal' => $tglAwal, 'tglAkhir' => $tglAkhir, 'tahun' => $tahun])->with('title', $title);
+    }
+    public function showDataTb04(Request $request)
+    {
+        $tglAwal = $request->input('tglAwal');
+        $tglAkhir = $request->input('tglAkhir');
+
+        $data = $this->getDataTb04Cetak([130, 214], $tglAwal, $tglAkhir)
+            ->concat($this->getDataTb04Cetak([131]), $tglAwal, $tglAkhir)
+            ->values(); // mengatur ulang index Collection
+        // return $data;
+
+        $res = [];
+        foreach ($data as $item) {
+            $umur = explode('th', $item['umur']);
+            $res[] = [
+                'id' => $item['id'],
+                'norm' => $item['norm'],
+                'notrans' => $item['notrans'],
+                'no_reg_lab' => $item['tb04'][0]['no_reg_lab'],
+                'no_iden_sediaan' => $item['tb04'][0]['no_iden_sediaan'],
+                'tgl_terima' => $item['tanggal'],
+                'nama' => $item['nama'],
                 'nik' => $item['pasien']['noktp'],
                 'umur' => $umur[0] . ' th',
                 'alamat' => $item['alamat'],
@@ -131,17 +172,114 @@ class LaboratoriumController extends Controller
             return $a['no_reg_lab'] <=> $b['no_reg_lab'];
         });
 
-        // return $res;
-        return view('Laboratorium.TB04Lab.cetak', ['data' => $res])->with('title', $title);
+        $html = '<table id="tb04Table" class="table table-bordered table-striped dataTable no-footer dtr-inline"
+        aria-describedby="tb04Table">
+        <thead class="bg-secondary">
+             <tr>
+                    <th class="border border-black p-1 text-center">Nomor Reg. Lab.</th>
+                    <th class="border border-black p-1 text-center">Nomor Identitas
+                        Contoh
+                        Uji</th>
+                    <th class="border border-black p-1 text-center">Tanggal Penerimaan
+                        Contoh
+                        Uji</th>
+                    <th class="border border-black p-1 text-center">Nama Lengkap Pasien
+                    </th>
+                    <th class="border border-black p-1 text-center">No Induk Kependudukan
+                    </th>
+                    <th class="border border-black p-1 text-center">Umur (th)</th>
+                    <th class="border border-black p-1 text-center">Alamt Lengkap</th>
+                    <th class="border border-black p-1 text-center">Nama Faskes Asal
+                        Contoh
+                        Uji</th>
+                    <th class="border border-black p-1 text-center">Alasan Pemeriksaan
+                        (K1)
+                    </th>
+                    <th class="border border-black p-1 text-center">Alasan Pemeriksaan
+                        (K2)
+                    </th>
+                     <th class="border border-black p-1 text-center">Tgl. Hasil</th>
+                    <th class="border border-black p-1 text-center">1</th>
+                    <th class="border border-black p-1 text-center">2</th>
+                    <th class="border border-black p-1 text-center">Tgl. Pemeriksaan</th>
+                    <th class="border border-black p-1 text-center">Hasil Pemeriksaan</th>
+                    <th class="border border-black p-1 text-center">Tgl. Hasil Dilaporkan</th>
+                    <th class="border border-black p-1 text-center text-[7pt]">Tanda
+                        Tangan
+                    </th>
+                    <th class="border border-black p-1 text-center text-[7pt]">Ket.</th>
+                </tr>
+                <tr>
+                    <th class="border border-black p-1 text-center">1</th>
+                    <th class="border border-black p-1 text-center">2</th>
+                    <th class="border border-black p-1 text-center">3</th>
+                    <th class="border border-black p-1 text-center">4</th>
+                    <th class="border border-black p-1 text-center">5</th>
+                    <th class="border border-black p-1 text-center">6</th>
+                    <th class="border border-black p-1 text-center">7</th>
+                    <th class="border border-black p-1 text-center">8</th>
+                    <th class="border border-black p-1 text-center">9</th>
+                    <th class="border border-black p-1 text-center">10</th>
+                    <th class="border border-black p-1 text-center">11</th>
+                    <th class="border border-black p-1 text-center">12</th>
+                    <th class="border border-black p-1 text-center">13</th>
+                    <th class="border border-black p-1 text-center">14</th>
+                    <th class="border border-black p-1 text-center">15</th>
+                    <th class="border border-black p-1 text-center">16</th>
+                    <th class="border border-black p-1 text-center">17</th>
+                    <th class="border border-black p-1 text-center">18</th>
+                </tr>
+            </thead>
+            <tbody>';
+
+        $html .= '<tbody class="table-bor">';
+        foreach ($data as $item) {
+            $tgl_terima = \Carbon\Carbon::parse($item['tgl_terima'])->format('d-m-Y');
+            $tgl_hasil_0 = isset($item['tb04'][0]['tgl_hasil']) ? \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') : '';
+            $hasil_0 = $item['tb04'][0]['hasil'] ?? '';
+            $idLayanan_0 = $item['tb04'][0]['idLayanan'] ?? '';
+            $hasil_1 = $item['tb04'][1]['hasil'] ?? '';
+            $idLayanan_1 = $item['tb04'][1]['idLayanan'] ?? '';
+            $tgl_hasil_1 = isset($item['tb04'][1]['tgl_hasil']) ? \Carbon\Carbon::parse($item['tb04'][1]['tgl_hasil'])->format('d-m-Y') : '';
+
+            $html .= '<tr>';
+            $html .= '<td class="p-1 text-left">' . ($item['no_reg_lab'] ?? 'reg lab') . '</td>';
+            $html .= '<td class="p-1 text-left">' . ($item['no_iden_sediaan'] ?? 'iden sediaan') . '</td>';
+            $html .= '<td class="p-1 text-left">' . $tgl_terima . '</td>';
+            $html .= '<td class="p-1 text-left">' . $item['nama'] . ' ' . $item['norm'] . '</td>';
+            $html .= '<td class="p-1 text-left">' . $item['nik'] . '</td>';
+            $html .= '<td class="p-1 text-left">' . $item['umur'] . '</td>';
+            $html .= '<td class="p-1 text-left">' . $item['alamat'] . '</td>';
+            $html .= '<td class="p-1 text-center">' . $item['namaFaskes'] . '</td>';
+            $html .= '<td class="p-1 text-left">' . ($item['tb04'][0]['alasan_periksa'] ?? 'alasan1') . '</td>';
+            $html .= '<td class="p-1 text-left">' . ($item['tb04'][1]['alasan_periksa'] ?? 'alasan2') . '</td>';
+            $html .= '<td class="p-1 text-left">' . $tgl_hasil_0 . '</td>';
+
+            if ($idLayanan_0 == 131) {
+                $html .= '<td></td>';
+                $html .= '<td></td>';
+                $html .= '<td class="p-1 text-left">' . $tgl_hasil_0 . '</td>';
+                $html .= '<td class="p-1 text-left">' . $hasil_0 . ' ' . $idLayanan_0 . '</td>';
+                $html .= '<td class="p-1 text-left">' . $tgl_hasil_0 . '</td>';
+            } else {
+                $html .= '<td class="p-1 text-left">' . $hasil_0 . ' ' . $idLayanan_0 . '</td>';
+                $html .= '<td class="p-1 text-left">' . $hasil_1 . ' ' . $idLayanan_1 . '</td>';
+                $html .= '<td></td>';
+                $html .= '<td></td>';
+                $html .= '<td></td>';
+            }
+
+            $html .= '<td class="p-1 text-center"></td>';
+            $html .= '<td class="p-1 text-center"></td>';
+            $html .= '</tr>';
+        }
+        $html .= '</tbody>';
+
+        return response()->json($html, 200, [], JSON_PRETTY_PRINT);
     }
-    public function getDataTb04Cetak($filter = null, $tanggal = null)
+    public function getDataTb04Cetak($filter = null, $tglAwal = null, $tglAkhir = null)
     {
-        $date = $tanggal ? Carbon::parse($tanggal) : Carbon::now();
-        //buat $tgl adalah 15 hari dari $date
-        $tglAkhir = $date->format('Y-m-d');
-        $tgl = $date->subDays(15);
-        $tglAwal = $tgl->format('Y-m-d');
-        // dd($tgl);
+        // dd($filter, $tglAwal, $tglAkhir);
         $data = LaboratoriumKunjunganModel::with(['tb04' => function ($query) use ($filter) {
             $query->whereIn('idLayanan', $filter);
         }])
@@ -274,7 +412,7 @@ class LaboratoriumController extends Controller
             $item->desa = trim($alamatParts[0] ?? '');
 
             // Buat tombol aksi
-            $item->aksi = '<a class="m-1 col btn btn-danger"
+            $item->aksi = '<a class="col btn btn-sm btn-danger"
                              data-toggle="tooltip"
                              data-placement="right"
                              title="Edit Hasil Lab"

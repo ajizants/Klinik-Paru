@@ -11,7 +11,7 @@
         @page {
             width: 33cm;
             height: 22cm;
-            margin: 0;
+            margin: 0.5cm 0.5cm 0.5cm 0.5cm;
             orientation: landscape;
         }
 
@@ -81,8 +81,7 @@
                                 </div>
                             </div>
                             <div class="p-2">
-                                <h1 class="font-bold text-xl">REGISTER LABORATORIUM TB TAHUN<input type="text"
-                                        value="2025" class="px-1"style="width: 58px;" /></h1>
+                                <h1 class="font-bold text-xl">REGISTER LABORATORIUM TB TAHUN {{ $tahun }}</h1>
                                 <h1 class="font-bold text-xl">UNTUK LABORATORIUM FASKES MIKROSKOPIS DAN TES CEPAT</h1>
                             </div>
                             <div class="p-2 flex justify-end">
@@ -176,7 +175,8 @@
                     <th class="border border-black p-1 text-center" rowspan="2">Nomor Identitas
                         Contoh
                         Uji</th>
-                    <th class="border border-black p-1 text-center" rowspan="2">Tanggal Penerimaan
+                    <th class="border border-black p-1 text-center" rowspan="2" style="width: 90.5px;">Tanggal
+                        Penerimaan
                         Contoh
                         Uji</th>
                     <th class="border border-black p-1 text-center" rowspan="2">Nama Lengkap Pasien
@@ -185,26 +185,28 @@
                     </th>
                     <th class="border border-black p-1 text-center" rowspan="2">Umur (th)</th>
                     <th class="border border-black p-1 text-center" rowspan="2">Alamt Lengkap</th>
-                    <th class="border border-black p-1 text-center" rowspan="2">Nama Faskes Asal
+                    <th class="border border-black p-1 text-center" rowspan="2" style="width: 70.5px; ">Nama Faskes
+                        Asal
                         Contoh
                         Uji</th>
-                    <th class="border border-black p-1 text-center" rowspan="2">Alasan Pemeriksaan
+                    <th class="border border-black p-1 text-center" rowspan="2" style="width: 70.5px; ">Alasan
+                        Pemeriksaan
                         (K1)
                     </th>
-                    <th class="border border-black p-1 text-center" rowspan="2">Alasan Pemeriksaan
+                    {{-- <th class="border border-black p-1 text-center" rowspan="2">Alasan Pemeriksaan
                         (K2)
-                    </th>
-                    <th class="border border-black p-1 text-center text-[7pt]" colspan="3">Hasil
+                    </th> --}}
+                    <th class="border border-black p-1 text-center text-[9pt]" colspan="3">Hasil
                         Pemeriksaan Mikroskopis (BTA/Lainnya)</th>
-                    <th class="border border-black p-1 text-center text-[7pt]" colspan="3">Hasil Tes
+                    <th class="border border-black p-1 text-center text-[9pt]" colspan="3">Hasil Tes
                         Cepat Dengan Xpert</th>
-                    <th class="border border-black p-1 text-center text-[7pt]" rowspan="2">Tanda
+                    <th class="border border-black p-1 text-center text-[9pt]" rowspan="2">Tanda
                         Tangan
                     </th>
                     <th class="border border-black p-1 text-center text-[7pt]" rowspan="2">Ket.</th>
                 </tr>
                 <tr>
-                    <th class="border border-black p-1 text-center">Tgl. Hasil</th>
+                    <th class="border border-black p-1 text-center" style="width: 90.5px;">Tgl. Hasil</th>
                     <th class="border border-black p-1 text-center">1</th>
                     <th class="border border-black p-1 text-center">2</th>
                     <th class="border border-black p-1 text-center">Tgl. Pemeriksaan</th>
@@ -229,15 +231,21 @@
                     <th class="border border-black p-1 text-center">15</th>
                     <th class="border border-black p-1 text-center">16</th>
                     <th class="border border-black p-1 text-center">17</th>
-                    <th class="border border-black p-1 text-center">18</th>
+                    {{-- <th class="border border-black p-1 text-center">18</th> --}}
                 </tr>
             </thead>
             <tbody class="table-bor">
                 @foreach ($data as $item)
                     <tr>
-                        <td class="p-1 text-left">{{ $item['no_reg_lab'] ?? 'reg lab' }}</td>
-                        <td class="p-1 text-left">{{ $item['no_iden_sediaan'] ?? 'iden sediaan' }}</td>
-                        <td class="p-1 text-left">
+                        <td class="p-1 text-center">{{ $item['no_reg_lab'] ?? 'reg lab' }}</td>
+                        @if (isset($item['tb04'][0]['no_iden_sediaan']))
+                            <td class="p-1 text-left">
+                                25/K3302730/{{ $item['tb04'][0]['kode_tcm'] }}/{{ $item['no_iden_sediaan'] }}
+                            </td>
+                        @else
+                            <td class="p-1 text-left">-</td>
+                        @endif
+                        <td class="p-1 text-left" style="width: 90.5px;">
                             {{ \Carbon\Carbon::parse($item['tgl_terima'])->format('d-m-Y') }}
                         </td>
 
@@ -246,11 +254,11 @@
                         <td class="p-1 text-left">{{ $item['umur'] }}</td>
                         <td class="p-1 text-left">{{ $item['alamat'] }}</td>
                         <td class=" p-1 text-center"><input type="text" class="w-[50px] text-center"
-                                value="{{ $item['namaFaskes'] }}">
+                                value="{{ $item['namaFaskes'] ?? 'KKPM' }}">
                         </td>
 
                         <td class="p-1 text-left">{{ $item['tb04'][0]['alasan_periksa'] ?? 'alasan1' }}</td>
-                        <td class="p-1 text-left">{{ $item['tb04'][1]['alasan_periksa'] ?? 'alasan2' }}</td>
+                        {{-- <td class="p-1 text-left">{{ $item['tb04'][1]['alasan_periksa'] ?? 'alasan2' }}</td> --}}
                         <td class="p-1 text-left">
                             {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
                         </td>
@@ -258,7 +266,7 @@
                         @if ($item['tb04'][0]['idLayanan'] == 131)
                             <td></td>
                             <td></td>
-                            <td class="p-1 text-left">
+                            <td class="p-1 text-center" style="width: 90.5px;">
                                 {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
                             </td>
                             <td class="p-1 text-left">
@@ -284,6 +292,7 @@
                         <td class=" p-1 text-center"></td>
                     </tr>
                 @endforeach
+            </tbody>
 
             <tfoot>
                 <tr>

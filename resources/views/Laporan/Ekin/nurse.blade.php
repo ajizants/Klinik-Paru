@@ -357,23 +357,8 @@
                     <td class="my-0 py-0 px-5" colspan="3"
                         style="padding-left:2rem; padding-right:2rem; text-align: left; border: none">
                         <!-- Tanda Tangan -->
-                        <div class="flex justify-between mt-20">
+                        @include('Laporan.Ekin.ttd')
 
-                            <div class="w-1/2 text-center">
-                                <p>Purwokerto, {{ $tglAkhir }}</p>
-                                <p>Pegawai yang Dinilai</p>
-                                <div class="h-16"></div>
-                                <p><u>{{ $biodata['nama'] ?? '-' }}</u></p>
-                                <p>NIP: {{ $biodata['nip'] ?? '-' }}</p>
-                            </div>
-                            <div class="w-1/2 text-center">
-                                <p>Mengetahui,</p>
-                                <p>Plt. Kepala KKPM PURWOKERTO</p>
-                                <div class="h-16"></div>
-                                <p><u>dr. RENDI RETISSU</u></p>
-                                <p>NIP: 19881016 201902 1 002</p>
-                            </div>
-                        </div>
                     </td>
 
                 </tr>

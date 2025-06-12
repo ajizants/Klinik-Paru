@@ -245,7 +245,14 @@ class EkinController extends Controller
             in_array($pegawai->kd_jab, [10, 23]) => 'nurse',
         };
 
-        return view("Laporan.Ekin.$view", compact('title', 'poinIgd', 'poinKominfo', 'inputPitc', 'biodata', 'tglAkhir', 'tgl', 'poinDots', 'poinLain'));
+        $bulan = Carbon::parse($request->input('tanggal_akhir'))->month;
+        $tahun = Carbon::parse($request->input('tanggal_akhir'))->year;
+
+        $pimpinan = $this->pimpinan($bulan, $tahun);
+        $kepala = $pimpinan['kepala'];
+        $nipKepala = $pimpinan['nipKepala'];
+
+        return view("Laporan.Ekin.$view", compact('kepala', 'nipKepala', 'title', 'poinIgd', 'poinKominfo', 'inputPitc', 'biodata', 'tglAkhir', 'tgl', 'poinDots', 'poinLain'));
 
         return [
             'inputPitc' => $inputPitc,
@@ -258,6 +265,23 @@ class EkinController extends Controller
             'title' => $title,
         ];
 
+    }
+
+    private function pimpinan($bln = null, $tahun)
+    {
+        $blnTahun = Carbon::create($tahun, $bln)->isoFormat('MMMM YYYY');
+        $blnTahunCompare = Carbon::create('2025', '05')->isoFormat('MMMM YYYY');
+        if ($blnTahun < $blnTahunCompare) {
+            $pimpinan = [
+                'kepala' => 'dr. RENDI RETISSU',
+                'nipKepala' => '198810162019021002'];
+        } else {
+            $pimpinan = [
+                'kepala' => 'dr. ANWAR HUDIONO, M.P.H.',
+                'nipKepala' => '198212242010011022'];
+        }
+
+        return $pimpinan;
     }
 
     public function store(Request $request)

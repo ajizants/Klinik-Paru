@@ -2,7 +2,7 @@
 @extends('Template.lte')
 
 @section('content')
-    @include('Laboratorium.Hasil.antrian')
+    @include('Laboratorium.TB04Lab.antrian')
     @include('Laboratorium.Hasil.input')
 
 
@@ -16,9 +16,6 @@
             showConfirmButton: false,
             timer: 3000,
         });
-
-        let data = @json($data);
-        // console.log("🚀 ~ data:", data)
 
         let keterangan; // Define status globally
 
@@ -603,16 +600,29 @@
                         className: "col-1"
                     },
                     {
-                        data: "pemeriksaan"
-                    },
-                    {
                         data: "alamat",
                         className: "col-2"
                     },
                     {
-                        data: "nama_dokter",
-                        className: "col-3"
+                        data: "tb04.0.no_reg_lab"
                     },
+                    {
+                        data: "tb04.0.kode_tcm"
+                    },
+                    {
+                        data: "tb04.0.no_iden_sediaan"
+                    },
+                    {
+                        data: "tb04.0.alasan_periksa"
+                    },
+                    {
+                        data: "pemeriksaan"
+                    },
+
+                    // {
+                    //     data: "nama_dokter",
+                    //     className: "col-3"
+                    // },
                 ],
                 paging: true,
                 lengthMenu: [
@@ -628,12 +638,13 @@
         }
 
         function antrianSudah(sudahTransakasi) {
+            console.log("🚀 ~ antrianSudah ~ sudahTransakasi:", sudahTransakasi)
 
             $("#antrianSudah").DataTable({
                 data: sudahTransakasi,
                 columns: [{
                         data: "aksi",
-                        className: "col-1"
+                        widh: "15px"
                     },
                     {
                         data: "status",
@@ -657,16 +668,29 @@
                         className: "col-1"
                     },
                     {
-                        data: "pemeriksaan"
-                    },
-                    {
                         data: "alamat",
                         className: "col-2"
                     },
                     {
-                        data: "nama_dokter",
-                        className: "col-3"
+                        data: "tb04.0.no_reg_lab"
                     },
+                    {
+                        data: "tb04.0.kode_tcm"
+                    },
+                    {
+                        data: "tb04.0.no_iden_sediaan"
+                    },
+                    {
+                        data: "tb04.0.alasan_periksa"
+                    },
+                    {
+                        data: "pemeriksaan"
+                    },
+
+                    // {
+                    //     data: "nama_dokter",
+                    //     className: "col-3"
+                    // },
                 ],
                 paging: true,
                 lengthMenu: [
@@ -692,19 +716,7 @@
                 deletLab(idLab, layanan);
             });
 
-            let belumTransaksi = data.filter(function(item) {
-                return (
-                    item.status === "Belum Lengkap" ||
-                    item.status === "Belum"
-                );
-            });
-
-            let sudahTransaksi = data.filter(function(item) {
-                return item.status === "Selesai";
-            });
-
-            antrianBelum(belumTransaksi);
-            antrianSudah(sudahTransaksi);
+            antrian();
         });
     </script>
 @endsection

@@ -39,9 +39,13 @@
                                 <th>Jaminan</th>
                                 <th>No RM</th>
                                 <th>Nama Pasien</th>
-                                <th>Pemeriksaan</th>
                                 <th>Alamat Pasien</th>
-                                <th>Dokter</th>
+                                <th>NoReg</th>
+                                <th>KD</th>
+                                <th>NoSediaan</th>
+                                <th>Alasan</th>
+                                <th>Pemeriksaan</th>
+                                {{-- <th>Dokter</th> --}}
                             </tr>
                         </thead>
                     </table>
@@ -58,10 +62,14 @@
                                 <th>Tanggal</th>
                                 <th>Jaminan</th>
                                 <th>No RM</th>
-                                <th class="col-2">Nama Pasien</th>
-                                <th>Pemeriksaan</th>
+                                <th>Nama Pasien</th>
                                 <th>Alamat Pasien</th>
-                                <th>Dokter</th>
+                                <th>NoReg</th>
+                                <th>KD</th>
+                                <th>NoSediaan</th>
+                                <th>Alasan</th>
+                                <th>Pemeriksaan</th>
+                                {{-- <th>Dokter</th> --}}
                             </tr>
                         </thead>
                         <tbody>
