@@ -814,6 +814,17 @@ class ROTransaksiController extends Controller
                 return $value['p_rontgen'] === $petugas;
             });
             $data = array_values($data);
+
+            if (empty($data)) {
+                $petugasNipMap = [
+                    '197404231998032006' => 'AMBARSARI, Amd.Rad.',
+                    '199009202011012001' => 'NOFI INDRIYANI, Amd.Rad.',
+                ];
+                // $namaPetugas = //ambil berdasarkan nip
+                $petugas = $petugasNipMap[$petugas];
+                $message = "Data Log Book a.n. $petugas pada tanggal $tglAwal sampai $tglAkhir tidak ditemukan";
+                return view('Template.404', compact('title', 'message'));
+            }
             $table = $this->table(collect($data), $petugas);
             return view('RO.LogBook.logBook', compact('table', 'title', 'tglAwal', 'tglAkhir'));
         }
