@@ -378,6 +378,7 @@ function generateAsktindString(data, addNewLine = false, isLab = false) {
         .map((item, index) => {
             const separator = isLab ? (index % 2 === 1 ? ",<br>" : ", ") : ", ";
             const hasil = " - Hasil: " + item.hasil || "";
+            // const hasil = item.hasil ? ` - Hasil: ${item.hasil}` : "";
             const ket =
                 item.keterangan || item.nama_obat
                     ? ` - ${item.keterangan || item.nama_obat}`

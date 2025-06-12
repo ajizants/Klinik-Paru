@@ -1307,24 +1307,70 @@ class PasienKominfoController extends Controller
         ]);
     }
 
-    public function newPasien(Request $request)
-    {
-        if ($request->has('no_rm')) {
-            $no_rm = $request->input('no_rm');
-            $model = new KominfoModel();
+    // public function newPasien(Request $request)
+    // {
+    //     if ($request->has('no_rm')) {
+    //         $no_rm = $request->input('no_rm');
+    //         $model = new KominfoModel();
 
-            // Panggil metode untuk melakukan request
+    //         // Panggil metode untuk melakukan request
+    //         $data = $model->pasienRequest($no_rm);
+
+    //         // Tampilkan data (atau lakukan apa pun yang diperlukan)
+    //         return response()->json($data);
+    //     } else {
+    //         // Jika parameter 'tanggal' tidak disediakan, kembalikan respons error
+    //         return response()->json(['error' => 'No RM Belum Di Isi'], 400);
+    //     }
+    // }
+    public function newPasien(Request $request)
+{
+    if ($request->has('no_rm')) {
+        $no_rm = $request->input('no_rm');
+        $model = new KominfoModel();
+
+        try {
+            // Ambil data dari model
             $data = $model->pasienRequest($no_rm);
 
-            // Tampilkan data (atau lakukan apa pun yang diperlukan)
+            // Jika data kosong atau tidak sesuai format
+            if (empty($data) || !is_array($data)) {
+                return response()->json(['error' => 'Data pasien tidak ditemukan'], 404);
+            }
+
+            // Hitung umur jika tanggal lahir tersedia dan valid
+            if (!empty($data['pasien_tgl_lahir'])) {
+                try {
+                    $tglLahir = Carbon::parse($data['pasien_tgl_lahir']);
+                    $now = Carbon::now();
+
+                    $tahun = $tglLahir->diffInYears($now);
+                    $bulan = $tglLahir->diffInMonths($now) % 12;
+
+                    $data['umur'] = "{$tahun} thn {$bulan} bln";
+                } catch (\Exception $e) {
+                    $data['umur'] = "-";
+                    $data['umur_error'] = "Format tanggal lahir tidak valid";
+                }
+            } else {
+                $data['umur'] = "-";
+                $data['umur_error'] = "Tanggal lahir kosong";
+            }
+
             return response()->json($data);
-        } else {
-            // Jika parameter 'tanggal' tidak disediakan, kembalikan respons error
-            return response()->json(['error' => 'No RM Belum Di Isi'], 400);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Terjadi kesalahan saat mengambil data',
+                'message' => $e->getMessage()
+            ], 500);
         }
+    } else {
+        return response()->json(['error' => 'No RM belum diisi'], 400);
     }
+}
     public function dataPasien(Request $request)
     {
+        // dd($request->all());
         if ($request->has('no_rm') && $request->has('tanggal')) {
             $no_rm = $request->input('no_rm');
             $tanggal = $request->input('tanggal', Carbon::now()->format('Y-m-d'));
