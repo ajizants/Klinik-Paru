@@ -22,11 +22,24 @@
                                     </div>
                                     <div class="mx-2">
                                         <button type="button" class="btn btn-primary"
-                                            onclick="cariRo(tglAwal, tglAkhir)">Cari Data Loog Book</button>
+                                            onclick="cariRo(tglAwal, tglAkhir)">Cari Data Log Book</button>
                                     </div>
                                     <div class="mx-2">
                                         <button type="button" class="btn btn-success"
                                             onclick="cariKegiatanRo(tglAwal, tglAkhir)">Cetak Data Kegiatan</button>
+                                    </div>
+                                    <div class="mx-2">
+                                        <button type="button" class="btn btn-warning"
+                                            onclick="cariRo(tglAwal, tglAkhir,'cetak')">Cetak Data Log Book</button>
+                                    </div>
+                                    <div class="mx-2">
+                                        <select name="petugas" id="petugas" class="form-control">
+                                            <option value="">-- Pilih Petugas --</option>
+                                            @foreach ($radiografer as $rad)
+                                                <option value="{{ $rad->nip }}">{{ $rad->gelar_d }}
+                                                    {{ $rad->nama }} {{ $rad->gelar_b }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>

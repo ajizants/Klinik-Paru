@@ -131,7 +131,15 @@ class ROTransaksiController extends Controller
     {
         $title = 'Riwayat Rontgen';
 
-        return view('RO.LogBook.main')->with('title', $title);
+        $pModel = new PegawaiModel();
+
+        $radiografer = $pModel->olahPegawai([12]);
+
+        $radiografer = array_map(function ($item) {
+            return (object) $item;
+        }, $radiografer);
+
+        return view('RO.LogBook.main', compact('radiografer'))->with('title', $title);
     }
     public function rontgenHasil($id)
     {
@@ -676,9 +684,12 @@ class ROTransaksiController extends Controller
 
     public function logBook(Request $request)
     {
+        // dd($request->all());
         $norm = $request->input('norm');
         $tglAwal = $request->input('tglAwal');
         $tglAkhir = $request->input('tglAkhir');
+        $cetak = $request->input('cetak');
+        $petugas = $request->input('petugas');
 
         if (Carbon::parse($tglAwal)->lessThanOrEqualTo(Carbon::parse('2024-06-01'))) {
             return response()->json(['message' => 'Data transaksi sebelum 2024-06-24 tidak ditemukan, cari di Aplikasi lama : RSPARU'], 404, [], JSON_PRETTY_PRINT);
@@ -796,16 +807,28 @@ class ROTransaksiController extends Controller
                 }
             }
         }
+
+        if ($cetak === "cetak") {
+            $title = 'Log Book';
+            $data = array_filter($res, function ($value) use ($petugas) {
+                return $value['p_rontgen'] === $petugas;
+            });
+            $data = array_values($data);
+            $table = $this->table(collect($data), $petugas);
+            return view('RO.LogBook.logBook', compact('table', 'title', 'tglAwal', 'tglAkhir'));
+        }
         $table = $this->table(collect($res));
 
         return response()->json(["jumlah" => $jumlah, "data" => $table], 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function table($data)
+    public function table($data, $rgrafer = null)
     {
         if ($data->isEmpty()) {
             return response()->make('<tr><td colspan="10" class="text-center">Data tidak ditemukan</td></tr>', 200);
         }
+
+        $radiografer_nama = $data->first()['radiografer_nama'];
 
         // Bangun tabel HTML
         $html = '<table class="table table-bordered" id="logBookTable">
@@ -878,6 +901,12 @@ class ROTransaksiController extends Controller
         $jmlIndoray_2 = collect($data)->where('nmMesin', 'Indoray 2')->count();
         $petugas_1 = collect($data)->where('p_rontgen', '197404231998032006')->count();
         $petugas_2 = collect($data)->where('p_rontgen', '199009202011012001')->count();
+        if ($rgrafer != null) {
+            $jumlah = collect($data)->where('p_rontgen', $rgrafer)->count();
+            $isianPetugas = "Jumlah Petugas Melakukan Rontgen <br> $radiografer_nama = $jumlah";
+        } else {
+            $isianPetugas = "Jumlah Petugas Melakukan Rontgen <br> AMBARSARI, Amd.Rad. = $petugas_1<br>NOFI INDRIYANI, Amd.Rad. = $petugas_2";
+        }
 
         $html .= '
             <tr class="bg bg-secondary font-weight-bold">
@@ -897,8 +926,8 @@ class ROTransaksiController extends Controller
                 <th>' . $totalRusak . '</th>
                 <th>PA: ' . $jumlahPA . '<br> AP: ' . $jumlahAP . '<br> Lat: ' . $jumlahLat . '<br> Obliq: ' . $jumlahOB . '</th>
                 <th>Indoray 1: ' . $jmlIndoray_1 . '<br> Indoray 2: ' . $jmlIndoray_2 . '</th>
-                <th></th>
-                <th>AMBARSARI, Amd.Rad.: ' . $petugas_1 . '<br> NOFI INDRIYANI, Amd.Rad.: ' . $petugas_2 . '</th>
+                 <th></th>
+                <th>' . $isianPetugas . '</th>
             </tr>
         </tbody>
         </table>';

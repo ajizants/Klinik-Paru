@@ -4,11 +4,34 @@ function formatTgl(date) {
     let year = date.getFullYear();
     return `${day}-${month}-${year}`;
 }
-function cariRo(tglAwal, tglAkhir, norm) {
-    // var tglAwal = $("#tglAwal").val(); // tambahkan ini
-    // var tglAkhir = $("#tglAkhir").val(); // tambahkan ini
+function cariRo(tglAwal, tglAkhir, cetak, norm) {
     var tglA = formatTgl(new Date(tglAwal));
     var tglB = formatTgl(new Date(tglAkhir));
+    var petugas = $("#petugas").val();
+    if (cetak === "cetak") {
+        if (!petugas || petugas.trim() === "") {
+            tampilkanEror("Harap pilih petugas terlebih dahulu!");
+            return;
+        }
+        if (cetak === "cetak") {
+            if (!petugas || petugas.trim() === "") {
+                tampilkanEror("Harap pilih petugas terlebih dahulu!");
+                return;
+            }
+
+            // Buat URL dengan parameter GET
+            var url = `/api/logBook?tglAwal=${encodeURIComponent(
+                tglAwal
+            )}&tglAkhir=${encodeURIComponent(
+                tglAkhir
+            )}&cetak=${encodeURIComponent(cetak)}&petugas=${encodeURIComponent(
+                petugas
+            )}`;
+
+            window.open(url, "_blank");
+        }
+    }
+
     if ($.fn.DataTable.isDataTable("#hasilRo, #jumlahPetugas")) {
         var tabletindakan = $("#hasilRo, #jumlahPetugas").DataTable();
         tabletindakan.destroy();
@@ -27,7 +50,13 @@ function cariRo(tglAwal, tglAkhir, norm) {
     $.ajax({
         url: "/api/logBook",
         type: "post",
-        data: { norm: norm, tglAkhir: tglAkhir, tglAwal: tglAwal },
+        data: {
+            norm: norm,
+            tglAkhir: tglAkhir,
+            tglAwal: tglAwal,
+            cetak: cetak,
+            petugas: petugas,
+        },
         success: function (response) {
             Swal.fire({
                 icon: "success",
@@ -37,33 +66,6 @@ function cariRo(tglAwal, tglAkhir, norm) {
             document.getElementById("containerTableLogBook").innerHTML = data;
             $("#logBookTable")
                 .DataTable({
-                    // data: response.data,
-                    // columns: [
-                    //     {
-                    //         data: null, // Data null akan diisi oleh render function
-                    //         render: function (data, type, row, meta) {
-                    //             return meta.row + 1; // Nomor urut mulai dari 1
-                    //         },
-                    //         title: "No", // Judul kolom
-                    //     },
-                    //     { data: "noreg" },
-                    //     { data: "tgltrans" },
-                    //     { data: "norm" },
-                    //     { data: "nama" },
-                    //     { data: "layanan" },
-                    //     { data: "jkel" },
-                    //     { data: "alamatDbOld", className: "col-4" },
-                    //     { data: "nmFoto" },
-                    //     { data: "ukuranFilm" },
-                    //     { data: "kondisiRo" },
-                    //     { data: "jmlFilmDipakai" },
-                    //     { data: "jmlExpose" },
-                    //     { data: "jmlFilmRusak" },
-                    //     { data: "proyeksi" },
-                    //     { data: "nmMesin" },
-                    //     { data: "catatan" },
-                    //     { data: "radiografer_nama" },
-                    // ],
                     autoWidth: false,
                     paging: true,
                     buttons: [
@@ -142,7 +144,7 @@ function cariRo(tglAwal, tglAkhir, norm) {
                 icon: "error",
                 title:
                     "Terjadi kesalahan saat mengambil data pasien...!!!\n" +
-                    xhr.responseJSON.message,
+                    error,
             });
         },
     });
