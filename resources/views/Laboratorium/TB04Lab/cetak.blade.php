@@ -249,9 +249,11 @@
                             {{ \Carbon\Carbon::parse($item['tgl_terima'])->format('d-m-Y') }}
                         </td>
 
-                        <td class="p-1 text-left">{{ $item['nama'] }} {{ $item['norm'] }}</td>
-                        <td class="p-1 text-left">{{ $item['nik'] }}</td>
-                        <td class="p-1 text-left">{{ $item['umur'] }}</td>
+                        <td class="p-1 text-left">{{ $item['nama'] }}
+                            {{-- {{ $item['norm'] }} --}}
+                        </td>
+                        <td class="p-1 text-center">{{ $item['nik'] }}</td>
+                        <td class="p-1 text-center">{{ $item['umur'] }}</td>
                         <td class="p-1 text-left">{{ $item['alamat'] }}</td>
                         <td class=" p-1 text-center"><input type="text" class="w-[50px] text-center"
                                 value="{{ $item['namaFaskes'] ?? 'KKPM' }}">
@@ -264,32 +266,41 @@
                         </td>
 
                         @if ($item['tb04'][0]['idLayanan'] == 131)
-                            <td></td>
-                            <td></td>
+                            <td class="text-center">-</td>
+                            <td class="text-center">-</td>
                             <td class="p-1 text-center" style="width: 90.5px;">
                                 {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
                             </td>
                             <td class="p-1 text-left">
-                                {{ $item['tb04'][0]['hasil'] }} {{ $item['tb04'][0]['idLayanan'] }}
+                                {{ $item['tb04'][0]['hasil'] }}
+                                {{-- {{ $item['tb04'][0]['idLayanan'] }} --}}
                             </td>
                             <td class="p-1 text-left">
                                 {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
                             </td>
                         @else
                             <td class="p-1 text-left">
-                                {{ $item['tb04'][0]['hasil'] }} {{ $item['tb04'][0]['idLayanan'] }}
+                                {{ $item['tb04'][0]['hasil'] }}
+                                {{-- {{ $item['tb04'][0]['idLayanan'] }} --}}
                             </td>
                             <td class="p-1 text-left">
-                                {{ $item['tb04'][1]['hasil'] ?? '' }} {{ $item['tb04'][1]['idLayanan'] ?? '' }}
+                                {{ $item['tb04'][1]['hasil'] ?? '' }}
+                                {{-- {{ $item['tb04'][1]['idLayanan'] ?? '' }} --}}
                             </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td class="text-center">-</td>
+                            <td class="text-center">-</td>
+                            <td class="text-center">-</td>
                         @endif
 
 
                         <td class=" p-1 text-center"></td>
-                        <td class=" p-1 text-center"></td>
+                        <td class=" p-1 text-center">
+                            @if (count($item['tb04']) > 1 && $item['tb04'][0]['ket'] !== null)
+                                {{ $item['tb04'][0]['ket'] ?? '-' }}, {{ $item['tb04'][1]['ket'] ?? '' }}
+                            @else
+                                {{ $item['tb04'][0]['ket'] ?? '-' }}
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

@@ -98,7 +98,7 @@ class LaboratoriumController extends Controller
         $tglAkhir = $tglAkhir ? Carbon::parse($tglAkhir)->format('Y-m-d') : Carbon::now()->format('Y-m-d');
 
         $data = $this->getDataTb04Cetak([130, 214], $tglAwal, $tglAkhir)
-            ->concat($this->getDataTb04Cetak([131]), $tglAwal, $tglAkhir)
+            ->concat($this->getDataTb04Cetak([131], $tglAwal, $tglAkhir))
             ->values(); // mengatur ulang index Collection
         // return $data;
 
@@ -146,10 +146,10 @@ class LaboratoriumController extends Controller
         $tglAkhir = $request->input('tglAkhir');
 
         $data = $this->getDataTb04Cetak([130, 214], $tglAwal, $tglAkhir)
-            ->concat($this->getDataTb04Cetak([131]), $tglAwal, $tglAkhir)
+            ->concat($this->getDataTb04Cetak([131], $tglAwal, $tglAkhir))
             ->values(); // mengatur ulang index Collection
-        // return $data;
 
+        // return $data;
         $res = [];
         foreach ($data as $item) {
             $umur = explode('th', $item['umur']);
