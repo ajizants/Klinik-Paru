@@ -697,7 +697,7 @@
                     [5, 10, 25, 50, -1],
                     [5, 10, 25, 50, "All"],
                 ],
-                pageLength: 3,
+                pageLength: 5,
                 order: [
                     [1, "asc"]
                 ],
