@@ -92,6 +92,15 @@
                             No Reg Lab
                         </label>
                         <div class="col-auto">
+                            <select name="idTb04Thn" class="form-control" id="idTb04Thn">
+                                @foreach (range(2024, date('Y')) as $year)
+                                    <option value="{{ $year }}" {{ $year == date('Y') ? 'selected' : '' }}>
+                                        {{ $year }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-auto">
                             <input type="text" class="form-control" id="idTb04"
                                 placeholder="Batas Awal No Reg Lab" onkeyup="if (event.key === 'Enter') cetakTb04Id();">
                         </div>
@@ -103,7 +112,7 @@
                         </div>
                         <div class="col-auto">
                             Pencarian by No Regl Lab akan berfokus pada No Reg Lab yang di pilih sampai No Reg Lab
-                            terakhir
+                            terakhir. Jika Akan mengambil semua data tuliskan "all" di No Reg Lab
                         </div>
                         <div class="form-row align-items-center">
                             <div class="form-inline d-flex justify-content-start p-2">
@@ -130,7 +139,8 @@
 
                             function cetakTb04Id() {
                                 var idTb04 = document.getElementById("idTb04").value;
-                                window.open('/api/tb04/cetak/' + idTb04, '_blank');
+                                var idTb04Thn = document.getElementById("idTb04Thn").value;
+                                window.open('/api/tb04/cetakId/' + idTb04 + '/' + idTb04Thn, '_blank');
                             }
                         </script>
                     </div>

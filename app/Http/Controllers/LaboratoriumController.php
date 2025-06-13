@@ -140,30 +140,19 @@ class LaboratoriumController extends Controller
         // return $res;
         return view('Laboratorium.TB04Lab.cetak', ['data' => $res, 'tglAwal' => $tglAwal, 'tglAkhir' => $tglAkhir, 'tahun' => $tahun])->with('title', $title);
     }
-    public function cetakTb04Id($regLab)
+    public function cetakTb04Id($regLab, $thn)
     {
         $title = 'Laporan TB 04';
 
-        $data = $this->getDataTb04Id([130, 214], $regLab)
-            ->concat($this->getDataTb04Id([131], $regLab))
+        $data = $this->getDataTb04Id([130, 214], $regLab, $thn)
+            ->concat($this->getDataTb04Id([131], $regLab, $thn))
             ->values(); // mengatur ulang index Collection
         // return $data;
 
         $res = [];
         foreach ($data as $item) {
             $umur = explode('th', $item['umur']);
-            if ($item['tb04'][0]['idLayanan'] == 131) {
-                $alasanPeriksa1 = $item['tb04'][0]['alasan_periksa'];
-                $alasanPeriksa2 = '-';
-                $hasil1 = $item['tb04'][0]['hasil'];
-                $hasil2 = '-';
-            } else {
-                $alasanPeriksa1 = $item['tb04'][0]['alasan_periksa'];
-                $alasanPeriksa2 = $item['tb04'][1]['alasan_periksa'] ?? '-';
-                $hasil1 = $item['tb04'][0]['hasil'];
-                $hasil2 = $item['tb04'][1]['hasil'] ?? '-';
 
-            }
             $res[] = [
                 'id' => $item['id'],
                 'norm' => $item['norm'],
@@ -183,21 +172,22 @@ class LaboratoriumController extends Controller
             return $a['no_reg_lab'] <=> $b['no_reg_lab'];
         });
         // return $res;
-        // ambil $tahun dari $res
-        $tahun = Carbon::parse($res[0]['tgl_terima'])->format('Y');
 
         // return $res;
-        return view('Laboratorium.TB04Lab.cetak', ['data' => $res, 'tahun' => $tahun])->with('title', $title);
+        return view('Laboratorium.TB04Lab.cetak', ['data' => $res, 'tahun' => $thn])->with('title', $title);
     }
-    public function getDataTb04Id($filter = null, $regLab)
+    public function getDataTb04Id($filter = null, $regLab, $thn)
     {
 
         $data = LaboratoriumKunjunganModel::with(['tb04' => function ($query) use ($filter) {
             $query->whereIn('idLayanan', $filter);
         }])
-            ->whereHas('tb04', function ($query) use ($filter, $regLab) {
+            ->whereHas('tb04', function ($query) use ($filter, $regLab, $thn) {
                 $query->whereIn('idLayanan', $filter)
-                    ->where('no_reg_lab', '>', $regLab);
+                    ->when($regLab !== 'all', function ($q) use ($regLab) {
+                        $q->where('no_reg_lab', '>', $regLab);
+                    })
+                    ->whereYear('created_at', $thn);
             })
             ->orderBy('id', 'desc')
             ->with('pasien')
