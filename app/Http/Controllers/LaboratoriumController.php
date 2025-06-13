@@ -94,7 +94,7 @@ class LaboratoriumController extends Controller
         // $tgl = $date->subDays(15);
         // $tglAwal = $tgl->format('Y-m-d');
         // // dd($tgl);
-        $tglAwal = $tglAwal ? Carbon::parse($tglAwal)->format('Y-m-d') : Carbon::now()->subDays(15)->format('Y-m-d');
+        $tglAwal = $tglAwal ? Carbon::parse($tglAwal)->format('Y-m-d') : Carbon::now()->subDays(8)->format('Y-m-d');
         $tglAkhir = $tglAkhir ? Carbon::parse($tglAkhir)->format('Y-m-d') : Carbon::now()->format('Y-m-d');
 
         $data = $this->getDataTb04Cetak([130, 214], $tglAwal, $tglAkhir)
@@ -139,6 +139,115 @@ class LaboratoriumController extends Controller
 
         // return $res;
         return view('Laboratorium.TB04Lab.cetak', ['data' => $res, 'tglAwal' => $tglAwal, 'tglAkhir' => $tglAkhir, 'tahun' => $tahun])->with('title', $title);
+    }
+    public function cetakTb04Id($regLab)
+    {
+        $title = 'Laporan TB 04';
+
+        $data = $this->getDataTb04Id([130, 214], $regLab)
+            ->concat($this->getDataTb04Id([131], $regLab))
+            ->values(); // mengatur ulang index Collection
+        // return $data;
+
+        $res = [];
+        foreach ($data as $item) {
+            $umur = explode('th', $item['umur']);
+            if ($item['tb04'][0]['idLayanan'] == 131) {
+                $alasanPeriksa1 = $item['tb04'][0]['alasan_periksa'];
+                $alasanPeriksa2 = '-';
+                $hasil1 = $item['tb04'][0]['hasil'];
+                $hasil2 = '-';
+            } else {
+                $alasanPeriksa1 = $item['tb04'][0]['alasan_periksa'];
+                $alasanPeriksa2 = $item['tb04'][1]['alasan_periksa'] ?? '-';
+                $hasil1 = $item['tb04'][0]['hasil'];
+                $hasil2 = $item['tb04'][1]['hasil'] ?? '-';
+
+            }
+            $res[] = [
+                'id' => $item['id'],
+                'norm' => $item['norm'],
+                'notrans' => $item['notrans'],
+                'no_reg_lab' => $item['tb04'][0]['no_reg_lab'],
+                'no_iden_sediaan' => $item['tb04'][0]['no_iden_sediaan'],
+                'tgl_terima' => $item['tanggal'],
+                'nama' => $item['nama'],
+                'nik' => $item['pasien']['noktp'] ?? "-",
+                'umur' => $umur[0],
+                'alamat' => $item['alamat'],
+                'namaFaskes' => $item['namaFaskes'],
+                'tb04' => $item['tb04'],
+            ];
+        }
+        usort($res, function ($a, $b) {
+            return $a['no_reg_lab'] <=> $b['no_reg_lab'];
+        });
+        // return $res;
+        // ambil $tahun dari $res
+        $tahun = Carbon::parse($res[0]['tgl_terima'])->format('Y');
+
+        // return $res;
+        return view('Laboratorium.TB04Lab.cetak', ['data' => $res, 'tahun' => $tahun])->with('title', $title);
+    }
+    public function getDataTb04Id($filter = null, $regLab)
+    {
+
+        $data = LaboratoriumKunjunganModel::with(['tb04' => function ($query) use ($filter) {
+            $query->whereIn('idLayanan', $filter);
+        }])
+            ->whereHas('tb04', function ($query) use ($filter, $regLab) {
+                $query->whereIn('idLayanan', $filter)
+                    ->where('no_reg_lab', '>', $regLab);
+            })
+            ->orderBy('id', 'desc')
+            ->with('pasien')
+            ->get();
+
+        foreach ($data as $item) {
+            $pemeriksaan = $item->tb04;
+            $nonNullHasilCount = 0;
+            $nmLayananList = [];
+
+            foreach ($pemeriksaan as $periksa) {
+                if (!is_null($periksa->no_reg_lab)) {
+                    $nonNullHasilCount++;
+                }
+
+                if (!empty($periksa->pemeriksaan->nmLayanan)) {
+                    $nmLayananList[] = $periksa->pemeriksaan->nmLayanan;
+                }
+            }
+
+            $item->pemeriksaan = implode(', ', $nmLayananList);
+            $item->jmlh = $pemeriksaan->count();
+
+            if ($nonNullHasilCount === 0) {
+                $item->status = 'Belum';
+            } elseif ($nonNullHasilCount < $item->jmlh) {
+                $item->status = 'Belum Lengkap';
+            } else {
+                $item->status = 'Lengkap';
+            }
+
+            $doctorNipMap = [
+                '198311142011012002' => 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.',
+                '9' => 'dr. Agil Dananjaya, Sp.P',
+                '198907252019022004' => 'dr. Filly Ulfa Kusumawardani',
+                '198903142022031005' => 'dr. Sigit Dwiyanto',
+            ];
+            $item->nama_dokter = $doctorNipMap[$item['dokter']] ?? 'Unknown';
+
+            // Tambahan properti baru
+            $item->tgl = \Carbon\Carbon::parse($item->created_at)->format('Y-m-d');
+            $item->tanggal = \Carbon\Carbon::parse($item->created_at)->format('d-m-Y');
+
+            // Bersihkan alamat dan ambil desa
+            $item->alamat = preg_replace('/, [^,]*$/', '', $item->alamat);
+            $alamatParts = explode(',', $item->alamat);
+            $item->desa = trim($alamatParts[0] ?? '');
+        }
+
+        return $data;
     }
     public function showDataTb04(Request $request)
     {
@@ -354,7 +463,7 @@ class LaboratoriumController extends Controller
         $date = $tanggal ? Carbon::parse($tanggal) : Carbon::now();
         //buat $tgl adalah 15 hari dari $date
         $tglAkhir = $date->format('Y-m-d');
-        $tgl = $date->subDays(15);
+        $tgl = $date->subDays(8);
         $tglAwal = $tgl->format('Y-m-d');
         // dd($tgl);
         $data = LaboratoriumKunjunganModel::with(['tb04' => function ($query) {

@@ -63,6 +63,7 @@ Route::get('lab/cetakPermintaan/{notras}/{norm}/{tgl}', [LaboratoriumController:
 
 Route::get('tb04/antrian/{tanggal}', [LaboratoriumController::class, 'getDataTb04']);
 Route::get('tb04/cetak/{tglAwal}/{tglAkhir}', [LaboratoriumController::class, 'cetakTb04']);
+Route::get('tb04/cetak/{id}', [LaboratoriumController::class, 'cetakTb04Id']);
 Route::post('tb04/data', [LaboratoriumController::class, 'showDataTb04']);
 
 Route::post('lab/laporan/kunjungan', [LaboratoriumController::class, 'rekapKunjunganLab']);

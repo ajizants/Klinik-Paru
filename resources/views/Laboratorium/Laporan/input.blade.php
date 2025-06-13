@@ -33,8 +33,8 @@
                         <div class="card-header">
                             <h4 class="card-title">Pencarian Laporan</h4>
                         </div>
-                        @csrf
-                        <form class="form-horizontal">
+
+                        <div class="form-horizontal">
                             <div class="card-body shadow">
                                 <div class="form-inline d-flex justify-content-start p-2">
                                     <label for="tglAwal"><b>Tanggal Awal :</b></label>
@@ -116,23 +116,48 @@
                                 </div>
                                 <!-- Jumlah Periksa -->
                                 <div class="container-fluid" id="tab_1" style="display:none;">
-                                    <div id="cariTb04">
+                                    {{-- <div id="cariTb04">
                                         <a class="btn btn-success d-flex justify-content-center mx-2"
                                             onclick="cetakTb04();">
-                                            Cetak Laporan TB 04
+                                            Cetak Laporan TB 04 By TGL
                                         </a>
+                                    </div> --}}
+                                    <div id="cariTb04" class="form-row align-items-center">
+                                        <label for="idTb04" class="col-auto col-form-label font-weight-bold mb-0">
+                                            Batas Awal No Reg Lab
+                                        </label>
+                                        <div class="col-auto">
+                                            <input type="text" class="form-control bg-warning" id="idTb04"
+                                                onkeyup="if (event.key === 'Enter') cetakTb04Id();">
+                                        </div>
+
+                                        <div class="col-auto">
+                                            <a class="btn btn-primary" onclick="cetakTb04Id();">
+                                                Cetak Laporan TB 04 By ID
+                                            </a>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a class="btn btn-success" onclick="cetakTb04();">
+                                                Cetak Laporan TB 04 By Tanggal (Pilih tgl awal dan akhir)
+                                            </a>
+                                        </div>
                                     </div>
+
                                     <script>
                                         function cetakTb04() {
                                             var tglAwal = document.getElementById("tglAwal").value;
                                             var tglAkhir = document.getElementById("tglAkhir").value;
-                                            // opeb 'tb04/cetak/' + tglAwal + '/' + tglAkhir; new window
                                             window.open('/api/tb04/cetak/' + tglAwal + '/' + tglAkhir, '_blank');
+                                        }
+
+                                        function cetakTb04Id() {
+                                            var idTb04 = document.getElementById("idTb04").value;
+                                            window.open('/api/tb04/cetak/' + idTb04, '_blank');
                                         }
                                     </script>
 
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
