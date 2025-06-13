@@ -931,8 +931,21 @@ class LaboratoriumController extends Controller
 
             $analis = $dataAnalis[rand(0, 2)];
 
-            $dataNoSampel = $this->noSampel();
-            $noSampel = $dataNoSampel->getData()->noSample; // atau getData(true) untuk array
+            if ($lab == null) {
+                $dataNoSampel = $this->noSampel();
+                $noSampel = $dataNoSampel->getData()->noSample; // atau getData(true) untuk array
+            } else {
+                $noSampel = $lab->no_sampel;
+            }
+
+            $tahunSekarang = date('Y');
+
+            // Ambil no_reg_lab tertinggi untuk tahun ini
+            $no_reg_lab = LaboratoriumHasilModel::whereYear('created_at', $tahunSekarang)->max('no_reg_lab');
+            // dd($no_reg_lab);
+            if ($no_reg_lab == null) {
+                $no_reg_lab = 0;
+            }
 
             return view('Laboratorium.Pendaftaran.order', compact('noSampel', 'dataCppt', 'lab', 'tglLahir', 'permintaan', 'analis', 'dokter'));
 
