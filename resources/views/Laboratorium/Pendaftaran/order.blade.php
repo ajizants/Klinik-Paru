@@ -255,7 +255,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // window.print();
+            window.print();
             window.addEventListener('afterprint', () => {
                 window.close(); // ini akan berhasil kalau dibuka dari window.open()
             });
