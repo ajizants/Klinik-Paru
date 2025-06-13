@@ -2,7 +2,7 @@
     <!-- Card Header - Accordion -->
     <a href="#collapseCardAntrian" class="d-block card-header py-1 bg bg-info" data-toggle="collapse" role="button"
         aria-expanded="true" aria-controls="collapseCardExample">
-        <h4 class="m-0 font-weight-bold text-dark text-center">Antrian</h4>
+        <h4 class="m-0 font-weight-bold text-dark text-center">TB 04 Laboratorium</h4>
     </a>
     <!-- Card Content - Collapse -->
     <div class="collapse show card-body p-0" id="collapseCardAntrian">
@@ -12,16 +12,21 @@
             @include('Template.Table.loading')
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a type="button" class="nav-link active bg-blue" onclick="toggleSections('#dTunggu');"><b>Daftar
+                    <a type="button" class="nav-link active bg-blue"
+                        onclick="toggleSections('#dTunggu');  $('#divTrans').show(); document.getElementById('divTgl').style.removeProperty('display', 'none', 'important');"><b>Daftar
                             Tunggu</b></a>
                 </li>
                 <li class="nav-item">
-                    <a type="button" class="nav-link" onclick="toggleSections('#dSelesai');"><b>Daftar Selesai</b></a>
+                    <a type="button" class="nav-link"
+                        onclick="toggleSections('#dSelesai'); $('#divTrans').show(); document.getElementById('divTgl').style.removeProperty('display', 'none', 'important');"><b>Daftar
+                            Selesai</b></a>
                 </li>
                 <li class="nav-item">
-                    <a type="button" class="nav-link" onclick="toggleSections('#tab_3');"><b>Cetak laporan</b></a>
+                    <a type="button" class="nav-link"
+                        onclick="toggleSections('#tab_3'); $('#divTrans').hide(); document.getElementById('divTgl').style.setProperty('display', 'none', 'important');"><b>Cetak
+                            laporan</b></a>
                 </li>
-                <div class="input-group col d-flex justify-content-end mr-5">
+                <div class="input-group col d-flex justify-content-end mr-5" id="divTgl">
                     <input type="date" class="form-control col-sm-2 bg bg-warning" id="tanggal"
                         value="{{ old('date') }}" required onchange="antrian();" />
                     <div class="input-group-addon btn btn-danger">
@@ -80,24 +85,25 @@
                     </table>
                 </div>
             </div>
-            <div id="tab_3" class="card-body card-body-hidden p-2" style="display: none;">
-                <div class="container-fluid">
-                    <div class="container-fluid">
-                        <div class="form-row align-items-center">
-                            <label for="idTb04" class="col-auto col-form-label font-weight-bold mb-0">
-                                No Reg Lab
-                            </label>
-                            <div class="col-auto">
-                                <input type="text" class="form-control" id="idTb04"
-                                    placeholder="Batas Awal No Reg Lab"
-                                    onkeyup="if (event.key === 'Enter') cetakTb04Id();">
-                            </div>
+            <div id="tab_3" class="card-body card-body-hidden p-0" style="display: none;">
+                <div class="container-fluid p-3">
+                    <div class="form-row align-items-center">
+                        <label for="idTb04" class="col-auto col-form-label font-weight-bold mb-0">
+                            No Reg Lab
+                        </label>
+                        <div class="col-auto">
+                            <input type="text" class="form-control" id="idTb04"
+                                placeholder="Batas Awal No Reg Lab" onkeyup="if (event.key === 'Enter') cetakTb04Id();">
+                        </div>
 
-                            <div class="col-auto">
-                                <a class="btn btn-primary" onclick="cetakTb04Id();">
-                                    Cetak Laporan TB 04 By ID
-                                </a>
-                            </div>
+                        <div class="col-auto">
+                            <a class="btn btn-primary" onclick="cetakTb04Id();">
+                                Cetak Laporan TB 04 By Reg Lab
+                            </a>
+                        </div>
+                        <div class="col-auto">
+                            Pencarian by No Regl Lab akan berfokus pada No Reg Lab yang di pilih sampai No Reg Lab
+                            terakhir
                         </div>
                         <div class="form-row align-items-center">
                             <div class="form-inline d-flex justify-content-start p-2">
@@ -131,6 +137,5 @@
                 </div>
             </div>
         </div>
-    </div>
 
-</div>
+    </div>
