@@ -18,6 +18,9 @@
                 <li class="nav-item">
                     <a type="button" class="nav-link" onclick="toggleSections('#dSelesai');"><b>Daftar Selesai</b></a>
                 </li>
+                <li class="nav-item">
+                    <a type="button" class="nav-link" onclick="toggleSections('#tab_3');"><b>Cetak laporan</b></a>
+                </li>
                 <div class="input-group col d-flex justify-content-end mr-5">
                     <input type="date" class="form-control col-sm-2 bg bg-warning" id="tanggal"
                         value="{{ old('date') }}" required onchange="antrian();" />
@@ -75,6 +78,56 @@
                         <tbody>
                         </tbody>
                     </table>
+                </div>
+            </div>
+            <div id="tab_3" class="card-body card-body-hidden p-2" style="display: none;">
+                <div class="container-fluid">
+                    <div class="container-fluid">
+                        <div class="form-row align-items-center">
+                            <label for="idTb04" class="col-auto col-form-label font-weight-bold mb-0">
+                                No Reg Lab
+                            </label>
+                            <div class="col-auto">
+                                <input type="text" class="form-control" id="idTb04"
+                                    placeholder="Batas Awal No Reg Lab"
+                                    onkeyup="if (event.key === 'Enter') cetakTb04Id();">
+                            </div>
+
+                            <div class="col-auto">
+                                <a class="btn btn-primary" onclick="cetakTb04Id();">
+                                    Cetak Laporan TB 04 By ID
+                                </a>
+                            </div>
+                        </div>
+                        <div class="form-row align-items-center">
+                            <div class="form-inline d-flex justify-content-start p-2">
+                                <label for="tglAwal"><b>Tanggal Awal</b></label>
+                                <input type="date" class="form-control m-2" id="tglAwal"
+                                    value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required>
+                                <label for="tglAkhir" class="form-label"><b>Tanggal Akhir</b></label>
+                                <input type="date" class="form-control m-2" id="tglAkhir"
+                                    value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required>
+                            </div>
+                            <div class="col-auto">
+                                <a class="btn btn-success" onclick="cetakTb04();">
+                                    Cetak Laporan TB 04 By Tanggal (Pilih tgl awal dan akhir)
+                                </a>
+                            </div>
+                        </div>
+
+                        <script>
+                            function cetakTb04() {
+                                var tglAwal = document.getElementById("tglAwal").value;
+                                var tglAkhir = document.getElementById("tglAkhir").value;
+                                window.open('/api/tb04/cetak/' + tglAwal + '/' + tglAkhir, '_blank');
+                            }
+
+                            function cetakTb04Id() {
+                                var idTb04 = document.getElementById("idTb04").value;
+                                window.open('/api/tb04/cetak/' + idTb04, '_blank');
+                            }
+                        </script>
+                    </div>
                 </div>
             </div>
         </div>
