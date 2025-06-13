@@ -554,7 +554,7 @@
                         <td class="py-1" rowspan="3">HIV</td>
                         <td class="py-1">
                             <input type="text" name="reagen_1" id="reagen_1"
-                                style="border: none; outline: none;" value="" class="col bg-warning"
+                                style="border: none; outline: none;" value="-" class="col bg-warning"
                                 oninput="removeBgWarning('reagen_1')" />
                         </td>
                         <td class="py-1 text-center">
@@ -597,7 +597,7 @@
                     <tr>
                         <td class="py-1">
                             <input type="text" name="reagen_2" id="reagen_2"
-                                style="border: none; outline: none;" value="" class="col bg-warning"
+                                style="border: none; outline: none;" value="-" class="col bg-warning"
                                 oninput="removeBgWarning('reagen_2')" />
                         </td>
                         <td class="py-1 text-center">
@@ -610,7 +610,7 @@
                     <tr>
                         <td class="py-1">
                             <input type="text" name="reagen_3" id="reagen_3"
-                                style="border: none; outline: none;" value="" class="col bg-warning"
+                                style="border: none; outline: none;" value="-" class="col bg-warning"
                                 oninput="removeBgWarning('reagen_3')" />
                         </td>
                         <td class="py-1 text-center">
@@ -624,7 +624,7 @@
                         <td class="py-1">SIFILIS (SIPILIS) </td>
                         <td class="py-1">
                             <input type="text" name="reagen_4" id="reagen_4"
-                                style="border: none; outline: none;" value="" class="col bg-warning"
+                                style="border: none; outline: none;" value="-" class="col bg-warning"
                                 oninput="removeBgWarning('reagen_4')" />
                         </td>
                         <td class="py-1 text-center">
@@ -665,7 +665,8 @@
                     </tr>
                     <tr>
                         <td width="70%" colspan="3" class="py-2 "></td>
-                        <td class="py-2">{{ $analis }}</td>
+                        {{-- <td class="py-2">{{ $analis }}</td> --}}
+                        <td class="py-2">SUHARTANTI Amd.AK.</td>
                     </tr>
                 </tbody>
             </table>

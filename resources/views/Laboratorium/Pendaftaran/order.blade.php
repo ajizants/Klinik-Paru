@@ -209,12 +209,27 @@
 
                         <td class="font-weight-bold py-2" width="25%">
                             <i class="fas fa-check-circle text-success mr-1"></i>
-                            {{ $item['layanan'] }} @php
-                                if ($item['keterangan'] != null || $item['keterangan'] != '') {
-                                    echo "- ({$item['keterangan']})";
-                                }
-                            @endphp
+                            {{ $item['layanan'] }}
+
+                            @if ($item['layanan'] === 'TCM XDR (Xpert)' || $item['layanan'] === 'TCM MTB Rif (Xpert)')
+                                <table class="mt- 1 text-sm" style="margin-left: 25px;">
+                                    <tr>
+                                        <td class="px-2 py-0 text-center" style="width: 108px;">No Reg.Lab</td>
+                                        <td class="px-2 py-0 text-center" style="width: 108px;">No sediaan</td>
+                                        <td class="px-2 py-0 text-center" style="width: 108px;">Hasil</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pr-2"></td>
+                                        <td class="pr-2"></td>
+                                        <td class="pr-2"></td>
+                                    </tr>
+                                </table>
+                            @elseif (!empty($item['keterangan']))
+                                - ({{ $item['keterangan'] }})
+                            @endif
                         </td>
+
+
 
                         @if ($loop->iteration % 4 == 0 || $loop->last)
                             @php
@@ -240,7 +255,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            window.print();
+            // window.print();
             window.addEventListener('afterprint', () => {
                 window.close(); // ini akan berhasil kalau dibuka dari window.open()
             });
