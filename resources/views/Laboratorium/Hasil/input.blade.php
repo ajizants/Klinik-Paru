@@ -227,12 +227,17 @@
                                         <table id="inputHasil" class="table table-tight">
                                             <thead>
                                                 <tr>
-                                                    <th>NO</th>
-                                                    <th>NO RM</th>
+                                                    <th>NoRM</th>
                                                     <th>Pemeriksaan</th>
                                                     <th>Petugas</th>
                                                     <th>Hasil</th>
                                                     <th>Ket</th>
+                                                    <th>Tgl Hasil</th>
+                                                    <th>NoReg TB04</th>
+                                                    <th>Kode</th>
+                                                    <th>No Sediaan</th>
+                                                    <th>Alasan</th>
+                                                    <th>Faskes</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
