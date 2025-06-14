@@ -107,7 +107,7 @@
                                     </div>
                                     <div class="card-footer form-row d-flex justify-content-end aligment-items-center">
                                         <div class="col-3 pt-2 d-flex aligment-items-center">
-                                            <div hidden>
+                                            <div>
                                                 <b class="mr-2">Waktu Selesai Hasil:</b> <span
                                                     id="waktuSelesai">-</span>
                                             </div>
