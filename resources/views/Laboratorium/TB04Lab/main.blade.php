@@ -313,6 +313,11 @@
                             `<input type="text" class="form-control-sm col hasil" id="ket${row.idLab}" value="${data}" placeholder="Keterangan">`,
                     },
                     {
+                        data: "tgl_hasil",
+                        render: (data, type, row) =>
+                            `<input type="date" class="form-control-sm col hasil" id="tgl_hasil${row.idLab}" value="${data}" placeholder="Tanggal Hasil">`,
+                    },
+                    {
                         data: "no_reg_lab",
                         width: "30px", // atur lebar kolom di sini
                         render: (data, type, row) => {
@@ -320,10 +325,10 @@
                             const arraykdTindakan = ["130", "131", "214"];
                             if (arraykdTindakan.includes(String(row.idLayanan))) {
                                 noRegHtml =
-                                    `<input type="text" class="form-control-sm col hasil" id="no_reg_lab${row.idLab}" value="${data}">`;
+                                    `<input type="text" class="form-control-sm col hasil" id="no_reg_lab${row.idLab}" value="${data}" placeholder="No.Reg">`;
                             } else {
                                 noRegHtml =
-                                    `<input type="text" class="form-control-sm col hasil bg-secondary" id="no_reg_lab${row.idLab}" value="${data}" readonly>`;
+                                    `<input type="text" class="form-control-sm col hasil bg-secondary" id="no_reg_lab${row.idLab}" value="${data}" readonly placeholder="No.Reg">`;
                             }
                             return noRegHtml;
                         },
@@ -332,19 +337,25 @@
                         data: "kode_tcm",
                         width: "20px", // lebar yang masuk akal
                         render: (data, type, row) => {
-                            return `
-                        <select class="form-control-sm col hasil" id="kode_tcm${
+                            let kdTcm = "";
+                            const arraykdTindakan = ["130", "131", "214"];
+                            if (arraykdTindakan.includes(String(row.idLayanan))) {
+                                kdTcm = `<select class="form-control-sm col hasil" id="kode_tcm${
                             row.idLab
                         }">
-                            <option value="">--Pilih Kode--</option>
+                            <option value="">-KD-</option>
                             <option value="1" ${
                                 data == "1" ? "selected" : ""
                             }>1</option>
                             <option value="2" ${
                                 data == "2" ? "selected" : ""
                             }>2</option>
-                        </select>
-                    `;
+                        </select>`;
+                            } else {
+                                kdTcm =
+                                    `<input type="text" class="form-control-sm col hasil bg-secondary" id="kode_tcm${row.idLab}" value="" readonly placeholder="Kode">`;
+                            }
+                            return kdTcm;
                         },
                     },
                     {
@@ -355,29 +366,44 @@
                             const arraykdTindakan = ["130", "131", "214"];
                             if (arraykdTindakan.includes(String(row.idLayanan))) {
                                 noIdenHtml =
-                                    `<input type="text" class="form-control-sm col hasil" id="no_iden_sediaan${row.idLab}" value="${data}">`;
+                                    `<input type="text" class="form-control-sm col hasil" id="no_iden_sediaan${row.idLab}" value="${data}" placeholder="No.Iden">`;
                             } else {
                                 noIdenHtml =
-                                    `<input type="text" class="form-control-sm col hasil bg-secondary" id="no_iden_sediaan${row.idLab}" value="" readonly>`;
+                                    `<input type="text" class="form-control-sm col hasil bg-secondary" id="no_iden_sediaan${row.idLab}" value="" readonly placeholder="No.Iden">`;
                             }
                             return noIdenHtml;
                         },
                     },
                     {
-                        data: "tgl_hasil",
-                        render: (data, type, row) =>
-                            `<input type="date" class="form-control-sm col hasil" id="tgl_hasil${row.idLab}" value="${data}">`,
-                    },
-                    {
                         data: "alasan_periksa",
-                        render: (data, type, row) =>
-                            `<input type="text" class="form-control-sm col hasil" id="alasan_periksa${row.idLab}" value="${data}">`,
+                        render: (data, type, row) => {
+                            let input = "";
+                            const arraykdTindakan = ["130", "131", "214"];
+                            if (arraykdTindakan.includes(String(row.idLayanan))) {
+                                input =
+                                    `<input type="text" class="form-control-sm col hasil" id="alasan_periksa${row.idLab}" value="${data}" placeholder="Alasan Periksa">`;
+                            } else {
+                                input =
+                                    `<input type="text" class="form-control-sm col hasil bg-secondary" id="alasan_periksa${row.idLab}" value="" readonly placeholder="Alasan Periksa">`;
+                            }
+                            return input;
+                        },
                     },
 
                     {
                         data: "namaFaskes",
-                        render: (data, type, row) =>
-                            `<input type="text" class="form-control-sm col hasil" id="namaFaskes${row.idLab}" value="${data}">`,
+                        render: (data, type, row) => {
+                            let input = "";
+                            const arraykdTindakan = ["130", "131", "214"];
+                            if (arraykdTindakan.includes(String(row.idLayanan))) {
+                                input =
+                                    `<input type="text" class="form-control-sm col hasil" id="namaFaskes${row.idLab}" value="${data}" placeholder="Nama Faskes">`;
+                            } else {
+                                input =
+                                    `<input type="text" class="form-control-sm col hasil bg-secondary" id="namaFaskes${row.idLab}" value="" readonly    placeholder="Nama Faskes">`;
+                            }
+                            return input;
+                        },
                     },
                 ],
                 order: [
