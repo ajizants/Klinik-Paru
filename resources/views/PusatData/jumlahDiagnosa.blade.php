@@ -1,6 +1,6 @@
     <div class="card card-lime">
         <div class="card-header bg-lime">
-            <h4 class="card-title font-weight-bold">Data Jumlah Pelayanan Dokter</h4>
+            <h4 class="card-title font-weight-bold">Data Jumlah Diagnosa Medis</h4>
         </div>
         <div class="card-body shadow">
             <div class="row">
@@ -8,13 +8,13 @@
                 <div class="col-md-4 col-sm-6">
                     <div class="form-group">
                         <div class="d-flex align-items-center">
-                            <select id="tahun" class="form-control form-control-sm mr-2">
+                            <select id="tahunDx" class="form-control form-control-sm mr-2">
                                 @for ($year = date('Y'); $year >= 2021; $year--)
                                     <option value="{{ $year }}">{{ $year }}</option>
                                 @endfor
                             </select>
                             <button class="btn btn-sm btn-success"
-                                onclick="cariDataDokterPeriksa(document.getElementById('tahun').value)">Cari</button>
+                                onclick="cariJumlahDiagnosa(document.getElementById('tahunDx').value)">Cari</button>
                         </div>
 
                     </div>
@@ -47,35 +47,43 @@
                     </div>
                 </div>
             </div>
-
-            <div class="table-responsive pt-2 px-2" id="divJumlahDokter">
-            </div>
             <div class="card mt-4">
-                <div class="card-header">Grafik Kunjungan Pemeriksaan Dokter</div>
+                <div class="card-header">Data Jumlah Diagnosa Per Tahun</div>
                 <div class="card-body">
-                    <canvas id="dokterLineChart" height="300"></canvas>
+                    <div class="table-responsive pt-2 px-2" id="divJumlahDxPerTahun">
+
+                    </div>
                 </div>
             </div>
+            <div class="card mt-4">
+                <div class="card-header">Data Jumlah Diagnosa Per Bulan</div>
+                <div class="card-body">
+                    <div class="table-responsive pt-2 px-2" id="divJumlahDx">
+
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
-        function cariDataDokterPeriksa(tahun) {
+        function cariJumlahDiagnosa(tahun) {
             tampilkanLoading("Sedangan Mencari Data Pemeriksaan Dokter...");
             // cariDataDokterPeriksaItem(tglAwal, tglAkhir);
 
             $.ajax({
-                url: "/api/laporan/dokter_periksa/" + tahun + "/12",
+                url: "/api/data/analis/diagnosa/" + tahun,
                 method: "GET",
                 success: function(response) {
-                    $('#divJumlahDokter').html(response.html);
-                    var table = $('#jumlahDokterTable').DataTable({
+                    $('#divJumlahDx').html(response.tablePerbulan);
+                    var table = $('#jumlahDxTable').DataTable({
                         responsive: true,
                         lengthChange: false,
                         autoWidth: true,
                         searching: true,
                         paging: true,
-                        // ordering: false,
+                        ordering: false,
                         order: [
                             [0, "asc"]
                         ],
@@ -99,10 +107,8 @@
                         }, {
                             extend: "excel", // Tombol ekspor ke Excel
                             text: "Download",
-                            title: "Data Jumlah Pemeriksaa Dokter " + tglAwal + " s.d. " +
-                                tglAkhir,
-                            filename: "Data Jumlah Pemeriksaa Dokter" + tglAwal + "_" +
-                                tglAkhir,
+                            title: "Data Jumlah Diagnosa Per Bulan " + tahun,
+                            filename: "Data Jumlah Diagnosa Per Bulan " + tahun,
                             exportOptions: {
                                 columns: ":visible",
                             },
@@ -110,45 +116,52 @@
                     });
 
                     // Menambahkan tombol ekspor ke dalam wrapper DataTables
-                    table.buttons().container().appendTo("#jumlahDokterTable_wrapper .col-md-6:eq(0)");
+                    table.buttons().container().appendTo("#jumlahDxTable_wrapper .col-md-6:eq(0)");
 
-                    const ctx = document.getElementById('dokterLineChart').getContext('2d');
 
-                    new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: response.chart.labels,
-                            datasets: response.chart
-                                .datasets // langsung gunakan semua datasets dari backend
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            interaction: {
-                                mode: 'index',
-                                intersect: false
-                            },
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'Grafik Pemeriksaan Dokter per Bulan'
-                                },
-                                tooltip: {
-                                    mode: 'index',
-                                    intersect: false
-                                },
-                                legend: {
-                                    display: true,
-                                    position: 'top'
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true
-                                }
+                    $('#divJumlahDxPerTahun').html(response.tablePertahun);
+                    var table = $('#jumlahDxPerTahunTable').DataTable({
+                        responsive: true,
+                        lengthChange: false,
+                        autoWidth: true,
+                        searching: true,
+                        paging: true,
+                        ordering: false,
+                        order: [
+                            [0, "asc"]
+                        ],
+                        info: true,
+                        language: {
+                            search: "Cari:",
+                            lengthMenu: "Tampilkan _MENU_ data",
+                            info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                            infoEmpty: "Tidak ada data tersedia",
+                            zeroRecords: "Tidak ada data yang cocok",
+                            paginate: {
+                                first: "Awal",
+                                last: "Akhir",
+                                next: "→",
+                                previous: "←"
                             }
-                        }
+                        },
+                        buttons: [{
+                            extend: "copyHtml5",
+                            text: "Salin",
+                        }, {
+                            extend: "excel", // Tombol ekspor ke Excel
+                            text: "Download",
+                            title: "Data Jumlah Diagnosa Tahun " + tahun,
+                            filename: "Data Jumlah Diagnosa Tahun " + tahun,
+                            exportOptions: {
+                                columns: ":visible",
+                            },
+                        }]
                     });
+
+                    // Menambahkan tombol ekspor ke dalam wrapper DataTables
+                    table.buttons().container().appendTo("#jumlahDxPerTahunTable_wrapper .col-md-6:eq(0)");
+
+
 
                     Swal.close();
                 },

@@ -12,6 +12,9 @@
                         Perujuk</b></a>
             </li>
             <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_9'); "><b>Jmlh DX Med</b></a>
+            </li>
+            <li class="nav-item">
                 <a type="button" class="nav-link " onclick="toggleSections('#tab_3'); "><b>Tindakan</b></a>
             </li>
             <li class="nav-item">
@@ -62,11 +65,14 @@
     <div class="container-fluid mt-1" id="tab_6" style="display: none;">
         @include('PusatData.pendaftaran')
     </div>
+    <div class="container-fluid mt-1" id="tab_7" style="display: none;">
+        @include('PusatData.dokter')
+    </div>
     <div class="container-fluid mt-1" id="tab_8" style="display: none;">
         @include('PusatData.wilayah')
     </div>
-    <div class="container-fluid mt-1" id="tab_7" style="display: none;">
-        @include('PusatData.dokter')
+    <div class="container-fluid mt-1" id="tab_9" style="display: none;">
+        @include('PusatData.jumlahDiagnosa')
     </div>
 
     <!-- my script -->

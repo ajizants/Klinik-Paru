@@ -6,6 +6,7 @@ use App\Models\KominfoModel;
 use App\Models\KunjunganWaktuSelesai;
 use App\Models\LaboratoriumHasilModel;
 use App\Models\LaboratoriumKunjunganModel;
+use App\Models\PoliModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -360,6 +361,207 @@ class DataAnalisController extends Controller
             'kunjungan' => $dataKunjunganLab,
             'hasil' => $dataHasilLab,
         ], 200);
+    }
+
+    public function jumlahDiagnosa($tahun)
+    {
+        if ($tahun >= 2025) {
+            if ($tahun == 2025) {
+                $tglAwal = Carbon::parse('2024-07-01')->startOfDay(); // 00:00:00
+                $tglAkhir = Carbon::parse($tahun . '-12-31')->endOfDay(); // 23:59:59
+            } else {
+                $tglAwal = Carbon::parse($tahun . '-01-01')->startOfDay(); // 00:00:00
+                $tglAkhir = Carbon::parse($tahun . '-12-31')->endOfDay(); // 23:59:59
+            }
+        }
+        $data = PoliModel::with('dx1', 'dx2', 'dx3')
+            ->whereYear('tgltrans', $tahun)
+            ->get();
+
+        $data = $this->hitungDx2024($data);
+        // return $data['perBulan'];
+        // return $data['perTahun'];
+        $tablePerbulan = $this->generateDiagnosaTablePerbulan($data['perBulan']);
+        $tablePertahun = $this->generateDiagnosaTable($data['perTahun']);
+        // return $tablePerbulan;
+        return response()->json([
+            'tablePerbulan' => $tablePerbulan,
+            'tablePertahun' => $tablePertahun,
+            'perBulan' => $data['perBulan'],
+            'perTahun' => $data['perTahun'],
+        ], 200);
+    }
+
+    private function hitungDx2024($data)
+    {
+        $perBulan = [];
+        $perTahun = [];
+
+        foreach ($data as $item) {
+            $tgl = \Carbon\Carbon::parse($item['tgltrans']);
+            $bulan = $tgl->format('Y-m'); // contoh: "2024-01"
+            $tahun = $tgl->format('Y'); // contoh: "2024"
+
+            // Ambil ketiga diagnosa
+            $diagnosaList = [
+                ['kode' => $item['diagnosa1'], 'detail' => $item['dx1'] ?? null],
+                ['kode' => $item['diagnosa2'], 'detail' => $item['dx2'] ?? null],
+                ['kode' => $item['diagnosa3'], 'detail' => $item['dx3'] ?? null],
+            ];
+
+            foreach ($diagnosaList as $dx) {
+                if (!empty($dx['kode'])) {
+                    $kode = $dx['kode'];
+                    $nama = $dx['detail']['diagnosa'] ?? 'Tidak diketahui';
+
+                    // === Hitung per bulan ===
+                    if (!isset($perBulan[$bulan])) {
+                        $perBulan[$bulan] = [];
+                    }
+
+                    // Cari apakah kode sudah ada
+                    $found = false;
+                    foreach ($perBulan[$bulan] as &$entry) {
+                        if ($entry['kddx'] === $kode) {
+                            $entry['jumlah']++;
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if (!$found) {
+                        $perBulan[$bulan][] = ['kddx' => $kode, 'namadx' => $nama, 'jumlah' => 1];
+                    }
+
+                    // === Hitung per tahun ===
+                    if (!isset($perTahun[$tahun])) {
+                        $perTahun[$tahun] = [];
+                    }
+
+                    $found = false;
+                    foreach ($perTahun[$tahun] as &$entry) {
+                        if ($entry['kddx'] === $kode) {
+                            $entry['jumlah']++;
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if (!$found) {
+                        $perTahun[$tahun][] = ['kddx' => $kode, 'namadx' => $nama, 'jumlah' => 1];
+                    }
+                }
+            }
+        }
+
+        return [
+            'perBulan' => $perBulan,
+            'perTahun' => $perTahun,
+        ];
+    }
+
+    private function generateDiagnosaTablePerbulan($perbulan)
+    {
+        // Kumpulkan semua bulan
+        $allMonths = [];
+        foreach ($perbulan as $bulan => $dxList) {
+            $allMonths[$bulan] = \Carbon\Carbon::parse($bulan . '-01')->translatedFormat('M Y'); // contoh: Jan 2024
+        }
+
+        // Urutkan bulan secara kronologis (Y-m)
+        ksort($allMonths); // <-- INI penting agar urut dari Jan ke Des
+
+        // Kumpulkan semua kode diagnosa
+        $diagnosaList = [];
+        foreach ($perbulan as $bulan => $dxs) {
+            foreach ($dxs as $kode => $item) {
+                if (!isset($diagnosaList[$kode])) {
+                    $diagnosaList[$kode] = [
+                        'kddx' => $item['kddx'],
+                        'namadx' => $item['namadx'],
+                    ];
+                }
+                $diagnosaList[$kode][$bulan] = $item['jumlah'];
+            }
+        }
+
+        // Susun data ke dalam format tabel
+        $table = [];
+        foreach ($diagnosaList as $kode => $dx) {
+            $row = [
+                'kddx' => $dx['kddx'],
+                'namadx' => $dx['namadx'],
+            ];
+
+            // Tambahkan kolom per bulan (yang sudah terurut)
+            foreach (array_keys($allMonths) as $bulan) {
+                $row[$bulan] = $dx[$bulan] ?? 0;
+            }
+
+            $table[] = $row;
+        }
+
+        // Optional: urutkan berdasarkan jumlah total
+        usort($table, function ($a, $b) use ($allMonths) {
+            $sumA = array_sum(array_intersect_key($a, array_flip(array_keys($allMonths))));
+            $sumB = array_sum(array_intersect_key($b, array_flip(array_keys($allMonths))));
+            return $sumB <=> $sumA;
+        });
+
+        // Header kolom
+        $headers = array_merge(['kddx', 'namadx'], array_values($allMonths));
+
+        // Generate HTML
+        $html = '<table id="jumlahDxTable" class="table table-bordered table-striped">';
+        $html .= '<thead class="bg bg-orange table-bordered"><tr>';
+        foreach ($headers as $header) {
+            $html .= '<th>' . $header . '</th>';
+        }
+        $html .= '</tr></thead><tbody>';
+
+        foreach ($table as $row) {
+            $html .= '<tr>';
+            foreach (array_keys($row) as $key) {
+                $html .= '<td>' . $row[$key] . '</td>';
+            }
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody></table>';
+
+        return $html;
+    }
+    private function generateDiagnosaTable($pertahun)
+    {
+        $html = '';
+
+        foreach ($pertahun as $tahun => $diagnosas) {
+            // Header tahun
+            // $html .= '<h4>Diagnosa Tahun ' . $tahun . '</h4>';
+            $html .= '<table id="jumlahDxPerTahunTable" class="table table-bordered table-striped">';
+            $html .= '<thead class="bg bg-primary text-white">';
+            $html .= '<tr>';
+            $html .= '<th>Kode Dx</th>';
+            $html .= '<th>Nama Diagnosa</th>';
+            $html .= '<th>Jumlah Tahun ' . $tahun . '</th>';
+            $html .= '</tr>';
+            $html .= '</thead><tbody>';
+
+            // Sort diagnosa berdasarkan jumlah terbanyak
+            uasort($diagnosas, function ($a, $b) {
+                return $b['jumlah'] <=> $a['jumlah'];
+            });
+
+            foreach ($diagnosas as $dx) {
+                $html .= '<tr>';
+                $html .= '<td>' . $dx['kddx'] . '</td>';
+                $html .= '<td>' . $dx['namadx'] . '</td>';
+                $html .= '<td class="text-end">' . number_format($dx['jumlah']) . '</td>';
+                $html .= '</tr>';
+            }
+
+            $html .= '</tbody></table><br>';
+        }
+
+        return $html;
     }
 
 }

@@ -54,7 +54,7 @@ Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);
 
 Route::get('/diagnosa_icd_x', function (Request $request) {
     $search = $request->get('search', '');
-    $limit  = $request->get('limit', 20);
+    $limit = $request->get('limit', 20);
 
     $diagnosas = DiagnosaIcdXModel::where(function ($query) use ($search) {
         $query->where('diagnosa', 'like', '%' . $search . '%')
@@ -215,6 +215,7 @@ Route::post('surat/medis/riwayat', [SuratController::class, 'riwayat']);
 Route::post('data/analis/biaya_pasien', [DataAnalisController::class, 'DataBiayaKunjungan']);
 Route::post('data/analis/faskes_perujuk', [DataAnalisController::class, 'faskesPerujuk']);
 Route::post('data/analis/kunjungan_lab', [DataAnalisController::class, 'kunjunganLab']);
+Route::get('data/analis/diagnosa/{tahun}', [DataAnalisController::class, 'jumlahDiagnosa']);
 
 Route::post('jadwal/upload', [JadwalController::class, 'import'])->name('jadwal.import');
 Route::post('jadwal/get', [JadwalController::class, 'getJadwal'])->name('jadwal.getJadwal');

@@ -37,7 +37,7 @@
                                 <h5>Pencarian Data</h5>
                                 <ul>
                                     <li>Pilih tab data yang akan dicari.</li>
-                                    <li>Pilih rentang tanggal.</li>
+                                    <li>Pilih rentang tanggal/tahun</li>
                                     <li>Untuk satu tanggal, klik dua kali pada tanggal tersebut.
                                     </li>
                                     <li>Klik tombol "Pilih" untuk mencari data.</li>
