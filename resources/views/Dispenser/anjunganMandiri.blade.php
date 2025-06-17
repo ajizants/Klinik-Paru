@@ -988,7 +988,7 @@
             printWindow.document.write(`<p class='time'>${tgl}, ${jam}</p>`);
             printWindow.document.write(`<p class='time'>Terimakasih sudah menunggu</p>`);
             printWindow.document.write(
-                `<div style='margin-top: 2px; margin-bottom: 2px; height: 150px; '>
+                `<div style='margin-top: 2px; margin-bottom: 2px; height: 170px; border-bottom: 1px solid black; '>
                    
                 </div>`
             );
