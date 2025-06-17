@@ -972,16 +972,13 @@
             let printWindow = window.open("", "_blank");
             printWindow.document.write(
                 `<html><head><title>Cetak No Antrian</title>` +
-                `<style>body{text-align:center;}h1{font-size:60px;font-family:sans-serif;font-weight:bold;margin-top:6px;margin-bottom:6px;}` +
+                `<style>body{text-align:center;}h1{font-size:60px;font-family:sans-serif;font-weight:bold;margin-top:6px;margin-bottom:6px; margin-left: 2px; margin-right: 2px;}` +
                 `.judul{font-size:20px;font-family:sans-serif;font-weight:bold;margin-top:0px;margin-bottom:0px;}` +
                 `h3{margin-top: 0px; margin-bottom: 0px;}` +
                 `.jenis{font-size:20px;font-family:sans-serif;font-weight:bold; margin-top: 0px; margin-bottom: 0px;}.time{font-size:12px;font-family:sans-serif;margin-top:0px;margin-bottom:0px;}</style></head><body>`
             );
 
-            printWindow.document.write(
-                `<div style='margin-top: 2px; margin-bottom: 2px; height: 100px; '>
-                </div>`
-            );
+
 
             printWindow.document.write(`<p class='judul'>Klinik Utama Kesehatan</p>`);
             printWindow.document.write(`<p class='judul'>Paru Masyarakat</p>`);
@@ -990,6 +987,11 @@
             printWindow.document.write(`<p class='jenis'>${jenis}</p>`);
             printWindow.document.write(`<p class='time'>${tgl}, ${jam}</p>`);
             printWindow.document.write(`<p class='time'>Terimakasih sudah menunggu</p>`);
+            printWindow.document.write(
+                `<div style='margin-top: 2px; margin-bottom: 2px; height: 150px; '>
+                   
+                </div>`
+            );
 
             printWindow.document.write(`</body></html>`);
 
