@@ -122,6 +122,7 @@ class LaboratoriumController extends Controller
                 'norm' => $item['norm'],
                 'notrans' => $item['notrans'],
                 'no_reg_lab' => $item['tb04'][0]['no_reg_lab'],
+                'no_tcm' => $item['tb04'][0]['no_tcm'],
                 'no_iden_sediaan' => $item['tb04'][0]['no_iden_sediaan'],
                 'tgl_terima' => $item['tanggal'],
                 'nama' => $item['nama'],
@@ -157,6 +158,7 @@ class LaboratoriumController extends Controller
                 'id' => $item['id'],
                 'norm' => $item['norm'],
                 'notrans' => $item['notrans'],
+                'no_tcm' => $item['tb04'][0]['no_tcm'],
                 'no_reg_lab' => $item['tb04'][0]['no_reg_lab'],
                 'no_iden_sediaan' => $item['tb04'][0]['no_iden_sediaan'],
                 'tgl_terima' => $item['tanggal'],
@@ -747,14 +749,15 @@ class LaboratoriumController extends Controller
             // Memulai transaksi database
             DB::beginTransaction();
 
-            // Membuat array untuk menyimpan data yang akan disimpan
+            $today = Carbon::today();
+            $maxNoTcmToday = LaboratoriumHasilModel::whereDate('created_at', $today)->max('no_tcm');
+            $no_tcm_counter = $maxNoTcmToday ? $maxNoTcmToday + 1 : 1;
+
             $dataToInsert = [];
 
-            // Looping untuk mengolah dataTerpilih
             foreach ($dataTerpilih as $data) {
-                // Validasi data yang diperlukan pada setiap elemen dataTerpilih
                 if (isset($data['idLayanan']) && isset($data['notrans'])) {
-                    $dataToInsert[] = [
+                    $entry = [
                         'notrans' => $data['notrans'],
                         'norm' => $data['norm'],
                         'idLayanan' => $data['idLayanan'],
@@ -763,6 +766,13 @@ class LaboratoriumController extends Controller
                         'created_at' => $tanggal,
                         'updated_at' => $tanggal,
                     ];
+
+                    // Tambahkan no_tcm jika idLayanan adalah 131
+                    if ($data['idLayanan'] == 131) {
+                        $entry['no_tcm'] = $no_tcm_counter++;
+                    }
+
+                    $dataToInsert[] = $entry;
                 } else {
                     return response()->json([
                         'message' => 'Data tidak lengkap',

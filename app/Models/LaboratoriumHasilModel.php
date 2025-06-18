@@ -14,7 +14,7 @@ class LaboratoriumHasilModel extends Model
     protected $fillable = [
         'idLab', 'notrans', 'norm', 'idLayanan', 'hasil', 'ket', 'jumlah',
         'total', 'petugas', 'dokter', 'nik', 'nama', 'created_at', 'updated_at',
-        'no_reg_lab', 'no_iden_sediaan', 'tgl_hasil', 'alasan_periksa', 'namaFaskes,', 'kode_tcm',
+        'no_reg_lab', 'no_iden_sediaan', 'tgl_hasil', 'alasan_periksa', 'namaFaskes,', 'kode_tcm', 'no_tcm',
     ];
 
     public function biodataPasien()

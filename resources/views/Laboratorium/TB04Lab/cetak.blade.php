@@ -198,7 +198,7 @@
                     </th> --}}
                     <th class="border border-black p-1 text-center text-[9pt]" colspan="3">Hasil
                         Pemeriksaan Mikroskopis (BTA/Lainnya)</th>
-                    <th class="border border-black p-1 text-center text-[9pt]" colspan="3">Hasil Tes
+                    <th class="border border-black p-1 text-center text-[9pt]" colspan="4">Hasil Tes
                         Cepat Dengan Xpert</th>
                     <th class="border border-black p-1 text-center text-[9pt]" rowspan="2">Tanda
                         Tangan
@@ -209,6 +209,7 @@
                     <th class="border border-black p-1 text-center" style="width: 90.5px;">Tgl. Hasil</th>
                     <th class="border border-black p-1 text-center">1</th>
                     <th class="border border-black p-1 text-center">2</th>
+                    <th class="border border-black p-1 text-center" style="width: 50.5px;">No TCM</th>
                     <th class="border border-black p-1 text-center"style="width: 90.5px;">Tgl. Pemeriksaan</th>
                     <th class="border border-black p-1 text-center">Hasil Pemeriksaan</th>
                     <th class="border border-black p-1 text-center"style="width: 90.5px;">Tgl. Hasil Dilaporkan</th>
@@ -231,6 +232,7 @@
                     <th class="border border-black p-1 text-center">15</th>
                     <th class="border border-black p-1 text-center">16</th>
                     <th class="border border-black p-1 text-center">17</th>
+                    <th class="border border-black p-1 text-center">18</th>
                     {{-- <th class="border border-black p-1 text-center">18</th> --}}
                 </tr>
             </thead>
@@ -268,6 +270,7 @@
                         @if ($item['tb04'][0]['idLayanan'] == 131)
                             <td class="text-center">-</td>
                             <td class="text-center">-</td>
+                            <td class="text-center">{{ $item['tb04'][0]['no_tcm'] }}</td>
                             <td class="p-1 text-center" style="width: 90.5px;">
                                 {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
                             </td>
