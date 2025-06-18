@@ -65,7 +65,7 @@
                             Jalan A. Yani Nomor 33 Purwokerto Timur, Banyumas, Jawa Tengah
                         </p>
                         <p style="margin-bottom: -5px; text-align: center; margin-top: 0px;">
-                            Kode Pos 53111, Telepon (0281) 635658, Pos-el bkpm_purwokerto@yahoo.com
+                            Kode Pos 52111, Telepon (0281) 635658, Pos-el bkpm_purwokerto@yahoo.com
                         </p>
                     </td>
                     <td colspan="2" width="20%"
@@ -238,9 +238,9 @@
                                             <td class="px-2 py-0 text-center" style="width: 33.3%;">Hasil</td>
                                         </tr>
                                         <tr>
-                                            <td class="p-2 h-10" style="height: 53px;"></td>
-                                            <td class="p-2 h-10" style="height: 53px;"></td>
-                                            <td class="p-2 h-10" style="height: 53px;"></td>
+                                            <td class="p-2 h-10" style="height: 52px;"></td>
+                                            <td class="p-2 h-10" style="height: 52px;"></td>
+                                            <td class="p-2 h-10" style="height: 52px;"></td>
                                         </tr>
                                     </table>
                                 @elseif (!empty($item['keterangan']))
@@ -325,9 +325,9 @@
                                             <td class="px-2 py-0 text-center" style="width: 108px;">Hasil</td>
                                         </tr>
                                         <tr>
-                                            <td class="p-2 h-10" style="height: 53px;"></td>
-                                            <td class="p-2 h-10" style="height: 53px;"></td>
-                                            <td class="p-2 h-10" style="height: 53px;"></td>
+                                            <td class="p-2 h-10" style="height: 52px;"></td>
+                                            <td class="p-2 h-10" style="height: 52px;"></td>
+                                            <td class="p-2 h-10" style="height: 52px;"></td>
                                         </tr>
                                     </table>
                                 @elseif (!empty($item['keterangan']))
@@ -362,7 +362,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // window.print();
+            window.print();
             window.addEventListener('afterprint', () => {
                 window.close(); // ini akan berhasil kalau dibuka dari window.open()
             });
