@@ -11,8 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700;900&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('vendor/plugins/fontawesome-free/css/all.min.css') }}">
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="{{ asset('vendor/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
     <style>
         /* CSS untuk mempertebal border pada tabel */
@@ -29,21 +27,14 @@
                 color: #000000;
                 /* Hitam untuk teks */
             }
+
+            body {
+                margin: 0;
+            }
         }
     </style>
     <!-- Script -->
     <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
-    <!-- Bootstrap 4 -->
-    <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <!-- SweetAlert2 -->
-    <script src="{{ asset('vendor/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
-    <!-- InputMask -->
-    <script src="{{ asset('vendor/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('vendor/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
-    <!-- QR CODE -->
-    <script src="https://unpkg.com/html5-qrcode@2.2.1/minified/html5-qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
-
     <!-- AdminLTE App -->
     <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
 </head>
@@ -198,59 +189,171 @@
                 </tr>
             </tbody>
         </table>
-        <div style=" margin-top: 15px;">
-            {{-- Hematologi --}}
-            <table class="table table-bor border-dark border" width="100%" style="border-size: 2px; color: black;">
-                <thead>
-                    @foreach ($permintaan as $item)
-                        @if ($loop->first || ($loop->iteration - 1) % 4 == 0)
-                            <tr>
-                        @endif
+        @if ($tcm == true)
+            @php
+                $permintaan = collect($permintaan);
 
-                        <td class="font-weight-bold py-2" width="25%">
-                            <i class="fas fa-check-circle text-success mr-1"></i>
-                            {{ $item['layanan'] }}
+                // Data yang tidak mengandung "TCM"
+                $permintaanNonTcm = $permintaan->filter(function ($item) {
+                    return stripos($item['layanan'], 'TCM') === false;
+                });
 
-                            @if ($item['layanan'] === 'TCM XDR (Xpert)' || $item['layanan'] === 'TCM MTB Rif (Xpert)')
-                                <table class="mt- 1 text-sm" style="margin-left: 25px;">
-                                    <tr>
-                                        <td class="px-2 py-0 text-center" style="width: 108px;">No Reg.Lab</td>
-                                        <td class="px-2 py-0 text-center" style="width: 108px;">No sediaan</td>
-                                        <td class="px-2 py-0 text-center" style="width: 108px;">Hasil</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 h-10" style="height: 40px;"></td>
-                                        <td class="p-2 h-10" style="height: 40px;"></td>
-                                        <td class="p-2 h-10" style="height: 40px;"></td>
-                                    </tr>
-                                </table>
-                            @elseif (!empty($item['keterangan']))
-                                - ({{ $item['keterangan'] }})
-                            @endif
-                        </td>
+                // Data yang mengandung "TCM"
+                $permintaanTcm = $permintaan
+                    ->filter(function ($item) {
+                        return stripos($item['layanan'], 'TCM') !== false;
+                    })
+                    ->values(); // values() untuk reset index
 
+                if (count($permintaanNonTcm) > 0) {
+                    $widht = '30%';
+                } else {
+                    $widht = '100%';
+                }
+            @endphp
 
-
-                        @if ($loop->iteration % 4 == 0 || $loop->last)
-                            @php
-                                // Hitung sisa kolom jika di akhir dan belum genap 4
-                                $sisa = 4 - ($loop->iteration % 4);
-                            @endphp
-
-                            @if ($loop->last && $loop->iteration % 4 != 0)
-                                @for ($i = 0; $i < $sisa; $i++)
-                                    <td width="25%"></td>
-                                @endfor
+            <div style=" margin-top: 15px;">
+                <table width="100%">
+                    <thead>
+                        @foreach ($permintaanTcm as $item)
+                            @if ($loop->first || ($loop->iteration - 1) % 4 == 0)
+                                <tr>
                             @endif
 
-                            </tr>
-                        @endif
-                    @endforeach
-                </thead>
-            </table>
+                            <td class="font-weight-bold py-2" width="{{ $widht }}">
+                                <i class="fas fa-check-circle text-success mr-1"></i>
+                                {{ $item['layanan'] }}
+                                @if (!empty($item['keterangan']))
+                                    - ({{ $item['keterangan'] }})
+                                @endif
+
+                                @if ($item['layanan'] === 'TCM XDR (Xpert)' || $item['layanan'] === 'TCM MTB Rif (Xpert)')
+                                    <table class="table table-bor border-dark border mt- 1 text-sm"
+                                        style="margin-left: 25px; width: 90%;">
+                                        <tr>
+                                            <td class="px-2 py-0 text-center" style="width: 33.3%;">No.Reg.Lab</td>
+                                            <td class="px-2 py-0 text-center" style="width: 33.3%;">No.Sediaan</td>
+                                            <td class="px-2 py-0 text-center" style="width: 33.3%;">Hasil</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 h-10" style="height: 55px;"></td>
+                                            <td class="p-2 h-10" style="height: 55px;"></td>
+                                            <td class="p-2 h-10" style="height: 55px;"></td>
+                                        </tr>
+                                    </table>
+                                @elseif (!empty($item['keterangan']))
+                                    - ({{ $item['keterangan'] }})
+                                @endif
+                            </td>
+
+                            @if ($loop->iteration % 4 == 0 || $loop->last)
+                                @php
+                                    // Hitung sisa kolom jika di akhir dan belum genap 4
+                                    $sisa = 4 - ($loop->iteration % 4);
+                                @endphp
+
+                                @if ($loop->last && $loop->iteration % 4 != 0)
+                                    {{-- @for ($i = 0; $i < $sisa; $i++) --}}
+                                    <td class="pt-3" width="65%">
+                                        <table class="table table-bor border-dark border" width="100%"
+                                            style="border-size: 2px; color: black;">
+                                            <thead>
+                                                {{-- ambil permintaan selain tcm --}}
+                                                @foreach ($permintaanNonTcm as $item)
+                                                    @if ($loop->first || ($loop->iteration - 1) % 3 == 0)
+                                                        <tr>
+                                                    @endif
+
+                                                    <td class="font-weight-bold py-2" width="33.3%">
+                                                        <i class="fas fa-check-circle text-success mr-1"></i>
+                                                        {{ $item['layanan'] }}
+
+                                                        @if (!empty($item['keterangan']))
+                                                            - ({{ $item['keterangan'] }})
+                                                        @endif
+                                                    </td>
+
+                                                    @if ($loop->iteration % 3 == 0 || $loop->last)
+                                                        @php
+                                                            // Hitung sisa kolom jika di akhir dan belum genap 4
+                                                            $sisa = 3 - ($loop->iteration % 3);
+                                                        @endphp
+
+                                                        @if ($loop->last && $loop->iteration % 3 != 0)
+                                                            @for ($i = 0; $i < $sisa; $i++)
+                                                                <td width="33.3%"></td>
+                                                            @endfor
+                                                        @endif
+
+                                                        </tr>
+                                                    @endif
+                                                @endforeach
+                                            </thead>
+                                        </table>
+                                    </td>
+                                    {{-- @endfor --}}
+                                @endif
+                                </tr>
+                            @endif
+                        @endforeach
+                    </thead>
+                </table>
+            </div>
+        @else
+            <div style=" margin-top: 15px;">
+                <table class="table table-bor border-dark border" width="100%"
+                    style="border-size: 2px; color: black;">
+                    <thead>
+                        @foreach ($permintaan as $item)
+                            @if ($loop->first || ($loop->iteration - 1) % 4 == 0)
+                                <tr>
+                            @endif
+
+                            <td class="font-weight-bold py-2" width="25%">
+                                <i class="fas fa-check-circle text-success mr-1"></i>
+                                {{ $item['layanan'] }}
+
+                                @if ($item['layanan'] === 'TCM XDR (Xpert)' || $item['layanan'] === 'TCM MTB Rif (Xpert)')
+                                    <table class="mt- 1 text-sm" style="margin-left: 25px;">
+                                        <tr>
+                                            <td class="px-2 py-0 text-center" style="width: 108px;">No.Reg.Lab</td>
+                                            <td class="px-2 py-0 text-center" style="width: 108px;">No.Sediaan</td>
+                                            <td class="px-2 py-0 text-center" style="width: 108px;">Hasil</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 h-10" style="height: 55px;"></td>
+                                            <td class="p-2 h-10" style="height: 55px;"></td>
+                                            <td class="p-2 h-10" style="height: 55px;"></td>
+                                        </tr>
+                                    </table>
+                                @elseif (!empty($item['keterangan']))
+                                    - ({{ $item['keterangan'] }})
+                                @endif
+                            </td>
 
 
-        </div>
+
+                            @if ($loop->iteration % 4 == 0 || $loop->last)
+                                @php
+                                    // Hitung sisa kolom jika di akhir dan belum genap 4
+                                    $sisa = 4 - ($loop->iteration % 4);
+                                @endphp
+
+                                @if ($loop->last && $loop->iteration % 4 != 0)
+                                    @for ($i = 0; $i < $sisa; $i++)
+                                        <td width="25%"></td>
+                                    @endfor
+                                @endif
+
+                                </tr>
+                            @endif
+                        @endforeach
+                    </thead>
+                </table>
+
+
+            </div>
+        @endif
     </div>
 
     <script>

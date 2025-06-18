@@ -1055,8 +1055,18 @@ class LaboratoriumController extends Controller
             if ($no_reg_lab == null) {
                 $no_reg_lab = 0;
             }
+            // dd($permintaan);
 
-            return view('Laboratorium.Pendaftaran.order', compact('noSampel', 'dataCppt', 'lab', 'tglLahir', 'permintaan', 'analis', 'dokter'));
+            //jika di $permintaan[layanan] ada TCM XDR (Xpert)' || 'TCM MTB Rif (Xpert)' maka $tcm=true
+            $tcm = false;
+            foreach ($permintaan as $item) {
+                if ($item['layanan'] == 'TCM XDR (Xpert)' || $item['layanan'] == 'TCM MTB Rif (Xpert)') {
+                    $tcm = true;
+                }
+            }
+            // dd($tcm);
+
+            return view('Laboratorium.Pendaftaran.order', compact('tcm', 'noSampel', 'dataCppt', 'lab', 'tglLahir', 'permintaan', 'analis', 'dokter'));
 
         } catch (\Exception $e) {
             Log::error('Terjadi kesalahan saat mencari data: ' . $e->getMessage());
