@@ -222,7 +222,9 @@
 
                             <td class="font-weight-bold py-2" width="{{ $widht }}">
                                 <i class="fas fa-check-circle text-success mr-1"></i>
-                                {{ $item['layanan'] }}
+                                <span title="{{ $item['layanan'] }}">
+                                    {{ \Illuminate\Support\Str::limit($item['layanan'], 20) }}
+                                </span>
                                 @if (!empty($item['keterangan']))
                                     - ({{ $item['keterangan'] }})
                                 @endif
@@ -236,9 +238,9 @@
                                             <td class="px-2 py-0 text-center" style="width: 33.3%;">Hasil</td>
                                         </tr>
                                         <tr>
-                                            <td class="p-2 h-10" style="height: 55px;"></td>
-                                            <td class="p-2 h-10" style="height: 55px;"></td>
-                                            <td class="p-2 h-10" style="height: 55px;"></td>
+                                            <td class="p-2 h-10" style="height: 53px;"></td>
+                                            <td class="p-2 h-10" style="height: 53px;"></td>
+                                            <td class="p-2 h-10" style="height: 53px;"></td>
                                         </tr>
                                     </table>
                                 @elseif (!empty($item['keterangan']))
@@ -266,7 +268,9 @@
 
                                                     <td class="font-weight-bold py-2" width="33.3%">
                                                         <i class="fas fa-check-circle text-success mr-1"></i>
-                                                        {{ $item['layanan'] }}
+                                                        <span title="{{ $item['layanan'] }}">
+                                                            {{ \Illuminate\Support\Str::limit($item['layanan'], 20) }}
+                                                        </span>
 
                                                         @if (!empty($item['keterangan']))
                                                             - ({{ $item['keterangan'] }})
@@ -321,9 +325,9 @@
                                             <td class="px-2 py-0 text-center" style="width: 108px;">Hasil</td>
                                         </tr>
                                         <tr>
-                                            <td class="p-2 h-10" style="height: 55px;"></td>
-                                            <td class="p-2 h-10" style="height: 55px;"></td>
-                                            <td class="p-2 h-10" style="height: 55px;"></td>
+                                            <td class="p-2 h-10" style="height: 53px;"></td>
+                                            <td class="p-2 h-10" style="height: 53px;"></td>
+                                            <td class="p-2 h-10" style="height: 53px;"></td>
                                         </tr>
                                     </table>
                                 @elseif (!empty($item['keterangan']))
