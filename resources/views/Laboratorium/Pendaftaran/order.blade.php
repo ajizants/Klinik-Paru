@@ -219,9 +219,9 @@
                                         <td class="px-2 py-0 text-center" style="width: 108px;">Hasil</td>
                                     </tr>
                                     <tr>
-                                        <td class="pr-2"></td>
-                                        <td class="pr-2"></td>
-                                        <td class="pr-2"></td>
+                                        <td class="p-2 h-10" style="height: 40px;"></td>
+                                        <td class="p-2 h-10" style="height: 40px;"></td>
+                                        <td class="p-2 h-10" style="height: 40px;"></td>
                                     </tr>
                                 </table>
                             @elseif (!empty($item['keterangan']))
@@ -255,7 +255,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            window.print();
+            // window.print();
             window.addEventListener('afterprint', () => {
                 window.close(); // ini akan berhasil kalau dibuka dari window.open()
             });
