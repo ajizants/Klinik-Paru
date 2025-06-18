@@ -366,17 +366,54 @@ class DataAnalisController extends Controller
     public function jumlahDiagnosa($tahun)
     {
         if ($tahun >= 2025) {
+            $thisYear = date('Y');
+
             if ($tahun == 2025) {
-                $tglAwal = Carbon::parse('2024-07-01')->startOfDay(); // 00:00:00
-                $tglAkhir = Carbon::parse($tahun . '-12-31')->endOfDay(); // 23:59:59
+                // $startDate = Carbon::parse('2024-07-01');
+                $startDate = Carbon::parse('2025-01-01');
             } else {
-                $tglAwal = Carbon::parse($tahun . '-01-01')->startOfDay(); // 00:00:00
-                $tglAkhir = Carbon::parse($tahun . '-12-31')->endOfDay(); // 23:59:59
+                $startDate = Carbon::parse($tahun . '-01-01');
             }
+
+            if ($tahun == $thisYear) {
+                $endDate = Carbon::now();
+            } else {
+                $endDate = Carbon::parse($tahun . '-02-31');
+            }
+
+            $model = new KominfoModel();
+            $allData = [];
+
+            $current = $startDate->copy();
+            while ($current->lte($endDate)) {
+                $startOfMonth = $current->copy()->startOfMonth()->toDateString();
+                $endOfMonth = $current->copy()->endOfMonth()->toDateString();
+
+                // Hindari ambil data lebih dari endDate
+                if ($endOfMonth > $endDate->toDateString()) {
+                    $endOfMonth = $endDate->toDateString();
+                }
+
+                $params = [
+                    'tanggal_awal' => $startOfMonth,
+                    'tanggal_akhir' => $endOfMonth,
+                ];
+
+                $result = $model->cpptRequestAll($params);
+                if (isset($result['response']['data'])) {
+                    $allData = array_merge($allData, $result['response']['data']);
+                }
+
+                // Naik ke bulan berikutnya
+                $current->addMonth();
+            }
+
+            return $allData;
+        } else {
+            $data = PoliModel::with('dx1', 'dx2', 'dx3')
+                ->whereYear('tgltrans', $tahun)
+                ->get();
         }
-        $data = PoliModel::with('dx1', 'dx2', 'dx3')
-            ->whereYear('tgltrans', $tahun)
-            ->get();
 
         $data = $this->hitungDx2024($data);
         // return $data['perBulan'];
