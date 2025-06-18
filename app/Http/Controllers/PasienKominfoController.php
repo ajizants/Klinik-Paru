@@ -50,8 +50,8 @@ class PasienKominfoController extends Controller
     public function pasienKominfo(Request $request)
     {
         if ($request->has('no_rm')) {
-            $uname = $request->input('username', '3301010509940003');
-            $pass = $request->input('password', 'banyumas');
+            $uname = env('USERNAME_KOMINFO');
+            $pass = env('PASSWORD_KOMINFO');
             // $uname = $request->input('username');
             // $pass = $request->input('password');
             $no_rm = $request->input('no_rm');
@@ -1039,8 +1039,8 @@ class PasienKominfoController extends Controller
     {
         if ($request->has('tanggal')) {
             // Default username and password, can be overridden by request input
-            $uname = $request->input('username', '3301010509940003');
-            $pass = $request->input('password', 'banyumas');
+            $uname = env('USERNAME_KOMINFO');
+            $pass = env('PASSWORD_KOMINFO');
             $tanggal = $request->input('tanggal');
 
             // Fetch data pendaftaran from API
@@ -1324,50 +1324,50 @@ class PasienKominfoController extends Controller
     //     }
     // }
     public function newPasien(Request $request)
-{
-    if ($request->has('no_rm')) {
-        $no_rm = $request->input('no_rm');
-        $model = new KominfoModel();
+    {
+        if ($request->has('no_rm')) {
+            $no_rm = $request->input('no_rm');
+            $model = new KominfoModel();
 
-        try {
-            // Ambil data dari model
-            $data = $model->pasienRequest($no_rm);
+            try {
+                // Ambil data dari model
+                $data = $model->pasienRequest($no_rm);
 
-            // Jika data kosong atau tidak sesuai format
-            if (empty($data) || !is_array($data)) {
-                return response()->json(['error' => 'Data pasien tidak ditemukan'], 404);
-            }
-
-            // Hitung umur jika tanggal lahir tersedia dan valid
-            if (!empty($data['pasien_tgl_lahir'])) {
-                try {
-                    $tglLahir = Carbon::parse($data['pasien_tgl_lahir']);
-                    $now = Carbon::now();
-
-                    $tahun = $tglLahir->diffInYears($now);
-                    $bulan = $tglLahir->diffInMonths($now) % 12;
-
-                    $data['umur'] = "{$tahun} thn {$bulan} bln";
-                } catch (\Exception $e) {
-                    $data['umur'] = "-";
-                    $data['umur_error'] = "Format tanggal lahir tidak valid";
+                // Jika data kosong atau tidak sesuai format
+                if (empty($data) || !is_array($data)) {
+                    return response()->json(['error' => 'Data pasien tidak ditemukan'], 404);
                 }
-            } else {
-                $data['umur'] = "-";
-                $data['umur_error'] = "Tanggal lahir kosong";
-            }
 
-            return response()->json($data);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Terjadi kesalahan saat mengambil data',
-                'message' => $e->getMessage()
-            ], 500);
+                // Hitung umur jika tanggal lahir tersedia dan valid
+                if (!empty($data['pasien_tgl_lahir'])) {
+                    try {
+                        $tglLahir = Carbon::parse($data['pasien_tgl_lahir']);
+                        $now = Carbon::now();
+
+                        $tahun = $tglLahir->diffInYears($now);
+                        $bulan = $tglLahir->diffInMonths($now) % 12;
+
+                        $data['umur'] = "{$tahun} thn {$bulan} bln";
+                    } catch (\Exception $e) {
+                        $data['umur'] = "-";
+                        $data['umur_error'] = "Format tanggal lahir tidak valid";
+                    }
+                } else {
+                    $data['umur'] = "-";
+                    $data['umur_error'] = "Tanggal lahir kosong";
+                }
+
+                return response()->json($data);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => 'Terjadi kesalahan saat mengambil data',
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+        } else {
+            return response()->json(['error' => 'No RM belum diisi'], 400);
         }
-    } else {
-        return response()->json(['error' => 'No RM belum diisi'], 400);
     }
-}
     public function dataPasien(Request $request)
     {
         // dd($request->all());
