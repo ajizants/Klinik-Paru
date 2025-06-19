@@ -10,9 +10,15 @@ class RanapPendaftaranController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function home()
+    {
+        $title = 'Dashboard Pendaftaran';
+        return view('Ranap.Pendaftaran.main', compact('title'));
+    }
     public function index()
     {
-        //
+        $title = 'Ranap Pendaftaran';
+        return view('Ranap.Pendaftaran.main', compact('title'));
     }
 
     /**

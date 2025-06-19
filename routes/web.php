@@ -7,6 +7,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasienKominfoController;
+use App\Http\Controllers\RanapCPPTController;
+use App\Http\Controllers\RanapPendaftaranController;
 use App\Http\Controllers\SuratController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -109,4 +111,10 @@ Route::middleware('auth')->group(function () {
 
         return response()->json(['error' => 'File tidak ditemukan'], 404);
     })->name('download.template');
+
+    //RANAP
+    Route::get('Ranap', [RanapPendaftaranController::class, 'home'])->name('dashboardRanap')->middleware('role:ranap');
+    Route::get('Ranap/Pendaftaran', [RanapPendaftaranController::class, 'index'])->name('formRawatInap')->middleware('role:ranap');
+    Route::get('Ranap/Cppt', [RanapCPPTController::class, 'index'])->name('formCPPT')->middleware('role:ranap');
+
 });

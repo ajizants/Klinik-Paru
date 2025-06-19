@@ -12,7 +12,8 @@ class RanapCPPTController extends Controller
      */
     public function index()
     {
-        //
+        $title = 'Ranap CPPT';
+        return view('Ranap.Cppt.main', compact('title'));
     }
 
     /**
