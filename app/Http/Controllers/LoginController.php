@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\LoginLogModel;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -29,33 +31,52 @@ class LoginController extends Controller
         ];
 
         if (Auth::attempt($data)) {
+            $user = Auth::user();
+
+            $log = LoginLogModel::create([
+                'user_id'      => $user->id,
+                'ip_address'   => $request->ip(),
+                'user_agent'   => $request->header('User-Agent'),
+                'logged_in_at' => now(),
+            ]);
+
+            // Simpan ID log di session
+            session(['login_log_id' => $log->id]);
+
             $email = $request->input('email');
             if (! str_ends_with($email, '@rsparu.com')) {
                 $email .= '@rsparu.com';
             }
+            // dd($email);
 
             $go = "";
             switch ($email) {
                 case 'nurse@rsparu.com':
-                    $go = '/nurse';
+                    $go = '/E-kinerja';
                     break;
                 case 'tindakan@rsparu.com':
-                    $go = '/igd';
+                    $go = '/Igd';
                     break;
                 case 'kasir@rsparu.com':
                     $go = '/kasir';
                     break;
                 case 'radiologi@rsparu.com':
-                    $go = '/ro';
+                    $go = '/Radiologi';
                     break;
                 case 'dots@rsparu.com':
                     $go = '/dots';
                     break;
                 case 'lab@rsparu.com':
-                    $go = '/lab';
+                    $go = '/Laboratorium/Pendaftaran';
+                    break;
+                case 'farmasi@rsparu.com':
+                    $go = '/farmasi';
+                    break;
+                case 'promkes@rsparu.com':
+                    $go = '/Promkes';
                     break;
                 case 'dataanalis@rsparu.com' || 'admin@rsparu.com':
-                    $go = '/Pusat-Data';
+                    $go = '/Pusat_Data';
                     break;
                 default:
                     $go = '/home';
@@ -93,7 +114,31 @@ class LoginController extends Controller
 
     public function actionlogout()
     {
+        $logId = session('login_log_id');
+
+        if ($logId) {
+            LoginLogModel::where('id', $logId)->update([
+                'logged_out_at' => now(),
+            ]);
+        }
         Auth::logout();
+        session()->forget('login_log_id');
         return redirect('/');
     }
+
+    public function logoutSession()
+    {
+        $logId = session('login_log_id');
+
+        if ($logId) {
+            LoginLogModel::where('id', $logId)->update([
+                'logged_out_at' => now(),
+            ]);
+        }
+
+        Auth::logout();
+        session()->flush(); // hapus semua session
+        return redirect('/')->with('message', 'Sesi Anda telah habis, silakan login kembali.');
+    }
+
 }

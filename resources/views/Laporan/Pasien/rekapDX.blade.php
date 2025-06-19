@@ -39,13 +39,15 @@
                         <th>Kecamatan</th>
                         <th>Kabupaten</th>
                         <th>ICD X 1</th>
-                        <th>Diagnosa 1</th>
+                        <th>DX 1</th>
                         <th>ICD X 2</th>
-                        <th>Diagnosa 2</th>
+                        <th>DX 2</th>
                         <th>ICD X 3</th>
-                        <th>Diagnosa 3</th>
+                        <th>DX 3</th>
                         <th class="col-3">Dokter</th>
                         <th class="px-0 col-3">Status</th>
+                        <th class="px-0 col-3">DS</th>
+                        <th class="px-0 col-3">RTL</th>
                     </tr>
                 </thead>
                 <tbody class="table-bordered border-warning">

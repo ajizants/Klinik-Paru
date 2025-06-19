@@ -21,4 +21,32 @@ class LayananModel extends Model
     {
         return $this->belongsTo(LayananKelasModel::class, 'kelas', 'kelas');
     }
+    public function layanans($kelas)
+    {
+        $data = LayananModel::where('status', "1")
+            ->whereIn('kelas', $kelas)
+            ->whereNot('idLayanan', 165)
+        // ->whereIn('kelas', 'like', '%' . $kelas . '%')
+            ->get();
+
+        $layanan = [];
+
+        foreach ($data as $d) {
+            $layanan[] = [
+                'idLayanan' => $d->idLayanan,
+                'kdTind'    => $d->kdTind,
+                'kdFoto'    => $d->kdFoto,
+                'kelas'     => $d->kelas,
+                'nmLayanan' => $d->nmLayanan,
+                'tarif'     => $d->tarif,
+                'status'    => $d->status,
+            ];
+        }
+        // dd($layanan);
+        $layanan = array_map(function ($item) {
+            return (object) $item;
+        }, $layanan);
+
+        return $layanan;
+    }
 }

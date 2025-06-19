@@ -10,8 +10,12 @@
         <div class="mt-3">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a type="button" class="nav-link active bg-blue"
-                        onclick=" toggleSections('#dTunggu')"><b>Tunggu</b></a>
+                    <a type="button" class="nav-link active bg-blue" onclick=" toggleSections('#dTunggu')"><b>Tunggu
+                            UMUM</b></a>
+                </li>
+                <li class="nav-item">
+                    <a type="button" class="nav-link" onclick=" toggleSections('#tab_1')"><b>Tunggu
+                            BPJS</b></a>
                 </li>
                 <li class="nav-item">
                     <a type="button" class="nav-link" onclick=" toggleSections('#dSelesai')"><b>Selesai</b></a>
@@ -30,6 +34,7 @@
                 </div>
             </ul>
             @include('Template.Table.tunggu')
+            @include('Template.Table.tungguBpjs')
             @include('Template.Table.selesai')
             @include('Template.Table.all')
         </div>

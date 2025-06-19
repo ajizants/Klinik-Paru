@@ -109,6 +109,9 @@ async function simpan() {
         var catatan = document.getElementById("catatan").value;
         var layanan = document.getElementById("layanan").value;
         var p_rontgen = document.getElementById("p_rontgen").value;
+        var p_rontgen_evaluator = document.getElementById(
+            "p_rontgen_evaluator"
+        ).value;
         var dokter = document.getElementById("dokter").value;
 
         var ket_foto = document.getElementById("ket_foto").value;
@@ -145,6 +148,7 @@ async function simpan() {
         formData.append("catatan", catatan);
         formData.append("layanan", layanan);
         formData.append("p_rontgen", p_rontgen);
+        formData.append("p_rontgen_evaluator", p_rontgen_evaluator);
         formData.append("dokter", dokter);
         formData.append("ket_foto", ket_foto);
         formData.append("gambar", foto);
@@ -537,6 +541,9 @@ async function cariTsRo(norm, tgl) {
                     .trigger("change");
                 $("#p_rontgen")
                     .val(petugas.p_rontgen || "")
+                    .trigger("change");
+                $("#p_rontgen_evaluator")
+                    .val(petugas.p_rontgen_evaluator || "")
                     .trigger("change");
 
                 Swal.close();

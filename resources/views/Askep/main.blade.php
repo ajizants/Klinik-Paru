@@ -2,7 +2,8 @@
 
 
 @section('content')
-    @include('Askep.input')
+    {{-- @include('Askep.input') --}}
+    @include('Template.comingSoon')
 
 
 

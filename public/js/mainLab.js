@@ -326,14 +326,6 @@ function simpan() {
                     icon: "success",
                     title: massage,
                     allowOutsideClick: false,
-                }).then((result) => {
-                    if (result.isConfirmed && msgSelesai != undefined) {
-                        Swal.fire({
-                            icon: "info",
-                            title: msgSelesai,
-                            allowOutsideClick: false,
-                        });
-                    }
                 });
                 var notrans = $("#notrans").val();
                 tampilkanOrder(notrans);
@@ -505,6 +497,7 @@ async function cariTsLab(norm, tgl, ruang) {
     norm = norm || formatNorm($("#norm").val);
     tgl = tgl || $("#tanggal").val();
     var requestData = { norm: norm, tgl: tgl };
+    const notrans = $("#notrans").val();
 
     Swal.fire({
         icon: "info",
@@ -560,6 +553,8 @@ async function cariTsLab(norm, tgl, ruang) {
                 throw new Error("Network response was not ok");
             }
             Swal.close();
+
+            cetakPermintaan(notrans, tgl, norm);
         } else {
             const data = await response.json();
             let noSampel = data.no_sampel;
@@ -586,6 +581,7 @@ async function cariTsLab(norm, tgl, ruang) {
             var btndelete = document.getElementById("delete_ts");
             btndelete.style.display = "block";
             scrollToInputSection();
+            cetakPermintaan(notrans, tgl, norm);
         }
     } catch (error) {
         console.error("Terjadi kesalahan saat mencari data:", error);
@@ -620,7 +616,7 @@ async function getNoSampel() {
         let noSampel = data.noSample; // Sesuaikan nama properti dengan hasil fetch
         $("#no_sampel").val(noSampel);
 
-        Swal.close();
+        // Swal.close();
     } catch (error) {
         console.error("Terjadi kesalahan saat mencari data:", error);
         Swal.fire({
@@ -692,11 +688,54 @@ function ckelisPemeriksaan(data) {
 }
 
 function resetForm(message) {
+    const notrans = document.getElementById("notrans").value;
+    const tglTrans = document.getElementById("tgltrans").value;
+    const norm = document.getElementById("norm").value;
+    console.log("🚀 ~ resetForm ~ notrans:", notrans);
     if (message != "trans") {
         antrian("lab");
     } else {
         message = "";
     }
+    // console.log(msgSelesai);
+    // Swal.fire({
+    //     icon: "question",
+    //     title: "Apakah anda ingin mencetak form permintaan?",
+    //     showCancelButton: true,
+    //     confirmButtonText: "Ya",
+    //     cancelButtonText: "Batal",
+    //     allowOutsideClick: false,
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         cetakPermintaan(notrans, tglTrans, norm);
+    //         Swal.fire({
+    //             icon: "question",
+    //             title: message + "\n Maturnuwun...!!!",
+    //             showCancelButton: true,
+    //             confirmButtonText: "Ya",
+    //             cancelButtonText: "Batal",
+    //             allowOutsideClick: false,
+    //         });
+    //     } else {
+    //         Swal.fire({
+    //             icon: "info",
+    //             title: msgSelesai,
+    //             allowOutsideClick: false,
+    //         });
+    //     }
+    // });
+
+    console.log(msgSelesai);
+    // Toast.fire({
+    //     icon: "success",
+    //     title: message + "\n Maturnuwun...!!!",
+    // });
+    Swal.fire({
+        icon: "info",
+        title: message + "\n Maturnuwun...!!!",
+        allowOutsideClick: true,
+    });
+
     $('table thead input[type="checkbox"]').prop("checked", false);
     $('table tbody input[type="checkbox"]').prop("checked", false);
     document.getElementById("form_identitas").reset();
@@ -712,193 +751,42 @@ function resetForm(message) {
         let tableTrans = $("#dataTrans").DataTable();
         tableTrans.clear().destroy();
     }
-    console.log(msgSelesai);
-    Swal.fire({
-        icon: "info",
-        title: message + "\n Maturnuwun...!!!",
-        allowOutsideClick: false,
-    }).then((result) => {
-        if (result.isConfirmed && msgSelesai != undefined) {
-            Swal.fire({
-                icon: "info",
-                title: msgSelesai,
-                allowOutsideClick: false,
-            });
-        }
-    });
 
     document.getElementById("tgltrans").value = new Date()
         .toISOString()
         .split("T")[0];
 }
+
+function cetakPermintaan(notrans, tglTrans, norm) {
+    Swal.fire({
+        icon: "question",
+        title: "Apakah anda ingin mencetak form permintaan?",
+        showCancelButton: true,
+        confirmButtonText: "Ya",
+        cancelButtonText: "Batal",
+        allowOutsideClick: false,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            notrans = notrans ? notrans : $("#notrans").val();
+            norm = norm ? norm : $("#norm").val();
+            tglTrans = tglTrans ? tglTrans : $("#tgltrans").val();
+            const baseUrl = window.location.origin;
+            const url =
+                baseUrl +
+                "/api/lab/cetakPermintaan/" +
+                notrans +
+                "/" +
+                norm +
+                "/" +
+                tglTrans;
+            window.open(url, "_blank", "noopener noreferrer");
+        }
+    });
+}
 function batal() {
     resetForm("Transaksi Lab dibatalkan...!!!");
     scrollToTop();
 }
-
-// function processAntrianData(data, filter, tabel) {
-//     $("#loadingSpinner").show();
-//     var filteredData = data.filter(function (item) {
-//         return item.status === filter;
-//     });
-
-//     filteredData.forEach(function (item) {
-//         item.aksi = `<a type="button" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-//                       onclick="cariTsRo('${item.pasien_no_rm}','${$(
-//             "#tanggal"
-//         ).val()}');rstForm();"><i class="fas fa-pen-to-square"></i></a>`;
-//     });
-
-//     if ($.fn.DataTable.isDataTable(tabel)) {
-//         var table = tabel.DataTable();
-//         table.clear().rows.add(filteredData).draw();
-//     } else {
-//         initializeAntrian(tabel, filteredData);
-//     }
-//     $("#loadingSpinner").hide();
-// }
-
-// function fetchDataAntrian(params, callback) {
-//     console.log("🚀 ~ fetchDataAntrian ~ params:", params);
-//     $.ajax({
-//         url: "/api/cpptKominfo",
-//         type: "post",
-//         data: params,
-//         success: function (response) {
-//             callback(response);
-//         },
-//         error: function (xhr) {
-//             // Tangani kesalahan jika diperlukan
-//         },
-//     });
-// }
-
-// // Fungsi untuk inisialisasi tabel data antrian
-// function initializeDataAntrian(response) {
-//     if (response && response.response && response.response.data) {
-//         var dataArray = response.response.data.filter(function (item) {
-//             return item.status === "belum";
-//         });
-
-//         dataArray.forEach(function (item) {
-//             var asktind = "";
-//             if (item.radiologi && Array.isArray(item.radiologi)) {
-//                 item.radiologi.forEach(function (radiologi) {
-//                     asktind += `${radiologi.layanan} (${radiologi.keterangan}), `;
-//                 });
-//             }
-//             item.asktind = asktind;
-//             item.index = dataArray.indexOf(item) + 1;
-
-//             var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-//             item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-//                             data-norm="${item.pasien_no_rm}"
-//                             data-nama="${item.pasien_nama}"
-//                             data-dokter="${item.dokter_nama}"
-//                             data-asktind="${asktind}"
-//                             data-kddokter="${item.nip_dokter}"
-//                             data-alamat="${alamat}"
-//                             data-layanan="${item.penjamin_nama}"
-//                             data-notrans="${item.no_trans}"
-//                             data-tgltrans="${item.tanggal}"
-//                             onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
-//         });
-
-//         $("#dataAntrian").DataTable({
-//             data: dataArray,
-//             columns: [
-//                 { data: "aksi", className: "text-center p-2" },
-//                 {
-//                     data: "status",
-//                     className: "text-center p-2",
-//                     render: function (data) {
-//                         var backgroundColor =
-//                             data === "belum" ? "danger" : "success";
-//                         return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-//                     },
-//                 },
-//                 { data: "antrean_nomor", className: "text-center p-2" },
-//                 { data: "tanggal", className: "text-center p-2 col-1" },
-//                 { data: "penjamin_nama", className: "text-center p-2" },
-//                 { data: "pasien_no_rm", className: "text-center p-2" },
-//                 { data: "pasien_nama", className: "p-2 col-2" },
-//                 { data: "asktind", className: "p-2 col-4" },
-//                 { data: "dokter_nama", className: "p-2 col-2" },
-//             ],
-//             order: [
-//                 [1, "asc"],
-//                 [2, "asc"],
-//             ],
-//         });
-//     } else {
-//         console.error(
-//             "Invalid response or response.response.data is not available:",
-//             response
-//         );
-//         // Tangani error atau tampilkan pesan yang sesuai
-//     }
-// }
-
-// // Fungsi untuk mengambil dan menampilkan data antrian
-// function antrian() {
-//     $("#loadingSpinner").show();
-//     var tanggal_awal = $("#tanggal").val();
-//     var tanggal_akhir = $("#tanggal").val();
-
-//     var param = {
-//         tanggal_awal: tanggal_awal,
-//         tanggal_akhir: tanggal_akhir,
-//         ruang: "lab",
-//     };
-
-//     fetchDataAntrian(param, function (response) {
-//         $("#loadingSpinner").hide();
-
-//         if ($.fn.DataTable.isDataTable("#dataAntrian")) {
-//             var table = $("#dataAntrian").DataTable();
-//             if (response && response.response && response.response.data) {
-//                 var dataArray = response.response.data.filter(function (item) {
-//                     return item.status === "belum";
-//                 });
-
-//                 // Proses ulang data untuk memperbarui kolom 'aksi' dan lainnya jika diperlukan
-//                 dataArray.forEach(function (item) {
-//                     var asktind = "";
-//                     if (item.radiologi && Array.isArray(item.radiologi)) {
-//                         item.radiologi.forEach(function (radiologi) {
-//                             asktind += `${radiologi.layanan} ket: ${radiologi.layanan}, `;
-//                         });
-//                     }
-//                     item.asktind = asktind;
-//                     item.index = dataArray.indexOf(item) + 1;
-
-//                     var alamat = `${item.kelurahan_nama}, ${item.pasien_rt}/${item.pasien_rw}, ${item.kecamatan_nama}, ${item.kabupaten_nama}`;
-//                     item.aksi = `<a href="#" class="aksi-button btn-sm btn-primary py-0 icon-link icon-link-hover"
-//                                     data-norm="${item.pasien_no_rm}"
-//                                     data-nama="${item.pasien_nama}"
-//                                     data-dokter="${item.dokter_nama}"
-//                                     data-asktind="${asktind}"
-//                                     data-kddokter="${item.nip_dokter}"
-//                                     data-alamat="${alamat}"
-//                                     data-layanan="${item.penjamin_nama}"
-//                                     data-notrans="${item.no_trans}"
-//                                     data-tgltrans="${item.tanggal}"
-//                                     onclick="askRo(this);"><i class="fas fa-pen-to-square"></i></a>`;
-//                 });
-
-//                 // Hapus data yang ada, tambahkan data baru, dan gambar ulang tabel
-//                 table.clear().rows.add(dataArray).draw();
-//             } else {
-//                 console.error(
-//                     "Invalid response or response.response.data is not available:",
-//                     response
-//                 );
-//             }
-//         } else {
-//             initializeDataAntrian(response);
-//         }
-//     });
-// }
 
 function updateAntrian() {
     antrian("lab");

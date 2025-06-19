@@ -291,7 +291,7 @@
                 success: function(response) {
                     console.log("🚀 ~ simpanPendLain ~ response:", response)
                     if (response.status == 'success') {
-                        tampilkanSuccess(response.message);
+                        tampilkanSukses(response.message);
 
                         dataPendLain = response.data
                         drawTable(
@@ -464,7 +464,7 @@
                     success: function(result) {
                         // Tampilkan pesan sukses
                         if (result.status === 'success') {
-                            tampilkanSuccess(result.message);
+                            tampilkanSukses(result.message);
                             const data = result.data;
                             drawTabelPenutupanKas(data);
                         } else {
@@ -517,7 +517,7 @@
                             success: function(result) {
                                 // Tampilkan pesan sukses
                                 if (result.status === 'success') {
-                                    tampilkanSuccess(result.message);
+                                    tampilkanSukses(result.message);
                                     const data = result.data
                                     drawTabelPenutupanKas(data);
                                 } else {
@@ -589,8 +589,18 @@
             data.forEach(function(item, index) {
                 item.no = index + 1; // Numbering row
                 item.aksi = `<a type="button" class="btn btn-warning my-1edit " onclick="editPenutupanKas(this)"><i class="fas fa-pen-to-square"></i></a>
-                            <a type="button" class="btn btn-danger my-1 delete" onclick="deletePenutupanKas(${item.id})"><i class="fas fa-trash"></i></a>
-                            <a href="/api/kasir/penutupanKas/cetak/${item.id}/${item.tanggal_sekarang}" class="btn btn-info my-1" ><i class="fas fa-print"></i></a>
+                            <a type="button" class="btn btn-danger my-1 delete"
+                            data-id="${item.id}"
+                            data-tanggal_sekarang="${item.tanggal_sekarang}"
+                            data-tanggal_lalu="${item.tanggal_lalu}"
+                            data-petugas="${item.petugas}"
+                            data-total_penerimaan="${item.total_penerimaan}"
+                            data-total_pengeluaran="${item.total_pengeluaran}"
+                            data-saldo_bku="${item.saldo_bku}"
+                            data-saldo_kas="${item.saldo_kas}"
+                            data-selisih_saldo="${item.selisih_saldo}"
+                             onclick="deletePenutupanKas(this,${item.id})"><i class="fas fa-trash"></i></a>
+                            <a href="/api/kasir/penutupanKas/cetak/${item.id}/${item.tanggal_sekarang}" target="_blank" class="btn btn-info my-1" ><i class="fas fa-print"></i></a>
                             `;
             });
 

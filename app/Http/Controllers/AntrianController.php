@@ -1,12 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\KasirTransModel;
 use App\Models\KominfoModel;
 use App\Models\KunjunganModel;
 use App\Models\KunjunganWaktuSelesai;
-use App\Models\PasienModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -52,63 +50,63 @@ class AntrianController extends Controller
             // $transaksi["status"] = $status;
 
             $formattedData[] = [
-                "notrans" => $transaksi["notrans"] ?? null,
-                "norm" => $transaksi["norm"] ?? null,
-                "nourut" => $transaksi["nourut"] ?? null,
-                "noasuransi" => $transaksi["noasuransi"] ?? null,
-                "biaya" => $transaksi["kelompok"]["biaya"] ?? null,
-                "noktp" => $transaksi["biodata"]["noktp"] ?? null,
-                "namapasien" => $transaksi["biodata"]["nama"] ?? null,
-                "alamatpasien" => $transaksi["biodata"]["alamat"] ?? null,
-                "rtrwpasien" => $transaksi["biodata"]["rtrw"] ?? null,
-                "kelaminpasien" => $transaksi["biodata"]["jeniskel"] ?? null,
-                "tmptlahir" => $transaksi["biodata"]["tmptlahir"] ?? null,
-                "tgllahir" => $transaksi["biodata"]["tgllahir"] ?? null,
-                "umurpasien" => $transaksi["biodata"]["umur"] ?? null,
-                "nohppasien" => $transaksi["biodata"]["nohp"] ?? null,
+                "notrans"         => $transaksi["notrans"] ?? null,
+                "norm"            => $transaksi["norm"] ?? null,
+                "nourut"          => $transaksi["nourut"] ?? null,
+                "noasuransi"      => $transaksi["noasuransi"] ?? null,
+                "biaya"           => $transaksi["kelompok"]["biaya"] ?? null,
+                "noktp"           => $transaksi["biodata"]["noktp"] ?? null,
+                "namapasien"      => $transaksi["biodata"]["nama"] ?? null,
+                "alamatpasien"    => $transaksi["biodata"]["alamat"] ?? null,
+                "rtrwpasien"      => $transaksi["biodata"]["rtrw"] ?? null,
+                "kelaminpasien"   => $transaksi["biodata"]["jeniskel"] ?? null,
+                "tmptlahir"       => $transaksi["biodata"]["tmptlahir"] ?? null,
+                "tgllahir"        => $transaksi["biodata"]["tgllahir"] ?? null,
+                "umurpasien"      => $transaksi["biodata"]["umur"] ?? null,
+                "nohppasien"      => $transaksi["biodata"]["nohp"] ?? null,
                 "statKawinpasien" => $transaksi["biodata"]["statKawin"] ?? null,
-                "kelompok" => $transaksi["biodata"]["kelompok"] ?? null,
-                "provinsi" => $transaksi["biodata"]["provinsi"] ?? null,
-                "kabupaten" => $transaksi["biodata"]["kabupaten"] ?? null,
-                "kecamatan" => $transaksi["biodata"]["kecamatan"] ?? null,
-                "kelurahan" => $transaksi["biodata"]["kelurahan"] ?? null,
-                "rtrw" => $transaksi["biodata"]["rtrw"] ?? null,
-                "agama" => $transaksi["biodata"]["agama"] ?? null,
-                "pendidikan" => $transaksi["biodata"]["pendidikan"] ?? null,
+                "kelompok"        => $transaksi["biodata"]["kelompok"] ?? null,
+                "provinsi"        => $transaksi["biodata"]["provinsi"] ?? null,
+                "kabupaten"       => $transaksi["biodata"]["kabupaten"] ?? null,
+                "kecamatan"       => $transaksi["biodata"]["kecamatan"] ?? null,
+                "kelurahan"       => $transaksi["biodata"]["kelurahan"] ?? null,
+                "rtrw"            => $transaksi["biodata"]["rtrw"] ?? null,
+                "agama"           => $transaksi["biodata"]["agama"] ?? null,
+                "pendidikan"      => $transaksi["biodata"]["pendidikan"] ?? null,
 
-                "tgltrans" => $transaksi["poli"]["tgltrans"] ?? null,
-                "rontgen" => $transaksi["poli"]["rontgen"] ?? null,
-                "konsul" => $transaksi["poli"]["konsul"] ?? null,
-                "tcm" => $transaksi["poli"]["tcm"] ?? null,
-                "bta" => $transaksi["poli"]["bta"] ?? null,
-                "hematologi" => $transaksi["poli"]["hematologi"] ?? null,
-                "kimiaDarah" => $transaksi["poli"]["kimiaDarah"] ?? null,
-                "imunoSerologi" => $transaksi["poli"]["imunoSerologi"] ?? null,
-                "mantoux" => $transaksi["poli"]["mantoux"] ?? null,
-                "ekg" => $transaksi["poli"]["ekg"] ?? null,
-                "mikroCo" => $transaksi["poli"]["mikroCo"] ?? null,
-                "spirometri" => $transaksi["poli"]["spirometri"] ?? null,
-                "spo2" => $transaksi["poli"]["spo2"] ?? null,
-                "diagnosa1" => $transaksi["poli"]["diagnosa1"] ?? null,
-                "diagnosa2" => $transaksi["poli"]["diagnosa2"] ?? null,
-                "diagnosa3" => $transaksi["poli"]["diagnosa3"] ?? null,
-                "nebulizer" => $transaksi["poli"]["nebulizer"] ?? null,
-                "infus" => $transaksi["poli"]["infus"] ?? null,
-                "oksigenasi" => $transaksi["poli"]["oksigenasi"] ?? null,
-                "injeksi" => $transaksi["poli"]["injeksi"] ?? null,
-                "terapi" => $transaksi["poli"]["terapi"] ?? null,
+                "tgltrans"        => $transaksi["poli"]["tgltrans"] ?? null,
+                "rontgen"         => $transaksi["poli"]["rontgen"] ?? null,
+                "konsul"          => $transaksi["poli"]["konsul"] ?? null,
+                "tcm"             => $transaksi["poli"]["tcm"] ?? null,
+                "bta"             => $transaksi["poli"]["bta"] ?? null,
+                "hematologi"      => $transaksi["poli"]["hematologi"] ?? null,
+                "kimiaDarah"      => $transaksi["poli"]["kimiaDarah"] ?? null,
+                "imunoSerologi"   => $transaksi["poli"]["imunoSerologi"] ?? null,
+                "mantoux"         => $transaksi["poli"]["mantoux"] ?? null,
+                "ekg"             => $transaksi["poli"]["ekg"] ?? null,
+                "mikroCo"         => $transaksi["poli"]["mikroCo"] ?? null,
+                "spirometri"      => $transaksi["poli"]["spirometri"] ?? null,
+                "spo2"            => $transaksi["poli"]["spo2"] ?? null,
+                "diagnosa1"       => $transaksi["poli"]["diagnosa1"] ?? null,
+                "diagnosa2"       => $transaksi["poli"]["diagnosa2"] ?? null,
+                "diagnosa3"       => $transaksi["poli"]["diagnosa3"] ?? null,
+                "nebulizer"       => $transaksi["poli"]["nebulizer"] ?? null,
+                "infus"           => $transaksi["poli"]["infus"] ?? null,
+                "oksigenasi"      => $transaksi["poli"]["oksigenasi"] ?? null,
+                "injeksi"         => $transaksi["poli"]["injeksi"] ?? null,
+                "terapi"          => $transaksi["poli"]["terapi"] ?? null,
 
-                "status" => $status,
+                "status"          => $status,
 
-                "idtindakan" => $transaksi["tindakan"]["id"] ?? null,
-                "kdTind" => $transaksi["tindakan"]["kdTind"] ?? null,
+                "idtindakan"      => $transaksi["tindakan"]["id"] ?? null,
+                "kdTind"          => $transaksi["tindakan"]["kdTind"] ?? null,
                 "petugastindakan" => $transaksi["tindakan"]["petugas"] ?? null,
-                "doktertindakan" => $transaksi["tindakan"]["dokter"] ?? null,
-                "created_at" => $transaksi["tindakan"]["created_at"] ?? null,
-                "updated_at" => $transaksi["tindakan"]["updated_at"] ?? null,
-                "nip" => $transaksi["petugas"]["pegawai"]["nip"] ?? null,
-                "dokterpoli" => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? null),
-                "jabatan" => $transaksi["petugas"]["pegawai"]["nm_jabatan"] ?? null,
+                "doktertindakan"  => $transaksi["tindakan"]["dokter"] ?? null,
+                "created_at"      => $transaksi["tindakan"]["created_at"] ?? null,
+                "updated_at"      => $transaksi["tindakan"]["updated_at"] ?? null,
+                "nip"             => $transaksi["petugas"]["pegawai"]["nip"] ?? null,
+                "dokterpoli"      => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? null),
+                "jabatan"         => $transaksi["petugas"]["pegawai"]["nm_jabatan"] ?? null,
             ];
         }
 
@@ -168,43 +166,43 @@ class AntrianController extends Controller
             $transaksi["status"] = $status;
 
             $formattedData[] = [
-                "notrans" => $transaksi["notrans"] ?? null,
-                "norm" => $transaksi["norm"] ?? null,
-                "nourut" => $transaksi["nourut"] ?? null,
-                "noasuransi" => $transaksi["noasuransi"] ?? null,
-                "ktujuan" => $transaksi["ktujuan"] ?? null,
-                "tgltrans" => $transaksi["tgltrans"] ?? null,
-                "noktp" => $transaksi["biodata"]["noktp"] ?? null,
-                "namapasien" => $transaksi["biodata"]["nama"] ?? null,
-                "alamatpasien" => $transaksi["biodata"]["alamat"] ?? null,
-                "rtrwpasien" => $transaksi["biodata"]["rtrw"] ?? null,
+                "notrans"       => $transaksi["notrans"] ?? null,
+                "norm"          => $transaksi["norm"] ?? null,
+                "nourut"        => $transaksi["nourut"] ?? null,
+                "noasuransi"    => $transaksi["noasuransi"] ?? null,
+                "ktujuan"       => $transaksi["ktujuan"] ?? null,
+                "tgltrans"      => $transaksi["tgltrans"] ?? null,
+                "noktp"         => $transaksi["biodata"]["noktp"] ?? null,
+                "namapasien"    => $transaksi["biodata"]["nama"] ?? null,
+                "alamatpasien"  => $transaksi["biodata"]["alamat"] ?? null,
+                "rtrwpasien"    => $transaksi["biodata"]["rtrw"] ?? null,
                 "kelaminpasien" => $transaksi["biodata"]["jeniskel"] ?? null,
-                "kelompok" => $transaksi["biodata"]["kelompok"] ?? null,
-                "provinsi" => $transaksi["biodata"]["provinsi"] ?? null,
-                "kabupaten" => $transaksi["biodata"]["kabupaten"] ?? null,
-                "kecamatan" => $transaksi["biodata"]["kecamatan"] ?? null,
-                "kelurahan" => $transaksi["biodata"]["kelurahan"] ?? null,
-                "rtrw" => $transaksi["biodata"]["rtrw"] ?? null,
-                "agama" => $transaksi["biodata"]["agama"] ?? null,
-                "pendidikan" => $transaksi["biodata"]["pendidikan"] ?? null,
+                "kelompok"      => $transaksi["biodata"]["kelompok"] ?? null,
+                "provinsi"      => $transaksi["biodata"]["provinsi"] ?? null,
+                "kabupaten"     => $transaksi["biodata"]["kabupaten"] ?? null,
+                "kecamatan"     => $transaksi["biodata"]["kecamatan"] ?? null,
+                "kelurahan"     => $transaksi["biodata"]["kelurahan"] ?? null,
+                "rtrw"          => $transaksi["biodata"]["rtrw"] ?? null,
+                "agama"         => $transaksi["biodata"]["agama"] ?? null,
+                "pendidikan"    => $transaksi["biodata"]["pendidikan"] ?? null,
 
-                "rontgen" => $transaksi["poli"]["rontgen"] ?? null,
-                "konsul" => $transaksi["poli"]["konsul"] ?? null,
-                "tcm" => $transaksi["poli"]["tcm"] ?? null,
-                "bta" => $transaksi["poli"]["bta"] ?? null,
-                "hematologi" => $transaksi["poli"]["hematologi"] ?? null,
-                "kimiaDarah" => $transaksi["poli"]["kimiaDarah"] ?? null,
+                "rontgen"       => $transaksi["poli"]["rontgen"] ?? null,
+                "konsul"        => $transaksi["poli"]["konsul"] ?? null,
+                "tcm"           => $transaksi["poli"]["tcm"] ?? null,
+                "bta"           => $transaksi["poli"]["bta"] ?? null,
+                "hematologi"    => $transaksi["poli"]["hematologi"] ?? null,
+                "kimiaDarah"    => $transaksi["poli"]["kimiaDarah"] ?? null,
                 "imunoSerologi" => $transaksi["poli"]["imunoSerologi"] ?? null,
-                "terapi" => $transaksi["poli"]["terapi"] ?? null,
+                "terapi"        => $transaksi["poli"]["terapi"] ?? null,
 
-                "status" => $status,
-                "pang" => $pang,
+                "status"        => $status,
+                "pang"          => $pang,
 
-                "created_at" => $transaksi["tindakan"]["created_at"] ?? null,
-                "updated_at" => $transaksi["tindakan"]["updated_at"] ?? null,
-                "nip" => $transaksi["petugas"]["pegawai"]["nip"] ?? null,
-                "dokterpoli" => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? null),
-                "jabatan" => $transaksi["petugas"]["pegawai"]["nm_jabatan"] ?? null,
+                "created_at"    => $transaksi["tindakan"]["created_at"] ?? null,
+                "updated_at"    => $transaksi["tindakan"]["updated_at"] ?? null,
+                "nip"           => $transaksi["petugas"]["pegawai"]["nip"] ?? null,
+                "dokterpoli"    => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? null),
+                "jabatan"       => $transaksi["petugas"]["pegawai"]["nm_jabatan"] ?? null,
             ];
         }
 
@@ -247,11 +245,11 @@ class AntrianController extends Controller
     {
         $tgl = $request->input('tgl') ?? now()->toDateString();
         // dd($tgl);
-        $model = new KominfoModel();
+        $model         = new KominfoModel();
         $loginResponse = $model->login(197609262011012003, env('PASSWORD_KOMINFO', ''));
 
         $cookie = $loginResponse['cookies'][0] ?? null;
-        if (!$cookie) {
+        if (! $cookie) {
             return response()->json(['message' => 'Login gagal'], 401);
         }
         $daftarTunggu = $model->getTungguFaramsi($tgl, $cookie);
@@ -260,14 +258,14 @@ class AntrianController extends Controller
 
         $lists = $daftarTunggu['data'];
         foreach ($lists as &$list) {
-            $norm = $list['pasien_no_rm'];
+            $norm    = $list['pasien_no_rm'];
             $tanggal = $list['tanggal'];
-            $kasir = KasirTransModel::where('norm', $norm)
+            $kasir   = KasirTransModel::where('norm', $norm)
                 ->whereDate('created_at', $tanggal)->first();
-            $list['status_kasir'] = !$kasir ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
-            $pulang = KunjunganWaktuSelesai::where('notrans', $list['no_reg'])->first();
+            $list['status_kasir'] = ! $kasir ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+            $pulang               = KunjunganWaktuSelesai::where('notrans', $list['no_reg'])->first();
             // dd($pulang);
-            $list['status_pulang'] = !$pulang || !$pulang['waktu_selesai_farmasi'] ? 'Belum Pulang' : 'Sudah Pulang';
+            $list['status_pulang'] = ! $pulang || ! $pulang['waktu_selesai_farmasi'] ? 'Belum Pulang' : 'Sudah Pulang';
         }
         // dd($lists);
 
@@ -302,9 +300,9 @@ class AntrianController extends Controller
     }
     public function all(Request $request)
     {
-        $date = $request->input('date', now()->toDateString());
+        $date  = $request->input('date', now()->toDateString());
         $ruang = $request->input('ruang');
-        $data = KunjunganModel::with(['poli', 'tujuan', 'biodata', 'lab', 'tindakan', 'kelompok', 'petugas.pegawai.biodata'])
+        $data  = KunjunganModel::with(['poli', 'tujuan', 'biodata', 'lab', 'tindakan', 'kelompok', 'petugas.pegawai.biodata'])
             ->whereDate('tgltrans', $date)
             ->where('ktujuan', '<>', $ruang)
             ->get();
@@ -326,65 +324,65 @@ class AntrianController extends Controller
             $transaksi["kunjungan"] = $status;
 
             $formattedData[] = [
-                "notrans" => $transaksi["notrans"] ?? null,
-                "norm" => $transaksi["norm"] ?? null,
-                "nourut" => $transaksi["nourut"] ?? null,
-                "noasuransi" => $transaksi["noasuransi"] ?? null,
-                "kunj" => $transaksi["kunj"] ?? null,
-                "kunjungan" => $status,
-                "biaya" => $transaksi["kelompok"]["biaya"] ?? null,
-                "layanan" => $transaksi["kelompok"]["kelompok"] ?? null,
-                "noktp" => $transaksi["biodata"]["noktp"] ?? null,
-                "namapasien" => $transaksi["biodata"]["nama"] ?? null,
-                "alamatpasien" => $transaksi["biodata"]["alamat"] ?? null,
-                "rtrwpasien" => $transaksi["biodata"]["rtrw"] ?? null,
-                "kelaminpasien" => $transaksi["biodata"]["jeniskel"] ?? null,
-                "tmptlahir" => $transaksi["biodata"]["tmptlahir"] ?? null,
-                "tgllahir" => $transaksi["biodata"]["tgllahir"] ?? null,
-                "umurpasien" => $transaksi["biodata"]["umur"] ?? null,
-                "nohppasien" => $transaksi["biodata"]["nohp"] ?? null,
+                "notrans"         => $transaksi["notrans"] ?? null,
+                "norm"            => $transaksi["norm"] ?? null,
+                "nourut"          => $transaksi["nourut"] ?? null,
+                "noasuransi"      => $transaksi["noasuransi"] ?? null,
+                "kunj"            => $transaksi["kunj"] ?? null,
+                "kunjungan"       => $status,
+                "biaya"           => $transaksi["kelompok"]["biaya"] ?? null,
+                "layanan"         => $transaksi["kelompok"]["kelompok"] ?? null,
+                "noktp"           => $transaksi["biodata"]["noktp"] ?? null,
+                "namapasien"      => $transaksi["biodata"]["nama"] ?? null,
+                "alamatpasien"    => $transaksi["biodata"]["alamat"] ?? null,
+                "rtrwpasien"      => $transaksi["biodata"]["rtrw"] ?? null,
+                "kelaminpasien"   => $transaksi["biodata"]["jeniskel"] ?? null,
+                "tmptlahir"       => $transaksi["biodata"]["tmptlahir"] ?? null,
+                "tgllahir"        => $transaksi["biodata"]["tgllahir"] ?? null,
+                "umurpasien"      => $transaksi["biodata"]["umur"] ?? null,
+                "nohppasien"      => $transaksi["biodata"]["nohp"] ?? null,
                 "statKawinpasien" => $transaksi["biodata"]["statKawin"] ?? null,
-                "provinsi" => $transaksi["biodata"]["provinsi"] ?? null,
-                "kabupaten" => $transaksi["biodata"]["kabupaten"] ?? null,
-                "kecamatan" => $transaksi["biodata"]["kecamatan"] ?? null,
-                "kelurahan" => $transaksi["biodata"]["kelurahan"] ?? null,
-                "rtrw" => $transaksi["biodata"]["rtrw"] ?? null,
-                "agama" => $transaksi["biodata"]["agama"] ?? null,
-                "pendidikan" => $transaksi["biodata"]["pendidikan"] ?? null,
-                "lokasi" => $transaksi["tujuan"]["tujuan"] ?? null,
+                "provinsi"        => $transaksi["biodata"]["provinsi"] ?? null,
+                "kabupaten"       => $transaksi["biodata"]["kabupaten"] ?? null,
+                "kecamatan"       => $transaksi["biodata"]["kecamatan"] ?? null,
+                "kelurahan"       => $transaksi["biodata"]["kelurahan"] ?? null,
+                "rtrw"            => $transaksi["biodata"]["rtrw"] ?? null,
+                "agama"           => $transaksi["biodata"]["agama"] ?? null,
+                "pendidikan"      => $transaksi["biodata"]["pendidikan"] ?? null,
+                "lokasi"          => $transaksi["tujuan"]["tujuan"] ?? null,
 
-                "tgltrans" => $transaksi["poli"]["tgltrans"] ?? null,
-                "rontgen" => $transaksi["poli"]["rontgen"] ?? null,
-                "konsul" => $transaksi["poli"]["konsul"] ?? null,
-                "tcm" => $transaksi["poli"]["tcm"] ?? null,
-                "bta" => $transaksi["poli"]["bta"] ?? null,
-                "hematologi" => $transaksi["poli"]["hematologi"] ?? null,
-                "kimiaDarah" => $transaksi["poli"]["kimiaDarah"] ?? null,
-                "imunoSerologi" => $transaksi["poli"]["imunoSerologi"] ?? null,
-                "mantoux" => $transaksi["poli"]["mantoux"] ?? null,
-                "ekg" => $transaksi["poli"]["ekg"] ?? null,
-                "mikroCo" => $transaksi["poli"]["mikroCo"] ?? null,
-                "spirometri" => $transaksi["poli"]["spirometri"] ?? null,
-                "spo2" => $transaksi["poli"]["spo2"] ?? null,
-                "diagnosa1" => $transaksi["poli"]["diagnosa1"] ?? null,
-                "diagnosa2" => $transaksi["poli"]["diagnosa2"] ?? null,
-                "diagnosa3" => $transaksi["poli"]["diagnosa3"] ?? null,
-                "nebulizer" => $transaksi["poli"]["nebulizer"] ?? null,
-                "infus" => $transaksi["poli"]["infus"] ?? null,
-                "oksigenasi" => $transaksi["poli"]["oksigenasi"] ?? null,
-                "injeksi" => $transaksi["poli"]["injeksi"] ?? null,
-                "terapi" => $transaksi["poli"]["terapi"] ?? null,
-                "laborat" => $lab,
+                "tgltrans"        => $transaksi["poli"]["tgltrans"] ?? null,
+                "rontgen"         => $transaksi["poli"]["rontgen"] ?? null,
+                "konsul"          => $transaksi["poli"]["konsul"] ?? null,
+                "tcm"             => $transaksi["poli"]["tcm"] ?? null,
+                "bta"             => $transaksi["poli"]["bta"] ?? null,
+                "hematologi"      => $transaksi["poli"]["hematologi"] ?? null,
+                "kimiaDarah"      => $transaksi["poli"]["kimiaDarah"] ?? null,
+                "imunoSerologi"   => $transaksi["poli"]["imunoSerologi"] ?? null,
+                "mantoux"         => $transaksi["poli"]["mantoux"] ?? null,
+                "ekg"             => $transaksi["poli"]["ekg"] ?? null,
+                "mikroCo"         => $transaksi["poli"]["mikroCo"] ?? null,
+                "spirometri"      => $transaksi["poli"]["spirometri"] ?? null,
+                "spo2"            => $transaksi["poli"]["spo2"] ?? null,
+                "diagnosa1"       => $transaksi["poli"]["diagnosa1"] ?? null,
+                "diagnosa2"       => $transaksi["poli"]["diagnosa2"] ?? null,
+                "diagnosa3"       => $transaksi["poli"]["diagnosa3"] ?? null,
+                "nebulizer"       => $transaksi["poli"]["nebulizer"] ?? null,
+                "infus"           => $transaksi["poli"]["infus"] ?? null,
+                "oksigenasi"      => $transaksi["poli"]["oksigenasi"] ?? null,
+                "injeksi"         => $transaksi["poli"]["injeksi"] ?? null,
+                "terapi"          => $transaksi["poli"]["terapi"] ?? null,
+                "laborat"         => $lab,
 
-                "idtindakan" => $transaksi["tindakan"]["id"] ?? null,
-                "kdTind" => $transaksi["tindakan"]["kdTind"] ?? null,
+                "idtindakan"      => $transaksi["tindakan"]["id"] ?? null,
+                "kdTind"          => $transaksi["tindakan"]["kdTind"] ?? null,
                 "petugastindakan" => $transaksi["tindakan"]["petugas"] ?? null,
-                "doktertindakan" => $transaksi["tindakan"]["dokter"] ?? null,
-                "created_at" => $transaksi["tindakan"]["created_at"] ?? null,
-                "updated_at" => $transaksi["tindakan"]["updated_at"] ?? null,
-                "nip" => $transaksi["petugas"]["pegawai"]["nip"] ?? null,
-                "dokterpoli" => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? null),
-                "jabatan" => $transaksi["petugas"]["pegawai"]["nm_jabatan"] ?? null,
+                "doktertindakan"  => $transaksi["tindakan"]["dokter"] ?? null,
+                "created_at"      => $transaksi["tindakan"]["created_at"] ?? null,
+                "updated_at"      => $transaksi["tindakan"]["updated_at"] ?? null,
+                "nip"             => $transaksi["petugas"]["pegawai"]["nip"] ?? null,
+                "dokterpoli"      => ($transaksi["petugas"]["pegawai"]["gelar_d"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["biodata"]["nama"] ?? null) . ' ' . ($transaksi["petugas"]["pegawai"]["gelar_b"] ?? null),
+                "jabatan"         => $transaksi["petugas"]["pegawai"]["nm_jabatan"] ?? null,
             ];
         }
 
@@ -429,24 +427,12 @@ class AntrianController extends Controller
 
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
-    public function cariRMObat(Request $request)
-    {
-        $norm = $request->input('norm');
-        $date = $request->input('date', now()->toDateString());
-
-        $data = PasienModel::where('norm', 'LIKE', '%' . $norm . '%')
-            ->first();
-
-        // $res = array_values($data);
-        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
-        // return response()->json($res, 200, [], JSON_PRETTY_PRINT);
-    }
 
     public function selesaiRM(Request $request)
     {
-        $norm = $request->input('norm');
+        $norm    = $request->input('norm');
         $notrans = $request->input('notrans');
-        $nosep = $request->input('nosep');
+        $nosep   = $request->input('nosep');
 
         try {
             DB::beginTransaction();
@@ -457,13 +443,13 @@ class AntrianController extends Controller
             if ($data) {
                 // Jika entri sudah ada, perbarui kolom updated_at
                 $data->waktu_selesai_rm = now();
-                $data->no_sep = $nosep;
+                $data->no_sep           = $nosep;
             } else {
                 // Jika entri belum ada, buat entri baru
-                $data = new KunjunganWaktuSelesai;
-                $data->norm = $norm;
-                $data->notrans = $notrans;
-                $data->no_sep = $nosep;
+                $data                   = new KunjunganWaktuSelesai;
+                $data->norm             = $norm;
+                $data->notrans          = $notrans;
+                $data->no_sep           = $nosep;
                 $data->waktu_selesai_rm = now();
             }
 
@@ -486,7 +472,7 @@ class AntrianController extends Controller
     }
     public function selesaiIGD(Request $request)
     {
-        $norm = $request->input('norm');
+        $norm    = $request->input('norm');
         $notrans = $request->input('notrans');
 
         try {
@@ -500,9 +486,9 @@ class AntrianController extends Controller
                 $data->waktu_selesai_igd = now();
             } else {
                 // Jika entri belum ada, buat entri baru
-                $data = new KunjunganWaktuSelesai;
-                $data->norm = $norm;
-                $data->notrans = $notrans;
+                $data                    = new KunjunganWaktuSelesai;
+                $data->norm              = $norm;
+                $data->notrans           = $notrans;
                 $data->waktu_selesai_igd = now();
             }
 

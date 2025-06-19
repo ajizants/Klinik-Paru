@@ -12,17 +12,27 @@
                     <a href="https://kkpm.banyumaskab.go.id/administrator/auth" target="_blank"" class="nav-link">APPS
                         KOMINFO</a>
                 </li>
+
                 <li class="nav-item d-none d-sm-inline-block">
                     <a type="button" class="nav-link" data-toggle="modal" data-target="#modal-jadwal"
                         onclick="getJadwalDokter()">
                         Jadwal Dokter
                     </a>
                 </li>
+                <li class="nav-item d-none d-sm-inline-block" style="display: none">
+                    <input type="text" class="form-control form-control-navbar" placeholder="Search" id='roleUser'
+                        value="{{ Auth::user()->role }}" hidden>
+                </li>
             </ul>
 
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto" style="color: rgba(255,255,255,.75);hover:color: rgba(255,255,255,1)">
                 <!-- Navbar Search -->
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a class="nav-link" href="{{ url('/users') }}">
+                        <i class="fa-solid fa-user"></i>
+                    </a>
+                </li>
                 <li class="nav-item form-inline">
                     <label type="text" id="waktu" class="font-weight-bold mb-0 mr-2"></label>
                 </li>

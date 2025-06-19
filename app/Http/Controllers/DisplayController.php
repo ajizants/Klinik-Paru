@@ -12,49 +12,49 @@ class DisplayController extends Controller
 {
     public function loket()
     {
-        $title       = 'Daftar Tunggu Loket';
-        $client      = new KominfoModel();
-        $params      = [];
-        $jadwal      = $client->jadwalPoli($params);
-        $listTunggu  = $this->listTungguLoket()['tunggu'];
+        $title = 'Daftar Tunggu Loket';
+        $client = new KominfoModel();
+        $params = [];
+        $jadwal = $client->jadwalPoli($params);
+        $listTunggu = $this->listTungguLoket()['tunggu'];
         $listSelesai = $this->listTungguLoket()['panggil'];
-        $loket1      = $this->listTungguLoket()['loket1'];
-        $loket2      = $this->listTungguLoket()['loket2'];
+        $loket1 = $this->listTungguLoket()['loket1'];
+        $loket2 = $this->listTungguLoket()['loket2'];
         return view('Display.loket', compact('title', 'jadwal', 'listTunggu', 'listSelesai', 'loket1', 'loket2'));
     }
 
     public function listTungguLoket()
     {
-        $client      = new KominfoModel();
-        $listTunggu  = $client->getTungguLoket();
+        $client = new KominfoModel();
+        $listTunggu = $client->getTungguLoket();
         $dataPanggil = $client->getDataLoket();
         $dataPanggil = $dataPanggil['data'];
-        $loket1      = collect($dataPanggil)->where('menuju_ke', 'Loket Pendaftaran 1')->first();
-        $loket2      = collect($dataPanggil)->where('menuju_ke', 'Loket Pendaftaran 2')->first();
+        $loket1 = collect($dataPanggil)->where('menuju_ke', 'Loket Pendaftaran 1')->first();
+        $loket2 = collect($dataPanggil)->where('menuju_ke', 'Loket Pendaftaran 2')->first();
 
         // dd($listTunggu);
         $listTunggu = $listTunggu['data'];
-        if (is_array($listTunggu) && ! isset($listTunggu['error'])) {
+        if (is_array($listTunggu) && !isset($listTunggu['error'])) {
             $listTunggu = array_filter($listTunggu, function ($item) {
                 return in_array($item['keterangan'], ['SEDANG DIPANGGIL', 'MENUNGGU DIPANGGIL', 'SKIP']);
             });
         }
         $res = [
-            'tunggu'  => $listTunggu,
+            'tunggu' => $listTunggu,
             'panggil' => $dataPanggil,
-            'loket1'  => $loket1 ?? "-",
-            'loket2'  => $loket2 ?? "-",
+            'loket1' => $loket1 ?? "-",
+            'loket2' => $loket2 ?? "-",
         ];
         return $res;
     }
 
     public function farmasi()
     {
-        $title      = 'Daftar Tunggu Farmasi';
-        $videos     = null;
-        $client     = new KominfoModel();
-        $params     = [];
-        $jadwal     = $client->jadwalPoli($params);
+        $title = 'Daftar Tunggu Farmasi';
+        $videos = null;
+        $client = new KominfoModel();
+        $params = [];
+        $jadwal = $client->jadwalPoli($params);
         $listTunggu = $this->listTungguFarmasi();
 
         // return $listTunggu;
@@ -69,7 +69,7 @@ class DisplayController extends Controller
         });
         // Filter listTunggu untuk membuat dua daftar: Menunggu dan Selesai
         $listMenunggu = array_filter($listTunggu, fn($item) => $item['ket'] === 'Menunggu');
-        $listSelesai  = array_filter($listTunggu, fn($item) => $item['ket'] === 'Selesai');
+        $listSelesai = array_filter($listTunggu, fn($item) => $item['ket'] === 'Selesai');
         // return $listTunggu;
 
         return view('Display.farmasi', compact('title', 'videos', 'jadwal', 'listTunggu', 'listMenunggu', 'listSelesai'));
@@ -77,12 +77,12 @@ class DisplayController extends Controller
 
     public function listTungguFarmasi()
     {
-        $client     = new KominfoModel();
+        $client = new KominfoModel();
         $listTunggu = $client->getTungguFaramsi();
         $listTunggu = $listTunggu['data'];
 
         foreach ($listTunggu as &$item) {
-            $now          = Carbon::now();
+            $now = Carbon::now();
             $createdAtLog = Carbon::parse($item['created_at_log']);
 
             // Tambahkan 30 menit ke waktu `created_at_log`
@@ -121,19 +121,32 @@ class DisplayController extends Controller
     {
         $listTunggu = [];
 
-        $client     = new KominfoModel();
-        $listTunggu = $client->getTungguTensi();
+        $client = new KominfoModel();
+        $data = $client->getTungguTensi();
 
-        // return $listTunggu;
-        // Cek apakah $listTunggu adalah array dan tidak mengandung error
-        if (is_array($listTunggu) && ! isset($listTunggu['error'])) {
+        $dataTunggu = $data['data']['data'];
+
+        // Cek apakah $data adalah array dan tidak mengandung error
+        if (is_array($data['data']['data']) && !isset($data['error'])) {
             // Lakukan filter jika tidak ada error
-            $listTunggu = array_filter($listTunggu['data'], function ($item) {
-                return $item['keterangan'] !== 'SELESAI DIPANGGIL';
+            $listTunggu = array_filter($dataTunggu, function ($item) {
+                return $item['keterangan'] === 'MENUNGGU DIPANGGIL';
             });
-        }
-        return $listTunggu;
+            $listSelesai = array_filter($dataTunggu, function ($item) {
+                return $item['keterangan'] === 'SELESAI DIPANGGIL';
+            });
+            $skip = array_filter($dataTunggu, function ($item) {
+                return $item['keterangan'] === 'SKIP';
+            });
 
+        }
+        $dataAtas = $data['dataAtas']['data'];
+        return [
+            'tunggu' => array_values($listTunggu),
+            'selesai' => array_values($listSelesai),
+            'skip' => array_values($skip),
+            'dataAtas' => $dataAtas,
+        ];
     }
 
     public function tensi()
@@ -141,25 +154,28 @@ class DisplayController extends Controller
 
         $title = 'Daftar Tunggu Tensi';
         // Akses video dari folder yang di-share di jaringan
-        $listTunggu = $this->listTungguTensi();
+        $data = $this->listTungguTensi();
         // return $data;
-        if (isset($listTunggu['response']['data']) && is_array($listTunggu['response']['data'])) {
-            $filteredData = array_filter(array_map(function ($d) {
-                $d['status'] = 'belum';
-                if (empty($d['laboratorium'])) {
-                    // dd("kosong");
-                    return null;
-                }
-                return $d;
-            }, $listTunggu['response']['data']));
-        }
-        // return $data;
+        $dataAtas = $data['dataAtas'];
+        // return $dataAtas;
+        $jumlahMenunggu = count($data['tunggu']);
+        // return $jumlahMenunggu;
+        $jumlahSelesai = count($data['selesai']);
+        // return $jumlahSelesai;
+        $listTunggu = $data['tunggu'];
+        $listSelesai = $data['selesai'];
+        ///ambil 3 data dari dataAtas
+        $sedangDipanggil = array_slice($dataAtas, 0, 3);
+        // return $sedangDipanggil;
+        // $sedangDipanggil = [];
 
+        $compact = compact('title', 'listTunggu', 'listSelesai', 'sedangDipanggil', 'jumlahMenunggu', 'jumlahSelesai');
+        // return $compact;
         $client = new KominfoModel();
         $params = [];
         $jadwal = $client->jadwalPoli($params);
 
-        return view('Display.tensi', compact('title', 'listTunggu', 'jadwal'));
+        return view('Display.tensi', $compact)->with('jadwal', $jadwal);
     }
 
     public function tungguLab()
@@ -173,20 +189,20 @@ class DisplayController extends Controller
         $tungguLab = []; // Inisialisasi array
 
         foreach ($dataLab as $d) {
-            $estimasi          = 10; // Nilai default estimasi
-            $pemeriksaan       = $d->pemeriksaan;
+            $estimasi = 10; // Nilai default estimasi
+            $pemeriksaan = $d->pemeriksaan;
             $nonNullHasilCount = 0;
-            $params            = ['BTA 1', 'BTA 2', 'Ureum darah', 'Creatinin darah', 'Asam Urat', 'SGOT', 'SGPT', 'Dlukosa darah', 'Trigliserid'];
+            $params = ['BTA 1', 'BTA 2', 'Ureum darah', 'Creatinin darah', 'Asam Urat', 'SGOT', 'SGPT', 'Dlukosa darah', 'Trigliserid'];
 
             foreach ($pemeriksaan as $periksa) {
                 // Mengecek apakah hasil pemeriksaan tidak null
-                if (! is_null($periksa->hasil)) {
+                if (!is_null($periksa->hasil)) {
                     $nonNullHasilCount++;
                 }
 
                 // Menambahkan nama pemeriksaan dari relasi nmLayanan
                 $periksa->nmPemeriksaan = $periksa->pemeriksaan->nmLayanan;
-                $estimasiLayanan        = $periksa->pemeriksaan->estimasi;
+                $estimasiLayanan = $periksa->pemeriksaan->estimasi;
 
                 // Mengecek apakah nmPemeriksaan ada dalam array params
                 if (in_array($periksa->nmPemeriksaan, $params)) {
@@ -209,13 +225,13 @@ class DisplayController extends Controller
 
             // Menambahkan data tungguLab
             $tungguLab[] = [
-                'id'        => $d->id,
-                'norm'      => $d->norm,
-                'nama'      => $d->nama,
-                'alamat'    => $d->alamat,
+                'id' => $d->id,
+                'norm' => $d->norm,
+                'nama' => $d->nama,
+                'alamat' => $d->alamat,
                 'jam_masuk' => $jam_masuk,
-                'estimasi'  => $estimasi,
-                'status'    => $status,
+                'estimasi' => $estimasi,
+                'status' => $status,
             ];
         }
 
@@ -239,21 +255,21 @@ class DisplayController extends Controller
 
         foreach ($dataRo as $d) {
             $jam_masuk = Carbon::parse($d->created_at)->format('H:i');
-            $status    = "Belum";
-            $hasil     = ROTransaksiHasilModel::where('norm', $d->norm)->where('tanggal', 'like', '%' . $tgl . '%')->first();
+            $status = "Belum";
+            $hasil = ROTransaksiHasilModel::where('norm', $d->norm)->where('tanggal', 'like', '%' . $tgl . '%')->first();
 
             if ($hasil) {
                 $status = "Selesai";
             }
 
             $tungguRo[] = [
-                'id'        => $d->id,
-                'norm'      => $d->norm,
-                'nama'      => $d->nama,
-                'alamat'    => $d->alamat,
+                'id' => $d->id,
+                'norm' => $d->norm,
+                'nama' => $d->nama,
+                'alamat' => $d->alamat,
                 'jam_masuk' => $jam_masuk,
-                'estimasi'  => 15,
-                'status'    => $status,
+                'estimasi' => 15,
+                'status' => $status,
             ];
         }
         usort($tungguRo, function ($a, $b) {
@@ -265,59 +281,63 @@ class DisplayController extends Controller
     public function lab()
     {
 
-        $title     = 'Daftar Tunggu';
+        $title = 'Daftar Tunggu';
         $tungguLab = $this->tungguLab();
         // return $tungguLab;
         $tungguRo = $this->tungguRo();
 
         return view('Display.lab', compact('title', 'tungguLab', 'tungguRo'));
     }
-    public function poli($id)
-    {
-        // Akses video dari folder yang di-share di jaringan
-        $videos = null;
-        switch ($id) {
-            case "agil":
-                $dokter = 'dr. AGIL DANANJAYA, Sp.P';
-                break;
-            case "nova":
-                $dokter = 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.';
-                break;
-            case "filly":
-                $dokter = 'dr. FILLY ULFA KUSUMAWARDANI';
-                break;
-            case "sigit":
-                $dokter = 'dr. SIGIT DWIYANTO';
-                break;
-            default:
-                abort(404, 'Dokter tidak ditemukan');
-        }
-        $title = 'Tunggu Poli ' . $dokter;
-        // return $dokter;
-        $params = [
-            'no_rm'         => '',
-            'tanggal_awal'  => Carbon::now()->format('Y-m-d'),
-            'tanggal_akhir' => Carbon::now()->format('Y-m-d'),
-        ];
-        $dataPendaftaran = [];
-        $listTunggu      = [];
-        $client          = new KominfoModel();
-        $dataPendaftaran = $client->pendaftaranRequest($params);
-        // return $dataPendaftaran;
-        $dataPendaftaran = ["error" => "Server error: `POST https:\/\/kkpm.banyumaskab.go.id\/api_kkpm\/v1\/pendaftaran\/data_pendaftaran` resulted in a `500 Internal Server Error` response:\n\n<div style=\"border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;\">\n\n<h4>A PHP Error was encountered<\/h4>\n\n<p>S (truncated...)\n"];
-        if (is_array($dataPendaftaran) && ! isset($dataPendaftaran['error'])) {
-            $listTunggu = array_filter($dataPendaftaran, function ($item) use ($dokter) {
-                return $item['dokter_nama'] === $dokter && $item['status_pulang'] === 'Belum Pulang';
-            });
-        }
-        // Mengubah hasil array filter menjadi object (Collection)
-        $listTunggu = collect(array_values($listTunggu));
+    // public function poli($id)
+    // {
+    //     switch ($id) {
+    //         case "agil":
+    //             $dokter = 'dr. Agil Dananjaya, Sp.P';
+    //             break;
+    //         case "nova":
+    //             $dokter = 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.';
+    //             break;
+    //         case "filly":
+    //             $dokter = 'dr. Filly Ulfa Kusumawardani';
+    //             break;
+    //         case "sigit":
+    //             $dokter = 'dr. Sigit Dwiyanto';
+    //             break;
+    //         default:
+    //             abort(404, 'Dokter tidak ditemukan');
+    //     }
+    //     $title = 'Tunggu Poli ' . $dokter;
+    //     // return $dokter;
+    //     $params = [
+    //         'no_rm' => '',
+    //         'tanggal_awal' => Carbon::now()->format('Y-m-d'),
+    //         'tanggal_akhir' => Carbon::now()->format('Y-m-d'),
+    //     ];
+    //     $params2 = [
+    //         'no_rm' => '',
+    //         'tgl_awal' => Carbon::now()->format('Y-m-d'),
+    //         'tgl_akhir' => Carbon::now()->format('Y-m-d'),
+    //     ];
+    //     $dataPendaftaran = [];
+    //     $listTunggu = [];
+    //     $client = new KominfoModel();
+    //     $dataPendaftaran = $client->pendaftaranRequest($params);
+    //     $data = $client->getTungguPoli($params2);
+    //     // return $dataPendaftaran;
+    //     if (is_array($dataPendaftaran) && !isset($dataPendaftaran['error'])) {
+    //         $listTunggu = array_filter($dataPendaftaran, function ($item) use ($dokter) {
+    //             return $item['dokter_nama'] === $dokter && $item['status_pulang'] === 'Belum Pulang';
+    //         });
+    //     }
+    //     // Mengubah hasil array filter menjadi object (Collection)
+    //     $listTunggu = collect(array_values($listTunggu));
+    //     $dataAtas = $data['data2']['data'];
+    //     // return $dataAtas;
+    //     return $listTunggu;
 
-        // Mengembalikan sebagai objek
-        // return $listTunggu;
+    //     return view('Display.poli', compact('title', 'videos', 'listTunggu', 'dokter'));
+    // }
 
-        return view('Display.poli', compact('title', 'videos', 'listTunggu', 'dokter'));
-    }
     public function rme()
     {
 
@@ -326,4 +346,242 @@ class DisplayController extends Controller
         return view('Laporan.dokter')->with('title', $title);
     }
 
+    public function poli($id)
+    {
+        $dokter = $this->getDokterName($id);
+        $title = 'Tunggu Poli ' . $dokter;
+
+        $listTunggu = $this->getListTungguByDokter($dokter);
+        // $dataAtas = $this->getDataAtas();
+        $dataPanggil = $this->getDataPanggilPoli($id);
+        $client = new KominfoModel();
+        $jadwal = $client->jadwalPoli($params = []);
+
+        // return $listTunggu;
+
+        // Jika ingin kembalikan ke tampilan:
+        return view('Display.poli', compact('title', 'listTunggu', 'dokter', 'dataPanggil', 'jadwal', 'id'));
+        // return view('Display.poli', compact('title', 'listTunggu', 'dokter', 'dataAtas', 'dataPanggil'));
+    }
+
+/**
+ * Ambil nama dokter berdasarkan ID
+ */
+    private function getDokterName($id)
+    {
+        return match ($id) {
+            "agil" => 'dr. Agil Dananjaya, Sp.P',
+            "nova" => 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.',
+            "filly" => 'dr. Filly Ulfa Kusumawardani',
+            "sigit" => 'dr. Sigit Dwiyanto',
+            default => abort(404, 'Dokter tidak ditemukan'),
+        };
+    }
+
+/**
+ * Ambil daftar pasien yang belum pulang berdasarkan nama dokter
+ */
+    private function getListTungguByDokter($dokter)
+    {
+        $params = [
+            'no_rm' => '',
+            'tanggal_awal' => Carbon::now()->format('Y-m-d'),
+            'tanggal_akhir' => Carbon::now()->format('Y-m-d'),
+        ];
+        $client = new KominfoModel();
+        $dataPendaftaran = $client->pendaftaranRequest($params);
+
+        if (is_array($dataPendaftaran) && !isset($dataPendaftaran['error'])) {
+            $listTunggu = array_filter($dataPendaftaran, function ($item) use ($dokter) {
+                return $item['dokter_nama'] === $dokter && $item['status_pulang'] === 'Belum Pulang';
+            });
+
+            return collect(array_values($listTunggu));
+        }
+
+        return collect();
+    }
+
+/**
+ * Ambil data atas dari KominfoModel
+ */
+    private function getDataAtas()
+    {
+        $params2 = [
+            'no_rm' => '',
+            'tgl_awal' => Carbon::now()->format('Y-m-d'),
+            'tgl_akhir' => Carbon::now()->format('Y-m-d'),
+        ];
+        $client = new KominfoModel();
+        $data = $client->getTungguPoli($params2);
+
+        return $data['data2']['data'] ?? [];
+    }
+    private function getDataPanggilPoli($id)
+    {
+        $params2 = [
+            'no_rm' => '',
+            'tgl_awal' => Carbon::now()->format('Y-m-d'),
+            'tgl_akhir' => Carbon::now()->format('Y-m-d'),
+        ];
+        $client = new KominfoModel();
+        $data = $client->getTungguPoli($params2);
+        $data = $data['data3']['data'];
+        $ruangPeriksa = [
+            'filly' => 'Ruang Periksa 1',
+            'nova' => 'Ruang Periksa 2',
+            'sigit' => 'Ruang Periksa 3',
+            'agil' => 'Ruang Periksa 4',
+        ];
+        $ruang = $ruangPeriksa[$id];
+
+        // dd($data);
+        //filter berdasarkan menuju_ke
+        $data = array_filter($data, function ($item) use ($ruang) {
+            return $item['menuju_ke'] === $ruang;
+        });
+        $data = array_values($data);
+
+        return $data[0] ?? [];
+    }
+
+    public function listTungguPoli($id)
+    {
+        $dokter = $this->getDokterName($id);
+        $listTunggu = $this->getListTungguByDokter($dokter);
+        // $dataAtas = $this->getDataAtas();
+        $dataPanggil = $this->getDataPanggilPoli($id);
+        $res = [
+            // 'dataAtas' => $dataAtas,
+            'dataPanggil' => $dataPanggil,
+            'tunggu' => $listTunggu,
+        ];
+
+        return response()->json($res);
+    }
+
+    public function dokter()
+    {
+        $title = 'Jumlah Antrian Poli';
+        $data = $this->dataJumlahTiapdokter();
+
+        return view('Display.dokter', compact('title', 'data'));
+    }
+
+    private function getListTungguPoli()
+    {
+        $params = [
+            'no_rm' => '',
+            'tgl_awal' => Carbon::now()->format('Y-m-d'),
+            'tgl_akhir' => Carbon::now()->format('Y-m-d'),
+        ];
+        // $params = [
+        //     'no_rm' => '',
+        //     'tgl_awal' => '2025-03-01',
+        //     'tgl_akhir' => '2025-03-01',
+        // ];
+        $client = new KominfoModel();
+        $dataPendaftaran = $client->tungguPoli($params);
+        $data = $dataPendaftaran['data'];
+        // $data = array_filter($dataPendaftaran['data'], function ($item) {
+        //     return isset($item['keterangan']) && $item['keterangan'] === 'SELESAI DIPANGGIL';
+        // });
+
+        $dataPenunjang = $client->tungguRoLab($params);
+
+        $tungguLab = array_filter($dataPenunjang['data']['data'], function ($item) {
+            return isset($item['keterangan']) && $item['keterangan'] === 'MENUNGGU DIPANGGIL';
+        });
+
+        $tungguRo = array_filter($dataPenunjang['data2']['data'], function ($item) {
+            return isset($item['keterangan']) && $item['keterangan'] === 'MENUNGGU DIPANGGIL';
+        });
+
+        // Gabungkan dan hilangkan duplikat berdasarkan pasien_no_rm + created_at
+        $combined = array_merge($data, $tungguLab, $tungguRo);
+
+        // Gunakan associative key gabungan untuk menyaring duplikat
+        $unique = [];
+        foreach ($combined as $item) {
+            $key = $item['pasien_no_rm'] . '|' . $item['created_at'];
+            if (!isset($unique[$key])) {
+                $unique[$key] = $item;
+            }
+        }
+
+        $finalData = array_values($unique);
+        return $finalData;
+
+    }
+
+    public function dataJumlahTiapdokter()
+    {
+        $agil = $this->getDokterName('agil');
+        $sigit = $this->getDokterName('sigit');
+        $filly = $this->getDokterName('filly');
+        $nova = $this->getDokterName('nova');
+
+        $data = $this->getListTungguPoli();
+
+        if (is_array($data) && !isset($data['error'])) {
+            $listAgil = array_filter($data, function ($item) use ($agil) {
+                return $item['dokter_nama'] === $agil;
+            });
+            $listSigit = array_filter($data, function ($item) use ($sigit) {
+                return $item['dokter_nama'] === $sigit;
+            });
+            $listFilly = array_filter($data, function ($item) use ($filly) {
+                return $item['dokter_nama'] === $filly;
+            });
+            $listNova = array_filter($data, function ($item) use ($nova) {
+                return $item['dokter_nama'] === $nova;
+            });
+
+            $listTungguAgil = array_filter($data, function ($item) use ($agil) {
+                return $item['dokter_nama'] === $agil && $item['keterangan'] === 'MENUNGGU DIPANGGIL';
+            });
+            $listTungguSigit = array_filter($data, function ($item) use ($sigit) {
+                return $item['dokter_nama'] === $sigit && $item['keterangan'] === 'MENUNGGU DIPANGGIL';
+            });
+            $listTungguFilly = array_filter($data, function ($item) use ($filly) {
+                return $item['dokter_nama'] === $filly && $item['keterangan'] === 'MENUNGGU DIPANGGIL';
+            });
+            $listTungguNova = array_filter($data, function ($item) use ($nova) {
+                return $item['dokter_nama'] === $nova && $item['keterangan'] === 'MENUNGGU DIPANGGIL';
+            });
+
+            // return collect(array_values($listTunggu));
+        }
+
+        //carikan jumlah masing msing list tunggu
+        $listTungguAgil = count($listTungguAgil);
+        $listTungguSigit = count($listTungguSigit);
+        $listTungguFilly = count($listTungguFilly);
+        $listTungguNova = count($listTungguNova);
+
+        $listAgil = count($listAgil);
+        $listSigit = count($listSigit);
+        $listFilly = count($listFilly);
+        $listNova = count($listNova);
+
+        $listSelesaiAgil = $listAgil - $listTungguAgil;
+        $listSelesaiSigit = $listSigit - $listTungguSigit;
+        $listSelesaiFilly = $listFilly - $listTungguFilly;
+        $listSelesaiNova = $listNova - $listTungguNova;
+
+        return [
+            'listTungguAgil' => $listTungguAgil,
+            'listTungguSigit' => $listTungguSigit,
+            'listTungguFilly' => $listTungguFilly,
+            'listTungguNova' => $listTungguNova,
+            'listAgil' => $listAgil,
+            'listSigit' => $listSigit,
+            'listFilly' => $listFilly,
+            'listNova' => $listNova,
+            'listSelesaiAgil' => $listSelesaiAgil,
+            'listSelesaiSigit' => $listSelesaiSigit,
+            'listSelesaiFilly' => $listSelesaiFilly,
+            'listSelesaiNova' => $listSelesaiNova,
+        ];
+    }
 }

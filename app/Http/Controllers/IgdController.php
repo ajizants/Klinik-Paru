@@ -3,9 +3,14 @@ namespace App\Http\Controllers;
 
 use App\Models\BMHPIGDInStokModel;
 use App\Models\BMHPModel;
+use App\Models\DiagnosaModel;
 use App\Models\IGDTransModel;
+use App\Models\KominfoModel;
 use App\Models\KunjunganModel;
 use App\Models\KunjunganWaktuSelesai;
+use App\Models\LayananModel;
+use App\Models\PegawaiKegiatanModel;
+use App\Models\PegawaiModel;
 use App\Models\TransaksiBMHPModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -13,6 +18,40 @@ use Illuminate\Support\Facades\DB;
 
 class IgdController extends Controller
 {
+    public function igd()
+    {
+        $title = 'IGD';
+        $pModel = new PegawaiModel();
+        $dokter = $pModel->olahPegawai([1, 7, 8]);
+        $perawat = $pModel->olahPegawai([10, 14, 15, 23]);
+        $lModel = new LayananModel();
+        $tindakan = $lModel->layanans([2, 3, 5, 6]);
+        $bmhp = BMHPModel::all();
+        $dxMed = DiagnosaModel::all();
+
+        $dokter = array_map(function ($item) {
+            return (object) $item;
+        }, $dokter);
+        $perawat = array_map(function ($item) {
+            return (object) $item;
+        }, $perawat);
+
+        $model = new IGDTransModel();
+        $dataIgd = $model->getPelaksanaLast();
+        // return $dataIgd;
+
+        return view('IGD.Trans.main', compact('tindakan', 'bmhp', 'dxMed', 'dokter', 'perawat', 'dataIgd'))->with('title', $title);
+    }
+    public function askep()
+    {
+        $title = 'ASKEP';
+        return view('Askep.main')->with('title', $title);
+    }
+    public function gudangIGD()
+    {
+        $title = 'Gudang IGD';
+        return view('IGD.GudangIGD.main')->with('title', $title);
+    }
 
     public function chart(Request $request)
     {
@@ -32,103 +71,6 @@ class IgdController extends Controller
             return $this->chart2025($request);
         }
     }
-    // public function chart2024(Request $request)
-    // {
-    //     $year = $request->input('year', date('Y')); // Gunakan tahun saat ini jika tidak ada input
-    //     if ($year == 2024) {
-
-    //         $awal = DB::table('t_kunjungan_tindakan')
-    //             ->select(
-    //                 DB::raw('MONTH(t_kunjungan_tindakan.created_at) as bulan'),
-    //                 DB::raw('COUNT(DISTINCT t_kunjungan_tindakan.notrans) as jumlah'),
-    //                 'm_kelompok.kelompok'
-    //             )
-    //             ->join('m_tindakan', 't_kunjungan_tindakan.kdTind', '=', 'm_tindakan.kdTindakan')
-    //             ->join('t_kunjungan', 't_kunjungan.notrans', '=', 't_kunjungan_tindakan.notrans')
-    //             ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
-    //             ->whereIn('m_kelompok.kelompok', ['umum', 'bpjs'])
-    //             ->whereBetween('t_kunjungan_tindakan.created_at', [$year . '-01-01', $year . '-12-31'])
-    //             ->groupBy(DB::raw('MONTH(t_kunjungan_tindakan.created_at)'), 'm_kelompok.kelompok')
-    //             ->orderBy('bulan') // Mengurutkan hasil berdasarkan bulan
-    //             ->get();
-
-    //         $dataIGD = IGDTransModel::whereBetween('created_at', [$year . '-08-01', $year . '-12-31'])->get();
-
-    //         // Proses setiap item
-    //         foreach ($dataIGD as $item) {
-    //             // Cari data kunjungan berdasarkan notrans
-    //             $kunjungan = KunjunganWaktuSelesai::where('notrans', $item->notrans)->first();
-
-    //             // Tentukan kelompok berdasarkan no_sep
-    //             if (isset($kunjungan) && $kunjungan->no_sep != null) {
-    //                 $item->kelompok = "BPJS";
-    //             } else if (isset($kunjungan) && $kunjungan->no_sep == null) {
-    //                 $item->kelompok = "UMUM";
-    //             } else {
-    //                 $item->kelompok = "mbuh";
-    //             }
-
-    //             // Set no_sep dan format bulan dalam bahasa Indonesia
-    //             $item->no_sep = $kunjungan->no_sep ?? '';
-    //             $item->bulan  = Carbon::parse($item->created_at)->format('m');
-    //         }
-
-    //         // Hapus duplikasi berdasarkan notrans
-    //         $dataIGD = $dataIGD->unique('notrans')->values();
-
-    //         // Rubah menjadi array
-    //         $data = $dataIGD->toArray();
-
-    //         // Kelompokkan data berdasarkan bulan dan kelompok
-    //         $sisa = collect($data)
-    //             ->groupBy(function ($item) {
-    //                 return $item['bulan'] . '|' . $item['kelompok']; // Gabungkan bulan dan kelompok sebagai kunci
-    //             })
-    //             ->map(function ($group, $key) {
-    //                 list($bulan, $kelompok) = explode('|', $key); // Pisahkan bulan dan kelompok
-
-    //                 return [
-    //                     'bulan'    => $bulan,
-    //                     'nmBulan'  => Carbon::createFromFormat('m', $bulan)->locale('id')->translatedFormat('F'),
-    //                     'kelompok' => $kelompok,
-    //                     'jumlah'   => $group->count(),
-    //                 ];
-    //             })
-    //             ->values();
-
-    //         $chart = //jumlahkan data awal dan sisa sesuai bulan dan kelompok
-    //         $awal->merge($sisa)
-    //             ->groupBy('bulan')
-    //             ->map(function ($group, $bulan) {
-    //                 return [
-    //                     'bulan'   => $bulan,
-    //                     'nmBulan' => Carbon::createFromFormat('m', $bulan)->locale('id')->translatedFormat('F'),
-    //                     'umum'    => $group->where('kelompok', 'umum')->sum('jumlah'),
-    //                     'bpjs'    => $group->where('kelompok', 'bpjs')->sum('jumlah'),
-    //                     'total'   => $group->sum('jumlah'),
-    //                 ];
-    //             });
-
-    //         return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
-    //     } else {
-    //         $chart = DB::table('t_kunjungan_tindakan')
-    //             ->select(
-    //                 DB::raw('MONTH(t_kunjungan_tindakan.created_at) as bulan'),
-    //                 DB::raw('COUNT(DISTINCT t_kunjungan_tindakan.notrans) as jumlah'),
-    //                 'm_kelompok.kelompok'
-    //             )
-    //             ->join('m_tindakan', 't_kunjungan_tindakan.kdTind', '=', 'm_tindakan.kdTindakan')
-    //             ->join('t_kunjungan', 't_kunjungan.notrans', '=', 't_kunjungan_tindakan.notrans')
-    //             ->join('m_kelompok', 't_kunjungan.kkelompok', '=', 'm_kelompok.kkelompok')
-    //             ->whereIn('m_kelompok.kelompok', ['umum', 'bpjs'])
-    //             ->whereYear('t_kunjungan_tindakan.created_at', $year)
-    //             ->groupBy(DB::raw('MONTH(t_kunjungan_tindakan.created_at)'), 'm_kelompok.kelompok')
-    //             ->orderBy('bulan') // Mengurutkan hasil berdasarkan bulan
-    //             ->get();
-
-    //         return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
-    //     }
-    // }
 
     public function chart2024(Request $request)
     {
@@ -174,9 +116,9 @@ class IgdController extends Controller
                     $totalKunjungan = $jumlahKunjunganPerBulan->firstWhere('bulan', (int) $bulan)->total ?? 0;
 
                     return [
-                        'bulan'          => (int) $bulan,
-                        'kelompok'       => ucfirst($kelompok), // Pastikan format nama kelompok rapi
-                        'jumlah'         => $group->sum('jumlah'),
+                        'bulan' => (int) $bulan,
+                        'kelompok' => ucfirst($kelompok), // Pastikan format nama kelompok rapi
+                        'jumlah' => $group->sum('jumlah'),
                         'totalKunjungan' => $totalKunjungan, // Assign the correct total kunjungan for the month
                     ];
                 })
@@ -206,9 +148,9 @@ class IgdController extends Controller
                 ->get()
                 ->map(function ($item) {
                     return [
-                        'bulan'    => (int) $item->bulan,
+                        'bulan' => (int) $item->bulan,
                         'kelompok' => ucfirst($item->kelompok),
-                        'jumlah'   => (int) $item->jumlah,
+                        'jumlah' => (int) $item->jumlah,
                     ];
                 })
                 ->values();
@@ -276,67 +218,14 @@ class IgdController extends Controller
             ->map(function ($group, $key) {
                 list($bulan, $kelompok) = explode('|', $key); // Pisahkan bulan dan kelompok
                 return [
-                    'bulan'    => (int) $bulan, // Konversi bulan ke integer
+                    'bulan' => (int) $bulan, // Konversi bulan ke integer
                     'kelompok' => $kelompok,
-                    'jumlah'   => $group->count(),
+                    'jumlah' => $group->count(),
                 ];
             })
             ->values();
         return $sisa;
     }
-
-    // public function chart2025(Request $request)
-    // {
-    //     $year = $request->input('year');
-
-    //     // Ambil data IGD berdasarkan tahun
-    //     $dataIGD = IGDTransModel::whereYear('created_at', $year)->get();
-
-    //     // Proses setiap item
-    //     foreach ($dataIGD as $item) {
-    //         // Cari data kunjungan berdasarkan tgltrans dan norm
-    //         $kunjungan = KunjunganWaktuSelesai::where('notrans', $item->notrans)->first();
-
-    //         // Tentukan kelompok berdasarkan no_sep
-    //         if (isset($kunjungan) && $kunjungan->no_sep != null) {
-    //             $item->kelompok = "BPJS";
-    //         } else if (isset($kunjungan) && $kunjungan->no_sep == null) {
-    //             $item->kelompok = "UMUM";
-    //         } else {
-    //             $item->kelompok = "mbuh";
-    //         }
-
-    //         // Set no_sep dan format bulan dalam bahasa Indonesia
-    //         $item->no_sep = $kunjungan->no_sep ?? '';
-
-    //         // $item->bulan= ambil bulan dati creted at mm
-    //         $item->bulan = Carbon::parse($item->created_at)->format('m');
-
-    //     }
-
-    //     // Rubah menjadi array
-    //     $data = $dataIGD->toArray();
-
-    //     // Kelompokkan data berdasarkan bulan dan kelompok
-    //     $chart = collect($data)
-    //         ->groupBy(function ($item) {
-    //             return $item['bulan'] . '|' . $item['kelompok']; // Gabungkan bulan dan kelompok menjadi satu kunci
-    //         })
-    //         ->map(function ($group, $key) {
-    //             list($bulan, $kelompok) = explode('|', $key); // Pisahkan bulan dan kelompok
-
-    //             return [
-    //                 'bulan'    => $bulan,
-    //                 'nmBulan'  => Carbon::createFromFormat('m', $bulan)->locale('id')->translatedFormat('F'),
-    //                 'kelompok' => $kelompok,
-    //                 'jumlah'   => $group->count(),
-    //             ];
-    //         })
-    //         ->values();
-
-    //     // Return hasil dalam bentuk JSON
-    //     return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
-    // }
 
     public function chart2025(Request $request)
     {
@@ -358,8 +247,8 @@ class IgdController extends Controller
             $kunjungan = $kunjunganData->get($item->notrans);
 
             return [
-                'notrans'  => $item->notrans,
-                'bulan'    => Carbon::parse($item->created_at)->format('m'),
+                'notrans' => $item->notrans,
+                'bulan' => Carbon::parse($item->created_at)->format('m'),
                 'kelompok' => $kunjungan ? ($kunjungan->no_sep ? "BPJS" : "UMUM") : "mbuh",
             ];
         })->unique('notrans')->values();
@@ -369,12 +258,12 @@ class IgdController extends Controller
             ->groupBy(fn($item) => $item['bulan'] . '|' . $item['kelompok'])
             ->map(function ($group, $key) use ($jumlahKunjunganPerBulan) {
                 list($bulan, $kelompok) = explode('|', $key);
-                $totalKunjungan         = $jumlahKunjunganPerBulan->firstWhere('bulan', (int) $bulan)->total ?? 0;
+                $totalKunjungan = $jumlahKunjunganPerBulan->firstWhere('bulan', (int) $bulan)->total ?? 0;
 
                 return [
-                    'bulan'          => (int) $bulan,
-                    'kelompok'       => ucfirst($kelompok),
-                    'jumlah'         => $group->count(),
+                    'bulan' => (int) $bulan,
+                    'kelompok' => ucfirst($kelompok),
+                    'jumlah' => $group->count(),
                     'totalKunjungan' => $totalKunjungan,
                 ];
             })
@@ -386,9 +275,16 @@ class IgdController extends Controller
         return response()->json($chart, 200, [], JSON_PRETTY_PRINT);
     }
 
+    public function reportPoin()
+    {
+        $title = 'Report IGD';
+
+        return view('IGD.report')->with('title', $title);
+    }
+
     public function cariDataTindakan(Request $request)
     {
-        $notrans      = $request->input('notrans');
+        $notrans = $request->input('notrans');
         $dataTindakan = IGDTransModel::with(['tindakan', 'transbmhp.tindakan', 'transbmhp.bmhp', 'petugas.biodata', 'dokter.biodata'])
             ->where('notrans', 'LIKE', '%' . $notrans . '%')
             ->get();
@@ -403,12 +299,15 @@ class IgdController extends Controller
     public function simpanTindakan(Request $request)
     {
         // Mengambil nilai dari input pengguna
-        $norm    = $request->input('norm');
+        $norm = $request->input('norm');
         $notrans = $request->input('notrans');
-        $kdTind  = $request->input('kdTind');
+        $kdTind = $request->input('kdTind');
         $petugas = $request->input('petugas');
-        $dokter  = $request->input('dokter');
+        $dokter = $request->input('dokter');
         $jaminan = $request->input('jaminan');
+        $tglTrans = $request->input('tgltrans');
+        $tglNow = Carbon::now()->format('Y-m-d');
+
         // dd($jaminan);
         // $created_at = $request->input('tgltrans');
         // $updated_at = $request->input('tgltind');
@@ -417,60 +316,74 @@ class IgdController extends Controller
             // Membuat instance dari model KunjunganTindakan
             $kunjunganTindakan = new IGDTransModel();
             // Mengatur nilai-nilai kolom
-            $kunjunganTindakan->kdTind  = $kdTind;
-            $kunjunganTindakan->norm    = $norm;
+            $kunjunganTindakan->kdTind = $kdTind;
+            $kunjunganTindakan->norm = $norm;
             $kunjunganTindakan->notrans = $notrans;
             $kunjunganTindakan->petugas = $petugas;
-            $kunjunganTindakan->dokter  = $dokter;
+            $kunjunganTindakan->dokter = $dokter;
             $kunjunganTindakan->jaminan = $jaminan;
+            //    jika tgl trans sebelum tgl sekarang maka isi creted_at dengan tglTrans dan jam sekarang
+            if ($tglTrans < $tglNow) {
+                $kunjunganTindakan->created_at = $tglTrans . ' ' . Carbon::now()->format('H:i:s');
+                $kunjunganTindakan->updated_at = $tglTrans . ' ' . Carbon::now()->format('H:i:s');
+            }
             // $kunjunganTindakan->created_at = $created_at;
             // $kunjunganTindakan->updated_at = $updated_at;
 
             // Simpan data ke dalam tabel
             $kunjunganTindakan->save();
+            $dataIGD = $this->getIgdLast();
 
             // Respon sukses atau redirect ke halaman lain
-            return response()->json(['message' => 'Data berhasil disimpan']);
+            return response()->json(['message' => 'Data berhasil disimpan', 'dataIGD' => $dataIGD], 200, [], JSON_PRETTY_PRINT);
         } else {
             // Handle case when $kdTind is null, misalnya kirim respon error
             return response()->json(['message' => 'kdTind tidak valid'], 400);
         }
     }
 
+    private function getIgdLast()
+    {
+        $model = new IGDTransModel();
+        $dataIgd = $model->getPelaksanaLast();
+        return $dataIgd;
+    }
+
     public function updateTindakan(Request $request)
     {
-        $id      = $request->input('id');
-        $kdTind  = $request->input('kdTind');
+        $id = $request->input('id');
+        $kdTind = $request->input('kdTind');
         $petugas = $request->input('petugas');
-        $dokter  = $request->input('dokter');
+        $dokter = $request->input('dokter');
 
         // Cek apakah ID yang diterima adalah ID yang valid dalam database
         $tindakan = IGDTransModel::find($id);
 
-        if (! $tindakan) {
+        if (!$tindakan) {
             return response()->json(['message' => 'Data tindakan tidak ditemukan'], 404);
         }
 
         // Update nilai kolom dengan nilai yang diterima dari input pengguna
-        $tindakan->kdTind  = $kdTind;
+        $tindakan->kdTind = $kdTind;
         $tindakan->petugas = $petugas;
-        $tindakan->dokter  = $dokter;
+        $tindakan->dokter = $dokter;
 
         // Simpan perubahan ke dalam database
         $tindakan->save();
+        $dataIGD = $this->getIgdLast();
 
         // Respon sukses
-        return response()->json(['message' => 'Data tindakan berhasil diperbarui']);
+        return response()->json(['message' => 'Data tindakan berhasil diperbarui', 'dataIGD' => $dataIGD]);
     }
 
     public function deleteTindakan(Request $request)
     {
-        $id     = $request->input('id');
+        $id = $request->input('id');
         $idTind = $request->input('id');
         // Cek apakah ID yang diterima adalah ID yang valid dalam database
         $tindakan = IGDTransModel::find($id);
-        $bmhp     = TransaksiBMHPModel::find($idTind);
-        if (! $tindakan) {
+        $bmhp = TransaksiBMHPModel::find($idTind);
+        if (!$tindakan) {
             return response()->json(['message' => 'Data tindakan tidak ditemukan'], 404);
         }
 
@@ -480,9 +393,10 @@ class IgdController extends Controller
         }
 
         $tindakan->delete();
+        $dataIGD = $this->getIgdLast();
 
         // Respon sukses
-        return response()->json(['message' => 'Data tindakan berhasil dihapus']);
+        return response()->json(['message' => 'Data tindakan berhasil dihapus', 'dataIGD' => $dataIGD]);
     }
     public function deleteTransaksiBmhp(Request $request)
     {
@@ -492,9 +406,9 @@ class IgdController extends Controller
 
         if ($bmhp) {
             // dd($bmhp);
-            $kdBmhp     = $bmhp->kdBmhp;
-            $jml        = $bmhp->jml;
-            $instokigd  = BMHPModel::find($kdBmhp);
+            $kdBmhp = $bmhp->kdBmhp;
+            $jml = $bmhp->jml;
+            $instokigd = BMHPModel::find($kdBmhp);
             $product_id = $instokigd->product_id;
             // dd($product_id);
 
@@ -516,7 +430,7 @@ class IgdController extends Controller
         if ($updateKeluar) {
             $updateKeluar->update([
                 'keluar' => $updateKeluar->keluar - $jml,
-                'sisa'   => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar - $jml),
+                'sisa' => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar - $jml),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -527,7 +441,7 @@ class IgdController extends Controller
         if ($updateKeluarInStok) {
             $updateKeluarInStok->update([
                 'keluar' => $updateKeluarInStok->keluar - $jml,
-                'sisa'   => $this->calculateSisa($updateKeluarInStok->stokBaru, $updateKeluarInStok->masuk, $updateKeluarInStok->keluar - $jml),
+                'sisa' => $this->calculateSisa($updateKeluarInStok->stokBaru, $updateKeluarInStok->masuk, $updateKeluarInStok->keluar - $jml),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -537,24 +451,24 @@ class IgdController extends Controller
     public function addTransaksiBmhp(Request $request)
     {
         // Ambil data dari permintaan Ajax
-        $idTind     = $request->input('idTind');
-        $kdTind     = $request->input('kdTind');
-        $kdBmhp     = $request->input('kdBmhp');
-        $jml        = $request->input('jml');
-        $total      = $request->input('total');
+        $idTind = $request->input('idTind');
+        $kdTind = $request->input('kdTind');
+        $kdBmhp = $request->input('kdBmhp');
+        $jml = $request->input('jml');
+        $total = $request->input('total');
         $product_id = $request->input('productID');
-        $notrans    = $request->input('notrans');
+        $notrans = $request->input('notrans');
         // dd($idTind, $kdTind, $kdBmhp, $jml);
         if ($kdBmhp !== null) {
             // Membuat instance dari model KunjunganTindakan
             $transaksibmhp = new TransaksiBMHPModel();
             // Mengatur nilai-nilai kolom
             $transaksibmhp->notrans = $notrans;
-            $transaksibmhp->idTind  = $idTind;
-            $transaksibmhp->kdTind  = $kdTind;
-            $transaksibmhp->kdBmhp  = $kdBmhp;
-            $transaksibmhp->jml     = $jml;
-            $transaksibmhp->biaya   = $total;
+            $transaksibmhp->idTind = $idTind;
+            $transaksibmhp->kdTind = $kdTind;
+            $transaksibmhp->kdBmhp = $kdBmhp;
+            $transaksibmhp->jml = $jml;
+            $transaksibmhp->biaya = $total;
 
             // Simpan data ke dalam tabel
             $transaksibmhp->save();
@@ -574,7 +488,7 @@ class IgdController extends Controller
         if ($updateKeluar) {
             $updateKeluar->update([
                 'keluar' => $updateKeluar->keluar + $jml,
-                'sisa'   => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar + $jml),
+                'sisa' => $this->calculateSisa($updateKeluar->stokBaru, $updateKeluar->masuk, $updateKeluar->keluar + $jml),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -585,7 +499,7 @@ class IgdController extends Controller
         if ($updateKeluarInStok) {
             $updateKeluarInStok->update([
                 'keluar' => $updateKeluarInStok->keluar + $jml,
-                'sisa'   => $this->calculateSisa($updateKeluarInStok->stokBaru, $updateKeluarInStok->masuk, $updateKeluarInStok->keluar + $jml),
+                'sisa' => $this->calculateSisa($updateKeluarInStok->stokBaru, $updateKeluarInStok->masuk, $updateKeluarInStok->keluar + $jml),
             ]);
         } else {
             return response()->json(['message' => 'Obat tidak valid'], 400);
@@ -610,7 +524,7 @@ class IgdController extends Controller
 
     public function cariPoinTotal(Request $request)
     {
-        $mulaiTgl   = $request->input('mulaiTgl');
+        $mulaiTgl = $request->input('mulaiTgl');
         $selesaiTgl = $request->input('selesaiTgl');
 
         $query = DB::table(DB::raw('(
@@ -641,7 +555,7 @@ class IgdController extends Controller
     }
     public function cariPoin(Request $request)
     {
-        $mulaiTgl   = $request->input('mulaiTgl');
+        $mulaiTgl = $request->input('mulaiTgl');
         $selesaiTgl = $request->input('selesaiTgl');
 
         $query = DB::table('t_kunjungan_tindakan')
@@ -676,5 +590,312 @@ class IgdController extends Controller
             ->get();
 
         return response()->json($query, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function getRekapJumlahTindakan(Request $request)
+    {
+        $tglAwal = $request->input('tglAwal') . ' 00:00:00';
+        $tglAkhir = $request->input('tglAkhir') . ' 23:59:59';
+
+        $data = IGDTransModel::with('tindakan')
+            ->whereBetween('created_at', [$tglAwal, $tglAkhir])
+            ->get();
+
+        $rekap = [];
+
+        foreach ($data as $item) {
+            $kdTindakan = $item->kdTind;
+            $nmTindakan = $item->tindakan->nmTindakan ?? '-';
+
+            if (!isset($rekap[$kdTindakan])) {
+                $rekap[$kdTindakan] = [
+                    'kdTindakan' => $kdTindakan,
+                    'nmTindakan' => $nmTindakan,
+                    'jumlah' => 0,
+                ];
+            }
+
+            $rekap[$kdTindakan]['jumlah']++;
+        }
+
+        $result = array_values($rekap);
+
+        // Bangun tabel HTML
+        $table = '<table class="table table-sm table-bordered table-hover table-striped" id="tableRekapJumlahTindakan" cellspacing="0">';
+        $table .= '<thead class="bg bg-orange">';
+        $table .= '<tr>
+                <th>No</th>
+                <th>Kode Tindakan</th>
+                <th>Nama Tindakan</th>
+                <th>Jumlah</th>
+              </tr></thead><tbody>';
+
+        foreach ($result as $i => $row) {
+            $table .= '<tr>
+                    <td>' . ($i + 1) . '</td>
+                    <td>' . $row['kdTindakan'] . '</td>
+                    <td>' . $row['nmTindakan'] . '</td>
+                    <td>' . $row['jumlah'] . '</td>
+                   </tr>';
+        }
+
+        $table .= '</tbody></table>';
+
+        // Return JSON dengan data mentah dan HTML tabel
+        return response()->json([
+            'data' => $result,
+            'html' => $table,
+        ], 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function poinPegawai($bln, $tahun)
+    {
+        $tglAwal = \Carbon\Carbon::create($tahun, $bln, 1)->isoFormat('YYYY-MM-DD');
+        $tglAkhir = \Carbon\Carbon::create($tahun, $bln, 1)->lastOfMonth()->isoFormat('YYYY-MM-DD');
+
+        $tindakanData = $this->getTindakanArray($tglAwal, $tglAkhir);
+        // return $tindakanData;
+        $kominfoData = $this->getKominfoArray($tglAwal, $tglAkhir);
+        // return $kominfoData;
+        $poinHIV = $this->getPoinHIV($tglAwal, $tglAkhir);
+        // return $poinHIV;
+
+        // Gabungkan tindakan dan kominfo
+        $combined = $tindakanData;
+
+        foreach ($kominfoData as $jenis => $admins) {
+            if (!isset($combined[$jenis])) {
+                $combined[$jenis] = [];
+            }
+
+            foreach ($admins as $admin => $jumlah) {
+                $combined[$jenis][$admin] = ($combined[$jenis][$admin] ?? 0) + $jumlah;
+            }
+        }
+
+        foreach ($poinHIV as $jenis => $admins) {
+            if (!isset($combined[$jenis])) {
+                $combined[$jenis] = [];
+            }
+
+            foreach ($admins as $admin => $jumlah) {
+                $combined[$jenis][$admin] = ($combined[$jenis][$admin] ?? 0) + $jumlah;
+            }
+        }
+
+        // Ambil semua nama pelaksana/admin unik
+        $allNama = [];
+        foreach ($combined as $admins) {
+            foreach ($admins as $nama => $jumlah) {
+                $allNama[$nama] = true;
+            }
+        }
+        $allNama = array_keys($allNama);
+
+        // Gabungkan daftar jenis tindakan dari kedua sumber
+        $order = [
+            'Punctie pleura',
+            'Infus',
+            'Mantoux Test',
+            'E K G',
+            'Observasi infus',
+            'Penanganan pasien Hemaptoe',
+            'Injeksi',
+            'Nebulasi ( tanpa harga obat )',
+            'Mengantar pasien dirujuk',
+            'Spirometri',
+            'Konseling VCT',
+            'Konseling PITC',
+            'Oksigenasi per jam',
+            'Anamnesa pasien baru',
+            'Asisten dokter',
+            'Anamnesa pasien lama',
+            'Timbang dan tensi',
+            'Lain lain (mencari kartu)',
+            'Input data',
+        ];
+
+        // Tambahkan tindakan dari Kominfo yang tidak ada di $order
+        foreach (array_keys($combined) as $jenis) {
+            if (!in_array($jenis, $order)) {
+                $order[] = $jenis;
+            }
+        }
+
+        // Bangun HTML gabungan
+        $html = '<table border="1" cellpadding="8" cellspacing="0" id="tablePoinJaspel">';
+        $html .= '<thead><tr><th>NO.</th><th class="col-2" width="20%">JENIS PELAYANAN</th>';
+
+        foreach ($allNama as $nama) {
+            $html .= '<th>' . htmlspecialchars($nama) . '</th>';
+        }
+        $html .= '</tr></thead><tbody>';
+
+        $no = 1;
+        foreach ($order as $jenis) {
+            if (!isset($combined[$jenis])) {
+                continue;
+            }
+
+            $html .= '<tr>';
+            $html .= '<td>' . $no++ . '</td>';
+            $html .= '<td>' . htmlspecialchars($jenis) . '</td>';
+            foreach ($allNama as $nama) {
+                $jumlah = $combined[$jenis][$nama] ?? 0;
+                $html .= '<td>' . $jumlah . '</td>';
+            }
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody></table>';
+
+        return $html;
+
+    }
+
+    private function getTindakanArray($tglAwal, $tglAkhir)
+    {
+        $tindakan = IGDTransModel::with('pelaksana.biodata', 'tindakan', 'dok.biodata')
+            ->whereBetween('created_at', [$tglAwal, $tglAkhir])
+            ->get();
+
+        $data = [];
+
+        foreach ($tindakan as $item) {
+            $nmTindakan = $item->tindakan->nmTindakan ?? '-';
+            $namaPelaksana = $item->pelaksana->biodata->nama ?? 'Tidak diketahui';
+
+            $data[$nmTindakan][$namaPelaksana] = ($data[$nmTindakan][$namaPelaksana] ?? 0) + 1;
+        }
+
+        // Tambahkan Observasi Infus dengan jumlah yang sama seperti Infus
+        if (isset($data['Infus'])) {
+            $data['Observasi infus'] = $data['Infus'];
+        }
+
+        // Tambahkan "Lain lain (mencari kartu)" untuk semua pelaksana yang ada
+        $pelaksanaTersedia = [];
+        foreach ($data as $tindakan) {
+            foreach ($tindakan as $pelaksana => $jumlah) {
+                $pelaksanaTersedia[$pelaksana] = true;
+            }
+        }
+
+        foreach (array_keys($pelaksanaTersedia) as $pelaksana) {
+            $data['Lain lain (mencari kartu)'][$pelaksana] = 0;
+        }
+        return $data;
+    }
+
+    private function getKominfoArray($tglAwal, $tglAkhir)
+    {
+        $params = [
+            'tanggal_awal' => $tglAwal,
+            'tanggal_akhir' => $tglAkhir,
+        ];
+
+        $model = new KominfoModel();
+        $data = $model->poinRequest($params);
+        $items = $data['response']['data'] ?? [];
+        // return $items;
+
+        $items = array_filter($items, function ($item) {
+            return in_array($item['ruang_nama'], ['Ruang Tensi 1', 'Ruang Poli (Perawat Poli)', 'Petugas Assessment Awal']);
+        });
+
+        $items = array_map(function ($item) {
+            $item['admin_nama'] = preg_replace('/,.*$/', '', $item['admin_nama']);
+            // Tambahkan "IMAM " jika nama admin adalah "AJI SANTOSO"
+            if ($item['admin_nama'] === 'AJI SANTOSO') {
+                $item['admin_nama'] = 'IMAM ' . $item['admin_nama'];
+            }
+            return $item;
+        }, $items);
+
+        $result = [
+            'Anamnesa pasien lama' => [],
+            'Anamnesa pasien lama2' => [],
+            'Anamnesa pasien baru' => [],
+            'Asisten dokter' => [],
+            'Timbang dan tensi' => [],
+            'Input data' => [],
+        ];
+
+        foreach ($items as $item) {
+            $admin = $item['admin_nama'];
+            $jumlah = (int) $item['jumlah'];
+            $ruang = $item['ruang_nama'];
+            if ($ruang === 'Ruang Tensi 1') {
+                $jumlahLama = (int) $item['jumlah'];
+            }
+
+            if ($ruang === 'Ruang Tensi 1') {
+                // $half = (int) floor($jumlah / 2);
+                // $result['Anamnesa pasien lama'][$admin] = ($result['Anamnesa pasien lama'][$admin] ?? 0) + $half;
+                // $result['Anamnesa pasien baru'][$admin] = ($result['Anamnesa pasien baru'][$admin] ?? 0) + ($jumlah - $half);
+
+                $result['Anamnesa pasien lama2'][$admin] = ($result['Ruang Tensi 1'][$admin] ?? 0) + $jumlah;
+                $result['Timbang dan tensi'][$admin] = ($result['Timbang dan tensi'][$admin] ?? 0) + $jumlah;
+                $result['Input data'][$admin] = ($result['Input data'][$admin] ?? 0) + $jumlah;
+            } elseif ($ruang === 'Petugas Assessment Awal') {
+                $result['Anamnesa pasien baru'][$admin] = ($result['Petugas Assessment Awal'][$admin] ?? 0) + $jumlah;
+            } elseif ($ruang === 'Ruang Poli (Perawat Poli)') {
+                $result['Asisten dokter'][$admin] = ($result['Asisten dokter'][$admin] ?? 0) + $jumlah;
+            }
+        }
+        // $result['Anamnesa pasien lama2'] = [];
+
+        foreach ($result['Anamnesa pasien lama2'] as $nama => $nilaiLama) {
+            if (isset($result['Anamnesa pasien baru'][$nama])) {
+                $result['Anamnesa pasien lama'][$nama] = $nilaiLama - $result['Anamnesa pasien baru'][$nama];
+            } else {
+                $result['Anamnesa pasien lama'][$nama] = $nilaiLama;
+            }
+        }
+        unset($result['Anamnesa pasien lama2']);
+
+        return $result;
+    }
+
+    private function getPoinHIV($tglAwal, $tglAkhir)
+    {
+        $data = PegawaiKegiatanModel::with('biodata')
+            ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
+            ->get();
+
+        // Jika tidak ada data, pastikan untuk mengembalikan array kosong
+        if ($data->isEmpty()) {
+            return []; // Kembalikan array kosong jika tidak ada data
+        }
+
+        $data = $data->toArray();
+
+        $items = array_filter($data, function ($item) {
+            return in_array($item['kegiatan'], ['Konseling VCT', 'Konseling PITC']);
+        });
+
+        $items = array_values($items);
+
+        $result = [
+            'Konseling VCT' => [],
+            'Konseling PITC' => [],
+            'Penanganan pasien Hemaptoe' => [],
+        ];
+
+        foreach ($items as $item) {
+            $admin = $item['biodata']['nama'];
+            $jumlah = (int) $item['jumlah'];
+            $ruang = $item['kegiatan'];
+
+            if ($ruang === 'Konseling PITC') {
+                $result['Konseling PITC'][$admin] = ($result['Konseling PITC'][$admin] ?? 0) + $jumlah;
+            } elseif ($ruang === 'Konseling VCT') {
+                $result['Konseling VCT'][$admin] = ($result['Konseling VCT'][$admin] ?? 0) + $jumlah;
+            } elseif ($ruang === 'Penanganan pasien Hemaptoe') {
+                $result['Penanganan pasien Hemaptoe'][$admin] = ($result['Penanganan pasien Hemaptoe'][$admin] ?? 0) + $jumlah;
+            }
+        }
+
+        return $result;
     }
 }

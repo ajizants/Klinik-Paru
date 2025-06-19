@@ -13,7 +13,7 @@ class TransPetugasModel extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'notrans', 'p_dokter_poli', 'p_rontgen',
+        'notrans', 'p_dokter_poli', 'p_rontgen', 'p_rontgen_evaluator',
     ];
 
     public function pegawai()
@@ -28,5 +28,9 @@ class TransPetugasModel extends Model
     public function radiografer()
     {
         return $this->hasOne(BiodataModel::class, 'nip', 'p_rontgen');
+    }
+    public function evaluator()
+    {
+        return $this->hasOne(BiodataModel::class, 'nip', 'p_rontgen_evaluator');
     }
 }

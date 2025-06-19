@@ -11,7 +11,8 @@
                         :</label>
                     <div class="col-sm-2 input-group" style="overflow: hidden;">
                         <input type="text" name="norm" id="norm" class="form-control" placeholder="No RM"
-                            maxlength="6" pattern="[0-9]{6}" required onkeyup="enterCariRM(event,'lab');" />
+                            maxlength="6" pattern="[0-9]{6}" required />
+                        <button class="btn btn-warning" onclick="obatSajaIdentitas()">TCM</button>
                     </div>
                     <label for="layanan" class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
                         :</label>
@@ -94,6 +95,68 @@
                 </div>
             </div>
         </form>
+
+        <script>
+            var number = 0;
+            var noTransObat;
+
+            async function obatSajaIdentitas() {
+                console.log("🚀 ~ obatSajaIdentitas ~ obatSajaIdentitas:", obatSajaIdentitas)
+                var today = new Date().toISOString().split("T")[0];
+                //hilangkan - atau / di today
+                let idTrans = today.replace(/-/g, "").replace(/\//g, "");
+                number++;
+                noTransObat = idTrans + number + '-' + 'TCM';
+
+                let norm = $("#norm").val();
+
+                //jika no tidak 6 digit, tambahkna 0000 sampai 6 digit
+                if (norm.length < 6) {
+                    norm = norm.padStart(6, "0");
+                }
+                tampilkanLoading("Sedang mencarikan data pasien...!!!");
+                try {
+                    const response = await $.ajax({
+                        url: "/api/pasienKominfo",
+                        type: "post",
+                        data: {
+                            no_rm: norm,
+                        },
+                    });
+                    console.log("🚀 ~ obatSajaIdentitas ~ response:", response)
+                    if (response === "Data tidak ditemukan!") {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Data pasien tidak ditemukan",
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            timer: 1500,
+                        });
+                        return;
+                    }
+                    Swal.fire({
+                        icon: "success",
+                        title: "Data pasien ditemukan, lanjutkan transaksi...!!!",
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+
+                    $("#norm").val(response.pasien_no_rm);
+                    $("#nama").val(response.pasien_nama);
+                    $("#alamat").val(response.pasien_alamat);
+                    $("#notrans").val(noTransObat);
+                    $("#layanan").val("UMUM");
+                    $("#umur").val(response.umur);
+                    $("#jk").val(response.jenis_kelamin_nama).trigger("change");
+                } catch (error) {
+                    console.error("Error:", error);
+                    // Handling error if the API request fails
+                    tampilkanEror(`Terjadi kesalahan saat mengambil data pasien: ${error}`);
+                }
+
+            }
+        </script>
     </div>
 </div>
 <div class="container-fluid">

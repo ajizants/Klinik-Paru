@@ -531,7 +531,7 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
         ];
     } else {
         aksiColumns = [
-            { data: "aksi", className: "p-2 text-center", title: "Aksi" },
+            { data: "aksi", className: "p-2 text-center col-1", title: "Aksi" },
         ];
     }
     const ketColumns = [
@@ -560,7 +560,7 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
         surat: [
             ...aksiColumns,
             ...baseColumns,
-            ...extraColumns,
+            // ...extraColumns,
             ...commonColumns,
         ],
         lab: [
@@ -607,8 +607,20 @@ function processResponse(response, ruang, statusFilter) {
             item.status_pulang === "Sudah Pulang" &&
             item.penjamin_nama === "UMUM"
     );
+    const daftarTungguBpjs = data.filter(
+        (item) =>
+            item.status === "Tidak Ada Transaksi" &&
+            item.status_pulang === "Sudah Pulang" &&
+            item.penjamin_nama === "BPJS"
+    );
 
-    return { data, dataSelesai, daftarTunggu, daftarTungguUmum };
+    return {
+        data,
+        dataSelesai,
+        daftarTunggu,
+        daftarTungguUmum,
+        daftarTungguBpjs,
+    };
 }
 
 function generateActionLink(item, ruang, statusFilter) {
@@ -662,7 +674,7 @@ function generateActionLink(item, ruang, statusFilter) {
         `;
 
     const linkLog = `<a type="button" class="aksi-button btn-sm btn-warning py-md-0 py-1 m-1 col icon-link icon-link-hover"
-                    onclick="cariLog('${item.id}');">
+                    onclick="cariLog('${item.id}','${item.pasien_no_rm}','${item.tanggal}');">
                     <strong>Posisi</strong>
                 </a>`;
     const linkCppt = `<a type="button" class="aksi-button btn-sm btn-success py-md-0 py-1 m-1 col icon-link icon-link-hover"
@@ -691,19 +703,30 @@ function generateActionLink(item, ruang, statusFilter) {
             "<strong>Surat</strong>"
         )}
             ${linkLog}
-            ${linkCppt}</div>`,
+            ${linkCppt}            
+                 <a type="button"
+                      data-toggle="tooltip" data-placement="right" title="Transaksi Konsul 
+                      ${item.konsul_ro === "danger" ? "Belum" : "Sudah"}"
+                      ${commonAttributes}
+                     class="aksi-button btn-sm btn-${item.konsul_ro} 
+                     py-md-0 py-1 m-1 col icon-link icon-link-hover"
+                     onclick="setKonsul(this)">Konsul RO
+                </a>
+                           
+            </div>`,
         kasir:
-            item.status === "Sudah Selesai"
-                ? createLink("fas fa-pen-to-square", "setTransaksi", ruang) +
-                  createLink(
-                      "fa-solid fa-volume-high",
-                      "celuk",
-                      ruang,
-                      "ml-3 btn-warning"
-                  )
-                : item.status === "Tidak Ada Transaksi"
-                ? createLink("fas fa-pen-to-square", "setTransaksi", ruang)
-                : `<a></a>`,
+            // item.status === "Sudah Selesai"
+            //     ?
+            createLink("fas fa-pen-to-square", "setTransaksi", ruang) +
+            createLink(
+                "fa-solid fa-volume-high",
+                "celuk",
+                ruang,
+                "ml-3 btn-warning"
+            ),
+        // : item.status === "Tidak Ada Transaksi"
+        // ? createLink("fas fa-pen-to-square", "setTransaksi", ruang)
+        // : `<a></a>`
         farmasi:
             item.status === "Sudah Selesai"
                 ? createLink(
@@ -843,7 +866,7 @@ function tabelRiwayatKunjungan(data) {
     });
 }
 
-function cariLog(id) {
+function cariLog(id, norm, tgl) {
     // console.log("🚀 ~ cariLog ~ id:", id);
     Swal.fire({
         title: "Loading...",
@@ -884,6 +907,10 @@ function cariLog(id) {
                                             <a href="https://kkpm.banyumaskab.go.id/administrator/loket_farmasi/cetak_resep?pendaftaran_id=${id}"
                                             target="_blank" class="btn btn-success" style="margin-top: 10px;">
                                                 Cetak Resep
+                                            </a>
+                                            <a href="/api/resep2/${norm}/${tgl}"
+                                            target="_blank" class="btn btn-primary" style="margin-top: 10px;">
+                                                Cetak Resep BPJS
                                             </a>
                                         </div>
                                     `;
@@ -977,10 +1004,11 @@ function pasienPulang(button, text) {
 }
 
 function setTransaksi(button, ruang) {
-    // console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi);
+    console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi);
     var norm = $(button).data("norm");
     var nama = $(button).data("nama");
     var dokter = $(button).data("kddokter");
+    console.log("🚀 ~ setTransaksi ~ dokter:", dokter);
     var alamat = $(button).data("alamat");
     var layanan = $(button).data("layanan");
     var notrans = $(button).data("notrans");
@@ -1004,9 +1032,10 @@ function setTransaksi(button, ruang) {
             cariTsLab(norm, tgl, ruang);
             $("#umur").val(umur);
             getNoSampel();
-            if (cekIgd == true) {
-                cekTransLain(notrans);
-            }
+            // if (cekIgd == true) {
+            //     cekTransLain(notrans);
+            // }
+
             break;
         case "ro":
             if ($.fn.DataTable.isDataTable("#tableRo")) {
@@ -1099,8 +1128,13 @@ function antrianAll(ruang) {
 
     fetchDataAntrianAll(tanggal, ruang, function (response) {
         $("#loadingSpinner").hide();
-        const { data, dataSelesai, daftarTunggu, daftarTungguUmum } =
-            processResponse(response, ruang, "Sudah Selesai");
+        const {
+            data,
+            dataSelesai,
+            daftarTunggu,
+            daftarTungguUmum,
+            daftarTungguBpjs,
+        } = processResponse(response, ruang, "Sudah Selesai");
         // console.log("🚀 ~ daftarTunggu:", daftarTunggu);
         // console.log("🚀 ~ dataSelesai:", dataSelesai);
         // console.log("🚀 ~ data:", data);
@@ -1120,6 +1154,12 @@ function antrianAll(ruang) {
             initializeDataTable(
                 "#dataAntrian",
                 daftarTungguUmum,
+                getColumnDefinitions("status", ruang),
+                ruang
+            );
+            initializeDataTable(
+                "#dataAntrianBpjs",
+                daftarTungguBpjs,
                 getColumnDefinitions("status", ruang),
                 ruang
             );
@@ -1281,6 +1321,8 @@ function handleLab(cppt, pasien, pendaftaran) {
 }
 
 function isiIdentitas(pasien, pendaftaran, permintaan) {
+    console.log("🚀 ~ isiIdentitas ~ pendaftaran:", pendaftaran);
+    console.log("🚀 ~ isiIdentitas ~ pasien:", pasien);
     // console.log("🚀 ~ isiIdentitas ~ permintaan:", permintaan);
 
     // Set values for input fields

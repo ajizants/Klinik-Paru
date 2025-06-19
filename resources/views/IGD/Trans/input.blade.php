@@ -99,6 +99,8 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="petugas">Pelaksana :</label>
+                                                    <p id='petugasSebelumnya'>Bef:
+                                                        {{ $dataIgd[0]['nama'] }}</p>
                                                     <select id="petugas"
                                                         class="select2bs4 form-control mb-3 border border-primary">
                                                         <option value="">--Pilih Petugas--</option>

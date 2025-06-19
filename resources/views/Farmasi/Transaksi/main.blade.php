@@ -7,6 +7,7 @@
     @include('IGD.Trans.input')
 
 
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalInputObat">modalInputObat</button>
 
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
@@ -675,9 +676,10 @@
         function cetakResep(norm, tgl, btn) {
             btn.classList.remove("btn-secondary");
             btn.classList.add("btn-danger");
-            const url = "/api/resep/" + norm + "/" + tgl;
-            console.log("🚀 ~ cetakResep ~ url:", url)
-            window.open(url, "_blank");
+            const urlEtiket = "/api/etiket/" + norm + "/" + tgl;
+            const urlResep = "/api/resep/" + norm + "/" + tgl;
+            // window.open(urlEtiket, "_blank");
+            window.open(urlResep, "_blank");
 
         }
 
@@ -967,4 +969,79 @@
         <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
+    <div class="modal fade" id="modalInputObat">
+        <div class="modal-dialog modal-dialog-scrollable modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Input Data Farmasi</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body p-2">
+                        @csrf
+                        <form id="form_identitas_bpjs">
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label for="norm_bpjs" class="col-form-label font-weight-bold mb-0 ">No
+                                        RM
+                                        :</label>
+                                    <div class=" input-group" style="overflow: hidden;">
+                                        <input type="text" name="norm_bpjs" id="norm_bpjs" class="form-control"
+                                            placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required />
+                                    </div>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="layanan_bpjs" class="col-form-label font-weight-bold mb-0">Jaminan
+                                        :</label>
+                                    <div class="">
+                                        <input type="text" id="layanan_bpjs" class="form-control bg-white"
+                                            placeholder="BPJS/UMUM" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="nama_bpjs" class="col-form-label font-weight-bold  mb-0">Nama
+                                    :</label>
+                                <input type="text" id="nama_bpjs" class="form-control bg-white"
+                                    placeholder="Nama Pasien">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label for="tgltrans_bpjs" class="col-form-label font-weight-bold mb-0">Tanggal
+                                        :</label>
+                                    <div class="">
+                                        <input type="date" id="tgltrans_bpjs" class="form-control bg-white"
+                                            placeholder="Tanggal Transaksi" />
+                                    </div>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="notrans_bpjs" class="col-form-label font-weight-bold mb-0">NoTran
+                                        :</label>
+                                    <div class="">
+                                        <input type="text" id="notrans_bpjs" class="form-control bg-white"
+                                            placeholder="Nomor Transaksi" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" class="form-control" id="obat_bpjs"
+                                    placeholder="Total harga Obat">
+                            </div>
+                            <div class="form-group">
+                                <input type="number" class="form-control" id="bmhp_bpjs"
+                                    placeholder="Total harga BMHP">
+                            </div>
+                            <div class="form-group">
+                                <input type="number" class="form-control" id="obatKronis_bpjs"
+                                    placeholder="Total Harga Obat kronis">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-end">
+                        <button type="button" class="btn btn-primary" data-dismiss="modalInputObat">Simpan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
 @endsection

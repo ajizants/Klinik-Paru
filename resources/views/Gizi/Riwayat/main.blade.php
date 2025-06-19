@@ -2,7 +2,8 @@
 @extends('Template.lte')
 
 @section('content')
-    @include('Gizi.Riwayat.input')
+    {{-- @include('Gizi.Riwayat.input') --}}
+    @include('Template.comingSoon')
 
     {{-- @include('Template.script') --}}
 

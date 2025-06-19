@@ -8,6 +8,26 @@ class SuratMedis extends Model
 {
     protected $table = 't_no_surat_medis';
     protected $primaryKey = 'id';
+    protected $fillable = [
+        'tanggal',
+        'noSurat',
+        'norm',
+        'nama',
+        'tglLahir',
+        'umur',
+        'alamat',
+        'hasil',
+        'keperluan',
+        'dokter',
+        'nik',
+        'petugas',
+        'td',
+        'bb',
+        'tb',
+        'nadi',
+        'pekerjaan',
+        'catatan',
+    ];
 
     public function adm()
     {

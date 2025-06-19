@@ -55,14 +55,34 @@
             </div>
         </div>
     </div>
+    <Style>
+        .select2-container--default .select2-selection--single {
+            height: 38px !important;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
 
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 38px !important;
+            padding-left: 0;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 38px !important;
+            top: 0px;
+        }
+    </Style>
 
     <!-- Modal -->
-    <div class="modal fade show" id="modalCreateSurat" tabindex="-1" aria-labelledby="modalCreateSuratLabel">
+    <div class="modal fade show" id="modalCreateSurat">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalCreateSuratLabel">Formulir Pembuatan Surat</h5>
+                    <h5 class="modal-title" id="modalCreateSuratLabel">Formulir Pembuatan Surat :
+                        {{-- <input type="text" id="noSurat" readonly></h5> --}}
                 </div>
                 <div class="modal-body">
                     @csrf
@@ -121,6 +141,12 @@
                                     <input id="alamat" class="form-control bg-white" placeholder="Alamat Pasien" />
                                 </div>
                                 <div class="form-group col-6 col-md-2">
+                                    <label for="pekerjaan" class="col-form-label font-weight-bold mb-0">Pekerjaan
+                                        :</label>
+                                    <input type="text" id="pekerjaan" class="form-control bg-white"
+                                        placeholder="Tanggal Transaksi" />
+                                </div>
+                                {{-- <div class="form-group col-6 col-md-2">
                                     <label for="tgltrans" class="col-form-label font-weight-bold mb-0">TD
                                         :</label>
                                     <div class="input-group">
@@ -139,7 +165,17 @@
                                             <span class="input-group-text">kg</span>
                                         </div>
                                     </div>
-                                </div>
+                                </div> 
+                                <div class="form-group col-6 col-md-2">
+                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Nadi
+                                        :</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Nadi" id="nadi">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">x/mnt</span>
+                                        </div>
+                                    </div>
+                                </div> --}}
                                 <div class="form-group col-6 col-md-2">
                                     <label for="tgltrans" class="col-form-label font-weight-bold mb-0">TB
                                         :</label>
@@ -150,16 +186,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group col-6 col-md-2">
-                                    <label for="tgltrans" class="col-form-label font-weight-bold mb-0">Nadi
-                                        :</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Nadi" id="nadi">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">x/mnt</span>
-                                        </div>
-                                    </div>
-                                </div>
+
 
                                 <div class="form-grup col-12 col-md-4">
                                     <label for="keperluan"
@@ -167,12 +194,6 @@
                                         :</label>
                                     <input id="keperluan" class="form-control bg-white"
                                         placeholder="Keterangan/Keperluan Surat" />
-                                </div>
-                                <div class="form-group col-12 col-md-4">
-                                    <label for="pekerjaan" class="col-form-label font-weight-bold mb-0">Pekerjaan
-                                        :</label>
-                                    <input type="text" id="pekerjaan" class="form-control bg-white"
-                                        placeholder="Tanggal Transaksi" />
                                 </div>
 
                                 <div class="form-group col-6 col-md-2">
@@ -198,7 +219,8 @@
                                 <div class="form-group col-12 col-md-4">
                                     <label for="petugas" class="col-form-label font-weight-bold">Admin
                                         :</label>
-                                    <select id="petugas" class="form-control border border-primary" required>
+                                    <select id="petugas" aria-describedby="inputGroup-sizing-md"
+                                        class="form-control select2bs4 border border-primary">
                                         <option value="">--Pilih Petugas--</option>
                                         @foreach ($petugas as $item)
                                             <option value="{{ $item->nip }}">{{ $item->gelar_d }}
@@ -217,7 +239,27 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <input type="text" id="noSurat">
+                                <div class="form-group col">
+                                    <label for="catatan" class="col-form-label font-weight-bold">Catatan
+                                        :</label>
+                                    <textarea id="catatan" name="catatan" placeholder="Tuliskan Catatan Jika ada"></textarea>
+                                </div>
+                                <script type="text/javascript">
+                                    $(function() {
+                                        $('#catatan').summernote({
+                                            height: 200,
+                                            toolbar: [
+                                                ['style', ['style']],
+                                                ['font', ['bold', 'underline', 'clear']],
+                                                ['color', ['color']],
+                                                ['para', ['ul', 'ol', 'paragraph']],
+                                                ['table', ['table']],
+                                                ['insert', ['link', 'picture', 'video']],
+                                                ['view', ['fullscreen', 'codeview', 'help']]
+                                            ]
+                                        });
+                                    })
+                                </script>
                             </div>
                         </div>
                     </form>
@@ -328,6 +370,7 @@
                 "surat"
             );
 
+            $("#modalCreateSurat .select2bs4").select2();
         });
 
         function creatTableDataPemohon(data) {
@@ -451,26 +494,26 @@
                     id: "keperluan",
                     label: "Keperluan"
                 },
-                {
-                    id: "td",
-                    label: "Tensi Darah"
-                },
-                {
-                    id: "bb",
-                    label: "Berat Badan"
-                },
+                // {
+                //     id: "td",
+                //     label: "Tensi Darah"
+                // },
+                // {
+                //     id: "bb",
+                //     label: "Berat Badan"
+                // },
                 {
                     id: "tb",
                     label: "Tinggi Badan"
                 },
-                {
-                    id: "nadi",
-                    label: "Nadi"
-                },
-                {
-                    id: "noSurat",
-                    label: "No Surat"
-                },
+                // {
+                //     id: "nadi",
+                //     label: "Nadi"
+                // },
+                // {
+                //     id: "noSurat",
+                //     label: "No Surat"
+                // },
                 {
                     id: "pekerjaan",
                     label: "Pekerjaan"
@@ -520,7 +563,7 @@
 
         function simpan() {
             var tglTrans = $("#tglTrans").val();
-            var noSurat = $("#noSurat").val();
+            // var noSurat = $("#noSurat").val();
             var norm = $("#norm").val();
             var nama = $("#nama").val();
             var tglLahir = $("#tglLahir").val();
@@ -534,11 +577,13 @@
             var keperluan = $("#keperluan").val();
             var petugas = $("#petugas").val();
             var dokter = $("#dokter").val();
-            var td = $("#td").val();
-            var bb = $("#bb").val();
+            // var td = $("#td").val();
+            // var bb = $("#bb").val();
             var tb = $("#tb").val();
-            var nadi = $("#nadi").val();
+            // var nadi = $("#nadi").val();
             var pekerjaan = $("#pekerjaan").val();
+            var catatan = $("#catatan").summernote("code");
+
 
             Swal.fire({
                 icon: "info",
@@ -554,7 +599,7 @@
                     },
                     body: JSON.stringify({
                         tglTrans: tglTrans,
-                        noSurat: noSurat,
+                        // noSurat: noSurat,
                         norm: norm,
                         nama: nama,
                         tglLahir: tglLahir,
@@ -565,11 +610,12 @@
                         keperluan: keperluan,
                         petugas: petugas,
                         dokter: dokter,
-                        td: td,
-                        bb: bb,
+                        // td: td,
+                        // bb: bb,
+                        // nadi: nadi,
                         tb: tb,
-                        nadi: nadi,
-                        pekerjaan: pekerjaan
+                        pekerjaan: pekerjaan,
+                        catatan: catatan
                     }),
                 })
                 .then((response) => {
@@ -623,8 +669,6 @@
         function sukses(data) {
             console.log("🚀 ~ sukses ~ data:", data)
             var listSurat = data.lists
-            jumlahSuratTahunIni = data.noSurat
-            console.log("🚀 ~ .then ~ jumlahSuratTahunIni:", jumlahSuratTahunIni)
             generateNoSurat();
             creatTableDataPemohon(listSurat);
         }

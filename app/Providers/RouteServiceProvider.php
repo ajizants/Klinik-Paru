@@ -33,6 +33,30 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
+            // Tambahkan file routes yang baru
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/part/igd.php'));
+
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/part/kominfo.php'));
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/part/pendaftaran.php'));
+
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/part/roLab.php'));
+
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/part/kasir.php'));
+
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/part/tu.php'));
+
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });

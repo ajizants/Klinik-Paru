@@ -5,6 +5,7 @@ use App\Imports\JadwalImport;
 use App\Models\JadwalModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class JadwalController extends Controller
@@ -13,6 +14,17 @@ class JadwalController extends Controller
     {
         $title = 'Jadwal Karyawan';
         return view('Jadwal.main')->with('title', $title);
+    }
+
+    public function getTemplate()
+    {
+        $filePath = 'public/templates/format_jadwal_karyawan.xlsx';
+
+        if (Storage::exists($filePath)) {
+            return Storage::download($filePath, 'format_jadwal_karyawan.xlsx');
+        }
+
+        return response()->json(['error' => 'File tidak ditemukan'], 404);
     }
 
     public function import(Request $request)

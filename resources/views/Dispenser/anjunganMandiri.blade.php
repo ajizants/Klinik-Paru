@@ -312,7 +312,7 @@
             <div id="print" style="display: none;">
                 <div class="row">
                     <span>
-                        <center>KKPM</center>
+                        <center>Klinik Utama Kesehatan</center>
                     </span>
                     <span style="font-size: 12px">
                         <center><span id="tanggal_tampil_print"></span></center>
@@ -346,8 +346,7 @@
         </footer>
 
     </div>
-    </div>
-    </div>
+
     <!-- Modal -->
     <div class="modal fade" id="keyPad" data-backdrop="static">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -361,7 +360,7 @@
                                         <div class="form-group col mb-2 d-flex justify-content-center">
                                             <input type="text" id="norm"
                                                 class="form-control form-control-lg col-md-7 text-center"
-                                                placeholder="Masukan No RM"
+                                                placeholder="{{ $id_server }}. Masukan No RM"
                                                 style="height: 80px; font-size: 30px; padding: 20px;"
                                                 {{-- tambahkan batasan 6 angka --}}
                                                 onkeyup="if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,'')" />
@@ -724,6 +723,8 @@
                     return response.json();
                 })
                 .then(result => {
+                    console.log("🚀 ~ cetakNoAntrian ~ data:", data);
+                    var no_rm = data.pasien_no_rm;
                     // Jika verifikasi berhasil, langsung cetak tanpa pertanyaan
                     // Swal.fire({
                     //     icon: "success",
@@ -731,13 +732,25 @@
                     //     showConfirmButton: false,
                     //     timer: 2000,
                     // }).then(() => {
-                    console.log("🚀 ~ cetakNoAntrian ~ data:", data);
-                    var no_rm = data.pasien_no_rm;
                     // submitKominfo(no_rm, data);
-                    cetakNoAntrian(data);
-
-
+                    // cetakNoAntrian(data);
                     // });
+                    setTimeout(() => {
+                        Swal.fire({
+                            icon: "question",
+                            title: "Lanjutkan Cetak No Antrian?",
+                            showCancelButton: true,
+                            confirmButtonText: "Ya",
+                            cancelButtonText: "Batal",
+                            allowOutsideClick: false,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                cetakNoAntrian(data);
+                            }
+                        })
+                    }, 3000);
+
+
                 })
                 .catch(error => {
                     console.error('Error executing automation script:', error);
@@ -776,16 +789,31 @@
                 .then(result => {
                     // Jika verifikasi berhasil, langsung cetak tanpa pertanyaan
                     // Swal.fire({
+                    console.log("🚀 ~ cetakNoAntrian ~ data:", data);
+                    var no_rm = data.pasien_no_rm;
                     //     icon: "success",
                     //     title: "Verifikasi Berhasil...!!!",
                     //     showConfirmButton: false,
                     //     timer: 2000,
                     // }).then(() => {
-                    console.log("🚀 ~ cetakNoAntrian ~ data:", data);
-                    var no_rm = data.pasien_no_rm;
                     // submitKominfo(no_rm, data);
-                    cetakNoAntrian(data);
+                    // cetakNoAntrian(data);
                     // });
+
+                    setTimeout(() => {
+                        Swal.fire({
+                            icon: "question",
+                            title: "Lanjutkan Cetak No Antrian?",
+                            showCancelButton: true,
+                            confirmButtonText: "Ya",
+                            cancelButtonText: "Batal",
+                            allowOutsideClick: false,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                cetakNoAntrian(data);
+                            }
+                        })
+                    }, 3000);
                 })
                 .catch(error => {
                     console.error('Error executing automation script:', error);
@@ -918,7 +946,10 @@
             });
             var noAntri = data.antrean_nomor;
             var jenis = data.penjamin_nama;
-            var no_rm = data.pasien_no_rm;
+            var no_rm = data.pasien_no_rm ?? "------";
+            // var noAntri = "001";
+            // var jenis = "UMUM";
+            // var no_rm = "000001";
             var date = new Date();
 
             let options = {
@@ -941,19 +972,27 @@
             let printWindow = window.open("", "_blank");
             printWindow.document.write(
                 `<html><head><title>Cetak No Antrian</title>` +
-                `<style>body{text-align:center;}h1{font-size:60px;font-family:sans-serif;font-weight:bold;margin-top:6px;margin-bottom:6px;}` +
+                `<style>body{text-align:center;}h1{font-size:60px;font-family:sans-serif;font-weight:bold;margin-top:6px;margin-bottom:6px; margin-left: 2px; margin-right: 2px;}` +
                 `.judul{font-size:20px;font-family:sans-serif;font-weight:bold;margin-top:0px;margin-bottom:0px;}` +
                 `h3{margin-top: 0px; margin-bottom: 0px;}` +
                 `.jenis{font-size:20px;font-family:sans-serif;font-weight:bold; margin-top: 0px; margin-bottom: 0px;}.time{font-size:12px;font-family:sans-serif;margin-top:0px;margin-bottom:0px;}</style></head><body>`
             );
+
+
 
             printWindow.document.write(`<p class='judul'>Klinik Utama Kesehatan</p>`);
             printWindow.document.write(`<p class='judul'>Paru Masyarakat</p>`);
             printWindow.document.write(`<h1>${noAntri}</h1>`);
             printWindow.document.write(`<h3>No RM: ${no_rm}</h3>`);
             printWindow.document.write(`<p class='jenis'>${jenis}</p>`);
-            printWindow.document.write(`<p class='time'>${tgl}</p>`);
-            printWindow.document.write(`<p class='time'>${jam}</p>`);
+            printWindow.document.write(`<p class='time'>${tgl}, ${jam}</p>`);
+            printWindow.document.write(`<p class='time'>Terimakasih sudah menunggu</p>`);
+            printWindow.document.write(
+                `<div style='margin-top: 2px; margin-bottom: 2px; height: 170px; border-bottom: 1px solid black; '>
+                   
+                </div>`
+            );
+
             printWindow.document.write(`</body></html>`);
 
             printWindow.print();
@@ -985,50 +1024,30 @@
                                     text: e.message
                                 })
                             } else {
-                                // socketIO.emit('reload', 'paru_loket_pendaftaran');
-                                // socketIO.emit('reload', 'paru_notifikasi_loket_pendaftaran');
-                                // e = {
-                                //     "code": 200,
-                                //     "message": "Berhasil mengambil nomor antrean!",
-                                //     "data": {
-                                //         "no_reg": "2024092000069",
-                                //         "antrean_angka": "069",
-                                //         "antrean_estimasi_dilayani": 1726811100,
-                                //         "penjamin_id": "1",
-                                //         "daftar_by": "OTS",
-                                //         "tanggal": "2024-09-20",
-                                //         "sesi_id": 1,
-                                //         "antrean_estimasi_dilayani_tampil": "2024-09-20 12:45:00",
-                                //         "antrean_menunggu": 0,
-                                //         "antrean_nomor": "069",
-                                //         "tanggal_tampil": "Jumat, 20 September 2024 09:11:46 WIB",
-                                //         "penjamin_nama": "UMUM",
-                                //         "antrean_menunggu_tampil": ""
-                                //     }
-                                // }
                                 result = e.data
-                                $("#tanggal_tampil_print").text(result['tanggal_tampil'])
-                                $("#antrean_nomor_print").text(result['antrean_nomor'])
-                                $("#penjamin_nama_print").text(result['penjamin_nama'])
-                                $("#antrean_menunggu_print").text(result['antrean_menunggu_tampil'])
+                                cetakNoAntrian(result)
+                                // $("#tanggal_tampil_print").text(result['tanggal_tampil'])
+                                // $("#antrean_nomor_print").text(result['antrean_nomor'])
+                                // $("#penjamin_nama_print").text(result['penjamin_nama'])
+                                // $("#antrean_menunggu_print").text(result['antrean_menunggu_tampil'])
 
-                                var divToPrint = document.getElementById('print');
-                                var newWin = window.open('', 'Print-Window');
-                                newWin.document.open();
-                                newWin.document.write('<html><body onload="window.print()">' +
-                                    divToPrint.innerHTML + '</body></html>');
-                                newWin.document.close();
+                                // var divToPrint = document.getElementById('print');
+                                // var newWin = window.open('', 'Print-Window');
+                                // newWin.document.open();
+                                // newWin.document.write('<html><body onload="window.print()">' +
+                                //     divToPrint.innerHTML + '</body></html>');
+                                // newWin.document.close();
 
-                                Swal.fire({
-                                    title: 'Mohon Tunggu',
-                                    text: "Sedang reload halaman...",
-                                    icon: 'info',
-                                    showConfirmButton: false,
-                                })
-                                setTimeout(function() {
-                                    newWin.close();
-                                    location.reload();
-                                }, 1000);
+                                // Swal.fire({
+                                //     title: 'Mohon Tunggu',
+                                //     text: "Sedang reload halaman...",
+                                //     icon: 'info',
+                                //     showConfirmButton: false,
+                                // })
+                                // setTimeout(function() {
+                                //     newWin.close();
+                                //     location.reload();
+                                // }, 1000);
                             }
                         },
                         error: function(xhr, ajaxOptions, thrownError) {

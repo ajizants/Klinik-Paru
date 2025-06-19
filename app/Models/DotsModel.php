@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,6 +31,15 @@ class DotsModel extends Model
         'dokter',
     ];
 
+    public function lastKontrol()
+    {
+        return $this->hasOne(DotsTransModel::class, 'norm', 'norm')->latestOfMany();
+    }
+    public function lastKontrolWithBln()
+    {
+        return $this->hasOne(DotsTransModel::class, 'norm', 'norm')->latestOfMany()->with('bulan');
+    }
+
     public function biodata()
     {
         // return $this->hasOne(PasienModel::class, 'norm', 'norm');
@@ -48,9 +56,57 @@ class DotsModel extends Model
     {
         return $this->hasOne(PegawaiModel::class, 'nip', 'dokter');
     }
+
+    public function identitasDokter()
+    {
+        return $this->hasOne(PegawaiModel::class, 'nip', 'dokter');
+    }
     public function pengobatan()
     {
-        return $this->hasOne(DotsBlnModel::class, 'notrans', 'hasilBerobat');
+        return $this->hasOne(DotsBlnModel::class, 'id', 'hasilBerobat');
+    }
+
+    public function pasienTB()
+    {
+        $Ptb = $this->all();
+        $pasienTB = [];
+
+        foreach ($Ptb as $d) {
+            $kdDiag = $d['kdDx'];
+
+            $dx = DiagnosaModel::where('kdDiag', $kdDiag)->first();
+            $d['diagnosa'] = $dx['diagnosa'] ?? 'Unknown Diagnosis';
+
+            if ($d['hasilBerobat'] === null) {
+                $d['statusPengobatan'] = "Belum Ada Pengobatan";
+            } else {
+                $status = DotsBlnModel::where('id', $d['hasilBerobat'])->first();
+                $d['statusPengobatan'] = $status['nmBlnKe'] ?? 'Unknown Status';
+            }
+            $dataDokter = PegawaiModel::with('biodata')->where('nip', $d->dokter)->first();
+            $namaDokter = $dataDokter->gelar_d . " " . $dataDokter->biodata->nama . " " . $dataDokter->gelar_b;
+            $d['namaDokter'] = $namaDokter;
+
+            $pasienTB[] = $d;
+        }
+        return $pasienTB;
+    }
+
+    public function getStatusPengobatan($status)
+    {
+        $statuses = [
+            "1" => "Pengobatan Pertama",
+            "2" => "Pengobatan Kedua",
+            "3" => "Pengobatan Ketiga",
+            "4" => "Pengobatan Keempat",
+        ];
+        return $statuses[$status] ?? "Tidak Diketahui";
+    }
+
+    // Masih di DotsModel.php
+    public function scopeEnriched($query)
+    {
+        return $query->with(['diagnosa', 'pengobatan', 'identitasDokter.biodata']);
     }
 
 }

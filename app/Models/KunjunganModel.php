@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,10 +7,29 @@ use Illuminate\Database\Eloquent\Model;
 class KunjunganModel extends Model
 {
     use HasFactory;
-    protected $table = 't_kunjungan';
+    protected $table   = 't_kunjungan';
     public $timestamps = false;
-    public $incrementing = false; // Karena menggunakan kombinasi kunci
-    protected $primaryKey = null; // Tidak ada kunci utama tunggal
+    // public $incrementing = false; // Karena menggunakan kombinasi kunci
+    protected $primaryKey = 'notrans';
+    protected $fillable   = [
+        'notrans',
+        'norm',
+        'rmlama',
+        'nourut',
+        'tgltrans',
+        'kunj',
+        'jeniskel',
+        'kkelompok',
+        'noasuransi',
+        'ktujuan',
+        'kkabupaten',
+        'umurthn',
+        'umurbln',
+        'umurhr',
+        'biaya',
+        'loket',
+        'selesai',
+    ];
     public function poli()
     {
         return $this->hasOne(PoliModel::class, 'notrans', 'notrans');

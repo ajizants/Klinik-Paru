@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use PhpParser\Node\Expr\FuncCall;
 
 class LaboratoriumHasilModel extends Model
 {
@@ -13,8 +12,15 @@ class LaboratoriumHasilModel extends Model
     protected $table = "t_kunjungan_lab_hasil";
 
     protected $fillable = [
-        'idLab','notrans','norm','idLayanan','hasil','ket','jumlah','total','petugas','dokter','nik','nama','created_at','updated_at',
+        'idLab', 'notrans', 'norm', 'idLayanan', 'hasil', 'ket', 'jumlah',
+        'total', 'petugas', 'dokter', 'nik', 'nama', 'created_at', 'updated_at',
+        'no_reg_lab', 'no_iden_sediaan', 'tgl_hasil', 'alasan_periksa', 'namaFaskes,', 'kode_tcm', 'no_tcm',
     ];
+
+    public function biodataPasien()
+    {
+        return $this->belongsTo(PasienModel::class, 'norm', 'norm');
+    }
 
     public function pasien()
     {
@@ -39,7 +45,7 @@ class LaboratoriumHasilModel extends Model
         return static::where('idLab', $id)->delete();
     }
 
-    public static Function desroyAll(string $notrans)
+    public static function desroyAll(string $notrans)
     {
         return static::where('notrans', $notrans)->delete();
     }

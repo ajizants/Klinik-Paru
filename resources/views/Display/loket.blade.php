@@ -27,6 +27,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js "
         integrity="sha512-eVL5Lb9al9FzgR63gDs1MxcDS2wFu3loYAgjIH0+Hg38tCS8Ag62dwKyH+wzDb+QauDpEZjXbMn11blw8cbTJQ=="
         crossorigin=" anonymousÂ&nbsp;"></script>
+    <style>
+        .fs3 {
+            font-size: 3rem !important;
+        }
+
+        .fs2 {
+            font-size: 2rem !important;
+        }
+    </style>
 
 </head>
 
@@ -73,6 +82,114 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-primary"> {{-- Jadwal --}}
+                <div class="card-header d-flex justify-content-center">
+                    <h1 class="card-title text-center font-weight-bold"
+                        style="font-size: 2rem !important; text-align: center !important;">JADWAL PRAKTIK DOKTER</h1>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover mb-0" id="header"
+                            style="width:100%">
+                            <thead class="bg bg-dark" style="font-size: 1.5rem">
+                                <tr>
+                                <tr>
+                                    <th class="col-1">No</th>
+                                    <th class="col-5">Dokter</th>
+                                    <th class="col-3">Hari</th>
+                                    <th>Waktu</th>
+                                </tr>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="table-responsive" style="height: 23.3rem; overflow-y: hidden; font-size: 2rem">
+                        {{-- <table class="table-auto table table-bordered table-striped table-hover" id="listJadwal"
+                            style="width:100%">
+                            <tbody id="listJadwal">
+                                @foreach ($jadwal as $item)
+                                    <td class="col-1">{{ $loop->iteration }}</td>
+                                    <td class="col-2">{{ $item['nama_hari'] }}</td>
+                                    <td>
+                                        <!-- Convert and display waktu_mulai_poli and waktu_selesai_poli -->
+                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_mulai_poli'])->format('H:i') }}
+                                        -
+                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_selesai_poli'])->format('H:i') }}
+                                    </td>
+                                    <td class="col-5">{{ $item['admin_nama'] }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table> --}}
+                        {!! $jadwal !!}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-5">
+            <div class="card card-primary"> {{-- Tunggu --}}
+                <div class="card-header d-flex justify-content-center">
+                    <h1 class="card-title text-center font-weight-bold"
+                        style="font-size: 2rem !important; text-align: center !important;">DAFTAR
+                        TUNGGU</h1>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover mb-0" id="header"
+                            style="width:100%">
+                            <thead class="bg bg-dark" style="font-size: 1.5rem;">
+                                <tr>
+                                    <th class="col-2">Antrean</th>
+                                    <th class="col-2">Jaminan</th>
+                                    <th class="col-3">Keterangan</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="table-responsive table-container" style="height: 23.3rem; font-size: 1.5rem;">
+                        @php
+                            $scrol = isset($listTunggu) && count($listTunggu) >= 7 ? 'table-auto' : '';
+                        @endphp
+
+                        <table class="table table-bordered table-striped table-hover {{ $scrol }}"
+                            id="listTunggu" style="width:100%;">
+                            @if (empty($listTunggu))
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3" class="text-center">Tidak ada antrian</td>
+                                    </tr>
+                                </tbody>
+                            @else
+                                <tbody>
+                                    @foreach ($listTunggu as $item)
+                                        @if ($item['keterangan'] === 'SKIP')
+                                            @php
+                                                $bg = 'bg-warning';
+                                            @endphp
+                                        @elseif ($item['keterangan'] === 'SEDANG DIPANGGIL')
+                                            @php
+                                                $bg = 'bg-success';
+                                            @endphp
+                                        @else
+                                            @php
+                                                $bg = 'bg-lime';
+                                            @endphp
+                                        @endif
+                                        <tr>
+                                            <td class="col-2 fs3">{{ $item['antrean_angka'] }}
+                                            </td>
+                                            <td class="col-2 fs3">{{ $item['penjamin_nama'] }}
+                                            </td>
+                                            <td class="col-3 {{ $bg }}">{{ $item['keterangan'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            @endif
+                        </table>
                     </div>
                 </div>
             </div>
@@ -125,168 +242,41 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-5">
-            <div class="card card-primary"> {{-- Tunggu --}}
-                <div class="card-header d-flex justify-content-center">
-                    <h1 class="card-title text-center font-weight-bold"
-                        style="font-size: 2rem !important; text-align: center !important;">DAFTAR
-                        TUNGGU</h1>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover mb-0" id="header"
-                            style="width:100%">
-                            <thead class="bg bg-dark" style="font-size: 1.5rem;">
-                                <tr>
-                                    <th class="col-2">Antrean</th>
-                                    <th class="col-2">Jaminan</th>
-                                    <th class="col-3">Keterangan</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                    <div class="table-responsive table-container" style="height: 23.3rem; font-size: 1.5rem;">
-                        @php
-                            $scrol = isset($listTunggu) && count($listTunggu) >= 7 ? 'table-auto' : '';
-                        @endphp
-
-                        <table class="table table-bordered table-striped table-hover {{ $scrol }}"
-                            id="listTunggu" style="width:100%;">
-                            @if (empty($listTunggu))
-                                <tbody>
-                                    <tr>
-                                        <td colspan="3" class="text-center">Tidak ada antrian</td>
-                                    </tr>
-                                </tbody>
-                            @else
-                                <tbody>
-                                    @foreach ($listTunggu as $item)
-                                        @if ($item['keterangan'] === 'SKIP')
-                                            @php
-                                                $bg = 'bg-warning';
-                                            @endphp
-                                        @elseif ($item['keterangan'] === 'SEDANG DIPANGGIL')
-                                            @php
-                                                $bg = 'bg-success';
-                                            @endphp
-                                        @else
-                                            @php
-                                                $bg = 'bg-lime';
-                                            @endphp
-                                        @endif
-                                        <tr>
-                                            <td class="col-2">{{ $item['antrean_angka'] }}</td>
-                                            <td class="col-2">{{ $item['penjamin_nama'] }}</td>
-                                            <td class="col-3 {{ $bg }}">{{ $item['keterangan'] }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            @endif
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="card card-primary"> {{-- Jadwal --}}
-                <div class="card-header d-flex justify-content-center">
-                    <h1 class="card-title text-center font-weight-bold"
-                        style="font-size: 2rem !important; text-align: center !important;">JADWAL PRAKTIK DOKTER</h1>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover mb-0" id="header"
-                            style="width:100%">
-                            <thead class="bg bg-dark" style="font-size: 1.5rem">
-                                <tr>
-                                    <th class="col-1">No</th>
-                                    <th class="col-2">Hari</th>
-                                    <th>Waktu</th>
-                                    <th class="col-5">Dokter</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                    <div class="table-responsive" style="height: 23.3rem; overflow-y: hidden; font-size: 1.5rem">
-                        <table class="table-auto table table-bordered table-striped table-hover" id="listJadwal"
-                            style="width:100%">
-                            <tbody id="listJadwal">
-                                @foreach ($jadwal as $item)
-                                    <td class="col-1">{{ $loop->iteration }}</td>
-                                    <td class="col-2">{{ $item['nama_hari'] }}</td>
-                                    <td>
-                                        <!-- Convert and display waktu_mulai_poli and waktu_selesai_poli -->
-                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_mulai_poli'])->format('H:i') }}
-                                        -
-                                        {{ \Carbon\Carbon::createFromTimestamp($item['waktu_selesai_poli'])->format('H:i') }}
-                                    </td>
-                                    <td class="col-5">{{ $item['admin_nama'] }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
 
         </div>
     </div>
-    <footer class="container-fluid fixed-bottom bg-primary">
-        <marquee class="marquee my-1" style="font-size: 2rem !important; color: #ffffff">
-            "Kamu seorang pejuang. Lawan penyakit yang ada di tubuhmu dan semoga segera sembuh."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Saya sangat menantikan kehadiranmu dengan penuh semangat. Segera sembuh, Sobat."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Kita memiliki banyak impian untuk dicapai bersama dan kita memiliki lebih banyak hal untuk
-            dicapai
-            dalam hidup. Cepat sembuh, Sayang." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Kamu pasti akan pulih karena saya tahu bahwa penyakitmu bisa dikalahkan dengan kekuatan dan
-            kemauanmu. Segera sembuh dan kembali lebih kuat." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Saya tahu kamu akan kembali lebih kuat dan lebih sehat, tidak ada yang bisa memenangkan tekad
-            dan
-            kekuatanmu. Semoga cepat sembuh." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Teman yang terkasih, percayalah semuanya akan baik-baik saja. Semoga cepat sembuh!"
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Jangan takut, Sahabatku, doamu didengar. Dia akan menaklukkanmu dan memberimu kemenangan. Cepat
-            Sembuh, Sob." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Semua pasti ada hikmahnya, jangan larut dalam kesedihan. Bersemangatlah karena itu akan membuat
-            keadaan lebih baik." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Semangat. Tak apa kamu sekarang terbujur lemas di ranjang rumah sakit ini. Aku yakin kamu bisa
-            melewati ini semua dan pulih seperti sedia kala." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Hal terpenting adalah jangan pernah putus asa. Aku selalu berdoa, semoga kamu cepat sembuh."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Anda sedang melalui situasi yang sulit, tetapi saya tahu Anda memiliki kekuatan untuk muncul
-            dengan
-            penuh kemenangan. Jaga diri Anda baik-baik dan jangan pernah menyerah!"
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Saya sangat mengagumi keberanian Anda menghadapi situasi ini. Anda adalah orang yang sangat
-            pejuang
-            dan saya tahu bahwa Anda akan menang. Saya mengirimi Anda pelukan hangat dan harapan terbaik
-            saya."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Ingatlah suatu hari, tidak lama lagi, kamu akan benar-benar sehat dan tersenyum kembali."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Kesembuhan memang butuh waktu dan kerja keras, tapi kamu tidak sendiri. Kami selalu
-            memikirkanmu
-            dan berdoa untuk kesembuhanmu." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Masa-masa sulit tidak bertahan lama, orang-orang tangguh melakukannya. Semoga cepat sembuh."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Percayalah bahwa setiap penyakit selalu ada obatnya. Kamu hanya perlu berpikir positif dan
-            bangkit
-            dari keputusasaan." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Janganlah kamu takut dengan rasa sakit, sebab dengan semangatmu, itu akan hilang. Aku akan
-            menemanimu dan merawatmu sampai kamu pulih dan sembuh. Lekas pulih ya."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Optimistislah, mulailah berpikir bahwa semuanya akan terjadi dan Anda akan segera mendapatkan
-            kembali kesehatan Anda." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Jadilah kuat karena segalanya akan menjadi lebih baik. Mungkin badai sekarang, tetapi tidak
-            pernah
-            hujan selamanya. Semoga cepat sembuh." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Anda tidak tampak hebat saat sakit. Jadi cepatlah sembuh agar Anda terlihat menarik kembali.
-            Semoga
-            Anda cepat pulih." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Rasa sakit itu nyata, tetapi begitu juga harapan. Semoga cepat sembuh."
-        </marquee>
-    </footer>
+    @include('Display.footer')
+    <audio id="morning-audio" src="{{ asset('audio/IndonesiaRaya.mp3') }}" preload="auto"></audio>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const audio = document.getElementById("morning-audio");
+            audio.volume = 0.7; // Atur volume ke 50%
+
+            function checkAndPlayAudio() {
+                // localStorage.setItem("audioPlayedDate", "");
+                console.log("🚀 ~ checkAndPlayAudio ~ checkAndPlayAudio:", checkAndPlayAudio)
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = now.getMinutes();
+
+                const playedToday = localStorage.getItem("audioPlayedDate");
+                console.log("🚀 ~ checkAndPlayAudio ~ playedToday:", playedToday)
+                const today = now.toISOString().split('T')[0]; // Format: yyyy-mm-dd
+                console.log("🚀 ~ checkAndPlayAudio ~ today:", today)
+
+                if (hours === 10 && minutes === 00 && playedToday !== today) {
+                    audio.play().then(() => {
+                        localStorage.setItem("audioPlayedDate", today);
+                    }).catch((err) => {
+                        console.log("Audio tidak bisa diputar otomatis: ", err);
+                    });
+                    console.log("🚀 ~ audio.play ~ localStorage:", localStorage)
+
+                }
+            }
+            setInterval(checkAndPlayAudio, 60000); // Cek setiap 1 menit
+        });
+    </script>
     <script type="text/javascript">
         async function getList() {
             const norm = "";
@@ -337,11 +327,13 @@
                     const noUrut = document.createElement("td");
                     noUrut.textContent = item.antrean_angka;
                     row.appendChild(noUrut);
+                    noUrut.classList.add("fs3");
                     noUrut.classList.add("col-2");
 
                     const penjamin = document.createElement("td");
                     penjamin.textContent = item.penjamin_nama;
                     row.appendChild(penjamin);
+                    penjamin.classList.add("fs3");
                     penjamin.classList.add("col-2");
 
                     const status = document.createElement("td");

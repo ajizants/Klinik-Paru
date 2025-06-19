@@ -9,363 +9,362 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700;900&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ asset('vendor/plugins/fontawesome-free/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
-    <!-- My Theme style -->
-    <link type="text/css" rel="stylesheet" href="{{ asset('css/mystyle.css') }}">
-    <link type="text/css" rel="stylesheet" href="{{ asset('css/display.css') }}">
-    <!-- jQuery -->
     <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap 4 -->
     <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
 
-    <script type="text/javascript">
-        // 1 detik = 1000
-        window.setTimeout("waktu()", 1000);
-
-        function waktu() {
-            var tanggal = new Date();
-            setTimeout("waktu()", 1000);
-            var detik = tanggal.getSeconds();
-            var menit = tanggal.getMinutes();
-            var jam = tanggal.getHours();
-            if (detik < 10) {
-                detik = "0" + detik;
-            }
-            if (menit < 10) {
-                menit = "0" + menit;
-            }
-            if (jam < 10) {
-                jam = "0" + jam;
-            }
-            document.getElementById("tanggalku").innerHTML
-
-            = jam + ":" + menit + ":" + detik;
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js "
+        integrity="sha512-eVL5Lb9al9FzgR63gDs1MxcDS2wFu3loYAgjIH0+Hg38tCS8Ag62dwKyH+wzDb+QauDpEZjXbMn11blw8cbTJQ=="
+        crossorigin=" anonymousÂ&nbsp;"></script>
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            /* margin-top: 75px; */
+        }
         }
 
-        $(document).ready(function() {
-            reload_table()
-        })
-
-        var tableData = $("#table_data").DataTable({
-            "lengthChange": false,
-            "info": false,
-            "dom": "lfrti",
-            "pagingType": "full_numbers",
-            "language": {
-                "infoEmpty": "Tidak ada data!",
-                "emptyTable": "Tidak ada data!",
-                "loadingRecords": "Memuat data...", // Teks yang ditampilkan saat data sedang dimuat
-                "processing": "Memproses...",
-            },
-            "processing": true,
-            "serverSide": true,
-            "ordering": false,
-            "searching": false,
-            "columnDefs": [],
-            "ajax": {
-                "url": "https://kkpm.banyumaskab.go.id/administrator/display_tv/ruang_tensi_get_data",
-                "type": "POST",
-                "error": function(xhr, status, error) {
-                    iziToast.warning({
-                        title: "'" + xhr.responseText + "'",
-                        position: 'topLeft',
-                        timeout: 100, //TODO : coba cek segini dulu
-                    });
-                },
-
-            },
-            "createdRow": function(row, data, dataIndex) {
-                console.log(data);
-                if (data['waktu_submit'] == null) {
-                    $(row).addClass('bg-info');
-                }
-            },
-            "columns": [{
-                    data: "pasien_nama",
-                    className: "text-center",
-                },
-                {
-                    data: "kelurahan",
-                    className: "text-center",
-                },
-                {
-                    data: "menuju_ke",
-                    className: "text-center",
-                },
-                {
-                    data: "created_at",
-                    className: "text-center",
-                },
-            ]
-        })
-
-        function reload_table() {
-            tableData.ajax.reload(null, false);
-            //  $("#div_ulangi_panggilan").html( /*html*/ ``)
-            $.ajax({
-                type: "POST",
-                url: "https://kkpm.banyumaskab.go.id/administrator/display_tv/ruang_tensi_get_data",
-                dataType: "json",
-                beforeSend: function() {
-                    $(".spinnerReloadTable").show()
-                },
-                data: {
-                    tanggal: $('#tanggal_filter').val()
-                },
-                success: function(e) {
-                    $(".spinnerReloadTable").hide()
-                    data = e.data
-                    antrean_sedang_dipanggil = data[0]['pasien_nama']
-                    antrean_sedang_dipanggil_kelurahan = data[0]['kelurahan']
-                    antrean_sedang_dipanggil_menuju_ke = data[0]['menuju_ke']
-                    if (antrean_sedang_dipanggil != null) {
-                        $("#antrean_sedang_dipanggil").html( /*html*/ `${antrean_sedang_dipanggil}`)
-                        $("#antrean_sedang_dipanggil_kelurahan").html( /*html*/
-                            `${antrean_sedang_dipanggil_kelurahan}`)
-                        $("#antrean_sedang_dipanggil_menuju_ke").html( /*html*/
-                            `${antrean_sedang_dipanggil_menuju_ke}`)
-                    } else {
-                        $("#antrean_sedang_dipanggil").html( /*html*/ `-`)
-                        $("#antrean_sedang_dipanggil_menuju_ke").html( /*html*/ ``)
-                    }
-                },
-                error: function(xhr, ajaxOptions, thrownError) {
-                    Swal.close();
-                    // alertz(xhr.responseText);
-                    iziToast.warning({
-                        title: "'" + xhr.responseText + "'",
-                        position: 'bottomRight'
-                    });
-                }
-            })
+        .table-container {
+            max-height: 40vh;
+            /* Set max height untuk auto scroll */
+            overflow: hidden;
+            /* Sembunyikan scroll bar */
+            position: relative;
+            /* Untuk posisi absolut */
         }
 
-        // var socketIO = io.connect('wss://kkpm.banyumaskab.go.id:3131/', {
-        //     // path: '/socket.io',
-        //     transports: ['websocket',
-        //         'polling',
-        //         'flashsocket'
-        //     ]
-        // });
+        .table-auto {
+            animation: scroll 50s linear infinite;
+            -webkit-animation: scroll 50s linear infinite;
+            animation-delay: 5s;
+        }
 
-        socketIO.on('connectParu', () => {
-            const sessionID = socketIO.id
-            $('#socket-id').html(sessionID)
-            console.log("Socket ID : " + sessionID)
-        });
-
-        socketIO.on('reload', (msg) => {
-            if (msg == 'paru_ruang_tensi') {
-                reload_table()
+        @keyframes scroll {
+            0% {
+                transform: translateY(0);
             }
-        });
-    </script>
+
+            85% {
+                transform: translateY(-100%);
+            }
+
+            86% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .marquee-container {
+            width: 80%;
+            overflow: hidden;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .marquee {
+            font-size: 30px;
+            font-weight: bold;
+            color: #1602fb;
+        }
+    </style>
 </head>
 
 <body>
-    <header class="container-fluid fixed-top bg-primary">
+    <header class="container-fluid  bg-primary mt-2">
         <h1 class="font-weight-bold text-center" style="font-size: 3rem">RUANG TENSI</h1>
-        <div class="row mb-1">
-            <div class="col text-center font-weight-bold" style="font-size:2.5rem;">SEDANG DIPANGGIL</div>
-            <div class="col text-center font-weight-bold" style="font-size:2.5rem;">DAFTAR TUNGGU</div>
-        </div>
     </header>
-    <div class="container-fluid row mt-2">
-        <div class="col">
-            <iframe class="custom-iframe" scrolling="no"
-                src="https://kkpm.banyumaskab.go.id/administrator/display_tv/ruang_tensi"></iframe>
-        </div>
-        <aside class="bg-white main-sidebar" style="width: 20px;z-index: 2 !important;height: 5000px;"></aside>
-        <div class="col" style="margin-top: 130px; font-size: 1.5rem">
-            <div class="table-responsive">
-                <table class="mb-0 table table-bordered table-striped table-hover" id="header" style="width:100%">
-                    <thead class="bg bg-dark">
-                        <tr>
-                            <th class="col-2">No RM</th>
-                            <th class="col-4">Nama Pasien</th>
-                            <th>Nama Dokter</th>
-                        </tr>
-                    </thead>
-                </table>
+    <div class="container-fluid">
+        <div class="card card-primary">
+            <div class="card-header d-flex justify-content-center">
+                <h1 class="card-title text-center font-weight-bold" style="font-size: 2rem !important;">SEDANG DIPANGGIL
+                </h1>
             </div>
-            <div class="table-responsive table-container">
-                @php
-                    $scrol = isset($listTunggu) && count($listTunggu) >= 7 ? 'table-auto' : '';
-                @endphp
-                @if (empty($listTunggu))
-                    <table class="table table-bordered table-striped table-hover" id="listTunggu" style="width:100%">
-                        <tbody>
-                            <tr>
-                                <td colspan="3" class="text-center">Tidak ada antrian</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                @else
-                    <table class="{{ $scrol }} table table-bordered table-striped table-hover" id="listTunggu"
-                        style="width:100%">
-                        <tbody>
-                            @foreach ($listTunggu as $item)
-                                <tr>
-                                    <td class="col-2">{{ $item['pasien_no_rm'] }}</td>
-                                    <td class="col-4">{{ $item['pasien_nama'] }}</td>
-                                    <td>{{ $item['dokter_nama'] }}</td>
-                                </tr>
+            <div class="card-body p-0">
+                <table class="text-center">
+                    <tbody>
+                        <tr>
+                            @php
+                                $looping = 3;
+                            @endphp
+                            @if ($sedangDipanggil === [])
+                                @for ($i = 0; $i < $looping; $i++)
+                                    <td class="font-weight-bold align-middle"
+                                        style="font-size: calc(2vw + 1rem); width: 33.33%;">
+                                        <div class="text-center py-4">
+                                            <span id="nama_loket_{{ $i }}" class="font-weight-bold"
+                                                style="font-size: calc(5vw + 2rem); height: auto; line-height: 1;">
+                                                -
+                                            </span>
+                                        </div>
+                                    </td>
+                                @endfor
+                            @endif
+                            @foreach ($sedangDipanggil as $index => $item)
+                                <td class="font-weight-bold align-middle"
+                                    style="font-size: calc(2vw + 1rem); width: 33.33%;">
+                                    <div class="text-center py-4">
+                                        <span id="nama_loket_{{ $index }}" class="font-weight-bold"
+                                            style="font-size: calc(5vw + 2rem); height: auto; line-height: 1;">
+                                            {{ $item['pasien_nama'] ?? '-' }}
+                                        </span>
+                                    </div>
+                                </td>
                             @endforeach
-                        </tbody>
-                    </table>
-                @endif
-            </div>
-            <div class="bg-primary text-center">
-                <h2 class="text-center mt-2 mb-0">JADWAL PRAKTIK DOKTER</h2>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover mb-0" id="header" style="width:100%">
-                    <thead class="bg bg-dark">
-                        <tr>
-                            <th class="col-1">No</th>
-                            <th class="col-2">Hari</th>
-                            <th>Waktu</th>
-                            <th class="col-5">Dokter</th>
                         </tr>
-                    </thead>
-                </table>
-            </div>
-            <div class="table-responsive" style="height: 25vh; overflow-y: hidden; font-size: 1.5rem">
-                <table class="table-auto table table-bordered table-striped table-hover" id="listJadwal"
-                    style="width:100%">
-                    <tbody id="listJadwal">
-                        @foreach ($jadwal as $item)
-                            <td class="col-1">{{ $loop->iteration }}</td>
-                            <td class="col-2">{{ $item['nama_hari'] }}</td>
-                            <td>
-                                <!-- Convert and display waktu_mulai_poli and waktu_selesai_poli -->
-                                {{ \Carbon\Carbon::createFromTimestamp($item['waktu_mulai_poli'])->format('H:i') }} -
-                                {{ \Carbon\Carbon::createFromTimestamp($item['waktu_selesai_poli'])->format('H:i') }}
-                            </td>
-                            <td class="col-5">{{ $item['admin_nama'] }}</td>
-                            </tr>
-                        @endforeach
+                        <tr>
+                            @php
+                                $looping = 3;
+                            @endphp
+                            @if ($sedangDipanggil === [])
+                                @for ($i = 0; $i < $looping; $i++)
+                                    <td class="font-weight-bold p-0"
+                                        style="font-size: calc(2vw + 1rem); width: 33.33%;">
+                                        <div class="text-center py-4">
+                                            <span id="alamat_loket_{{ $i }}" class="font-weight-bold"
+                                                style="font-size: calc(3vw + 1rem); height: auto; line-height: 1;">
+                                                -
+                                            </span>
+                                        </div>
+                                    </td>
+                                @endfor
+                            @endif
+                            @foreach ($sedangDipanggil as $index => $item)
+                                <td class="font-weight-bold p-0" style="font-size: calc(2vw + 1rem); width: 33.33%;">
+                                    <div class="text-center py-4">
+                                        <span id="alamat_loket_{{ $index }}" class="font-weight-bold"
+                                            style="font-size: calc(3vw + 1rem); height: auto; line-height: 1;">
+                                            {{ $item['kelurahan'] ?? '-' }}
+                                        </span>
+                                    </div>
+                                </td>
+                            @endforeach
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+
+        <div class="row">
+            <div class="card card-primary col"> {{-- Tunggu --}}
+                <div class="card-header d-flex justify-content-center">
+                    <h1 class="card-title text-center font-weight-bold"
+                        style="font-size: 2rem !important; text-align: center !important;">DAFTAR
+                        TUNGGU</h1>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover mb-0" id="header"
+                            style="width:100%">
+                            <thead class="bg bg-dark" style="font-size: 1.5rem;">
+                                <tr>
+                                    <th class="col-3">Nama</th>
+                                    <th class="col-2">Loket</th>
+                                    <th class="col-3">Ket</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="table-responsive" style="height: 27rem; overflow-y: hidden; font-size: 1.5rem">
+                        @php
+                            $scrol = isset($listTunggu) && count($listTunggu) >= 4 ? 'table-auto' : '';
+                        @endphp
+
+                        <table class="table table-bordered table-striped table-hover {{ $scrol }}"
+                            id="listTunggu" style="width:100%;">
+                            @if (empty($listTunggu))
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3" class="text-center">Tidak ada antrian</td>
+                                    </tr>
+                                </tbody>
+                            @else
+                                <tbody>
+                                    @foreach ($listTunggu as $item)
+                                        @if ($item['keterangan'] === 'SKIP')
+                                            @php
+                                                $bg = 'bg-warning';
+                                            @endphp
+                                        @elseif ($item['keterangan'] === 'SEDANG DIPANGGIL')
+                                            @php
+                                                $bg = 'bg-success';
+                                            @endphp
+                                        @else
+                                            @php
+                                                $bg = 'bg-lime';
+                                            @endphp
+                                        @endif
+                                        <tr>
+                                            <td class="col-3">{{ $item['pasien_nama'] }}</td>
+                                            <td class="col-2">{{ $item['ruang_nama'] }}</td>
+                                            <td class="col-3 {{ $bg }}">{{ $item['keterangan'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            @endif
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-primary col" hidden> {{-- Selesai --}}
+                <div class="card-header d-flex justify-content-center">
+                    <h1 class="card-title text-center font-weight-bold"
+                        style="font-size: 2rem !important; text-align: center !important;">DAFTAR
+                        SELESAI</h1>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover mb-0" id="headerSelesai"
+                            style="width:100%">
+                            <thead class="bg bg-dark" style="font-size: 1.5rem;">
+                                <tr>
+                                    <th class="col-3">Nama</th>
+                                    <th class="col-2">Loket</th>
+                                    <th class="col-3">Jam</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="table-responsive" style="height: 27rem; overflow-y: hidden; font-size: 1.5rem">
+                        @php
+                            $scrol = isset($listSelesai) && count($listSelesai) >= 4 ? 'table-auto' : '';
+                        @endphp
+
+                        <table class="table table-bordered table-striped table-hover {{ $scrol }}"
+                            id="listSelesai" style="width:100%;">
+                            @if (empty($listSelesai))
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3" class="text-center">Tidak ada antrian</td>
+                                    </tr>
+                                </tbody>
+                            @else
+                                <tbody>
+                                    @foreach ($listSelesai as $item)
+                                        <tr>
+                                            <td class="col-3">{{ $item['pasien_nama'] }}</td>
+                                            <td class="col-2">{{ $item['ruang_nama'] }}</td>
+                                            <td class="col-3">{{ $item['created_at_log'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            @endif
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-primary col"> {{-- Jadwal --}}
+                <div class="card-header d-flex justify-content-center">
+                    <h1 class="card-title text-center font-weight-bold"
+                        style="font-size: 2rem !important; text-align: center !important;">JADWAL PRAKTIK DOKTER
+                    </h1>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover mb-0" id="header"
+                            style="width:100%">
+                            <thead class="bg bg-dark" style="font-size: 1.5rem">
+                                <tr>
+                                    <th class="col-1">No</th>
+                                    <th class="col-5">Dokter</th>
+                                    <th class="col-3">Hari</th>
+                                    <th>Waktu</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="table-responsive" style="height: 27rem; overflow-y: hidden; font-size: 1.5rem">
+                        {!! $jadwal !!}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <footer class="container-fluid fixed-bottom bg-primary">
-        <marquee class="marquee my-1" style="font-size: 2rem !important; color: #ffffff">
-            "Kamu seorang pejuang. Lawan penyakit yang ada di tubuhmu dan semoga segera sembuh."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Saya sangat menantikan kehadiranmu dengan penuh semangat. Segera sembuh, Sobat."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Kita memiliki banyak impian untuk dicapai bersama dan kita memiliki lebih banyak hal untuk
-            dicapai
-            dalam hidup. Cepat sembuh, Sayang." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Kamu pasti akan pulih karena saya tahu bahwa penyakitmu bisa dikalahkan dengan kekuatan dan
-            kemauanmu. Segera sembuh dan kembali lebih kuat." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Saya tahu kamu akan kembali lebih kuat dan lebih sehat, tidak ada yang bisa memenangkan tekad
-            dan
-            kekuatanmu. Semoga cepat sembuh." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Teman yang terkasih, percayalah semuanya akan baik-baik saja. Semoga cepat sembuh!"
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Jangan takut, Sahabatku, doamu didengar. Dia akan menaklukkanmu dan memberimu kemenangan. Cepat
-            Sembuh, Sob." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Semua pasti ada hikmahnya, jangan larut dalam kesedihan. Bersemangatlah karena itu akan membuat
-            keadaan lebih baik." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Semangat. Tak apa kamu sekarang terbujur lemas di ranjang rumah sakit ini. Aku yakin kamu bisa
-            melewati ini semua dan pulih seperti sedia kala." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Hal terpenting adalah jangan pernah putus asa. Aku selalu berdoa, semoga kamu cepat sembuh."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Anda sedang melalui situasi yang sulit, tetapi saya tahu Anda memiliki kekuatan untuk muncul
-            dengan
-            penuh kemenangan. Jaga diri Anda baik-baik dan jangan pernah menyerah!"
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Saya sangat mengagumi keberanian Anda menghadapi situasi ini. Anda adalah orang yang sangat
-            pejuang
-            dan saya tahu bahwa Anda akan menang. Saya mengirimi Anda pelukan hangat dan harapan terbaik
-            saya."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Ingatlah suatu hari, tidak lama lagi, kamu akan benar-benar sehat dan tersenyum kembali."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Kesembuhan memang butuh waktu dan kerja keras, tapi kamu tidak sendiri. Kami selalu
-            memikirkanmu
-            dan berdoa untuk kesembuhanmu." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Masa-masa sulit tidak bertahan lama, orang-orang tangguh melakukannya. Semoga cepat sembuh."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Percayalah bahwa setiap penyakit selalu ada obatnya. Kamu hanya perlu berpikir positif dan
-            bangkit
-            dari keputusasaan." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Janganlah kamu takut dengan rasa sakit, sebab dengan semangatmu, itu akan hilang. Aku akan
-            menemanimu dan merawatmu sampai kamu pulih dan sembuh. Lekas pulih ya."
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Optimistislah, mulailah berpikir bahwa semuanya akan terjadi dan Anda akan segera mendapatkan
-            kembali kesehatan Anda." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Jadilah kuat karena segalanya akan menjadi lebih baik. Mungkin badai sekarang, tetapi tidak
-            pernah
-            hujan selamanya. Semoga cepat sembuh." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Anda tidak tampak hebat saat sakit. Jadi cepatlah sembuh agar Anda terlihat menarik kembali.
-            Semoga
-            Anda cepat pulih." &nbsp;&nbsp;|&nbsp;&nbsp;
-            "Rasa sakit itu nyata, tetapi begitu juga harapan. Semoga cepat sembuh."
-        </marquee>
-    </footer>
+    @include('Display.footer')
     <script type="text/javascript">
         async function getList() {
-            const tableBody = document.querySelector("table tbody");
-            tableBody.innerHTML = "";
             const norm = "";
             try {
                 const response = await fetch("/api/list/tunggu/tensi", {
-                    method: "POST",
+                    method: "GET",
                     headers: {
                         "Content-Type": "application/json",
                     },
                 });
                 const data = await response.json();
-                console.log("🚀 ~ getList ~ data:", data)
+                // console.log("🚀 ~ getList ~ data:", data)
+                const tunggu = data.tunggu;
+                //ambil 3 data pertama dari data.dataAtas
+                const dataAtas = data.dataAtas.slice(0, 3);
 
-                drawTable(data);
+                drawTable(tunggu);
+                drawNotif(dataAtas);
             } catch (error) {
                 console.error("Terjadi kesalahan saat mencari data:", error);
             }
         }
 
         function drawTable(data) {
-            console.log("🚀 ~ drawTable ~ data:", data)
             if (data.length > 0) {
-
-
-                const tableBody = document.querySelector("table tbody");
+                const tableBody = document.querySelector("#listTunggu tbody");
                 tableBody.innerHTML = ""; // Bersihkan konten sebelumnya
 
                 data.forEach(item => {
+                    let bg;
+
+                    switch (item.keterangan) {
+                        case 'SEDANG DIPANGGIL':
+                            bg = "bg-success";
+                            break;
+                        case 'SKIP':
+                            bg = "bg-warning";
+                            break;
+                        case 'MENUNGGU DIPANGGIL':
+                            bg = "bg-lime";
+                            break;
+                        default:
+                            bg = "bg-info";
+                            break;
+                    }
+
                     const row = document.createElement("tr");
 
-                    const noRmCell = document.createElement("td");
-                    noRmCell.textContent = item.pasien_no_rm;
-                    row.appendChild(noRmCell);
-                    //tambahkan class col-2
-                    noRmCell.classList.add("col-2");
+                    const nama = document.createElement("td");
+                    nama.textContent = item.pasien_nama;
+                    row.appendChild(nama);
+                    nama.classList.add("col-2");
 
-                    const namaCell = document.createElement("td");
-                    namaCell.textContent = item.pasien_nama;
-                    row.appendChild(namaCell);
-                    namaCell.classList.add("col-4");
+                    const loket = document.createElement("td");
+                    loket.textContent = item.ruang_nama;
+                    row.appendChild(loket);
+                    loket.classList.add("col-2");
 
-                    const alamatCell = document.createElement("td");
-                    alamatCell.textContent = item.dokter_nama;
-                    row.appendChild(alamatCell);
+                    const status = document.createElement("td");
+                    status.textContent = item.keterangan;
+                    row.appendChild(status);
+                    status.classList.add("col-3");
+                    status.classList.add(bg);
 
                     tableBody.appendChild(row);
                 });
 
-                // Memastikan animasi berjalan
-                document.querySelector(".table-auto").style.animation = 'scroll 20s linear infinite';
+                if (data.length >= 5) {
+                    document.querySelector("#listTunggu").style.animation = 'scroll 50s linear infinite';
+                } else {
+                    document.querySelector("#listTunggu").style.animation = 'none';
+                }
+
             } else {
                 //draw tabel "Tidak ada antrian" coll span 3
-                const tableBody = document.querySelector("table tbody");
+                const tableBody = document.querySelector("#listTunggu tbody");
                 tableBody.innerHTML = ""; // Bersihkan konten sebelumnya
                 const row = document.createElement("tr");
                 const noRmCell = document.createElement("td");
@@ -378,10 +377,93 @@
             }
         }
 
-        setInterval(() => {
-            // Panggil fungsi untuk menggambar tabel
-            getList();
-        }, 20000);
+        function drawTableSelesai(data) {
+            if (data.length > 0) {
+                const tableBody = document.querySelector("#listSelesai tbody");
+                tableBody.innerHTML = ""; // Bersihkan konten sebelumnya
+
+                data.forEach(item => {
+                    const row = document.createElement("tr");
+
+                    const noUrut = document.createElement("td");
+                    noUrut.textContent = item.antrean_angka;
+                    row.appendChild(noUrut);
+                    noUrut.classList.add("col-2");
+
+                    const penjamin = document.createElement("td");
+                    penjamin.textContent = item.penjamin_nama;
+                    row.appendChild(penjamin);
+                    penjamin.classList.add("col-2");
+
+                    const status = document.createElement("td");
+                    status.textContent = item.keterangan;
+                    row.appendChild(status);
+                    status.classList.add("col-3 bg-success");
+
+                    tableBody.appendChild(row);
+                });
+
+                if (data.length >= 5) {
+                    document.querySelector("#listSelesai").style.animation = 'scroll 50s linear infinite';
+                } else {
+                    document.querySelector("#listSelesai").style.animation = 'none';
+                }
+
+            } else {
+                //draw tabel "Tidak ada antrian" coll span 3
+                const tableBody = document.querySelector("#listSelesai tbody");
+                tableBody.innerHTML = ""; // Bersihkan konten sebelumnya
+                const row = document.createElement("tr");
+                const noRmCell = document.createElement("td");
+                noRmCell.textContent = "Tidak ada antrian";
+                noRmCell.colSpan = 3;
+                //class text center
+                noRmCell.classList.add("text-center");
+                row.appendChild(noRmCell);
+                tableBody.appendChild(row);
+            }
+        }
+
+        function drawNotif(data) {
+            console.log("🚀 ~ data:", data);
+
+            data.forEach((item, index) => {
+                console.log("🚀 ~ data.forEach ~ index:", index)
+                // Isi nama pasien
+                const namaEl = document.getElementById(`nama_loket_${index}`);
+                if (namaEl) {
+                    console.log("🚀 ~ data.forEach ~ namaEl:", namaEl)
+                    namaEl.textContent = item.pasien_nama || '-';
+                }
+
+                // Isi kelurahan
+                const kelurahanEl = document.getElementById(`alamat_loket_${index}`);
+                if (kelurahanEl) {
+                    kelurahanEl.textContent = item.kelurahan || '-';
+                }
+            });
+        }
+
+
+        var socketIO = io.connect('wss://kkpm.banyumaskab.go.id:3131/', {
+            // path: '/socket.io',
+            transports: ['websocket',
+                'polling',
+                'flashsocket'
+            ]
+        });
+
+        socketIO.on('connectParu', () => {
+            const sessionID = socketIO.id
+            $('#socket-id').html(sessionID)
+            console.log("Socket ID : " + sessionID)
+        });
+        socketIO.on('reload', (msg) => {
+            if (msg == 'paru_ruang_tensi') {
+                // reload_table();
+                getList();
+            }
+        });
     </script>
 </body>
 

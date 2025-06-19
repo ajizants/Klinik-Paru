@@ -132,6 +132,7 @@ function setTodayDate() {
     $("#tglKunj").val(today);
     $("#tglRO").val(today);
     $("#tgltrans").val(today);
+    $("#tanggal_bpjs").val(today);
 }
 
 function scrollToInputSection() {
@@ -151,7 +152,7 @@ var Toast = Swal.mixin({
     timer: 3000,
 });
 
-function toggleSections(sectionToShow) {
+function toggleSections(sectionToShow, idTable = null) {
     console.log("🚀 ~ toggleSections ~ sectionToShow:", sectionToShow);
     var sections = [
         "#dAntrian",
@@ -203,6 +204,9 @@ function toggleSections(sectionToShow) {
             $(section).hide();
         }
     });
+    if (idTable !== null) {
+        $(idTable).DataTable().columns.adjust().draw();
+    }
 }
 
 function enterCariRM(event, ruang) {
@@ -226,7 +230,7 @@ function enterCariRM(event, ruang) {
         var norm = formatNorm.slice(0, 6);
 
         if (ruang == "lab") {
-            cariTsLab(norm, tgl, ruang);
+            cariTsLab(norm, tgl, "tampil");
         } else if (ruang == "dots") {
             cariPasienTb(norm, tgl, ruang);
         } else if (ruang == "gizi") {
@@ -337,10 +341,10 @@ socketIO.on("connectParu", () => {
     console.log("Socket ID : " + sessionID);
 });
 
-function tampilkanLoading() {
+function tampilkanLoading(msg = "Sedang memproses data...!!!") {
     Swal.fire({
         icon: "info",
-        title: "Sedang memproses data...!!!",
+        title: msg,
         showConfirmButton: false,
         allowOutsideClick: false,
         didOpen: () => {
@@ -359,7 +363,7 @@ function tampilkanEror(msg = "") {
     });
 }
 
-function tampilkanSuccess(msg = "") {
+function tampilkanSukses(msg = "") {
     Swal.fire({
         icon: "success",
         title: msg,
@@ -374,6 +378,7 @@ function generateAsktindString(data, addNewLine = false, isLab = false) {
         .map((item, index) => {
             const separator = isLab ? (index % 2 === 1 ? ",<br>" : ", ") : ", ";
             const hasil = " - Hasil: " + item.hasil || "";
+            // const hasil = item.hasil ? ` - Hasil: ${item.hasil}` : "";
             const ket =
                 item.keterangan || item.nama_obat
                     ? ` - ${item.keterangan || item.nama_obat}`
@@ -384,7 +389,7 @@ function generateAsktindString(data, addNewLine = false, isLab = false) {
             } ${ket} ${hasilLab} ${addNewLine ? "<br>" : separator}`;
         })
         .join("")
-        .replace(/(,\s*<br>|,\s)$/, ""); // Remove trailing separator
+        .replace(/(,\s*<br>|,\s)$/, "");
 }
 
 $.extend(true, $.fn.dataTable.defaults, {
@@ -393,13 +398,14 @@ $.extend(true, $.fn.dataTable.defaults, {
         lengthMenu: "Lihat _MENU_ data",
         zeroRecords: "Tidak ada data yang cocok",
         info: "Menampilkan _START_ s.d. _END_ dari _TOTAL_ data",
-        infoEmpty: "Tidak ada data yang tersedia",
+        infoEmpty: "Menampilkan 0",
+        emptyTable: "Tidak ada data yang tersedia",
         infoFiltered: "(difilter dari _MAX_ total data)",
         paginate: {
-            first: "Pertama",
-            last: "Terakhir",
-            next: "Selanjutnya",
-            previous: "Sebelumnya",
+            first: "<",
+            last: ">",
+            next: ">>",
+            previous: "<<",
         },
     },
 });

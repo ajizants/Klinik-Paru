@@ -1,7 +1,79 @@
 @extends('Template.lte')
 
 @section('content')
-    @include('PusatData.input')
+    <div class="container-fluid">
+        <h2 class="font-weight-bold text-center">Pusat Data</h2>
+        <h3 class="font-weight-bold text-center">Selamat Datang di Menu Pusat Data KKPM</h3>
+    </div>
+    <div class="container-fluid">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a type="button" class="nav-link active bg-blue" onclick="toggleSections('#tab_2');"><b>Faskes
+                        Perujuk</b></a>
+            </li>
+            <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_9'); "><b>Jmlh DX Med</b></a>
+            </li>
+            <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_3'); "><b>Tindakan</b></a>
+            </li>
+            <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_7'); "><b>Laporan
+                        Dokter</b></a>
+            </li>
+            <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_4'); "><b>
+                        Laboratorium</b></a>
+            </li>
+            <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_5'); "><b>
+                        Radiologi</b></a>
+            </li>
+            <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_6'); "><b>
+                        Pendaftaran</b></a>
+            </li>
+            <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_8'); "><b>Kunjungan per Wilayah</b></a>
+            </li>
+            <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_1');"><b>Biaya</b></a>
+            </li>
+            {{-- <li class="nav-item">
+                <a href="{{ url('/Laporan/Pendaftaran') }}" class="nav-link "><b>Pendaftaran</b></a>
+            </li> --}}
+            <li class="nav-item">
+                <a href="{{ url('/kasir/report') }}" class="nav-link "><b>Kasir</b></a>
+            </li>
+        </ul>
+    </div>
+    <div class="container-fluid mt-1" id="tab_1">
+        @include('PusatData.biaya')
+    </div>
+    <div class="container-fluid mt-1" id="tab_2" style="display: none;">
+        @include('PusatData.faskesPerujuk')
+    </div>
+    <div class="container-fluid mt-1" id="tab_3" style="display: none;">
+        @include('PusatData.jmlTindakan')
+    </div>
+    <div class="container-fluid mt-1" id="tab_4" style="display: none;">
+        @include('PusatData.lab')
+    </div>
+    <div class="container-fluid mt-1" id="tab_5" style="display: none;">
+        @include('PusatData.ro')
+    </div>
+    <div class="container-fluid mt-1" id="tab_6" style="display: none;">
+        @include('PusatData.pendaftaran')
+    </div>
+    <div class="container-fluid mt-1" id="tab_7" style="display: none;">
+        @include('PusatData.dokter')
+    </div>
+    <div class="container-fluid mt-1" id="tab_8" style="display: none;">
+        @include('PusatData.wilayah')
+    </div>
+    <div class="container-fluid mt-1" id="tab_9" style="display: none;">
+        @include('PusatData.jumlahDiagnosa')
+    </div>
 
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
@@ -11,7 +83,6 @@
         var tglAwal;
         var tglAkhir;
         var myChart;
-
 
         function cariDataKunjungan(tglAwal, tglAkhir) {
             Swal.fire({
@@ -207,7 +278,6 @@
             });
         }
 
-
         function formatDate(date) {
             // Convert the input to a Date object if it isn't already
             if (!(date instanceof Date)) {
@@ -316,7 +386,6 @@
             Swal.close();
         }
 
-
         function tabelIgd(data, tahun) {
             // Jika data bukan array, konversikan menjadi array
             if (!Array.isArray(data)) {
@@ -389,8 +458,6 @@
             getChartData();
         });
 
-
-
         window.addEventListener("load", function() {
             setTodayDate();
             var today = new Date().toISOString().split("T")[0];
@@ -402,23 +469,26 @@
             tglAkhir = moment().subtract(0, "days").format("YYYY-MM-DD");
 
             // Menetapkan nilai ke input tanggal
-            $("#reservation, #tglFaskesPerujuk").val(tglAwal + " to " + tglAkhir);
+            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo, #tglTindakan, #tglKunjPend, #tglDokter").val(
+                tglAwal + " to " +
+                tglAkhir);
 
             // Date range picker
-            $("#reservation, #tglFaskesPerujuk").daterangepicker({
-                startDate: tglAwal,
-                endDate: tglAkhir,
-                autoApply: true,
-                locale: {
-                    format: "YYYY-MM-DD",
-                    separator: " s.d. ",
-                    applyLabel: "Pilih",
-                    cancelLabel: "Batal",
-                    customRangeLabel: "Custom Range",
-                },
-            });
+            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo, #tglTindakan, #tglKunjPend, #tglDokter")
+                .daterangepicker({
+                    startDate: tglAwal,
+                    endDate: tglAkhir,
+                    autoApply: true,
+                    locale: {
+                        format: "YYYY-MM-DD",
+                        separator: " s.d. ",
+                        applyLabel: "Pilih",
+                        cancelLabel: "Batal",
+                        customRangeLabel: "Custom Range",
+                    },
+                });
 
-            $("#reservation, #tglFaskesPerujuk").on(
+            $("#reservation, #tglFaskesPerujuk, #tglLab, #tglRo, #tglTindakan, #tglKunjPend, #tglDokter").on(
                 "apply.daterangepicker",
                 function(ev, picker) {
                     tglAwal = picker.startDate.format("YYYY-MM-DD");

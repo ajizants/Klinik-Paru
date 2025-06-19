@@ -75,6 +75,13 @@ function processResponseFar(response) {
                 <i class="fa-solid fa-right-from-bracket"></i>
             </a>
             `;
+        const bpjsBtn = `
+            <a type="button" ${commonAttributes} onclick="isiObat(this)"
+                class="btn bg-lime"
+                data-toggle="tooltip" data-placement="top" title="Isi Obat">
+                <i class="fa-solid fa-tablets"></i>
+            </a>
+            `;
 
         const panggilBtn = `<button class="panggil btn btn-success"
                 onclick="panggil('${item.log_id}','${item.pasien_no_rm}', '${item.tanggal}')"
@@ -91,6 +98,7 @@ function processResponseFar(response) {
             item.aksi = `
              ${inputBtn}
              ${ctkRspBtn}
+             ${bpjsBtn}
             `;
         } else if (item.keterangan === "SEDANG DIPANGGIL") {
             item.aksi = `
@@ -104,9 +112,110 @@ function processResponseFar(response) {
             ${inputBtn}
             ${panggilBtn}
             ${ctkRspBtn}
+            ${bpjsBtn}
             `;
         }
     });
+}
+
+function isiObat(btn) {
+    console.log("🚀 ~ isiObat ~ btn:", btn);
+    $("#norm_bpjs").val(btn.getAttribute("data-norm"));
+    $("#layanan_bpjs").val(btn.getAttribute("data-layanan"));
+    $("#nama_bpjs").val(btn.getAttribute("data-nama"));
+    $("#tgltrans_bpjs").val(btn.getAttribute("data-tgltrans"));
+    $("#notrans_bpjs").val(btn.getAttribute("data-notrans"));
+
+    $("#modalInputObat").modal("show");
+}
+
+function simpanTagihan() {
+    const notrans = $("#notrans_bpjs").val();
+    const norm = $("#norm_bpjs").val();
+    const jaminan = $("#layanan_bpjs").val();
+    const nama = $("#nama_bpjs").val();
+    const tgltrans = $("#tgltrans_bpjs").val();
+    const obat = $("#obat_bpjs").val();
+    const bmhp = $("#bmhp_bpjs").val();
+    const obatKronis = $("#obatKronis_bpjs").val();
+
+    const dataTerpilih = [];
+
+    if (obat !== "") {
+        dataTerpilih.push({
+            idLayanan: 2,
+            norm: norm,
+            notrans: notrans,
+            qty: 1,
+            harga: obat,
+            jaminan: jaminan,
+        });
+    }
+
+    if (bmhp !== "") {
+        dataTerpilih.push({
+            idLayanan: 229,
+            norm: norm,
+            notrans: notrans,
+            qty: 1,
+            harga: bmhp,
+            jaminan: jaminan,
+        });
+    }
+
+    if (obatKronis !== "") {
+        dataTerpilih.push({
+            idLayanan: 228,
+            norm: norm,
+            notrans: notrans,
+            qty: 1,
+            harga: obatKronis,
+            jaminan: jaminan,
+        });
+    }
+
+    // Kirim data ke server
+    fetch("/api/kasir/item/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            notrans: notrans,
+            norm: norm,
+            nama: nama,
+            umur: "",
+            jk: "",
+            alamat: "",
+            jaminan: jaminan,
+            dataTerpilih: dataTerpilih,
+        }),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                console.log("Response status:", response.status);
+                console.log("Response status text:", response.statusText);
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data);
+            Swal.fire({
+                icon: "success",
+                title: data.message,
+            });
+        })
+        .catch((error) => {
+            console.error(
+                "There has been a problem with your fetch operation:",
+                error
+            );
+            Swal.fire({
+                icon: "error",
+                title: "Terjadi masalah: " + error.message,
+            });
+        });
 }
 
 function initializeDataAntrianFar(response) {
@@ -233,9 +342,9 @@ function getNipByDoctorName(doctorName) {
 }
 const doctorNipMap = {
     "dr. Cempaka Nova Intani, Sp.P, FISR., MM.": "198311142011012002",
-    "dr. AGIL DANANJAYA, Sp.P": "9",
-    "dr. FILLY ULFA KUSUMAWARDANI": "198907252019022004",
-    "dr. SIGIT DWIYANTO": "198903142022031005",
+    "dr. Agil Dananjaya, Sp.P": "9",
+    "dr. Filly Ulfa Kusumawardani": "198907252019022004",
+    "dr. Sigit Dwiyanto": "198903142022031005",
 };
 
 function searchByRM(norm) {

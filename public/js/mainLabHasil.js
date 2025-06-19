@@ -79,6 +79,7 @@ async function cariTsLab(norm, tgl, task) {
                 $("#alamat").val(data.alamat);
                 $("#notrans").val(data.notrans);
                 $("#layanan").val(data.layanan);
+                $("#no_reg_lab_next").html(data.no_reg_lab_next);
                 $("#dokter").val(data.dokter).trigger("change");
                 $("#analis").val(data.petugas).trigger("change");
                 var rawDateTime = data.waktu_selesai;
@@ -114,172 +115,6 @@ async function cariTsLab(norm, tgl, task) {
             title: "Terjadi kesalahan saat mencari data...!!! /n" + error,
         });
     }
-}
-
-async function dataLab(pemeriksaan, notrans) {
-    const analisResponse = await fetch("/api/analis", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
-
-    if (!analisResponse.ok) {
-        throw new Error(`HTTP error! Status: ${analisResponse.status}`);
-    }
-
-    const analisData = await analisResponse.json();
-
-    const data = pemeriksaan.map((item, index) => ({
-        no: index + 1,
-        norm: item.norm,
-        nmLayanan: item.pemeriksaan.nmLayanan,
-        petugas: item.petugas,
-        hasiLab: item.hasil || "",
-        ket: item.ket || "",
-        idLab: item.idLab,
-        idLayanan: item.pemeriksaan.idLayanan,
-        kelas: item.pemeriksaan.kelas,
-        kdTind: item.pemeriksaan.kdTind,
-    }));
-
-    const table = $("#inputHasil").DataTable({
-        data: data,
-        destroy: true,
-        columns: [
-            {
-                data: "no",
-                render: (data) =>
-                    `<p type="text" class="form-control-sm col hasil">${data}</p>`,
-            },
-            {
-                data: "norm",
-                render: (data) =>
-                    `<p type="text" class="form-control-sm col hasil">${data}</p>`,
-            },
-            {
-                data: "nmLayanan",
-                render: (data, type, row) =>
-                    `<p type="text" class="form-control-sm col hasil" id="layanan${row.idLayanan}" value="${row.idLayanan}" readonly>${data}</p>`,
-            },
-            {
-                data: "petugas",
-                render: (data, type, row) => {
-                    let inputId = "analis" + row.idLab;
-                    let inputField = `<select id="${inputId}" class="form-control-sm col analis">`;
-                    inputField += `<option value="">--- Pilih Petugas ---</option>`;
-                    analisData.forEach((petugas) => {
-                        let selected = data === petugas.nip ? "selected" : "";
-                        inputField += `<option value="${petugas.nip}" ${selected}>${petugas.gelar_d} ${petugas.nama} ${petugas.gelar_b}</option>`;
-                    });
-                    inputField += "</select>";
-                    return inputField;
-                },
-            },
-            {
-                data: "hasiLab",
-                render: (data, type, row) => {
-                    let hasilLabHtml = "";
-                    // switch (row.kelas) {
-                    switch (row.kdTind) {
-                        case "94":
-                            hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
-                            hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
-                            hasilLabHtml += `<option value="Hasil di SITB" ${
-                                data === "Hasil di SITB" ? "selected" : ""
-                            }>Hasil di SITB (TCM)</option>`;
-                            hasilLabHtml += `<option value="Negatif" ${
-                                data === "Negatif" ? "selected" : ""
-                            }>Negatif (BTA/TCM)</option>`;
-                            hasilLabHtml += `<option value="+1" ${
-                                data === "+1" ? "selected" : ""
-                            }>+ 1 (BTA)</option>`;
-                            hasilLabHtml += `<option value="+2" ${
-                                data === "+2" ? "selected" : ""
-                            }>+ 2 (BTA)</option>`;
-                            hasilLabHtml += `<option value="+3" ${
-                                data === "+3" ? "selected" : ""
-                            }>+ 3 (BTA)</option>`;
-                            hasilLabHtml += `<option value="+1-9" ${
-                                data === "+1-9" ? "selected" : ""
-                            }>+ 1-9 (BTA)</option>`;
-                            hasilLabHtml += `</select>`;
-                            break;
-                        case "93":
-                            hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
-                            hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
-                            hasilLabHtml += `<option value="NR" ${
-                                data === "NR" ? "selected" : ""
-                            }>Non Reaktif (HIV)</option>`;
-                            hasilLabHtml += `<option value="Reaktif" ${
-                                data === "Reaktif" ? "selected" : ""
-                            }>Reaktif (HIV)</option>`;
-                            hasilLabHtml += `<option value="Negatif" ${
-                                data === "Negatif" || data === "NEGATIF"
-                                    ? "selected"
-                                    : ""
-                            }>Negatif (Sifilis)</option>`;
-                            hasilLabHtml += `<option value="Positif" ${
-                                data === "Positif" ? "selected" : ""
-                            }>Positif (Sifilis)</option>`;
-                            hasilLabHtml += `</select>`;
-                            break;
-                        case "99":
-                            hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
-                            hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
-                            hasilLabHtml += `<option value="A" ${
-                                data === "A" ? "selected" : ""
-                            }>A</option>`;
-                            hasilLabHtml += `<option value="B" ${
-                                data === "B" ? "selected" : ""
-                            }>B</option>`;
-                            hasilLabHtml += `<option value="AB" ${
-                                data === "AB" ? "selected" : ""
-                            }>AB</option>`;
-                            hasilLabHtml += `<option value="O" ${
-                                data === "O" ? "selected" : ""
-                            }>O</option>`;
-                            hasilLabHtml += `</select>`;
-                            break;
-                        case "97":
-                            hasilLabHtml = `<select class="form-control-sm col hasil" id="hasil${row.idLab}">`;
-                            hasilLabHtml += `<option value="">--Pilih Hasil--</option>`;
-                            hasilLabHtml += `<option value="IGG NR, IGM NR" ${
-                                data === "IGG NR, IGM NR" ? "selected" : ""
-                            }>IGG dan IGM NR</option>`;
-                            hasilLabHtml += `<option value="IGG R, IGM R" ${
-                                data === "IGG R, IGM R" ? "selected" : ""
-                            }>IGG dan IGM R</option>`;
-                            hasilLabHtml += `<option value="IGG NR, IGM R" ${
-                                data === "IGG NR, IGM R" ? "selected" : ""
-                            }>IGG NR dan IGM R</option>`;
-                            hasilLabHtml += `<option value="IGG R, IGM NR" ${
-                                data === "IGG R, IGM NR" ? "selected" : ""
-                            }>IGG R dan IGM NR</option>`;
-
-                            hasilLabHtml += `</select>`;
-                            break;
-                        case "98":
-                            hasilLabHtml = `<input type="text" class="form-control-sm col hasil" id="hasil${row.idLab}" value="Terlampir">`;
-                            break;
-                        default:
-                            hasilLabHtml = `<input type="text" class="form-control-sm col hasil" id="hasil${row.idLab}" value="${data}">`;
-                    }
-                    return hasilLabHtml;
-                },
-            },
-            {
-                data: "ket",
-                render: (data, type, row) =>
-                    `<input type="text" class="form-control-sm col hasil" id="ket${row.idLab}" value="${data}">`,
-            },
-        ],
-        order: [[2, "desc"]],
-        scrollY: "320px",
-        scrollCollapse: true,
-        paging: false,
-    });
-    scrollToInputSection();
 }
 
 async function cetak(norm, tgl) {
@@ -353,6 +188,12 @@ function simpan() {
             hasil: $("#hasil" + row.idLab).val(),
             petugas: $("#analis" + row.idLab).val(),
             ket: $("#ket" + row.idLab).val(),
+            no_reg_lab: $("#no_reg_lab" + row.idLab).val(),
+            no_iden_sediaan: $("#no_iden_sediaan" + row.idLab).val(),
+            tgl_hasil: $("#tgl_hasil" + row.idLab).val(),
+            alasan_periksa: $("#alasan_periksa" + row.idLab).val(),
+            namaFaskes: $("#namaFaskes" + row.idLab).val(),
+            kode_tcm: $("#kode_tcm" + row.idLab).val(),
         }))
         .toArray();
 

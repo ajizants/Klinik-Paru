@@ -4,21 +4,18 @@ body {
     /* margin-top: 75px; */
 }
 
-.custom-iframe {
+/* .custom-iframe {
     width: 100%;
     height: 100vh;
     border: none;
     overflow: hidden;
     -ms-overflow-style: none;
-    /* Hides scrollbar in Internet Explorer */
     scrollbar-width: none;
-    /* Hides scrollbar in Firefox */
 }
 
 .custom-iframe::-webkit-scrollbar {
     display: none;
-    /* Hides scrollbar in Chrome, Safari, and newer versions of Edge */
-}
+} */
 
 .table-container {
     max-height: 40vh;
@@ -30,8 +27,8 @@ body {
 }
 
 .table-auto {
-    animation: scroll 45s linear infinite;
     -webkit-animation: scroll 45s linear infinite;
+    animation: scroll 45s linear infinite;
     animation-delay: 5s;
 }
 

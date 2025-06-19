@@ -155,7 +155,7 @@
                 success: function(response) {
                     console.log("🚀 ~ simpan ~ response:", response)
                     if (response.success == true) {
-                        tampilkanSuccess(response.message);
+                        tampilkanSukses(response.message);
 
                         data = response.dxMaps
                         drawTable(
