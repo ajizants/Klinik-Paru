@@ -366,11 +366,16 @@ class DataAnalisController extends Controller
     public function jumlahDiagnosa($tahun)
     {
         if ($tahun >= 2025) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Pencarian diatas Tahun 2025 belum diizinkan',
+            ], 400);
+           
             $thisYear = date('Y');
 
             if ($tahun == 2025) {
-                // $startDate = Carbon::parse('2024-07-01');
-                $startDate = Carbon::parse('2025-01-01');
+                $startDate = Carbon::parse('2024-07-01');
+                // $startDate = Carbon::parse('2025-01-01');
             } else {
                 $startDate = Carbon::parse($tahun . '-01-01');
             }
@@ -378,7 +383,7 @@ class DataAnalisController extends Controller
             if ($tahun == $thisYear) {
                 $endDate = Carbon::now();
             } else {
-                $endDate = Carbon::parse($tahun . '-02-31');
+                $endDate = Carbon::parse($tahun . '-01-31');
             }
 
             $model = new KominfoModel();

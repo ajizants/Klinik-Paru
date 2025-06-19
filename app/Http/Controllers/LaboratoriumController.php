@@ -767,10 +767,8 @@ class LaboratoriumController extends Controller
                         'updated_at' => $tanggal,
                     ];
 
-                    // Tambahkan no_tcm jika idLayanan adalah 131
-                    if ($data['idLayanan'] == 131) {
-                        $entry['no_tcm'] = $no_tcm_counter++;
-                    }
+                    $entry['no_tcm'] = ($data['idLayanan'] == 131) ? $no_tcm_counter++ : null;
+
 
                     $dataToInsert[] = $entry;
                 } else {
