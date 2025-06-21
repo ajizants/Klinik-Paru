@@ -1,8 +1,11 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Models\DiagnosaModel;
+use App\Models\GiziDxSubKelasModel;
+use App\Models\PegawaiModel;
 use App\Models\RanapCPPT;
+use App\Models\RanapPendaftaran;
 use Illuminate\Http\Request;
 
 class RanapCPPTController extends Controller
@@ -12,13 +15,25 @@ class RanapCPPTController extends Controller
      */
     public function index()
     {
-        $title = 'Ranap CPPT';
-        return view('Ranap.Cppt.main', compact('title'));
+        $title        = 'Ranap CPPT';
+        $pegawaiModel = new PegawaiModel();
+        $dokter       = $pegawaiModel->olahPegawai([1, 7, 8]);
+        $dokter       = array_map(function ($item) {
+            return (object) $item;
+        }, $dokter);
+        $petugas = $pegawaiModel->olahPegawai([1, 7, 8, 9, 10, 12, 14, 15, 23]);
+        $petugas = array_map(function ($item) {
+            return (object) $item;
+        }, $petugas);
+
+        $sub                   = GiziDxSubKelasModel::with('domain')->get();
+        $dxMed                 = DiagnosaModel::get();
+        $modelRanapPendaftaran = new RanapPendaftaran();
+
+        $dataPasien = $modelRanapPendaftaran->getPasienRanap();
+        return view('Ranap.Cppt.main', compact('title', 'dokter', 'petugas', 'sub', 'dxMed', 'dataPasien'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //

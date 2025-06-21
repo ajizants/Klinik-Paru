@@ -28,10 +28,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/Ranap/Pendaftaran') }}">
                             <i class="fa-regular fas fa-edit nav-icon"></i>
-                            <p>Form Pendaftaran</p>
+                            <p>Pendaftaran</p>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a href="" class="nav-link">
                             <i class="fa-solid fa-desktop nav-icon"></i>
                             <p>Pendaftaran <i class="right fas fa-angle-left"></i></p>
@@ -44,13 +44,19 @@
                                 </a>
                             </li>
                         </ul>
-                    </li>
-                    <!-- CPPT Section -->
+                    </li> --}}
 
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/Ranap/Cppt') }}">
-                            <i class="fa-regular fas fa-edit nav-icon"></i>
+                            <i class="fa-solid fa-book-medical nav-icon"></i>
                             <p>Input CPPT</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url('Ranap/Kasir') }}">
+                            <i class="fa-solid fa-cash-register nav-icon"></i>
+                            <p>Transaksi Kasir</p>
                         </a>
                     </li>
 

@@ -1,3 +1,60 @@
+html {
+    scrollbar-width: thin;
+    /* Untuk Firefox */
+    scrollbar-color: #888 #f1f1f1;
+    /* Warna thumb dan track */
+}
+
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    /* Lebar scrollbar vertikal */
+    height: 6px;
+    /* Tinggi scrollbar horizontal */
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* Warna track */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    /* Warna thumb */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    /* Warna saat hover */
+}
+
+.col-sm-75 {
+    flex: 0 0 auto;
+    padding-left: 3px;
+    padding-right: 3px;
+    width: calc((100% / 12) * 0.75);
+}
+
+.col-sm-60 {
+    flex: 0 0 auto;
+    padding-left: 3px;
+    padding-right: 3px;
+    width: calc((100% / 12) * 0.6);
+}
+
+.col-sm-50 {
+    flex: 0 0 auto;
+    padding-left: 3px;
+    padding-right: 3px;
+    width: calc((100% / 12) * 0.5);
+}
+
 .hidden-time {
     display: none;
 }
@@ -16,6 +73,10 @@
     background-color: antiquewhite;
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
+}
+
+.bg-antiquewhite {
+    background-color: antiquewhite;
 }
 
 .card-footer {
@@ -320,4 +381,10 @@ input:checked + .slider:before {
 .custom-spin {
     display: inline-block;
     animation: spin 1s linear infinite;
+}
+
+.note-editor,
+.note-frame,
+.note-editor.card {
+    margin-bottom: 0 !important;
 }

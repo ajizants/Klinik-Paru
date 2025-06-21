@@ -184,22 +184,9 @@
                             :</label>
                         <select name="ruang" id="ruang" class="form-control select2bs4">
                             <option value="">--Pilih Ruang--</option>
-                            <option value="Ranap 1 A">Ranap 1 A</option>
-                            <option value="Ranap 1 B">Ranap 1 B</option>
-                            <option value="Ranap 1 C">Ranap 1 C</option>
-                            <option value="Ranap 2 A">Ranap 2 A</option>
-                            <option value="Ranap 2 B">Ranap 2 B</option>
-                            <option value="Ranap 2 C">Ranap 2 C</option>
-                            <option value="Ranap 3 A">Ranap 3 A</option>
-                            <option value="Ranap 3 B">Ranap 3 B</option>
-                            <option value="Ranap 3 C">Ranap 3 C</option>
-                            <option value="Ranap 3 D">Ranap 3 D</option>
-                            <option value="Ranap 3 E">Ranap 3 E</option>
-                            <option value="Ranap 3 F">Ranap 3 F</option>
-                            <option value="Ranap 3 G">Ranap 3 G</option>
-                            <option value="Ranap 3 H">Ranap 3 H</option>
-                            <option value="Ranap 3 I">Ranap 3 I</option>
-                            <option value="Ranap 3 J">Ranap 3 J</option>
+                            @foreach ($ruangan as $item)
+                                <option value="{{ $item->id }}">{{ $item->nama_ruangan }}</option>
+                            @endforeach
 
 
                         </select>
@@ -207,9 +194,9 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="petugas" class="col-auto col-form-label font-weight-bold">Admin
+                        <label for="admin" class="col-auto col-form-label font-weight-bold">Admin
                             :</label>
-                        <select id="petugas" name="petugas" class="form-control border border-primary" required>
+                        <select id="admin" name="admin" class="form-control border border-primary" required>
                             <option value="">--Pilih Petugas--</option>
                             @foreach ($petugas as $item)
                                 <option value="{{ $item->nip }}">{{ $item->gelar_d }}
@@ -218,9 +205,9 @@
                         </select>
                     </div>
                     <div class="form-group col-md-6">
-                        <label for="dokter" class="col-auto col-form-label font-weight-bold">Dokter
+                        <label for="dpjp" class="col-auto col-form-label font-weight-bold">Dokter
                             :</label>
-                        <select id="dokter" name="dokter" class="form-control border border-primary" required>
+                        <select id="dpjp" name="dpjp" class="form-control border border-primary" required>
                             <option value="">--Pilih DPJP--</option>
                             @foreach ($dokter as $item)
                                 <option value="{{ $item->nip }}">{{ $item->gelar_d }}
@@ -244,26 +231,8 @@
             <h6 class="m-0 font-weight-bold text-primary">Pasien Rawat Inap</h6>
         </div>
         <div class="card-body">
-            <div class="form-horizontal" id="form_identitas">
-                <div class="card-body" id="inputSection">
-                    <div class="form-group row">
-                        <label for="norm" class="col-auto col-form-label font-weight-bold mb-0 ">No RM
-                            :</label>
-                        <div class="col-sm-2 input-group" style="overflow: hidden;">
-                            <input type="text" name="norm" id="norm" class="form-control"
-                                placeholder="No RM" maxlength="6" pattern="[0-9]{6}" required
-                                onkeyup="enterCariRM();" />
-                        </div>
+            <div class="table-responsive" id="divTablePasienRanap">
 
-
-                        <div class=" form-group d-flex justify-content-center">
-                            <button type="button" class="btn btn-primary col" data-toggle="modal"
-                                data-target="#riwayatModal" onclick="showRiwayat()" hidden>Lihat
-                                Riwayat
-                                Transaksi</button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

@@ -40,7 +40,9 @@
     <!-- jQuery -->
     <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap 4 -->
-    <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    {{-- <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <!-- SweetAlert2 -->
     <script src="{{ asset('vendor/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
     <!-- Select2 -->
@@ -69,18 +71,6 @@
     <script src="{{ asset('vendor/plugins/confetti/confetti.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
-    <script>
-        $(function() {
-            // Summernote
-            $('#summernote').summernote()
-
-            //   // CodeMirror
-            //   CodeMirror.fromTextArea(document.getElementById("codeMirrorDemo"), {
-            //     mode: "htmlmixed",
-            //     theme: "monokai"
-            //   });
-        })
-    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/panzoom/panzoom.umd.js"></script>
 
@@ -88,43 +78,6 @@
         integrity="sha512-eVL5Lb9al9FzgR63gDs1MxcDS2wFu3loYAgjIH0+Hg38tCS8Ag62dwKyH+wzDb+QauDpEZjXbMn11blw8cbTJQ=="
         crossorigin=" anonymous"></script>
 
-    <style type="text/css">
-        html {
-            scrollbar-width: thin;
-            /* Untuk Firefox */
-            scrollbar-color: #888 #f1f1f1;
-            /* Warna thumb dan track */
-        }
-
-        html {
-            scrollbar-width: thin;
-            scrollbar-color: #888 #f1f1f1;
-        }
-
-        ::-webkit-scrollbar {
-            width: 6px;
-            /* Lebar scrollbar vertikal */
-            height: 6px;
-            /* Tinggi scrollbar horizontal */
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            /* Warna track */
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            /* Warna thumb */
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-            /* Warna saat hover */
-        }
-    </style>
 
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
 </head>

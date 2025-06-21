@@ -2,8 +2,17 @@ $(document).on("select2:open", () => {
     document.querySelector(".select2-search__field").focus();
 });
 
+$(document).on("select2:open", function () {
+    setTimeout(() => {
+        document
+            .querySelector(".select2-container--open .select2-search__field")
+            ?.focus();
+    }, 100);
+});
+
 let tglnow = "";
 document.addEventListener("DOMContentLoaded", function () {
+    $("#summernote").summernote();
     function updateDateTime() {
         var now = new Date();
         var options = {
@@ -32,27 +41,6 @@ document.addEventListener("DOMContentLoaded", function () {
         headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"), // Mengirim token CSRF untuk perlindungan keamanan
         },
-    });
-
-    $(".nav-link").on("click", function () {
-        // Menghapus class 'active' dari semua elemen dengan class 'nav-link'
-        $(".nav-link").removeClass("active");
-        $(".nav-link").removeClass("bg-blue");
-        // Menambah class 'active' ke elemen yang diklik
-        $(this).addClass("active");
-        if ($(this).hasClass("active")) {
-            // Jika iya, ubah warna latar belakang menjadi putih
-            $(this).addClass("bg-blue");
-        }
-    });
-
-    $("#itunggu").on("click", function () {
-        $("#dselesai").hide();
-        $("#dtunggu").show();
-    });
-    $("#iselesai").on("click", function () {
-        $("#dselesai").show();
-        $("#dtunggu").hide();
     });
 });
 function formatNorm(inputElement) {

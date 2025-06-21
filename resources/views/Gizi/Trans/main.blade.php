@@ -11,6 +11,7 @@
     <script src="{{ asset('js/template.js') }}"></script>
     <script src="{{ asset('js/populate.js') }}"></script>
     <script src="{{ asset('js/mainGizi.js') }}"></script>
+    <script src="{{ asset('js/cppt.js') }}"></script>
 
 
     <div class="modal fade" id="modal-xl">
