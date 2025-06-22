@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\KominfoModel;
@@ -22,10 +21,10 @@ class RanapPendaftaranController extends Controller
     }
     public function index()
     {
-        $title = 'Ranap Pendaftaran';
+        $title        = 'Ranap Pendaftaran';
         $pegawaiModel = new PegawaiModel();
-        $dokter = $pegawaiModel->olahPegawai([1, 7, 8]);
-        $dokter = array_map(function ($item) {
+        $dokter       = $pegawaiModel->olahPegawai([1, 7, 8]);
+        $dokter       = array_map(function ($item) {
             return (object) $item;
         }, $dokter);
         $petugas = $pegawaiModel->olahPegawai([16, 17]);
@@ -43,7 +42,7 @@ class RanapPendaftaranController extends Controller
     private function getRuangTerpakai()
     {
         $ruangDipakai = RanapPendaftaran::where('status_pulang', null)->pluck('ruang')->toArray();
-        $ruangan = RanapRuangan::whereNotIn('id', $ruangDipakai)->get();
+        $ruangan      = RanapRuangan::whereNotIn('id', $ruangDipakai)->get();
         return $ruangan;
     }
 
@@ -52,7 +51,7 @@ class RanapPendaftaranController extends Controller
         $data = RanapPendaftaran::whereNull('status_pulang')
             ->with('dokter', 'kamar', 'petugas')->get();
         // return $data;
-        $model = new KominfoModel();
+        $model     = new KominfoModel();
         $allPasien = [];
 
         foreach ($data as $item) {
@@ -66,18 +65,18 @@ class RanapPendaftaranController extends Controller
 
         $data = $data->map(function ($item) use ($allPasien) {
             return [
-                'id' => $item->id,
-                'norm' => $item->norm,
-                'jaminan' => $item->jaminan,
-                'notrans' => $item->notrans,
-                'pasien_no_rm' => $item->norm,
-                'pasien_nama' => $allPasien[$item->norm]['pasien_nama'] ?? '-',
+                'id'            => $item->id,
+                'norm'          => $item->norm,
+                'jaminan'       => $item->jaminan,
+                'notrans'       => $item->notrans,
+                'pasien_no_rm'  => $item->norm,
+                'pasien_nama'   => $allPasien[$item->norm]['pasien_nama'] ?? '-',
                 'pasien_alamat' => $allPasien[$item->norm]['pasien_alamat'] ?? '-',
-                'tgl_masuk' => $item->tgl_masuk,
-                'ruang' => $item->ruang,
-                'dokter' => $item->dokter->gelar_d . ' ' . $item->dokter->nama . ' ' . $item->dokter->gelar_b,
-                'admin' => $item->petugas->gelar_d . ' ' . $item->petugas->nama . ' ' . $item->petugas->gelar_b,
-                'ruang' => $item->kamar->nama_ruangan,
+                'tgl_masuk'     => $item->tgl_masuk,
+                'ruang'         => $item->ruang,
+                'dokter'        => $item->dokter->gelar_d . ' ' . $item->dokter->nama . ' ' . $item->dokter->gelar_b,
+                'admin'         => $item->petugas->gelar_d . ' ' . $item->petugas->nama . ' ' . $item->petugas->gelar_b,
+                'ruang'         => $item->kamar->nama_ruangan,
             ];
         });
 
@@ -125,28 +124,28 @@ class RanapPendaftaranController extends Controller
     {
         // Validasi awal (optional tapi sangat direkomendasikan)
         $request->validate([
-            'pasien_no_rm' => 'required|string|max:6',
-            'jaminan' => 'required|string',
-            'tgl_masuk' => 'required|date',
-            'dpjp' => 'required|string',
-            'admin' => 'required|string',
+            'pasien_no_rm'  => 'required|string|max:6',
+            'jaminan'       => 'required|string',
+            'tgl_masuk'     => 'required|date',
+            'dpjp'          => 'required|string',
+            'admin'         => 'required|string',
             'status_pulang' => 'nullable|string',
-            'ruang' => 'required|string',
-            'hub_p_jawab' => 'required|string',
-            'p_jawab' => 'required|string',
+            'ruang'         => 'required|string',
+            'hub_p_jawab'   => 'required|string',
+            'p_jawab'       => 'required|string',
         ]);
 
         try {
-            $norm = $request->pasien_no_rm;
-            $jaminan = $request->jaminan;
+            $norm         = $request->pasien_no_rm;
+            $jaminan      = $request->jaminan;
             $statusPulang = $request->status_pulang ?? null;
-            $tglMasuk = Carbon::parse($request->tgl_masuk)->format('Y-m-d');
-            $dpjp = $request->dpjp;
-            $ruang = $request->ruang;
-            $admin = $request->admin;
-            $hub_p_jawab = $request->hub_p_jawab;
-            $p_jawab = $request->p_jawab;
-            $tgl = Carbon::parse($tglMasuk);
+            $tglMasuk     = Carbon::parse($request->tgl_masuk)->format('Y-m-d');
+            $dpjp         = $request->dpjp;
+            $ruang        = $request->ruang;
+            $admin        = $request->admin;
+            $hub_p_jawab  = $request->hub_p_jawab;
+            $p_jawab      = $request->p_jawab;
+            $tgl          = Carbon::parse($tglMasuk);
 
             // Cek apakah ruang sedang digunakan (status_pulang masih null)
             $ruangDipakai = RanapPendaftaran::where('ruang', $ruang)
@@ -163,7 +162,7 @@ class RanapPendaftaranController extends Controller
 
             if ($cekData) {
                 return response()->json([
-                    'status' => 'error',
+                    'status'  => 'error',
                     'success' => false,
                     'message' => 'Data pasien dengan No RM ' . $norm . ' dan tanggal masuk ' . $tglMasuk . ' sudah terdaftar.',
                 ], 400);
@@ -178,27 +177,26 @@ class RanapPendaftaranController extends Controller
             $noTrans = 'RI' . str_replace('-', '', $tglMasuk) . $norm . $nomorUrut;
 
             // Simpan data ke DB
-            $ranapPendaftaran = new RanapPendaftaran();
-            $ranapPendaftaran->norm = $norm;
-            $ranapPendaftaran->notrans = $noTrans;
-            $ranapPendaftaran->jaminan = $jaminan;
+            $ranapPendaftaran                = new RanapPendaftaran();
+            $ranapPendaftaran->norm          = $norm;
+            $ranapPendaftaran->notrans       = $noTrans;
+            $ranapPendaftaran->jaminan       = $jaminan;
             $ranapPendaftaran->status_pulang = $statusPulang;
-            $ranapPendaftaran->tgl_masuk = $tglMasuk;
-            $ranapPendaftaran->dpjp = $dpjp;
-            $ranapPendaftaran->ruang = $ruang;
-            $ranapPendaftaran->admin = $admin;
-            $ranapPendaftaran->hub_p_jawab = $hub_p_jawab;
-            $ranapPendaftaran->p_jawab = $p_jawab;
+            $ranapPendaftaran->tgl_masuk     = $tglMasuk;
+            $ranapPendaftaran->dpjp          = $dpjp;
+            $ranapPendaftaran->ruang         = $ruang;
+            $ranapPendaftaran->admin         = $admin;
+            $ranapPendaftaran->hub_p_jawab   = $hub_p_jawab;
+            $ranapPendaftaran->p_jawab       = $p_jawab;
             $ranapPendaftaran->save();
             $ruangDipakai = $this->getRuangTerpakai();
-            // dd($ruangDipakai);
-            $ruangan = RanapRuangan::whereNotIn('id', $ruangDipakai)->get();
+
             $tablePasienRanap = $this->getPasienRanap();
             return response()->json([
                 'message' => 'Data berhasil disimpan',
                 'success' => true,
-                'table' => $tablePasienRanap,
-                'ruangan' => $ruangan,
+                'table'   => $tablePasienRanap,
+                'ruangan' => $ruangDipakai,
             ], 200);
 
         } catch (\Exception $e) {
@@ -207,7 +205,7 @@ class RanapPendaftaranController extends Controller
 
             return response()->json([
                 'message' => 'Terjadi kesalahan saat menyimpan data',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -217,10 +215,10 @@ class RanapPendaftaranController extends Controller
         $norm = $ranapPendaftaran->norm;
 
         // Ambil detail pasien dari KominfoModel
-        $kominfo = new KominfoModel();
-        $pasien = $kominfo->pasienRequest($norm);
+        $kominfo        = new KominfoModel();
+        $pasien         = $kominfo->pasienRequest($norm);
         $pasien['umur'] = date_diff(date_create($pasien['pasien_tgl_lahir']), date_create('today'))->y;
-        $ruanganPasien = RanapRuangan::where('id', $ranapPendaftaran->ruang)->first()->toArray();
+        $ruanganPasien  = RanapRuangan::where('id', $ranapPendaftaran->ruang)->first()->toArray();
         // return $pasien;
 
         // Konversi model Eloquent ke array
@@ -276,7 +274,7 @@ class RanapPendaftaranController extends Controller
             ], 404);
         }
         $ranapPendaftaran->status_pulang = 'Pulang';
-        $ranapPendaftaran->tgl_pulang = $request->tgl_pulang ?? Carbon::now()->format('Y-m-d');
+        $ranapPendaftaran->tgl_pulang    = $request->tgl_pulang ?? Carbon::now()->format('Y-m-d');
         $ranapPendaftaran->save();
         return response()->json([
             'success' => true,

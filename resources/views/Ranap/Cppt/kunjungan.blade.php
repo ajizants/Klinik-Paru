@@ -174,8 +174,12 @@
                                         role="tab" aria-controls="nav-1" aria-selected="true">Dokter</a>
                                 </li>
                                 <li class="nav-item">
+                                    <a class="nav-link" id="nav-tindakan-tab" data-toggle="tab" href="#nav-tindakan"
+                                        role="tab" aria-controls="nav-tindakan" aria-selected="true">Tindakan</a>
+                                </li>
+                                <li class="nav-item">
                                     <a class="nav-link" id="nav-2-tab" data-toggle="tab" href="#nav-2"
-                                        role="tab" aria-controls="nav-2" aria-selected="false">Perawat</a>
+                                        role="tab" aria-controls="nav-2" aria-selected="false">RO & Lab</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="nav-3-tab" data-toggle="tab" href="#nav-3"
@@ -191,17 +195,23 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="card-body form-row mx-0 px-0 py-1">
-                            <div class="col-5 tab-content" id="custom-tabs-one-tabContent">
+                        <div class="card-body mx-0 px-0 py-1">
+                            {{-- <div class="form-row mx-0 px-0 py-1"> --}}
+                            <div class="tab-content" id="custom-tabs-one-tabContent">
                                 <div class="tab-pane fade show active" id="nav-1" role="tabpanel"
                                     aria-labelledby="nav-1-tab">
                                     <!-- Konten Tab 1 -->
                                     @include('Ranap.Cppt.assDokter')
                                 </div>
+                                <div class="tab-pane fade" id="nav-tindakan" role="tabpanel"
+                                    aria-labelledby="nav-tindakan-tab">
+                                    <!-- Konten Tab 1 -->
+                                    @include('Ranap.Cppt.Planing.tindakan')
+                                </div>
                                 <div class="tab-pane fade" id="nav-2" role="tabpanel"
                                     aria-labelledby="nav-2-tab">
                                     <!-- Konten Tab 2 -->
-                                    @include('Ranap.Cppt.assPerawat')
+                                    @include('Ranap.Cppt.roLab')
                                 </div>
                                 <div class="tab-pane fade" id="nav-3" role="tabpanel"
                                     aria-labelledby="nav-3-tab">
@@ -219,34 +229,9 @@
                                     @include('Ranap.Cppt.assApoteker')
                                 </div>
                             </div>
-                            <div class="col-7">
-                                <div class="col-md mx-1">
-                                    <div class="card card-outline card-info">
-                                        <div class="card-header">
-                                            <h3 class="card-title">
-                                                Assesment (deskriptif)
-                                            </h3>
-                                        </div>
-                                        <!-- /.card-header -->
-                                        <div class="card-body p-0">
-                                            <textarea id="assesment" name="assesment" placeholder="Tuliskan secara deskriptif di sini"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                {{-- <div class="col-md mx-1">
-                                    <div class="card card-outline card-info">
-                                        <div class="card-header">
-                                            <h3 class="card-title">
-                                                Planing
-                                            </h3>
-                                        </div>
-                                        <!-- /.card-header -->
-                                        <div class="card-body p-0">
-                                            <textarea id="planing" name="planing" placeholder="Tuliskan Data Objektif Pasien di sini"></textarea>
-                                        </div>
-                                    </div>
-                                </div> --}}
-                            </div>
+
+                            {{-- </div> --}}
+                            {{-- @include('Ranap.Cppt.Planing.tindakan') --}}
                         </div>
                     </div>
 

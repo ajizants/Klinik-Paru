@@ -1,8 +1,10 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\BMHPModel;
 use App\Models\DiagnosaModel;
 use App\Models\GiziDxSubKelasModel;
+use App\Models\LayananModel;
 use App\Models\PegawaiModel;
 use App\Models\RanapCPPT;
 use App\Models\RanapPendaftaran;
@@ -30,8 +32,12 @@ class RanapCPPTController extends Controller
         $dxMed                 = DiagnosaModel::get();
         $modelRanapPendaftaran = new RanapPendaftaran();
 
+        $lModel   = new LayananModel();
+        $tindakan = $lModel->layanans([2, 3, 5, 6]);
+        $bmhp     = BMHPModel::all();
+
         $dataPasien = $modelRanapPendaftaran->getPasienRanap();
-        return view('Ranap.Cppt.main', compact('title', 'dokter', 'petugas', 'sub', 'dxMed', 'dataPasien'));
+        return view('Ranap.Cppt.main', compact('title', 'dokter', 'petugas', 'sub', 'dxMed', 'dataPasien', 'tindakan', 'bmhp'));
     }
 
     public function create()
@@ -78,4 +84,24 @@ class RanapCPPTController extends Controller
     {
         //
     }
+
+    public function simpan(Request $request)
+    {
+        $obat_ids   = $request->input('obat_id');
+        $signa1     = $request->input('signa_1');
+        $signa2     = $request->input('signa_2');
+        $keterangan = $request->input('keterangan');
+
+        foreach ($obat_ids as $index => $obat_id) {
+            ObatTindakan::create([
+                'obat_id'    => $obat_id,
+                'signa_1'    => $signa1[$index],
+                'signa_2'    => $signa2[$index],
+                'keterangan' => $keterangan[$index],
+            ]);
+        }
+
+        return back()->with('success', 'Data tindakan berhasil disimpan.');
+    }
+
 }

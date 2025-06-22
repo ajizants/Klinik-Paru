@@ -11,6 +11,9 @@ function entryCppt(button, noTrans) {
 
     $("#notrans").val($(button).data("notrans"));
     $("#norm").val($(button).data("norm"));
+
+    $("#tindakan_notrans").val($(button).data("notrans"));
+    $("#tindakan_norm").val($(button).data("norm"));
     scrollToInputSection();
 }
 

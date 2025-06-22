@@ -388,3 +388,7 @@ input:checked + .slider:before {
 .note-editor.card {
     margin-bottom: 0 !important;
 }
+
+.form-control-sm {
+    height: 34.22px !important;
+}
