@@ -75,13 +75,13 @@
             callbacks: {
                 onInit: function() {
                     $('.note-btn').css({
-                        'padding': '2px 6px',
-                        'font-size': '12px',
-                        'line-height': '1.2'
+                        'padding': '1px 2px',
+                        'font-size': '10px',
+                        'line-height': '1'
                     });
                     $('.note-editable p').css({
-                        'margin-top': '2px',
-                        'margin-bottom': '2px'
+                        'margin-top': '1px',
+                        'margin-bottom': '1px'
                     });
                 }
             }
@@ -91,13 +91,13 @@
             callbacks: {
                 onInit: function() {
                     $('.note-btn').css({
-                        'padding': '2px 6px',
-                        'font-size': '12px',
-                        'line-height': '1.2'
+                        'padding': '1px 2px',
+                        'font-size': '10px',
+                        'line-height': '1'
                     });
                     $('.note-editable p').css({
-                        'margin-top': '2px',
-                        'margin-bottom': '2px'
+                        'margin-top': '1px',
+                        'margin-bottom': '1px'
                     });
                 }
             }
