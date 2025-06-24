@@ -89,20 +89,20 @@
             <h3 class="card-title">Data Rencana Tindakan</h3>
         </div>
         <div class="card-body p-2">
-            <div class="table-responsive">
-                <table id="dataTindakan" name="dataTindakan" class="table table-striped table-tight" style="width:100%"
-                    cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th class="col-1">Aksi</th>
-                            <th class="col-1">No RM</th>
-                            <th class="col-3">Tindakan</th>
-                            <th class="col-2">Signa</th>
-                            <th class="col-2">Keterangan</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
+            {{-- <div class="table-responsive"> --}}
+            <table id="dataTindakan" name="dataTindakan" class="table table-striped table-tight" style="width:100%"
+                cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="col-1">Aksi</th>
+                        <th class="col-3">Tindakan</th>
+                        <th class="col-3">Obat</th>
+                        <th class="col-2">Signa</th>
+                        <th class="col-2">Keterangan</th>
+                    </tr>
+                </thead>
+            </table>
+            {{-- </div> --}}
         </div>
     </div>
 
@@ -110,31 +110,6 @@
 
 
 <script>
-    // function orderTindakan() {
-    //     const form = document.getElementById("formtind");
-    //     const formData = new FormData(form);
-
-    //     $.ajax({
-    //         url: "/api/ranap/order_tindakan",
-    //         method: "POST",
-    //         data: formData,
-    //         processData: false,
-    //         contentType: false,
-    //         headers: {
-    //             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-    //         },
-    //         success: function(res) {
-    //             console.log("✅ Respon:", res);
-    //             Swal.fire("Sukses", "Data berhasil disimpan", "success");
-    //             // loadCpptTable(res.notrans);
-    //         },
-    //         error: function(xhr) {
-    //             console.error("❌ Error:", xhr.responseText);
-    //             Swal.fire("Gagal", "Terjadi kesalahan saat menyimpan", "error");
-    //         },
-    //     });
-    // }
-
     function orderTindakan() {
         const data = {
             norm: $("#tindakan_norm").val(),
@@ -177,6 +152,56 @@
             },
         });
     }
+
+    function isiTabelTindakan(data) {
+        console.log(data);
+        $("#dataTindakan").DataTable({
+            destroy: true,
+            data: data,
+            columns: [{
+                    data: "id",
+                    render: function(data) {
+                        return `
+                        <button class="btn btn-sm btn-danger" onclick="deleteTindakan('${data}')">
+                            <i class="fa fa-trash"></i>
+                        </button>`;
+                    }
+                },
+                {
+                    data: "nmLayanan",
+                    defaultContent: "-"
+                },
+                {
+                    data: "nmObat",
+                    defaultContent: "-",
+                    render: function(data) {
+                        return data ?? "-";
+                    }
+                },
+                {
+                    data: "signa",
+                    defaultContent: "-",
+                    render: function(data) {
+                        return data ?? "-";
+                    }
+                },
+                {
+                    data: "ket",
+                    defaultContent: "-",
+                    render: function(data) {
+                        return data ?? "-";
+                    }
+                }
+            ],
+            createdRow: function(row, data) {
+                $(row).attr("id", "row_" + data.id);
+            },
+            order: [1, "asc"],
+            scrollY: "300px",
+            paging: false,
+        });
+    }
+
 
 
     $(document).ready(function() {

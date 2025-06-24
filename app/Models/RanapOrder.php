@@ -27,4 +27,8 @@ class RanapOrder extends Model
     {
         return $this->hasMany(LayananModel::class, 'idLayanan', 'order');
     }
+    public function detailObat()
+    {
+        return $this->hasMany(BMHPModel::class, 'id', 'obat_id');
+    }
 }

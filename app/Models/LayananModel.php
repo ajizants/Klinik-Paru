@@ -25,6 +25,7 @@ class LayananModel extends Model
     {
         $data = LayananModel::where('status', "1")
             ->whereIn('kelas', $kelas)
+            ->orderBy('kelas', 'asc')
             ->whereNot('idLayanan', 165)
         // ->whereIn('kelas', 'like', '%' . $kelas . '%')
             ->get();
@@ -36,6 +37,7 @@ class LayananModel extends Model
                 'idLayanan' => $d->idLayanan,
                 'kdTind'    => $d->kdTind,
                 'kdFoto'    => $d->kdFoto,
+                'grup'      => $d->grup,
                 'kelas'     => $d->kelas,
                 'nmLayanan' => $d->nmLayanan,
                 'tarif'     => $d->tarif,

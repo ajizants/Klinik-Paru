@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\BMHPModel;
 use App\Models\DiagnosaModel;
 use App\Models\GiziDxSubKelasModel;
+use App\Models\KominfoModel;
 use App\Models\LayananModel;
 use App\Models\PegawaiModel;
 use App\Models\RanapCPPT;
@@ -41,16 +42,22 @@ class RanapCPPTController extends Controller
         $dxMed                 = DiagnosaModel::get();
         $modelRanapPendaftaran = new RanapPendaftaran();
 
-        $lModel   = new LayananModel();
-        $tindakan = $lModel->layanans([2, 3, 5, 6]);
-        $bmhp     = BMHPModel::all();
+        $lModel          = new LayananModel();
+        $bmhp            = BMHPModel::all();
+        $tindakan        = $lModel->layanans([2, 3, 5, 6]);
+        $itemPemeriksaan = $lModel->layanans([8, 9]);
+
+        $itemPemeriksaan = array_map(function ($item) {
+            return (object) $item;
+        }, $itemPemeriksaan);
+
         if ($role == 'dpjp') {
             $dataPasien = $modelRanapPendaftaran->getPasienRanap($username);
 
         } else {
             $dataPasien = $modelRanapPendaftaran->getPasienRanap();
         }
-        $compact = compact('title', 'dokter', 'petugas', 'sub', 'dxMed', 'dataPasien', 'tindakan', 'bmhp', 'role');
+        $compact = compact('title', 'dokter', 'petugas', 'sub', 'dxMed', 'dataPasien', 'tindakan', 'bmhp', 'itemPemeriksaan', 'role');
 
         switch ($module) {
             case 'dokter':
@@ -70,11 +77,6 @@ class RanapCPPTController extends Controller
                 break;
         }
 
-    }
-
-    public function create()
-    {
-        //
     }
 
     public function store(Request $request)
@@ -146,64 +148,6 @@ class RanapCPPTController extends Controller
         }
     }
 
-    // public function order_tindakan(Request $request)
-    // {
-    //     try {
-    //         $validator = Validator::make($request->all(), [
-    //             'norm'        => 'required|string|max:10',
-    //             'notrans'     => 'required|string',
-    //             'form_id'     => 'required|string',
-    //             'tindakan_id' => 'required|array|min:1',
-    //             'obat_id'     => 'required|array|min:1',
-    //             'signa_1'     => 'required|array|min:1',
-    //             'signa_2'     => 'required|array|min:1',
-    //             'keterangan'  => 'nullable|array',
-    //         ]);
-
-    //         if ($validator->fails()) {
-    //             return response()->json([
-    //                 'message' => 'Validasi gagal',
-    //                 'errors'  => $validator->errors(),
-    //             ], 422);
-    //         }
-
-    //         $norm       = $request->input('norm');
-    //         $notrans    = $request->input('notrans');
-    //         $form_id    = $request->input('form_id');
-    //         $order      = $request->input('tindakan_id');
-    //         $obatIds    = $request->input('obat_id');
-    //         $signa1     = $request->input('signa_1');
-    //         $signa2     = $request->input('signa_2');
-    //         $keterangan = $request->input('keterangan');
-
-    //         foreach ($obatIds as $i => $obatId) {
-    //             // dd($obatId);
-    //             if (! $obatId) {
-    //                 continue;
-    //             }
-
-    //             RanapOrder::create([
-    //                 'norm'    => $norm,
-    //                 'notrans' => $notrans,
-    //                 'form_id' => $form_id,
-    //                 'order'   => $order[0] ?? null, // hanya satu tindakan diambil
-    //                 'obat_id' => $obatId,
-    //                 'signa_1' => $signa1[$i] ?? null,
-    //                 'signa_2' => $signa2[$i] ?? null,
-    //                 'ket'     => $keterangan[$i] ?? null,
-    //             ]);
-    //         }
-
-    //         return response()->json(['message' => 'Tindakan & obat berhasil disimpan'], 200);
-
-    //     } catch (\Throwable $th) {
-    //         return response()->json([
-    //             'message' => 'Gagal menyimpan',
-    //             'error'   => $th->getMessage(),
-    //         ], 500);
-    //     }
-    // }
-
     public function order_tindakan(Request $request)
     {
         try {
@@ -269,6 +213,49 @@ class RanapCPPTController extends Controller
         }
     }
 
+    public function order_obat(Request $request)
+    {
+        //
+    }
+
+    public function order_penunjang(Request $request)
+    {
+        // Validasi data utama
+        $validated = $request->validate([
+            'norm'              => 'required|string',
+            'notrans'           => 'required|string',
+            'form_id'           => 'required|string',
+            'petugas'           => 'required|string',
+            'items'             => 'required|array|min:1',
+            'items.*.idLayanan' => 'required|numeric',
+            'items.*.ket'       => 'nullable|string',
+        ]);
+
+        try {
+            foreach ($validated['items'] as $item) {
+                // Simpan ke database (contoh, sesuaikan dengan model kamu)
+                RanapOrder::create([
+                    'norm'    => $validated['norm'],
+                    'notrans' => $validated['notrans'],
+                    'form_id' => $validated['form_id'],
+                    // 'petugas' => $validated['petugas'],
+                    'order'   => $item['idLayanan'],
+                    'ket'     => $item['keterangan'] ?? null,
+                ]);
+            }
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Order penunjang berhasil disimpan.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
     private function getByNotrans($notrans)
     {
         $data = RanapCPPT::with([
@@ -330,8 +317,9 @@ class RanapCPPTController extends Controller
             }
 
             return [
+                'form_id'          => $item->form_id,
                 'id'               => $item->id,
-                'created_at'       => $item->created_at->format('d/m/Y'),
+                'created_at'       => $item->created_at->format('d/m/Y') . '<br>' . $item->created_at->format('H:i:s'),
                 'petugas'          => trim(collect([
                     optional($item->nakes)->gelar_d,
                     optional($item->nakes)->nama,
@@ -371,84 +359,127 @@ class RanapCPPTController extends Controller
         return response()->json(['success' => true, 'message' => 'Data berhasil disimpan', 'id' => $formId], 200);
     }
 
-    // public function show($notrans)
-    // {
-    //     $data = RanapCPPT::with([
-    //         'nakes', 'diagnosa1', 'diagnosa2', 'diagnosa3', 'diagnosa4', 'order.detail',
-    //     ])
-    //         ->where('notrans', $notrans)
-    //         ->orderBy('created_at', 'desc')
-    //         ->get();
-
-    //     $result = $data->map(function ($item) {
-    //         $petugas = $item->nakes->nama ?? '-';
-
-    //         $assessment = collect([
-    //             $item->subjektif ? "<strong>S:</strong> {$item->subjektif}" : null,
-    //             $item->objektif ? "<strong>O:</strong> {$item->objektif}" : null,
-    //             $item->assesment ? "<strong>A:</strong> {$item->assesment}" : null,
-    //         ])->filter()->implode('<br>');
-
-    //         $instruksi = collect([
-    //             $item->dx1 ? "<strong>DX1:</strong> {$item->dx1} - {$item->ket_dx1}" : null,
-    //             $item->dx2 ? "<strong>DX2:</strong> {$item->dx2} - {$item->ket_dx2}" : null,
-    //             $item->dx3 ? "<strong>DX3:</strong> {$item->dx3} - {$item->ket_dx3}" : null,
-    //             $item->dx4 ? "<strong>DX4:</strong> {$item->dx4} - {$item->ket_dx4}" : null,
-    //         ])->filter()->implode('<br>');
-
-    //         return [
-    //             'id'               => $item->id,
-    //             'created_at'       => $item->created_at->format('d/m/Y'),
-    //             'petugas'          => $petugas,
-    //             'hasil_assessment' => $assessment,
-    //             'instruksi'        => $instruksi,
-    //         ];
-    //     });
-
-    //     return response()->json($result); // dataSrc: "" di JS
-    // }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(RanapCPPT $ranapCPPT)
+    public function edit($form_id)
     {
-        //
+        $data = RanapCPPT::with([
+            'order.detail', 'order.detailObat',
+        ])
+            ->where('form_id', $form_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $penunjang = collect();
+
+        foreach ($data as $cppt) {
+            foreach ($cppt->order as $order) {
+                foreach ($order->detail as $detail) {
+                    if (in_array($detail->kelas, [8, 9])) {
+                        $penunjang->push([
+                            'form_id'   => $order->form_id,
+                            'notrans'   => $order->notrans,
+                            'norm'      => $order->norm,
+                            'ket'       => $order->ket,
+                            'idLayanan' => $detail->idLayanan,
+                            'nmLayanan' => $detail->nmLayanan,
+                            'kelas'     => $detail->kelas,
+                            'kdTind'    => $detail->kdTind,
+                            'kdFoto'    => $detail->kdFoto,
+                            'tarif'     => $detail->tarif,
+                        ]);
+                    }
+                }
+            }
+        }
+        $tindakan = collect();
+
+        foreach ($data as $cppt) {
+            foreach ($cppt->order as $order) {
+                foreach ($order->detail as $detail) {
+                    if (in_array($detail->kelas, [2, 3, 5, 6])) {
+                        $detailObat = $order->detailObat[0] ?? null;
+
+                        $tindakan->push([
+                            'form_id'   => $order->form_id,
+                            'notrans'   => $order->notrans,
+                            'norm'      => $order->norm,
+                            'ket'       => $order->ket,
+                            'signa'     => $order->signa_1 . ' X ' . $order->signa_2,
+                            'idLayanan' => $detail->idLayanan,
+                            'nmLayanan' => $detail->nmLayanan,
+                            'kelas'     => $detail->kelas,
+                            'kdTind'    => $detail->kdTind,
+                            'kdFoto'    => $detail->kdFoto,
+                            'tarif'     => $detail->tarif,
+                            'obat_id'   => $order->obat_id ?? null,
+                            'nmObat'    => $detailObat->nmObat ?? null,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'message'   => 'Data berhasil ditemukan',
+            'data'      => $data,
+            'penunjang' => $penunjang,
+            'tindakan'  => $tindakan,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, RanapCPPT $ranapCPPT)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(RanapCPPT $ranapCPPT)
     {
         //
     }
 
-    public function simpan(Request $request)
+    public function findPasien($norm)
     {
-        $obat_ids   = $request->input('obat_id');
-        $signa1     = $request->input('signa_1');
-        $signa2     = $request->input('signa_2');
-        $keterangan = $request->input('keterangan');
-
-        foreach ($obat_ids as $index => $obat_id) {
-            // ObatTindakan::create([
-            //     'obat_id'    => $obat_id,
-            //     'signa_1'    => $signa1[$index],
-            //     'signa_2'    => $signa2[$index],
-            //     'keterangan' => $keterangan[$index],
-            // ]);
-        }
-
-        return back()->with('success', 'Data tindakan berhasil disimpan.');
+        $pasien = RanapPendaftaran::where('norm', $norm)
+            ->with('identitas', 'dokter', 'kamar', 'petugas')
+            ->first();
+        $kominfo          = new KominfoModel();
+        $identitasKominfo = $kominfo->pasienRequest($norm);
+        $pasien->biodata  = $identitasKominfo;
+        $pasien->umur     = date_diff(date_create($pasien->identitas->tgllahir), date_create('today'))->y;
+        $pasien->alamat   = $pasien->identitas->kelurahan . ', ' . $pasien->identitas->rtrw . ', ' . $pasien->identitas->kabupaten;
+        $pasien->ruang    = $pasien->kamar->nama_ruangan;
+        // return $pasien;
+        $pasien = [
+            'id'                 => $pasien->id,
+            'pasien_no_rm'       => $pasien->norm,
+            'pasien_nama'        => $identitasKominfo['pasien_nama'],
+            'jaminan'            => $pasien->jaminan,
+            'ruang'              => $pasien->ruang,
+            'jenis_kelamin_nama' => $identitasKominfo['jenis_kelamin_nama'],
+            'umur'               => date_diff(date_create($identitasKominfo['pasien_tgl_lahir']), date_create('today'))->y,
+            'pasien_tgl_lahir'   => $identitasKominfo['pasien_tgl_lahir'],
+            'notrans'            => $pasien->notrans,
+            'pasien_alamat'      => $identitasKominfo['pasien_alamat'],
+            // 'id'                  => $pasien->id,
+            // 'pasien_no_rm'        => $pasien->norm,
+            // 'pasien_nama'         => $pasien->identitas->nama,
+            // 'jaminan'             => $pasien->jaminan,
+            // 'ruang,'              => $pasien->ruang,
+            // 'jenis_kelamin_nama,' => $pasien->identitas->jkel,
+            // 'umur'                => $pasien->umur,
+            // 'pasien_tgl_lahir'    => $pasien->identitas->tgllahir,
+            // 'notrans'             => $pasien->notrans,
+            // 'pasien_alamat'       => $pasien->alamat,
+        ];
+        // return $pasien;
+        $date       = date('Y-m-d');
+        $jumlahCppt = RanapCPPT::where('created_at', 'like', $date . '%')->count();
+        $formId     = 'CPPT' . date('dmy') . sprintf('%04d', $jumlahCppt + 1);
+        return response()->json(
+            ['success' => true,
+                'message'  => 'Data berhasil ditemukan...',
+                'form_id'  => $formId,
+                'pasien'   => $pasien,
+            ], 200);
     }
-
 }

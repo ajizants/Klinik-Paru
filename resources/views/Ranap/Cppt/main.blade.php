@@ -40,19 +40,21 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="nav-dx-tab" data-toggle="tab" href="#nav-dx" role="tab"
-                                    aria-controls="nav-dx" aria-selected="true"><b>Diagnosa</b></a>
+                                    aria-controls="nav-dx" aria-selected="true"><b>DA & DP</b></a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="nav-tindakan-tab" data-toggle="tab" href="#nav-tindakan"
-                                    role="tab" aria-controls="nav-tindakan" aria-selected="true"><b>Tindakan</b></a>
+                                    role="tab" aria-controls="nav-tindakan"
+                                    aria-selected="true"onclick="refreshTable('nav-tindakan-tab')"><b>Tindakan</b></a>
                             </li>
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a class="nav-link" id="nav-ro-tab" data-toggle="tab" href="#nav-ro" role="tab"
-                                    aria-controls="nav-ro" aria-selected="false"><b>Radiologi</b></a>
-                            </li>
+                                    aria-controls="nav-ro" aria-selected="false"><b>Penunjang</b></a>
+                            </li> --}}
                             <li class="nav-item">
                                 <a class="nav-link" id="nav-lab-tab" data-toggle="tab" href="#nav-lab" role="tab"
-                                    aria-controls="nav-lab" aria-selected="false"><b>Lab</b></a>
+                                    aria-controls="nav-lab" aria-selected="false"
+                                    onclick="refreshTable('nav-lab-tab')"><b>Penunjang</b></a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="nav-terapi-tab" data-toggle="tab" href="#nav-terapi" role="tab"
@@ -72,7 +74,7 @@
                                     <input type="text" id="notrans" name="notrans">
                                     <input type="text" id="form_id" name="form_id">
                                 </div>
-                                @if ($role == 'dokter' || $role == 'dpjp')
+                                @if ($role == 'dokter' || $role == 'dpjp' || $role == 'admin')
                                     @include('Ranap.Cppt.Dokter.main')
                                 @elseif ($role == 'perawat')
                                     @include('Ranap.Cppt.Perawat.main')
@@ -112,7 +114,7 @@
     </div>
     <div class="modal fade" id="modalRiwayatCppt" tabindex="-1" aria-labelledby="modalRiwayatCpptLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-xxl modal-dialog-scrollable">
+        <div class="modal-dialog modal-xxl">
             <div class="modal-content">
                 <div class="modal-header bg-info">
                     <h5 class="modal-title" id="modalRiwayatCpptLabel">Catatan Perawatan Pasien Terintegritas</h5>
@@ -136,20 +138,23 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#modalAssesmentAwal">Tambah</button>
+                                    Tombol untuk membuka form atau modal pengisian CPPT/assesment awal pasien.
                                 </td>
                                 <td>
-                                    02/12/2025
+                                    Tanggal pencatatan assesment atau pelayanan pasien dilakukan.
                                 </td>
-                                <td>dr. CEMPAKA NOVA INTANI Sp.P, MM, FISR<br> DPJP</td>
-                                <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum iusto, ipsa repellat
-                                    repudiandae eveniet quisquam veritatis minima? Temporibus, id quos, quisquam voluptatem
-                                    magnam, voluptates eius optio debitis adipisci reiciendis nemo.</td>
-                                <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius, qui nemo. Cum minus nemo
-                                    atque expedita! Nihil facere harum ipsa, temporibus esse nobis repellendus minus
-                                    aspernatur cumque neque tempore soluta.</td>
-                                <td>dr. CEMPAKA NOVA INTANI Sp.P, MM, FISR</td>
+                                <td>
+                                    Nama dan gelar lengkap tenaga kesehatan profesional yang memberikan asuhan.
+                                </td>
+                                <td>
+                                    Uraian hasil pengkajian kondisi pasien dan pelayanan yang diberikan secara detail.
+                                </td>
+                                <td>
+                                    Instruksi medis atau keperawatan lanjutan dari PPA kepada tim lainnya.
+                                </td>
+                                <td>
+                                    Nama DPJP yang melakukan review dan verifikasi terhadap tindakan/assesment.
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -166,27 +171,11 @@
     <script src="{{ asset('js/cpptGizi.js') }}"></script>
     <script src="{{ asset('js/cppt.js') }}"></script>
     <script>
-        // $('#modalAssesmentAwal').on('shown.bs.modal', function() {
-        //     $(".select2bs4").select2({
-        //         dropdownParent: $('#modalAssesmentAwal')
-        //     });
-        // });
-
-        // // Pastikan search bisa difokus
-        // $(document).on("select2:open", function() {
-        //     setTimeout(() => {
-        //         document.querySelector(".select2-container--open .select2-search__field")?.focus();
-        //     }, 100);
-        // });
-
+        let itemPemeriksaan = @json($itemPemeriksaan)
 
 
         $(document).ready(function() {
-            // $('#modalAssesmentAwal').on('shown.bs.modal', function() {
-            //     $(".select2bs4").select2({
-            //         dropdownParent: $('#modalAssesmentAwal')
-            //     });
-            // });
+
             $("#modalAssesmentAwal .select2bs4").select2();
             $("#modalRiwayatCppt").on("shown.bs.modal", function() {
                 let notrans = $("#pasien_notrans").val(); // atau dari data lain
@@ -227,7 +216,21 @@
                 const data = e.params.data;
                 // $('#ket_dx' + num).val(data.text); // masukkan ke input keterangan
             });
+
+            handlePilihSemuaClick("pilih-semua", "item");
+
+            tabelPemeriksaan(itemPemeriksaan, "item", "pilih-semua");
         });
+
+        function refreshTable(id) {
+            $('#' + id).on('shown.bs.tab', function() {
+                setTimeout(() => {
+                    $('#daftarOrderPenunjang').DataTable().columns.adjust().draw();
+                    $('#dataTindakan').DataTable().columns.adjust().draw();
+                    $('#tablePenunjang').DataTable().columns.adjust().draw();
+                }, 10); // delay kecil agar render sempat selesai
+            });
+        }
     </script>
     <script>
         $(function() {
@@ -264,7 +267,7 @@
             }
         });
         $('#assesment, #planing').summernote({
-            height: 119,
+            height: 59,
             callbacks: {
                 onInit: function() {
                     $('.note-btn').css({
@@ -280,59 +283,59 @@
             }
         });
 
-        document.getElementById('pasien_no_rm').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                let val = this.value.trim();
+        // document.getElementById('pasien_no_rm').addEventListener('keydown', function(e) {
+        //     if (e.key === 'Enter') {
+        //         let val = this.value.trim();
 
-                // Tambahkan 0 di depan hingga panjangnya 6 digit
-                if (val.length < 6) {
-                    this.value = val.padStart(6, '0');
-                }
+        //         // Tambahkan 0 di depan hingga panjangnya 6 digit
+        //         if (val.length < 6) {
+        //             this.value = val.padStart(6, '0');
+        //         }
 
-                // Optional: panggil ulang fungsi lihatIdentitas
-                lihatIdentitas(this.value);
+        //         // Optional: panggil ulang fungsi lihatIdentitas
+        //         lihatIdentitas(this.value);
 
-                // Cegah submit form jika perlu
-                e.preventDefault();
-            }
-        });
+        //         // Cegah submit form jika perlu
+        //         e.preventDefault();
+        //     }
+        // });
 
-        function lihatIdentitas(no_rm) {
-            // Ambil nilai dari input form saat ini
-            let current_rm = $("#pasien_no_rm").val();
+        // function lihatIdentitas(no_rm) {
+        //     // Ambil nilai dari input form saat ini
+        //     let current_rm = $("#pasien_no_rm").val();
 
-            // Tambahkan 0 di depan hingga panjangnya 6 digit
-            if (current_rm.length < 6) {
-                this.value = current_rm.padStart(6, '0');
-            }
+        //     // Tambahkan 0 di depan hingga panjangnya 6 digit
+        //     if (current_rm.length < 6) {
+        //         this.value = current_rm.padStart(6, '0');
+        //     }
 
-            tampilkanLoading("Sedangan mengambil data pasien...");
-            // Lakukan request ke API untuk ambil data baru
-            $.ajax({
-                url: "/api/pasienKominfo",
-                method: "POST",
-                data: {
-                    no_rm: current_rm
-                },
-                success: function(response) {
-                    if (response && response.error) {
-                        tampilkanEror(response.error); // tampilkan pesan error
-                        return;
-                    }
-                    Swal.close();
-                    // Isi form dengan data dari response
-                    for (let key in response) {
-                        $(`#form_identitas [name="${key}"]`).val(response[key]);
-                    }
+        //     tampilkanLoading("Sedangan mengambil data pasien...");
+        //     // Lakukan request ke API untuk ambil data baru
+        //     $.ajax({
+        //         url: "/api/pasienKominfo",
+        //         method: "POST",
+        //         data: {
+        //             no_rm: current_rm
+        //         },
+        //         success: function(response) {
+        //             if (response && response.error) {
+        //                 tampilkanEror(response.error); // tampilkan pesan error
+        //                 return;
+        //             }
+        //             Swal.close();
+        //             // Isi form dengan data dari response
+        //             for (let key in response) {
+        //                 $(`#form_identitas [name="${key}"]`).val(response[key]);
+        //             }
 
-                },
-                error: function(xhr, error) {
-                    console.log("🚀 ~ lihatIdentitas ~ xhr:", xhr)
-                    tampilkanEror(xhr.responseJSON.error);
-                    // tampilkanEror(error);
-                }
-            });
-        }
+        //         },
+        //         error: function(xhr, error) {
+        //             console.log("🚀 ~ lihatIdentitas ~ xhr:", xhr)
+        //             tampilkanEror(xhr.responseJSON.error);
+        //             // tampilkanEror(error);
+        //         }
+        //     });
+        // }
 
         function simpanPendaftaran() {
             let form = document.getElementById('formPendaftaran');
