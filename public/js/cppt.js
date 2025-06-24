@@ -25,6 +25,11 @@ function entryCppt(button, noTrans) {
 
             $("#tindakan_notrans").val($(button).data("notrans"));
             $("#tindakan_norm").val($(button).data("norm"));
+            $("#tindakan_form_id").val($(button).data(response.id));
+
+            $("#penunjang_notrans").val($(button).data("notrans"));
+            $("#penunjang_norm").val($(button).data("norm"));
+            $("#penunjang_form_id").val($(button).data(response.id));
             scrollToInputSection();
         })
         .fail(function (xhr) {
@@ -70,6 +75,9 @@ function loadCpptTable(notrans) {
         destroy: true,
         processing: true,
         serverSide: false,
+        scrollY: "700px", // tinggi maksimum body yang bisa discroll
+        scrollCollapse: true,
+        paging: false, // opsional, agar tidak ada pagination
         ajax: {
             url: `/api/ranap/cppt/${notrans}`,
             method: "GET",
@@ -80,20 +88,20 @@ function loadCpptTable(notrans) {
                 data: "id",
                 render: function (data) {
                     return `
-                        <button class="btn btn-sm btn-danger" onclick="deleteCPPT('${data}')">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                        <button class="btn btn-sm btn-primary" onclick="editCPPT('${data}')">
-                            <i class="fa fa-edit"></i>
-                        </button>
-                    `;
+                    <button class="btn btn-sm btn-danger" onclick="deleteCPPT('${data}')">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                    <button class="btn btn-sm btn-primary" onclick="editCPPT('${data}')">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                `;
                 },
             },
             { data: "created_at" },
             { data: "petugas" },
             { data: "hasil_assessment" },
             { data: "instruksi" },
-            { data: "dpjp" }, // Review DPJP sama dengan petugas
+            { data: "dpjp" },
         ],
     });
 }

@@ -12,7 +12,8 @@
     Route::post('/ranap/pendaftaran/pulangkanPasien', [RanapPendaftaranController::class, 'pulangkanPasien']);
 
     Route::get('/ranap/cppt/getFormId', [RanapCPPTController::class, 'getFormId']);
-    Route::post('ranap/cppt', [RanapCPPTController::class, 'store']);
+    Route::post('/ranap/cppt', [RanapCPPTController::class, 'store']);
+    Route::post('/ranap/order_tindakan', [RanapCPPTController::class, 'order_tindakan']);
     Route::get('/ranap/cppt/{notrans}', [RanapCPPTController::class, 'show']);
 
 Route::put('/ranap/cppt/{ranapCPPT}', [RanapCPPTController::class, 'update']);

@@ -112,7 +112,7 @@
     </div>
     <div class="modal fade" id="modalRiwayatCppt" tabindex="-1" aria-labelledby="modalRiwayatCpptLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-xxl">
+        <div class="modal-dialog modal-xxl modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header bg-info">
                     <h5 class="modal-title" id="modalRiwayatCpptLabel">Catatan Perawatan Pasien Terintegritas</h5>

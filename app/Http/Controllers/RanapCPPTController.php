@@ -11,6 +11,7 @@ use App\Models\RanapOrder;
 use App\Models\RanapPendaftaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class RanapCPPTController extends Controller
 {
@@ -145,6 +146,129 @@ class RanapCPPTController extends Controller
         }
     }
 
+    // public function order_tindakan(Request $request)
+    // {
+    //     try {
+    //         $validator = Validator::make($request->all(), [
+    //             'norm'        => 'required|string|max:10',
+    //             'notrans'     => 'required|string',
+    //             'form_id'     => 'required|string',
+    //             'tindakan_id' => 'required|array|min:1',
+    //             'obat_id'     => 'required|array|min:1',
+    //             'signa_1'     => 'required|array|min:1',
+    //             'signa_2'     => 'required|array|min:1',
+    //             'keterangan'  => 'nullable|array',
+    //         ]);
+
+    //         if ($validator->fails()) {
+    //             return response()->json([
+    //                 'message' => 'Validasi gagal',
+    //                 'errors'  => $validator->errors(),
+    //             ], 422);
+    //         }
+
+    //         $norm       = $request->input('norm');
+    //         $notrans    = $request->input('notrans');
+    //         $form_id    = $request->input('form_id');
+    //         $order      = $request->input('tindakan_id');
+    //         $obatIds    = $request->input('obat_id');
+    //         $signa1     = $request->input('signa_1');
+    //         $signa2     = $request->input('signa_2');
+    //         $keterangan = $request->input('keterangan');
+
+    //         foreach ($obatIds as $i => $obatId) {
+    //             // dd($obatId);
+    //             if (! $obatId) {
+    //                 continue;
+    //             }
+
+    //             RanapOrder::create([
+    //                 'norm'    => $norm,
+    //                 'notrans' => $notrans,
+    //                 'form_id' => $form_id,
+    //                 'order'   => $order[0] ?? null, // hanya satu tindakan diambil
+    //                 'obat_id' => $obatId,
+    //                 'signa_1' => $signa1[$i] ?? null,
+    //                 'signa_2' => $signa2[$i] ?? null,
+    //                 'ket'     => $keterangan[$i] ?? null,
+    //             ]);
+    //         }
+
+    //         return response()->json(['message' => 'Tindakan & obat berhasil disimpan'], 200);
+
+    //     } catch (\Throwable $th) {
+    //         return response()->json([
+    //             'message' => 'Gagal menyimpan',
+    //             'error'   => $th->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
+    public function order_tindakan(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'norm'        => 'required|string|max:10',
+                'notrans'     => 'required|string',
+                'form_id'     => 'required|string',
+                'tindakan_id' => 'required|array|min:1',
+                'obat_id'     => 'required|array|min:1',
+                'signa_1'     => 'required|array|min:1',
+                'signa_2'     => 'required|array|min:1',
+                'keterangan'  => 'nullable|array',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Validasi gagal',
+                    'errors'  => $validator->errors(),
+                ], 422);
+            }
+
+            // DEBUG: log seluruh data yang diterima
+            Log::info('Data diterima untuk order_tindakan:', $request->all());
+
+            $norm       = $request->input('norm');
+            $notrans    = $request->input('notrans');
+            $form_id    = $request->input('form_id');
+            $order      = $request->input('tindakan_id');
+            $obatIds    = $request->input('obat_id');
+            $signa1     = $request->input('signa_1');
+            $signa2     = $request->input('signa_2');
+            $keterangan = $request->input('keterangan');
+
+            foreach ($obatIds as $i => $obatId) {
+                if (! $obatId) {
+                    continue;
+                }
+
+                $rowData = [
+                    'norm'    => $norm,
+                    'notrans' => $notrans,
+                    'form_id' => $form_id,
+                    'order'   => $order[0] ?? null,
+                    'obat_id' => $obatId,
+                    'signa_1' => $signa1[$i] ?? null,
+                    'signa_2' => $signa2[$i] ?? null,
+                    'ket'     => $keterangan[$i] ?? null,
+                ];
+
+                Log::info('Data akan disimpan:', $rowData); // DEBUG
+
+                RanapOrder::create($rowData);
+            }
+
+            return response()->json(['message' => 'Tindakan & obat berhasil disimpan'], 200);
+
+        } catch (\Throwable $th) {
+            Log::error('Gagal simpan order_tindakan: ' . $th->getMessage());
+            return response()->json([
+                'message' => 'Gagal menyimpan',
+                'error'   => $th->getMessage(),
+            ], 500);
+        }
+    }
+
     private function getByNotrans($notrans)
     {
         $data = RanapCPPT::with([
@@ -191,12 +315,19 @@ class RanapCPPTController extends Controller
         $data = RanapCPPT::with('nakes', 'pasien.dokter', 'diagnosa1', 'diagnosa2', 'diagnosa3', 'diagnosa4')->where('notrans', $notrans)->orderBy('created_at', 'desc')->get();
 
         $result = $data->map(function ($item) {
-            $order     = RanapOrder::with('detail')->where('form_id', $item->form_id)->first();
-            $instruksi = '
-            <strong>DX1:</strong> ' . $item->dx1 . ' - ' . $item->ket_dx1 . '<br>
-            <strong>DX2:</strong> ' . $item->dx2 . ' - ' . $item->ket_dx2 . '<br>
-            <strong>DX3:</strong> ' . $item->dx3 . ' - ' . $item->ket_dx3 . '<br>
-            <strong>DX4:</strong> ' . $item->dx4 . ' - ' . $item->ket_dx4 . '<br>';
+            $orders = RanapOrder::with('detail')->where('form_id', $item->form_id)->get();
+            // dd($orders);
+            $instruksiList = collect();
+            foreach ($orders as $order) {
+                $sortedDetails = $order->detail->sortBy('kelas'); // urutkan berdasarkan kelas
+                foreach ($sortedDetails as $detail) {
+                    $baris = $detail->nmLayanan;
+                    if ($order->ket) {
+                        $baris .= " - " . $order->ket;
+                    }
+                    $instruksiList->push($baris);
+                }
+            }
 
             return [
                 'id'               => $item->id,
@@ -225,9 +356,7 @@ class RanapCPPTController extends Controller
                     $item->dx3 ? "<strong>DX3:</strong> $item->dx3 - $item->ket_dx3" : null,
                     $item->dx4 ? "<strong>DX4:</strong> $item->dx4 - $item->ket_dx4" : null,
                 ])->filter()->implode('<br>'),
-                'instruksi'        => collect([
-                    $instruksi,
-                ])->filter()->implode('<br>'),
+                'instruksi'        => $instruksiList->filter()->implode('<br>'),
             ];
         });
 

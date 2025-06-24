@@ -52,12 +52,12 @@ class HomeController extends Controller
     }
     public function lte()
     {
-        $title = 'Dashboard';
+        $title = 'RaJal';
         return view('Template.lte')->with('title', $title);
     }
     public function home()
     {
-        $title = 'Dashboard';
+        $title = 'RaJal';
         return view('dashboard')->with('title', $title);
     }
     public function forbidden()

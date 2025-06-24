@@ -8,17 +8,19 @@ class RanapOrder extends Model
 {
     use HasFactory;
 
-    protected $table    = 'ranap_order';
+    protected $table = 'ranap_order';
+
     protected $fillable = [
-        'id',
         'norm',
-        'notrana',
+        'notrans', // ✅ perbaiki ini (bukan 'notrana')
         'petugas',
         'ruangan',
         'order',
-        'ket',
-        'created_at',
-        'updated_at',
+        'form_id', // ✅ tambahkan jika belum ada
+        'obat_id',
+        'signa_1',
+        'signa_2',
+        'ket', // pastikan kolom ini benar
     ];
 
     public function detail()
