@@ -281,6 +281,7 @@
                             <td class="p-1 text-center">
                                 {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
                             </td>
+                            <td class="text-center"></td>
                         @else
                             <td class="p-1 text-center">
                                 {{ $item['tb04'][0]['hasil'] }}
@@ -293,10 +294,13 @@
                             <td class="text-center">-</td>
                             <td class="text-center">-</td>
                             <td class="text-center">-</td>
+                            <td class="text-center">-</td>
+                            <td class="text-center">-</td>
                         @endif
 
 
-                        <td class=" p-1 text-center"></td>
+                        {{-- <td class=" p-1 text-center"></td>
+                        <td class=" p-1 text-center"></td> --}}
                         <td class=" p-1 text-center">
                             @if (count($item['tb04']) > 1 && $item['tb04'][0]['ket'] !== null)
                                 {{ $item['tb04'][0]['ket'] ?? '-' }}, {{ $item['tb04'][1]['ket'] ?? '' }}
