@@ -20,7 +20,7 @@
                     <select name="tindakan_id[]" class="select2bs4 form-control border border-primary">
                         <option value="">--Pilih Tindakan--</option>
                         @foreach (collect($tindakan)->sortBy('nama') as $item)
-                            <option value="{{ $item->kdTind ?? $item->idLayanan }}">
+                            <option value="{{ $item->idLayanan }}">
                                 {{ $item->nmTindakan ?? $item->nmLayanan }}
                             </option>
                         @endforeach
