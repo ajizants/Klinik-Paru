@@ -116,8 +116,8 @@ Route::middleware('auth')->group(function () {
     Route::get('Gizi/Riwayat', [HomeController::class, 'riwayatGizi'])->name('riwayatGizi')->middleware('role:gizi');
 
     //riwayat diagnosa
-    Route::get('Riwayat/Pasien', [HomeController::class, 'riwayatKunjungan'])->name('riwayatKunjungan')->middleware('role:dokter,perawat,dots,igd,farmasi');
-    Route::get('Diagnosa/Mapping', [HomeController::class, 'mappingDx'])->name('mappingDx')->middleware('role:dokter,perawat');
+    Route::get('Riwayat/Pasien', [HomeController::class, 'riwayatKunjungan'])->name('riwayatKunjungan')->middleware('role:dpjp,dokter,perawat,dots,igd,farmasi');
+    Route::get('Diagnosa/Mapping', [HomeController::class, 'mappingDx'])->name('mappingDx')->middleware('role:dpjp,dokter,perawat');
 
     //analisis data
     Route::get('Pusat_Data', [DataAnalisController::class, 'index'])->name('pusatData');
@@ -147,8 +147,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/online', [UserController::class, 'userOnline'])->name('users.online');
 
     //RANAP
-    Route::get('Ranap', [RanapPendaftaranController::class, 'home'])->name('dashboardRanap')->middleware('role:ranap');
-    Route::get('Ranap/Pendaftaran', [RanapPendaftaranController::class, 'index'])->name('formRawatInap')->middleware('role:ranap');
-    Route::get('Ranap/Cppt', [RanapCPPTController::class, 'index'])->name('formCPPT')->middleware('role:ranap');
+    Route::get('Ranap', [RanapPendaftaranController::class, 'home'])->name('dashboardRanap')->middleware('role:dpjp,dokter,perawat,dots,igd,farmasi,loket');
+    Route::get('Ranap/Pendaftaran', [RanapPendaftaranController::class, 'index'])->name('formRawatInap')->middleware('role:dpjp,dokter,perawat,dots,igd,farmasi,loket');
+    Route::get('Ranap/Cppt/{module}', [RanapCPPTController::class, 'index'])->name('formCPPT')->middleware('role:dpjp,dokter,perawat,dots,igd,farmasi,loket');
 
 });

@@ -27,173 +27,44 @@
                     <div class="card-header p-0 pt-1">
                         <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link" type="button" data-toggle="modal"
-                                    data-target="#modalAssesmentAwal"><b>Assesment Awal</b></a>
+                                <a class="nav-link active" id="nav-cppt-tab" data-toggle="tab" href="#nav-cppt"
+                                    role="tab" aria-controls="nav-cppt" aria-selected="true"><b>CPPT</b></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" type="button" data-toggle="modal"
-                                    data-target="#modalRiwayatCppt"><b>Riwayat CPPT</b></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" id="nav-dsdo-tab" data-toggle="tab" href="#nav-dsdo"
-                                    role="tab" aria-controls="nav-dsdo" aria-selected="true"><b>DS & DO</b></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="nav-dx-tab" data-toggle="tab" href="#nav-dx" role="tab"
-                                    aria-controls="nav-dx" aria-selected="true"><b>Diagnosa</b></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="nav-tindakan-tab" data-toggle="tab" href="#nav-tindakan"
-                                    role="tab" aria-controls="nav-tindakan" aria-selected="true"><b>Tindakan</b></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="nav-ro-tab" data-toggle="tab" href="#nav-ro" role="tab"
-                                    aria-controls="nav-ro" aria-selected="false"><b>Radiologi</b></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="nav-lab-tab" data-toggle="tab" href="#nav-lab" role="tab"
-                                    aria-controls="nav-lab" aria-selected="false"><b>Lab</b></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="nav-terapi-tab" data-toggle="tab" href="#nav-terapi" role="tab"
-                                    aria-controls="nav-terapi" aria-selected="false"><b>Terapi</b></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="nav-resep-tab" data-toggle="tab" href="#nav-resep" role="tab"
-                                    aria-controls="nav-resep" aria-selected="false"><b>Resep Pulang</b></a>
+                                <a class="nav-link" id="nav-asAwal-tab" data-toggle="tab" href="#nav-asAwal" role="tab"
+                                    aria-controls="nav-asAwal" aria-selected="true"><b>Assesment Awal</b></a>
                             </li>
                         </ul>
                     </div>
-                    <div class="card-body mx-0 px-2" style="min-height: 450px">
-                        <form id="form_cppt">
-                            <div class="tab-content" id="custom-tabs-one-tabContent">
-                                <div>
-                                    <input type="text" id="norm" name="norm">
-                                    <input type="text" id="notrans" name="notrans">
-                                    <input type="text" id="form_id" name="form_id">
-                                </div>
+                    <div class="card-body mx-0 p-0">
+                        <div class="tab-content" id="custom-tabs-one-tabContent">
+                            <div class="tab-pane fade show active" id="nav-cppt" role="tabpanel"
+                                aria-labelledby="nav-cppt-tab">
+                                <!-- Konten Tab 1 -->
                                 @if ($role == 'dokter' || $role == 'dpjp')
                                     @include('Ranap.Cppt.Dokter.main')
                                 @elseif ($role == 'perawat')
                                     @include('Ranap.Cppt.Perawat.main')
-                                @elseif ($role == 'terapis')
-                                    @include('Ranap.Cppt.Terapis.main')
-                                @elseif ($role == 'gizi')
-                                    @include('Ranap.Cppt.Gizi.main')
                                 @endif
-                                @include('Ranap.Cppt.Template.footer')
                             </div>
-                        </form>
+                            <div class="tab-pane fade" id="nav-asAwal" role="tabpanel" aria-labelledby="nav-asAwal-tab">
+                                <!-- Konten Tab 1 -->
+                                @include('Ranap.Cppt.asesment')
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    {{-- modal --}}
-    <div class="modal fade" id="modalAssesmentAwal" tabindex="-1" aria-labelledby="modalAssesmentAwalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-xxl modal-dialog-scrollable ">
-            <div class="modal-content">
-                <div class="modal-header bg-info">
-                    <h5 class="modal-title" id="modalAssesmentAwalLabel">Assesment Awal</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body modal-body bg-antiquewhite">
-                    @include('Ranap.Cppt.asesment')
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="modalRiwayatCppt" tabindex="-1" aria-labelledby="modalRiwayatCpptLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-xxl">
-            <div class="modal-content">
-                <div class="modal-header bg-info">
-                    <h5 class="modal-title" id="modalRiwayatCpptLabel">Catatan Perawatan Pasien Terintegritas</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body modal-body bg-antiquewhite">
-                    <table id="tabel_riwayat_cppt" class="table table-bordered table-striped" width="100%"
-                        cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th style="width: 10px">Aksi</th>
-                                <th style="width: 15px">Tanggal</th>
-                                <th style="width: 30px">Professional Pemberi Ashuan</th>
-                                <th class="col-4">Hasil Assessment Pasien & Pemberian Pelayanan</th>
-                                <th class="col-3">Intruksi PPA</th>
-                                <th style="width: 30px">Review & Verifikasi DPJP</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#modalAssesmentAwal">Tambah</button>
-                                </td>
-                                <td>
-                                    02/12/2025
-                                </td>
-                                <td>dr. CEMPAKA NOVA INTANI Sp.P, MM, FISR<br> DPJP</td>
-                                <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum iusto, ipsa repellat
-                                    repudiandae eveniet quisquam veritatis minima? Temporibus, id quos, quisquam voluptatem
-                                    magnam, voluptates eius optio debitis adipisci reiciendis nemo.</td>
-                                <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius, qui nemo. Cum minus nemo
-                                    atque expedita! Nihil facere harum ipsa, temporibus esse nobis repellendus minus
-                                    aspernatur cumque neque tempore soluta.</td>
-                                <td>dr. CEMPAKA NOVA INTANI Sp.P, MM, FISR</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
             </div>
         </div>
     </div>
 
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
-    <script src="{{ asset('js/cpptGizi.js') }}"></script>
+    <script src="{{ asset('js/mainGizi.js') }}"></script>
     <script src="{{ asset('js/cppt.js') }}"></script>
     <script>
-        // $('#modalAssesmentAwal').on('shown.bs.modal', function() {
-        //     $(".select2bs4").select2({
-        //         dropdownParent: $('#modalAssesmentAwal')
-        //     });
-        // });
-
-        // // Pastikan search bisa difokus
-        // $(document).on("select2:open", function() {
-        //     setTimeout(() => {
-        //         document.querySelector(".select2-container--open .select2-search__field")?.focus();
-        //     }, 100);
-        // });
-
-
-
         $(document).ready(function() {
-            // $('#modalAssesmentAwal').on('shown.bs.modal', function() {
-            //     $(".select2bs4").select2({
-            //         dropdownParent: $('#modalAssesmentAwal')
-            //     });
-            // });
-            $("#modalAssesmentAwal .select2bs4").select2();
-            $("#modalRiwayatCppt").on("shown.bs.modal", function() {
-                let notrans = $("#pasien_notrans").val(); // atau dari data lain
-                console.log("🚀 ~ $ ~ notrans:", notrans)
-                loadCpptTable(notrans);
-            });
-
             $('#dx1, #dx2, #dx3, #dx4').select2({
                 placeholder: 'Cari Diagnosa...',
                 ajax: {

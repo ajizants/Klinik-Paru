@@ -22,6 +22,8 @@
                 <li class="nav-item d-none d-sm-inline-block" style="display: none">
                     <input type="text" class="form-control form-control-navbar" placeholder="Search" id='roleUser'
                         value="{{ Auth::user()->role }}" hidden>
+                    <input type="text" class="form-control form-control-navbar" placeholder="Search" id='emailUser'
+                        value="{{ Auth::user()->email }}" hidden>
                 </li>
             </ul>
 

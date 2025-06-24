@@ -10,6 +10,10 @@
     <div class="sidebar font-weight-bold">
         <!-- Sidebar Menu -->
         <nav class="mt-2">
+            @php
+                $role = Auth::user()->role;
+                $url = '/Ranap/Cppt/' . $role;
+            @endphp
             @if (Request::is('Ranap*'))
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                     data-accordion="false">
@@ -31,23 +35,9 @@
                             <p>Pendaftaran</p>
                         </a>
                     </li>
-                    {{-- <li class="nav-item">
-                        <a href="" class="nav-link">
-                            <i class="fa-solid fa-desktop nav-icon"></i>
-                            <p>Pendaftaran <i class="right fas fa-angle-left"></i></p>
-                        </a>
-                        <ul class="nav nav-treeview" style="display: none;">
-                            <li class="nav-item ml-4">
-                                <a class="nav-link" href="{{ url('display/loket') }}">
-                                    <i class="fa-solid fa-chart-column nav-icon"></i>
-                                    <p>Rekap Pendaftaran</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li> --}}
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/Ranap/Cppt') }}">
+                        <a class="nav-link" href="{{ url($url) }}">
                             <i class="fa-solid fa-book-medical nav-icon"></i>
                             <p>Input CPPT</p>
                         </a>
@@ -421,7 +411,7 @@
 
                     <!-- Surat Medis -->
                     @php
-                        $roleSurat = ['admin', 'igd', 'nakes', 'dokter', 'perawat'];
+                        $roleSurat = ['admin', 'igd', 'nakes', 'dpjp', 'dokter', 'perawat'];
                     @endphp
                     <li class="nav-item @if (!in_array(Auth::user()->role, $roleSurat)) non-aktif @endif">
                         <a class="nav-link" href="{{ url('/surat/medis') }}">
@@ -439,7 +429,7 @@
 
                     <!-- Hasil Penunjang -->
                     @php
-                        $roleHasilPenunjang = ['tamu', 'igd', 'admin', 'nakes', 'dokter', 'perawat'];
+                        $roleHasilPenunjang = ['tamu', 'igd', 'admin', 'nakes', 'dpjp', 'dokter', 'perawat'];
                     @endphp
                     <li class="nav-item @if (!in_array(Auth::user()->role, $roleHasilPenunjang)) non-aktif @endif">
                         <a class="nav-link" href="{{ url('/RO/Hasil') }}">
@@ -448,9 +438,7 @@
                         </a>
                     </li>
                     <!-- Promkes -->
-                    @php
-                        $roleHasilPenunjang = ['tamu', 'promkes', 'admin', 'nakes', 'dokter', 'perawat'];
-                    @endphp
+
                     <li class="nav-item @if (!in_array(Auth::user()->role, $roleHasilPenunjang)) non-aktif @endif">
                         <a class="nav-link" href="{{ url('/Promkes') }}">
                             <i class="fa-solid fa-laptop-medical nav-icon"></i>
@@ -460,7 +448,7 @@
 
                     <!-- CPPT Section -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/Ranap') }}" target="_blank">
+                        <a class="nav-link" href="{{ url($url) }}" target="_blank">
                             <i class="fa-solid fa-book-medical nav-icon"></i>
                             <p>RAWAT INAP</p>
                         </a>
@@ -495,7 +483,7 @@
                     </li>
 
                     @php
-                        $roleDokter = ['admin', 'igd', 'dokter', 'perawat'];
+                        $roleDokter = ['admin', 'igd', 'dpjp', 'dokter', 'perawat'];
                     @endphp
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/Riwayat/Pasien') }}">

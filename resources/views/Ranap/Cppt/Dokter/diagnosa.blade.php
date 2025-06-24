@@ -13,9 +13,9 @@
                          <select type="select" id="dx1" name="dx1"
                              class="form-control select2bs4 mb-2 border border-primary" required>
                              <option value="">--Pilih Diagnosa Medis 1--</option>
-                             @foreach ($dxMed as $dx)
+                             {{-- @foreach ($dxMed as $dx)
                                  <option value="{{ $dx->kdDiag }}">{{ $dx->diagnosa }}</option>
-                             @endforeach
+                             @endforeach --}}
                          </select>
                          <input type="text" id="ket_dx1" name="ket_dx1" class="form-control"
                              placeholder="Keterangan Diagnosa 1">

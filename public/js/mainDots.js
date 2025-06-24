@@ -401,8 +401,6 @@ function setKontrol(bln, kntrl) {
 
 $(document).ready(function () {
     scrollToTop();
-    $(".select2bs4").select2();
-    $("#modal-pasienTB .select2bs4").select2();
     $("#modal-pasienTB #modal-norm").on("keyup", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();

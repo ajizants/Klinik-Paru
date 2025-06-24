@@ -311,6 +311,12 @@ input:checked + .slider:before {
     max-width: 90% !important; /* Sesuaikan lebar sesuai kebutuhan, misalnya 90% */
     width: 90% !important; /* Gunakan 90% dari lebar layar */
 }
+.modal-xxl {
+    max-width: 100% !important; /* Sesuaikan lebar sesuai kebutuhan, misalnya 100% */
+    width: 100% !important; /* Gunakan 100% dari lebar layar */
+    margin-top: 0px;
+    left: 10px;
+}
 
 @media (max-width: 700px) {
     .mobile-navbar {

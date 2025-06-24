@@ -1,3 +1,13 @@
+let tglnow = "";
+let adminId = "";
+let jk = "";
+var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+});
+
 $(document).on("select2:open", () => {
     document.querySelector(".select2-search__field").focus();
 });
@@ -10,8 +20,11 @@ $(document).on("select2:open", function () {
     }, 100);
 });
 
-let tglnow = "";
 document.addEventListener("DOMContentLoaded", function () {
+    let email = $("#emailUser").val();
+    adminId = email.split("@")[0];
+    console.log("🚀 ~ adminId:", adminId);
+
     $("#summernote").summernote();
     function updateDateTime() {
         var now = new Date();
@@ -36,6 +49,14 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(updateDateTime, 1000);
 
     $(".select2bs4").select2();
+
+    $(".modal").on("shown.bs.modal", function () {
+        $(this)
+            .find(".select2bs4")
+            .select2({
+                dropdownParent: $(this),
+            });
+    });
 
     $.ajaxSetup({
         headers: {
@@ -141,7 +162,6 @@ var Toast = Swal.mixin({
 });
 
 function toggleSections(sectionToShow, idTable = null) {
-    console.log("🚀 ~ toggleSections ~ sectionToShow:", sectionToShow);
     var sections = [
         "#dAntrian",
         "#dSelesai",

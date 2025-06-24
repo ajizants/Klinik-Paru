@@ -15,6 +15,11 @@ class RanapPendaftaran extends Model
         return $this->belongsTo(PasienModel::class, 'norm', 'norm');
     }
 
+    public function identitas()
+    {
+        return $this->belongsTo(PasienModel::class, 'norm', 'norm');
+    }
+
     public function dokter()
     {
         return $this->belongsTo(Vpegawai::class, 'dpjp', 'nip');
@@ -30,10 +35,16 @@ class RanapPendaftaran extends Model
         return $this->belongsTo(Vpegawai::class, 'admin', 'nip');
     }
 
-    public function getPasienRanap()
+    public function getPasienRanap($dpjp = null)
     {
-        $data = RanapPendaftaran::whereNull('status_pulang')
-            ->with('dokter', 'kamar', 'petugas')->get();
+        $query = RanapPendaftaran::whereNull('status_pulang')
+            ->with('dokter', 'kamar', 'petugas');
+
+        if ($dpjp !== null) {
+            $query->where('dpjp', $dpjp);
+        }
+
+        $data = $query->get();
         // return $data;
         $model     = new KominfoModel();
         $allPasien = [];
@@ -42,6 +53,8 @@ class RanapPendaftaran extends Model
             $pasien = $model->pasienRequest($item->norm);
             if ($pasien) {
                 $allPasien[$item->norm] = $pasien;
+            } else {
+
             }
         }
 
@@ -58,6 +71,7 @@ class RanapPendaftaran extends Model
                 'pasien_jk'        => $allPasien[$item->norm]['jenis_kelamin_nama'] ?? '-',
                 'tgl_masuk'        => $item->tgl_masuk,
                 'ruang'            => $item->ruang,
+                'dpjp'             => $item->dpjp,
                 'dokter'           => $item->dokter->gelar_d . ' ' . $item->dokter->nama . ' ' . $item->dokter->gelar_b,
                 'admin'            => $item->petugas->gelar_d . ' ' . $item->petugas->nama . ' ' . $item->petugas->gelar_b,
                 'ruang'            => $item->kamar->nama_ruangan,
@@ -76,8 +90,8 @@ class RanapPendaftaran extends Model
                     <th>Alamat</th>
                     <th>Tgl Masuk</th>
                     <th>Ruangan</th>
+                    <th>Jaminan</th>
                     <th>Dokter</th>
-                    <th>Admin</th>
                 </tr>
             </thead>
             <tbody>';
@@ -94,6 +108,7 @@ class RanapPendaftaran extends Model
                     data-ruang="' . $item['ruang'] . '"
                     data-jk="' . $item['pasien_jk'] . '"
                     data-umur="' . $item['umur'] . '"
+                    data-dpjp="' . $item['dpjp'] . '"
                     data-tgllahir="' . Carbon::parse($item['pasien_tgl_lahir'])->format('d-m-Y') . '"
                     onclick="entryCppt(this,' . "'" . $item['notrans'] . "'" . ')" data-toggle="tooltip" data-placement="top" title="Entry CPPT Pasien"><i class="fas fa-edit"></i></a>
                 </td>
@@ -101,8 +116,8 @@ class RanapPendaftaran extends Model
                 <td>' . $item['pasien_alamat'] . '</td>
                 <td>' . Carbon::parse($item['tgl_masuk'])->format('d-m-Y') . '</td>
                 <td>' . $item['ruang'] . '</td>
+                <td>' . $item['jaminan'] . '</td>
                 <td>' . $item['dokter'] . '</td>
-                <td>' . $item['admin'] . '</td>
             </tr>';
         }
 

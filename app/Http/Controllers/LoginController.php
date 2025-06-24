@@ -50,6 +50,9 @@ class LoginController extends Controller
             // dd($email);
 
             $go = "";
+            if ($user->role == 'dokter' || $user->role == 'dpjp') {
+                return redirect('/Ranap');
+            }
             switch ($email) {
                 case 'nurse@rsparu.com':
                     $go = '/E-kinerja';
