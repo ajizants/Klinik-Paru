@@ -102,6 +102,7 @@
              success: function(response) {
                  console.log('Berhasil:', response);
                  tampilkanSukses(response.message);
+                 isiTabelPenunjang(response.data);
              },
              error: function(xhr) {
                  console.error('Gagal:', xhr.responseText);
@@ -113,6 +114,9 @@
 
      function isiTabelPenunjang(data) {
          console.log(data);
+         if ($.fn.DataTable.isDataTable("#daftarOrderPenunjang")) {
+             $("#daftarOrderPenunjang").DataTable().clear().destroy();
+         }
          $("#daftarOrderPenunjang").DataTable({
              data: data,
              columns: [{

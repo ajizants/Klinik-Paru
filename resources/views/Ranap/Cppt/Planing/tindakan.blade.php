@@ -111,6 +111,7 @@
 
 <script>
     function orderTindakan() {
+        tampilkanLoading('Sedang menyimpan data...');
         const data = {
             norm: $("#tindakan_norm").val(),
             notrans: $("#tindakan_notrans").val(),
@@ -144,11 +145,12 @@
             },
             success: function(res) {
                 console.log("✅ Respon:", res);
+                isiTabelTindakan(res.data);
                 Swal.fire("Sukses", "Data berhasil disimpan", "success");
             },
             error: function(xhr) {
                 console.error("❌ Error:", xhr.responseText);
-                Swal.fire("Gagal", "Terjadi kesalahan saat menyimpan", "error");
+                Swal.fire("Gagal", "Terjadi kesalahan saat menyimpan", "error", xhr.responseText);
             },
         });
     }

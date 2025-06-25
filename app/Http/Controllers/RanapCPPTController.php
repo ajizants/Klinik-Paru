@@ -150,6 +150,40 @@ class RanapCPPTController extends Controller
 
     public function order_tindakan(Request $request)
     {
+        $form_id        = $request->input('form_id');
+        $daftarTindakan = $this->getDataPenunjangDanTindakan($form_id)['tindakan'];
+
+        return response()->json(['message' => 'Tindakan & obat berhasil disimpan', 'data' => $daftarTindakan], 200);
+        // $notrans        = $request->input('notrans');
+        // $daftarTindakan = RanapOrder::where('form_id', $form_id)
+        //     ->with('detail', 'detailObat')
+        //     ->where('notrans', $notrans)->get();
+        // $tindakan = collect();
+        // foreach ($daftarTindakan as $order) {
+        //     foreach ($order->detail as $detail) {
+        //         if (in_array($detail->kelas, [2, 3, 5, 6])) {
+        //             $detailObat = $order->detailObat[0] ?? null;
+
+        //             $tindakan->push([
+        //                 'form_id'   => $order->form_id,
+        //                 'notrans'   => $order->notrans,
+        //                 'norm'      => $order->norm,
+        //                 'ket'       => $order->ket,
+        //                 'signa'     => $order->signa_1 . ' X ' . $order->signa_2,
+        //                 'idLayanan' => $detail->idLayanan,
+        //                 'nmLayanan' => $detail->nmLayanan,
+        //                 'kelas'     => $detail->kelas,
+        //                 'kdTind'    => $detail->kdTind,
+        //                 'kdFoto'    => $detail->kdFoto,
+        //                 'tarif'     => $detail->tarif,
+        //                 'obat_id'   => $order->obat_id ?? null,
+        //                 'nmObat'    => $detailObat->nmObat ?? null,
+        //             ]);
+        //         }
+        //     }
+        // }
+
+        // return response()->json(['message' => 'Tindakan & obat berhasil disimpan', 'data' => $tindakan], 200);
         try {
             $validator = Validator::make($request->all(), [
                 'norm'        => 'required|string|max:10',
@@ -202,7 +236,9 @@ class RanapCPPTController extends Controller
                 RanapOrder::create($rowData);
             }
 
-            return response()->json(['message' => 'Tindakan & obat berhasil disimpan'], 200);
+            $daftarTindakan = $this->getDataPenunjangDanTindakan($form_id)['tindakan'];
+
+            return response()->json(['message' => 'Tindakan & obat berhasil disimpan', 'data' => $daftarTindakan], 200);
 
         } catch (\Throwable $th) {
             Log::error('Gagal simpan order_tindakan: ' . $th->getMessage());
@@ -221,6 +257,7 @@ class RanapCPPTController extends Controller
     public function order_penunjang(Request $request)
     {
         // Validasi data utama
+
         $validated = $request->validate([
             'norm'              => 'required|string',
             'notrans'           => 'required|string',
@@ -229,6 +266,12 @@ class RanapCPPTController extends Controller
             'items'             => 'required|array|min:1',
             'items.*.idLayanan' => 'required|numeric',
             'items.*.ket'       => 'nullable|string',
+        ]);
+        $dataOrder = $this->getDataPenunjangDanTindakan($validated['form_id'])['penunjang'];
+        return response()->json([
+            'status'  => true,
+            'message' => 'Order penunjang berhasil disimpan.',
+            'data'    => $dataOrder,
         ]);
 
         try {
@@ -243,10 +286,11 @@ class RanapCPPTController extends Controller
                     'ket'     => $item['keterangan'] ?? null,
                 ]);
             }
-
+            $dataOrder = $this->getDataPenunjangDanTindakan($validated['form_id'])['penunjang'];
             return response()->json([
                 'status'  => true,
                 'message' => 'Order penunjang berhasil disimpan.',
+                'data'    => $dataOrder,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -361,6 +405,20 @@ class RanapCPPTController extends Controller
 
     public function edit($form_id)
     {
+        $getData   = $this->getDataPenunjangDanTindakan($form_id);
+        $data      = $getData['data'];
+        $penunjang = $getData['penunjang'];
+        $tindakan  = $getData['tindakan'];
+        return response()->json([
+            'success'   => true,
+            'message'   => 'Data berhasil ditemukan',
+            'data'      => $data,
+            'penunjang' => $penunjang,
+            'tindakan'  => $tindakan,
+        ]);
+    }
+    public function getDataPenunjangDanTindakan($form_id)
+    {
         $data = RanapCPPT::with([
             'order.detail', 'order.detailObat',
         ])
@@ -418,13 +476,11 @@ class RanapCPPTController extends Controller
             }
         }
 
-        return response()->json([
-            'success'   => true,
-            'message'   => 'Data berhasil ditemukan',
+        return [
             'data'      => $data,
             'penunjang' => $penunjang,
             'tindakan'  => $tindakan,
-        ]);
+        ];
     }
 
     public function update(Request $request, RanapCPPT $ranapCPPT)
