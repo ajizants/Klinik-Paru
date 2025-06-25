@@ -11,6 +11,7 @@ use App\Models\RanapCPPT;
 use App\Models\RanapOrder;
 use App\Models\RanapPendaftaran;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -85,7 +86,7 @@ class RanapCPPTController extends Controller
             $validated = $request->validate([
                 'norm'        => 'required|string|max:10',
                 'notrans'     => 'required|string',
-                'form_id'     => 'required|string',
+                'form_id'     => 'required|string|unique:ranap_cppt',
                 'td'          => 'nullable|string',
                 'nadi'        => 'nullable|string',
                 'suhu'        => 'nullable|string',
@@ -99,6 +100,7 @@ class RanapCPPTController extends Controller
                 'objektif'    => 'nullable|string',
                 'subjektif'   => 'nullable|string',
                 'assesment'   => 'nullable|string',
+                'planing'     => 'nullable|string',
                 'dx1'         => 'nullable|string',
                 'ket_dx1'     => 'nullable|string',
                 'dx2'         => 'nullable|string',
@@ -128,6 +130,7 @@ class RanapCPPTController extends Controller
                 'objektif'    => $validated['objektif'],
                 'subjektif'   => $validated['subjektif'],
                 'assesment'   => $validated['assesment'],
+                'planing'     => $validated['planing'],
                 'dx1'         => $validated['dx1'],
                 'ket_dx1'     => $validated['ket_dx1'],
                 'dx2'         => $validated['dx2'],
@@ -150,40 +153,11 @@ class RanapCPPTController extends Controller
 
     public function order_tindakan(Request $request)
     {
-        $form_id        = $request->input('form_id');
-        $daftarTindakan = $this->getDataPenunjangDanTindakan($form_id)['tindakan'];
+        // $form_id        = $request->input('form_id');
+        // $daftarTindakan = $this->getDataPenunjangDanTindakan($form_id)['tindakan'];
 
-        return response()->json(['message' => 'Tindakan & obat berhasil disimpan', 'data' => $daftarTindakan], 200);
-        // $notrans        = $request->input('notrans');
-        // $daftarTindakan = RanapOrder::where('form_id', $form_id)
-        //     ->with('detail', 'detailObat')
-        //     ->where('notrans', $notrans)->get();
-        // $tindakan = collect();
-        // foreach ($daftarTindakan as $order) {
-        //     foreach ($order->detail as $detail) {
-        //         if (in_array($detail->kelas, [2, 3, 5, 6])) {
-        //             $detailObat = $order->detailObat[0] ?? null;
+        // return response()->json(['message' => 'Tindakan & obat berhasil disimpan', 'data' => $daftarTindakan], 200);
 
-        //             $tindakan->push([
-        //                 'form_id'   => $order->form_id,
-        //                 'notrans'   => $order->notrans,
-        //                 'norm'      => $order->norm,
-        //                 'ket'       => $order->ket,
-        //                 'signa'     => $order->signa_1 . ' X ' . $order->signa_2,
-        //                 'idLayanan' => $detail->idLayanan,
-        //                 'nmLayanan' => $detail->nmLayanan,
-        //                 'kelas'     => $detail->kelas,
-        //                 'kdTind'    => $detail->kdTind,
-        //                 'kdFoto'    => $detail->kdFoto,
-        //                 'tarif'     => $detail->tarif,
-        //                 'obat_id'   => $order->obat_id ?? null,
-        //                 'nmObat'    => $detailObat->nmObat ?? null,
-        //             ]);
-        //         }
-        //     }
-        // }
-
-        // return response()->json(['message' => 'Tindakan & obat berhasil disimpan', 'data' => $tindakan], 200);
         try {
             $validator = Validator::make($request->all(), [
                 'norm'        => 'required|string|max:10',
@@ -267,12 +241,12 @@ class RanapCPPTController extends Controller
             'items.*.idLayanan' => 'required|numeric',
             'items.*.ket'       => 'nullable|string',
         ]);
-        $dataOrder = $this->getDataPenunjangDanTindakan($validated['form_id'])['penunjang'];
-        return response()->json([
-            'status'  => true,
-            'message' => 'Order penunjang berhasil disimpan.',
-            'data'    => $dataOrder,
-        ]);
+        // $dataOrder = $this->getDataPenunjangDanTindakan($validated['form_id'])['penunjang'];
+        // return response()->json([
+        //     'status'  => true,
+        //     'message' => 'Order penunjang berhasil disimpan.',
+        //     'data'    => $dataOrder,
+        // ]);
 
         try {
             foreach ($validated['items'] as $item) {
@@ -340,24 +314,102 @@ class RanapCPPTController extends Controller
         return $html;
     }
 
+    public function showLast($notrans)
+    {
+        // return response()->json($this->getByNotrans($notrans));
+        $data = RanapCPPT::where('notrans', $notrans)->orderBy('created_at', 'desc')->first();
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil ditemukan',
+            'data'    => $data,
+        ]);
+
+        return response()->json($result);
+    }
     public function show($notrans)
     {
         // return response()->json($this->getByNotrans($notrans));
         $data = RanapCPPT::with('nakes', 'pasien.dokter', 'diagnosa1', 'diagnosa2', 'diagnosa3', 'diagnosa4')->where('notrans', $notrans)->orderBy('created_at', 'desc')->get();
+        // return $data;
+        // $result = $data->map(function ($item) {
+        //     // $orders = RanapOrder::with('detail')->where('form_id', $item->form_id)->get();
+        //     // dd($orders);
+        //     $tindakan  = $this->getDataPenunjangDanTindakan($item['form_id'])['tindakan'];
+        //     $penunjang = $this->getDataPenunjangDanTindakan($item['form_id'])['penunjang'];
+        //     // dd($penunjang, $tindakan);
+        //     $penunjangList = collect();
+        //     $tindakanList  = collect();
+        //     foreach ($penunjang as $order) {
+        //         // dd($order);
+        //         $baris = $order['nmLayanan'];
+        //         if ($order['ket']) {
+        //             $baris .= " - " . $order['ket'];
+        //         }
+        //         $penunjangList->push($baris);
+        //     }
 
+        //     foreach ($tindakan as $order) {
+        //         $baris = $order['nmLayanan'] . ' ' . $order['nmObat'] . ' ' . $order['signa'];
+        //         if ($order['ket']) {
+        //             $baris .= " - " . $order['ket'];
+        //         }
+        //         $tindakanList->push($baris);
+        //     }
+        //     return [
+        //         'form_id'          => $item->form_id,
+        //         'id'               => $item->id,
+        //         'created_at'       => $item->created_at->format('d/m/Y') . '<br>' . $item->created_at->format('H:i:s'),
+        //         'petugas'          => trim(collect([
+        //             optional($item->nakes)->gelar_d,
+        //             optional($item->nakes)->nama,
+        //             optional($item->nakes)->gelar_b,
+        //         ])->filter()->implode(' ')) . '<br>' . (optional($item->nakes)->nm_jabatan ?? '-'),
+        //         'dpjp'             => trim(collect([
+        //             optional(optional($item->pasien)->dokter)->gelar_d,
+        //             optional(optional($item->pasien)->dokter)->nama,
+        //             optional(optional($item->pasien)->dokter)->gelar_b,
+        //         ])->filter()->implode(' ')) ?: '-',
+        //         'hasil_assessment' => collect([
+        //             $item->subjektif ? "<strong>S:</strong> $item->subjektif" : null,
+        //             $item->objektif ? "<strong>O:</strong> $item->objektif" : null,
+        //             $item->assesment ? "<strong>A:</strong> $item->assesment" : null,
+        //             $item->dx1 ? "<strong>DX1:</strong> $item->dx1 - $item->ket_dx1" : null,
+        //             $item->dx2 ? "<strong>DX2:</strong> $item->dx2 - $item->ket_dx2" : null,
+        //             $item->dx3 ? "<strong>DX3:</strong> $item->dx3 - $item->ket_dx3" : null,
+        //             $item->dx4 ? "<strong>DX4:</strong> $item->dx4 - $item->ket_dx4" : null,
+        //             $item->assesment ? "<strong>P:</strong> $item->assesment" : null,
+        //             $item->dx1 ? "<strong>DX1:</strong> $item->dx1 - $item->ket_dx1" : null,
+        //             $item->dx2 ? "<strong>DX2:</strong> $item->dx2 - $item->ket_dx2" : null,
+        //             $item->dx3 ? "<strong>DX3:</strong> $item->dx3 - $item->ket_dx3" : null,
+        //             $item->dx4 ? "<strong>DX4:</strong> $item->dx4 - $item->ket_dx4" : null,
+        //         ])->filter()->implode('<br>'),
+        //         'instruksi'        => collect([
+        //             count($penunjang) > 0 ? "<strong>Penunjang:</strong><br> " . $penunjangList->implode('<br>') : null,
+        //             count($tindakan) > 0 ? "<strong>Tindakan:</strong><br> " . $tindakanList->implode('<br>') : null,
+        //         ])->filter()->implode('<br>')];
+        // });
         $result = $data->map(function ($item) {
-            $orders = RanapOrder::with('detail')->where('form_id', $item->form_id)->get();
-            // dd($orders);
-            $instruksiList = collect();
-            foreach ($orders as $order) {
-                $sortedDetails = $order->detail->sortBy('kelas'); // urutkan berdasarkan kelas
-                foreach ($sortedDetails as $detail) {
-                    $baris = $detail->nmLayanan;
-                    if ($order->ket) {
-                        $baris .= " - " . $order->ket;
-                    }
-                    $instruksiList->push($baris);
+            $dataInstruksi = $this->getDataPenunjangDanTindakan($item->form_id); // panggil sekali saja
+            $tindakan      = $dataInstruksi['tindakan'] ?? [];
+            $penunjang     = $dataInstruksi['penunjang'] ?? [];
+
+            $penunjangList = collect();
+            $tindakanList  = collect();
+
+            foreach ($penunjang as $order) {
+                $baris = $order['nmLayanan'];
+                if ($order['ket']) {
+                    $baris .= " - " . $order['ket'];
                 }
+                $penunjangList->push($baris);
+            }
+
+            foreach ($tindakan as $order) {
+                $baris = $order['nmLayanan'] . ' ' . $order['nmObat'] . ' ' . $order['signa'];
+                if ($order['ket']) {
+                    $baris .= " - " . $order['ket'];
+                }
+                $tindakanList->push($baris);
             }
 
             return [
@@ -378,29 +430,34 @@ class RanapCPPTController extends Controller
                     $item->subjektif ? "<strong>S:</strong> $item->subjektif" : null,
                     $item->objektif ? "<strong>O:</strong> $item->objektif" : null,
                     $item->assesment ? "<strong>A:</strong> $item->assesment" : null,
-                    $item->dx1 ? "<strong>DX1:</strong> $item->dx1 - $item->ket_dx1" : null,
-                    $item->dx2 ? "<strong>DX2:</strong> $item->dx2 - $item->ket_dx2" : null,
-                    $item->dx3 ? "<strong>DX3:</strong> $item->dx3 - $item->ket_dx3" : null,
-                    $item->dx4 ? "<strong>DX4:</strong> $item->dx4 - $item->ket_dx4" : null,
                     $item->assesment ? "<strong>P:</strong> $item->assesment" : null,
                     $item->dx1 ? "<strong>DX1:</strong> $item->dx1 - $item->ket_dx1" : null,
                     $item->dx2 ? "<strong>DX2:</strong> $item->dx2 - $item->ket_dx2" : null,
                     $item->dx3 ? "<strong>DX3:</strong> $item->dx3 - $item->ket_dx3" : null,
                     $item->dx4 ? "<strong>DX4:</strong> $item->dx4 - $item->ket_dx4" : null,
                 ])->filter()->implode('<br>'),
-                'instruksi'        => $instruksiList->filter()->implode('<br>'),
+                'instruksi'        => collect([
+                    $penunjangList->isNotEmpty() ? "<strong>Penunjang:</strong><br>" . $penunjangList->implode('<br>') : null,
+                    $tindakanList->isNotEmpty() ? "<strong>Tindakan:</strong><br>" . $tindakanList->implode('<br>') : null,
+                ])->filter()->implode('<br>'),
             ];
         });
 
         return response()->json($result);
     }
 
-    public function getFormId()
+    public function getFormId($notrans)
     {
         $date       = date('Y-m-d');
         $jumlahCppt = RanapCPPT::where('created_at', 'like', $date . '%')->count();
         $formId     = 'CPPT' . date('dmy') . sprintf('%04d', $jumlahCppt + 1);
-        return response()->json(['success' => true, 'message' => 'Data berhasil disimpan', 'id' => $formId], 200);
+        $cpptLast   = RanapCPPT::where('notrans', $notrans)->first();
+        return response()->json([
+            'success'  => true,
+            'message'  => 'Data berhasil disimpan',
+            'id'       => $formId,
+            'cpptLast' => $cpptLast,
+        ], 200);
     }
 
     public function edit($form_id)
@@ -417,19 +474,84 @@ class RanapCPPTController extends Controller
             'tindakan'  => $tindakan,
         ]);
     }
+    // public function getDataPenunjangDanTindakan($form_id)
+    // {
+    //     $data = RanapCPPT::with([
+    //         'order.detail', 'order.detailObat',
+    //     ])
+    //         ->where('form_id', $form_id)
+    //         ->orderBy('created_at', 'desc')
+    //         ->get();
+
+    //     $penunjang = collect();
+
+    //     foreach ($data as $cppt) {
+    //         foreach ($cppt->order as $order) {
+    //             foreach ($order->detail as $detail) {
+    //                 if (in_array($detail->kelas, [8, 9])) {
+    //                     $penunjang->push([
+    //                         'form_id'   => $order->form_id,
+    //                         'notrans'   => $order->notrans,
+    //                         'norm'      => $order->norm,
+    //                         'ket'       => $order->ket,
+    //                         'idLayanan' => $detail->idLayanan,
+    //                         'nmLayanan' => $detail->nmLayanan,
+    //                         'kelas'     => $detail->kelas,
+    //                         'kdTind'    => $detail->kdTind,
+    //                         'kdFoto'    => $detail->kdFoto,
+    //                         'tarif'     => $detail->tarif,
+    //                     ]);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     $tindakan = collect();
+
+    //     foreach ($data as $cppt) {
+    //         foreach ($cppt->order as $order) {
+    //             foreach ($order->detail as $detail) {
+    //                 if (in_array($detail->kelas, [2, 3, 5, 6])) {
+    //                     $detailObat = $order->detailObat[0] ?? null;
+
+    //                     $tindakan->push([
+    //                         'form_id'   => $order->form_id,
+    //                         'notrans'   => $order->notrans,
+    //                         'norm'      => $order->norm,
+    //                         'ket'       => $order->ket,
+    //                         'signa'     => $order->signa_1 . ' X ' . $order->signa_2,
+    //                         'idLayanan' => $detail->idLayanan,
+    //                         'nmLayanan' => $detail->nmLayanan,
+    //                         'kelas'     => $detail->kelas,
+    //                         'kdTind'    => $detail->kdTind,
+    //                         'kdFoto'    => $detail->kdFoto,
+    //                         'tarif'     => $detail->tarif,
+    //                         'obat_id'   => $order->obat_id ?? null,
+    //                         'nmObat'    => $detailObat->nmObat ?? null,
+    //                     ]);
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     return [
+    //         'data'      => $data,
+    //         'penunjang' => $penunjang,
+    //         'tindakan'  => $tindakan,
+    //     ];
+    // }
+
     public function getDataPenunjangDanTindakan($form_id)
     {
-        $data = RanapCPPT::with([
-            'order.detail', 'order.detailObat',
-        ])
+        $data = RanapCPPT::with(['order.detail', 'order.detailObat'])
             ->where('form_id', $form_id)
             ->orderBy('created_at', 'desc')
             ->get();
 
         $penunjang = collect();
+        $tindakan  = collect();
 
         foreach ($data as $cppt) {
-            foreach ($cppt->order as $order) {
+            foreach ($cppt->order->where('form_id', $form_id) as $order) {
                 foreach ($order->detail as $detail) {
                     if (in_array($detail->kelas, [8, 9])) {
                         $penunjang->push([
@@ -447,11 +569,8 @@ class RanapCPPTController extends Controller
                     }
                 }
             }
-        }
-        $tindakan = collect();
 
-        foreach ($data as $cppt) {
-            foreach ($cppt->order as $order) {
+            foreach ($cppt->order->where('form_id', $form_id) as $order) {
                 foreach ($order->detail as $detail) {
                     if (in_array($detail->kelas, [2, 3, 5, 6])) {
                         $detailObat = $order->detailObat[0] ?? null;
@@ -497,7 +616,10 @@ class RanapCPPTController extends Controller
     {
         $pasien = RanapPendaftaran::where('norm', $norm)
             ->with('identitas', 'dokter', 'kamar', 'petugas')
+            ->where('status_pulang', null)
             ->first();
+        $cpptLast = RanapCPPT::where('notrans', $pasien->notrans)->orderBy('created_at', 'desc')->first();
+
         $kominfo          = new KominfoModel();
         $identitasKominfo = $kominfo->pasienRequest($norm);
         $pasien->biodata  = $identitasKominfo;
@@ -536,6 +658,7 @@ class RanapCPPTController extends Controller
                 'message'  => 'Data berhasil ditemukan...',
                 'form_id'  => $formId,
                 'pasien'   => $pasien,
+                'cppt'     => $cpptLast,
             ], 200);
     }
 }

@@ -1,5 +1,6 @@
 let tglnow = "";
 let adminId = "";
+let roleUser = "";
 let jk = "";
 var Toast = Swal.mixin({
     toast: true,
@@ -24,6 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let email = $("#emailUser").val();
     adminId = email.split("@")[0];
     console.log("🚀 ~ adminId:", adminId);
+    roleUser = $("#roleUser").val();
+    console.log("🚀 ~ roleUser:", roleUser);
 
     $("#summernote").summernote();
     function updateDateTime() {

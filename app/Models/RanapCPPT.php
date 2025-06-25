@@ -27,6 +27,7 @@ class RanapCPPT extends Model
         'objektif',
         'subjektif',
         'assesment',
+        'planing',
         'dx1',
         'ket_dx1',
         'dx2',

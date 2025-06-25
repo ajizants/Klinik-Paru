@@ -1,7 +1,7 @@
 let form_id;
 function entryCppt(button, noTrans) {
     $.ajax({
-        url: `/api/ranap/cppt/getFormId`,
+        url: `/api/ranap/cppt/getFormId/${noTrans}`,
         method: "GET",
         headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
@@ -9,7 +9,21 @@ function entryCppt(button, noTrans) {
     })
         .done(function (response) {
             form_id = response.id;
-            $("#form_id").val(response.id); // asumsi response bentuk: { id: "..." }
+            const data = response.cpptLast;
+            for (let key in data) {
+                $(`#form_cppt [name="${key}"]`).val(data[key]);
+                $(`#form_cppt [name="${key}"]`).trigger("change");
+            }
+
+            $("#subjektif").summernote("code", data.subjektif ?? "");
+            $("#objektif").summernote("code", data.objektif ?? "");
+            $("#assesment").summernote("code", data.assesment ?? "");
+            $("#planing").summernote("code", data.planing ?? "");
+            if (data.dx1) isiDiagnosaSelect("#dx1", data.dx1);
+            if (data.dx2) isiDiagnosaSelect("#dx2", data.dx2);
+            if (data.dx3) isiDiagnosaSelect("#dx3", data.dx3);
+            if (data.dx4) isiDiagnosaSelect("#dx4", data.dx4);
+
             $("#pasien_no_rm").val($(button).data("norm"));
             $("#jaminan").val($(button).data("jaminan"));
             $("#pasien_nama").val($(button).data("nama"));
@@ -23,6 +37,8 @@ function entryCppt(button, noTrans) {
             $("#petugas").trigger("change");
             document.getElementsByName("notrans")[0].value =
                 $(button).data("notrans");
+
+            $("#form_id").val(response.id); // asumsi response bentuk: { id: "..." }
 
             $("#notrans").val($(button).data("notrans"));
             $("#norm").val($(button).data("norm"));

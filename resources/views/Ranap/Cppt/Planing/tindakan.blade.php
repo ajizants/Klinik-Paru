@@ -8,7 +8,7 @@
         <div class="card-body p-2">
             {{-- @csrf --}}
             <div id="formtind" class="form-group col">
-                <div>
+                <div hidden>
                     <input type="text" id="tindakan_norm" name="norm">
                     <input type="text" id="tindakan_notrans" name="notrans">
                     <input type="text" id="tindakan_form_id" name="form_id">
@@ -77,7 +77,7 @@
                     </tfoot>
                 </table>
                 <div class="form-group form-row d-flex justify-conten-end">
-                    <button onclick="orderTindakan()" class="btn btn-primary">Simpan</button>
+                    <a type="button" onclick="orderTindakan()" class="btn btn-primary">Simpan</a>
                 </div>
             </div>
         </div>

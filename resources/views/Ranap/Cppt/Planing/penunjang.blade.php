@@ -10,7 +10,7 @@
              <div class="card-body pb-0 pt-1 px-1">
                  @csrf
                  <form class="form-group col">
-                     <div>
+                     <div hidden>
                          <input type="text" id="penunjang_norm" name="norm">
                          <input type="text" id="penunjang_notrans" name="notrans">
                          <input type="text" id="penunjang_form_id" name="form_id">
