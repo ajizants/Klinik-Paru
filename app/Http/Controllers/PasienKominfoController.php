@@ -1608,7 +1608,13 @@ class PasienKominfoController extends Controller
         $riwayat = [];
         foreach ($data as $item) {
             $dataLab = LaboratoriumHasilModel::with('pemeriksaan')->where('notrans', $item['no_reg'])->get();
+            // (10) Alasan pemeriksan diisi dengan
+            // 0 untuk diagnosis
+            // 2 atau 3 untuk akhir tahap awal
+            // 5 untuk bulan kelima
+            // 6 atau 8 untuk akhir pengobatan
 
+            // return $dataLab;
             if (empty($dataLab) || count($dataLab) == 0 || $dataLab == null || $dataLab == []) {
                 $hasilLabHtml = "Tidak ada pemeriksaan laboratorium";
             } else {

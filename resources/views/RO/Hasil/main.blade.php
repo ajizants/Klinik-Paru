@@ -328,6 +328,7 @@
             // Grouping data by date
             var groupedData = {};
             hasilLab.forEach(function(item) {
+                console.log("🚀 ~ hasilLab.forEach ~ hasilLab:", hasilLab)
                 var dateKey = formatDate(item.created_at);
                 if (!groupedData[dateKey]) {
                     groupedData[dateKey] = Object.assign({}, item, {
@@ -335,6 +336,10 @@
                     });
                 }
                 // Merge pemeriksaan results into the group
+                if (item.idLayanan == 131) {
+                    groupedData[dateKey].pemeriksaan[item.pemeriksaan.nmLayanan] = item.hasil + " <br> " + item
+                        .no_iden_sediaan;
+                }
                 groupedData[dateKey].pemeriksaan[item.pemeriksaan.nmLayanan] = item.hasil;
             });
 
