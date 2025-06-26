@@ -54,10 +54,11 @@
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                                     :</label>
                                                 <div class="col-sm-2">
-                                                    <input type="date" id="tglKunj"
-                                                        class="form-control bg-white" />
+                                                    <input type="date" id="tglKunj" class="form-control bg-white"
+                                                        value="{{ now()->format('Y-m-d') }}" />
                                                     <input type="text" id="tgltind" class="form-control bg-white"
-                                                        placeholder="tgltind" readonly hidden />
+                                                        placeholder="tgltind" readonly hidden
+                                                        value="{{ now()->format('Y-m-d') }}" />
                                                 </div>
                                                 <label for="notrans"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
