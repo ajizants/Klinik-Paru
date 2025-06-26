@@ -1,55 +1,52 @@
  {{-- Diagnosa Medis --}}
  <div class="form-row">
-     <div class="col-sm mx-1">
-         <div class="card card-outline card-info">
-             <div class="card-header">
-                 <h3 class="card-title">
-                     Input Permintaan Laboratorium
-                 </h3>
-             </div>
-             <div class="card-body pb-0 pt-1 px-1">
-                 @csrf
-                 <form class="form-group col">
-                     <div hidden>
-                         <input type="text" id="penunjang_norm" name="norm">
-                         <input type="text" id="penunjang_notrans" name="notrans">
-                         <input type="text" id="penunjang_form_id" name="form_id">
-                     </div>
-                     <table id="tablePenunjang" class="table table-striped table-tight" cellspacing="0">
-                         <thead>
-                             <tr>
-                                 <th><input type="checkbox" id="pilih-semua"
-                                         style="width: 15px; height: 15px; margin-top: 12px;"></th>
-                                 <th>Item Pemeriksaan</th>
-                                 <th>Keterangan</th>
-                             </tr>
-                         </thead>
-                     </table>
-                     <br>
-                     <a id="addKasir" class="btn btn-success d-flex justify-content-center mb-4"
-                         onclick="orderPenunjang();">Tambah
-                         Order Penunjang</a>
-                 </form>
-             </div>
+     <div class="col-sm px-0 mx-1 card card-warning">
+         <div class="card-header">
+             <h3 class="card-title">
+                 Input Permintaan Laboratorium
+             </h3>
          </div>
-     </div>
-     <div class="col-sm mx-1">
-         <div class="card card-outline card-info">
-             <div class="card-header">
-                 <h3 class="card-title">
-                     Daftar Permintaan Laboratorium
-                 </h3>
-             </div>
-             <div class="card-body pb-0 pt-1 px-1">
-                 <table id="daftarOrderPenunjang" class="table table-striped table-tight" cellspacing="0">
+         <div class="card-body pb-0 pt-1 px-1">
+             @csrf
+             <form class="form-group col">
+                 <div hidden>
+                     <input type="text" id="penunjang_norm" name="norm">
+                     <input type="text" id="penunjang_notrans" name="notrans">
+                     <input type="text" id="penunjang_form_id" name="form_id">
+                 </div>
+                 <table id="tablePenunjang" class="table table-striped table-tight" cellspacing="0" style="width:100%">
                      <thead>
                          <tr>
-                             <th class="col-1">Aksi</th>
-                             <th class="col">Pemeriksaan</th>
-                             <th class="col">Keterangan</th>
+                             <th><input type="checkbox" id="pilih-semua"
+                                     style="width: 15px; height: 15px; margin-top: 12px;"></th>
+                             <th>Item Pemeriksaan</th>
+                             <th>Keterangan</th>
                          </tr>
+                     </thead>
                  </table>
-             </div>
+                 <br>
+                 <a id="addKasir" class="btn btn-success d-flex justify-content-center mb-4"
+                     onclick="orderPenunjang();">Tambah
+                     Order Penunjang</a>
+             </form>
+         </div>
+     </div>
+     <div class="col-sm px-0 mx-1 card card-success">
+         <div class="card-header">
+             <h3 class="card-title">
+                 Daftar Permintaan Laboratorium
+             </h3>
+         </div>
+         <div class="card-body pb-0 pt-1 px-1">
+             <table id="daftarOrderPenunjang" class="table table-striped table-tight" cellspacing="0"
+                 style="width:100%">
+                 <thead>
+                     <tr>
+                         <th class="col-1">Aksi</th>
+                         <th class="col">Pemeriksaan</th>
+                         <th class="col">Keterangan</th>
+                     </tr>
+             </table>
          </div>
      </div>
  </div>
@@ -123,9 +120,9 @@
                      data: "id",
                      render: function(data) {
                          return `
-                    <button class="btn btn-sm btn-danger" onclick="deletePenunjang('${data}')">
+                    <a type="button" class="btn btn-sm btn-danger" onclick="deletePenunjang('${data}')">
                         <i class="fa fa-trash"></i>
-                    </button>
+                    </a>
                 `;
                      },
                  },
@@ -144,6 +141,25 @@
              order: [1, "asc"],
              scrollY: "300px",
              paging: false,
+         });
+     }
+
+     function deletePenunjang(id) {
+         $.ajax({
+             url: '/api/ranap/delete_penunjang/' + id,
+             method: 'DELETE',
+             headers: {
+                 'X-CSRF-TOKEN': $('input[name="_token"]').val()
+             },
+             success: function(response) {
+                 console.log('Berhasil:', response);
+                 tampilkanSukses(response.message);
+                 isiTabelPenunjang(response.data);
+             },
+             error: function(xhr) {
+                 console.error('Gagal:', xhr.responseText);
+                 tampilkanEror(xhr.responseText);
+             }
          });
      }
  </script>

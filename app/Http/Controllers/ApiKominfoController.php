@@ -824,4 +824,28 @@ class ApiKominfoController extends Controller
         return view('SuratMedis.suratMedis', compact('title', 'cppt'));
     }
 
+    public function getDataObat(Request $request)
+    {
+        $search  = $request->get('search', '');
+        $kominfo = new ApiKominfo();
+
+        $pilihObat = [[
+            'id'              => "0",
+            'nama_obat'       => '--Pilih Obat--',
+            'kode_obat'       => 'zzzzz',
+            'stok'            => 't',
+            'dosis'           => '',
+            'nama_satuan'     => '',
+            'nama_bentuk'     => '',
+            'jenis_obat_nama' => '',
+            'nama_kategori'   => '',
+        ]];
+
+        $dataObat = $kominfo->getDataObat($search)['data'];
+
+        $data = array_merge($pilihObat, $dataObat); // ← gabungkan dengan benar
+
+        return response()->json($data);
+    }
+
 }

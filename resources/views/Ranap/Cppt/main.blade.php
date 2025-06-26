@@ -69,7 +69,7 @@
                     <div class="card-body mx-0 px-2" style="min-height: 450px">
                         <form id="form_cppt">
                             <div class="tab-content" id="custom-tabs-one-tabContent">
-                                <div>
+                                <div hidden>
                                     <input type="text" id="norm" name="norm">
                                     <input type="text" id="notrans" name="notrans">
                                     <input type="text" id="form_id" name="form_id">

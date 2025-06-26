@@ -10,19 +10,21 @@ function entryCppt(button, noTrans) {
         .done(function (response) {
             form_id = response.id;
             const data = response.cpptLast;
-            for (let key in data) {
-                $(`#form_cppt [name="${key}"]`).val(data[key]);
-                $(`#form_cppt [name="${key}"]`).trigger("change");
-            }
+            if (data) {
+                for (let key in data) {
+                    $(`#form_cppt [name="${key}"]`).val(data[key]);
+                    $(`#form_cppt [name="${key}"]`).trigger("change");
+                }
 
-            $("#subjektif").summernote("code", data.subjektif ?? "");
-            $("#objektif").summernote("code", data.objektif ?? "");
-            $("#assesment").summernote("code", data.assesment ?? "");
-            $("#planing").summernote("code", data.planing ?? "");
-            if (data.dx1) isiDiagnosaSelect("#dx1", data.dx1);
-            if (data.dx2) isiDiagnosaSelect("#dx2", data.dx2);
-            if (data.dx3) isiDiagnosaSelect("#dx3", data.dx3);
-            if (data.dx4) isiDiagnosaSelect("#dx4", data.dx4);
+                $("#subjektif").summernote("code", data.subjektif ?? "");
+                $("#objektif").summernote("code", data.objektif ?? "");
+                $("#assesment").summernote("code", data.assesment ?? "");
+                $("#planing").summernote("code", data.planing ?? "");
+                if (data.dx1) isiDiagnosaSelect("#dx1", data.dx1);
+                if (data.dx2) isiDiagnosaSelect("#dx2", data.dx2);
+                if (data.dx3) isiDiagnosaSelect("#dx3", data.dx3);
+                if (data.dx4) isiDiagnosaSelect("#dx4", data.dx4);
+            }
 
             $("#pasien_no_rm").val($(button).data("norm"));
             $("#jaminan").val($(button).data("jaminan"));
@@ -76,6 +78,8 @@ function simpanCppt() {
             console.log("✅ Respon:", res);
             Swal.fire("Sukses", "Data berhasil disimpan", "success");
             // loadCpptTable(res.notrans);
+            $("#tblBatal").hide();
+            $("#tblSelesai").show();
         },
         error: function (xhr) {
             console.error("❌ Error:", xhr.responseText);
@@ -282,8 +286,7 @@ function tabelPemeriksaan(itemPemeriksaan, item, pilihSemuaId) {
                             class="form-control mt-1"
                             id="ket_${row.idLayanan}"
                             style="font-size: medium;"
-                            placeholder="Ket. untuk ${data}"
-                            value="${data}">
+                            placeholder="Ket. untuk ${data}">
                     `;
                 },
             },

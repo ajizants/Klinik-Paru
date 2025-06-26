@@ -40,14 +40,11 @@
                     <tbody>
                         <tr class="obat-row">
                             <td>
-                                <select name="obat_id[]" class="form-control-sm col-12 select2bs4">
+                                <select name="obat_id[]" id="obat_id"
+                                    class="form-control-sm col-12 select2bs4 select2bs4Obat">
                                     <option value="">-- Pilih Obat --</option>
-                                    @foreach (collect($bmhp)->sortBy('nmObat') as $item)
-                                        <option value="{{ $item->id }}">
-                                            {{ $item->nmObat }} (Stok: {{ $item->sisa }})
-                                        </option>
-                                    @endforeach
                                 </select>
+                                <input type="" id="obat_nama" name="obat_nama[]">
                             </td>
                             <td>
                                 <div class="form-row">
@@ -84,7 +81,7 @@
     </div>
 
     <!-- Kartu Rencana Tindakan -->
-    <div class="col-sm px-0 mx-1 card card-warning">
+    <div class="col-sm px-0 mx-1 card card-success">
         <div class="card-header">
             <h3 class="card-title">Data Rencana Tindakan</h3>
         </div>
@@ -116,8 +113,10 @@
             norm: $("#tindakan_norm").val(),
             notrans: $("#tindakan_notrans").val(),
             form_id: $("#tindakan_form_id").val(),
+            petugas: $("#petugas").val(),
             tindakan_id: [],
             obat_id: [],
+            obat_nama: [],
             signa_1: [],
             signa_2: [],
             keterangan: [],
@@ -126,6 +125,7 @@
         // Loop semua baris obat
         $("#obatTable tbody tr").each(function() {
             data.obat_id.push($(this).find('select[name="obat_id[]"]').val());
+            data.obat_nama.push($(this).find('input[name="obat_nama[]"]').val());
             data.signa_1.push($(this).find('input[name="signa_1[]"]').val());
             data.signa_2.push($(this).find('input[name="signa_2[]"]').val());
             data.keterangan.push($(this).find('input[name="keterangan[]"]').val());
@@ -164,9 +164,9 @@
                     data: "id",
                     render: function(data) {
                         return `
-                        <button class="btn btn-sm btn-danger" onclick="deleteTindakan('${data}')">
+                        <a type="button" class="btn btn-sm btn-danger" onclick="deleteTindakan('${data}')">
                             <i class="fa fa-trash"></i>
-                        </button>`;
+                        </a>`;
                     }
                 },
                 {
@@ -204,6 +204,69 @@
         });
     }
 
+    // Inisialisasi Select2 dengan AJAX pada elemen baru
+    function initSelect2(el) {
+        el.select2({
+            theme: 'bootstrap4',
+            placeholder: 'Cari Obat...',
+            ajax: {
+                url: '/api/kominfo/data_obat/get_data',
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.map(function(item) {
+                            return {
+                                id: item.id,
+                                text: item.jenis_obat_nama ?
+                                    item.nama_obat + ' - ' + item.jenis_obat_nama : item
+                                    .nama_obat, // ← kalau kosong, cukup tampilkan nama_obat saja
+                                nama_obat: item.nama_obat
+                            };
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+
+        // Tangkap perubahan dan simpan nama_obat ke input hidden dalam baris yang sama
+        el.on('select2:select', function(e) {
+            const selected = e.params.data;
+            const row = $(this).closest('tr');
+            if (selected.id == "0") {
+                row.find('input[name="obat_nama[]"]').val("");
+            } else {
+                row.find('input[name="obat_nama[]"]').val(selected.nama_obat);
+            }
+        });
+    }
+
+    function deleteTindakan(id) {
+        $.ajax({
+            url: "/api/ranap/order_tindakan/" + id,
+            method: "DELETE",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            success: function(response) {
+                console.log('Berhasil:', response);
+                tampilkanSukses(response.message);
+                isiTabelPenunjang(response.data);
+            },
+            error: function(xhr) {
+                console.error('Gagal:', xhr.responseText);
+                tampilkanEror(xhr.responseText);
+            }
+        });
+    }
+
+
 
 
     $(document).ready(function() {
@@ -213,42 +276,68 @@
         });
 
         // Tambah baris obat
+        // $('#addRow').click(function() {
+        //     const newRow = `
+        //             <tr class="obat-row">
+        //                 <td>
+        //                     <select name="obat_id[]" id="obat_id" class="form-control-sm col-12 select2bs4">
+        //                         <option value="">-- Pilih Obat --</option>
+        //                     </select>
+        //                     <input type="" id="obat_nama" name="obat_nama[]">
+        //                 </td>
+        //                 <td>
+        //                     <div class="form-row">
+        //                         <input type="text" name="signa_1[]" class="form-control form-control-sm col"
+        //                             placeholder="Signa">
+        //                         <label class="col-form-label col-2 text-center font-weight-bold">X</label>
+        //                         <input type="text" name="signa_2[]" class="form-control form-control-sm col"
+        //                             placeholder="Signa">
+        //                     </div>
+        //                 </td>
+        //                 <td>
+        //                     <input type="text" name="keterangan[]" class="form-control form-control-sm"
+        //                         placeholder="Keterangan">
+        //                 </td>
+        //                 <td>
+        //                     <button type="button" class="btn btn-danger remove-row">🗑</button>
+        //                 </td>
+        //             </tr>
+        //             `;
+        //     $('#obatTable tbody').append(newRow);
+        //     $('.select2bs4').select2({
+        //         theme: 'bootstrap4'
+        //     }); // reinit select2
+        // });
+
+        // Tambah baris obat
         $('#addRow').click(function() {
             const newRow = `
-                <tr class="obat-row">
-                            <td>
-                                <select name="obat_id[]" class="form-control col-12 select2bs4">
-                                    <option value="">-- Pilih Obat --</option>
-                                    @foreach (collect($bmhp)->sortBy('nmObat') as $item)
-                                        <option value="{{ $item->id }}">
-                                            {{ $item->nmObat }} (Stok: {{ $item->sisa }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </td>
-                            <td>
-                                <div class="form-row">
-                                    <input type="text" name="signa_1[]" class="form-control form-control-sm col"
-                                        placeholder="Signa">
-                                    <label class="col-form-label col-2 text-center font-weight-bold">X</label>
-                                    <input type="text" name="signa_2[]" class="form-control form-control-sm col"
-                                        placeholder="Signa">
-                                </div>
-                            </td>
-                            <td>
-                                <input type="text" name="keterangan[]" class="form-control form-control-sm"
-                                    placeholder="Keterangan">
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-danger remove-row">🗑</button>
-                            </td>
-                        </tr>
-            `;
-            $('#obatTable tbody').append(newRow);
-            $('.select2bs4').select2({
-                theme: 'bootstrap4'
-            }); // reinit select2
+                                    <tr class="obat-row">
+                                        <td>
+                                            <select name="obat_id[]" class="form-control-sm col-12 select2bs4">
+                                                <option value="">-- Pilih Obat --</option>
+                                            </select>
+                                            <input type="" name="obat_nama[]">
+                                        </td>
+                                        <td>
+                                            <div class="form-row">
+                                                <input type="text" name="signa_1[]" class="form-control form-control-sm col" placeholder="Signa">
+                                                <label class="col-form-label col-2 text-center font-weight-bold">X</label>
+                                                <input type="text" name="signa_2[]" class="form-control form-control-sm col" placeholder="Signa">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="keterangan[]" class="form-control form-control-sm" placeholder="Keterangan">
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger remove-row">🗑</button>
+                                        </td>
+                                    </tr>`;
+            const $row = $(newRow).appendTo('#obatTable tbody');
+            initSelect2($row.find('select'));
         });
+
+
 
         // Hapus baris
         $('#obatTable').on('click', '.remove-row', function() {
@@ -258,5 +347,44 @@
                 alert('Minimal 1 baris harus ada.');
             }
         });
+
+        // $('#obat_id').select2({
+        //     placeholder: 'Cari Obat...',
+        //     ajax: {
+        //         url: '/api/kominfo/data_obat/get_data',
+        //         dataType: 'json',
+        //         delay: 50,
+        //         data: function(params) {
+        //             return {
+        //                 search: params.term,
+        //             };
+        //         },
+        //         processResults: function(data) {
+        //             return {
+        //                 results: data.map(function(item) {
+        //                     return {
+        //                         id: item.id,
+        //                         text: item.nama_obat + ' - ' + item.jenis_obat_nama,
+        //                         nama_obat: item.nama_obat
+        //                     };
+        //                 })
+        //             };
+        //         },
+        //         cache: true
+        //     }
+        // });
+        // // Tangkap perubahan dan simpan nama_obat ke input hidden
+        // $('#obat_id').on('select2:select', function(e) {
+        //     const selected = e.params.data;
+        //     $('#obat_nama').val(selected.nama_obat);
+        // });
+
+
+
+        // Inisialisasi Select2 pada semua elemen dengan kelas .select2bs4
+        $('.select2bs4Obat').each(function() {
+            initSelect2($(this));
+        });
+
     });
 </script>

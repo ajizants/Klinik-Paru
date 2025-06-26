@@ -163,8 +163,10 @@ class RanapCPPTController extends Controller
                 'norm'        => 'required|string|max:10',
                 'notrans'     => 'required|string',
                 'form_id'     => 'required|string',
+                'petugas'     => 'required|string',
                 'tindakan_id' => 'required|array|min:1',
                 'obat_id'     => 'required|array|min:1',
+                'obat_nama'   => 'required|array|min:1',
                 'signa_1'     => 'required|array|min:1',
                 'signa_2'     => 'required|array|min:1',
                 'keterangan'  => 'nullable|array',
@@ -182,9 +184,11 @@ class RanapCPPTController extends Controller
 
             $norm       = $request->input('norm');
             $notrans    = $request->input('notrans');
+            $petugas    = $request->input('petugas');
             $form_id    = $request->input('form_id');
             $order      = $request->input('tindakan_id');
             $obatIds    = $request->input('obat_id');
+            $obat_nama  = $request->input('obat_nama');
             $signa1     = $request->input('signa_1');
             $signa2     = $request->input('signa_2');
             $keterangan = $request->input('keterangan');
@@ -195,14 +199,16 @@ class RanapCPPTController extends Controller
                 }
 
                 $rowData = [
-                    'norm'    => $norm,
-                    'notrans' => $notrans,
-                    'form_id' => $form_id,
-                    'order'   => $order[0] ?? null,
-                    'obat_id' => $obatId,
-                    'signa_1' => $signa1[$i] ?? null,
-                    'signa_2' => $signa2[$i] ?? null,
-                    'ket'     => $keterangan[$i] ?? null,
+                    'norm'      => $norm,
+                    'notrans'   => $notrans,
+                    'form_id'   => $form_id,
+                    'petugas'   => $petugas,
+                    'order'     => $order[0] ?? null,
+                    'obat_id'   => $obatId,
+                    'obat_nama' => $obat_nama[$i] ?? null,
+                    'signa_1'   => $signa1[$i] ?? null,
+                    'signa_2'   => $signa2[$i] ?? null,
+                    'ket'       => $keterangan[$i] ?? null,
                 ];
 
                 Log::info('Data akan disimpan:', $rowData); // DEBUG
@@ -223,11 +229,24 @@ class RanapCPPTController extends Controller
         }
     }
 
-    public function order_obat(Request $request)
+    public function delete_tindakan($id)
     {
-        //
+        try {
+            RanapOrder::where('id', $id)->delete();
+            $form_id        = RanapOrder::where('id', $id)->value('form_id');
+            $daftarTindakan = $this->getDataPenunjangDanTindakan($form_id)['tindakan'];
+            return response()->json([
+                'status'  => true,
+                'message' => 'Data berhasil dihapus',
+                'data'    => $daftarTindakan,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
+        }
     }
-
     public function order_penunjang(Request $request)
     {
         // Validasi data utama
@@ -272,6 +291,31 @@ class RanapCPPTController extends Controller
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function delete_penunjang($id)
+    {
+
+        try {
+            $form_id = RanapOrder::where('id', $id)->value('form_id');
+            RanapOrder::where('id', $id)->delete();
+            $daftarPenunjang = $this->getDataPenunjangDanTindakan($form_id)['penunjang'];
+            return response()->json([
+                'status'  => true,
+                'message' => 'Data berhasil dihapus',
+                'data'    => $daftarPenunjang,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function order_obat(Request $request)
+    {
+        //
     }
 
     private function getByNotrans($notrans)
@@ -331,64 +375,52 @@ class RanapCPPTController extends Controller
         // return response()->json($this->getByNotrans($notrans));
         $data = RanapCPPT::with('nakes', 'pasien.dokter', 'diagnosa1', 'diagnosa2', 'diagnosa3', 'diagnosa4')->where('notrans', $notrans)->orderBy('created_at', 'desc')->get();
         // return $data;
-        // $result = $data->map(function ($item) {
-        //     // $orders = RanapOrder::with('detail')->where('form_id', $item->form_id)->get();
-        //     // dd($orders);
-        //     $tindakan  = $this->getDataPenunjangDanTindakan($item['form_id'])['tindakan'];
-        //     $penunjang = $this->getDataPenunjangDanTindakan($item['form_id'])['penunjang'];
-        //     // dd($penunjang, $tindakan);
-        //     $penunjangList = collect();
-        //     $tindakanList  = collect();
-        //     foreach ($penunjang as $order) {
-        //         // dd($order);
-        //         $baris = $order['nmLayanan'];
-        //         if ($order['ket']) {
-        //             $baris .= " - " . $order['ket'];
-        //         }
-        //         $penunjangList->push($baris);
-        //     }
-
-        //     foreach ($tindakan as $order) {
-        //         $baris = $order['nmLayanan'] . ' ' . $order['nmObat'] . ' ' . $order['signa'];
-        //         if ($order['ket']) {
-        //             $baris .= " - " . $order['ket'];
-        //         }
-        //         $tindakanList->push($baris);
-        //     }
-        //     return [
-        //         'form_id'          => $item->form_id,
-        //         'id'               => $item->id,
-        //         'created_at'       => $item->created_at->format('d/m/Y') . '<br>' . $item->created_at->format('H:i:s'),
-        //         'petugas'          => trim(collect([
-        //             optional($item->nakes)->gelar_d,
-        //             optional($item->nakes)->nama,
-        //             optional($item->nakes)->gelar_b,
-        //         ])->filter()->implode(' ')) . '<br>' . (optional($item->nakes)->nm_jabatan ?? '-'),
-        //         'dpjp'             => trim(collect([
-        //             optional(optional($item->pasien)->dokter)->gelar_d,
-        //             optional(optional($item->pasien)->dokter)->nama,
-        //             optional(optional($item->pasien)->dokter)->gelar_b,
-        //         ])->filter()->implode(' ')) ?: '-',
-        //         'hasil_assessment' => collect([
-        //             $item->subjektif ? "<strong>S:</strong> $item->subjektif" : null,
-        //             $item->objektif ? "<strong>O:</strong> $item->objektif" : null,
-        //             $item->assesment ? "<strong>A:</strong> $item->assesment" : null,
-        //             $item->dx1 ? "<strong>DX1:</strong> $item->dx1 - $item->ket_dx1" : null,
-        //             $item->dx2 ? "<strong>DX2:</strong> $item->dx2 - $item->ket_dx2" : null,
-        //             $item->dx3 ? "<strong>DX3:</strong> $item->dx3 - $item->ket_dx3" : null,
-        //             $item->dx4 ? "<strong>DX4:</strong> $item->dx4 - $item->ket_dx4" : null,
-        //             $item->assesment ? "<strong>P:</strong> $item->assesment" : null,
-        //             $item->dx1 ? "<strong>DX1:</strong> $item->dx1 - $item->ket_dx1" : null,
-        //             $item->dx2 ? "<strong>DX2:</strong> $item->dx2 - $item->ket_dx2" : null,
-        //             $item->dx3 ? "<strong>DX3:</strong> $item->dx3 - $item->ket_dx3" : null,
-        //             $item->dx4 ? "<strong>DX4:</strong> $item->dx4 - $item->ket_dx4" : null,
-        //         ])->filter()->implode('<br>'),
-        //         'instruksi'        => collect([
-        //             count($penunjang) > 0 ? "<strong>Penunjang:</strong><br> " . $penunjangList->implode('<br>') : null,
-        //             count($tindakan) > 0 ? "<strong>Tindakan:</strong><br> " . $tindakanList->implode('<br>') : null,
-        //         ])->filter()->implode('<br>')];
-        // });
         $result = $data->map(function ($item) {
+            $antropo = [];
+
+            if ($item->td) {
+                $antropo[] = '<div class="col-md-4 mb-2"><span>TD :</span> ' . $item->td . ' mmHg</div>';
+            }
+
+            if ($item->nadi) {
+                $antropo[] = '<div class="col-md-4 mb-2"><span>Nadi :</span> ' . $item->nadi . ' x/mnt</div>';
+            }
+
+            if ($item->rr) {
+                $antropo[] = '<div class="col-md-4 mb-2"><span>RR :</span> ' . $item->rr . ' x/mnt</div>';
+            }
+
+            if ($item->suhu) {
+                $antropo[] = '<div class="col-md-4 mb-2"><span>Suhu :</span> ' . $item->suhu . ' °C</div>';
+            }
+
+            if ($item->tb) {
+                $antropo[] = '<div class="col-md-4 mb-2"><span>TB :</span> ' . $item->tb . ' cm</div>';
+            }
+
+            if ($item->bb) {
+                $antropo[] = '<div class="col-md-4 mb-2"><span>BB :</span> ' . $item->bb . ' kg</div>';
+            }
+
+            if ($item->imt) {
+                $antropo[] = '<div class="col-md-4 mb-2"><span>IMT :</span> ' . $item->imt . ' kg/m2</div>';
+            }
+
+            if ($item->bbi) {
+                $antropo[] = '<div class="col-md-4 mb-2"><span>BBI :</span> ' . $item->bbi . ' kg</div>';
+            }
+
+            if ($item->lla) {
+                $antropo[] = '<div class="col-md-4 mb-2"><span>LLA :</span> ' . $item->lla . ' cm</div>';
+            }
+
+            if ($item->status_gizi) {
+                $antropo[] = '<div class="col-md-12 mb-2"><span>Status Gizi :</span> ' . $item->status_gizi . '</div>';
+            }
+
+            $antropometri = count($antropo)
+            ? '<div class="form-row">' . implode('', $antropo) . '</div>'
+            : null;
             $dataInstruksi = $this->getDataPenunjangDanTindakan($item->form_id); // panggil sekali saja
             $tindakan      = $dataInstruksi['tindakan'] ?? [];
             $penunjang     = $dataInstruksi['penunjang'] ?? [];
@@ -397,7 +429,7 @@ class RanapCPPTController extends Controller
             $tindakanList  = collect();
 
             foreach ($penunjang as $order) {
-                $baris = $order['nmLayanan'];
+                $baris = '- ' . $order['nmLayanan'];
                 if ($order['ket']) {
                     $baris .= " - " . $order['ket'];
                 }
@@ -405,7 +437,7 @@ class RanapCPPTController extends Controller
             }
 
             foreach ($tindakan as $order) {
-                $baris = $order['nmLayanan'] . ' ' . $order['nmObat'] . ' ' . $order['signa'];
+                $baris = '- ' . $order['nmLayanan'] . ' ' . $order['nmObat'] . ' ' . $order['signa'];
                 if ($order['ket']) {
                     $baris .= " - " . $order['ket'];
                 }
@@ -427,18 +459,42 @@ class RanapCPPTController extends Controller
                     optional(optional($item->pasien)->dokter)->gelar_b,
                 ])->filter()->implode(' ')) ?: '-',
                 'hasil_assessment' => collect([
-                    $item->subjektif ? "<strong>S:</strong> $item->subjektif" : null,
-                    $item->objektif ? "<strong>O:</strong> $item->objektif" : null,
-                    $item->assesment ? "<strong>A:</strong> $item->assesment" : null,
-                    $item->assesment ? "<strong>P:</strong> $item->assesment" : null,
-                    $item->dx1 ? "<strong>DX1:</strong> $item->dx1 - $item->ket_dx1" : null,
-                    $item->dx2 ? "<strong>DX2:</strong> $item->dx2 - $item->ket_dx2" : null,
-                    $item->dx3 ? "<strong>DX3:</strong> $item->dx3 - $item->ket_dx3" : null,
-                    $item->dx4 ? "<strong>DX4:</strong> $item->dx4 - $item->ket_dx4" : null,
+                    $item->subjektif ? "<strong>S :</strong> $item->subjektif" : "<strong>S: -</strong>",
+                    $item->objektif ? "<strong>O :</strong> $item->objektif" : "<strong>O: -</strong>",
+                    $antropometri,
+                    $item->assesment ? "<strong>A :</strong> $item->assesment" : "<strong>A :</strong>",
+                    ($item->dx1 || $item->dx2 || $item->dx3 || $item->dx4) ? '
+                        <table width: 100%;">
+                        <tbody>
+                            ' . ($item->dx1 ? '
+                            <tr>
+                                <td style=" width: 150px;"><strong>Diagnosa Primer :</strong></td>
+                                <td>' . $item->dx1 . ' - ' . $item->diagnosa1->diagnosa . ' <br> ' . $item->ket_dx1 . '</td>
+                            </tr>' : '') . '
+                            ' . ($item->dx2 ? '
+                            <tr>
+                                <td><strong>Diagnosa Sekunder :</strong></td>
+                                <td>' . $item->dx2 . ' - ' . $item->diagnosa2->diagnosa . ' <br> ' . $item->ket_dx2 . '</td>
+                            </tr>' : '') . '
+                            ' . ($item->dx3 ? '
+                            <tr>
+                                <td></td>
+                                <td>' . $item->dx3 . ' - ' . $item->diagnosa3->diagnosa . ' <br> ' . $item->ket_dx3 . '</td>
+                            </tr>' : '') . '
+                            ' . ($item->dx4 ? '
+                            <tr>
+                                <td></td>
+                                <td>' . $item->dx4 . ' - ' . $item->diagnosa4->diagnosa . ' <br> ' . $item->ket_dx4 . '</td>
+                            </tr>' : '') . '
+                        </tbody>
+                        </table>
+                    ' : null,
+                    $item->planing ? "<strong>P :</strong> $item->planing" : "<strong>P:-</strong>",
                 ])->filter()->implode('<br>'),
+
                 'instruksi'        => collect([
-                    $penunjangList->isNotEmpty() ? "<strong>Penunjang:</strong><br>" . $penunjangList->implode('<br>') : null,
-                    $tindakanList->isNotEmpty() ? "<strong>Tindakan:</strong><br>" . $tindakanList->implode('<br>') : null,
+                    $penunjangList->isNotEmpty() ? "<strong>Penunjang :</strong><br>" . $penunjangList->implode('<br>') : null,
+                    $tindakanList->isNotEmpty() ? "<strong>Tindakan :</strong><br>" . $tindakanList->implode('<br>') : null,
                 ])->filter()->implode('<br>'),
             ];
         });
@@ -555,6 +611,7 @@ class RanapCPPTController extends Controller
                 foreach ($order->detail as $detail) {
                     if (in_array($detail->kelas, [8, 9])) {
                         $penunjang->push([
+                            'id'        => $order->id,
                             'form_id'   => $order->form_id,
                             'notrans'   => $order->notrans,
                             'norm'      => $order->norm,
@@ -574,13 +631,18 @@ class RanapCPPTController extends Controller
                 foreach ($order->detail as $detail) {
                     if (in_array($detail->kelas, [2, 3, 5, 6])) {
                         $detailObat = $order->detailObat[0] ?? null;
+                        $signa      = $order->signa_1 . ' X ' . $order->signa_2;
+                        if ($order->signa_1 == null && $order->signa_2 == null) {
+                            $signa = null;
+                        }
 
                         $tindakan->push([
+                            'id'        => $order->id,
                             'form_id'   => $order->form_id,
                             'notrans'   => $order->notrans,
                             'norm'      => $order->norm,
                             'ket'       => $order->ket,
-                            'signa'     => $order->signa_1 . ' X ' . $order->signa_2,
+                            'signa'     => $signa,
                             'idLayanan' => $detail->idLayanan,
                             'nmLayanan' => $detail->nmLayanan,
                             'kelas'     => $detail->kelas,
@@ -588,7 +650,7 @@ class RanapCPPTController extends Controller
                             'kdFoto'    => $detail->kdFoto,
                             'tarif'     => $detail->tarif,
                             'obat_id'   => $order->obat_id ?? null,
-                            'nmObat'    => $detailObat->nmObat ?? null,
+                            'nmObat'    => $order->obat_nama ?? null,
                         ]);
                     }
                 }

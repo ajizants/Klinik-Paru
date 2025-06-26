@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiKominfoController;
 use App\Http\Controllers\PasienKominfoController;
 use App\Http\Controllers\RiwayatController;
 use Illuminate\Support\Facades\Route;
@@ -42,3 +43,5 @@ Route::post('kominfo/pendaftaran/report', [PasienKominfoController::class, 'repo
 // Route::post('SuratKontrol/detail', [ApiKominfoController::class, 'getDetailSuratKontrol']);
 // Route::get('SuratKontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakSuratKontrol']);
 // Route::post('bpjs/get_data', [ApiKominfoController::class, 'getDataSEPSK']);
+
+Route::get('/kominfo/data_obat/get_data', [ApiKominfoController::class, 'getDataObat']);

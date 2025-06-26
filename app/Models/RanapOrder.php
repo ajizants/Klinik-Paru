@@ -18,6 +18,7 @@ class RanapOrder extends Model
         'order',
         'form_id', // ✅ tambahkan jika belum ada
         'obat_id',
+        'obat_nama',
         'signa_1',
         'signa_2',
         'ket', // pastikan kolom ini benar
