@@ -29,10 +29,34 @@ document.addEventListener("DOMContentLoaded", function () {
     $(".select2bs4").select2();
 
     $.ajaxSetup({
+        credentials: "include",
         headers: {
             "X-CSRF-TOKEN": $('meta[name="_token"]').attr("content"), // Mengirim token CSRF untuk perlindungan keamanan
         },
     });
+
+    // const originalFetch = window.fetch;
+    // window.fetch = function (url, options = {}) {
+    //     const token = document
+    //         .querySelector('meta[name="_token"]')
+    //         .getAttribute("content");
+
+    //     // Pastikan objek headers ada
+    //     options.headers = options.headers || {};
+
+    //     // Tambahkan header CSRF
+    //     options.headers["X-CSRF-TOKEN"] = token;
+    //     options.headers["Accept"] = "application/json";
+    //     options.credentials = "include";
+
+    //     // Cek jika bukan FormData, set Content-Type JSON
+    //     const isFormData = options.body instanceof FormData;
+    //     if (!isFormData && !options.headers["Content-Type"]) {
+    //         options.headers["Content-Type"] = "application/json";
+    //     }
+
+    //     return originalFetch(url, options);
+    // };
 
     $(".nav-link").on("click", function () {
         // Menghapus class 'active' dari semua elemen dengan class 'nav-link'

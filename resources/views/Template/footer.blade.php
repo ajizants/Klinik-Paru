@@ -45,16 +45,38 @@
                         <div class="modal-body">
                             @csrf
                             <form id="form-password">
-                                <input type="text" class="form-control" id="id_user" name="id_user"
-                                    value="{{ Auth::user()->id }}" readonly>
+                                <div class="form-group form-row">
+                                    <input type="text" class="col-1 form-control" id="id_user" name="id_user"
+                                        value="{{ Auth::user()->id }}" readonly>
+                                    <input type="text" class="col form-control" id="nama_user" name="nama_user"
+                                        value="{{ Auth::user()->name }}" readonly>
+                                </div>
+
                                 <div class="form-group">
                                     <label for="password">Password Baru</label>
-                                    <input type="password" class="form-control" id="password" name="password">
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="password" name="password">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-secondary toggle-password" type="button"
+                                                data-target="password">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="password_confirmation">Konfirmasi Password Baru</label>
-                                    <input type="password" class="form-control" id="password_confirmation"
-                                        name="password_confirmation">
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="password_confirmation"
+                                            name="password_confirmation">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-secondary toggle-password" type="button"
+                                                data-target="password_confirmation">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -67,6 +89,20 @@
             </div>
 
             <script>
+                $('.toggle-password').on('click', function() {
+                    const targetId = $(this).data('target');
+                    const input = $('#' + targetId);
+                    const icon = $(this).find('i');
+
+                    if (input.attr('type') === 'password') {
+                        input.attr('type', 'text');
+                        icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                    } else {
+                        input.attr('type', 'password');
+                        icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                    }
+                });
+
                 function updatePassword() {
                     var id_user = $('#id_user').val();
                     var password = $('#password').val();

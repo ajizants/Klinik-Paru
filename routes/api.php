@@ -54,7 +54,7 @@ Route::get('jenistindakan', [InputController::class, 'JenisTindakan']);
 
 Route::get('/diagnosa_icd_x', function (Request $request) {
     $search = $request->get('search', '');
-    $limit = $request->get('limit', 20);
+    $limit  = $request->get('limit', 20);
 
     $diagnosas = DiagnosaIcdXModel::where(function ($query) use ($search) {
         $query->where('diagnosa', 'like', '%' . $search . '%')
@@ -229,6 +229,5 @@ Route::get('promkes/{id}', [PromkesController::class, 'show']);
 Route::put('promkes/{promkesModel}', [PromkesController::class, 'update']);
 Route::delete('promkes/{id}', [PromkesController::class, 'destroy']);
 
-// });
-
 Route::get('userOnline', [UserController::class, 'userOnline'])->name('userOnline');
+// });

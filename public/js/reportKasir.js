@@ -826,8 +826,10 @@ async function reportKunjungan(tglAwal, tglAkhir) {
     // Fetch data dari API
     await fetch("/api/kasir/rekap", {
         method: "POST",
+        credentials: "include",
         headers: {
             "Content-Type": "application/json",
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
         },
         body: JSON.stringify({
             tglAwal: tglAwal,
