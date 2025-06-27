@@ -220,6 +220,25 @@
     </div>
 </div>
 
+<div class="modal fade" id="assesmentAwalModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Asesment Awal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="asWal">
+                {{-- {!! $assesment_awal_html !!} --}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
     window.addEventListener("load", function() {
@@ -343,6 +362,7 @@
                 <p>${item.antrean_nomor} </p>                                    
                 <p>${item.penjamin_nama}</p>                                    
                 <p>${item.dokter_nama}</p>
+                
             </div>`;
 
             item.diagnosa = `
@@ -389,6 +409,9 @@
             <div class="row">
                 <div class="col-md-4 col-sm-6 col-12 mb-2">
                     <a type="button" class="btn btn-warning font-weight-bold mx-2" href="/RO/Hasil/${item.pasien_no_rm}" target="_blank">Lihat Hasil Penunjang</a>
+                </div>
+                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                    <a type="button" class="btn btn-primary font-weight-bold mx-2" onclick="lihatAsWal('${item.pasien_no_rm}', '${item.tanggal}')">Lihat Asesment Awal</a>
                 </div>
                 <div class="col-md-4 col-sm-6 col-12 mb-2">
                     <a type="button" class="btn btn-danger font-weight-bold mx-2"  onclick="lihatIdentitas('${item.pasien_no_rm}')">Lihat Identitas</a>
@@ -491,5 +514,25 @@
             autoWidth: false,
             scrollX: true
         });
+    }
+
+    function lihatAsWal(pasien_no_rm, tanggal) {
+        tampilkanLoading("Sedangan mengambil data pasien...");
+        $.ajax({
+            url: "/api/kominfo/get_assesment_awal/" + pasien_no_rm + "/" + tanggal,
+            type: "GET",
+            success: function(response) {
+                Swal.close();
+                $("#asWal").html(response);
+                $("#assesmentAwalModal").modal("show");
+            },
+            error: function(error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Gagal mengambil data pasien...",
+                    timer: 1500
+                });
+            }
+        })
     }
 </script>
