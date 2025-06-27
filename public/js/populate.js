@@ -33,7 +33,7 @@ function initializeDataAntrian(response, ruang) {
     updateTableData(data, ruang, "sudah", "#dataSelesai");
 
     if (ruang === "ro") {
-        console.log("🚀 ~ initializeDataAntrian ~ ro:", data);
+        // console.log("🚀 ~ initializeDataAntrian ~ ro:", data);
         updateTableData(
             data,
             ruang,
@@ -47,7 +47,7 @@ function updateTableData(data, ruang, status, tableId) {
     const filteredData = data.filter((item) => item.status === status);
     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
     const nama = dataArray[0]?.pasien_nama;
-    console.log("🚀 ~ updateTableData ~ nama:", nama);
+    // console.log("🚀 ~ updateTableData ~ nama:", nama);
     if (nama !== "Belum ada data masuk") {
         processDataArray(dataArray, ruang, false);
     }
@@ -58,9 +58,9 @@ function updateTableDataKonsul(data, ruang, status, tableId) {
         (item) => item.permintaan_konsul === status
     );
     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
-    console.log("🚀 ~ updateTableDataKonsul ~ a:", dataArray);
+    // console.log("🚀 ~ updateTableDataKonsul ~ a:", dataArray);
     const nama = dataArray[0]?.pasien_nama;
-    console.log("🚀 ~ updateTableData ~ nama:", nama);
+    // console.log("🚀 ~ updateTableData ~ nama:", nama);
     if (nama !== "Belum ada data masuk") {
         processDataArray(dataArray, ruang, true);
     }
@@ -103,11 +103,11 @@ function updateExistingTables(response, ruang) {
 
 function updateTable(tableId, data, ruang, status) {
     const filteredData = data.filter((item) => item.status === status);
-    console.log("🚀 ~ updateTable ~ filteredData:", filteredData);
+    // console.log("🚀 ~ updateTable ~ filteredData:", filteredData);
     const table = $(tableId).DataTable();
     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
     const nama = dataArray[0]?.pasien_nama;
-    console.log("🚀 ~ updateTableData ~ nama:", nama);
+    // console.log("🚀 ~ updateTableData ~ nama:", nama);
     if (nama !== "Belum ada data masuk") {
         processDataArray(dataArray, ruang, false);
     }
@@ -117,11 +117,11 @@ function updateTableKonsul(tableId, data, ruang, status) {
     const filteredData = data.filter(
         (item) => item.permintaan_konsul === status
     );
-    console.log("🚀 ~ updateTableKonsul ~ filteredData:", filteredData);
+    // console.log("🚀 ~ updateTableKonsul ~ filteredData:", filteredData);
     const table = $(tableId).DataTable();
     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
     const nama = dataArray[0]?.pasien_nama;
-    console.log("🚀 ~ updateTableData ~ nama:", nama);
+    // console.log("🚀 ~ updateTableData ~ nama:", nama);
     if (nama !== "Belum ada data masuk") {
         processDataArray(dataArray, ruang, true);
     }
@@ -205,7 +205,7 @@ function setKonsul(button) {
             norm: $(button).data("norm"),
         },
         success: function (response) {
-            console.log("🚀 ~ setKonsul ~ response:", response);
+            // console.log("🚀 ~ setKonsul ~ response:", response);
             Swal.fire({
                 icon: "success",
                 title: response.metadata.message,
@@ -512,12 +512,73 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
         { data: "dokter_nama", className: "p-2 col-3", title: "Dokter" },
         { data: "poli_nama", className: "p-2", title: "Poli" },
     ];
+    const suratColumns = [
+        {
+            data: "antrean_nomor",
+            className: "font-weight-bold text-center p-2 col-1",
+            title: "Urut",
+        },
+        {
+            data: statusType,
+            className: "text-center p-2",
+            title: "Status",
+            render: function (data, type, row) {
+                const statusClasses = {
+                    "Belum Pulang": "danger",
+                    "Sudah Pulang": "success",
+                    "Tidak Ada Permintaan": "danger",
+                    "Belum Ada Ts RO": "danger",
+                    "Belum Upload Foto Thorax": "warning",
+                    "Sudah Selesai": "success",
+                    default: "secondary",
+                };
+                const tgl = row.tanggal;
+                return `<div class="badge badge-${
+                    statusClasses[data] || statusClasses.default
+                }">${data}</div>
+                <div class="badge badge-info">${tgl}</div>
+                `;
+            },
+        },
+        // { data: "tanggal", className: "col-1 p-2", title: "Tanggal" },
+        // { data: "pasien_no_rm", className: "text-center p-2", title: "NoRM" },
+        // { data: "pasien_nama", className: "p-2 col-2", title: "Nama Pasien" },
+        {
+            data: null,
+            className: "p-2 col-3",
+            title: "Pasien",
+            render: function (data, type, row) {
+                const nama = row.pasien_nama || "-";
+                const norm = row.pasien_no_rm || "-";
+                return `
+                ${nama}<br>
+                ( ${norm} )<br>
+            `;
+            },
+        },
+        {
+            data: null,
+            className: "p-2 col-3",
+            title: "Dokter & Poli",
+            render: function (data, type, row) {
+                const dokter = row.dokter_nama || "-";
+                const poli = row.poli_nama || "-";
+                const penjamin = row.penjamin_nama || "-";
+                return `
+                ${dokter}<br>
+                 <small><strong>Poli:</strong> ${poli}</small><br>
+                <small><strong>Jaminan:</strong> ${penjamin}</small>
+            `;
+            },
+        },
+    ];
+
     let aksiColumns;
     if (ruang === "surat") {
         aksiColumns = [
             {
                 data: "aksi",
-                className: "p-2 col-4 text-center",
+                className: "p-2 col-2 text-center",
                 title: "Aksi",
             },
         ];
@@ -551,9 +612,9 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
     const columnConfig = {
         surat: [
             ...aksiColumns,
-            ...baseColumns,
+            // ...baseColumns,
             // ...extraColumns,
-            ...commonColumns,
+            ...suratColumns,
         ],
         lab: [
             ...aksiColumns,
@@ -671,7 +732,7 @@ function generateActionLink(item, ruang, statusFilter) {
                 </a>`;
     const linkCppt = `<a type="button" class="aksi-button btn-sm btn-success py-md-0 py-1 m-1 col icon-link icon-link-hover"
                     onclick="riwayatKunjungan('${item.pasien_no_rm}','${item.pasien_nama}');">
-                    <strong>Riwayat</strong>                   
+                    <strong>CPPT</strong>                   
                 </a>`;
     const buttonColor = item.button;
     let panggilan;
@@ -693,9 +754,9 @@ function generateActionLink(item, ruang, statusFilter) {
             "col m-1",
             "",
             "<strong>Surat</strong>"
-        )}
-            ${linkLog}
-            ${linkCppt}            
+        )}<br>
+            ${linkLog}<br>
+            ${linkCppt}<br>            
                  <a type="button"
                       data-toggle="tooltip" data-placement="right" title="Transaksi Konsul 
                       ${item.konsul_ro === "danger" ? "Belum" : "Sudah"}"
@@ -751,16 +812,21 @@ function riwayatKunjungan(norm, nama) {
             Swal.showLoading();
         },
     });
-    console.log("🚀 ~ riwayatKunjungan ~ norm:", norm);
+    // console.log("🚀 ~ riwayatKunjungan ~ norm:", norm);
     $.ajax({
         url: "/api/kominfo/kunjungan/riwayat",
         type: "POST",
         data: { no_rm: norm },
         success: function (response) {
             Swal.close();
-            console.log("🚀 ~ riwayatKunjungan ~ response:", response);
+            // console.log("🚀 ~ riwayatKunjungan ~ response:", response);
             tabelRiwayatKunjungan(response); // Menampilkan tabel
             $("#historiKunjungan").modal("show"); // Menampilkan modal
+            // $("#historiKunjungan").on("shown.bs.tab", function () {
+            setTimeout(() => {
+                $("#riwayatKunjungan").DataTable().columns.adjust().draw();
+            }, 50); // delay kecil agar render sempat selesai
+            // });
         },
         error: function (xhr) {
             console.error("Error:", xhr.responseText);
@@ -774,87 +840,177 @@ function riwayatKunjungan(norm, nama) {
 }
 
 function tabelRiwayatKunjungan(data) {
-    data.forEach(function (item, index) {
+    data.forEach((item, index) => {
         item.no = index + 1; // Nomor urut dimulai dari 1
-        item.diagnosa = `
-                            <table>
-                                <tr>
-                                    <td><strong>DX 1 :</strong></td>
-                                    <td>${item.dx1 || "-"}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>DX 3 :</strong></td>
-                                    <td>${item.dx2 || "-"}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>DX 3 :</strong></td>
-                                    <td>${item.dx3 || "-"}</td>
-                                </tr>
-                            </table>
 
-                        `;
-        item.anamnesa = `<div>
-                            <p><strong>DS :</strong> ${item.ds || "-"}</p>
-                            <p><strong>DO :</strong> ${item.do || "-"}</p>
-                            <table>
-                                <tr>
-                                    <td><strong>TD :</strong> ${
-                                        item.td || "-"
-                                    } mmHg</td>
-                                    <td><strong>Nadi :</strong> ${
-                                        item.nadi || "-"
-                                    } X/mnt</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>BB :</strong> ${
-                                        item.bb || "-"
-                                    } Kg</td>
-                                    <td><strong>Suhu :</strong> ${
-                                        item.suhu || "-"
-                                    } °C</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>RR :</strong> ${
-                                        item.rr || "-"
-                                    } X/mnt</td>
-                                </tr>
-                            </table>
-                        </div>`;
+        item.antrean = `
+            <div>
+                <p>${item.antrean_nomor} </p>                                    
+                <p>${item.penjamin_nama}</p>                                    
+                <p>${item.dokter_nama}</p>
+            </div>`;
+
+        item.diagnosa = `
+            <div>
+                <p><strong>DX 1 :</strong> ${item.dx1 || "-"}</p>
+                <p><strong>DX 2 :</strong> ${item.dx2 || "-"}</p>
+                <p><strong>DX 3 :</strong> ${item.dx3 || "-"}</p>
+            </div>`;
+
+        item.anamnesa = `
+            <div>
+                <p><strong>DS :</strong> ${item.ds || "-"}</p>
+                <p><strong>DO :</strong> ${item.do || "-"}</p>
+                <table>
+                    <tr>
+                        <td><strong>TD :</strong> ${item.td || "-"} mmHg</td>
+                        <td><strong>Nadi :</strong> ${
+                            item.nadi || "-"
+                        } X/mnt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>BB :</strong> ${item.bb || "-"} Kg</td>
+                        <td><strong>Suhu :</strong> ${item.suhu || "-"} °C</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RR :</strong> ${item.rr || "-"} X/mnt</td>
+                    </tr>
+                </table>
+            </div>`;
+
+        let identitas = `
+            <div class="row">
+                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                    <p><strong>NO RM:</strong> ${item.pasien_no_rm}</p>
+                    <p><strong>Nama:</strong> ${item.pasien_nama}</p>
+                </div>
+                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                    <p><strong>Tgl Lahir:</strong> ${item.pasien_tgl_lahir}</p>
+                    <p><strong>Umur:</strong> ${item.umur}</p>
+                </div>
+                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                    <p><strong>Kelamin:</strong> ${item.jenis_kelamin_nama}</p>
+                    <p><strong>Alamat:</strong> ${item.alamat}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                    <a type="button" class="btn btn-warning font-weight-bold mx-2" href="/RO/Hasil/${item.pasien_no_rm}" target="_blank">Lihat Hasil Penunjang</a>
+                </div>
+                <div class="col-md-4 col-sm-6 col-12 mb-2">
+                    <a type="button" class="btn btn-danger font-weight-bold mx-2"  onclick="lihatIdentitas('${item.pasien_no_rm}')">Lihat Identitas</a>
+                </div>                
+            </div>`;
+
+        $("#identitas").html(identitas);
 
         item.ro = generateAsktindString(item.radiologi);
         item.igd = generateAsktindString(item.tindakan, true);
         item.lab = generateAsktindString(item.laboratorium, false, true);
-        item.hasilLab = generateAsktindString(item.hasilLab, false, true);
+        // item.hasilLab = generateAsktindString(item.hasilLab, false, true);
+
+        let obatHtml = `
+            <div>
+                <table border="1" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th>Nama Obat</th>
+                            <th>Aturan</th>
+                            <th>Jumlah</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+        item.obat.forEach((obat) => {
+            obat.resep_obat_detail.forEach((detail) => {
+                let aturan = obat.aturan_pakai || "";
+                obatHtml += `
+                    <tr>
+                        <td>${detail.nama_obat}</td>
+                        <td>${obat.signa_1} X ${obat.signa_2} ${aturan}</td>
+                        <td>${detail.jumlah_obat}</td>
+                    </tr>`;
+            });
+        });
+
+        obatHtml += `</tbody></table></div>`;
+        item.dataObats = obatHtml;
+
+        item.rincian = `
+                <div class="mb-2">
+                    <p><strong>DS :</strong> ${item.ds || "-"}</p>
+                    <p><strong>DO :</strong> ${item.do || "-"}</p>
+                    <p><span><strong>TD:</strong> ${
+                        item.td || "-"
+                    } mmHg, </span>
+                    <span><strong>Nadi:</strong> ${
+                        item.nadi || "-"
+                    } X/mnt, </span>
+                    <span><strong>BB:</strong> ${item.bb || "-"} Kg, </span>
+                    <span><strong>Suhu:</strong> ${item.suhu || "-"} °C, </span>
+                    <span><strong>RR:</strong> ${
+                        item.rr || "-"
+                    } X/mnt </span></p>
+                </div>
+                <div class="mb-2" >
+                    <p><strong>DX 1 :</strong> ${item.dx1 || "-"}</p>
+                    <p><strong>DX 2 :</strong> ${item.dx2 || "-"}</p>
+                    <p><strong>DX 3 :</strong> ${item.dx3 || "-"}</p>
+                </div>
+                <p class="mb-2"><strong>Radiologi :</strong> ${
+                    item.ro || "Tidak Ada Pemeriksaan RO"
+                }</p>
+                <p class="mb-2"><strong>Tindakan :</strong> ${
+                    item.igd || "Tidak Ada Tidankan"
+                }</p>
+                <p class="mb-2"><strong>Laboratorium :</strong> ${
+                    item.hasilLab || ""
+                }</p>
+                <p class="mb-2"><strong>Resep Obat :</strong> ${
+                    item.dataObats || "Tidak Ada Resep Obat"
+                }</p>
+                <p class="mb-2"> <strong> Status Pulang: </strong> ${
+                    item.status_pasien_pulang + ", " || ""
+                }  ${item.ket_status_pasien_pulang || "-"}</p > `;
     });
 
     // Hancurkan DataTable sebelumnya jika ada
-    const table = $("#riwayatKunjungan").DataTable();
     if ($.fn.DataTable.isDataTable("#riwayatKunjungan")) {
-        table.destroy();
+        $("#riwayatKunjungan").DataTable().destroy();
     }
 
     // Inisialisasi DataTable baru
     $("#riwayatKunjungan").DataTable({
         data: data,
         columns: [
-            { data: "tanggal", className: "col-1 text-center" },
-            // { data: "pasien_no_rm", className: "col-1 text-center" },
-            // { data: "pasien_nama", className: " text-center" },
-            { data: "dokter_nama", className: "text-center" },
-            { data: "diagnosa", className: "col-4" },
-            { data: "anamnesa" },
-            { data: "igd", title: "Tindakan" },
-            { data: "hasilLab", title: "Laboratorium" },
-            { data: "ro", title: "Radiologi" },
+            {
+                data: "antrean",
+                className: "text-wrap",
+                title: "Pendaftaran",
+                width: "25%",
+            },
+            {
+                data: "tanggal",
+                className: "text-center",
+                title: "Tanggal",
+                width: "10%",
+            },
+            {
+                data: "rincian",
+                className: "text-wrap",
+                title: "SOAP",
+            },
         ],
         paging: true,
-        order: [0, "desc"], // Mengurutkan berdasarkan tanggal
+        order: [[1, "desc"]], // Mengurutkan berdasarkan tanggal
         lengthMenu: [
             [5, 10, 25, 50, -1],
             [5, 10, 25, 50, "All"],
         ],
-        pageLength: 5,
+        pageLength: 3,
         responsive: true,
+        autoWidth: false,
+        scrollX: true,
     });
 }
 
@@ -871,7 +1027,7 @@ function cariLog(id, norm, tgl) {
         method: "POST",
         data: { id: id },
         success: function (response) {
-            console.log("🚀 ~ cariLog ~ response:", response);
+            // console.log("🚀 ~ cariLog ~ response:", response);
             //tangani jika 404 kirim swal
             if (response.status === 404) {
                 Swal.fire({
@@ -938,7 +1094,7 @@ function celuk(button, ruang) {
         }
     }
     const text = `${sebutan} ${nama} dari ${alamat}, silahkan menuju ke loket ${ruang}`;
-    console.log("🚀 ~ celuk ~ text:", text);
+    // console.log("🚀 ~ celuk ~ text:", text);
     if (ruang === "farmasi") {
         pasienPulang(button, text);
     } else {
@@ -947,7 +1103,7 @@ function celuk(button, ruang) {
 }
 
 function pasienPulang(button, text) {
-    console.log("🚀 ~ pasienPulang ~ pasienPulang:", pasienPulang);
+    // console.log("🚀 ~ pasienPulang ~ pasienPulang:", pasienPulang);
     var norm = $(button).data("norm");
     var notrans = $(button).data("notrans");
     var tgltrans = $(button).data("tgltrans");
@@ -961,7 +1117,7 @@ function pasienPulang(button, text) {
                 tgltrans: tgltrans,
             },
             success: function (response) {
-                console.log("🚀 ~ pasienPulang ~ response:", response);
+                // console.log("🚀 ~ pasienPulang ~ response:", response);
                 //jika respon 500 swal fire eror
                 Swal.fire({
                     icon: "success",
@@ -975,7 +1131,7 @@ function pasienPulang(button, text) {
                 });
             },
             error: function (xhr) {
-                console.log("🚀 ~ pasienPulang ~ xhr:", xhr);
+                // console.log("🚀 ~ pasienPulang ~ xhr:", xhr);
                 let response = xhr.responseJSON || {
                     message: "Terjadi kesalahan.",
                     status: 500,
@@ -987,7 +1143,7 @@ function pasienPulang(button, text) {
             },
         });
     } catch (error) {
-        console.log("🚀 ~ pasienPulang ~ error:", error);
+        // console.log("🚀 ~ pasienPulang ~ error:", error);
         Swal.fire({
             icon: "error",
             title: error,
@@ -996,11 +1152,11 @@ function pasienPulang(button, text) {
 }
 
 function setTransaksi(button, ruang) {
-    console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi);
+    // console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi);
     var norm = $(button).data("norm");
     var nama = $(button).data("nama");
     var dokter = $(button).data("kddokter");
-    console.log("🚀 ~ setTransaksi ~ dokter:", dokter);
+    // console.log("🚀 ~ setTransaksi ~ dokter:", dokter);
     var alamat = $(button).data("alamat");
     var layanan = $(button).data("layanan");
     var notrans = $(button).data("notrans");
@@ -1105,10 +1261,10 @@ async function cekTransLain(notrans) {
                 msgSelesai =
                     "Transaksi IGD sudah, silahkan di arahkan menunggu hasil";
             }
-            console.log("🚀 ~ msgSelesai:", msgSelesai);
+            // console.log("🚀 ~ msgSelesai:", msgSelesai);
         });
     } catch (error) {
-        console.log("error++", error);
+        // console.log("error++", error);
     }
 }
 
@@ -1161,6 +1317,13 @@ function antrianAll(ruang) {
             //     ruang
             // );
         } else if (ruang === "farmasi") {
+            initializeDataTable(
+                "#antrianall",
+                dataSelesai,
+                getColumnDefinitions("status", ruang),
+                ruang
+            );
+        } else if (ruang === "surat") {
             initializeDataTable(
                 "#antrianall",
                 dataSelesai,
@@ -1277,14 +1440,46 @@ function handleMetadata(response, ruang) {
 }
 
 function handleIgd(cppt, pasien, pendaftaran) {
-    const permintaan =
+    const pendaftaran_id = cppt.pendaftaran_id;
+    console.log("🚀 ~ handleIgd ~ pendaftaran_id:", pendaftaran_id);
+    let permintaan =
         cppt.tindakan
             ?.map(
                 (tindakan) =>
                     `${tindakan.nama_tindakan} : ${tindakan.nama_obat}`
             )
-            .join(",<br>") || "";
-    isiIdentitas(pasien, pendaftaran, permintaan);
+            .join(",<br>") || "kosong";
+    if (permintaan === "kosong") {
+        getTindakanKominfo(pendaftaran_id, function (permintaan) {
+            console.log("🚀 ~ handleIgd ~ permintaan:", permintaan);
+            isiIdentitas(pasien, pendaftaran, permintaan);
+        });
+    } else {
+        isiIdentitas(pasien, pendaftaran, permintaan);
+    }
+}
+
+function getTindakanKominfo(pendaftaran_id, callback) {
+    $.ajax({
+        url: "/api/kominfo/get_data_tindakan/" + pendaftaran_id,
+        method: "GET",
+        dataType: "json",
+        success: function (response) {
+            const permintaan =
+                response
+                    ?.map(
+                        (item) =>
+                            `${item.nama_tindakan} : ${item.nama_obat || "-"}`
+                    )
+                    .join(",<br>") || "-";
+
+            callback(permintaan);
+        },
+        error: function (error) {
+            console.log("🚀 ~ getPermintaanKominfo ~ error:", error);
+            callback("-");
+        },
+    });
 }
 
 function handleRo(cppt, pasien, pendaftaran) {
@@ -1312,8 +1507,8 @@ function handleLab(cppt, pasien, pendaftaran) {
 }
 
 function isiIdentitas(pasien, pendaftaran, permintaan) {
-    console.log("🚀 ~ isiIdentitas ~ pendaftaran:", pendaftaran);
-    console.log("🚀 ~ isiIdentitas ~ pasien:", pasien);
+    // console.log("🚀 ~ isiIdentitas ~ pendaftaran:", pendaftaran);
+    // console.log("🚀 ~ isiIdentitas ~ pasien:", pasien);
     // console.log("🚀 ~ isiIdentitas ~ permintaan:", permintaan);
 
     // Set values for input fields

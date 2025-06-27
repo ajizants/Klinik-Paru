@@ -280,29 +280,19 @@
                             id="no_rm"></span></h4>
                 </div>
                 <div class="modal-body">
-                    <div class="card-body p-2">
-                        <div class="container-fluid">
-                            <div class="card card-info">
-                                <div class="card-body p-2">
-
-                                    <div class="table-responsive">
-                                        <table id="riwayatKunjungan"
-                                            class="table table-striped table-hover pt-0 mt-0 fs-6" style="width:100%"
-                                            cellspacing="0">
-                                            <thead>
-                                                <tr>
-                                                    <th width="15px" class="text-center">Tanggal</th>
-                                                    <th class="col-2 text-center">Dokter</th>
-                                                    <th class="col-3">Diagnosa</th>
-                                                    <th>Anamnesa</th>
-                                                    <th>Anamnesa</th>
-                                                    <th>Anamnesa</th>
-                                                    <th>Anamnesa</th>
-                                                </tr>
-                                            </thead>
-                                        </table>
-                                    </div>
-                                </div>
+                    <div class="card card-info">
+                        <div class="card-body p-2">
+                            <div style="display: block; overflow-x: auto; white-space: nowrap;">
+                                <table id="riwayatKunjungan" class="table table-striped table-hover pt-0 mt-0 fs-6"
+                                    style="width:100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center"></th>
+                                            <th class="text-center"></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                </table>
                             </div>
                         </div>
                     </div>

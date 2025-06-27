@@ -62,9 +62,54 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     $.ajaxSetup({
+        credentials: "include",
         headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"), // Mengirim token CSRF untuk perlindungan keamanan
+            "X-CSRF-TOKEN": $('meta[name="_token"]').attr("content"), // Mengirim token CSRF untuk perlindungan keamanan
         },
+    });
+
+    // const originalFetch = window.fetch;
+    // window.fetch = function (url, options = {}) {
+    //     const token = document
+    //         .querySelector('meta[name="_token"]')
+    //         .getAttribute("content");
+
+    //     // Pastikan objek headers ada
+    //     options.headers = options.headers || {};
+
+    //     // Tambahkan header CSRF
+    //     options.headers["X-CSRF-TOKEN"] = token;
+    //     options.headers["Accept"] = "application/json";
+    //     options.credentials = "include";
+
+    //     // Cek jika bukan FormData, set Content-Type JSON
+    //     const isFormData = options.body instanceof FormData;
+    //     if (!isFormData && !options.headers["Content-Type"]) {
+    //         options.headers["Content-Type"] = "application/json";
+    //     }
+
+    //     return originalFetch(url, options);
+    // };
+
+    $(".nav-link").on("click", function () {
+        // Menghapus class 'active' dari semua elemen dengan class 'nav-link'
+        $(".nav-link").removeClass("active");
+        $(".nav-link").removeClass("bg-blue");
+        // Menambah class 'active' ke elemen yang diklik
+        $(this).addClass("active");
+        if ($(this).hasClass("active")) {
+            // Jika iya, ubah warna latar belakang menjadi putih
+            $(this).addClass("bg-blue");
+        }
+    });
+
+    $("#itunggu").on("click", function () {
+        $("#dselesai").hide();
+        $("#dtunggu").show();
+    });
+    $("#iselesai").on("click", function () {
+        $("#dselesai").show();
+        $("#dtunggu").hide();
     });
 });
 function formatNorm(inputElement) {

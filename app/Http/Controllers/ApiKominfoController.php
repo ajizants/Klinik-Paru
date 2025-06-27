@@ -30,10 +30,10 @@ class ApiKominfoController extends Controller
     public function data_rencana_kontrol(Request $request)
     {
         $model = new ApiKominfo();
-        $data  = $model->data_pasien_kontrol($request->all());
+        $data   = $model->data_pasien_kontrol($request->all());
 
         // Cek jika data kosong atau tidak valid
-        if (! $data || count($data) == 0) {
+        if (!  $data || count($data) == 0) {
             return response()->json([
                 'html' => '<p class="text-center text-danger">Tidak ada data tersedia</p>',
                 'data' => [],
@@ -86,9 +86,9 @@ class ApiKominfoController extends Controller
 
     public function poliDokter()
     {
-        $model        = new KominfoModel();
-        $res          = $model->getAkssLoket();
-        $data         = $res['data'];
+        $model               = new KominfoModel();
+        $res                   = $model->getAkssLoket();
+        $data                 = $res['data'];
         $jadwalDokter = array_filter($data, function ($item) {
             return stripos($item['admin_nama'], 'dr. ') !== false;
         });
@@ -120,14 +120,14 @@ class ApiKominfoController extends Controller
 
     public function getDataSEP(Request $request)
     {
-        $model  = new KominfoModel();
+        $model   = new KominfoModel();
         $params = [
-            'tanggal_awal'  => $request->input('tanggal_awal') ?? date('Y-m-d'),
+            'tanggal_awal'   => $request->input('tanggal_awal') ?? date('Y-m-d'),
             'tanggal_akhir' => $request->input('tanggal_akhir') ?? date('Y-m-d'),
         ];
         // dd($params);
         $data = $model->getDataSEP($params);
-        $res  = $data['data'];
+        $res   = $data['data'];
         // tambahkan aksi di $res
         foreach ($res as &$item) {
             $item['aksi'] = '
@@ -139,22 +139,22 @@ class ApiKominfoController extends Controller
     }
     public function getDataSEPSK(Request $request)
     {
-        $model  = new KominfoModel();
+        $model   = new KominfoModel();
         $params = [
-            'tanggal_awal'  => $request->input('tanggal_awal') ?? date('Y-m-d'),
+            'tanggal_awal'   => $request->input('tanggal_awal') ?? date('Y-m-d'),
             'tanggal_akhir' => $request->input('tanggal_akhir') ?? date('Y-m-d'),
         ];
 
         // Ambil data SEP
         $data = $model->getDataSEP($params);
-        $res  = $data['data'];
+        $res   = $data['data'];
 
         foreach ($res as &$item) {
-            $nik     = $item['pasien_nik'];
+            $nik         = $item['pasien_nik'];
             $noSurat = $item['no_surat_kontrol'];
-            $hidden  = $noSurat == "" ? "hidden" : "";
-            $norm    = $item['pasien_no_rm'];
-            $tgl     = $item['tanggal'];
+            $hidden   = $noSurat == "" ? "hidden" : "";
+            $norm       = $item['pasien_no_rm'];
+            $tgl         = $item['tanggal'];
 
             $aksi = '
             <a href="' . url('api/sep/cetak/' . $item['no_sep']) . '" target="_blank" class="btn btn-sm btn-primary mt-2 col">SEP</a>
@@ -172,9 +172,9 @@ class ApiKominfoController extends Controller
             // <a href="' . url('api/billing/suratkontrol/cetak/' . $noSurat) . '" ' . $hidden . ' target="_blank" class="btn btn-sm bg-orange mt-2 col">S.Kontrol & Billing</a>
             // ';
 
-            $sepTanggal       = $item['tanggal_sep'] ?? null;
+            $sepTanggal             = $item['tanggal_sep'] ?? null;
             $sepTanggalTampil = $item['tanggal_sep_tampil'] ?? '-';
-            $tanggalTampil    = $item['tanggal_tampil'] ?? '-';
+            $tanggalTampil       = $item['tanggal_tampil'] ?? '-';
 
             $item['detail_sep'] = '
                                         <p>No SEP: <br>' . ($item['no_sep'] ?? '-') . '</p>
@@ -195,7 +195,7 @@ class ApiKominfoController extends Controller
 
     public function getDetailSEP(Request $request)
     {
-        $model  = new KominfoModel();
+        $model   = new KominfoModel();
         $no_sep = $request->input('no_sep');
         // dd($params);
         $data = $model->getDetailSEP($no_sep);
@@ -205,14 +205,15 @@ class ApiKominfoController extends Controller
     {
         $model = new KominfoModel();
         // dd($params);
-        $data      = $model->getDetailSEP($no_sep);
+        $data           = $model->getDetailSEP($no_sep);
         $detailSEP = $data['data'];
+        // return response()->json($detailSEP);
         if (empty($detailSEP)) {
             return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
         // return response()->json($detailSEP);
 
-        $noKartu   = $detailSEP['peserta']['noKartu'];
+        $noKartu     = $detailSEP['peserta']['noKartu'];
         $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=' . urlencode($noKartu) . '&size=100x100';
 
         $qrCodeBase64 = base64_encode(file_get_contents($qrCodeUrl));
@@ -231,27 +232,30 @@ class ApiKominfoController extends Controller
     {
         $model = new KominfoModel();
         // dd($params);
-        $data         = $model->getDetailSEP($no_sep);
-        $detailSEP    = $data['data'];
-        $norm         = $detailSEP['peserta']['noMr'];
+        $data                 = $model->getDetailSEP($no_sep);
+        $detailSEP       = $data['data'];
+        $norm                 = $detailSEP['peserta']['noMr'];
         $tglKunjungan = $detailSEP['tglSep'];
 
         $dataTagihan = $this->getDataTagihan($norm, $tglKunjungan);
         // dd($dataTagihan);
 
-        $lab             = $dataTagihan['lab'];
-        $totalLab        = $dataTagihan['totalLab'];
-        $ro              = $dataTagihan['ro'];
-        $totalRo         = $dataTagihan['totalRo'];
-        $tindakan        = $dataTagihan['tindakan'];
-        $totalTindakan   = $dataTagihan['totalTindakan'];
-        $obat            = $dataTagihan['obat'];
-        $totalObat       = $dataTagihan['totalObat'];
-        $obatKronis      = $dataTagihan['obatKronis'];
+        $lab                         = $dataTagihan['lab'];
+        $totalLab               = $dataTagihan['totalLab'];
+        $ro                           = $dataTagihan['ro'];
+        $totalRo                 = $dataTagihan['totalRo'];
+        $tindakan               = $dataTagihan['tindakan'];
+        $totalTindakan     = $dataTagihan['totalTindakan'];
+        $obat                       = $dataTagihan['obat'];
+        $totalObat             = $dataTagihan['totalObat'];
+        $obatKronis           = $dataTagihan['obatKronis'];
         $totalObatKronis = $dataTagihan['totalObatKronis'];
         $bmhp            = $dataTagihan['bmhp'];
         $totalbmhp       = $dataTagihan['totalbmhp'];
+        $bmhp            = $dataTagihan['bmhp'];
+        $totalbmhp       = $dataTagihan['totalbmhp'];
 
+        $noKartu   = $detailSEP['peserta']['noKartu'];
         $noKartu   = $detailSEP['peserta']['noKartu'];
         $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=' . urlencode($noKartu) . '&size=100x100';
 
@@ -277,27 +281,28 @@ class ApiKominfoController extends Controller
     {
         $model = new KominfoModel();
         // dd($params);
-        $data         = $model->getDetailSEP($no_sep);
-        $detailSEP    = $data['data'];
-        $norm         = $detailSEP['peserta']['noMr'];
+        $data                 = $model->getDetailSEP($no_sep);
+        $detailSEP       = $data['data'];
+        $norm                 = $detailSEP['peserta']['noMr'];
         $tglKunjungan = $detailSEP['tglSep'];
 
         $dataTagihan = $this->getDataTagihan($norm, $tglKunjungan);
         // return response()->json($dataTagihan);
 
-        $lab             = $dataTagihan['lab'];
-        $totalLab        = $dataTagihan['totalLab'];
-        $ro              = $dataTagihan['ro'];
-        $totalRo         = $dataTagihan['totalRo'];
-        $tindakan        = $dataTagihan['tindakan'];
-        $totalTindakan   = $dataTagihan['totalTindakan'];
-        $obat            = $dataTagihan['obat'];
-        $totalObat       = $dataTagihan['totalObat'];
-        $obatKronis      = $dataTagihan['obatKronis'];
+        $lab                         = $dataTagihan['lab'];
+        $totalLab               = $dataTagihan['totalLab'];
+        $ro                           = $dataTagihan['ro'];
+        $totalRo                 = $dataTagihan['totalRo'];
+        $tindakan               = $dataTagihan['tindakan'];
+        $totalTindakan     = $dataTagihan['totalTindakan'];
+        $obat                       = $dataTagihan['obat'];
+        $totalObat             = $dataTagihan['totalObat'];
+        $obatKronis           = $dataTagihan['obatKronis'];
         $totalObatKronis = $dataTagihan['totalObatKronis'];
-        $bmhp            = $dataTagihan['bmhp'];
-        $totalbmhp       = $dataTagihan['totalbmhp'];
+        $bmhp                       = $dataTagihan['bmhp'];
+        $totalbmhp             = $dataTagihan['totalbmhp'];
 
+        $noKartu   = $detailSEP['peserta']['noKartu'];
         $noKartu   = $detailSEP['peserta']['noKartu'];
         $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=' . urlencode($noKartu) . '&size=100x100';
 
@@ -320,26 +325,29 @@ class ApiKominfoController extends Controller
         $model = new KominfoModel();
         // dd($params);
         // dd($params);
-        $data               = $model->getDetailSuratKontrol($no_SuratKontrol);
+        $data                             = $model->getDetailSuratKontrol($no_SuratKontrol);
         $detailSuratKontrol = $data['data'];
         // return response()->json($detailSuratKontrol);
 
+        $norm         = $detailSuratKontrol['sep']['data_rujukan']['rujukan']['peserta']['mr']['noMR'];
         $norm         = $detailSuratKontrol['sep']['data_rujukan']['rujukan']['peserta']['mr']['noMR'];
         $tglKunjungan = $detailSuratKontrol['sep']['tglSep'];
 
         $dataTagihan = $this->getDataTagihan($norm, $tglKunjungan);
         // return response()->json($dataTagihan);
 
-        $lab             = $dataTagihan['lab'];
-        $totalLab        = $dataTagihan['totalLab'];
-        $ro              = $dataTagihan['ro'];
-        $totalRo         = $dataTagihan['totalRo'];
-        $tindakan        = $dataTagihan['tindakan'];
-        $totalTindakan   = $dataTagihan['totalTindakan'];
-        $obat            = $dataTagihan['obat'];
-        $totalObat       = $dataTagihan['totalObat'];
-        $obatKronis      = $dataTagihan['obatKronis'];
+        $lab                         = $dataTagihan['lab'];
+        $totalLab               = $dataTagihan['totalLab'];
+        $ro                           = $dataTagihan['ro'];
+        $totalRo                 = $dataTagihan['totalRo'];
+        $tindakan               = $dataTagihan['tindakan'];
+        $totalTindakan     = $dataTagihan['totalTindakan'];
+        $obat                       = $dataTagihan['obat'];
+        $totalObat             = $dataTagihan['totalObat'];
+        $obatKronis           = $dataTagihan['obatKronis'];
         $totalObatKronis = $dataTagihan['totalObatKronis'];
+        $bmhp            = $dataTagihan['bmhp'];
+        $totalbmhp       = $dataTagihan['totalbmhp'];
         $bmhp            = $dataTagihan['bmhp'];
         $totalbmhp       = $dataTagihan['totalbmhp'];
 
@@ -379,7 +387,19 @@ class ApiKominfoController extends Controller
             'obat'            => null,
             'totalObat'       => 0,
             'obatKronis'      => null,
+            'data'            => $dataTagihan,
+            'lab'             => null,
+            'totalLab'        => 0,
+            'ro'              => null,
+            'totalRo'         => 0,
+            'tindakan'        => null,
+            'totalTindakan'   => 0,
+            'obat'            => null,
+            'totalObat'       => 0,
+            'obatKronis'      => null,
             'totalObatKronis' => 0,
+            'bmhp'            => null,
+            'totalbmhp'       => 0,
             'bmhp'            => null,
             'totalbmhp'       => 0,
         ];
@@ -389,6 +409,7 @@ class ApiKominfoController extends Controller
 
             [$res['lab'], $res['totalLab']] = $this->filterAndSum($rincian, function ($item) {
                 return stripos($item['layanan']['kelas'], 9) !== false
+                && ! in_array($item['layanan']['idLayanan'], [131, 214]);
                 && ! in_array($item['layanan']['idLayanan'], [131, 214]);
             }, true);
 
@@ -421,6 +442,7 @@ class ApiKominfoController extends Controller
     {
         $filtered = array_filter($items, $filter);
         $total    = array_sum(array_column($filtered, 'totalHarga'));
+        $total    = array_sum(array_column($filtered, 'totalHarga'));
 
         return $returnItems ? [$filtered, $total] : [null, $total];
     }
@@ -428,12 +450,15 @@ class ApiKominfoController extends Controller
     public function getDataSuratKontrol(Request $request)
     {
         $model  = new KominfoModel();
+        $model  = new KominfoModel();
         $params = [
+            'tanggal_awal'  => $request->input('tanggal_awal') ?? date('Y-m-d'),
             'tanggal_awal'  => $request->input('tanggal_awal') ?? date('Y-m-d'),
             'tanggal_akhir' => $request->input('tanggal_akhir') ?? date('Y-m-d'),
         ];
         // dd($params);
         $data = $model->getDataSuratKontrol($params);
+        $res  = $data['data'];
         $res  = $data['data'];
         // tambahkan aksi di $res
         foreach ($res as &$item) {
@@ -447,6 +472,7 @@ class ApiKominfoController extends Controller
     public function getDetailSuratKontrol(Request $request)
     {
         $model           = new KominfoModel();
+        $model           = new KominfoModel();
         $no_SuratKontrol = $request->input('no_SuratKontrol');
         // dd($params);
         $data = $model->getDetailSuratKontrol($no_SuratKontrol);
@@ -454,6 +480,8 @@ class ApiKominfoController extends Controller
     }
     public function cetakSuratKontrol(string $no_SuratKontrol, $norm = null)
     {
+        $model  = new KominfoModel();
+        $data   = $model->getDetailSuratKontrol($no_SuratKontrol);
         $model  = new KominfoModel();
         $data   = $model->getDetailSuratKontrol($no_SuratKontrol);
         $detail = $data['data'] ?? null;
@@ -471,12 +499,16 @@ class ApiKominfoController extends Controller
         }
 
         $tgl          = $detail['sep']['tglSep'] ?? null;
+        $tgl          = $detail['sep']['tglSep'] ?? null;
         $cpptResponse = $model->cpptRequest([
+            'no_rm'         => $norm,
+            'tanggal_awal'  => $tgl,
             'no_rm'         => $norm,
             'tanggal_awal'  => $tgl,
             'tanggal_akhir' => $tgl,
         ]);
         $detailSuratKontrol = $detail;
+        $cppt               = $cpptResponse['response']['data'][0] ?? null;
         $cppt               = $cpptResponse['response']['data'][0] ?? null;
 
         return view('Laporan.Pasien.SuratKontrol', compact('detailSuratKontrol', 'cppt'));
@@ -485,6 +517,9 @@ class ApiKominfoController extends Controller
     public function suratRujukan($tgl, $norm)
     {
         $model = new KominfoModel();
+        $cppt  = $model->cpptRequest([
+            'no_rm'         => $norm,
+            'tanggal_awal'  => $tgl,
         $cppt  = $model->cpptRequest([
             'no_rm'         => $norm,
             'tanggal_awal'  => $tgl,
@@ -499,6 +534,7 @@ class ApiKominfoController extends Controller
         $statusPulang = $cppt['status_pasien_pulang'];
         // dd($statusPulang);
         $namaFaskes  = '-';
+        $namaFaskes  = '-';
         $alasanRujuk = '-';
 
         if (strtolower(trim($statusPulang)) === 'prb') {
@@ -511,6 +547,7 @@ class ApiKominfoController extends Controller
         if (strtolower($statusPulang) === 'dirujuk') {
             $keterangan = $cppt['ket_status_pasien_pulang'];
             preg_match('/Nama Faskes\s*:\s*(.*?),\s*Alasan Dirujuk\s*:\s*(.*)/i', $keterangan, $matches);
+            $namaFaskes  = $matches[1] ?? '-';
             $namaFaskes  = $matches[1] ?? '-';
             $alasanRujuk = $matches[2] ?? '-';
         }
@@ -529,6 +566,9 @@ class ApiKominfoController extends Controller
         $cppt  = $model->cpptRequest([
             'no_rm'         => $norm,
             'tanggal_awal'  => $tgl,
+        $cppt  = $model->cpptRequest([
+            'no_rm'         => $norm,
+            'tanggal_awal'  => $tgl,
             'tanggal_akhir' => $tgl,
         ]);
         $cppt = $cppt['response']['data'][0];
@@ -538,6 +578,9 @@ class ApiKominfoController extends Controller
     public function suratPRB($tgl, $norm)
     {
         $model = new KominfoModel();
+        $cppt  = $model->cpptRequest([
+            'no_rm'         => $norm,
+            'tanggal_awal'  => $tgl,
         $cppt  = $model->cpptRequest([
             'no_rm'         => $norm,
             'tanggal_awal'  => $tgl,
@@ -552,15 +595,20 @@ class ApiKominfoController extends Controller
     {
         $kominfo = new KominfoModel();
         $result  = [];
+        $result  = [];
 
         for ($bulan = 1; $bulan <= $bln; $bulan++) {
             $bulanFormatted = str_pad($bulan, 2, '0', STR_PAD_LEFT);
             $tanggal_awal   = "$tahun-$bulanFormatted-01";
             $tanggal_akhir  = date("Y-m-t", strtotime($tanggal_awal));
+            $tanggal_awal   = "$tahun-$bulanFormatted-01";
+            $tanggal_akhir  = date("Y-m-t", strtotime($tanggal_awal));
 
             $params = [
                 'tanggal_awal'  => $tanggal_awal,
+                'tanggal_awal'  => $tanggal_awal,
                 'tanggal_akhir' => $tanggal_akhir,
+                'no_rm'         => '',
                 'no_rm'         => '',
             ];
             // $params = [
@@ -578,22 +626,27 @@ class ApiKominfoController extends Controller
                     "ruang_nama" => "Ruang Poli (Dokter CPPT)",
                     "admin_nama" => "dr. Agil Dananjaya, Sp.P",
                     "jumlah"     => 0,
+                    "jumlah"     => 0,
                 ], [
                     "ruang_nama" => "Ruang Poli (Dokter CPPT)",
                     "admin_nama" => "dr. Cempaka Nova Intani, Sp.P, FISR., MM.",
+                    "jumlah"     => 0,
                     "jumlah"     => 0,
                 ], [
                     "ruang_nama" => "Ruang Poli (Dokter CPPT)",
                     "admin_nama" => "dr. Filly Ulfa Kusumawardani",
                     "jumlah"     => 0,
+                    "jumlah"     => 0,
                 ], [
                     "ruang_nama" => "Ruang Poli (Dokter CPPT)",
                     "admin_nama" => "dr. Sigit Dwiyanto",
+                    "jumlah"     => 0,
                     "jumlah"     => 0,
                 ]];
             } else {
                 // Ambil dan filter data yang sesuai
                 $data = $response['response']['data'];
+                $res  = array_filter($data, function ($item) {
                 $res  = array_filter($data, function ($item) {
                     return
                     ($item['ruang_nama'] ?? '') === 'Ruang Poli (Dokter CPPT)' &&
@@ -606,28 +659,36 @@ class ApiKominfoController extends Controller
                         "ruang_nama" => "Ruang Poli (Dokter CPPT)",
                         "admin_nama" => "dr. Agil Dananjaya, Sp.P",
                         "jumlah"     => 0,
+                        "jumlah"     => 0,
                     ], [
                         "ruang_nama" => "Ruang Poli (Dokter CPPT)",
                         "admin_nama" => "dr. Cempaka Nova Intani, Sp.P, FISR., MM.",
+                        "jumlah"     => 0,
                         "jumlah"     => 0,
                     ], [
                         "ruang_nama" => "Ruang Poli (Dokter CPPT)",
                         "admin_nama" => "dr. Filly Ulfa Kusumawardani",
                         "jumlah"     => 0,
+                        "jumlah"     => 0,
                     ], [
                         "ruang_nama" => "Ruang Poli (Dokter CPPT)",
                         "admin_nama" => "dr. Sigit Dwiyanto",
+                        "jumlah"     => 0,
                         "jumlah"     => 0,
                     ]];
                 }
             }
 
                                                            // Simpan hasil
+                                                           // Simpan hasil
             $result[$bulanFormatted] = array_values($res); // reset key numerik
         }
 
         $html  = $this->generatejmlDokterPeriksaTable($result, $tahun);
+        $html  = $this->generatejmlDokterPeriksaTable($result, $tahun);
         $chart = $this->generatejmlDokterPeriksaChart($result, $tahun);
+        $res   = [
+            'html'  => $html,
         $res   = [
             'html'  => $html,
             'chart' => $chart,
@@ -701,15 +762,18 @@ class ApiKominfoController extends Controller
         for ($bulan = 1; $bulan <= 12; $bulan++) {
             $bulanStr = str_pad($bulan, 2, '0', STR_PAD_LEFT);
             $entries  = $data[$bulanStr] ?? [];
+            $entries  = $data[$bulanStr] ?? [];
 
             // Catat jumlah pasien tiap dokter
             $currentMonthData = [];
 
             foreach ($entries as $entry) {
                 $nama   = $entry['admin_nama'];
+                $nama   = $entry['admin_nama'];
                 $jumlah = (int) $entry['jumlah'];
 
                 // Jika belum ada, inisialisasi array dengan nol untuk bulan-bulan sebelumnya
+                if (! isset($dokterData[$nama])) {
                 if (! isset($dokterData[$nama])) {
                     $dokterData[$nama] = array_fill(0, $bulan - 1, 0);
                 }
@@ -724,6 +788,7 @@ class ApiKominfoController extends Controller
             // Tambahkan 0 untuk dokter yang tidak ada data di bulan ini
             foreach ($dokterData as $nama => &$dataArr) {
                 if (! isset($currentMonthData[$nama])) {
+                if (! isset($currentMonthData[$nama])) {
                     $dataArr[] = 0;
                 }
             }
@@ -733,6 +798,7 @@ class ApiKominfoController extends Controller
         // Format akhir untuk chart.js
         $datasets = [];
         $colors   = [
+        $colors   = [
             '#36A2EB', '#FF6384', '#4BC0C0', '#9966FF', '#FF9F40', '#8e44ad',
             '#e67e22', '#16a085', '#f1c40f', '#2c3e50', '#d35400', '#27ae60',
         ];
@@ -740,11 +806,17 @@ class ApiKominfoController extends Controller
         $i = 0;
         foreach ($dokterData as $nama => $dataArr) {
             $color      = $colors[$i % count($colors)];
+            $color      = $colors[$i % count($colors)];
             $datasets[] = [
                 'label'           => $nama,
                 'data'            => $dataArr,
                 'borderColor'     => $color,
+                'label'           => $nama,
+                'data'            => $dataArr,
+                'borderColor'     => $color,
                 'backgroundColor' => $this->hexToRgba($color, 0),
+                'tension'         => 0.3,
+                'fill'            => true,
                 'tension'         => 0.3,
                 'fill'            => true,
             ];
@@ -752,6 +824,7 @@ class ApiKominfoController extends Controller
         }
 
         return [
+            'labels'   => $labels,
             'labels'   => $labels,
             'datasets' => $datasets,
         ];
@@ -779,6 +852,7 @@ class ApiKominfoController extends Controller
     {
         $kominfo = new KominfoModel();
         $result  = [];
+        $result  = [];
 
         for ($bulan = 1; $bulan <= 12; $bulan++) {
             // Format bulan dengan leading zero, misal: 01, 02, ..., 12
@@ -786,12 +860,15 @@ class ApiKominfoController extends Controller
 
             // Buat tanggal awal dan akhir bulan
             $tanggal_awal  = "$tahun-$bulanFormatted-01";
+            $tanggal_awal  = "$tahun-$bulanFormatted-01";
             $tanggal_akhir = date("Y-m-t", strtotime($tanggal_awal)); // tanggal akhir bulan
 
             // Siapkan parameter untuk request
             $params = [
                 'tanggal_awal'  => $tanggal_awal,
+                'tanggal_awal'  => $tanggal_awal,
                 'tanggal_akhir' => $tanggal_akhir,
+                'no_rm'         => '',
                 'no_rm'         => '',
             ];
 
@@ -802,6 +879,7 @@ class ApiKominfoController extends Controller
             $res = $this->waktuTungguProses($data, $bulanFormatted);
 
             // Simpan hasil ke dalam array result dengan struktur baru
+            $result['html'][$bulanFormatted]  = $res['html'];
             $result['html'][$bulanFormatted]  = $res['html'];
             $result['total'][$bulanFormatted] = $res['total'];
 
@@ -817,11 +895,48 @@ class ApiKominfoController extends Controller
         $param = [
             'no_rm'         => $norm,
             'tanggal_awal'  => $tgl,
+            'no_rm'         => $norm,
+            'tanggal_awal'  => $tgl,
             'tanggal_akhir' => $tgl,
         ];
         $cppt = $model->cpptRequest($param)['response']['data'];
 
         return view('SuratMedis.suratMedis', compact('title', 'cppt'));
+    }
+
+    public function get_assesment_awal($norm, $tanggal)
+    {
+        $api         = new ApiKominfo();
+        $pasien      = $api->get_pasien($norm);
+        $kominfo     = new KominfoModel();
+        $pendaftaran = $kominfo->pendaftaranRequest([
+            'no_rm'         => $norm,
+            'tanggal_awal'  => $tanggal,
+            'tanggal_akhir' => $tanggal,
+        ]);
+        // return $pendaftaran;
+        $log_id = $pendaftaran[0]['log_id'];
+        // return response()->json($pasien);
+        $id_pasien = $pasien[0]['id'];
+        // return $id_pasien;
+        $params = [
+            'pasien_id' => $id_pasien,
+            'log_id'    => $log_id,
+
+        ];
+        $assesment_awal_html = $api->get_assesment_awal($params);
+        return $assesment_awal_html;
+        // return response()->json($assesment_awal);
+        return view('Laporan.Pasien.asesmentAwal', compact('assesment_awal_html'));
+    }
+    public function get_data_tindakan($pendaftatan_id)
+    {
+        $api  = new ApiKominfo();
+        $data = $api->get_data_tindakan($pendaftatan_id);
+
+        return $data;
+        // return response()->json($assesment_awal);
+        return view('Laporan.Pasien.asesmentAwal', compact('assesment_awal_html'));
     }
 
     public function getDataObat(Request $request)

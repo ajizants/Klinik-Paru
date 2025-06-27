@@ -185,13 +185,14 @@
             </tr>
             <tr>
                 <td class="font-bold">Faskes Perujuk</td>
-                <td>: -</td>
+                <td>: {{ $detailSEP['data_rujukan']['rujukan']['provPerujuk']['nama'] }}</td>
                 <td class="font-bold">Kls. Rawat</td>
                 <td>: {{ $detailSEP['kelasRawat'] }}</td>
             </tr>
             <tr>
                 <td class="font-bold " width="20%">Diagnosa Awal</td>
-                <td class=>: {{ $detailSEP['diagnosa'] }}</td>
+                <td class="">: {{ $detailSEP['data_rujukan']['rujukan']['diagnosa']['kode'] }} -
+                    {{ $detailSEP['diagnosa'] }}</td>
                 <td class="font-bold">Penjamin</td>
                 <td>: {{ $detailSEP['penjamin'] ?? '-' }}</td>
             </tr>

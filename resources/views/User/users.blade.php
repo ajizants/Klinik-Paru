@@ -8,6 +8,11 @@
                     <!-- Card Content - Collapse -->
                     <div class="collapse show" id="collapseCardExample">
                         <div class="card-body p-2" id="usersContainer">
+                            <div class="container-fluid form-row">
+                                <button type="button" class="btn btn-success mx-2" id="refresh"
+                                    onclick="cariUser()">Refresh</button>
+                                @include('User.create')
+                            </div>
                             {!! $users !!}
                         </div>
                     </div>

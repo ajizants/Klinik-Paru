@@ -1608,7 +1608,13 @@ class PasienKominfoController extends Controller
         $riwayat = [];
         foreach ($data as $item) {
             $dataLab = LaboratoriumHasilModel::with('pemeriksaan')->where('notrans', $item['no_reg'])->get();
+            // (10) Alasan pemeriksan diisi dengan
+            // 0 untuk diagnosis
+            // 2 atau 3 untuk akhir tahap awal
+            // 5 untuk bulan kelima
+            // 6 atau 8 untuk akhir pengobatan
 
+            // return $dataLab;
             if (empty($dataLab) || count($dataLab) == 0 || $dataLab == null || $dataLab == []) {
                 $hasilLabHtml = "Tidak ada pemeriksaan laboratorium";
             } else {
@@ -1679,7 +1685,7 @@ class PasienKominfoController extends Controller
 
         $model = new KominfoModel();
         $data  = $model->cpptRequest($params);
-        // dd($data);
+        // return $data;
 
         if (isset($data['response']['data']) && is_array($data['response']['data'])) {
             $filteredData = array_filter(array_map(function ($d) use ($ruang) {
@@ -1708,7 +1714,8 @@ class PasienKominfoController extends Controller
 
                     $jumlahPermintaan = count($d['tindakan']);
 
-                    $igd       = IGDTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->get();
+                    $igd = IGDTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->get();
+                    // dd($igd);
                     $jumlahIgd = count($igd);
                     if ($jumlahIgd < $jumlahPermintaan) {
                         $d['status'] = 'belum';
@@ -1717,7 +1724,7 @@ class PasienKominfoController extends Controller
                     }
                     $d['jmlPerminttanIgd'] = $jumlahPermintaan;
                     $d['jmlIgd']           = $jumlahIgd;
-                    if (empty($d['tindakan'])) {
+                    if (empty($d['tindakan']) && $jumlahIgd == 0) {
                         return null;
                     }
 

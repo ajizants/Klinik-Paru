@@ -5,6 +5,7 @@ use App\Http\Controllers\KasirPenutupanKasController;
 use App\Http\Controllers\KasirSetoranController;
 use Illuminate\Support\Facades\Route;
 
+// Route::middleware('auth:sanctum')->group(function () {
 //Kasir
 Route::get('layanan', [KasirController::class, 'Layanan']);
 Route::post('layanan/update', [KasirController::class, 'updateLayanan']);
@@ -52,3 +53,5 @@ Route::post('/kasir/penutupanKas/ubah', [KasirPenutupanKasController::class, 'up
 Route::delete('/kasir/penutupanKas/delete', [KasirPenutupanKasController::class, 'destroy']);
 Route::get('/kasir/penutupanKas/cetak/{id}/{tgl}', [KasirPenutupanKasController::class, 'cetakRegPenutupan']);
 Route::get('tutupKas/{bln}/{tahun}', [KasirPenutupanKasController::class, 'cetakRegTupan']);
+
+// });

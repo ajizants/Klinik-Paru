@@ -52,7 +52,7 @@ class ApiKominfo extends Model
 
     }
 
-    private function login($username = null, $password = null)
+    public function login($username = null, $password = null)
     {
         // dd("masuk");
         $username = $username ?? env('USERNAME_KOMINFO', '');
@@ -83,7 +83,7 @@ class ApiKominfo extends Model
         $body = $response->getBody();
         $data = json_decode($body, true);
         if (isset($cookies[0])) {
-            setcookie('kominfo_cookie', $cookies[0], time() + (86400 * 30), "/");
+            setcookie('kominfo_cookie', $cookies[0], time() + (86400 * 30), "/"); // Cookie akan kedaluwarsa dalam 30 hari
         }
 
         return [
@@ -92,23 +92,36 @@ class ApiKominfo extends Model
         ];
     }
 
-    public function getDataObat($namaObat = "")
+    public function get_pasien($norm)
     {
         $client = new Client();
         $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+
         if (! $cookie) {
             // Authenticate if no cookie is found
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
             $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
-                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/");
             } else {
                 return response()->json(['message' => 'Login gagal'], 401);
             }
         }
 
-        $url = env('BASR_URL_KOMINFO', '') . '/data_obat/get_data';
+        $url = env('BASR_URL_KOMINFO', '') . '/data_pasien/get_data';
+
+        // Format request sesuai dengan yang Anda inginkan
+        $columns = [];
+        for ($i = 0; $i < 3; $i++) { // Sesuaikan jumlah kolom sesuai kebutuhan
+            $columns[] = [
+                'data'       => ($i === 0) ? '' : 'id',
+                'name'       => '',
+                'searchable' => true,
+                'orderable'  => false,
+                'search'     => ['value' => '', 'regex' => false],
+            ];
+        }
 
         try {
             $response = $client->request('POST', $url, [
@@ -117,38 +130,31 @@ class ApiKominfo extends Model
                     'Cookie'       => $cookie,
                 ],
                 'form_params' => [
-                    'draw'              => 1,
-                    'start'             => 0,
-                    'length'            => 1000,
-                    'search'            => [
+                    'draw'               => 2,
+                    'columns'            => $columns,
+                    'start'              => 0,
+                    'length'             => 100,
+                    'search'             => [
                         'value' => '',
                         'regex' => false,
                     ],
-                    // columns[0] sampai [9]
-                    'columns'           => [
-                        ['data' => '', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
-                        ['data' => 'kode_obat', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
-                        ['data' => 'nama_obat', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
-                        ['data' => 'jenis_obat_nama', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
-                        ['data' => 'nama_bentuk', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
-                        ['data' => 'dosis', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
-                        ['data' => 'nama_kategori', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
-                        ['data' => 'nama_satuan', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
-                        ['data' => 'stok', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
-                        ['data' => 'id', 'name' => '', 'searchable' => true, 'orderable' => false, 'search' => ['value' => '', 'regex' => false]],
-                    ],
-                    // Filter tambahan
-                    'kode_obat_filter'  => '',
-                    'nama_obat_filter'  => $namaObat,
-                    'stok_filter'       => 't',
-                    'kategori_filter'   => '',
-                    'satuan_filter'     => '',
-                    'bentuk_filter'     => '',
-                    'jenis_obat_filter' => '',
+                    'pasien_nik'         => $nik ?? '',
+                    'pasien_nama'        => $nama ?? '',
+                    'pasien_no_rm'       => $norm ?? '',
+                    'jenis_kelamin_id'   => '',
+                    'pasien_tgl_lahir'   => '',
+                    'kelurahan'          => '',
+                    'created_at'         => $createdat ?? '',
+                    'penjamin_id'        => 2,
+                    'nomor_referensi'    => '',
+                    'penjamin_nomor'     => '',
+                    'jenis_kunjungan_id' => '',
+                    'no_surat_kontrol'   => '',
+
                 ],
             ]);
 
-            // Check if the response status is 200
+            // Check if response is successful
             if ($response->getStatusCode() !== 200) {
                 Log::error('Error response body: ' . (string) $response->getBody());
                 return response()->json(['error' => 'Internal Server Error'], 500);
@@ -156,9 +162,10 @@ class ApiKominfo extends Model
 
             $body = (string) $response->getBody();
             $data = json_decode($body, true);
+            $data = $data['data'];
             return $data;
         } catch (\GuzzleHttp\Exception\RequestException $e) {
-            // Handle network or request errors
+            // Handle request errors
             Log::error('Request Error: ' . $e->getMessage());
             return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
         } catch (\Exception $e) {
@@ -167,4 +174,143 @@ class ApiKominfo extends Model
             return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
         }
     }
+
+    public function get_assesment_awal(array $params)
+    {
+        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+
+        if (! $cookie) {
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+            $cookie        = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/");
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+
+        $client = new Client();
+        $url    = env('BASR_URL_KOMINFO', '') . '/ruang_tensi/show_assessment_awal';
+        // dd($cookie);
+
+        try {
+            $response = $client->request('POST', $url, [
+                'query'   => ['view_tensi' => 'true'],
+                'headers' => [
+                    'accept'             => '*/*',
+                    'accept-encoding'    => 'gzip, deflate, br, zstd',
+                    'accept-language'    => 'en-US,en;q=0.6',
+                    'connection'         => 'keep-alive',
+                    'content-length'     => '29',
+                    'content-type'       => 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'Cookie'             => $cookie,
+                    'host'               => 'kkpm.banyumaskab.go.id',
+                    'origin'             => 'https://kkpm.banyumaskab.go.id',
+                    'referer'            => 'https://kkpm.banyumaskab.go.id/administrator/ruang_poli/menu_poli?poli_sub_id=1',
+                    'sec-ch-ua'          => '"Not)A;Brand";v="8", "Chromium";v="138", "Brave";v="138"',
+                    'sec-ch-ua-mobile'   => '?0',
+                    'sec-ch-ua-platform' => '"Windows"',
+                    'sec-fetch-dest'     => 'empty',
+                    'sec-fetch-mode'     => 'cors',
+                    'sec-fetch-site'     => 'same-origin',
+                    'sec-gpc'            => '1',
+                    'user-agent'         => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
+                    'x-requested-with'   => 'XMLHttpRequest',
+
+                ],
+            ]);
+                                                         // dd($response);
+            $body = $response->getBody()->getContents(); // Ambil isi response
+            $data = json_decode($body, true);            // Decode JSON ke array
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception('JSON Decode Error: ' . json_last_error_msg() . ' | Raw: ' . $body);
+            }
+
+            return $data['data']['content'] ?? [];
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    public function get_data_tindakan($pendaftaran_id)
+    {
+        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+
+        if (! $cookie) {
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+            $cookie        = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/");
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+
+        // Format request sesuai dengan yang Anda inginkan
+        $columns = [];
+        for ($i = 0; $i < 3; $i++) { // Sesuaikan jumlah kolom sesuai kebutuhan
+            $columns[] = [
+                'data'       => ($i === 0) ? '' : 'id',
+                'name'       => '',
+                'searchable' => true,
+                'orderable'  => false,
+                'search'     => ['value' => '', 'regex' => false],
+            ];
+        }
+        $client = new Client();
+        $url    = env('BASR_URL_KOMINFO', '') . '/ruang_poli/get_data_tindakan';
+
+        try {
+            $response = $client->request('POST', $url, [
+                'form_params' => [
+                    'draw'           => 2,
+                    'columns'        => $columns,
+                    'start'          => 0,
+                    'length'         => 100,
+                    'search'         => [
+                        'value' => '',
+                        'regex' => false,
+                    ],
+                    'pendaftaran_id' => $pendaftaran_id ?? '',
+                ],
+                'headers'     => [
+                    'accept'             => '*/*',
+                    'accept-encoding'    => 'gzip, deflate, br, zstd',
+                    'accept-language'    => 'en-US,en;q=0.6',
+                    'connection'         => 'keep-alive',
+                    'content-length'     => '29',
+                    'content-type'       => 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'Cookie'             => $cookie,
+                    'host'               => 'kkpm.banyumaskab.go.id',
+                    'origin'             => 'https://kkpm.banyumaskab.go.id',
+                    'referer'            => 'https://kkpm.banyumaskab.go.id/administrator/ruang_poli/menu_poli?poli_sub_id=1',
+                    'sec-ch-ua'          => '"Not)A;Brand";v="8", "Chromium";v="138", "Brave";v="138"',
+                    'sec-ch-ua-mobile'   => '?0',
+                    'sec-ch-ua-platform' => '"Windows"',
+                    'sec-fetch-dest'     => 'empty',
+                    'sec-fetch-mode'     => 'cors',
+                    'sec-fetch-site'     => 'same-origin',
+                    'sec-gpc'            => '1',
+                    'user-agent'         => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
+                    'x-requested-with'   => 'XMLHttpRequest',
+
+                ],
+            ]);
+                                              // dd($response);                    // dd($response);
+            $body = $response->getBody();     // Ambil isi response
+            $data = json_decode($body, true); // Decode JSON ke array
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception('JSON Decode Error: ' . json_last_error_msg() . ' | Raw: ' . $body);
+            }
+
+            return $data['data'];
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
 }

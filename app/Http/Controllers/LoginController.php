@@ -29,6 +29,7 @@ class LoginController extends Controller
             'email'    => $email,
             'password' => $request->input('password'),
         ];
+        // dd($data);
 
         if (Auth::attempt($data)) {
             $user = Auth::user();
