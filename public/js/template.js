@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     $.ajaxSetup({
         headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"), // Mengirim token CSRF untuk perlindungan keamanan
+            "X-CSRF-TOKEN": $('meta[name="_token"]').attr("content"), // Mengirim token CSRF untuk perlindungan keamanan
         },
     });
 

@@ -81,6 +81,10 @@
                             <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                             Logout
                         </a>
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#modal-password">
+                            <i class="fa-solid fa-lock mr-2 text-gray-400"></i>
+                            Ubah Password
+                        </a>
                     </div>
                 </li>
                 <li class="nav-item">
