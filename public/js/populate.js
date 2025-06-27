@@ -41,7 +41,7 @@ function initializeDataAntrian(response, ruang) {
     updateTableData(data, ruang, "sudah", "#dataSelesai");
 
     if (ruang === "ro") {
-        console.log("🚀 ~ initializeDataAntrian ~ ro:", data);
+        // console.log("🚀 ~ initializeDataAntrian ~ ro:", data);
         updateTableData(
             data,
             ruang,
@@ -55,7 +55,7 @@ function updateTableData(data, ruang, status, tableId) {
     const filteredData = data.filter((item) => item.status === status);
     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
     const nama = dataArray[0]?.pasien_nama;
-    console.log("🚀 ~ updateTableData ~ nama:", nama);
+    // console.log("🚀 ~ updateTableData ~ nama:", nama);
     if (nama !== "Belum ada data masuk") {
         processDataArray(dataArray, ruang, false);
     }
@@ -66,9 +66,9 @@ function updateTableDataKonsul(data, ruang, status, tableId) {
         (item) => item.permintaan_konsul === status
     );
     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
-    console.log("🚀 ~ updateTableDataKonsul ~ a:", dataArray);
+    // console.log("🚀 ~ updateTableDataKonsul ~ a:", dataArray);
     const nama = dataArray[0]?.pasien_nama;
-    console.log("🚀 ~ updateTableData ~ nama:", nama);
+    // console.log("🚀 ~ updateTableData ~ nama:", nama);
     if (nama !== "Belum ada data masuk") {
         processDataArray(dataArray, ruang, true);
     }
@@ -111,11 +111,11 @@ function updateExistingTables(response, ruang) {
 
 function updateTable(tableId, data, ruang, status) {
     const filteredData = data.filter((item) => item.status === status);
-    console.log("🚀 ~ updateTable ~ filteredData:", filteredData);
+    // console.log("🚀 ~ updateTable ~ filteredData:", filteredData);
     const table = $(tableId).DataTable();
     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
     const nama = dataArray[0]?.pasien_nama;
-    console.log("🚀 ~ updateTableData ~ nama:", nama);
+    // console.log("🚀 ~ updateTableData ~ nama:", nama);
     if (nama !== "Belum ada data masuk") {
         processDataArray(dataArray, ruang, false);
     }
@@ -125,11 +125,11 @@ function updateTableKonsul(tableId, data, ruang, status) {
     const filteredData = data.filter(
         (item) => item.permintaan_konsul === status
     );
-    console.log("🚀 ~ updateTableKonsul ~ filteredData:", filteredData);
+    // console.log("🚀 ~ updateTableKonsul ~ filteredData:", filteredData);
     const table = $(tableId).DataTable();
     const dataArray = filteredData.length ? filteredData : getNoDataMessage();
     const nama = dataArray[0]?.pasien_nama;
-    console.log("🚀 ~ updateTableData ~ nama:", nama);
+    // console.log("🚀 ~ updateTableData ~ nama:", nama);
     if (nama !== "Belum ada data masuk") {
         processDataArray(dataArray, ruang, true);
     }
@@ -213,7 +213,7 @@ function setKonsul(button) {
             norm: $(button).data("norm"),
         },
         success: function (response) {
-            console.log("🚀 ~ setKonsul ~ response:", response);
+            // console.log("🚀 ~ setKonsul ~ response:", response);
             Swal.fire({
                 icon: "success",
                 title: response.metadata.message,
@@ -820,14 +820,14 @@ function riwayatKunjungan(norm, nama) {
             Swal.showLoading();
         },
     });
-    console.log("🚀 ~ riwayatKunjungan ~ norm:", norm);
+    // console.log("🚀 ~ riwayatKunjungan ~ norm:", norm);
     $.ajax({
         url: "/api/kominfo/kunjungan/riwayat",
         type: "POST",
         data: { no_rm: norm },
         success: function (response) {
             Swal.close();
-            console.log("🚀 ~ riwayatKunjungan ~ response:", response);
+            // console.log("🚀 ~ riwayatKunjungan ~ response:", response);
             tabelRiwayatKunjungan(response); // Menampilkan tabel
             $("#historiKunjungan").modal("show"); // Menampilkan modal
             // $("#historiKunjungan").on("shown.bs.tab", function () {
@@ -1035,7 +1035,7 @@ function cariLog(id, norm, tgl) {
         method: "POST",
         data: { id: id },
         success: function (response) {
-            console.log("🚀 ~ cariLog ~ response:", response);
+            // console.log("🚀 ~ cariLog ~ response:", response);
             //tangani jika 404 kirim swal
             if (response.status === 404) {
                 Swal.fire({
@@ -1102,7 +1102,7 @@ function celuk(button, ruang) {
         }
     }
     const text = `${sebutan} ${nama} dari ${alamat}, silahkan menuju ke loket ${ruang}`;
-    console.log("🚀 ~ celuk ~ text:", text);
+    // console.log("🚀 ~ celuk ~ text:", text);
     if (ruang === "farmasi") {
         pasienPulang(button, text);
     } else {
@@ -1111,7 +1111,7 @@ function celuk(button, ruang) {
 }
 
 function pasienPulang(button, text) {
-    console.log("🚀 ~ pasienPulang ~ pasienPulang:", pasienPulang);
+    // console.log("🚀 ~ pasienPulang ~ pasienPulang:", pasienPulang);
     var norm = $(button).data("norm");
     var notrans = $(button).data("notrans");
     var tgltrans = $(button).data("tgltrans");
@@ -1125,7 +1125,7 @@ function pasienPulang(button, text) {
                 tgltrans: tgltrans,
             },
             success: function (response) {
-                console.log("🚀 ~ pasienPulang ~ response:", response);
+                // console.log("🚀 ~ pasienPulang ~ response:", response);
                 //jika respon 500 swal fire eror
                 Swal.fire({
                     icon: "success",
@@ -1139,7 +1139,7 @@ function pasienPulang(button, text) {
                 });
             },
             error: function (xhr) {
-                console.log("🚀 ~ pasienPulang ~ xhr:", xhr);
+                // console.log("🚀 ~ pasienPulang ~ xhr:", xhr);
                 let response = xhr.responseJSON || {
                     message: "Terjadi kesalahan.",
                     status: 500,
@@ -1151,7 +1151,7 @@ function pasienPulang(button, text) {
             },
         });
     } catch (error) {
-        console.log("🚀 ~ pasienPulang ~ error:", error);
+        // console.log("🚀 ~ pasienPulang ~ error:", error);
         Swal.fire({
             icon: "error",
             title: error,
@@ -1160,11 +1160,11 @@ function pasienPulang(button, text) {
 }
 
 function setTransaksi(button, ruang) {
-    console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi);
+    // console.log("🚀 ~ setTransaksi ~ setTransaksi:", setTransaksi);
     var norm = $(button).data("norm");
     var nama = $(button).data("nama");
     var dokter = $(button).data("kddokter");
-    console.log("🚀 ~ setTransaksi ~ dokter:", dokter);
+    // console.log("🚀 ~ setTransaksi ~ dokter:", dokter);
     var alamat = $(button).data("alamat");
     var layanan = $(button).data("layanan");
     var notrans = $(button).data("notrans");
@@ -1270,10 +1270,10 @@ async function cekTransLain(notrans) {
                 msgSelesai =
                     "Transaksi IGD sudah, silahkan di arahkan menunggu hasil";
             }
-            console.log("🚀 ~ msgSelesai:", msgSelesai);
+            // console.log("🚀 ~ msgSelesai:", msgSelesai);
         });
     } catch (error) {
-        console.log("error++", error);
+        // console.log("error++", error);
     }
 }
 
@@ -1449,14 +1449,46 @@ function handleMetadata(response, ruang) {
 }
 
 function handleIgd(cppt, pasien, pendaftaran) {
-    const permintaan =
+    const pendaftaran_id = cppt.pendaftaran_id;
+    console.log("🚀 ~ handleIgd ~ pendaftaran_id:", pendaftaran_id);
+    let permintaan =
         cppt.tindakan
             ?.map(
                 (tindakan) =>
                     `${tindakan.nama_tindakan} : ${tindakan.nama_obat}`
             )
-            .join(",<br>") || "";
-    isiIdentitas(pasien, pendaftaran, permintaan);
+            .join(",<br>") || "kosong";
+    if (permintaan === "kosong") {
+        getTindakanKominfo(pendaftaran_id, function (permintaan) {
+            console.log("🚀 ~ handleIgd ~ permintaan:", permintaan);
+            isiIdentitas(pasien, pendaftaran, permintaan);
+        });
+    } else {
+        isiIdentitas(pasien, pendaftaran, permintaan);
+    }
+}
+
+function getTindakanKominfo(pendaftaran_id, callback) {
+    $.ajax({
+        url: "/api/kominfo/get_data_tindakan/" + pendaftaran_id,
+        method: "GET",
+        dataType: "json",
+        success: function (response) {
+            const permintaan =
+                response
+                    ?.map(
+                        (item) =>
+                            `${item.nama_tindakan} : ${item.nama_obat || "-"}`
+                    )
+                    .join(",<br>") || "-";
+
+            callback(permintaan);
+        },
+        error: function (error) {
+            console.log("🚀 ~ getPermintaanKominfo ~ error:", error);
+            callback("-");
+        },
+    });
 }
 
 function handleRo(cppt, pasien, pendaftaran) {
@@ -1484,8 +1516,8 @@ function handleLab(cppt, pasien, pendaftaran) {
 }
 
 function isiIdentitas(pasien, pendaftaran, permintaan) {
-    console.log("🚀 ~ isiIdentitas ~ pendaftaran:", pendaftaran);
-    console.log("🚀 ~ isiIdentitas ~ pasien:", pasien);
+    // console.log("🚀 ~ isiIdentitas ~ pendaftaran:", pendaftaran);
+    // console.log("🚀 ~ isiIdentitas ~ pasien:", pasien);
     // console.log("🚀 ~ isiIdentitas ~ permintaan:", permintaan);
 
     // Set values for input fields

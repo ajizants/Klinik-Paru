@@ -849,4 +849,13 @@ class ApiKominfoController extends Controller
         // return response()->json($assesment_awal);
         return view('Laporan.Pasien.asesmentAwal', compact('assesment_awal_html'));
     }
+    public function get_data_tindakan($pendaftatan_id)
+    {
+        $api  = new ApiKominfo();
+        $data = $api->get_data_tindakan($pendaftatan_id);
+
+        return $data;
+        // return response()->json($assesment_awal);
+        return view('Laporan.Pasien.asesmentAwal', compact('assesment_awal_html'));
+    }
 }

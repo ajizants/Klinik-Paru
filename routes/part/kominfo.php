@@ -23,3 +23,4 @@ Route::post('kominfo/report/dokter_rme', [PasienKominfoController::class, 'grafi
 Route::post('kominfo/pendaftaran/report', [PasienKominfoController::class, 'reportPendaftaran']);
 
 Route::get('kominfo/get_assesment_awal/{norm}/{tanggal}', [ApiKominfoController::class, 'get_assesment_awal']);
+Route::get('kominfo/get_data_tindakan/{pendaftaran_id}', [ApiKominfoController::class, 'get_data_tindakan']);

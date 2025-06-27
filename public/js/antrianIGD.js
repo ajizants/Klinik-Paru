@@ -127,9 +127,9 @@ async function cariTsIgd(notrans, norm, tgl, ruang) {
 }
 
 function dataTindakan(notrans, norm) {
-    console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
+    // console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
     var notrans = notrans ? notrans : $("#notrans").val();
-    console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
+    // console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
 
     if ($.fn.DataTable.isDataTable("#dataTindakan")) {
         var tabletindakan = $("#dataTindakan").DataTable();
