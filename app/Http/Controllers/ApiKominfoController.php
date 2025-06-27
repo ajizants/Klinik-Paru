@@ -207,6 +207,7 @@ class ApiKominfoController extends Controller
         // dd($params);
         $data      = $model->getDetailSEP($no_sep);
         $detailSEP = $data['data'];
+        // return response()->json($detailSEP);
         if (empty($detailSEP)) {
             return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }

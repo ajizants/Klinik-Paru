@@ -19,8 +19,8 @@ class UserController extends Controller
     public function index(): View
     {
         //get posts
-        $title = 'User';
-        $users = $this->getUsers();
+        $title       = 'User';
+        $users       = $this->getUsers();
         $usersOnline = $this->getUserOnline();
 
         //render view with users
@@ -67,7 +67,7 @@ class UserController extends Controller
     public function getUsers()
     {
         $datas = User::get();
-        $html = '
+        $html  = '
         <table class="table table-striped table-hover pt-0 mt-0" style="width:100%" cellspacing="0" id="tableUser">
             <thead>
                 <tr>
@@ -99,6 +99,33 @@ class UserController extends Controller
         $html .= '</tbody></table>';
 
         return $html;
+    }
+
+    public function create()
+    {
+        return view('User.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name'     => 'required|string|max:255',
+            'role'     => 'required|string',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::create([
+            'name'     => $validated['name'],
+            'role'     => $validated['role'],
+            'email'    => $validated['email'],
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return response()->json([
+            'message' => 'User berhasil ditambahkan.',
+            'user'    => $user,
+        ], 201); // Status 201 Created
     }
 
     public function edit($id)
@@ -176,9 +203,9 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'role' => 'required|string',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'name'     => 'required|string|max:255',
+            'role'     => 'required|string',
+            'email'    => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
@@ -193,6 +220,13 @@ class UserController extends Controller
         $users = $this->getUsers();
 
         return response()->json(['message' => 'User updated successfully', 'users' => $users], 200);
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+        return response()->json(['message' => 'User deleted successfully'], 200);
     }
 
 }

@@ -328,13 +328,13 @@
                 @php
                     $roleKasir = ['admin', 'tu', 'kasir', 'atk'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleKasir)) non-aktif @endif">
+                <li class="nav-item ">
                     <a href="" class="nav-link">
                         <i class="fa-solid fa-house-medical nav-icon"></i>
                         <p>Tata Usaha <i class="right fas fa-angle-left"></i></p>
                     </a>
-                    <ul class="nav nav-treeview" style="display: none;">
-                        <li class="nav-item ml-4">
+                    <ul class="nav nav-treeview ">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleKasir)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('Gudang/ATK') }}">
                                 <i class="fa-solid fa-warehouse nav-icon"></i>
                                 <p>Gudang ATK</p>
@@ -346,19 +346,19 @@
                                 <p>Surat Umum</p>
                             </a>
                         </li>
-                        <li class="nav-item ml-4">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleKasir)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('/TataUsaha/belanja') }}">
                                 <i class="fa-solid fa-money-bill-1-wave nav-icon"></i>
                                 <p>Belanja</p>
                             </a>
                         </li>
-                        <li class="nav-item ml-4">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleKasir)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('TataUsaha/report') }}">
                                 <i class="fa-solid fa-cart-flatbed nav-icon"></i>
                                 <p>Laporan Belanja</p>
                             </a>
                         </li>
-                        <li class="nav-item ml-4">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleKasir)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('/kasir/master') }}">
                                 <i class="fa-solid fa-database nav-icon"></i>
                                 <p>Master Data Layanan</p>

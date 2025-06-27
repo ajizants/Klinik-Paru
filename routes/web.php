@@ -139,7 +139,9 @@ Route::middleware('auth')->group(function () {
     Route::get('Gudang/ATK', [GudangATKController::class, 'index'])->name('gudangATK')->middleware('role:atk');
 
     //user
-    Route::get('users', [UserController::class, 'index'])->name('index')->middleware('role:admin');
+    Route::get('users', [UserController::class, 'index'])->name('index.user')->middleware('role:admin');
+    Route::get('users/create', [UserController::class, 'create'])->name('user.create')->middleware('role:admin');
+    Route::post('users/store', [UserController::class, 'store'])->name('user.store')->middleware('role:admin');
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::get('/user/online', [UserController::class, 'userOnline'])->name('users.online');
