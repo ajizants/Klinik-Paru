@@ -148,23 +148,23 @@ class ROTransaksiController extends Controller
         $norm     = str_pad($id, 6, '0', STR_PAD_LEFT); // Normalize ID to 6 digits
 
         $hasilRo = "";
-        // try {
-        //     $hasilRo = RoHasilModel::when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
-        //         return $query->where('norm', $norm); // Filter by norm if valid
-        //     })
-        //         ->get();
+        try {
+            $hasilRo = RoHasilModel::when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
+                return $query->where('norm', $norm); // Filter by norm if valid
+            })
+                ->get();
 
-        //     if ($hasilRo->isEmpty()) {
-        //         $hasilRo = "Data Foto Thorax pada Pasien dengan Norm: <u><b>" . $norm . "</b></u> tidak ditemukan,<br> Jika pasien melakukan Foto Thorax di KKPM, silahkan Menghubungi Bagian Radiologi. Terima Kasih...";
-        //     }
-        // } catch (\Exception $e) {
-        //     $hasilRo = "Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.";
-        //     // return response()->json([
-        //     //     'message' => 'Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.',
-        //     //     'status' => 500,
-        //     // ], 500, [], JSON_PRETTY_PRINT);
-        // }
-        $hasilRo = "Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.";
+            if ($hasilRo->isEmpty()) {
+                $hasilRo = "Data Foto Thorax pada Pasien dengan Norm: <u><b>" . $norm . "</b></u> tidak ditemukan,<br> Jika pasien melakukan Foto Thorax di KKPM, silahkan Menghubungi Bagian Radiologi. Terima Kasih...";
+            }
+        } catch (\Exception $e) {
+            $hasilRo = "Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.";
+            // return response()->json([
+            //     'message' => 'Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.',
+            //     'status' => 500,
+            // ], 500, [], JSON_PRETTY_PRINT);
+        }
+        // $hasilRo = "Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.";
 
         try {
             $hasilLab = LaboratoriumHasilModel::with('pasien', 'pemeriksaan', 'petugas.biodata', 'dokter.biodata')
@@ -177,12 +177,12 @@ class ROTransaksiController extends Controller
             }
             // dd($hasilLab); // Debug: Dump and Die
             foreach ($hasilLab as $item) {
-                if ($item->idLayanan == 131) {
+                if (in_array($item->idLayanan, [130, 131, 214])) {
                     $item['hasil'] = $item->hasil . " <br> " .
                     substr($item->tgl_hasil, 2, 2) . "/K3302730/" .
                     $item->kode_tcm . "/" . $item->no_iden_sediaan;
-
                 }
+
             }
 
         } catch (\Exception $e) {
