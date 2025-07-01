@@ -274,6 +274,12 @@
                             </a>
                         </li>
                         <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('/Radiologi/Bacaan') }}">
+                                <i class="fa-regular nav-icon fas fa-edit"></i>
+                                <p>Bacaan Radiologi</p>
+                            </a>
+                        </li>
+                        <li class="nav-item ml-4">
                             <a class="nav-link" href="{{ url('/Radiologi/Master') }}">
                                 <i class="fa-solid fa-database nav-icon"></i>
                                 <p>Master Radiologi</p>

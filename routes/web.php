@@ -16,6 +16,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\PendaftaranOnlineController;
 use App\Http\Controllers\PromkesController;
+use App\Http\Controllers\ROBacaanController;
 use App\Http\Controllers\ROTransaksiController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\TataUsahaController;
@@ -105,6 +106,7 @@ Route::middleware('auth')->group(function () {
 
     //RO
     Route::get('Radiologi', [ROTransaksiController::class, 'ro'])->name('ro')->middleware('role:ro');
+    Route::get('/Radiologi/Bacaan', [ROBacaanController::class, 'index'])->name('bacaan.index')->middleware('role:ro');
     Route::get('Radiologi/Master', [ROTransaksiController::class, 'masterRo'])->name('masterRo')->middleware('role:ro');
     Route::get('Radiologi/Laporan', [ROTransaksiController::class, 'laporanRo'])->name('hasilRo')->middleware('role:ro');
     Route::get('ro2', [ROTransaksiController::class, 'ro2'])->name('ro')->middleware('role:ro');

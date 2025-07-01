@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,7 +8,7 @@ class KunjunganWaktuSelesai extends Model
 {
     use HasFactory;
 
-    protected $table = ('t_waktu_rm_selesai');
+    protected $table      = ('t_waktu_rm_selesai');
     protected $primaryKey = 'notrans';
 
     protected $fillable = [
@@ -32,5 +31,15 @@ class KunjunganWaktuSelesai extends Model
         } else {
             return 'BPJS'; // Jika no_sep tidak null, maka layanan adalah BPJS
         }
+    }
+
+    public function pasienRo()
+    {
+        return $this->belongsTo(ROTransaksiModel::class, 'notrans', 'notrans');
+    }
+
+    public function hasilBacaan()
+    {
+        return $this->belongsTo(ROBacaan::class, 'notrans', 'notrans');
     }
 }

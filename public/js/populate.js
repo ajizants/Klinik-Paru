@@ -599,7 +599,9 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
             render: function (data, type, row) {
                 const nama = row.pasien_nama || "-";
                 const norm = row.pasien_no_rm || "-";
+                const pasien_lama_baru = row.pasien_lama_baru || "-";
                 return `
+                <small><strong>${pasien_lama_baru}</strong></small><br>
                 ${nama}<br>
                 ( ${norm} )<br>
             `;

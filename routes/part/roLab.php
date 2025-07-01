@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AntrianController;
 use App\Http\Controllers\LaboratoriumController;
+use App\Http\Controllers\ROBacaanController;
 use App\Http\Controllers\RoMasterController;
 use App\Http\Controllers\ROTransaksiController;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,8 @@ Route::post('ro/konsul', [ROTransaksiController::class, 'konsulRo']);
 Route::get('ro/kegiatan/laporan/{tglAwal}/{tglAkhir}', [ROTransaksiController::class, 'rekapKegiatan']);
 Route::post('ro/laporan/kunjungan', [ROTransaksiController::class, 'rekapKunjunganRo']);
 Route::post('ro/laporan/kunjungan/item', [ROTransaksiController::class, 'rekapKunjunganRoItem']);
+Route::post('ro/bacaan', [ROBacaanController::class, 'listBacaan']);
+Route::get('ro/bacaan', [ROBacaanController::class, 'getListBacaan']);
 
 //laboratorium
 Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);

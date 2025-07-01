@@ -53,7 +53,7 @@ class LoginController extends Controller
             $go   = "";
             switch ($email) {
                 case 'nurse@rsparu.com':
-                    $go = '/E-kinerja';
+                    $go = '/surat/medis';
                     break;
                 case 'tindakan@rsparu.com':
                     $go = '/Igd';

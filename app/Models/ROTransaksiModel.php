@@ -72,7 +72,7 @@ class ROTransaksiModel extends Model
     }
     public function dokter()
     {
-        return $this->hasOne(TransPetugasModel::class, 'norm', 'norm');
+        return $this->hasOne(TransPetugasModel::class, 'notrans', 'notrans');
     }
     public function kunjungan()
     {
