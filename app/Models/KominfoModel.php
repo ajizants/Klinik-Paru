@@ -25,6 +25,7 @@ class KominfoModel extends Model
             'no_rm'         => '',
         ];
         $data = $this->pendaftaranRequest($params);
+        // dd($data);
 
         if (! isset($data) || ! is_array($data)) {
             return response()->json(['error' => 'Invalid data format'], 500);
@@ -83,6 +84,11 @@ class KominfoModel extends Model
                         $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
                         break;
                     case 'kasir':
+                        $ts = KasirTransModel::where('norm', $norm)
+                            ->whereDate('created_at', $tanggal)->first();
+                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+                        break;
+                    case 'surat':
                         $ts = KasirTransModel::where('norm', $norm)
                             ->whereDate('created_at', $tanggal)->first();
                         $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
@@ -339,8 +345,29 @@ class KominfoModel extends Model
 
             $res = array_values($res); // Re-index the array
 
+            $tanggal = $params['tanggal_awal'] ?? date('Y-m-d');
+            // dd($tanggal);
+            $kunjunganLab = new LaboratoriumKunjunganModel();
+            $tungguLab    = $kunjunganLab->tungguLab($tanggal);
+
+            $kunjunganRo = new ROTransaksiModel();
+            $tungguRo    = $kunjunganRo->tungguRo($tanggal);
+
+            // Tambahkan statusLab dan statusRO jika norm ditemukan
+            foreach ($res as &$pendaftar) {
+                $rm = $pendaftar['pasien_no_rm'];
+
+                // Cari di tungguLab
+                $lab                    = collect($tungguLab)->firstWhere('norm', $rm);
+                $pendaftar['statusLab'] = $lab['status'] ?? null;
+
+                // Cari di tungguRo
+                $ro                    = collect($tungguRo)->firstWhere('norm', $rm);
+                $pendaftar['statusRO'] = $ro['status'] ?? null;
+            }
+            // $res = array_values($res);
             // dd($res);
-            return $res;
+            return array_values($res);
         } catch (\Exception $e) {
             // Tangani kesalahan
             return ['error' => $e->getMessage()];
@@ -439,7 +466,26 @@ class KominfoModel extends Model
                 });
 
                 $data['response']['data'] = $filteredData;
+                $tanggal                  = $params['tanggal_awal'] ?? date('Y-m-d');
+                // dd($tanggal);
+                $kunjunganLab = new LaboratoriumKunjunganModel();
+                $tungguLab    = $kunjunganLab->tungguLab($tanggal);
 
+                $kunjunganRo = new ROTransaksiModel();
+                $tungguRo    = $kunjunganRo->tungguRo($tanggal);
+
+                // Tambahkan statusLab dan statusRO jika norm ditemukan
+                foreach ($data['response']['data'] as &$pendaftar) {
+                    $rm = $pendaftar['pasien_no_rm'];
+
+                    // Cari di tungguLab
+                    $lab                    = collect($tungguLab)->firstWhere('norm', $rm);
+                    $pendaftar['statusLab'] = $lab['status'] ?? null;
+
+                    // Cari di tungguRo
+                    $ro                    = collect($tungguRo)->firstWhere('norm', $rm);
+                    $pendaftar['statusRO'] = $ro['status'] ?? null;
+                }
                 // Update the 'data' key with the filtered data
             } else {
                 // Handle the case where 'response' or 'data' key is not present

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CutiPegawaiController;
 use App\Http\Controllers\DataAnalisController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\DotsController;
@@ -131,6 +132,14 @@ Route::middleware('auth')->group(function () {
     Route::get('TataUsaha/keuangan', [TataUsahaController::class, 'keuangan'])->name('tu.keuangan')->middleware('role:tu');
     Route::get('TataUsaha/belanja', [TataUsahaController::class, 'belanja'])->name('tu.belanja')->middleware('role:tu');
     Route::get('TataUsaha/report', [TataUsahaController::class, 'report'])->name('tu.report')->middleware('role:tu');
+
+    Route::get('TataUsaha/Cuti', [CutiPegawaiController::class, 'index'])->name('cuti');
+    Route::post('tu/cuti/pengajuan', [CutiPegawaiController::class, 'ajukanCuti']);
+    Route::post('tu/cuti/tambahkanCuti', [CutiPegawaiController::class, 'tambahkanCuti']);
+    Route::get('tu/cuti/bulan/{nip}', [CutiPegawaiController::class, 'getPermohonanCutiPegawai']);
+    Route::get('tu/cuti/hari/{tgl}', [CutiPegawaiController::class, 'getCutiPegawai']);
+    Route::get('tu/cuti/persetujuan/{id}/{persetujuan}', [CutiPegawaiController::class, 'update']);
+    Route::get('tu/cuti/sisa/get', [CutiPegawaiController::class, 'getDataSisaCuti']);
 
     //Prokes
     Route::get('Promkes', [PromkesController::class, 'index'])->name('promkes');

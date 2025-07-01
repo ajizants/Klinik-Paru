@@ -178,9 +178,13 @@ class ROTransaksiController extends Controller
             // dd($hasilLab); // Debug: Dump and Die
             foreach ($hasilLab as $item) {
                 if (in_array($item->idLayanan, [130, 131, 214])) {
-                    $item['hasil'] = $item->hasil . " <br> " .
-                    substr($item->tgl_hasil, 2, 2) . "/K3302730/" .
-                    $item->kode_tcm . "/" . $item->no_iden_sediaan;
+                    // dd($item->hasil);
+                    if ($item->no_iden_sediaan !== null) {
+                        $item['hasil'] = $item->hasil . " <br> " .
+                        substr($item->tgl_hasil, 2, 2) . "/K3302730/" .
+                        $item->kode_tcm . "/" . $item->no_iden_sediaan;
+
+                    }
                 }
 
             }

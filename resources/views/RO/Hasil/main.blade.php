@@ -336,11 +336,17 @@
                     });
                 }
                 // Merge pemeriksaan results into the group
+
+                let nilaiNormal = item.pemeriksaan.normal == null ? "  " : item.pemeriksaan.normal
+                let hasil = item.pemeriksaan.satuan == null ? item.hasil : item.hasil + "  " + item.pemeriksaan
+                    .satuan
                 if (item.idLayanan == 131) {
-                    groupedData[dateKey].pemeriksaan[item.pemeriksaan.nmLayanan] = item.hasil + " <br> " + item
-                        .no_iden_sediaan;
+                    groupedData[dateKey].pemeriksaan[item.pemeriksaan.nmLayanan] = hasil + " <br> " + item
+                        .no_iden_sediaan + " <br> " + nilaiNormal;
                 }
-                groupedData[dateKey].pemeriksaan[item.pemeriksaan.nmLayanan] = item.hasil;
+                groupedData[dateKey].pemeriksaan[item.pemeriksaan.nmLayanan] = hasil +
+                    " <br><br> Normal: <br>" +
+                    nilaiNormal;
             });
 
             // Convert groupedData into an array for DataTable

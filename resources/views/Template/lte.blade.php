@@ -128,6 +128,13 @@
     </style>
 
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
+
+    {{-- jika url /TataUsaha* tampikan scritp --}}
+    @if (Request::is('TataUsaha*'))
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    @endif
 </head>
 
 <body class="scrollbar-thin sidebar-mini layout-fixed control-sidebar-slide-open sidebar-collapse text-sm">

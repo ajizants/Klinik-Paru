@@ -1,9 +1,9 @@
-var Toast = Swal.mixin({
-    toast: true,
-    position: "top-end",
-    showConfirmButton: false,
-    timer: 3000,
-});
+// var Toast = Swal.mixin({
+//     toast: true,
+//     position: "top-end",
+//     showConfirmButton: false,
+//     timer: 3000,
+// });
 
 let jk = "";
 function fetchDataAntrian(ruang, params, callback) {
@@ -430,16 +430,36 @@ function getNoDataMessage() {
     ];
 }
 
+// function getPenunjangText(item) {
+//     console.log("🚀 ~ getPenunjangText ~ item:", item);
+
+//     return `
+//         <div>
+//             <h6>Penunjang Hari ini:</h6>
+//             ${item.laboratorium.length > 0 ? "Laboratorium, " : ""}
+//             ${item.tindakan.length > 0 ? "IGD, " : ""}
+//             ${item.radiologi.length > 0 ? "Radiologi, " : ""}
+//         </div>`;
+// }
 function getPenunjangText(item) {
-    // console.log("🚀 ~ getPenunjangText ~ item:", item);
+    console.log("🚀 ~ getPenunjangText ~ item:", item);
+
+    const statusLab = item.statusLab ?? "Belum";
+    const statusRO = item.statusRO ?? "Belum";
+
+    const labText =
+        item.laboratorium.length > 0 ? `Laboratorium (${statusLab}), ` : "";
+
+    const igdText = item.tindakan.length > 0 ? "IGD, " : "";
+
+    const roText = item.radiologi.length > 0 ? `Radiologi (${statusRO}), ` : "";
 
     return `
         <div>
             <h6>Penunjang Hari ini:</h6>
-            ${item.laboratorium.length > 0 ? "Laboratorium, " : ""}
-            ${item.tindakan.length > 0 ? "IGD, " : ""}
-            ${item.radiologi.length > 0 ? "Radiologi, " : ""}
-        </div>`;
+            ${labText}${igdText}${roText}
+        </div>
+    `;
 }
 
 //antrianall
@@ -456,9 +476,13 @@ function fetchDataAntrianAll(tanggal, ruang, callback) {
 }
 
 function initializeDataTable(selector, data, columns, ruang) {
+    // console.log("🚀 ~ initializeDataTable ~ ruang:", ruang);
+    // console.log("🚀 ~ initializeDataTable ~ columns:", columns);
+    // console.log("🚀 ~ initializeDataTable ~ data:", data);
+    // console.log("🚀 ~ initializeDataTable ~ selector:", selector);
     let order;
     if (ruang === "surat") {
-        order = [[0, "dsc"]];
+        order = [[1, "asc"]];
     } else if (ruang === "farmasi") {
         order = [[1, "asc"]];
     } else {
@@ -476,7 +500,7 @@ function initializeDataTable(selector, data, columns, ruang) {
 }
 
 function getColumnDefinitions(statusType = "status_pulang", ruang) {
-    // console.log("🚀 ~ getColumnDefinitions ~ ruang:", ruang);
+    console.log("🚀 ~ getColumnDefinitions ~ ruang:", ruang);
     const baseColumns = [
         {
             data: "antrean_nomor",
@@ -531,6 +555,8 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
             className: "text-center p-2",
             title: "Status",
             render: function (data, type, row) {
+                console.log("🚀 ~ getColumnDefinitions ~ row:", row);
+
                 const statusClasses = {
                     "Belum Pulang": "danger",
                     "Sudah Pulang": "success",
@@ -540,17 +566,32 @@ function getColumnDefinitions(statusType = "status_pulang", ruang) {
                     "Sudah Selesai": "success",
                     default: "secondary",
                 };
+
                 const tgl = row.tanggal;
-                return `<div class="badge badge-${
+                const statusRO = row.statusRO;
+                const statusLab = row.statusLab;
+
+                const statusROClass =
+                    statusRO === "Belum" ? "warning" : "success";
+                const statusLabClass =
+                    statusLab === "Belum" ? "warning" : "success";
+
+                let html = `<div class="badge badge-${
                     statusClasses[data] || statusClasses.default
-                }">${data}</div>
-                <div class="badge badge-info">${tgl}</div>
-                `;
+                }">${data}</div><br>`;
+
+                if (statusRO !== null) {
+                    html += `<div class="badge badge-${statusROClass}">RO: ${statusRO}</div><br>`;
+                }
+
+                if (statusLab !== null) {
+                    html += `<div class="badge badge-${statusLabClass}">LAB: ${statusLab}</div><br>`;
+                }
+                html += `<div class="">${tgl}</div>`;
+
+                return html;
             },
         },
-        // { data: "tanggal", className: "col-1 p-2", title: "Tanggal" },
-        // { data: "pasien_no_rm", className: "text-center p-2", title: "NoRM" },
-        // { data: "pasien_nama", className: "p-2 col-2", title: "Nama Pasien" },
         {
             data: null,
             className: "p-2 col-3",
@@ -1279,6 +1320,9 @@ async function cekTransLain(notrans) {
 
 function antrianAll(ruang) {
     $("#loadingSpinner").show();
+    // if (ruang == "surat") {
+    //     tampilkanLoading("Sedang memproses data...!!!");
+    // }
     const tanggal =
         $("#tanggal").val() || new Date().toISOString().slice(0, 10);
 
@@ -1319,12 +1363,6 @@ function antrianAll(ruang) {
                 getColumnDefinitions("status", ruang),
                 ruang
             );
-            // initializeDataTable(
-            //     "#dataTunggu",
-            //     daftarTunggu,
-            //     getColumnDefinitions("status", ruang),
-            //     ruang
-            // );
         } else if (ruang === "farmasi") {
             initializeDataTable(
                 "#antrianall",
@@ -1333,10 +1371,11 @@ function antrianAll(ruang) {
                 ruang
             );
         } else if (ruang === "surat") {
+            console.log("🚀 ~ ruang:", ruang);
             initializeDataTable(
                 "#antrianall",
-                dataSelesai,
-                getColumnDefinitions("status", ruang),
+                data,
+                getColumnDefinitions("status_pulang", ruang),
                 ruang
             );
         } else {

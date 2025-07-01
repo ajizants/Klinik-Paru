@@ -239,10 +239,10 @@
             <tbody class="table-bor">
                 @foreach ($data as $item)
                     <tr>
-                        <td class="p-1 text-center">{{ $item['no_reg_lab'] ?? 'reg lab' }}</td>
+                        <td class="p-1 text-center">{{ $item['no_reg_lab'] ?? '-' }}</td>
                         @if (isset($item['tb04'][0]['no_iden_sediaan']))
                             <td class="p-1 text-left">
-                                25/K3302730/{{ $item['tb04'][0]['kode_tcm'] }}/{{ $item['no_iden_sediaan'] }}
+                                {{ $item['tahun_tcm'] ?? '2025' }}/K3302730/{{ $item['tb04'][0]['kode_tcm'] }}/{{ $item['no_iden_sediaan'] }}
                             </td>
                         @else
                             <td class="p-1 text-left">-</td>

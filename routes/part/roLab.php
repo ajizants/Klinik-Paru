@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AntrianController;
 use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\RoMasterController;
 use App\Http\Controllers\ROTransaksiController;
@@ -71,3 +72,5 @@ Route::post('lab/laporan/kunjungan/item', [LaboratoriumController::class, 'rekap
 
 Route::post('addHasilLab', [LaboratoriumController::class, 'addHasil']);
 Route::post('cariRiwayatLab', [LaboratoriumController::class, 'riwayat']);
+
+Route::get('/status/penujang/{tgl}', [AntrianController::class, 'statusPenujang']);

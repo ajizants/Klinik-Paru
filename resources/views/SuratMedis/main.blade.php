@@ -15,13 +15,13 @@
                     </button>
                 </div>
             </div>
+            <div id="loadingSpinner"
+                class="badge bg-warning text-wrap text-center z-3 loadingSpinner"style="display: none;">
+                <i class="fa fa-spinner fa-spin custom-spin"></i> Sedang Mencari data...
+            </div>
         </div>
 
         <div class="card-body mb-2 px-1">
-            <!-- Loading Spinner -->
-            @include('Template.Table.loading')
-
-            <!-- Include Table -->
             @include('Template.Table.all')
 
             <!-- Card List Surat Keterangan Medis -->
@@ -309,9 +309,9 @@
     <script src="{{ asset('js/populate.js') }}"></script>
     <script>
         const listSurat = @json($lists);
-        console.log("🚀 ~ listSurat:", listSurat)
+        // console.log("🚀 ~ listSurat:", listSurat)
         const pasien = @json($pasien);
-        console.log("🚀 ~ pasien:", pasien)
+        // console.log("🚀 ~ pasien:", pasien)
         const dataPasien = pasien.original;
         // console.log("🚀 ~ dataPasien:", dataPasien)
         let jumlahSuratTahunIni = @json($jumlahSuratTahunIni);
@@ -327,8 +327,8 @@
 
         function generateNoSurat() {
             noSuratNext = "440.6/" + jumlahSuratTahunIni + "/" + monthRomawi + "/" + year,
-                console.log("🚀 ~ $ ~ noSuratNext:", noSuratNext)
-            $("#noSurat").val(noSuratNext);
+                // console.log("🚀 ~ $ ~ noSuratNext:", noSuratNext)
+                $("#noSurat").val(noSuratNext);
         }
 
         $(document).ready(function() {
@@ -346,8 +346,8 @@
             $("#dAntrian").show();
 
             noSuratNext = "440.6/" + jumlahSuratTahunIni + "/" + monthRomawi + "/" + year,
-                console.log("🚀 ~ $ ~ noSuratNext:", noSuratNext)
-            $("#noSurat").val(noSuratNext);
+                // console.log("🚀 ~ $ ~ noSuratNext:", noSuratNext)
+                $("#noSurat").val(noSuratNext);
             creatTableDataPemohon(listSurat);
             // antrianAll("surat");
             const antrian = processResponse(dataPasien, "surat", "Tidak Ada Transaksi");

@@ -69,6 +69,13 @@
                                 <div class="media-body">
                                     <h3 class="dropdown-item-title">
                                         <b>{{ Auth::user()->name }}</b>
+                                        @php
+                                            $email = Auth::user()->email;
+                                            $email = explode('@', $email);
+                                            $nip = $email[0];
+                                        @endphp
+                                        <br>
+                                        <input style="border: 0;" id="user_nip" value="{{ $nip }}" readonly>
                                         <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
                                     </h3>
                                     <p class="text-sm">Wis Rampung Lik...?</p>

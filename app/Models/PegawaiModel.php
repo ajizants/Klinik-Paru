@@ -11,7 +11,10 @@ class PegawaiModel extends Model
     protected $keyType    = 'string'; // Jika 'nip' adalah string
 
     protected $fillable = [
-        'nip', 'kd_jab', 'kd_pend', 'kd_jurusan', 'gelar_d', 'gelar_b', 'stat_pns', 'tgl_masuk', 'sip', 'pangkat_gol',
+        'nip', 'kd_jab', 'kd_pend',
+        'kd_jurusan', 'gelar_d', 'gelar_b',
+        'stat_pns', 'tgl_masuk', 'sip',
+        'pangkat_gol', 'jatah_cuti', 'tambahan_cuti',
     ];
     public function biodata()
     {

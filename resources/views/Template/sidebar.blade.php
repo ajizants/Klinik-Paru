@@ -334,6 +334,12 @@
                         <p>Tata Usaha <i class="right fas fa-angle-left"></i></p>
                     </a>
                     <ul class="nav nav-treeview ">
+                        <li class="nav-item ml-4">
+                            <a class="nav-link" href="{{ url('TataUsaha/Cuti') }}">
+                                <i class="fa-solid fa-person-walking-arrow-right nav-icon"></i>
+                                <p>Cuti Pegawai</p>
+                            </a>
+                        </li>
                         <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleKasir)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('Gudang/ATK') }}">
                                 <i class="fa-solid fa-warehouse nav-icon"></i>
@@ -436,8 +442,9 @@
 
                 @php
                     $roleDokter = ['admin', 'igd', 'dokter', 'perawat'];
+                    $rolePegawai = ['pegawai'];
                 @endphp
-                <li class="nav-item">
+                <li class="nav-item @if (in_array(Auth::user()->role, $rolePegawai)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/Riwayat/Pasien') }}">
                         <i class="fa-solid fa-book-medical nav-icon"></i>
                         <p>Riwayat Pasien</p>

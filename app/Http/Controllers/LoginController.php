@@ -49,8 +49,8 @@ class LoginController extends Controller
                 $email .= '@rsparu.com';
             }
             // dd($email);
-
-            $go = "";
+            $role = Auth::user()->role;
+            $go   = "";
             switch ($email) {
                 case 'nurse@rsparu.com':
                     $go = '/E-kinerja';
@@ -81,6 +81,9 @@ class LoginController extends Controller
                     break;
                 default:
                     $go = '/home';
+            }
+            if ($role == 'pegawai') {
+                $go = '/TataUsaha/Cuti';
             }
 
             return redirect($go);

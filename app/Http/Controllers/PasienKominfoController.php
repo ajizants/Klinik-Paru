@@ -1208,6 +1208,7 @@ class PasienKominfoController extends Controller
         ];
         $model = new KominfoModel();
         $data  = $model->pendaftaranRequest($params);
+
         // return $data;
         //jika respon {"error":"Error decoding JSON response: Syntax error"}
         if (isset($data['error'])) {
@@ -1240,6 +1241,13 @@ class PasienKominfoController extends Controller
             $norm        = $item['pasien_no_rm'];
             $dokter_nama = $item['dokter_nama'];
 
+            // // Cari di tungguLab
+            // $lab               = collect($tungguLab)->firstWhere('norm', $norm);
+            // $item['statusLab'] = $lab['status'] ?? null;
+
+            // // Cari di tungguRo
+            // $ro               = collect($tungguRo)->firstWhere('norm', $norm);
+            // $item['statusRO'] = $ro['status'] ?? null;
             try {
                 switch ($ruang) {
                     case 'ro':

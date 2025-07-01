@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,7 +9,7 @@ class LaboratoriumHasilModel extends Model
 {
     use HasFactory;
     public $timestamps = true;
-    protected $table = "t_kunjungan_lab_hasil";
+    protected $table   = "t_kunjungan_lab_hasil";
 
     protected $fillable = [
         'idLab', 'notrans', 'norm', 'idLayanan', 'hasil', 'ket', 'jumlah',
@@ -48,6 +48,13 @@ class LaboratoriumHasilModel extends Model
     public static function desroyAll(string $notrans)
     {
         return static::where('notrans', $notrans)->delete();
+    }
+
+    public function getTahunTcm($norm)
+    {
+        $data  = $this::where('norm', $norm)->where('idLayanan', 131)->orderBy('created_at', 'desc')->first();
+        $tahun = Carbon::parse($data->created_at)->format('Y');
+        return $tahun;
     }
 
 }

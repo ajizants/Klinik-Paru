@@ -174,6 +174,11 @@ var Toast = Swal.mixin({
     position: "top-end",
     showConfirmButton: false,
     timer: 3000,
+    iconColor: "white",
+    customClass: {
+        popup: "colored-toast",
+    },
+    timerProgressBar: true,
 });
 
 function toggleSections(sectionToShow, idTable = null) {

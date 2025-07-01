@@ -1,15 +1,15 @@
 <?php
-
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class ROTransaksiModel extends Model
 {
-    protected $table = 't_rontgen';
+    protected $table      = 't_rontgen';
     protected $primaryKey = 'notrans';
-    public $incrementing = false;
-    protected $keyType = 'string';
+    public $incrementing  = false;
+    protected $keyType    = 'string';
 
     protected $fillable = [
         'norm', 'nama', 'alamat', 'jk', 'tgltrans', 'noreg', 'pasienRawat',
@@ -82,5 +82,41 @@ class ROTransaksiModel extends Model
     public function konsulRo()
     {
         return $this->belongsTo(KunjunganWaktuSelesai::class, 'notrans', 'notrans');
+    }
+
+    public function tungguRo($tgl)
+    {
+        $tgl = $tgl ?? date('Y-m-d');
+        // $tgl = '2024-10-19';
+        $dataRo = ROTransaksiModel::where('created_at', 'like', '%' . $tgl . '%')
+            ->get();
+        // return $dataRo;
+
+        $tungguRo = []; // Inisialisasi array
+
+        foreach ($dataRo as $d) {
+            $jam_masuk = Carbon::parse($d->created_at)->format('H:i');
+            $status    = "Belum";
+            $hasil     = ROTransaksiHasilModel::where('norm', $d->norm)->where('tanggal', 'like', '%' . $tgl . '%')->first();
+
+            if ($hasil) {
+                $status = "Selesai";
+            }
+
+            $tungguRo[] = [
+                'id'        => $d->id,
+                'norm'      => $d->norm,
+                'nama'      => $d->nama,
+                'alamat'    => $d->alamat,
+                'jam_masuk' => $jam_masuk,
+                'estimasi'  => 15,
+                'status'    => $status,
+            ];
+        }
+        usort($tungguRo, function ($a, $b) {
+            return ($a['status'] === 'Selesai' ? 0 : 1) <=> ($b['status'] === 'Selesai' ? 0 : 1);
+        });
+
+        return $tungguRo;
     }
 }

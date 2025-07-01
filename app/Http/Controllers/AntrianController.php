@@ -5,6 +5,8 @@ use App\Models\KasirTransModel;
 use App\Models\KominfoModel;
 use App\Models\KunjunganModel;
 use App\Models\KunjunganWaktuSelesai;
+use App\Models\LaboratoriumKunjunganModel;
+use App\Models\ROTransaksiModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -508,6 +510,43 @@ class AntrianController extends Controller
             Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
             return response()->json(['message' => 'Terjadi kesalahan saat checkOut data: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function statusPenujang($tgl)
+    {
+        $kunjunganLab = new LaboratoriumKunjunganModel();
+        $tungguLab    = $kunjunganLab->tungguLab($tgl);
+
+        $kunjunganRo = new ROTransaksiModel();
+        $tungguRo    = $kunjunganRo->tungguRo($tgl);
+
+        $params = [
+            "tanggal_awal"  => $tgl,
+            "tanggal_akhir" => $tgl,
+            "no_rm"         => "",
+        ];
+
+        $kominfo            = new KominfoModel();
+        $pendaftaranKominfo = $kominfo->pendaftaranRequest($params);
+
+        // Tambahkan statusLab dan statusRO jika norm ditemukan
+        foreach ($pendaftaranKominfo as &$pendaftar) {
+            $rm = $pendaftar['pasien_no_rm'];
+
+            // Cari di tungguLab
+            $lab                    = collect($tungguLab)->firstWhere('norm', $rm);
+            $pendaftar['statusLab'] = $lab['status'] ?? null;
+
+            // Cari di tungguRo
+            $ro                    = collect($tungguRo)->firstWhere('norm', $rm);
+            $pendaftar['statusRO'] = $ro['status'] ?? null;
+        }
+
+        return [
+            'pendaftaranKominfo' => $pendaftaranKominfo,
+            'tungguLab'          => $tungguLab,
+            'tungguRo'           => $tungguRo,
+        ];
     }
 
 }
