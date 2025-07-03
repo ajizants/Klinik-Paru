@@ -19,13 +19,38 @@
                         <div class="form-group col">
 
                             <label for="nip">NIP</label>
-                            <input type="text" class="form-control" id="nip" name="nip"
-                                value="{{ $nip }}" readonly required>
+                            @if (Auth::user()->role == 'pegawai')
+                                <input type="text" class="form-control form-control-sm" id="nip" name="nip"
+                                    value="{{ $nip }}" readonly required>
+                            @else
+                                <select name="nip" class="form-control select2bs4" id="nip">
+                                    <option value="">-- Pilih Pegawai --</option>
+                                    @foreach ($pegawai as $pegawai)
+                                        <option value="{{ $pegawai->nip }}"
+                                            data-nama="{{ $pegawai->gelar_d }} {{ $pegawai->nama }} {{ $pegawai->gelar_b }}">
+                                            {{ $pegawai->gelar_d }} {{ $pegawai->nama }}
+                                            {{ $pegawai->gelar_b }} - {{ $pegawai->nip }}</option>
+                                    @endforeach
+                            @endif
+                            </select>
                         </div>
+
+                        <script>
+                            $(document).ready(function() {
+                                $('.select2bs4').select2({
+                                    theme: 'bootstrap4'
+                                });
+                                $('#nip').on('change', function() {
+                                    const selectedOption = $(this).find('option:selected');
+                                    const namaLengkap = selectedOption.data('nama') || '';
+                                    $('#nama').val(namaLengkap);
+                                });
+                            });
+                        </script>
 
                         <div class="form-group col">
                             <label for="nama">Nama Petugas</label>
-                            <input type="text" class="form-control" id="nama" name="nama"
+                            <input type="text" class="form-control form-control-sm" id="nama" name="nama"
                                 value="{{ Auth::user()->name }}" readonly>
                         </div>
                     </div>
@@ -48,10 +73,12 @@
                             <select class="form-control" id="alasan" name="alasan" required>
                                 <option value="">-- Pilih Alasan --</option>
                                 <option value="Cuti Tahunan">Cuti Tahunan</option>
-                                <option value="Cuti Sakit">Cuti Sakit</option>
-                                <option value="Cuti Melahirkan">Cuti Melahirkan</option>
                                 <option value="Cuti Besar">Cuti Besar</option>
                                 <option value="Cuti Alasan Penting">Cuti Alasan Penting</option>
+                                <option value="Cuti Melahirkan">Cuti Melahirkan</option>
+                                <option value="Cuti Sakit">Cuti Sakit</option>
+                                <option value="Cuti Bersama">Cuti Bersama</option>
+                                <option value="Dinas Luar">Dinas Luar</option>
                             </select>
                         </div>
 
@@ -64,7 +91,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary" onclick="ajukanCuti()">Ajukan Cuti</button>
+                <button type="button" class="btn btn-primary" onclick="ajukanCuti()">Simpan</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -129,6 +156,8 @@
                 form.reset();
                 $('#modal-pengajuanCuti').modal('hide');
                 generateTabelPermohonanCuti(data.html);
+                generateTabelSisaCuti(sisaCutiAll);
+                tampilkanInfoCuti(sisaCutiUser);
             })
             .catch(err => {
                 console.error(err);

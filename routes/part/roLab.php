@@ -44,8 +44,9 @@ Route::post('ro/konsul', [ROTransaksiController::class, 'konsulRo']);
 Route::get('ro/kegiatan/laporan/{tglAwal}/{tglAkhir}', [ROTransaksiController::class, 'rekapKegiatan']);
 Route::post('ro/laporan/kunjungan', [ROTransaksiController::class, 'rekapKunjunganRo']);
 Route::post('ro/laporan/kunjungan/item', [ROTransaksiController::class, 'rekapKunjunganRoItem']);
-Route::post('ro/bacaan', [ROBacaanController::class, 'listBacaan']);
+Route::get('ro/bacaan/cetak', [ROBacaanController::class, 'getBacaan']);
 Route::get('ro/bacaan', [ROBacaanController::class, 'getListBacaan']);
+Route::post('ro/bacaan/hasil', [ROBacaanController::class, 'store']);
 
 //laboratorium
 Route::get('layananLabAll', [LaboratoriumController::class, 'layanan']);

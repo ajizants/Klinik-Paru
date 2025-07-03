@@ -82,7 +82,7 @@ class LoginController extends Controller
                 default:
                     $go = '/home';
             }
-            if ($role == 'pegawai') {
+            if ($role == 'pegawai' || $role == 'tu') {
                 $go = '/TataUsaha/Cuti';
             }
 

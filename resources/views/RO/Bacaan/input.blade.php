@@ -27,17 +27,17 @@
                                                         class="form-control" placeholder="No RM" maxlength="6"
                                                         pattern="[0-9]{6}" onkeyup="" />
                                                     <div class="input-group-addon btn btn-danger">
-                                                        <span class="fa-solid fa-magnifying-glass" onclick="cariTsRo();"
-                                                            data-toggle="tooltip" data-placement="top"
-                                                            title="Selain Pasien Hari ini"></span>
+                                                        <span class="fa-solid fa-magnifying-glass"
+                                                            onclick="cariPasien();" data-toggle="tooltip"
+                                                            data-placement="top" title="Selain Pasien Hari ini"></span>
                                                     </div>
                                                 </div>
                                                 <label for="layanan"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Layanan
                                                     :</label>
                                                 <div class="col-sm-2">
-                                                    <select name="layanan" id="layanan" class="form-control select2"
-                                                        required>
+                                                    <select disabled name="layanan" id="layanan"
+                                                        class="form-control select2" required>
                                                         <option value="">--Pilih Penjamin--
                                                         <option value="UMUM">UMUM
                                                         <option value="BPJS">BPJS
@@ -48,12 +48,12 @@
                                                     class="col-sm-1 col-form-label font-weight-bold  mb-0">Nama
                                                     :</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" id="nama" class="form-control bg-white"
-                                                        placeholder="Nama Pasien">
+                                                    <input type="text" id="nama" name="nama"
+                                                        class="form-control bg-white" placeholder="Nama Pasien">
                                                 </div>
                                                 <div class="col-sm-1">
-                                                    <input type="text" id="jk" class="form-control bg-white"
-                                                        placeholder="JK Pasien">
+                                                    <input type="text" id="jk" name="jk"
+                                                        class="form-control bg-white" placeholder="JK Pasien">
                                                 </div>
                                             </div>
                                             <div class="form-grup row mt-2">
@@ -61,21 +61,23 @@
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Tanggal
                                                     :</label>
                                                 <div class="col-sm-2">
-                                                    <input type="date" id="tglRo" class="form-control bg-white"
-                                                        placeholder="tglRo" value="{{ date('Y-m-d') }}" />
+                                                    <input type="date" id="tglRo" name="tglRo"
+                                                        class="form-control bg-white" placeholder="tglRo"
+                                                        value="{{ date('Y-m-d') }}" />
                                                 </div>
                                                 <label for="notrans"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
                                                     :</label>
                                                 <div class="col-sm-2">
-                                                    <input type="text" id="notrans" class="form-control bg-white"
-                                                        placeholder="Nomor Transaksi" readonly />
+                                                    <input type="text" id="notrans" name="notrans"
+                                                        class="form-control bg-white" placeholder="Nomor Transaksi"
+                                                        readonly />
                                                 </div>
                                                 <label for="alamat"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat
                                                     :</label>
                                                 <div class="col-sm-5">
-                                                    <input id="alamat" class="form-control bg-white"
+                                                    <input id="alamat" name="alamat" class="form-control bg-white"
                                                         placeholder="Alamat Pasien" readonly />
                                                 </div>
                                             </div>
@@ -109,16 +111,18 @@
                                                 </div>
 
                                                 <div class="form-grup row">
-                                                    <label class="col-sm-1 py-3 col-form-label" for="pasienRawat">Pasien
+                                                    <label class="col-sm-1 py-3 col-form-label"
+                                                        for="pasienRawat">Pasien
                                                         Rawat</label>
                                                     <div class="col-sm-3 py-3 mr-5">
                                                         <label for="pasienRawat0" class="mr-4">
                                                             <input type="radio" name="pasienRawat" value="0"
-                                                                checked=""> IRJA
+                                                                checked="" readonly> IRJA
                                                         </label>
 
                                                         <label for="pasienRawat1">
-                                                            <input type="radio" name="pasienRawat" value="1">
+                                                            <input type="radio" name="pasienRawat" value="1"
+                                                                readonly>
                                                             IGD
                                                             / IRNA
                                                         </label>
@@ -131,34 +135,34 @@
                                                         <div class="col-sm-2">
                                                             <input type="text" name="noreg" maxlength="6"
                                                                 class="form-control form-control-sm" id="noreg"
-                                                                placeholder="NO. Reg." required="">
+                                                                placeholder="NO. Reg." required="" readonly>
                                                         </div>
 
                                                         <label class="col-sm-1 col-form-label">Nama Foto</label>
                                                         <div class="col-sm-3">
-                                                            <select name="kdFoto" id="kdFoto"
+                                                            <select disabled name="kdFoto" id="kdFoto" readonly
                                                                 class="form-control select2bs4 ">
                                                                 <option value="">--Pilih Foto--
                                                                 </option>
-                                                                {{-- @foreach ($foto as $foto)
+                                                                @foreach ($foto as $foto)
                                                                     <option value="{{ $foto->kdFoto }}">
                                                                         {{ $foto->nmFoto }}
-                                                                @endforeach --}}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <label for="kdFilm"
                                                             class="ml-2 col-sm-1 col-form-label text-right">Ukuran
                                                             Film</label>
                                                         <div class="col-sm-3">
-                                                            <select name="kdFilm" id="kdFilm"
+                                                            <select disabled name="kdFilm" id="kdFilm" readonly
                                                                 class="form-control select2bs4 ">
                                                                 <option value="">--Pilih Ukuran
                                                                     Film--
                                                                 </option>
-                                                                {{-- @foreach ($film as $film)
+                                                                @foreach ($film as $film)
                                                                     <option value="{{ $film->kdFilm }}">
                                                                         {{ $film->ukuranFilm }}
-                                                                @endforeach --}}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
@@ -166,48 +170,48 @@
                                                         <label for="kdKondisiRo"
                                                             class="col-sm-1 col-form-label">Kondisi</label>
                                                         <div class="col-sm-2">
-                                                            <select name="kv" id="kv"
+                                                            <select disabled name="kv" id="kv" readonly
                                                                 class="form-control select2bs4 ">
                                                                 <option value="">--Pilih KV--
                                                                 </option>
-                                                                {{-- @foreach ($kv as $kv)
+                                                                @foreach ($kv as $kv)
                                                                     <option value="{{ $kv->kdKondisiRo }}">
                                                                         {{ $kv->nmKondisi }}
-                                                                @endforeach --}}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <div class="col-sm-2">
-                                                            <select name="ma" id="ma"
+                                                            <select disabled name="ma" id="ma" readonly
                                                                 class="form-control select2bs4 ">
                                                                 <option value="">--Pilih mA--
                                                                 </option>
-                                                                {{-- @foreach ($ma as $ma)
+                                                                @foreach ($ma as $ma)
                                                                     <option value="{{ $ma->kdKondisiRo }}">
                                                                         {{ $ma->nmKondisi }}
-                                                                @endforeach --}}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <div class="col-sm-2">
-                                                            <select name="s" id="s"
+                                                            <select disabled name="s" id="s" readonly
                                                                 class="form-control select2bs4 ">
                                                                 <option value="">--Pilih S--
                                                                 </option>
-                                                                {{-- @foreach ($s as $s)
+                                                                @foreach ($s as $s)
                                                                     <option value="{{ $s->kdKondisiRo }}">
                                                                         {{ $s->nmKondisi }}
-                                                                @endforeach --}}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <label for="kdMesin"
                                                             class="ml-2 col-sm-1 text-right col-form-label">Mesin</label>
                                                         <div class="col-sm-3">
-                                                            <select name="kdMesin" id="kdMesin"
+                                                            <select disabled name="kdMesin" id="kdMesin" readonly
                                                                 class="form-control select2bs4 " required="">
                                                                 <option value="">--Pilih Mesin--</option>
-                                                                {{-- @foreach ($mesin as $mesin)
+                                                                @foreach ($mesin as $mesin)
                                                                     <option value="{{ $mesin->kdMesin }}">
                                                                         {{ $mesin->nmMesin }}
-                                                                @endforeach --}}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
@@ -217,7 +221,7 @@
                                                             Expose</label>
                                                         <div class="col-sm-1">
                                                             <input type="text" name="jmlExpose" id="jmlExpose"
-                                                                class="form-control form-control-sm"
+                                                                readonly class="form-control form-control-sm"
                                                                 placeholder="Jml Expose" value="1">
                                                         </div>
                                                         <div width="3rem">
@@ -228,7 +232,7 @@
                                                             Dipakai</label>
                                                         <div class="col-sm-1">
                                                             <input type="text" name="jmlFilmDipakai"
-                                                                id="jmlFilmDipakai"
+                                                                id="jmlFilmDipakai" readonly
                                                                 class="form-control form-control-sm"
                                                                 placeholder="Jml Film Dipakai" value="1">
                                                         </div>
@@ -239,24 +243,22 @@
                                                             class=" col-1 text-right col-form-label">Film
                                                             Rusak</label>
                                                         <div class="col-sm-1">
-                                                            <input type="text" name="jmlFilmRusak"
+                                                            <input type="text" name="jmlFilmRusak" readonly
                                                                 id="jmlFilmRusak" class="form-control form-control-sm"
                                                                 placeholder="Jml Film Rusak" value="0">
                                                         </div>
 
                                                         <label for="proyeksi"
-                                                            class=" col-sm-1 text-right col-form-label"></label>
-
-                                                        <label for="proyeksi"
                                                             class=" ml-2 col-sm-1 text-right col-form-label">Proyeksi</label>
                                                         <div class="col-sm-3">
-                                                            <select name="kdProyeksi" id="kdProyeksi"
-                                                                class="form-control select2bs4 " required="">
+                                                            <select disabled name="kdProyeksi" id="kdProyeksi"
+                                                                readonly class="form-control select2bs4 "
+                                                                required="">
                                                                 <option value="">--Pilih Proyeksi--</option>
-                                                                {{-- @foreach ($proyeksi as $proyeksi)
+                                                                @foreach ($proyeksi as $proyeksi)
                                                                     <option value="{{ $proyeksi->kdProyeksi }}">
                                                                         {{ $proyeksi->proyeksi }}
-                                                                @endforeach --}}
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
@@ -267,7 +269,7 @@
                                                                 <label for="catatan" class="col-sm-2">Catatan</label>
                                                                 <div class="col-sm pr-0">
                                                                     <textarea name="catatan" id="catatan" class="form-control textarea" placeholder="Catatan" title="Catatan"
-                                                                        style="height: 40px"></textarea>
+                                                                        style="height: 40px" readonly></textarea>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -277,13 +279,13 @@
                                                                     Rontgen</label>
 
                                                                 <div class="col-sm-6 ml-2">
-                                                                    <input type="file" name="gambar"
+                                                                    <input type="file" name="gambar" readonly
                                                                         id="fileRo" class="form-control-sm col"
                                                                         placeholder=" Pilih Foto" title="Foto Ro" />
                                                                 </div>
                                                                 <div class="col-sm-3">
                                                                     <input class="form-control form-control-sm col"
-                                                                        name="Ket Foto 1"
+                                                                        name="Ket Foto 1" readonly
                                                                         id="ket_foto"title="Nama Foto"
                                                                         placeholder=" Nama Foto" />
                                                                 </div>
@@ -426,48 +428,76 @@
                                         </div>
                                     </div>
 
-
+                                    <div class="card card-outline card-info">
+                                        <div class="card-header bg-info">
+                                            <h3 class="card-title">
+                                                Form Bacaan Hasil Radiologi
+                                            </h3>
+                                        </div>
+                                        <!-- /.card-header -->
+                                        <div class="card-body">
+                                            <div class="form-grup form-row">
+                                                <label for="tanggalBacaan" class="col-sm-auto col-form-label">Tanggal
+                                                    Hasil Bacaan</label>
+                                                <div class="col-sm-2">
+                                                    <input type="date" id="tanggalBacaan" name="tanggalBacaan"
+                                                        class="form-control bg-white"
+                                                        placeholder="Tanggal Hasil Bacaan"
+                                                        value="{{ date('Y-m-d') }}" />
+                                                </div>
+                                                <label for="tanggal_ro" class="col-sm-auto col-form-label">Tanggal
+                                                    RO</label>
+                                                <div class="col-sm-2">
+                                                    <input type="date" id="tanggal_ro" name="tanggal_ro"
+                                                        class="form-control bg-white"
+                                                        placeholder="Tanggal Hasil Bacaan"
+                                                        value="{{ date('Y-m-d') }}" />
+                                                </div>
+                                            </div>
+                                            <textarea id="bacaanRO" name="Hasil Bacaan RO" placeholder="Tuliskan Hasil Bacaan Radiologi"></textarea>
+                                        </div>
+                                    </div>
                                     <div class="form-row d-flex justify-content-end">
                                         <label class="col-form-label" for="dokter">Dokter</label>
                                         <div class="col-3">
-                                            <select id="dokter"
+                                            <select disabled id="dokter"
                                                 class="select2bs4 form-control mb-3 border border-primary">
                                                 <option value="">--Dokter--</option>
-                                                {{-- @foreach ($dokter as $dok)
+                                                @foreach ($dokter as $dok)
                                                     <option value="{{ $dok->nip }}">{{ $dok->gelar_d }}
                                                         {{ $dok->nama }} {{ $dok->gelar_b }}</option>
-                                                @endforeach --}}
+                                                @endforeach
                                             </select>
                                         </div>
                                         <label class="col-sm-1 text-right col-form-label"
                                             for="p_rontgen">Radiografer</label>
                                         <div class="col-sm-2">
-                                            <select id="p_rontgen" name="p_rontgen" class="form-control select2bs4"
-                                                required="">
+                                            <select disabled id="p_rontgen" name="p_rontgen"
+                                                class="form-control select2bs4" required="">
                                                 <option value="">--Radiografer--</option>
-                                                {{-- @foreach ($radiografer as $rad)
+                                                @foreach ($radiografer as $rad)
                                                     <option value="{{ $rad->nip }}">{{ $rad->gelar_d }}
                                                         {{ $rad->nama }} {{ $rad->gelar_b }}</option>
-                                                @endforeach --}}
+                                                @endforeach
                                             </select>
                                         </div>
                                         <label class="col-sm-1 text-right col-form-label"
                                             for="p_rontgen_evaluator">Petugas CR</label>
                                         <div class="col-sm-2">
-                                            <select id="p_rontgen_evaluator" name="p_rontgen_evaluator"
+                                            <select disabled id="p_rontgen_evaluator" name="p_rontgen_evaluator"
                                                 class="form-control select2bs4" required="">
                                                 <option value="">--Petugas CR--</option>
-                                                {{-- @foreach ($radiografer as $rad)
+                                                @foreach ($radiografer as $rad)
                                                     <option value="{{ $rad->nip }}">{{ $rad->gelar_d }}
                                                         {{ $rad->nama }} {{ $rad->gelar_b }}</option>
-                                                @endforeach --}}
+                                                @endforeach
                                             </select>
                                         </div>
 
                                         <div class="col-auto">
                                             {{-- <a class="btn btn-success" id="tblSimpan" onclick="simpan();">Simpan</a> --}}
                                             <a class="btn btn-success" id="tblSimpan"
-                                                onclick="validateAndSubmit();">Simpan</a>
+                                                onclick="simpanBacaan();">Simpan</a>
                                         </div>
                                         <div class="col-auto">
                                             <a class="btn btn-danger" id="tblBatal" onclick="rstForm();">Selesai /

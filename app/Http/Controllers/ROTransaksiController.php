@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\KunjunganWaktuSelesai;
 use App\Models\LaboratoriumHasilModel;
 use App\Models\PegawaiModel;
+use App\Models\ROBacaan;
 use App\Models\RoHasilModel;
 use App\Models\ROJenisFilm;
 use App\Models\ROJenisFoto;
@@ -153,6 +154,21 @@ class ROTransaksiController extends Controller
                 return $query->where('norm', $norm); // Filter by norm if valid
             })
                 ->get();
+            foreach ($hasilRo as $item) {
+                $norm = $item->norm;
+                $tgl  = $item->tanggal;
+                // dd($item->tanggal);
+                $item['hasilBacaan'] = 'RO Tidak Dibacakan';
+
+                $bacaan = ROBacaan::where('norm', $norm)
+                    ->where('tanggal_ro', $tgl)
+                    ->first();
+                // dd($bacaan);
+                if ($bacaan) {
+                    $item['hasilBacaan'] = $bacaan->bacaan_radiolog;
+                }
+
+            }
 
             if ($hasilRo->isEmpty()) {
                 $hasilRo = "Data Foto Thorax pada Pasien dengan Norm: <u><b>" . $norm . "</b></u> tidak ditemukan,<br> Jika pasien melakukan Foto Thorax di KKPM, silahkan Menghubungi Bagian Radiologi. Terima Kasih...";
@@ -667,6 +683,9 @@ class ROTransaksiController extends Controller
             $data = RoHasilModel::when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
                 return $query->where('norm', $norm);
             })
+            // $data = ROTransaksiHasilModel::when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
+            //     return $query->where('norm', $norm);
+            // })
                 ->where('tanggal', 'like', '%' . $tgl . '%')
                 ->get();
 
@@ -677,6 +696,21 @@ class ROTransaksiController extends Controller
                 ];
                 return response()->json($res, 404, [], JSON_PRETTY_PRINT);
             } else {
+                foreach ($data as $item) {
+                    $norm = $item->norm;
+                    $tgl  = $item->tanggal;
+                    // dd($item->tanggal);
+                    $item['hasilBacaan'] = 'RO Tidak Dibacakan';
+
+                    $bacaan = ROBacaan::where('norm', $norm)
+                        ->where('tanggal_ro', $tgl)
+                        ->first();
+                    // dd($bacaan);
+                    if ($bacaan) {
+                        $item['hasilBacaan'] = $bacaan->bacaan_radiolog;
+                    }
+
+                }
                 $res = [
                     'metadata' => [
                         'message' => 'Data foto thorax ditemukan',
@@ -967,8 +1001,8 @@ class ROTransaksiController extends Controller
         $tgl  = $request->input('tgl', date('Y-m-d'));
         $norm = $request->input('norm');
 
-        // Query untuk mendapatkan data transaksi berdasarkan tanggal dan norm
-        $data = ROTransaksiModel::with('pasien')
+        // Query untuk mendapatkan data transaksi berdasarkan tanggal dan norm, 2024-10-04 mulai notran baru
+        $data = ROTransaksiModel::with('pasien', 'hasilBacaan')
             ->when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
                 return $query->where('norm', $norm);
             })
@@ -1002,12 +1036,17 @@ class ROTransaksiController extends Controller
         // dd($petugas);
         //Query untuk mendapatkan foto thorax
         try {
-            $data_foto = RoHasilModel::on('rontgen')
-                ->when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
-                    return $query->where('norm', $norm);
-                })
+            $data_foto = ROTransaksiHasilModel::when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
+                return $query->where('norm', $norm);
+            })
                 ->whereDate('tanggal', $tgl)
                 ->get();
+            // $data_foto = RoHasilModel::on('rontgen')
+            //     ->when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
+            //         return $query->where('norm', $norm);
+            //     })
+            //     ->whereDate('tanggal', $tgl)
+            //     ->get();
 
             if (! $data_foto) {
                 $foto = [

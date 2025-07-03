@@ -546,8 +546,7 @@ async function cariTsRo(norm, tgl) {
                     .val(petugas.p_rontgen_evaluator || "")
                     .trigger("change");
 
-                Swal.close();
-                scrollToInputSection();
+                closeSwalAfterDelay();
             } else {
                 console.error("No data received from API");
                 Swal.fire({
@@ -855,6 +854,7 @@ window.addEventListener("load", function () {
     setTglRo();
     setTodayDate();
     updateAntrian();
+    scrollToTop();
     $("#norm").on("keyup", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();

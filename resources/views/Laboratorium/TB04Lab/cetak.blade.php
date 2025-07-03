@@ -275,8 +275,13 @@
                                 {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
                             </td>
                             <td class="p-1 text-center">
-                                {{ $item['tb04'][0]['hasil'] }}
-                                {{-- {{ $item['tb04'][0]['idLayanan'] }} --}}
+                                @if ($item['tb04'][0]['hasil'] == 'Rif Sen')
+                                    <span style="color: red;">Rif Sen</span>
+                                @elseif($item['tb04'][0]['hasil'] == 'Rif Res')
+                                    <span style="color: red;">Rif Res</span>
+                                @else
+                                    {{ $item['tb04'][0]['hasil'] }}
+                                @endif
                             </td>
                             <td class="p-1 text-center">
                                 {{ \Carbon\Carbon::parse($item['tb04'][0]['tgl_hasil'])->format('d-m-Y') }}
@@ -284,8 +289,17 @@
                             <td class="text-center"></td>
                         @else
                             <td class="p-1 text-center">
-                                {{ $item['tb04'][0]['hasil'] }}
-                                {{-- {{ $item['tb04'][0]['idLayanan'] }} --}}
+                                @if ($item['tb04'][0]['hasil'] == '+1')
+                                    <span style="color: red;">1 +</span>
+                                @elseif($item['tb04'][0]['hasil'] == '+2')
+                                    <span style="color: red;">2 +</span>
+                                @elseif($item['tb04'][0]['hasil'] == '+3')
+                                    <span style="color: red;">3 +</span>
+                                @elseif($item['tb04'][0]['hasil'] == '+1-9')
+                                    <span style="color: red;">+ 1-9</span>
+                                @else
+                                    {{ $item['tb04'][0]['hasil'] }}
+                                @endif
                             </td>
                             <td class="p-1 text-center">
                                 {{ $item['tb04'][1]['hasil'] ?? '' }}

@@ -3,31 +3,25 @@
         <tr>
             <th>#</th>
             <th>Nama</th>
-            <th>Jumlah Cuti</th>
+            <th>Jatah Cuti</th>
             <th>Tambahan Cuti</th>
-            <th>Cuti Diambil</th>
+            <th>Permohonan Cuti</th>
+            <th>Cuti Disetujui</th>
+            <th>Cuti Ditolak</th>
             <th>Sisa Cuti</th>
-            {{-- <th>Update Per</th> --}}
         </tr>
     </thead>
     <tbody>
         @forelse($dataSisaCutiAll as $index => $cuti)
             <tr>
-                <td>
-                    @if (in_array(Auth::user()->role, ['admin', 'tu']))
-                        <button class="btn btn-success btn-sm"
-                            onclick="persetujuanCuti({{ $cuti->nip }}, 1)">Tambah</button>
-                        <button class="btn btn-danger btn-sm"
-                            onclick="persetujuanCuti({{ $cuti->nip }}, 2)">Kurangi</button>
-                    @else
-                        {{ $index + 1 }}
-                    @endif
-                </td>
+                <td> {{ $index + 1 }} </td>
                 <td>{{ $cuti->nama ?? '-' }}<br>Nip. {{ $cuti->nip }}</td>
-                <td>{{ $cuti->jatah_cuti }}</td>
-                <td>{{ $cuti->tambahan_cuti }}</td>
-                <td>{{ $cuti->jumalhCutiDiambil }}</td>
-                <td>{{ $cuti->jumlahSisaCuti }}</td>
+                <td>{{ $cuti->jatah_cuti }} hari</td>
+                <td>{{ $cuti->jumlahCutiTambahan }} hari</td>
+                <td>{{ $cuti->jumlahCutiDiambil }} hari</td>
+                <td>{{ $cuti->jumlahCutiDisetujui }} hari</td>
+                <td>{{ $cuti->jumlahCutiDitolak }} hari</td>
+                <td>{{ $cuti->jumlahSisaCuti }} hari</td>
             </tr>
         @empty
             <tr>
@@ -36,17 +30,3 @@
         @endforelse
     </tbody>
 </table>
-
-<script>
-    function tambahCuti(nip) {
-        tampilkanLoading('Sedang Menambah Cuti...');
-        $.ajax({
-            url: "/tu/cuti/tambah/" + nip,
-            type: "GET",
-            success: function(data) {
-                generateTabelPermohonanCuti(data.html);
-                Swal.close();
-            }
-        })
-    }
-</script>

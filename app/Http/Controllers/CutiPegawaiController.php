@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 use App\Models\CutiPegawai;
 use App\Models\PegawaiModel;
 use App\Models\Vpegawai;
+use App\Models\vPegawaiModel;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use MehediJaman\LaravelZkteco\LaravelZkteco;
 
 class CutiPegawaiController extends Controller
 {
@@ -72,28 +75,102 @@ class CutiPegawaiController extends Controller
         return $query->get();
     }
 
+    // private function dataSisaCuti($nip = null)
+    // {
+    //     $query = Vpegawai::with('cuti');
+    //     if ($nip) {
+    //         $query->where('nip', $nip);
+    //     }
+    //     // hanya cuti tahunan
+    //     // hari minggu tidak di hitung jumlah cuti tahunan
+    //     $dataPegawai = $query->get();
+
+    //     foreach ($dataPegawai as $key) {
+    //         $jumlahCuti          = 0;
+    //         $jumlahCutiDisetujui = 0;
+
+    //         foreach ($key->cuti as $cuti) {
+    //             // Hitung selisih hari cuti (inklusif)
+    //             $mulai    = Carbon::parse($cuti->tgl_mulai);
+    //             $selesai  = Carbon::parse($cuti->tgl_selesai);
+    //             $hariCuti = $selesai->diffInDays($mulai) + 1;
+
+    //             $jumlahCuti += $hariCuti;
+
+    //             if ($cuti->persetujuan == 1) {
+    //                 $jumlahCutiDisetujui += $hariCuti;
+    //             }
+    //         }
+
+    //         $key['jumlahCutiDiambil']   = $jumlahCuti;
+    //         $key['jumlahCutiDisetujui'] = $jumlahCutiDisetujui;
+    //         $key['jumlahSisaCuti']      = ($key->jatah_cuti + $key->tambahan_cuti) - $jumlahCutiDisetujui;
+    //     }
+
+    //     return $dataPegawai;
+    // }
+
     private function dataSisaCuti($nip = null)
     {
-        $query = Vpegawai::with('cuti');
+        $query = Vpegawai::with('cuti', 'cutiTambahan')->whereNot('stat_pns', 'PENSIUNAN');
         if ($nip) {
             $query->where('nip', $nip);
         }
+
+        // Ambil hari libur dari tabel
+        $hariLibur = DB::table('hari_libur')->pluck('tanggal')->map(function ($tanggal) {
+            return Carbon::parse($tanggal)->toDateString();
+        })->toArray();
+
         $dataPegawai = $query->get();
 
         foreach ($dataPegawai as $key) {
-            $jumlahCuti = 0;
+            $jumlahCuti          = 0;
+            $jumlahCutiDisetujui = 0;
+            $jumlahCutiDitolak   = 0;
+            $jumlahCutiTambahan  = 0;
 
             foreach ($key->cuti as $cuti) {
-                // Hitung selisih hari cuti (inklusif)
-                $mulai    = Carbon::parse($cuti->tgl_mulai);
-                $selesai  = Carbon::parse($cuti->tgl_selesai);
-                $hariCuti = $selesai->diffInDays($mulai) + 1;
+                // Hanya hitung cuti tahunan (misal ID jenis cuti = 1)
+                if ($cuti->alasan !== 'Cuti Tahunan') {
+                    continue;
+                }
+
+                $mulai   = Carbon::parse($cuti->tgl_mulai);
+                $selesai = Carbon::parse($cuti->tgl_selesai);
+
+                $hariCuti = 0;
+
+                // Loop per hari, cek apakah hari itu bukan Minggu dan bukan hari libur
+                for ($tanggal = $mulai->copy(); $tanggal->lte($selesai); $tanggal->addDay()) {
+                    $isMinggu    = $tanggal->dayOfWeek == Carbon::SUNDAY;
+                    $isHariLibur = in_array($tanggal->toDateString(), $hariLibur);
+
+                    if (! $isMinggu && ! $isHariLibur) {
+                        $hariCuti++;
+                    }
+                }
 
                 $jumlahCuti += $hariCuti;
+
+                if ($cuti->persetujuan == 1) {
+                    $jumlahCutiDisetujui += $hariCuti;
+                }
+                if ($cuti->persetujuan == 2) {
+                    $jumlahCutiDitolak += $hariCuti;
+                }
             }
 
-            $key['jumalhCutiDiambil'] = $jumlahCuti;
-            $key['jumlahSisaCuti']    = ($key->jatah_cuti + $key->tambahan_cuti) - $jumlahCuti;
+            foreach ($key->cutiTambahan as $cuti) {
+                // Hanya hitung cuti tahunan (misal ID jenis cuti = 1)
+                $jumlahCutiTambahan += $cuti->jumlah_tambahan;
+            }
+
+            $key['jumlahCutiDiambil']   = $jumlahCuti;
+            $key['jumlahCutiDisetujui'] = $jumlahCutiDisetujui;
+            $key['jumlahCutiDitolak']   = $jumlahCutiDitolak;
+            $key['jumlahCutiTambahan']  = $jumlahCutiTambahan;
+            $key['jumlahSisaCuti']      = ($key->jatah_cuti + $key->tambahan_cuti) - $jumlahCutiDisetujui;
         }
 
         return $dataPegawai;
@@ -149,6 +226,14 @@ class CutiPegawaiController extends Controller
 
         $cuti = CutiPegawai::create($validated);
 
+        $user     = Auth::user();
+        $roleUser = $user->role;
+        $nip      = explode('@', $user->email)[0];
+        $params   = [
+            // 'tgl_mulai'   => $tgl_mulai,
+            // 'tgl_selesai' => $tgl_selesai,
+            'nip' => $nip,
+        ];
         switch ($roleUser) {
             case 'admin' || 'tu':
                 $dataCuti = $this->dataCutiPegawai();
@@ -157,11 +242,19 @@ class CutiPegawaiController extends Controller
                 $dataCuti = $this->dataCutiPegawai($params);
                 break;
         }
+        $html = view('TataUsaha.Cuti.permohonanCutiTabel', compact('dataCuti'))->render();
+
+        $sisaCutiUser    = $this->dataSisaCuti($nip);
+        $dataSisaCutiAll = $this->dataSisaCuti();
+        // return $dataSisaCutiAll;
+        $sisaCutiAll = view('TataUsaha.Cuti.sisaCutiTabel', compact('dataSisaCutiAll'))->render();
 
         return response()->json([
-            'message'    => 'Pengajuan cuti berhasil dikirim.',
-            'permohonan' => $cuti,
-            'html'       => view('TataUsaha.Cuti.permohonanCutiTabel', compact('dataCuti', 'user'))->render(),
+            'message'     => 'Pengajuan cuti berhasil dikirim.',
+            'permohonan'  => $cuti,
+            'html'        => $html,
+            'sisaCuti'    => $sisaCutiUser,
+            'sisaCutiAll' => $sisaCutiAll,
         ]);
     }
 
@@ -223,13 +316,31 @@ class CutiPegawaiController extends Controller
             ], 500);
         }
     }
+    public function getDataSisaCutiPerson($nip)
+    {
+        try {
+            $dataSisaCuti = $this->dataSisaCuti($nip);
+            return $dataSisaCuti;
+            $html = view('TataUsaha.Cuti.sisaCutiTabel', compact('dataSisaCuti'))->render();
+            return response()->json([
+                'message' => 'Permohonan cuti berhasil diambil.',
+                'html'    => $html,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
     public function getDataSisaCuti(Request $request)
     {
         $tahun_cuti = $request->input('tahun_cuti');
 
         try {
             $dataSisaCutiAll = $this->dataSisaCuti();
-            $html            = view('TataUsaha.Cuti.sisaCutiTabel', compact('dataSisaCutiAll'))->render();
+            // return $dataSisaCutiAll;
+            $html = view('TataUsaha.Cuti.sisaCutiTabel', compact('dataSisaCutiAll'))->render();
             return response()->json([
                 'message' => 'Permohonan cuti berhasil diambil.',
                 'html'    => $html,
@@ -291,7 +402,9 @@ class CutiPegawaiController extends Controller
         $sisaCutiAll = view('TataUsaha.Cuti.sisaCutiTabel', compact('dataSisaCutiAll'))->render();
         // return $sisaCutiAll;
 
-        return view('TataUsaha.Cuti.main', compact('pegawai', 'html', 'cutiHariIni', 'sisaCutiUser', 'sisaCutiAll'))->with('title', $title);
+        $pegawai = vPegawaiModel::whereNot('stat_pns', 'PENSIUNAN')->orderBy('nama')->get();
+
+        return view('TataUsaha.Cuti.main', compact('pegawai', 'html', 'cutiHariIni', 'sisaCutiUser', 'sisaCutiAll', 'pegawai'))->with('title', $title);
     }
 
     public function tambahkanCuti(Request $request)
@@ -299,45 +412,100 @@ class CutiPegawaiController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(CutiPegawai $cutiPegawai)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(CutiPegawai $cutiPegawai)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update($id, $persetujuan)
     {
         CutiPegawai::where('id', $id)->update(['persetujuan' => $persetujuan]);
 
-        $dataCuti = CutiPegawai::with('pegawai')
-            ->whereYear('created_at', Carbon::now()->year)
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->get();
+        $user     = Auth::user();
+        $roleUser = $user->role;
+        $nip      = explode('@', $user->email)[0];
+        $params   = [
+            // 'tgl_mulai'   => $tgl_mulai,
+            // 'tgl_selesai' => $tgl_selesai,
+            'nip' => $nip,
+        ];
+        switch ($roleUser) {
+            case 'admin' || 'tu':
+                $dataCuti = $this->dataCutiPegawai();
+                break;
+            default:
+                $dataCuti = $this->dataCutiPegawai($params);
+                break;
+        }
         $html = view('TataUsaha.Cuti.permohonanCutiTabel', compact('dataCuti'))->render();
+
+        $sisaCutiUser    = $this->dataSisaCuti($nip);
+        $dataSisaCutiAll = $this->dataSisaCuti();
+        // return $dataSisaCutiAll;
+        $sisaCutiAll = view('TataUsaha.Cuti.sisaCutiTabel', compact('dataSisaCutiAll'))->render();
         return response()->json([
-            'message' => 'Permohonan cuti berhasil diubah.',
-            'html'    => $html,
+            'message'     => 'Permohonan cuti berhasil diubah.',
+            'html'        => $html,
+            'sisaCuti'    => $sisaCutiUser,
+            'sisaCutiAll' => $sisaCutiAll,
         ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(CutiPegawai $cutiPegawai)
+    public function destroy(CutiPegawai $cutiPegawai): JsonResponse
     {
-        //
+        try {
+            $cutiPegawai->delete();
+
+            // Ambil ulang data setelah penghapusan
+            $user     = Auth::user();
+            $roleUser = $user->role;
+            $nip      = explode('@', $user->email)[0];
+            $params   = [
+                // 'tgl_mulai'   => $tgl_mulai,
+                // 'tgl_selesai' => $tgl_selesai,
+                'nip' => $nip,
+            ];
+            switch ($roleUser) {
+                case 'admin' || 'tu':
+                    $dataCuti = $this->dataCutiPegawai();
+                    break;
+                default:
+                    $dataCuti = $this->dataCutiPegawai($params);
+                    break;
+            }
+            $html = view('TataUsaha.Cuti.permohonanCutiTabel', compact('dataCuti'))->render();
+
+            $sisaCutiUser    = $this->dataSisaCuti($nip);
+            $dataSisaCutiAll = $this->dataSisaCuti();
+            // return $dataSisaCutiAll;
+            $sisaCutiAll = view('TataUsaha.Cuti.sisaCutiTabel', compact('dataSisaCutiAll'))->render();
+
+            return response()->json([
+                'message'     => 'Data cuti berhasil dihapus.',
+                'html'        => $html,
+                'sisaCuti'    => $sisaCutiUser,
+                'sisaCutiAll' => $sisaCutiAll,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat menghapus data.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
     }
+
+    public function ambilLog()
+    {
+        $zk = new LaravelZkteco('192.168.10.27', 4370);
+
+        try {
+            $zk->connect();
+            $zk->disableDevice();
+
+            $logs = $zk->getAttendance();
+
+            $zk->enableDevice();
+            $zk->disconnect();
+
+            return response()->json($logs);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
 }

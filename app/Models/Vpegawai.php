@@ -19,4 +19,9 @@ class Vpegawai extends Model
         return $this->hasMany(CutiPegawai::class, 'nip', 'nip');
     }
 
+    public function cutiTambahan()
+    {
+        return $this->hasMany(CutiTambahan::class, 'nip', 'nip');
+    }
+
 }

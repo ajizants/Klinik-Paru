@@ -204,6 +204,7 @@
                 const cardid = `${item.id}_${item.tanggal}`;
                 const panzoomid = `myPanzoom${item.id}`;
                 const buttonid = `btn${item.id}`;
+                const hasilBacaan = `${item.hasilBacaan||''}`;
 
                 const button =
                     `<a type="button" class="btn btn-primary btn-sm mx-3 mt-3" id="${buttonid}" onclick="toggleImage('${cardid}', '${buttonid}')">Foto Tanggal: ${item.tanggal}</a>`;
@@ -244,12 +245,25 @@
                                             <img class="f-panzoom__content" id="zoomed-image" src="${imageUrl}" />
                                         </div>
                                         <div class="card-footer">
-                                            <h5 class="text-center">${item.norm} - ${item.nama}</h5>
-                                            <h5 class="text-center">Tanggal: ${item.tanggal}</h5>
+                                            <p class="mb-1 text-center"><b>${item.norm} - ${item.nama}</b></p>
+                                            <p class="mb-1 text-center"><b>Tanggal: ${item.tanggal}</b></p>
+                                            <p class="mb-0" ><b>Hasil Bacaan:</b></p>
+                                            ${item.hasilBacaan}
                                         </div>
                                     </div>
                                 </div>
                             `;
+
+                // <div class="form-row">
+                //     <div class="form-group col-md-6">
+                //         <h5 class="text-center">${item.norm} - ${item.nama}</h5>
+                //         <h5 class="text-center">Tanggal: ${item.tanggal}</h5>
+                //     </div>
+                //     <div class="form-group col-md-6">
+                //        <p class="mb-0" >Hasil Bacaan:</p>
+                //         ${item.hasilBacaan}
+                //     </div>
+                // </div>
 
                 buttondiv.insertAdjacentHTML('beforeend', button);
                 preview.insertAdjacentHTML('beforeend', card);

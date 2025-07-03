@@ -25,6 +25,10 @@ class ROTransaksiModel extends Model
     {
         return $this->hasOne(ROJenisFoto::class, 'kdFoto', 'kdFoto');
     }
+    public function pemeriksaan()
+    {
+        return $this->hasOne(LayananModel::class, 'kdFoto', 'kdFoto');
+    }
     public function proyeksi()
     {
         return $this->hasOne(RoProyeksiModel::class, 'kdProyeksi', 'kdProyeksi');
@@ -82,6 +86,11 @@ class ROTransaksiModel extends Model
     public function konsulRo()
     {
         return $this->belongsTo(KunjunganWaktuSelesai::class, 'notrans', 'notrans');
+    }
+
+    public function hasilBacaan()
+    {
+        return $this->hasOne(ROBacaan::class, 'notrans', 'notrans');
     }
 
     public function tungguRo($tgl)

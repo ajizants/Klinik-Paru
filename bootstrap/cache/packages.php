@@ -43,6 +43,17 @@
       0 => 'Maatwebsite\\Excel\\ExcelServiceProvider',
     ),
   ),
+  'mehedijaman/laravel-zkteco' => 
+  array (
+    'aliases' => 
+    array (
+      'LaravelZkteco' => 'MehediJaman\\LaravelZkteco\\Facades\\LaravelZkteco',
+    ),
+    'providers' => 
+    array (
+      0 => 'MehediJaman\\LaravelZkteco\\LaravelZktecoServiceProvider',
+    ),
+  ),
   'nesbot/carbon' => 
   array (
     'providers' => 

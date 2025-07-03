@@ -1697,60 +1697,60 @@ async function searchRMObat(norm) {
     }
 }
 
-// //KASIR
-// function populateLayananOptions(kelas) {
-//     var LayananSelectElement = $("#jenislayanan");
-//     LayananSelectElement.empty();
-//     $.get("/api/layanan", { kelas: kelas }, function (data) {
-//         // console.log(data);
-//         data.sort(function (a, b) {
-//             var namaA = a.nmLayanan.toUpperCase();
-//             var namaB = b.nmLayanan.toUpperCase();
-//             if (namaA < namaB) {
-//                 return -1;
-//             }
-//             if (namaA > namaB) {
-//                 return 1;
-//             }
-//             return 0;
-//         });
-//         data.forEach(function (layanan) {
-//             var option = new Option(
-//                 layanan.nmLayanan,
-//                 layanan.idLayanan,
-//                 false,
-//                 false
-//             );
-//             LayananSelectElement.append(option).trigger("change");
-//             // console.log(
-//             //     "Options added to select element:",
-//             //     LayananSelectElement.html()
-//             // );
-//         });
-//     });
-// }
+//KASIR
+function populateLayananOptions(kelas) {
+    var LayananSelectElement = $("#jenislayanan");
+    LayananSelectElement.empty();
+    $.get("/api/layanan", { kelas: kelas }, function (data) {
+        // console.log(data);
+        data.sort(function (a, b) {
+            var namaA = a.nmLayanan.toUpperCase();
+            var namaB = b.nmLayanan.toUpperCase();
+            if (namaA < namaB) {
+                return -1;
+            }
+            if (namaA > namaB) {
+                return 1;
+            }
+            return 0;
+        });
+        data.forEach(function (layanan) {
+            var option = new Option(
+                layanan.nmLayanan,
+                layanan.idLayanan,
+                false,
+                false
+            );
+            LayananSelectElement.append(option).trigger("change");
+            // console.log(
+            //     "Options added to select element:",
+            //     LayananSelectElement.html()
+            // );
+        });
+    });
+}
 
-// function populateJaminan() {
-//     var jaminan = $("#jaminan");
+function populateJaminan() {
+    var jaminan = $("#jaminan");
 
-//     $.get("/api/jaminan", function (data) {
-//         data.sort(function (a, b) {
-//             // Add your sorting logic here if needed
-//             // Example: return a.name.localeCompare(b.name);
-//         });
+    $.get("/api/jaminan", function (data) {
+        data.sort(function (a, b) {
+            // Add your sorting logic here if needed
+            // Example: return a.name.localeCompare(b.name);
+        });
 
-//         data.forEach(function (jaminanData) {
-//             var kelompok = jaminanData.kelompok;
-//             var kode = jaminanData.kkelompok;
+        data.forEach(function (jaminanData) {
+            var kelompok = jaminanData.kelompok;
+            var kode = jaminanData.kkelompok;
 
-//             // Creating option elements
-//             var option = new Option(kelompok, kode, false, false);
+            // Creating option elements
+            var option = new Option(kelompok, kode, false, false);
 
-//             // Appending options to both jaminan and dokterModals
-//             jaminan.append(option).trigger("change");
-//         });
-//     });
-// }
+            // Appending options to both jaminan and dokterModals
+            jaminan.append(option).trigger("change");
+        });
+    });
+}
 function populateTujuan() {
     var tujuanSelectElement = $("#tujuan");
     $.get("/api/tujuan", function (data) {
@@ -1771,68 +1771,68 @@ function populateTujuan() {
     });
 }
 
-// function populateAnalisHasil() {
-//     var analisDarah = $("#darah");
-//     var analisBakteri = $("#bakteri");
-//     var analisImuno = $("#imuno");
-//     var analisSampling = $("#sampling");
-//     var analisAdmin = $("#admin");
+function populateAnalisHasil() {
+    var analisDarah = $("#darah");
+    var analisBakteri = $("#bakteri");
+    var analisImuno = $("#imuno");
+    var analisSampling = $("#sampling");
+    var analisAdmin = $("#admin");
 
-//     $.get("/api/analis", function (data) {
-//         data.sort(function (a, b) {
-//             var namaLengkapA = a.gelar_d + " " + a.nama + " " + a.gelar_b;
-//             var namaLengkapB = b.gelar_d + " " + b.nama + " " + b.gelar_b;
-//             return namaLengkapA.localeCompare(namaLengkapB, undefined, {
-//                 numeric: true,
-//                 sensitivity: "base",
-//             });
-//         });
+    $.get("/api/analis", function (data) {
+        data.sort(function (a, b) {
+            var namaLengkapA = a.gelar_d + " " + a.nama + " " + a.gelar_b;
+            var namaLengkapB = b.gelar_d + " " + b.nama + " " + b.gelar_b;
+            return namaLengkapA.localeCompare(namaLengkapB, undefined, {
+                numeric: true,
+                sensitivity: "base",
+            });
+        });
 
-//         data.forEach(function (petugas) {
-//             var namaLengkap =
-//                 petugas.gelar_d + " " + petugas.nama + " " + petugas.gelar_b;
+        data.forEach(function (petugas) {
+            var namaLengkap =
+                petugas.gelar_d + " " + petugas.nama + " " + petugas.gelar_b;
 
-//             // Create separate Option instances for each select element
-//             var optionDarah = new Option(
-//                 namaLengkap,
-//                 petugas.nip,
-//                 false,
-//                 false
-//             );
-//             var optionBakteri = new Option(
-//                 namaLengkap,
-//                 petugas.nip,
-//                 false,
-//                 false
-//             );
-//             var optionImuno = new Option(
-//                 namaLengkap,
-//                 petugas.nip,
-//                 false,
-//                 false
-//             );
-//             var optionSampling = new Option(
-//                 namaLengkap,
-//                 petugas.nip,
-//                 false,
-//                 false
-//             );
-//             var optionAdmin = new Option(
-//                 namaLengkap,
-//                 petugas.nip,
-//                 false,
-//                 false
-//             );
+            // Create separate Option instances for each select element
+            var optionDarah = new Option(
+                namaLengkap,
+                petugas.nip,
+                false,
+                false
+            );
+            var optionBakteri = new Option(
+                namaLengkap,
+                petugas.nip,
+                false,
+                false
+            );
+            var optionImuno = new Option(
+                namaLengkap,
+                petugas.nip,
+                false,
+                false
+            );
+            var optionSampling = new Option(
+                namaLengkap,
+                petugas.nip,
+                false,
+                false
+            );
+            var optionAdmin = new Option(
+                namaLengkap,
+                petugas.nip,
+                false,
+                false
+            );
 
-//             // Append options to the respective select elements
-//             analisDarah.append(optionDarah).trigger("change");
-//             analisBakteri.append(optionBakteri).trigger("change");
-//             analisImuno.append(optionImuno).trigger("change");
-//             analisAdmin.append(optionAdmin).trigger("change");
-//             analisSampling.append(optionSampling).trigger("change");
-//         });
-//     });
-// }
+            // Append options to the respective select elements
+            analisDarah.append(optionDarah).trigger("change");
+            analisBakteri.append(optionBakteri).trigger("change");
+            analisImuno.append(optionImuno).trigger("change");
+            analisAdmin.append(optionAdmin).trigger("change");
+            analisSampling.append(optionSampling).trigger("change");
+        });
+    });
+}
 
 //format numbering
 function formatNumberWithCommas(number) {

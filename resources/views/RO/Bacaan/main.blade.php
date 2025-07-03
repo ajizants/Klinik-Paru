@@ -18,7 +18,22 @@
         });
 
         let keterangan; // Define status globally
+        var appUrlRo = @json($appUrlRo);
 
+        $(function() {
+            $('#bacaanRO').summernote({
+                height: 200,
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ]
+            });
+        })
 
 
         function formatWaktu(dateTimeString) {
@@ -26,98 +41,6 @@
             const [year, month, day] = datePart.split("-");
             const formattedDate = `${day}-${month}-${year}`;
             return `${formattedDate} ${timePart}`;
-        }
-
-        async function cariTsLab(norm, tgl, task) {
-            formatNorm($("#norm"));
-            norm = norm || $("#norm").val();
-            tgl = tgl || $("#tanggal").val();
-            var requestData = {
-                norm: norm,
-                tgl: tgl
-            };
-
-            Swal.fire({
-                icon: "info",
-                title: "Sedang mencarikan data pasien...!!!",
-                showConfirmButton: false,
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-            });
-
-            try {
-                const response = await fetch("/api/cariTsLab", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(requestData),
-                });
-
-                if (!response.ok) {
-                    if (response.status == 404) {
-                        // searchRMObat(norm);
-                        // cariKominfo(norm, tgl);
-                        Swal.fire({
-                            icon: "error",
-                            title: "Pasien dengan NO RM : " +
-                                norm +
-                                " tidak ditemukan di pendaftaran laboratorium...!!!",
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Terjadi kesalahan saat mengambil data pasien...!!!",
-                        });
-                        throw new Error("Network response was not ok");
-                    }
-                } else {
-                    const data = await response.json();
-                    if (task == "tampil") {
-                        $("#norm").val(data.norm);
-                        $("#nama").val(data.nama);
-                        $("#nik").val(data.nik);
-                        $("#alamat").val(data.alamat);
-                        $("#notrans").val(data.notrans);
-                        $("#layanan").val(data.layanan);
-                        $("#no_reg_lab_next").html(data.no_reg_lab_next);
-                        $("#dokter").val(data.dokter).trigger("change");
-                        $("#analis").val(data.petugas).trigger("change");
-                        var rawDateTime = data.waktu_selesai;
-                        if (rawDateTime !== null) {
-                            const waktuSelesai = formatWaktu(rawDateTime);
-                            console.log("🚀 ~ cariTsLab ~ waktuSelesai:", waktuSelesai);
-                            $("#waktuSelesai").text(waktuSelesai);
-                            $("#divSwitch").hide();
-                        }
-                        // var ket = data.ket;
-                        // if (ket == "Selesai") {
-                        //     document.getElementById("statusSwitch").checked = true;
-                        //     document.getElementById("statusLabel").textContent = "Selesai";
-                        //     keterangan = "Selesai";
-                        // } else {
-                        //     document.getElementById("statusSwitch").checked = false;
-                        //     document.getElementById("statusLabel").textContent = "Belum";
-                        //     keterangan = "Belum";
-                        // }
-
-                        const notrans = data.notrans;
-                        var pemeriksaan = data.pemeriksaan;
-                        dataLab(pemeriksaan);
-                    } else {
-                        cetak(data);
-                    }
-                    Swal.close();
-                }
-            } catch (error) {
-                console.error("Terjadi kesalahan saat mencari data:", error);
-                Swal.fire({
-                    icon: "error",
-                    title: "Terjadi kesalahan saat mencari data...!!! /n" + error,
-                });
-            }
         }
 
         async function cetak(norm, tgl) {
@@ -163,103 +86,103 @@
             // printWindow.close();
         }
 
-        function simpan() {
-            const norm = $("#norm").val();
-            const notrans = $("#notrans").val();
-            const tglTrans = $("#tgltrans").val();
+        function simpanBacaan() {
+            //masukan form_identitas
+            let formData = new FormData(document.getElementById("form_identitas"));
+            formData.append("keterangan", keterangan);
+            formData.append("bacaan_radiolog", $("#bacaanRO").val());
+            formData.append("tanggal", $("#tanggalBacaan").val());
+            formData.append("tanggal_ro", $("#tanggal_ro").val());
+            var inputsToValidate = [
+                "bacaanRO",
+                "tanggalBacaan",
+                "tanggal_ro",
 
-            if (!norm || !notrans) {
-                const dataKurang = [];
-                if (!norm) dataKurang.push("No RM");
-                if (!notrans) dataKurang.push("Nomor Transaksi");
+            ];
 
+            var error = false;
+
+            inputsToValidate.forEach(function(inputId) {
+                var inputElement = document.getElementById(inputId);
+                var inputValue = inputElement.value.trim();
+
+                if (inputValue === "") {
+                    if ($(inputElement).hasClass("select2-hidden-accessible")) {
+                        // Select2 element
+                        $(inputElement)
+                            .next(".select2-container")
+                            .addClass("input-error");
+                    } else {
+                        // Regular input element
+                        inputElement.classList.add("input-error");
+                    }
+                    error = true;
+                } else {
+                    if ($(inputElement).hasClass("select2-hidden-accessible")) {
+                        // Select2 element
+                        $(inputElement)
+                            .next(".select2-container")
+                            .removeClass("input-error");
+                    } else {
+                        // Regular input element
+                        inputElement.classList.remove("input-error");
+                    }
+                }
+            });
+            if (error) {
+                // Tampilkan pesan error menggunakan Swal jika ada input yang kosong
                 Swal.fire({
                     icon: "error",
-                    title: `Data Tidak Lengkap...!!! ${dataKurang.join(
-                ", "
-            )} Belum Diisi`,
+                    title: "Oops...",
+                    text: "Ada data yang masih kosong! Mohon lengkapi semua data.",
                 });
                 return;
             }
+            tampilkanLoading('Sedang menyimpan data...');
+            $.ajax({
+                url: "/api/ro/bacaan/hasil",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    tampilkanSukses(response.message);
+                    rstForm("Data berhasil disimpan");
+                    const data = response.data;
+                    if (Array.isArray(data)) {
+                        var belumTransaksi = data.filter(function(item) {
+                            return (
+                                item.hasilKonsul === "Belum Selesai"
+                            );
+                        });
 
-            const table = $("#inputHasil").DataTable();
-            const dataRows = table.rows().data();
-
-            const dataTerpilih = dataRows
-                .map((row) => ({
-                    idLab: row.idLab,
-                    idLayanan: row.idLayanan,
-                    norm: norm,
-                    notrans: notrans,
-                    hasil: $("#hasil" + row.idLab).val(),
-                    petugas: $("#analis" + row.idLab).val(),
-                    ket: $("#ket" + row.idLab).val(),
-                    no_reg_lab: $("#no_reg_lab" + row.idLab).val(),
-                    no_iden_sediaan: $("#no_iden_sediaan" + row.idLab).val(),
-                    tgl_hasil: $("#tgl_hasil" + row.idLab).val(),
-                    alasan_periksa: $("#alasan_periksa" + row.idLab).val(),
-                    namaFaskes: $("#namaFaskes" + row.idLab).val(),
-                    kode_tcm: $("#kode_tcm" + row.idLab).val(),
-                }))
-                .toArray();
-
-            fetch("/api/addHasilLab", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        dataTerpilih: dataTerpilih,
-                        keterangan: keterangan,
-                        tglTrans: tglTrans,
-                    }),
-                })
-                .then((response) => {
-                    if (!response.ok) throw new Error("Network response was not ok");
-                    return response.json();
-                })
-                .then((data) => {
-                    Swal.fire({
-                        icon: "success",
-                        title: "Data berhasil tersimpan...!!!",
-                    });
-                    resetForm("Data berhasil tersimpan...!!!");
-                })
-                .catch((error) => {
-                    console.error(
-                        "There has been a problem with your fetch operation:",
-                        error
-                    );
-                    Swal.fire({
-                        icon: "error",
-                        title: `There has been a problem with your fetch operation: ${error}`,
-                    });
-                });
-        }
-
-        function resetForm(message) {
-            document.getElementById("form_identitas").reset();
-
-            document.getElementById("statusSwitch").checked = false; // Uncheck the switch
-            document.getElementById("statusLabel").textContent = "Belum"; // Update the text
-            keterangan = "Belum";
-
-            if ($.fn.DataTable.isDataTable("#inputHasil")) {
-                let tableTrans = $("#inputHasil").DataTable();
-                tableTrans.clear().destroy();
-            }
-            Swal.fire({
-                icon: "info",
-                title: message + "\n Maturnuwun...!!!",
+                        var sudahTransakasi = data.filter(function(item) {
+                            return item.hasilKonsul === "Sudah Selesai";
+                        });
+                        if ($.fn.DataTable.isDataTable("#antrianBelum, #antrianSudah")) {
+                            $("#antrianBelum, #antrianSudah").DataTable().destroy();
+                        }
+                        generateTabelAntrian(belumTransaksi, "#antrianBelum");
+                        generateTabelAntrian(sudahTransakasi, "#antrianSudah");
+                    } else {
+                        console.error("Invalid data format:", data);
+                        Toast.fire({
+                            icon: "error",
+                            title: "Invalid data format:" + data,
+                        })
+                    }
+                    setTimeout(() => {
+                        Swal.close();
+                    }, 500);
+                },
+                error: function(xhr, status, error) {
+                    console.log("🚀 ~ simpanBacaan ~ xhr:", xhr)
+                    console.log("🚀 ~ simpanBacaan ~ error:", error)
+                    console.log("🚀 ~ simpanBacaan ~ xhr:", xhr.responseText)
+                    tampilkanEror(error + ", \n Terjadi kesalahan saat mengambil data: " + xhr.responseText ||
+                        "Unknown error");
+                },
             });
-
-            document.getElementById("tgltrans").value = new Date()
-                .toISOString()
-                .split("T")[0];
-            listBacaanRo();
-
-            $("#waktuSelesai").text("-");
-            $("#divSwitch").show();
         }
 
         function listBacaanRo() {
@@ -291,8 +214,8 @@
                             return item.hasilKonsul === "Sudah Selesai";
                         });
 
-                        generateTabelAntrian(belumTransaksi, tgl, "#antrianBelum");
-                        generateTabelAntrian(sudahTransakasi, tgl, "#antrianSudah");
+                        generateTabelAntrian(belumTransaksi, "#antrianBelum");
+                        generateTabelAntrian(sudahTransakasi, "#antrianSudah");
                     } else {
                         console.error("Invalid data format:", data);
                     }
@@ -303,27 +226,33 @@
             });
         }
 
-        function generateTabelAntrian(dataArray, tgl, idTabel) {
+        function generateTabelAntrian(dataArray, idTabel) {
             dataArray.forEach(function(item, index) {
                 item.no = index + 1;
 
                 // Cek jika pasien_ro tidak null sebelum akses tgltrans
                 item.tgl = item.pasien_ro?.tgltrans || "";
 
-                console.log("🚀 ~ dataArray.forEach ~ tgl:", item.tgl);
+                // console.log("🚀 ~ dataArray.forEach ~ tgl:", item.tgl);
 
                 item.tanggal = moment(item.created_at).format("DD-MM-YYYY");
+                const warna = item.hasilKonsul === "Belum Selesai" ? "warning" : "success";
+                const hidden = item.hasilKonsul === "Belum Selesai" ? "hidden" : "";
 
-                item.aksi = `<button class="btn btn-danger col"
+                item.aksi = `<a class="btn btn-${warna}"
                         data-toggle="tooltip"
                         data-placement="right"
                         title="Input Hasil Lab"
                         data-norm="${item.norm}"
                         data-nama="${item.nama}"
                         data-alamat="${item.alamat}"
-                        onclick="cariTsLab('${item.norm}', '${item.tgl}','tampil');">
+                        onclick="cariTsRo('${item.norm}', '${item.tgl}');">
                         <i class="fa-solid fa-file-pen"></i>
-                     </button>`;
+                     </a>
+                      <a href="/api/ro/bacaan/cetak?norm=${item.norm}&tgl=${item.tgl}" method="get" target="_blank" ${hidden} class="${hidden} m-1 btn btn-info"
+                            data-toggle="tooltip" data-placement="right" title="Cetak Hasil Lab">
+                            <i class="fa-solid fa-print"></i>
+                        </a>     `;
 
                 // Cek jika struktur pasien_ro.dokter.pegawai tersedia
                 const pegawai = item.pasien_ro?.dokter?.pegawai;
@@ -335,14 +264,16 @@
             $(idTabel).DataTable({
                 data: dataArray,
                 columns: [{
-                        data: "aksi"
+                        data: "aksi",
+                        className: "text-center col-1",
+                        orderable: false
                     },
                     {
                         data: "hasilKonsul",
                         className: "text-center",
                         render: function(data) {
                             var backgroundColor =
-                                data === "Belum Selesai" ? "warning" : "danger";
+                                data === "Belum Selesai" ? "warning" : "success";
                             return `<div class="badge badge-${backgroundColor}">${data}</div>`;
                         },
                     },
@@ -381,234 +312,369 @@
             });
         }
 
-        function antrianBelum(belumTransaksi, tgl) {
-            belumTransaksi.forEach(function(item, index) {
-                // Mengambil nmLayanan dari pemeriksaan
-                const nmLayananArray = item.pemeriksaan.map(
-                    (pem) => pem.pemeriksaan.nmLayanan
-                );
+        async function cariTsRo(norm, tgl) {
+            //    jika no rm belum 6 digit, jadikan 6 digit
+            norm = norm.padStart(6, "0");
+            // rstForm();
+            // formatNorm($("#norm"));
+            norm = norm ? norm : formatNorm($("#norm"));
+            tgl = tgl ? tgl : $("#tglRo").val();
+            var requestData = {
+                norm: norm,
+                tgl: tgl
+            };
 
-                // Menggabungkan nmLayanan menjadi satu string
-                item.pemeriksaan = nmLayananArray.join(", ");
-                item.no = index + 1;
-                item.tgl = tgl;
-                item.tanggal = moment(item.created_at).format("DD-MM-YYYY");
-                item.alamat = item.alamat.replace(/, [^,]*$/, "");
-                item.aksi = `<button class="btn btn-danger col"
-                            data-toggle="tooltip"
-                            data-placement="right"
-                            title="Input Hasil Lab"
-                            data-norm="${item.norm}"
-                            data-nama="${item.nama}"
-                            data-alamat="${item.alamat}"
-                            onclick="cariTsLab('${item.norm}', '${item.tgl}','tampil');"><i class="fa-solid fa-file-pen"></i></button>
-
-                            `;
+            Swal.fire({
+                icon: "info",
+                title: "Sedang mencarikan data pasien...!!!",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
             });
+            try {
+                const response = await fetch("/api/cariTsRO", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(requestData),
+                });
 
-            $("#antrianBelum").DataTable({
-                data: belumTransaksi,
-                columns: [{
-                        data: "aksi"
-                    },
-                    {
-                        data: "status",
-                        className: "text-center",
-                        render: function(data) {
-                            var backgroundColor =
-                                data === "Belum Lengkap" ? "warning" : "danger";
-                            return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-                        },
-                    },
-                    {
-                        data: "tanggal"
-                    },
-                    {
-                        data: "layanan"
-                    },
-                    {
-                        data: "norm"
-                    },
-                    {
-                        data: "nama",
-                        className: "col-1"
-                    },
-                    {
-                        data: "pemeriksaan"
-                    },
-                    {
-                        data: "alamat",
-                        className: "col-2"
-                    },
-                    {
-                        data: "nama_dokter",
-                        className: "col-3"
-                    },
-                ],
-                paging: true,
-                lengthMenu: [
-                    [5, 10, 25, 50, -1],
-                    [5, 10, 25, 50, "All"],
-                ],
-                pageLength: 5,
-                responsive: true,
-            });
-        }
-
-        function antrianSudah(sudahTransakasi, tgl) {
-            sudahTransakasi.forEach(function(item, index) {
-                const nmLayananArray = item.pemeriksaan.map(
-                    (pem) => pem.pemeriksaan.nmLayanan
-                );
-                var sebutan = "";
-                let umur = item.umur.split("th")[0];
-                if (umur <= 14) {
-                    sebutan = "Anak ";
-                } else if (umur > 14 && umur <= 30) {
-                    if (item.jk == "L") {
-                        sebutan = "Saudara ";
+                if (!response.ok) {
+                    if (response.status == 404) {
+                        // searchRMObat(norm);
+                        // cariKominfo(norm, tgl, "ro");
+                        $("#tableRo").DataTable({
+                            data: [{
+                                ket: "Belum Ada Transaksi",
+                            }, ],
+                            columns: [{
+                                data: "ket",
+                                createdCell: function(
+                                    td,
+                                    cellData,
+                                    rowData,
+                                    row,
+                                    col
+                                ) {
+                                    $(td)
+                                        .attr("colspan", 5)
+                                        .addClass("bg-warning text-center");
+                                },
+                            }, ],
+                            paging: false, // Disable pagination if not needed
+                            searching: false, // Disable searching if not needed
+                            ordering: false, // Disable ordering if not needed
+                            info: false, // Disable table information display
+                        });
+                        $("#noreg").val("");
                     } else {
-                        sebutan = "Nona ";
+                        Swal.fire({
+                            icon: "error",
+                            title: "Terjadi kesalahan saat mengambil data pasien...!!!",
+                        });
+                        throw new Error("Network response was not ok");
                     }
-                } else if (umur > 30) {
-                    if (item.jk == "L") {
-                        sebutan = "Bapak ";
+                    Swal.close();
+                } else {
+                    const data = await response.json();
+
+                    // Ensure data and the 'transaksi_ro' object exist before setting values
+                    if (data && data.data && data.data.transaksi_ro) {
+                        const transaksi = data.data.transaksi_ro;
+                        const petugas = data.data.petugas;
+                        const foto = data.data.foto_thorax;
+                        const hasilBacaan = data.data.transaksi_ro.hasil_bacaan;
+                        console.log("🚀 ~ cariTsRo ~ hasilBacaan:", hasilBacaan)
+                        if (foto && foto.length > 0) {
+                            showFoto(foto);
+                        }
+                        let noreg = transaksi.noreg;
+                        console.log("🚀 ~ cariTsRo ~ noreg:", noreg);
+                        jk = transaksi.jk || transaksi.pasien.jkel;
+                        $("#norm").val(transaksi.norm || "");
+                        $("#nama").val(transaksi.nama || "");
+                        $("#alamat").val(transaksi.alamat || "");
+                        $("#jk").val(transaksi.jk || transaksi.pasien.jkel);
+                        $("#notrans").val(transaksi.notrans || "");
+                        $(
+                            "input[name=pasienRawat][value=" +
+                            transaksi.pasienRawat +
+                            "]"
+                        ).prop("checked", true);
+                        $("#noreg").val(transaksi.noreg || "");
+                        $("#layanan")
+                            .val(transaksi.layanan || "")
+                            .trigger("change");
+                        $("#kdFoto")
+                            .val(transaksi.kdFoto || "")
+                            .trigger("change");
+                        $("#kdFilm")
+                            .val(transaksi.kdFilm || "")
+                            .trigger("change");
+                        $("#kv")
+                            .val(transaksi.kv || "")
+                            .trigger("change");
+                        $("#ma")
+                            .val(transaksi.ma || "")
+                            .trigger("change");
+                        $("#s")
+                            .val(transaksi.s || "")
+                            .trigger("change");
+                        $("#kdMesin")
+                            .val(transaksi.kdMesin || "")
+                            .trigger("change");
+                        $("#jmlExpose").val(transaksi.jmlExpose || "1");
+                        $("#jmlFilmDipakai").val(transaksi.jmlFilmDipakai || "1");
+                        $("#jmlFilmRusak").val(transaksi.jmlFilmRusak || "0");
+                        $("#kdProyeksi")
+                            .val(transaksi.kdProyeksi || "")
+                            .trigger("change");
+                        $("#catatan").val(transaksi.catatan || "");
+                        $("#dokter")
+                            .val(petugas.p_dokter_poli || "")
+                            .trigger("change");
+                        $("#p_rontgen")
+                            .val(petugas.p_rontgen || "")
+                            .trigger("change");
+                        $("#p_rontgen_evaluator")
+                            .val(petugas.p_rontgen_evaluator || "")
+                            .trigger("change");
+                        $('#tanggal_ro').val(transaksi.tgltrans);
+                        $('#tglRo').val(transaksi.tgltrans);
+                        if (hasilBacaan !== null) {
+                            $('#tanggalBacaan').val(hasilBacaan.tanggal);
+                            $('#tanggal_ro').val(hasilBacaan.tanggal_ro);
+                            $('#bacaanRO').summernote('code', hasilBacaan.bacaan_radiolog);
+                        } else {
+                            const template = `                                             
+                                            <p style="margin: 2px 0 2px 50px;">Thorak emfisema</p>
+                                            <p style="margin: 2px 0 2px 50px;">Cor dbn, aorta elongasi</p>
+                                            <p style="margin: 2px 0 2px 50px;">Sinus dan diafragma baik</p>
+                                            <p style="margin: 2px 0 2px 50px;">Pulmones:</p>
+                                            <p style="margin: 2px 0 2px 125px;">Corakan paru kasar</p>
+                                            <p style="margin: 2px 0 2px 125px;">Kedua paru suram berbercak</p>
+                                            <p style="margin: 2px 0 2px 125px;"><br></p>
+                                            <p style="margin: 2px 0px 2px 75px;"><b>Kesan : Bronkopneumonia</b></p>
+                                            `;
+                            $('#tanggalBacaan').val('');
+                            $('#bacaanRO').summernote('code', template);
+                        }
+
+
+                        closeSwalAfterDelay()
                     } else {
-                        sebutan = "Ibu ";
+                        console.error("No data received from API");
+                        Swal.fire({
+                            icon: "error",
+                            title: "Terjadi kesalahan saat mengambil data pasien...!!!",
+                        });
                     }
                 }
-                item.pemeriksaan = nmLayananArray.join(", ");
-                item.no = index + 1;
-                item.tgl = tgl;
-                item.tanggal = moment(item.created_at).format("DD-MM-YYYY");
-                item.alamat = item.alamat.replace(/, [^,]*$/, "");
-                let desa = item.alamat.split(",")[0];
+            } catch (error) {
+                console.error("Terjadi kesalahan saat mencari data:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Terjadi kesalahan saat mencari data...!!! /n" + error,
+                });
+                // Optionally, handle the error by informing the user or retrying
+            }
+        }
 
-                item.aksi = `<a class="m-1 col btn btn-danger"
-                            data-toggle="tooltip"
-                            data-placement="right"
-                            title="Edit Hasil Lab"
+        async function hasilRo(norm, tgl) {
+            var norm = norm || $("#norm").val();
+            var tgl = tgl || $("#tglRo").val();
+            try {
+                const response = await fetch("/api/ro", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        norm,
+                        tgl
+                    }),
+                });
+                const data = await response.json();
+                console.log(data);
+            } catch (error) {
+                console.error("Terjadi kesalahan saat mencari data:", error);
+            }
+        }
+
+        function showFoto(foto) {
+            console.log("🚀 ~ showFoto ~ foto:", foto);
+
+            $("#preview").show();
+            if ($.fn.DataTable.isDataTable("#tableRo")) {
+                var tabel = $("#tableRo").DataTable();
+                tabel.clear().destroy();
+            }
+            foto.forEach(function(item, index) {
+                let ket = ""; // Default value if no valid 'ket' part is found
+                // let ketFoto = item.norm + "-" + item.nama ;
+                // item.ketFoto = ketFoto;
+                // Check if the file name includes an underscore and has at least three parts
+                if (item.foto.includes("_")) {
+                    const parts = item.foto.split("_");
+
+                    if (parts.length > 2) {
+                        // Safely access the third part and remove the extension
+                        ket = parts[2].split(".")[0];
+                    }
+                }
+
+                // If 'ket' is empty or undefined, you can provide a fallback or leave it as an empty string
+                if (!ket) {
+                    ket = ""; // Or some other fallback value
+                }
+
+                item.actions = `<a type="button"  class="btn-sm btn-danger mx-2 mt-md-0 mt-2"
+                            data-id="${item.id}"
+                            data-foto="${item.foto}"
+                            data-ketFoto="${item.ketFoto}"
                             data-norm="${item.norm}"
                             data-nama="${item.nama}"
-                            data-alamat="${item.alamat}"
-                            onclick="cariTsLab('${item.norm}', '${item.tgl}','tampil');">
-                            <i class="fa-solid fa-file-pen"></i>
-                        </a>
-                        <a href="/api/hasil/lab/cetak/${item.notrans}/${item.tgl}" method="get" target="_blank" class="m-1 col btn btn-success"
-                            data-toggle="tooltip" data-placement="right" title="Cetak Hasil Lab">
-                            <i class="fa-solid fa-print"></i>
-                        </a>                   
-                        <a class="m-1 col btn btn-warning"
-                            onclick="panggil('${sebutan} ${item.nama} dari ${desa}, silahkan menuju ke loket laboratorium')">
-                            <i class="fa-solid fa-volume-high"></i>
-                        </a>
-                    `;
+                            onclick="deleteFoto('${item.id}')"
+                            ><i class="fas fa-trash"></i></a>
+                        <a type="button"  class="btn-sm btn-warning mx-2 mt-md-0 mt-2"
+                            data-id="${item.id}"
+                            data-foto="${item.foto}"
+                            data-ketFoto="${item.ketFoto}"
+                            data-norm="${item.norm}"
+                            data-nama="${item.nama}"
+                            data-toggle="modal" data-target="#staticBackdrop"
+                            onclick="document.getElementById('idFoto').value = '${item.id}'; document.getElementById('nmFoto').value = '${item.foto}';document.getElementById('ket_foto_new').value = '${ket}';"
+                            ><i class="fas fa-pen-to-square"></i></a> `;
+                item.buttonShow = `<a type="button" class="btn-sm btn-primary px-5" data-toggle="modal" data-target="#modalFoto" onclick="modalFotoShow('${item.foto}','${item.norm} - ${item.nama}','${item.tanggal}')">
+                            <i class="fa-solid fa-eye"></i></a>`;
+                item.no = index + 1;
             });
 
-            $("#antrianSudah").DataTable({
-                data: sudahTransakasi,
+            $("#tableRo").DataTable({
+                data: foto,
+                paging: false,
+                searching: false,
+                ordering: false,
                 columns: [{
-                        data: "aksi",
-                        className: "col-1"
+                        data: "actions",
+                        className: "text-center col-2"
                     },
                     {
-                        data: "status",
-                        className: "text-center",
-                        render: function(data) {
-                            var backgroundColor = "success";
-                            return `<div class="badge badge-${backgroundColor}">${data}</div>`;
-                        },
+                        data: "id"
+                    },
+                    {
+                        data: "buttonShow",
                     },
                     {
                         data: "tanggal"
                     },
                     {
-                        data: "layanan"
-                    },
-                    {
-                        data: "norm"
-                    },
-                    {
-                        data: "nama",
-                        className: "col-1"
-                    },
-                    {
-                        data: "pemeriksaan"
-                    },
-                    {
-                        data: "alamat",
-                        className: "col-2"
-                    },
-                    {
-                        data: "nama_dokter",
-                        className: "col-3"
+                        data: "foto"
                     },
                 ],
-                paging: true,
-                lengthMenu: [
-                    [5, 10, 25, 50, -1],
-                    [5, 10, 25, 50, "All"],
-                ],
-                pageLength: 3,
-                responsive: true,
             });
         }
 
-        function panggil(pesan) {
-            //     console.log("🚀 ~ panggil ~ pesan:", pesan);
+        function modalFotoShow(foto, ketFoto, tgl) {
+            const fullImageUrl = appUrlRo + foto;
+            // document.getElementById("modalFotoImage").src = fullImageUrl;
+            document.getElementById("zoomed-image").src = fullImageUrl;
+            $("#keteranganFoto").html(`<b>${ketFoto}</b>`);
+            $("#keteranganFoto2").html(`<b>${tgl}</b>`);
+            const container = document.getElementById("myPanzoom");
+            const options = {
+                click: "toggleCover",
+                Toolbar: {
+                    display: ["zoomIn", "zoomOut"],
+                },
+            };
 
-            // Cek daftar suara yang tersedia
-            const voices = speechSynthesis.getVoices();
-
-            // Cari suara VE Damayanti (atau yang mendukung id-ID)
-            const damayantiVoice = voices.find(
-                (voice) => voice.name.includes("Damayanti") || voice.lang === "id-ID"
-            );
-
-            const utterance = new SpeechSynthesisUtterance(pesan);
-            utterance.lang = "id-ID"; // Bahasa Indonesia
-
-            // Gunakan VE Damayanti jika ditemukan
-            if (damayantiVoice) {
-                utterance.voice = damayantiVoice;
-            } else {
-                console.warn(
-                    "VE Damayanti tidak ditemukan, menggunakan suara default."
-                );
-            }
-
-            // Setel kecepatan dan nada suara jika diperlukan
-            utterance.rate = 0.6; // Turunkan sedikit kecepatannya
-            utterance.pitch = 1.0; // Nada normal
-
-            // Tambahkan dingdong sebelum panggilan
-            const dingdong = new Audio("/audio/dingdong.mp3");
-            dingdong
-                .play()
-                .then(() => {
-                    setTimeout(() => {
-                        speechSynthesis.speak(utterance);
-                    }, 1000);
-                })
-                .catch((error) => {
-                    console.error("Gagal memutar audio:", error);
-                    speechSynthesis.speak(utterance); // Tetap lanjutkan ucapan
-                });
+            new Panzoom(container, options);
+            $("#modalFoto").modal("show");
         }
 
-        // Pastikan daftar suara sudah dimuat sebelum fungsi dipanggil
-        speechSynthesis.onvoiceschanged = () => {
-            console.log("Voices loaded");
-        };
+        async function cariPasien() {
+            var tgl = $("#tglRo").val();
+            var norm = $("#norm").val();
+
+            // Mengecek apakah norm dan tgl sudah diisi
+            if (!norm || !tgl) {
+                Swal.fire({
+                    icon: "error",
+                    title: "No RM dan Tanggal Belum di isi...!!!",
+                });
+            } else {
+                // Memanggil fungsi cariTsRo jika norm dan tgl tidak kosong
+                cariTsRo(norm, tgl);
+            }
+        }
+
+        function rstForm() {
+            document.getElementById("form_identitas").reset();
+            document.getElementById("formtrans").reset();
+            $("#preview").hide();
+            $("#formtrans select").trigger("change");
+            $("#form_identitas select").trigger("change");
+            $("#permintaan").html("");
+            $("#tujuanLain").html("Penunjang Hari ini:");
+            scrollToTop();
+            setTodayDate();
+            $('#bacaanRO').summernote('code', '');
+            // $('#bacaanRO').val('');
+
+            console.log("🚀 ~ msgSelesai:", msgSelesai);
+            if (msgSelesai != undefined)
+                Swal.fire({
+                    icon: "info",
+                    title: msgSelesai,
+                    allowOutsideClick: false,
+                });
+            msgSelesai = undefined;
+        }
+
+        function askRo(button) {
+            var norm = $(button).data("norm");
+            var nama = $(button).data("nama");
+            var dokter = $(button).data("kddokter");
+            var alamat = $(button).data("alamat");
+            var layanan = $(button).data("layanan");
+            var notrans = $(button).data("notrans");
+            var tgltrans = $(button).data("tgltrans");
+            var asktind = $(button).data("asktind");
+            var tujuan = $(button).data("tujuan");
+            jk = $(button).data("jk");
+
+            $("#norm").val(norm);
+            $("#nama").val(nama);
+            $("#dokter").val(dokter);
+            $("#dokter").trigger("change");
+            $("#alamat").val(alamat);
+            $("#layanan").val(layanan).trigger("change");
+            $("#notrans").val(notrans);
+            $("#tgltrans").val(tgltrans);
+            $("#jk").val(jk);
+
+            // Memperbarui konten asktindContent
+            $("#permintaan").html(`<b>${asktind}</b>`);
+            $("#tujuanLain").html(
+                `<div class="font-weight-bold bg-warning rounded">${tujuan}</div>`
+            );
+
+            scrollToInputSection();
+        }
 
         $(document).ready(function() {
             setTodayDate();
             listBacaanRo();
-            $("#dataTrans").on("click", ".delete", function(e) {
-                e.preventDefault();
-                let idLab = $(this).data("id");
-                let layanan = $(this).data("layanan");
-                deletLab(idLab, layanan);
+            scrollToTop();
+            $("#norm").on("keyup", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    cariPasien();
+                }
             });
         });
     </script>

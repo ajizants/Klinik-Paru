@@ -85,26 +85,28 @@
                                                 Selanjutnya adalah: <span id="no_reg_lab_next"
                                                     class="bg-yellow font-weight-bold mx-4"></span></h5>
                                         </div>
-                                        <table id="inputHasil" class="table table-tight">
-                                            <thead>
-                                                <tr>
-                                                    <th>NoRM</th>
-                                                    <th>Pemeriksaan</th>
-                                                    <th>Petugas</th>
-                                                    <th>Hasil</th>
-                                                    <th>Ket</th>
-                                                    <th>Tgl Hasil</th>
-                                                    <th>NoTCM</th>
-                                                    <th>NoReg TB04</th>
-                                                    <th>Kode</th>
-                                                    <th>No Sediaan</th>
-                                                    <th>Alasan</th>
-                                                    <th>Faskes</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
+                                        <div class="table-responsive">
+                                            <table id="inputHasil" class="table table-tight">
+                                                <thead>
+                                                    <tr>
+                                                        <th>NoRM</th>
+                                                        <th>Pemeriksaan</th>
+                                                        <th>Petugas</th>
+                                                        <th>Hasil</th>
+                                                        <th>Ket</th>
+                                                        <th>Tgl Hasil</th>
+                                                        <th>NoTCM</th>
+                                                        <th>NoReg TB04</th>
+                                                        <th>Kode</th>
+                                                        <th>No Sediaan</th>
+                                                        <th>Alasan</th>
+                                                        <th>Faskes</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                     <div class="card-footer form-row d-flex justify-content-end aligment-items-center">
                                         <div class="col-3 pt-2 d-flex aligment-items-center">
@@ -212,7 +214,7 @@
                                 },
                                 {
                                     data: "petugas",
-                                    width: "200px", // atur lebar kolom di sini
+                                    width: "100px", // atur lebar kolom di sini
                                     render: (data, type, row) => {
                                         let inputId = "analis" + row.idLab;
                                         let inputField =
@@ -229,6 +231,7 @@
                                 },
                                 {
                                     data: "hasiLab",
+                                    width: "100px", // atur lebar kolom di sini
                                     render: (data, type, row) => {
                                         let hasilLabHtml = "";
                                         // switch (row.kelas) {
@@ -325,12 +328,13 @@
                                 },
                                 {
                                     data: "tgl_hasil",
+                                    width: "100px",
                                     render: (data, type, row) =>
                                         `<input type="date" class="form-control-sm col hasil" id="tgl_hasil${row.idLab}" value="${data}" placeholder="Tanggal Hasil">`,
                                 },
                                 {
                                     data: "no_tcm",
-                                    width: "30px", // atur lebar kolom di sini
+                                    width: "25px", // atur lebar kolom di sini
                                     render: (data, type, row) => {
                                         let noRegHtml = "";
                                         const arraykdTindakan = ["131"];
@@ -435,6 +439,7 @@
                                 [2, "desc"]
                             ],
                             scrollY: "320px",
+                            scrolX: true,
                             scrollCollapse: true,
                             paging: false,
                         });

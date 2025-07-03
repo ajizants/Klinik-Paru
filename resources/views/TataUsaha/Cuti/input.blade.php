@@ -15,66 +15,59 @@
 
                             <div class="row">
                                 <!-- Input Group -->
-                                <div class="col-md">
-                                    <div id="dataCutiPegawai"></div>
+                                <div class="col-md-5 mb-3">
+                                    <div id="dataCutiPegawai">
+
+                                    </div>
                                     <input type="text" id="nip_cuti" name="nip_cuti" value="{{ $nip }}"
                                         hidden>
-                                    <button type="button" class="btn btn-warning" data-toggle="modal"
+                                    <button type="button" class="mx-2 btn btn-warning" data-toggle="modal"
                                         data-target="#modal-pengajuanCuti">
-                                        Formulir Pengajuan Cuti Pegawai
+                                        Ajukan Cuti
                                     </button>
-                                    <button type="button" class="btn btn-success" data-toggle="modal"
-                                        data-target="#modal-form" onclick="cariDataCuti($('#nip_cuti').val())">Cari
-                                        Data
-                                        Cuti</button>
-                                    {{-- <div class="input-group mt-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="far fa-calendar-alt"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" id="bulanCuti" readonly>
-                                        <button type="button" class="btn btn-success" data-toggle="modal"
-                                            data-target="#modal-form"
-                                            onclick="cariDataCuti($('#bulanCuti').data('monthpicker'))">Cari Data
-                                            Cuti</button>
-                                    </div>
-                                    <script>
-                                        $(function() {
-                                            $('#bulanCuti').datepicker({
-                                                format: "yyyy-mm",
-                                                startView: "months",
-                                                minViewMode: "months",
-                                                autoclose: true
-                                            }).on('changeDate', function(e) {
-                                                $(this).data('monthpicker', e.format());
-                                            });
-                                            $('#bulanCuti').datepicker('setDate', new Date());
-                                        });
-                                    </script> --}}
+                                    <button type="button" class="mx-2 btn btn-success" data-toggle="modal"
+                                        data-target="#modal-form" onclick="cariDataCuti($('#nip_cuti').val())">
+                                        Cari Data Cuti</button>
                                 </div>
 
                                 <!-- Accordion -->
-                                <div class="col-md">
+                                <div class="col-md-7 mb-2">
                                     <div class="accordion" id="accordionExample">
                                         <div class="card">
                                             <a class="btn btn-link text-left w-100" type="button"
                                                 data-toggle="collapse" id="headingOne" data-target="#collapseOne"
                                                 aria-expanded="true" aria-controls="collapseOne">
-                                                <strong>Klik Untuk Melihat Cara Pencarian Data</strong>
+                                                <strong>Klik Untuk Melihat Cara Memakai Aplikasi</strong>
                                             </a>
                                             <div id="collapseOne" class="collapse" aria-labelledby="headingOne"
                                                 data-parent="#accordionExample">
                                                 <div class="card-body">
-                                                    <h5>Pencarian Data</h5>
-                                                    <ul>
-                                                        <li>Pilih tab data yang akan dicari.</li>
-                                                        <li>Pilih rentang tanggal.</li>
-                                                        <li>Untuk satu tanggal, klik dua kali pada tanggal tersebut.
-                                                        </li>
-                                                        <li>Klik tombol "Pilih" untuk mencari data.</li>
-                                                        <li>Klik tombol "Cari" untuk memperbarui data.</li>
-                                                    </ul>
+                                                    <div class="form-row">
+                                                        <div class="col-md">
+                                                            <h5>Pencarian Data</h5>
+                                                            <ul>
+                                                                <li>Klik Tombol Ajukan Cuti</li>
+                                                                <li>Pilih tanggal mulai dan tanggal selesai.</li>
+                                                                <li>Pilih Alasan Cuti.</li>
+                                                                <li>Isi Keterangan Cuti, misalnya "Liburan"</li>
+                                                                <li>Klik tombol "Simpan" untuk menyimpan permohonan
+                                                                    cuti.</li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-md">
+                                                            <h5>Pencarian Data</h5>
+                                                            <ul>
+                                                                <li>Klik Tombol Cari Data Cuti.</li>
+                                                                {{-- <li>Pilih rentang tanggal.</li>
+                                                                <li>Untuk satu tanggal, klik dua kali pada tanggal
+                                                                    tersebut.
+                                                                </li>
+                                                                <li>Klik tombol "Pilih" untuk mencari data.</li>
+                                                                <li>Klik tombol "Cari" untuk memperbarui data.</li> --}}
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -123,9 +116,17 @@
                                                 @php
                                                     $tahun = date('Y');
                                                     for ($i = 2024; $i <= $tahun; $i++) {
-                                                        echo '<option value="' . $i . '">' . $i . '</option>';
+                                                        $selected = $i == $tahun ? 'selected' : '';
+                                                        echo '<option value="' .
+                                                            $i .
+                                                            '" ' .
+                                                            $selected .
+                                                            '>' .
+                                                            $i .
+                                                            '</option>';
                                                     }
                                                 @endphp
+
                                             </select>
                                             <button type="button" class="btn btn-success" data-toggle="modal"
                                                 data-target="#modal-form"

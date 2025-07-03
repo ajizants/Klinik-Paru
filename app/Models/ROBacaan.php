@@ -15,6 +15,7 @@ class ROBacaan extends Model
         'norm',
         'notrans',
         'tanggal',
+        'tanggal_ro',
         'bacaan_radiolog',
         'created_at',
         'updated_at',

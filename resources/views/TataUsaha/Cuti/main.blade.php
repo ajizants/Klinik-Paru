@@ -10,7 +10,7 @@
     <div class="container-fluid">
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a type="button" class="nav-link active bg-blue" onclick="toggleSections('#tab_1');"><b>Daftar Pengajuan
+                <a type="button" class="nav-link active bg-blue" onclick="toggleSections('#tab_1');"><b>Pengajuan
                         Cuti</b></a>
             </li>
             <li class="nav-item">
@@ -91,7 +91,7 @@
                     tahun_cuti: tahun_cuti
                 }, // tambahkan parameter di sini
                 success: function(data) {
-                    generateTabelPermohonanCuti(data.html);
+                    generateTabelSisaCuti(data.html);
                     Swal.close();
                 },
                 error: function(xhr) {
@@ -127,7 +127,36 @@
                 success: function(data) {
                     tampilkanSukses(data.message);
                     generateTabelPermohonanCuti(data.html);
+                    generateTabelSisaCuti(sisaCutiAll);
+                    tampilkanInfoCuti(data.sisaCuti);
                     Swal.close();
+                }
+            })
+        }
+
+        function hapusPermohonanCuti(id) {
+            Swal.fire({
+                title: 'Apakah anda yakin ingin menghapus data ini?',
+                showCancelButton: true,
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Tidak',
+                showLoaderOnConfirm: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/tu/cuti/hapus/" + id,
+                        type: "GET",
+                        success: function(data) {
+                            tampilkanSukses(data.message);
+                            generateTabelPermohonanCuti(data.html);
+                            generateTabelSisaCuti(sisaCutiAll);
+                            tampilkanInfoCuti(data.sisaCuti);
+                            Swal.close();
+                        },
+                        error: function(xhr) {
+                            tampilkanEror(xhr.response)
+                        }
+                    })
                 }
             })
         }
@@ -137,7 +166,9 @@
 
             $('#divTabelDaftarCuti').html(data);
             $('#tabelDaftarPermohonanCuti').DataTable({
-                "responsive": true,
+                language: {
+                    emptyTable: "Tidak ada data cuti untuk bulan ini."
+                },
                 "lengthChange": true,
                 "pageLength": 5,
                 "lengthMenu": [5, 10, 25, 50],
@@ -154,9 +185,10 @@
         }
 
         function generateTabelSisaCuti(data) {
+
             $('#divTabelDaftarSisaCuti').html(data);
             $('#tabelDaftarSisaCuti').DataTable({
-                "responsive": true,
+                "destroy": true,
                 "lengthChange": true,
                 "pageLength": 5,
                 "lengthMenu": [5, 10, 25, 50],
@@ -172,25 +204,35 @@
         }
 
         function tampilkanInfoCuti(dataArray) {
+            console.log("🚀 ~ tampilkanInfoCuti ~ dataArray:", dataArray)
             const container = document.getElementById('dataCutiPegawai');
             container.innerHTML = ''; // Kosongkan dulu
 
             dataArray.forEach((item) => {
                 const card = `
-                    <div class="card shadow-sm border">
-                        <div class="card-body">
-                            <div class="form-row">
-                                    <p class="mb-1 col">Nama:<strong> ${item.nama}</strong></p>
-                                    <p class="mb-1 col">Jatah Cuti:<strong> ${item.jatah_cuti}</strong></p>
-                                    <p class="mb-1 col">Diambil:<strong> ${item.jumalhCutiDiambil}</strong></p>
+                                <div class="card shadow-sm border">
+                                    <div class="card-header p-2">
+                                        <h6 class="card-title font-weight-bold">Informasi Cuti Pegawai</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-row">
+                                            <p class="mb-1 col-md">Nama:<br><strong> ${item.nama} hari</strong>
+                                            <p class="mb-1 col-md">NIP/NIK:<br><strong> ${item.nip} hari</strong>
+                                        </div>
+                                        <div class="form-row">
+                                            <p class="mb-1 col">Jatah Cuti:<br><strong> ${item.jatah_cuti} hari</strong>
+                                                <p class="mb-1 col">Tambahan Cuti:<br><strong> ${item.jumlahCutiTambahan} hari</strong>
+                                            </div>
+                                        <div class="form-row">
+                                            <p class="mb-1 col">Menunggu:<br><strong> ${item.jumlahCutiDiambil - item.jumlahCutiDisetujui} hari</strong>
+                                            <p class="mb-1 col">Disetujui:<br><strong> ${item.jumlahCutiDisetujui} hari</strong>
+                                        </div>
+                                        <div class="form-row">
+                                            <p class="mb-0 col">Ditolak:<br><strong> ${item.jumlahSisaCuti} hari</strong>
+                                            <p class="mb-0 col">Sisa Cuti:<br><strong> ${item.jumlahSisaCuti} hari</strong>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-row">
-                                    <p class="mb-1 col">NIP/NIK:<strong> ${item.nip}</strong></p>
-                                    <p class="mb-1 col">Tambahan Cuti:<strong> ${item.tambahan_cuti}</strong></p>
-                                    <p class="mb-0 col">Sisa Cuti:<strong> ${item.jumlahSisaCuti}</strong></p>
-                            </div>
-                        </div>
-                    </div>
         `;
                 container.insertAdjacentHTML('beforeend', card);
             });

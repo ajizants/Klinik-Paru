@@ -40,6 +40,6 @@ class KunjunganWaktuSelesai extends Model
 
     public function hasilBacaan()
     {
-        return $this->belongsTo(ROBacaan::class, 'notrans', 'notrans');
+        return $this->hasOne(ROBacaan::class, 'notrans', 'notrans');
     }
 }
