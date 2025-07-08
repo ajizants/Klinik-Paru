@@ -25,11 +25,11 @@
                             @else
                                 <select name="nip" class="form-control select2bs4" id="nip">
                                     <option value="">-- Pilih Pegawai --</option>
-                                    @foreach ($pegawai as $pegawai)
-                                        <option value="{{ $pegawai->nip }}"
-                                            data-nama="{{ $pegawai->gelar_d }} {{ $pegawai->nama }} {{ $pegawai->gelar_b }}">
-                                            {{ $pegawai->gelar_d }} {{ $pegawai->nama }}
-                                            {{ $pegawai->gelar_b }} - {{ $pegawai->nip }}</option>
+                                    @foreach ($pegawai as $user)
+                                        <option value="{{ $user->nip }}"
+                                            data-nama="{{ $user->gelar_d }} {{ $user->nama }} {{ $user->gelar_b }}">
+                                            {{ $user->gelar_d }} {{ $user->nama }}
+                                            {{ $user->gelar_b }} - {{ $user->nip }}</option>
                                     @endforeach
                             @endif
                             </select>
@@ -94,13 +94,181 @@
                 <button type="button" class="btn btn-primary" onclick="ajukanCuti()">Simpan</button>
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
+
+<div class="modal fade" id="modalTambahanCuti">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Formulir Penambahan Cuti Pegawai</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                {{-- Form Manual Input --}}
+                <h5>Formulir Penambahan Cuti per Pegawai</h5>
+                <form id="formTambahanCuti" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="nip_manual">Pilih Pegawai</label>
+                        <select name="nip_manual" class="form-control select2bs4">
+                            @foreach ($pegawai as $user)
+                                <option value="{{ $user->nip }}">{{ $user->nama }} - {{ $user->nip }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cuti_manual">Tambahan Cuti</label>
+                        <input type="number" name="cuti_manual" class="form-control"
+                            placeholder="Jumlah hari tambahan cuti">
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" id="tblSimpan" onclick="tambahkanCuti(event)"
+                            class="btn btn-primary">
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+
+                <hr>
+
+                {{-- Upload Excel --}}
+                <h5>Formulir Penambahan Cuti Kolektif</h5>
+
+                <div class="form-group">
+                    <label for="file_tambahan_cuti">Upload Tambahan Cuti Multiple</label>
+                    <input type="file" name="file_tambahan_cuti" id="file_tambahan_cuti" accept=".xls,.xlsx"
+                        class="form-control">
+                </div>
+
+                <div class="form-group d-flex justify-content-between">
+                    <button type="button" class="btn btn-primary" onclick="uploadTambahan(event)" id="tblUpload">
+                        Upload
+                    </button>
+                    <a href="https://docs.google.com/spreadsheets/d/1-mxBJrTWcQcZEPD2xlnBqRht6T9BYEn4/edit?usp=sharing&ouid=109021928107189827550&rtpof=true&sd=true"
+                        target="_blank" class="btn btn-warning">
+                        Download Template
+                    </a>
+                </div>
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <script>
+    function uploadTambahan(event) {
+        event.preventDefault();
+
+        Swal.fire({
+            title: 'Mohon Tunggu Beberapa Saat',
+            text: 'Sedang memproses upload tambahan cuti...',
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading()
+            }
+        });
+
+        $('#tblUpload').prop('disabled', true);
+
+        const fileInput = document.getElementById("file_tambahan_cuti");
+        const file = fileInput.files[0];
+
+        if (!file) {
+            Swal.close();
+            tampilkanEror("File belum dipilih.");
+            $('#tblUpload').prop('disabled', false);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        $.ajax({
+            url: "/tu/cuti/tambahan/kolektif",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                Swal.close();
+                if (response.success) {
+                    tampilkanSukses(response.message);
+                } else {
+                    tampilkanEror(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                Swal.close();
+                tampilkanEror(
+                    `${error}, \n Terjadi kesalahan saat mengupload file: ${xhr.responseJSON?.message || "Unknown error"}`
+                );
+            },
+            complete: function() {
+                $('#tblUpload').prop('disabled', false);
+            }
+        });
+    }
+
+    function tambahkanCuti(event) {
+        event.preventDefault();
+
+        Swal.fire({
+            title: 'Mohon Tunggu Beberapa Saat',
+            text: 'Sedang menyimpan data cuti...',
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading()
+            }
+        });
+
+        $('#tblSimpan').prop('disabled', true);
+
+        const form = document.getElementById("formTambahanCuti");
+        const formData = new FormData(form);
+        const nip = form.querySelector('[name="nip_manual"]').value;
+
+        $.ajax({
+            url: "/tu/cuti/tambahan",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                Swal.close();
+                if (response.success) {
+                    tampilkanSukses(response.message);
+                    // Misalnya kamu mau reload data tertentu:
+                    // drawTable(response.data, "pegawai", "table_pegawai");
+                } else {
+                    tampilkanEror(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                Swal.close();
+                tampilkanEror(
+                    `${error}, \n Terjadi kesalahan saat menyimpan data: ${xhr.responseJSON?.message || "Unknown error"}`
+                );
+            },
+            complete: function() {
+                $('#tblSimpan').prop('disabled', false);
+            }
+        });
+    }
+
+
+
     function ajukanCuti() {
         const form = document.getElementById('formCuti');
         const formData = new FormData(form);

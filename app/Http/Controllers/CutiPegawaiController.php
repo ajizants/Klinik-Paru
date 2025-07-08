@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CutiPegawai;
+use App\Models\CutiTambahan;
 use App\Models\PegawaiModel;
 use App\Models\Vpegawai;
 use App\Models\vPegawaiModel;
@@ -14,37 +15,6 @@ use MehediJaman\LaravelZkteco\LaravelZkteco;
 
 class CutiPegawaiController extends Controller
 {
-
-    // private function dataCutiPegawai($tgl_mulai = null, $tgl_selesai = null, $tgl_pengajuan = null, $nip = null, $persetujuan = null)
-    // {
-    //     $query = CutiPegawai::with('pegawai');
-
-    //     if ($tgl_mulai) {
-    //         $query->whereDate('tgl_mulai', '<=', $tgl_mulai);
-    //     }
-
-    //     if ($tgl_selesai) {
-    //         $query->whereDate('tgl_selesai', '>=', $tgl_selesai);
-    //     }
-
-    //     if ($tgl_pengajuan) {
-    //         $tgl_pengajuan = Carbon::parse($tgl_pengajuan);
-
-    //         // dd($tgl_pengajuan);
-    //         $query->whereMounth('tgl_pengajuan', $tgl_pengajuan->month)
-    //             ->whereYear('tgl_pengajuan', $tgl_pengajuan->year);
-    //     }
-
-    //     if ($nip) {
-    //         $query->where('nip', $nip);
-    //     }
-
-    //     if (! is_null($persetujuan)) {
-    //         $query->where('persetujuan', $persetujuan);
-    //     }
-
-    //     return $query->get();
-    // }
 
     private function dataCutiPegawai(array $params = [])
     {
@@ -74,41 +44,6 @@ class CutiPegawaiController extends Controller
 
         return $query->get();
     }
-
-    // private function dataSisaCuti($nip = null)
-    // {
-    //     $query = Vpegawai::with('cuti');
-    //     if ($nip) {
-    //         $query->where('nip', $nip);
-    //     }
-    //     // hanya cuti tahunan
-    //     // hari minggu tidak di hitung jumlah cuti tahunan
-    //     $dataPegawai = $query->get();
-
-    //     foreach ($dataPegawai as $key) {
-    //         $jumlahCuti          = 0;
-    //         $jumlahCutiDisetujui = 0;
-
-    //         foreach ($key->cuti as $cuti) {
-    //             // Hitung selisih hari cuti (inklusif)
-    //             $mulai    = Carbon::parse($cuti->tgl_mulai);
-    //             $selesai  = Carbon::parse($cuti->tgl_selesai);
-    //             $hariCuti = $selesai->diffInDays($mulai) + 1;
-
-    //             $jumlahCuti += $hariCuti;
-
-    //             if ($cuti->persetujuan == 1) {
-    //                 $jumlahCutiDisetujui += $hariCuti;
-    //             }
-    //         }
-
-    //         $key['jumlahCutiDiambil']   = $jumlahCuti;
-    //         $key['jumlahCutiDisetujui'] = $jumlahCutiDisetujui;
-    //         $key['jumlahSisaCuti']      = ($key->jatah_cuti + $key->tambahan_cuti) - $jumlahCutiDisetujui;
-    //     }
-
-    //     return $dataPegawai;
-    // }
 
     private function dataSisaCuti($nip = null)
     {
@@ -170,7 +105,7 @@ class CutiPegawaiController extends Controller
             $key['jumlahCutiDisetujui'] = $jumlahCutiDisetujui;
             $key['jumlahCutiDitolak']   = $jumlahCutiDitolak;
             $key['jumlahCutiTambahan']  = $jumlahCutiTambahan;
-            $key['jumlahSisaCuti']      = ($key->jatah_cuti + $key->tambahan_cuti) - $jumlahCutiDisetujui;
+            $key['jumlahSisaCuti']      = ($key->jatah_cuti + $key->tambahan_cuti + $key->jumlahCutiTambahan) - $jumlahCutiDisetujui;
         }
 
         return $dataPegawai;
@@ -301,6 +236,7 @@ class CutiPegawaiController extends Controller
             $html       = $this->dataCutiPegawai($params);
             $dataCutiWa = CutiPegawai::with('pegawai')->whereDate('tgl_mulai', '<=', $tanggal)
                 ->whereDate('tgl_selesai', '>=', $tanggal)
+                ->where('persetujuan', '1')
                 ->get();
 
             $html = view('TataUsaha.Cuti.wa', compact('dataCutiWa', 'tanggal'))->render();
@@ -360,7 +296,6 @@ class CutiPegawaiController extends Controller
     {
         $title     = 'Cuti Pegawai';
         $model     = new PegawaiModel();
-        $pegawai   = $model->olahPegawai([]);
         $user      = Auth::user();
         $roleUser  = $user->role;
         $emailUser = $user->email;
@@ -387,7 +322,7 @@ class CutiPegawaiController extends Controller
                 break;
         }
         // return $dataCuti;
-        $html = view('TataUsaha.Cuti.permohonanCutiTabel', compact('dataCuti', 'tanggal', 'user'))->render();
+        $dataPengajuanCuti = view('TataUsaha.Cuti.permohonanCutiTabel', compact('dataCuti', 'tanggal', 'user'))->render();
         // return $html;
 
         $dataCutiWa = CutiPegawai::with('pegawai')->whereDate('tgl_mulai', '<=', $tanggal)
@@ -401,15 +336,20 @@ class CutiPegawaiController extends Controller
         // return $dataSisaCutiAll;
         $sisaCutiAll = view('TataUsaha.Cuti.sisaCutiTabel', compact('dataSisaCutiAll'))->render();
         // return $sisaCutiAll;
+        $cutiTambahan = $this->getCutiTambahan();
+
+        // return $cutiTambahan;
 
         $pegawai = vPegawaiModel::whereNot('stat_pns', 'PENSIUNAN')->orderBy('nama')->get();
 
-        return view('TataUsaha.Cuti.main', compact('pegawai', 'html', 'cutiHariIni', 'sisaCutiUser', 'sisaCutiAll', 'pegawai'))->with('title', $title);
+        return view('TataUsaha.Cuti.main', compact('pegawai', 'dataPengajuanCuti', 'cutiHariIni', 'sisaCutiUser', 'sisaCutiAll', 'pegawai', 'cutiTambahan'))->with('title', $title);
     }
 
-    public function tambahkanCuti(Request $request)
+    private function getCutiTambahan()
     {
-        //
+        $dataTambahanCuti = CutiTambahan::with('pegawai')->whereYear('created_at', now()->year)->get();
+        $html             = view('TataUsaha.Cuti.tambahanTabel', compact('dataTambahanCuti'))->render();
+        return $html;
     }
 
     public function update($id, $persetujuan)
@@ -487,6 +427,14 @@ class CutiPegawaiController extends Controller
                 'error'   => $e->getMessage(),
             ], 500);
         }
+    }
+    public function cetak($id)
+    {
+        $data             = CutiPegawai::with('pegawai')->find($id);
+        $sisaCutiUser     = $this->dataSisaCuti($data->pegawai->nip);
+        $data['sisaCuti'] = $sisaCutiUser;
+        return $data;
+        return view('TataUsaha.Cuti.cetakFormCuti', compact('cutiPegawai'));
     }
 
     public function ambilLog()

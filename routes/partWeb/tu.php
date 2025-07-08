@@ -2,6 +2,7 @@
 <?php
 
     use App\Http\Controllers\CutiPegawaiController;
+    use App\Http\Controllers\CutiTambahanController;
     use Illuminate\Support\Facades\Route;
 
     Route::middleware('auth')->group(function () {
@@ -14,6 +15,13 @@
         Route::get('tu/cuti/sisa/get', [CutiPegawaiController::class, 'getDataSisaCuti']);
         Route::get('tu/cuti/sisa/get/{nip}', [CutiPegawaiController::class, 'getDataSisaCutiPerson']);
         Route::get('tu/cuti/hapus/{cutiPegawai}', [CutiPegawaiController::class, 'destroy']);
-        Route::get('/absensi/log', [CutiPegawaiController::class, 'ambilLog']);
+        Route::get('tu/cuti/cetak/{id}', [CutiPegawaiController::class, 'cetak']);
 
+        Route::get('tu/cuti/download/kolektif', [CutiTambahanController::class, 'downloadTemplate']);
+        Route::post('tu/cuti/tambahan', [CutiTambahanController::class, 'cutiTambahanByNip']);
+        Route::post('tu/cuti/tambahan/kolektif', [CutiTambahanController::class, 'cutiTambahanKolektif']);
+        Route::post('tu/cuti/tambahan/edit/{cutiTambahan}', [CutiTambahanController::class, 'update']);
+        Route::post('tu/cuti/tambahan/delete/{cutiTambahan}', [CutiTambahanController::class, 'destroy']);
+
+    Route::get('/absensi/log', [CutiPegawaiController::class, 'ambilLog']);
 });

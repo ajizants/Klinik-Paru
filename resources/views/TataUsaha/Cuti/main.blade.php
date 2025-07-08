@@ -30,10 +30,12 @@
         var tglAwal;
         var tglAkhir;
 
-        let htmlPermohonan = @json($html);
+        let htmlPermohonan = @json($dataPengajuanCuti);
         let cutiHariIni = @json($cutiHariIni);
         let sisaCutiUser = @json($sisaCutiUser);
         let sisaCutiAll = @json($sisaCutiAll);
+        let cutiTambahan = @json($cutiTambahan);
+        console.log("🚀 ~ cutiTambahan:", cutiTambahan)
 
         window.addEventListener("load", function() {
             setTodayDate();
@@ -64,6 +66,7 @@
             });
 
             generateTabelPermohonanCuti(htmlPermohonan);
+            generateTabelTambahanCuti(cutiTambahan);
             generateTabelSisaCuti(sisaCutiAll);
             $('#dataCutiWa').html(cutiHariIni);
             tampilkanInfoCuti(sisaCutiUser);
@@ -169,6 +172,7 @@
                 language: {
                     emptyTable: "Tidak ada data cuti untuk bulan ini."
                 },
+                "destroy": true,
                 "lengthChange": true,
                 "pageLength": 5,
                 "lengthMenu": [5, 10, 25, 50],
@@ -180,12 +184,31 @@
                     // [1, "asc"],
                     [6, "desc"]
                 ],
+            });
+        }
 
+        function generateTabelTambahanCuti(data) {
+            $('#divTabelDaftarCutiTambahan').html(data);
+            $('#tabelDaftarTambahanCuti').DataTable({
+                language: {
+                    emptyTable: "Tidak ada data tambahan cuti."
+                },
+                "destroy": true,
+                "lengthChange": true,
+                "pageLength": 5,
+                "lengthMenu": [5, 10, 25, 50],
+                "info": true,
+                "autoWidth": false,
+                "searching": true,
+                "paging": true,
+                "order": [
+                    [1, "asc"],
+                ],
             });
         }
 
         function generateTabelSisaCuti(data) {
-
+            console.log("🚀 ~ generateTabelSisaCuti ~ generateTabelSisaCuti:", generateTabelSisaCuti)
             $('#divTabelDaftarSisaCuti').html(data);
             $('#tabelDaftarSisaCuti').DataTable({
                 "destroy": true,
@@ -199,7 +222,6 @@
                 "order": [
                     [1, "asc"]
                 ],
-
             });
         }
 
@@ -228,7 +250,7 @@
                                             <p class="mb-1 col">Disetujui:<br><strong> ${item.jumlahCutiDisetujui} hari</strong>
                                         </div>
                                         <div class="form-row">
-                                            <p class="mb-0 col">Ditolak:<br><strong> ${item.jumlahSisaCuti} hari</strong>
+                                            <p class="mb-0 col">Ditolak:<br><strong> ${item.jumlahCutiDitolak} hari</strong>
                                             <p class="mb-0 col">Sisa Cuti:<br><strong> ${item.jumlahSisaCuti} hari</strong>
                                         </div>
                                     </div>

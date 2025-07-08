@@ -44,7 +44,7 @@
                                                 <div class="card-body">
                                                     <div class="form-row">
                                                         <div class="col-md">
-                                                            <h5>Pencarian Data</h5>
+                                                            <h5>Permohonan Cuti</h5>
                                                             <ul>
                                                                 <li>Klik Tombol Ajukan Cuti</li>
                                                                 <li>Pilih tanggal mulai dan tanggal selesai.</li>
@@ -75,7 +75,6 @@
                                 </div>
                             </div>
 
-
                             <div class="table-responsive pt-2 px-2" id="divTabelDaftarCuti">
                                 <table id="tabelDaftarCuti"
                                     class="table table-bordered table-striped dataTable no-footer dtr-inline"
@@ -100,63 +99,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="container-fluid mt-1" id="tab_3" style="display: none;">
-                    <div class="card card-warning">
-                        <div class="card-header text-light">
-                            <h6 class="card-title font-weight-bold">Rekap Sisa Cuti</h6>
-                        </div>
-                        <div class="card-body shadow">
-                            <div class="row">
-                                <!-- Input Group -->
-                                <div class="col-md-4 col-sm-6">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <select name="tahun_cuti" id="tahun_cuti" class="form-control">
-                                                <option value="">--Tahun--</option>
-                                                @php
-                                                    $tahun = date('Y');
-                                                    for ($i = 2024; $i <= $tahun; $i++) {
-                                                        $selected = $i == $tahun ? 'selected' : '';
-                                                        echo '<option value="' .
-                                                            $i .
-                                                            '" ' .
-                                                            $selected .
-                                                            '>' .
-                                                            $i .
-                                                            '</option>';
-                                                    }
-                                                @endphp
 
-                                            </select>
-                                            <button type="button" class="btn btn-success" data-toggle="modal"
-                                                data-target="#modal-form"
-                                                onclick="cariDataSisaCuti($('#tahun_cuti').val())">Perbaharui</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="table-responsive pt-2 px-2" id="divTabelDaftarSisaCuti">
-                                    <table class="table table-bordered table-hover dataTable dtr-inline"
-                                        id="TabelSisaCuti" cellspacing="0">
-                                        <thead class="bg bg-warning table-bordered">
-                                            <tr>
-                                                <th>Aksi</th>
-                                                <th>NO</th>
-                                                <th>NIP</th>
-                                                <th>Nama Pegawai</th>
-                                                <th>Jumlah Cuti</th>
-                                                <th>Jumlah Cuti Terpakai</th>
-                                                <th>Jumlah Cuti Tambahan</th>
-                                                <th>Sisa Cuti</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="table-bordered">
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="container-fluid mt-1" id="tab_2" style="display: none;">
                     <div class="card card-orange">
                         <div class="card-header text-light">
@@ -182,6 +125,103 @@
                                     {{-- @include('TataUsaha.Cuti.wa') --}}
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-fluid mt-1" id="tab_3" style="display: none;">
+                    <div class="card card-warning">
+                        <div class="card-header text-light">
+                            <h6 class="card-title font-weight-bold">Rekap Sisa Cuti</h6>
+                        </div>
+                        <div class="card-body shadow">
+
+                            <div class="form-group form-row">
+                                <div class="input-group col-md">
+                                    <select name="tahun_cuti" id="tahun_cuti" class="form-control col-4">
+                                        <option value="">--Tahun--</option>
+                                        @php
+                                            $tahun = date('Y');
+                                            for ($i = 2024; $i <= $tahun; $i++) {
+                                                $selected = $i == $tahun ? 'selected' : '';
+                                                echo '<option value="' . $i . '" ' . $selected . '>' . $i . '</option>';
+                                            }
+                                        @endphp
+
+                                    </select>
+                                    <button type="button" class="btn btn-success" data-toggle="modal"
+                                        data-target="#modal-form"
+                                        onclick="cariDataSisaCuti($('#tahun_cuti').val())">Perbaharui</button>
+                                </div>
+                                <div class="col-md">
+                                    {{-- <button type="button" class="btn btn-success" data-toggle="modal"
+                                        data-target="#modalTambahanCuti">Upload Tambahan
+                                        Cuti</button> --}}
+
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="font-weight-bold text-center mt-4 underline">Daftar Rekap Cuti
+                                        Pegawai
+                                    </h4>
+                                    <div class="table-responsive pt-2 px-2" id="divTabelDaftarSisaCuti">
+                                        <table class="table table-bordered table-hover dataTable dtr-inline"
+                                            id="TabelSisaCuti" cellspacing="0">
+                                            <thead class="bg bg-warning table-bordered">
+                                                <tr>
+                                                    <th>Aksi</th>
+                                                    <th>NO</th>
+                                                    <th>NIP</th>
+                                                    <th>Nama Pegawai</th>
+                                                    <th>Jumlah Cuti</th>
+                                                    <th>Jumlah Cuti Terpakai</th>
+                                                    <th>Jumlah Cuti Tambahan</th>
+                                                    <th>Sisa Cuti</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table-bordered">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            @if (Auth::user()->role == 'admin' || Auth::user()->role == 'tu')
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="font-weight-bold text-center mt-4 underline">Daftar Cuti
+                                            Tambahan
+                                        </h4>
+                                        <button type="button" class="btn btn-success" data-toggle="modal"
+                                            data-target="#modalTambahanCuti">Upload Tambahan
+                                            Cuti</button>
+                                        <div class="table-responsive pt-2 px-2" id="divTabelDaftarCutiTambahan">
+                                            <table id="tabelDaftarCuti"
+                                                class="table table-bordered table-striped dataTable no-footer dtr-inline"
+                                                aria-describedby="tabelDaftarCuti_info">
+                                                <thead class="bg-info">
+                                                    <tr>
+                                                        <th>Aksi</th>
+                                                        <th>No</th>
+                                                        <th>NIP</th>
+                                                        <th>Nama</th>
+                                                        <th>Tgl Mulai</th>
+                                                        <th>Tgl Selesai</th>
+                                                        <th>Lama Cuti</th>
+                                                        <th>Alasan Cuti</th>
+                                                        <th>Keterangan</th>
+                                                        <th>Persetujuan</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

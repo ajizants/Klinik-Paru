@@ -26,6 +26,8 @@
                             onclick="persetujuanCuti({{ $cuti->id }}, 2)">Tolak</button>
                         <button class="mt-2 btn btn-danger btn-sm"
                             onclick="hapusPermohonanCuti({{ $cuti->id }})">Hapus</button>
+                        <a class="mt-2 btn btn-primary btn-sm" href="/tu/cuti/cetak/{{ $cuti->id }}"
+                            target="_blank">Cetak</a>
                     @else
                         {{ $index + 1 }}
                     @endif

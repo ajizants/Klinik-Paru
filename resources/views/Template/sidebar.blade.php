@@ -332,7 +332,8 @@
                 </li>
                 <!-- TU Section -->
                 @php
-                    $roleKasir = ['admin', 'tu', 'kasir', 'atk'];
+                    $roleKasir = ['admin', 'tu', 'kasir', 'atk', 'igd', 'nurse', 'dokter', 'perawat', 'ro', 'lab'];
+                    $roleTu = ['admin', 'tu', 'atk'];
                 @endphp
                 <li class="nav-item ">
                     <a href="" class="nav-link">
@@ -346,31 +347,31 @@
                                 <p>Cuti Pegawai</p>
                             </a>
                         </li>
-                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleKasir)) non-aktif @endif">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleTu)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('Gudang/ATK') }}">
                                 <i class="fa-solid fa-warehouse nav-icon"></i>
                                 <p>Gudang ATK</p>
                             </a>
                         </li>
-                        <li class="nav-item ml-4">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleTu)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('TataUsaha/surat') }}">
                                 <i class="fa-solid fa-envelope nav-icon"></i>
                                 <p>Surat Umum</p>
                             </a>
                         </li>
-                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleKasir)) non-aktif @endif">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleTu)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('/TataUsaha/belanja') }}">
                                 <i class="fa-solid fa-money-bill-1-wave nav-icon"></i>
                                 <p>Belanja</p>
                             </a>
                         </li>
-                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleKasir)) non-aktif @endif">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleTu)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('TataUsaha/report') }}">
                                 <i class="fa-solid fa-cart-flatbed nav-icon"></i>
                                 <p>Laporan Belanja</p>
                             </a>
                         </li>
-                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleKasir)) non-aktif @endif">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleTu)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('/kasir/master') }}">
                                 <i class="fa-solid fa-database nav-icon"></i>
                                 <p>Master Data Layanan</p>
@@ -399,7 +400,7 @@
 
                 <!-- Hasil Penunjang -->
                 @php
-                    $roleHasilPenunjang = ['tamu', 'igd', 'admin', 'nakes', 'dokter', 'perawat'];
+                    $roleHasilPenunjang = ['tamu', 'igd', 'admin', 'nakes', 'dokter', 'perawat', 'ro'];
                 @endphp
                 <li class="nav-item @if (!in_array(Auth::user()->role, $roleHasilPenunjang)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/RO/Hasil') }}">

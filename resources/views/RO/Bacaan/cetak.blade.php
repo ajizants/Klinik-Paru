@@ -62,7 +62,7 @@
 </head>
 
 <body>
-    <div class=" container">
+    <div class=" container border "">
         <div class="container-fluid" style="text-align: center;">
             <div style=" margin-bottom: 0;">
                 <p style="font-size: 20pt; font-weight: bold; margin: 0;">dr. SOEGIMIN ARDI SOEWARNO, Sp. Rad.</p>
@@ -73,6 +73,8 @@
             <div style="border-bottom: 4px solid black; margin-top: 5px;"></div>
             <div style="border-bottom: 1px solid black; margin-top: 2px;"></div>
         </div>
+        <h4 class="text-center font-weight-bold mb-0"><u>Hasil Pemeriksaan Radiologi</u></h4>
+        <h4 class="text-center font-weight-bold">KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A</h4>
 
 
         {{-- identitas --}}

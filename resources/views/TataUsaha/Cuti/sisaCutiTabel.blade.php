@@ -1,5 +1,5 @@
 <table id="tabelDaftarSisaCuti" class="table table-bordered table-striped">
-    <thead>
+    <thead class="bg-warning">
         <tr>
             <th>#</th>
             <th>Nama</th>
