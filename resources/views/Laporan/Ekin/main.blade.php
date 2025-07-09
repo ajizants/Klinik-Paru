@@ -99,7 +99,7 @@
             }
 
             function edit(nip, nama) {
-                const url = `api/pegawai/${nip}`;
+                const url = `/api/pegawai/${nip}`;
 
                 // Tampilkan SweetAlert loading
                 Swal.fire({
@@ -118,6 +118,7 @@
 
                         // Inisialisasi Select2
                         $("#kd_jab").select2();
+                        $("#kd_jenjang").select2();
 
                         // Tutup alert loading dan tampilkan sukses
                         Swal.fire({
@@ -194,7 +195,7 @@
                         [5, 10, 25, 50, "All"]
                     ],
                     responsive: true,
-                    autoWidth: false,
+                    autoWidth: true,
                     scrollX: true
                 });
             }

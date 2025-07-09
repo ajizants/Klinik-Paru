@@ -13,7 +13,7 @@
             <tr>
                 <td>
                     <a type="button" class="btn btn-info"
-                        onclick="editTambahanCuti({{ $cuti->id }}, '{{ addslashes($cuti->pegawai->nama) }}', {{ $cuti->jumlah_tambahan }})">
+                        onclick="editTambahanCuti({{ $cuti->id }}, '{{ addslashes($cuti->pegawai->nama ?? '-') }}', {{ $cuti->jumlah_tambahan }})">
                         edit
                     </a>
 

@@ -11,10 +11,10 @@ class PegawaiModel extends Model
     protected $keyType    = 'string'; // Jika 'nip' adalah string
 
     protected $fillable = [
-        'nip', 'kd_jab', 'kd_pend',
+        'nip', 'kd_jab', 'kd_pend', 'noHp', 'kd_jenjeng',
         'kd_jurusan', 'gelar_d', 'gelar_b',
         'stat_pns', 'tgl_masuk', 'sip',
-        'pangkat_gol', 'jatah_cuti', 'tambahan_cuti',
+        'pangkat_gol', 'jatah_cuti', 'jatah_cuti_1', 'jatah_cuti_2',
     ];
     public function biodata()
     {
@@ -24,6 +24,11 @@ class PegawaiModel extends Model
     {
         return $this->hasOne(JabatanModel::class, 'kd_jab', 'kd_jab');
     }
+
+    public function jenjang()
+    {
+        return $this->hasOne(PegawaiJenjangModel::class, 'kd_jenjang', 'kd_jenjang');
+    }
     public function karyawan()
     {
         return $this->with('biodata', 'jabatan')->get();
@@ -31,11 +36,12 @@ class PegawaiModel extends Model
 
     public function dataPegawai()
     {
-        $title   = 'E-Kinerja';
-        $pegawai = $this->with('biodata')
+        $pegawai = $this->with('biodata', 'jabatan', 'jenjang')
             ->whereNot('kd_jab', '22')
+            ->whereNot('stat_pns', 'PENSIUNAN')
             ->get()
             ->sortBy('kd_jab');
+        // return $pegawai;
 
         $tablePegawai = $this->createTablePegawai($pegawai);
 
@@ -51,28 +57,32 @@ class PegawaiModel extends Model
                             <th>Nama</th>
                             <th>NIP</th>
                             <th>Jabatan</th>
+                            <th>Jenjang</th>
                             <th>Pangkat/Gol</th>
                             <th>Status Pegawai</th>
+                            <th>Alamat</th>
                         </tr>
                     </thead>';
         $table .= '<tbody>';
 
         foreach ($pegawai as $index => $data) {
             $jabatan = isset($data->jabatan->nm_jabatan) ? $data->jabatan->nm_jabatan : '-';
+            $jenjang = isset($data->jenjang->nmJenjang) ? $data->jenjang->nmJenjang : '-';
             $atribut = '
                 item-nip="' . $data->nip . '"
                 item-nama="' . $data->biodata->nama . '"
                 item-stat_pns="' . $data->stat_pns . '"
                 item-jabatan="' . $jabatan . '"
+                item-jenjang="' . $jenjang . '"
             ';
             $table .= '<tr>
-            <td>
-                <a type="button" class="btn btn-warning" ' . $atribut . '
+            <td class="text-center col-2">
+                <a type="button" class="btn btn-warning col" ' . $atribut . '
                    onclick="edit(\'' . $data->nip . '\', \'' . addslashes($data->biodata->nama) . '\')">
                    Update Data Pegawai
                 </a>
-
-                <a type="button" class="btn btn-success"
+                <br>
+                <a type="button" class="btn btn-success col mt-2"
                    onclick="cetak(\'' . $data->nip . '\', \'' . addslashes($data->biodata->nama) . '\')">
                    Cetak Data Kinerja
                 </a>
@@ -80,8 +90,10 @@ class PegawaiModel extends Model
             <td>' . $data->gelar_d . ' ' . htmlspecialchars($data->biodata->nama, ENT_QUOTES, 'UTF-8') . ' ' . $data->gelar_b . '</td>
             <td>' . $data->nip . '</td>
             <td>' . $jabatan . '</td>
+            <td>' . $jenjang . '</td>
             <td>' . $data->pangkat_gol . '</td>
             <td>' . $data->stat_pns . '</td>
+            <td>' . $data->biodata->alamat . '</td>
         </tr>';
 
         }

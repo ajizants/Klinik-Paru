@@ -35,7 +35,7 @@
         let sisaCutiUser = @json($sisaCutiUser);
         let sisaCutiAll = @json($sisaCutiAll);
         let cutiTambahan = @json($cutiTambahan);
-        console.log("🚀 ~ cutiTambahan:", cutiTambahan)
+        // console.log("🚀 ~ cutiTambahan:", cutiTambahan)
 
         window.addEventListener("load", function() {
             setTodayDate();
@@ -98,7 +98,7 @@
                     Swal.close();
                 },
                 error: function(xhr) {
-                    console.log("🚀 ~ cariDataSisaCuti ~ xhr:", xhr)
+                    // console.log("🚀 ~ cariDataSisaCuti ~ xhr:", xhr)
                     tampilkanEror(xhr.responseJSON.message)
                 }
             });
@@ -112,7 +112,7 @@
                 url: "/tu/cuti/hari/" + tgl,
                 type: "GET",
                 success: function(data) {
-                    console.log("🚀 ~ cariDataCutiHari ~ data:", data.html)
+                    // console.log("🚀 ~ cariDataCutiHari ~ data:", data.html)
                     $('#dataCutiWa').html(data.html);
                     Swal.close();
                 },
@@ -208,7 +208,7 @@
         }
 
         function generateTabelSisaCuti(data) {
-            console.log("🚀 ~ generateTabelSisaCuti ~ generateTabelSisaCuti:", generateTabelSisaCuti)
+            // console.log("🚀 ~ generateTabelSisaCuti ~ generateTabelSisaCuti:", generateTabelSisaCuti)
             $('#divTabelDaftarSisaCuti').html(data);
             $('#tabelDaftarSisaCuti').DataTable({
                 "destroy": true,
@@ -238,8 +238,8 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="form-row">
-                                            <p class="mb-1 col-md">Nama:<br><strong> ${item.nama} hari</strong>
-                                            <p class="mb-1 col-md">NIP/NIK:<br><strong> ${item.nip} hari</strong>
+                                            <p class="mb-1 col-md">Nama:<br><strong> ${item.nama}</strong>
+                                            <p class="mb-1 col-md">NIP/NIK:<br><strong> ${item.nip}</strong>
                                         </div>
                                         <div class="form-row">
                                             <p class="mb-1 col">Jatah Cuti:<br><strong> ${item.jatah_cuti} hari</strong>
@@ -260,29 +260,83 @@
             });
         }
 
-        // function tampilkanInfoCuti(data) {
-        //     let html = '';
-        //     data.forEach(item => {
-        //         html += `
-    //                 <tr style="background-color:rgba(0,0,0,.05);">
-    //                     <th class="col-2">Nama</th>
-    //                     <td class="">: ${item.nama}</td>
-    //                     <th class="col-2">Jatah Cuti</th>
-    //                     <td class="">: ${item.jatah_cuti}</td>
-    //                     <th class="col-2">Tambahan Cuti</th>
-    //                     <td class="">: ${item.tambahan_cuti}</td>
-    //                 </tr>
-    //                 <tr style="background-color:rgba(0,0,0,.05);">
-    //                     <th class="col-2">NIP</th>
-    //                     <td class="">: ${item.nip}</td>
-    //                     <th class="col-2">Diambil</th>
-    //                     <td class="">: ${item.jumalhCutiDiambil}</td>
-    //                     <th class="col-2">Sisa Cuti</th>
-    //                     <td class="">: ${item.jumlahSisaCuti}</td>
-    //                 </tr>
-    //             `;
-        //     });
-        //     document.getElementById('tabelInfoCuti').innerHTML = html;
-        // }
+
+        function editPegawai(nip, nama) {
+            const url = `/api/pegawai/${nip}`;
+
+            // Tampilkan SweetAlert loading
+            Swal.fire({
+                title: 'Memuat data...',
+                text: 'Silakan tunggu',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.get(url)
+                .done(function(data) {
+                    // Tampilkan data di divFormEdit
+                    $("#divFormEdit").html(data);
+
+                    // Inisialisasi Select2
+                    $("#kd_jab").select2();
+                    $("#kd_jenjang").select2();
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Data Ditemukan',
+                        text: `Form untuk ${nama} berhasil dimuat!`
+                    })
+
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    // Tutup alert loading dan tampilkan error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal Memuat Data',
+                        text: `Terjadi kesalahan: ${jqXHR.status} - ${errorThrown}`
+                    });
+                });
+        }
+
+        function updatePegawai() {
+            var formData = new FormData(document.getElementById("pegawaiForm"));
+            var nip = document.getElementById("nip").value;
+            $.ajax({
+                url: "/api/pegawai/update/" + nip,
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    // console.log(response);
+                    Swal.fire({
+                        icon: "success",
+                        title: "Data Berhasil Diubah",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    const tgl = new Date();
+                    const tahun_cuti = tgl.getFullYear();
+                    cariDataSisaCuti(tahun_cuti)
+
+                    $('#divFormEdit').html('');
+                },
+                error: function(xhr) {
+                    console.error("Error:", xhr.responseText);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Gagal Mengubah Data",
+                        text: "Terjadi kesalahan, silakan coba lagi." + xhr.responseText,
+                    });
+                },
+            });
+
+        }
+
+        function batal() {
+            $('#divFormEdit').html('');
+        }
     </script>
 @endsection

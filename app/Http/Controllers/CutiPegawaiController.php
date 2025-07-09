@@ -102,10 +102,38 @@ class CutiPegawaiController extends Controller
             }
 
             $key['jumlahCutiDiambil']   = $jumlahCuti;
-            $key['jumlahCutiDisetujui'] = $jumlahCutiDisetujui;
             $key['jumlahCutiDitolak']   = $jumlahCutiDitolak;
             $key['jumlahCutiTambahan']  = $jumlahCutiTambahan;
-            $key['jumlahSisaCuti']      = ($key->jatah_cuti + $key->tambahan_cuti + $key->jumlahCutiTambahan) - $jumlahCutiDisetujui;
+            $key['jumlahCutiDisetujui'] = $jumlahCutiDisetujui;
+
+            $key['jumlahCutiDisetujui'] = $jumlahCutiDisetujui;
+
+            // Step 1: Kurangi dari sisaCuti_2 (2 tahun lalu)
+            if ($jumlahCutiDisetujui <= $key->sisa_2) {
+                $key['sisaCuti_2'] = $key->sisa_2 - $jumlahCutiDisetujui;
+                $jumlahSisa        = 0;
+            } else {
+                $key['sisaCuti_2'] = 0;
+                $jumlahSisa        = $jumlahCutiDisetujui - $key->sisa_2;
+            }
+
+            // Step 2: Kurangi dari sisaCuti_1 (1 tahun lalu)
+            if ($jumlahSisa <= $key->sisa_1) {
+                $key['sisaCuti_1'] = $key->sisa_1 - $jumlahSisa;
+                $jumlahSisa        = 0;
+            } else {
+                $key['sisaCuti_1'] = 0;
+                $jumlahSisa        = $jumlahSisa - $key->sisa_1;
+            }
+
+            // Step 3: Kurangi dari jatahCuti (tahun ini)
+            if ($jumlahSisa <= $key->jatah_cuti) {
+                $key['sisaCuti'] = $key->jatah_cuti - $jumlahSisa;
+            } else {
+                $key['sisaCuti'] = 0; // atau bisa buat warning kalau cuti melebihi kuota
+            }
+
+            $key['jumlahSisaCuti'] = ($key->jatah_cuti + $key->tambahan_cuti + $key->jumlahCutiTambahan) - $jumlahCutiDisetujui;
         }
 
         return $dataPegawai;
@@ -288,10 +316,6 @@ class CutiPegawaiController extends Controller
             ], 500);
         }
     }
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $title     = 'Cuti Pegawai';
@@ -341,6 +365,7 @@ class CutiPegawaiController extends Controller
         // return $cutiTambahan;
 
         $pegawai = vPegawaiModel::whereNot('stat_pns', 'PENSIUNAN')->orderBy('nama')->get();
+        // return $pegawai;
 
         return view('TataUsaha.Cuti.main', compact('pegawai', 'dataPengajuanCuti', 'cutiHariIni', 'sisaCutiUser', 'sisaCutiAll', 'pegawai', 'cutiTambahan'))->with('title', $title);
     }
@@ -348,7 +373,8 @@ class CutiPegawaiController extends Controller
     private function getCutiTambahan()
     {
         $dataTambahanCuti = CutiTambahan::with('pegawai')->whereYear('created_at', now()->year)->get();
-        $html             = view('TataUsaha.Cuti.tambahanTabel', compact('dataTambahanCuti'))->render();
+        // return $dataTambahanCuti;
+        $html = view('TataUsaha.Cuti.tambahanTabel', compact('dataTambahanCuti'))->render();
         return $html;
     }
 
@@ -428,13 +454,25 @@ class CutiPegawaiController extends Controller
             ], 500);
         }
     }
+
+    public function eidtSisaCuti($nip)
+    {
+        $data = Vpegawai::where('nip', $nip)->first();
+        return $data;
+    }
     public function cetak($id)
     {
-        $data             = CutiPegawai::with('pegawai')->find($id);
-        $sisaCutiUser     = $this->dataSisaCuti($data->pegawai->nip);
-        $data['sisaCuti'] = $sisaCutiUser;
-        return $data;
-        return view('TataUsaha.Cuti.cetakFormCuti', compact('cutiPegawai'));
+        $title    = 'Cetak Form Cuti';
+        $pModel   = new Vpegawai();
+        $data     = CutiPegawai::with('pegawai')->find($id);
+        $sisaCuti = $this->dataSisaCuti($data->pegawai->nip)->first();
+        // return $sisaCuti;
+        $data->sisaCuti = $sisaCuti;
+        $bln            = Carbon::parse($data->created_at)->format('m');
+        $thn            = Carbon::parse($data->created_at)->format('Y');
+        $pimpinan       = $pModel->pimpinan($bln, $thn);
+        // return $data;
+        return view('TataUsaha.Cuti.cetakFormCuti', compact('data', 'sisaCuti', 'pimpinan', 'title'));
     }
 
     public function ambilLog()

@@ -14,6 +14,7 @@
         Route::get('tu/cuti/persetujuan/{id}/{persetujuan}', [CutiPegawaiController::class, 'update']);
         Route::get('tu/cuti/sisa/get', [CutiPegawaiController::class, 'getDataSisaCuti']);
         Route::get('tu/cuti/sisa/get/{nip}', [CutiPegawaiController::class, 'getDataSisaCutiPerson']);
+        Route::post('tu/cuti/sisa/edit/{nip}', [CutiPegawaiController::class, 'eidtSisaCuti']);
         Route::get('tu/cuti/hapus/{cutiPegawai}', [CutiPegawaiController::class, 'destroy']);
         Route::get('tu/cuti/cetak/{id}', [CutiPegawaiController::class, 'cetak']);
 

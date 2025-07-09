@@ -28,6 +28,10 @@
                                     <button type="button" class="mx-2 btn btn-success" data-toggle="modal"
                                         data-target="#modal-form" onclick="cariDataCuti($('#nip_cuti').val())">
                                         Cari Data Cuti</button>
+                                    <button type="button" class="mx-2 btn btn-info" data-toggle="modal"
+                                        data-target="#modal-form"
+                                        onclick="editPegawai($('#nip_cuti').val(), 'pegawai')">
+                                        Update Data Pegawai</button>
                                 </div>
 
                                 <!-- Accordion -->
@@ -74,6 +78,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <div id="divFormEdit"></div>
 
                             <div class="table-responsive pt-2 px-2" id="divTabelDaftarCuti">
                                 <table id="tabelDaftarCuti"

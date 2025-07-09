@@ -220,14 +220,16 @@ class EkinController extends Controller
             $nipReplace = $request->input('nip');
         }
 
-        $pegawai = PegawaiModel::with('biodata', 'jabatan')->where('nip', $request->input('nip'))->first();
+        $pegawai = PegawaiModel::with('biodata', 'jabatan', 'jenjang')->where('nip', $request->input('nip'))->first();
         // return $pegawai;
         $biodata = [
             'nip'     => $nipReplace,
             'nama'    => $pegawai->gelar_d . ' ' . $pegawai->biodata->nama . ', ' . $pegawai->gelar_b,
             'jabatan' => $pegawai->jabatan->nm_jabatan ?? "-",
+            'jenjang' => $pegawai->jenjang->nmJenjang ?? "-",
             'pangkat' => $pegawai->pangkat_gol ?? "-",
         ];
+        // return $biodata;
 
         $modelPoinDots = new DotsTransModel();
         $poinDots      = $modelPoinDots->poinPetugas($request->input('tanggal_awal'), $request->input('tanggal_akhir'), $request->input('nip'));
