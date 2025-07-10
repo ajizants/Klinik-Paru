@@ -648,12 +648,14 @@ class IgdController extends Controller
         ], 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function poinPegawai($bln, $tahun)
+    public function poinPegawai($bln, $tahun, $petugas = null)
     {
         $tglAwal  = \Carbon\Carbon::create($tahun, $bln, 1)->isoFormat('YYYY-MM-DD');
         $tglAkhir = \Carbon\Carbon::create($tahun, $bln, 1)->lastOfMonth()->isoFormat('YYYY-MM-DD');
 
-        $tindakanData = $this->getTindakanArray($tglAwal, $tglAkhir);
+        $tindakanData = $this->getTindakanArray($tglAwal, $tglAkhir)[0];
+        // return $tindakanData;
+        $dokterData = $this->getTindakanArray($tglAwal, $tglAkhir)[1];
         // return $tindakanData;
         $kominfoData = $this->getKominfoArray($tglAwal, $tglAkhir);
         // return $kominfoData;
@@ -683,6 +685,16 @@ class IgdController extends Controller
             }
         }
 
+        foreach ($dokterData as $jenis => $admins) {
+            if (! isset($combined[$jenis])) {
+                $combined[$jenis] = [];
+            }
+
+            foreach ($admins as $admin => $jumlah) {
+                $combined[$jenis][$admin] = ($combined[$jenis][$admin] ?? 0) + $jumlah;
+            }
+        }
+
         // Ambil semua nama pelaksana/admin unik
         $allNama = [];
         foreach ($combined as $admins) {
@@ -690,7 +702,20 @@ class IgdController extends Controller
                 $allNama[$nama] = true;
             }
         }
-        $allNama = array_keys($allNama);
+        $allNama = array_keys($allNama); // ambil array nama
+        sort($allNama);                  // urutkan dari A ke Z
+
+        // Geser REGINA dan VANNIA ke akhir array
+        $namaKhusus = ['SIGIT DWIYANTO', 'FILLY ULFA KUSUMAWARDANI', 'CEMPAKA NOVA INTANI', 'AGIL DANANJAYA', 'REGINA DONA ZHAFIRA', 'VANNIA MAULIDINA PRASETYO'];
+        $namaDokter = ['SIGIT DWIYANTO', 'FILLY ULFA KUSUMAWARDANI', 'CEMPAKA NOVA INTANI', 'AGIL DANANJAYA'];
+
+        // Buat array baru tanpa nama khusus
+        $filtered = array_filter($allNama, function ($nama) use ($namaKhusus) {
+            return ! in_array($nama, $namaKhusus);
+        });
+
+        // Gabungkan: hasil sort tanpa REGINA & VANNIA + REGINA & VANNIA di akhir
+        $allNama = array_merge(array_values($filtered), $namaKhusus);
 
         // Gabungkan daftar jenis tindakan dari kedua sumber
         $order = [
@@ -763,10 +788,12 @@ class IgdController extends Controller
         // ->where('petugas', '197907231999032002')
             ->get();
         // return $tindakan;
+        $tindakanDokter = $tindakan;
 
         $data = [];
 
         foreach ($tindakan as $item) {
+            // dd($item);
             $nmTindakan    = $item->tindakan->nmTindakan ?? '-';
             $namaPelaksana = $item->pelaksana->biodata->nama ?? 'Tidak diketahui';
 
@@ -789,10 +816,75 @@ class IgdController extends Controller
         foreach (array_keys($pelaksanaTersedia) as $pelaksana) {
             $data['Lain lain (mencari kartu)'][$pelaksana] = 0;
         }
-        return $data;
-    }
 
-    private function getKominfoArray($tglAwal, $tglAkhir)
+        $dokter = [];
+
+        foreach ($tindakanDokter as $item) {
+            $nmTindakan    = $item->tindakan->nmTindakan ?? '-';
+            $namaPelaksana = $item->dok->biodata->nama ?? 'Tidak diketahui';
+
+            $dokter[$nmTindakan][$namaPelaksana] = ($dokter[$nmTindakan][$namaPelaksana] ?? 0) + 1;
+        }
+
+        // Tambahkan Observasi Infus dengan jumlah yang sama seperti Infus
+        if (isset($dokter['Infus'])) {
+            $dokter['Observasi infus'] = $dokter['Infus'];
+        }
+
+        // Tambahkan "Lain lain (mencari kartu)" untuk semua pelaksana yang ada
+        $pelaksanaTersedia = [];
+        foreach ($dokter as $tindakan) {
+            foreach ($tindakan as $pelaksana => $jumlah) {
+                $pelaksanaTersedia[$pelaksana] = true;
+            }
+        }
+
+        foreach (array_keys($pelaksanaTersedia) as $pelaksana) {
+            $dokter['Lain lain (mencari kartu)'][$pelaksana] = 0;
+        }
+        // return $data;
+        return [$data, $dokter];
+    }
+    // private function getTindakanArray($tglAwal, $tglAkhir)
+    // {
+    //     // $tglAkhir = \Carbon\Carbon::create($tglAkhir)->addDay()->isoFormat('YYYY-MM-DD') . ' 23:59:59';
+    //     // $tglAwal  = \Carbon\Carbon::create($tglAwal)->isoFormat('YYYY-MM-DD') . ' 00:00:00';
+    //     $tindakan = IGDTransModel::with('pelaksana.biodata', 'tindakan', 'dok.biodata')
+    //         ->whereBetween('created_at', [$tglAwal . ' 00:00:00', $tglAkhir . ' 23:59:59'])
+    //     // ->where('kdTind', 9)
+    //     // ->where('petugas', '197907231999032002')
+    //         ->get();
+    //     // return $tindakan;
+
+    //     $data = [];
+
+    //     foreach ($tindakan as $item) {
+    //         $nmTindakan    = $item->tindakan->nmTindakan ?? '-';
+    //         $namaPelaksana = $item->pelaksana->biodata->nama ?? 'Tidak diketahui';
+
+    //         $data[$nmTindakan][$namaPelaksana] = ($data[$nmTindakan][$namaPelaksana] ?? 0) + 1;
+    //     }
+
+    //     // Tambahkan Observasi Infus dengan jumlah yang sama seperti Infus
+    //     if (isset($data['Infus'])) {
+    //         $data['Observasi infus'] = $data['Infus'];
+    //     }
+
+    //     // Tambahkan "Lain lain (mencari kartu)" untuk semua pelaksana yang ada
+    //     $pelaksanaTersedia = [];
+    //     foreach ($data as $tindakan) {
+    //         foreach ($tindakan as $pelaksana => $jumlah) {
+    //             $pelaksanaTersedia[$pelaksana] = true;
+    //         }
+    //     }
+
+    //     foreach (array_keys($pelaksanaTersedia) as $pelaksana) {
+    //         $data['Lain lain (mencari kartu)'][$pelaksana] = 0;
+    //     }
+    //     return $data;
+    // }
+
+    private function getKominfoArray($tglAwal, $tglAkhir, $petugas = null)
     {
         $params = [
             'tanggal_awal'  => $tglAwal,
@@ -801,18 +893,29 @@ class IgdController extends Controller
 
         $model = new KominfoModel();
         $data  = $model->poinRequest($params);
-        $items = $data['response']['data'] ?? [];
+        $data  = $data['response']['data'] ?? [];
+        // dd($data);
         // return $items;
+        // dd($items);
+        // if ($petugas == "dokter") {
+        //     $items = array_filter($data, function ($item) {
+        //         return in_array($item['ruang_nama'], ['Ruang Tensi 1', 'Ruang Poli (Perawat Poli)', 'Petugas Assessment Awal']);
+        //     });
+        // } else {
 
-        $items = array_filter($items, function ($item) {
-            return in_array($item['ruang_nama'], ['Ruang Tensi 1', 'Ruang Poli (Perawat Poli)', 'Petugas Assessment Awal']);
+        $items = array_filter($data, function ($item) {
+            return in_array($item['ruang_nama'], ['Ruang Poli (Dokter CPPT)', 'Ruang Tensi 1', 'Ruang Poli (Perawat Poli)', 'Petugas Assessment Awal']);
         });
+        // }
 
         $items = array_map(function ($item) {
-            $item['admin_nama'] = preg_replace('/,.*$/', '', $item['admin_nama']);
+                                                                                   // $item['admin_nama'] = preg_replace('/^dr\.\s*/i', '', $item['admin_nama']); // hilangkan dr.
+            $item['admin_nama'] = preg_replace('/,.*$/', '', $item['admin_nama']); // hilangkan setelah koma
+
             // Tambahkan "IMAM " jika nama admin adalah "AJI SANTOSO"
             if ($item['admin_nama'] === 'AJI SANTOSO') {
                 $item['admin_nama'] = 'IMAM ' . $item['admin_nama'];
+                // $item['admin_nama'] = 'IMAM ' . $item['admin_nama'] . ' A.Md.Kep.';
             }
             return $item;
         }, $items);
@@ -824,6 +927,7 @@ class IgdController extends Controller
             'Asisten dokter'        => [],
             'Timbang dan tensi'     => [],
             'Input data'            => [],
+            'Pemeriksaan dokter'    => [],
         ];
 
         foreach ($items as $item) {
@@ -846,6 +950,8 @@ class IgdController extends Controller
                 $result['Anamnesa pasien baru'][$admin] = ($result['Petugas Assessment Awal'][$admin] ?? 0) + $jumlah;
             } elseif ($ruang === 'Ruang Poli (Perawat Poli)') {
                 $result['Asisten dokter'][$admin] = ($result['Asisten dokter'][$admin] ?? 0) + $jumlah;
+            } elseif ($ruang === 'Ruang Poli (Dokter CPPT)') {
+                $result['Pemeriksaan dokter'][$admin] = ($result['Pemeriksaan dokter'][$admin] ?? 0) + $jumlah;
             }
         }
         // $result['Anamnesa pasien lama2'] = [];
@@ -858,7 +964,7 @@ class IgdController extends Controller
             }
         }
         unset($result['Anamnesa pasien lama2']);
-
+        // dd($result);
         return $result;
     }
 

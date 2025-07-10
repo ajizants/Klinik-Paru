@@ -1906,6 +1906,7 @@ class PasienKominfoController extends Controller
         $filteredData = array_filter($data['response']['data'], function ($item) {
             return $item['ruang_nama'] !== 'Ruang Poli';
         });
+        // dd($filteredData);
 
         // Step 2: Buat map sementara berdasarkan ruang dan admin
         $grouped = [];
