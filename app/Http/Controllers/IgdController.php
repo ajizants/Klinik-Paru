@@ -909,9 +909,9 @@ class IgdController extends Controller
         // }
 
         $items = array_map(function ($item) {
-                                                                                   // $item['admin_nama'] = preg_replace('/^dr\.\s*/i', '', $item['admin_nama']); // hilangkan dr.
-            $item['admin_nama'] = preg_replace('/,.*$/', '', $item['admin_nama']); // hilangkan setelah koma
-
+            $item['admin_nama'] = preg_replace('/^dr\.\s*/i', '', $item['admin_nama']); // hilangkan dr.
+            $item['admin_nama'] = preg_replace('/,.*$/', '', $item['admin_nama']);      // hilangkan setelah koma
+            $item['admin_nama'] = strtoupper($item['admin_nama']);
             // Tambahkan "IMAM " jika nama admin adalah "AJI SANTOSO"
             if ($item['admin_nama'] === 'AJI SANTOSO') {
                 $item['admin_nama'] = 'IMAM ' . $item['admin_nama'];

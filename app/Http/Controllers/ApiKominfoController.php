@@ -5,6 +5,7 @@ use App\Models\ApiKominfo;
 use App\Models\KasirTransModel;
 use App\Models\KominfoModel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ApiKominfoController extends Controller
@@ -858,5 +859,135 @@ class ApiKominfoController extends Controller
         return $data;
         // return response()->json($assesment_awal);
         return view('Laporan.Pasien.asesmentAwal', compact('assesment_awal_html'));
+    }
+
+    // public function jumlahPetugas(Request $request)
+    // {
+    //     $model  = new KominfoModel();
+    //     $params = [
+    //         'tgl_awal'  => '2025-06-01',
+    //         'tgl_akhir' => '2025-06-10',
+    //         'status'    => $request->input('status') ?? '',
+    //     ];
+
+    //     $dataPendaftaran = $model->getTungguLoketFilter($params)['data'];
+
+    //     // Inisialisasi array untuk menyimpan hasil
+    //     $pasienBaru = [];
+    //     $pasienLama = [];
+
+    //     // Proses penghitungan
+    //     foreach ($dataPendaftaran as $item) {
+    //         $adminName    = $item['admin_log_nama'] ?? 'Tidak Diketahui';
+    //         $statusPasien = $item['pasien_lama_baru'] ?? 'Tidak Diketahui';
+
+    //         if (strtoupper($statusPasien) === 'BARU') {
+    //             if (! isset($pasienBaru[$adminName])) {
+    //                 $pasienBaru[$adminName] = 0;
+    //             }
+    //             $pasienBaru[$adminName]++;
+    //         } elseif (strtoupper($statusPasien) === 'LAMA') {
+    //             if (! isset($pasienLama[$adminName])) {
+    //                 $pasienLama[$adminName] = 0;
+    //             }
+    //             $pasienLama[$adminName]++;
+    //         }
+    //     }
+
+    //     // Format output
+    //     $result = [
+    //         'pasien_baru' => array_map(function ($name, $count) {
+    //             return ['nama_admin' => $name, 'jumlah' => $count];
+    //         }, array_keys($pasienBaru), array_values($pasienBaru)),
+
+    //         'pasien_lama' => array_map(function ($name, $count) {
+    //             return ['nama_admin' => $name, 'jumlah' => $count];
+    //         }, array_keys($pasienLama), array_values($pasienLama)),
+    //     ];
+
+    //     return response()->json($result);
+    // }
+
+    public function jumlahPetugas(Request $request)
+    {
+        $model = new KominfoModel();
+
+        $tglAwal  = Carbon::parse($request->input('tgl_awal') ?? date('Y-m-d'));
+        $tglAkhir = Carbon::parse($request->input('tgl_akhir') ?? date('Y-m-d'));
+        $status   = $request->input('status') ?? '';
+
+        $diffInDays = $tglAwal->diffInDays($tglAkhir);
+        // dd($diffInDays);
+
+        if ($diffInDays > 14) {
+                                                        // Bagi jadi 2 rentang: 14 hari pertama, sisanya
+            $tglTengah = $tglAwal->copy()->addDays(13); // 14 hari dari awal (13 hari setelah awal)
+
+            // Request pertama
+            $params1 = [
+                'tgl_awal'  => $tglAwal->format('Y-m-d'),
+                'tgl_akhir' => $tglTengah->format('Y-m-d'),
+                'status'    => $status,
+            ];
+            $data1 = $model->getTungguLoketFilter($params1)['data'];
+
+            // Request kedua
+            $params2 = [
+                'tgl_awal'  => $tglTengah->copy()->addDay()->format('Y-m-d'), // hari ke-15
+                'tgl_akhir' => $tglAkhir->format('Y-m-d'),
+                'status'    => $status,
+            ];
+            // dd($params2);
+            $data2 = $model->getTungguLoketFilter($params2)['data'];
+
+            // Gabungkan hasil
+            $dataPendaftaran = array_merge($data1, $data2);
+        } else {
+            // Jika <= 14 hari, langsung ambil 1x
+            $params = [
+                'tgl_awal'  => $tglAwal->format('Y-m-d'),
+                'tgl_akhir' => $tglAkhir->format('Y-m-d'),
+                'status'    => $status,
+            ];
+            $dataPendaftaran = $model->getTungguLoketFilter($params)['data'];
+        }
+
+        // return count($dataPendaftaran);
+        // return response()->json($dataPendaftaran);
+        $dataPendaftaran = array_filter($dataPendaftaran, function ($item) {
+            return $item['keterangan'] === 'SELESAI DIPANGGIL';
+        });
+        $dataPendaftaran = array_values($dataPendaftaran);
+
+        // return response()->json($dataPendaftaran);
+        // Inisialisasi array untuk menyimpan hasil per admin
+        $adminData = [];
+
+        // Proses penghitungan
+        foreach ($dataPendaftaran as $item) {
+            $adminName    = $item['admin_log_nama'];
+            $statusPasien = strtoupper($item['pasien_lama_baru']);
+
+            // Inisialisasi data admin jika belum ada
+            if (! isset($adminData[$adminName])) {
+                $adminData[$adminName] = [
+                    'nama'       => $adminName,
+                    'jumlahLama' => 0,
+                    'jumlahBaru' => 0,
+                ];
+            }
+
+            // Tambahkan ke jumlah yang sesuai
+            if ($statusPasien === 'LAMA') {
+                $adminData[$adminName]['jumlahLama']++;
+            } elseif ($statusPasien === 'BARU') {
+                $adminData[$adminName]['jumlahBaru']++;
+            }
+        }
+
+        // Konversi associative array ke indexed array
+        $result = array_values($adminData);
+
+        return response()->json($result);
     }
 }

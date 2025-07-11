@@ -2,7 +2,7 @@ $(document).on("select2:open", () => {
     document.querySelector(".select2-search__field").focus();
 });
 
-let tglnow = "";
+// let tglnow = "";
 document.addEventListener("DOMContentLoaded", function () {
     function updateDateTime() {
         var now = new Date();
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
             minute: "2-digit",
             // second: "2-digit",
         };
-        let tglnow = now
+        tglnow = now
             .toLocaleString("id-ID", options)
             .replace(
                 /(\d{4})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})/,

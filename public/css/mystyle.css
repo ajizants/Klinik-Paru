@@ -7,6 +7,10 @@
     color: #1f2d3d !important;
 }
 
+.bg-antiquewhite {
+    background-color: antiquewhite !important;
+}
+
 .input-sm {
     width: 60px;
     height: 28px;

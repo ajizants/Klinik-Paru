@@ -245,20 +245,6 @@ function reportPoinDots() {
                         { data: "tampilLama" },
                         { data: "tampilBaru" },
                     ],
-                    // response.forEach(function (item, index) {
-                    //     item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
-                    // });
-
-                    // $("#reportDots")
-                    //     .DataTable({
-                    //         data: response,
-                    //         columns: [
-                    //             { data: "no" },
-                    //             // { data: "nip" },
-                    //             { data: "nama" },
-                    //             { data: "jumlahLama" },
-                    //             { data: "jumlahBaru" },
-                    //         ],
                     order: [0, "asc"],
                     lengthChange: false,
                     autoWidth: false,
@@ -293,6 +279,85 @@ function reportPoinDots() {
         },
     });
 }
+function reportPoinLoket() {
+    if ($.fn.DataTable.isDataTable("#reportLoket")) {
+        var tabletindakan = $("#reportLoket").DataTable();
+        tabletindakan.clear().destroy();
+    }
+
+    var tgl_awal = $("#tgl_awal").val(); // Ambil nilai dari input tanggal mulai
+    var tgl_akhir = $("#tgl_akhir").val(); // Ambil nilai dari input tanggal selesai
+    var tglA = formatDate(new Date(tgl_awal));
+    var tglB = formatDate(new Date(tgl_akhir));
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"), // Mengirim token CSRF untuk perlindungan keamanan
+        },
+    });
+    tampilkanLoading("Sedang mengambil data...");
+    const cookiestring = document.cookie.split("=");
+    $.ajax({
+        url: "/api/get/jumlah_petugas_loket",
+        type: "get",
+        data: {
+            tgl_awal: tgl_awal,
+            tgl_akhir: tgl_akhir,
+        },
+        success: function (response) {
+            response.forEach(function (item, index) {
+                item.no = index + 1; // Nomor urut dimulai dari 1, bukan 0
+                const lama = item.jumlahLama;
+                const baru = item.jumlahBaru;
+                item.total = lama + baru;
+            });
+            Swal.close();
+
+            $("#reportLoket")
+                .DataTable({
+                    data: response,
+                    columns: [
+                        { data: "no" },
+                        { data: "nama" },
+                        { data: "total" },
+                        { data: "jumlahLama" },
+                        { data: "jumlahBaru" },
+                    ],
+
+                    order: [0, "asc"],
+                    lengthChange: false,
+                    autoWidth: false,
+                    buttons: [
+                        {
+                            extend: "copyHtml5",
+                            text: "Salin",
+                        },
+                        {
+                            extend: "excelHtml5",
+                            text: "Excel",
+                            title:
+                                "Report Petugas Loket Tanggal: \n" +
+                                tglA +
+                                " s.d. " +
+                                tglB,
+                            filename:
+                                "Report Petugas Loket Tanggal: " +
+                                tglA +
+                                "  s.d. " +
+                                tglB,
+                        },
+                        "colvis", // Tombol untuk menampilkan/menyembunyikan kolom
+                    ],
+                })
+                .buttons()
+                .container()
+                .appendTo("#reportLoket_wrapper .col-md-6:eq(0)");
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            tampilkanEror(error + xhr.responseText);
+        },
+    });
+}
 
 $(document).ready(function () {
     $("#cari").on("click", reportPoin);
@@ -312,4 +377,5 @@ $(document).ready(function () {
     reportPoinPetugas();
     reportPoinDots();
     CariPoinJaspel();
+    reportPoinLoket();
 });

@@ -304,6 +304,11 @@ class PegawaiController extends Controller
                 <label for="alamat">Alamat Lengkap</label>
                 <input type="text" class="form-control form-control-sm" id="alamat" name="alamat"  value="' . htmlspecialchars($pegawai->biodata->alamat, ENT_QUOTES, 'UTF-8') . '"/>
               </div>';
+        // NO HP
+        $form .= '<div class="form-group col-6 col-md-auto">
+                <label for="noHp">Nomor HP</label>
+                <input type="text" class="form-control form-control-sm" id="noHp" name="noHp"  value="' . $pegawai->noHp . '"/>
+              </div>';
 
         // Status PNS
         $form .= '<div class="form-group col-6 col-md-auto">
@@ -322,7 +327,7 @@ class PegawaiController extends Controller
         $form .= '<div class="form-group col-6 col-md-auto">
                 <label for="status_kawin">Status Kawin</label>
                 <select class="form-control form-control-sm" id="status_kawin" name="status_kawin">
-                    <option value="KAWIN"' . ($pegawai->biodata->status_kawin == 'KAWIN' ? ' selected' : '') . '>KWIN</option>
+                    <option value="KAWIN"' . ($pegawai->biodata->status_kawin == 'KAWIN' ? ' selected' : '') . '>KAWIN</option>
                     <option value="BELUM KAWIN"' . ($pegawai->biodata->status_kawin == 'BELUM KAWIN' ? ' selected' : '') . '>BELUM KAWIN</option>
                     <option value="CERAI HIDUP"' . ($pegawai->biodata->status_kawin == 'CERAI HIDUP' ? ' selected' : '') . '>CERAI HIDUP</option>
                     <option value="CERAI MATI"' . ($pegawai->biodata->status_kawin == 'CERAI MATI' ? ' selected' : '') . '>CERAI MATI</option>
@@ -416,6 +421,7 @@ class PegawaiController extends Controller
         $pegawai->gelar_b     = $request->gelar_b;
         $pegawai->pangkat_gol = $request->pangkat;
         $pegawai->stat_pns    = $request->stat_pns;
+        $pegawai->noHp        = $request->noHp;
         $pegawai->save();
 
         // Update data biodata pegawai
