@@ -26,7 +26,8 @@
                                 <select name="nip" class="form-control select2bs4" id="nip">
                                     <option value="">-- Pilih Pegawai --</option>
                                     @foreach ($pegawai as $user)
-                                        <option value="{{ $user->nip }}"
+                                        <option value="{{ $user->nip }}" {{-- pilih nip yang sama --}}
+                                            @if ($user->nip == $nip) selected @endif
                                             data-nama="{{ $user->gelar_d }} {{ $user->nama }} {{ $user->gelar_b }}">
                                             {{ $user->gelar_d }} {{ $user->nama }}
                                             {{ $user->gelar_b }} - {{ $user->nip }}</option>
@@ -329,17 +330,8 @@
             })
             .catch(err => {
                 console.error(err);
+                tampilkanEror(err.message || "Terjadi kesalahan saat mengirim pengajuan cuti.");
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal',
-                    text: err.message || 'Terjadi kesalahan saat mengirim data.',
-                });
-
-                // opsional: tetap update tabel walaupun gagal
-                if (err.html) {
-                    generateTabelPermohonanCuti(err.html);
-                }
             });
 
     }

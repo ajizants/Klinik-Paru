@@ -141,6 +141,9 @@ class CutiPegawaiController extends Controller
 
     public function ajukanCuti(Request $request)
     {
+        if ($request->input('tgl_mulai') > $request->input('tgl_selesai')) {
+            return response()->json(['error' => true, 'message' => 'Tanggal selesai harus lebih besar dari tanggal mulai'], 500);
+        }
         $validated = $request->validate([
             'nip'         => 'required|string|exists:peg_t_pegawai,nip',
             'nama'        => 'required|string',
@@ -207,11 +210,11 @@ class CutiPegawaiController extends Controller
         }
         $html = view('TataUsaha.Cuti.permohonanCutiTabel', compact('dataCuti'))->render();
 
-        $sisaCutiUser    = $this->dataSisaCuti($nip);
         $dataSisaCutiAll = $this->dataSisaCuti();
         // return $dataSisaCutiAll;
         $sisaCutiAll = view('TataUsaha.Cuti.sisaCutiTabel', compact('dataSisaCutiAll'))->render();
 
+        $sisaCutiUser = $this->dataSisaCuti($nip);
         return response()->json([
             'message'     => 'Pengajuan cuti berhasil dikirim.',
             'permohonan'  => $cuti,

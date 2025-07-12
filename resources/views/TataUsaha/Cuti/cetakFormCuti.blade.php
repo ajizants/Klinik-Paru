@@ -30,7 +30,7 @@
         </div>
         <div class="text-center">
             <h2 class="font-bold">FORMULIR PERMINTAAN DAN PEMBERIAN CUTI</h2>
-            <h2 class="font-semibold">NOMOR : / /
+            <h2 class="font-semibold">NOMOR : / {{ $data->id }} /
                 {{ \Carbon\Carbon::parse($data->created_at)->locale('id')->isoFormat('Y') }}</h2>
         </div>
 
@@ -311,86 +311,20 @@
                     </tr>
                 </tbody>
             </table>
-            <table class="w-full text-sm">
-                <tbody>
-                    <tr class="bg-white ">
-                        <td class="px-2 py-[0.15rem] border border-t-0 border-black" colspan="4">
-                            <h2 class="font-bold">VII. PERTIMBANGAN ATASAN LANGSUNG </h2>
-                        </td>
-                    </tr>
-                    <tr class="bg-white border border-black">
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%">DISETUJUI</td>
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%">PERUBAHAN</td>
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%">DITANGGUHKAN</td>
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%">DISETUJUI</td>
-                    </tr>
-                    <tr class="bg-white border border-black">
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%">
-                            @if ($data->persetujuan == 1)
-                                <strong class="text-red-600">✓</strong>
-                            @endif
-                        </td>
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%"></td>
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%">
-                            @if ($data->persetujuan == 0)
-                                <strong class="text-red-600">✓</strong>
-                            @endif
-                        </td>
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%">
-                            @if ($data->persetujuan == 2)
-                                <strong class="text-red-600">✓</strong>
-                            @endif
-                        </td>
-                    </tr>
-                    <tr class="bg-white ">
-                        <td class="px-2 py-[0.15rem] border-b border-black" colspan="2">
-                            <textarea class="w-full resize-none" rows="6"></textarea>
-                        </td>
+            {{-- kepala/tu --}}
+            @if ($data->pegawai->stat_pns == 'PNS' || $data->pegawai->stat_pns == 'PPPK')
+                @include('TataUsaha.Cuti.ttdKepala')
+            @else
+                @include('TataUsaha.Cuti.ttdTu')
+            @endif
 
-                        <td class="px-2 py-[0.15rem] text-center border  border-black" colspan="2">
-                            <p>{{ $pimpinan['gelar'] }} Klinik Utama Kesehatan Paru Masyarakat Kelas A</p>
-                            <div class="h-[4rem]"></div>
-                            <p><u>{{ $pimpinan['kepala'] }}</u></p>
-                            <p>NIP: {{ $pimpinan['nipKepala'] }}</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="w-full text-sm text-left">
-                <tbody>
-                    <tr class="bg-white border border-black border-t-0">
-                        <td class="px-2 py-[0.15rem]" colspan="4">
-                            <h2 class="font-bold">VIII. KEPUTUSAN PEJABAT YANG BERWENANG MEMBERIKAN CUTI** </h2>
-                        </td>
-                    </tr>
-                    <tr class="bg-white border border-black">
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%">DISETUJUI</td>
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%">PERUBAHAN</td>
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%">DITANGGUHKAN</td>
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%">TIDAK DISETUJUI</td>
-                    </tr>
-                    <tr class="bg-white border border-black">
+            {{-- kepala/Sekdin --}}
 
-                        <td class="px-2 py-[0.15rem] border border-black text-white" width="25%">.</td>
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%"></td>
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%"></td>
-                        <td class="px-2 py-[0.15rem] border border-black" width="25%"></td>
-
-                    </tr>
-                    <tr class="bg-white ">
-                        <td class="px-2 py-[0.15rem] " colspan="2">
-                            <textarea class="w-full resize-none" rows="5"></textarea>
-                        </td>
-
-                        <td class="px-2 py-[0.15rem] text-center border  border-black" colspan="2">
-                            <p>Sekertaris Dinas Kesehatan <br> Kabupaten Banyumas</p>
-                            <div class="h-[4rem]"></div>
-                            <p><u>dr. Catur Yuni Muliatsih, MM.</u></p>
-                            <p>NIP: 197306152022122006</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            @if ($data->pegawai->stat_pns == 'PNS' || $data->pegawai->stat_pns == 'PPPK')
+                @include('TataUsaha.Cuti.ttdSekdin')
+            @else
+                @include('TataUsaha.Cuti.ttdKepala')
+            @endif
         </div>
 
     </div>

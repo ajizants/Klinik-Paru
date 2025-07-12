@@ -182,7 +182,8 @@
                 "paging": true,
                 "order": [
                     // [1, "asc"],
-                    [6, "desc"]
+                    [1, "desc"],
+                    [7, "desc"],
                 ],
             });
         }

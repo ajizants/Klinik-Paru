@@ -396,7 +396,8 @@ class DisplayController extends Controller
                 return $item['dokter_nama'] === $dokter && $item['status_pulang'] === 'Belum Pulang';
             });
 
-            return collect(array_values($listTunggu));
+            // return collect(array_values($listTunggu));
+            return collect(array_values($listTunggu))->sortBy('waktu_verifikasi')->values();
         }
 
         return collect();
