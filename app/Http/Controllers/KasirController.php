@@ -367,9 +367,9 @@ class KasirController extends Controller
                 'umur'       => $request->input('umur'),
                 'alamat'     => $request->input('alamat'),
                 'jaminan'    => $request->input('jaminan'),
-                'tagihan'    => 0,
-                'bayar'      => 0,
-                'kembalian'  => 0,
+                'tagihan'    => $request->input('tagihan'),
+                'bayar'      => $request->input('bayar'),
+                'kembalian'  => $request->input('kembalian'),
                 'petugas'    => "Nasirin",
                 'created_at' => $createdAt,
             ];
