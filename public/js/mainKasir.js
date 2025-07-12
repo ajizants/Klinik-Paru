@@ -90,6 +90,7 @@ function simpan() {
     var notrans = $("#notrans").val();
     var umur = $("#umur").val();
     var jk = $("#jk").val();
+    var tgltrans = $("#tgltrans").val();
 
     // Validasi data input
     if (!norm || !notrans || !umur || !jk) {
@@ -177,6 +178,7 @@ function simpan() {
             jk: jk,
             alamat: alamat,
             jaminan: jaminan,
+            tgltrans: tgltrans,
             dataTerpilih: dataTerpilih,
         }),
     })
@@ -557,6 +559,7 @@ function simpanTransaksi() {
     var tagihan = $("#tagihan").val();
     var bayar = $("#bayar").val();
     var kembalian = $("#kembali").val();
+    var tgltrans = $("#tgltrans").val();
 
     $.ajax({
         url: "/api/kasir/transaksi",
@@ -573,6 +576,7 @@ function simpanTransaksi() {
             tagihan: tagihan,
             bayar: bayar,
             kembalian: kembalian,
+            tgltrans: tgltrans,
         },
         success: function (response) {
             console.log(response);

@@ -272,18 +272,27 @@ class KasirController extends Controller
             KasirAddModel::insert($dataToInsert);
 
             if ($request->input('notrans')) {
+                $tglNow   = Carbon::now()->format('Y-m-d');
+                $tglTrans = Carbon::parse($request->input('tgltrans'))->format('Y-m-d');
+                if ($tglNow > $tglTrans) {
+                    $createdAt = Carbon::parse($request->input('tgltrans') . ' ' . Carbon::now()->format('H:i:s'));
+                } else {
+                    $createdAt = Carbon::now();
+                }
+                // dd($createdAt);
                 $req = [
-                    'notrans'   => $request->input('notrans'),
-                    'norm'      => $request->input('norm'),
-                    'nama'      => $request->input('nama'),
-                    'jk'        => $request->input('jk'),
-                    'umur'      => $request->input('umur'),
-                    'alamat'    => $request->input('alamat'),
-                    'jaminan'   => $request->input('jaminan'),
-                    'tagihan'   => 0,
-                    'bayar'     => 0,
-                    'kembalian' => 0,
-                    'petugas'   => "Nasirin",
+                    'notrans'    => $request->input('notrans'),
+                    'norm'       => $request->input('norm'),
+                    'nama'       => $request->input('nama'),
+                    'jk'         => $request->input('jk'),
+                    'umur'       => $request->input('umur'),
+                    'alamat'     => $request->input('alamat'),
+                    'jaminan'    => $request->input('jaminan'),
+                    'tagihan'    => 0,
+                    'bayar'      => 0,
+                    'kembalian'  => 0,
+                    'petugas'    => "Nasirin",
+                    'created_at' => $createdAt,
                 ];
                 $this->saveOrUpdateKunjungan($req);
             }
@@ -342,19 +351,29 @@ class KasirController extends Controller
     public function addTransaksi(Request $request)
     {
         if ($request->input('notrans')) {
+            $tglNow   = Carbon::now()->format('Y-m-d');
+            $tglTrans = Carbon::parse($request->input('tgltrans'))->format('Y-m-d');
+            if ($tglNow > $tglTrans) {
+                $createdAt = Carbon::parse($request->input('tgltrans') . ' ' . Carbon::now()->format('H:i:s'));
+            } else {
+                $createdAt = Carbon::now();
+            }
+            // dd($createdAt);
             $req = [
-                'notrans'   => $request->input('notrans'),
-                'norm'      => $request->input('norm'),
-                'nama'      => $request->input('nama'),
-                'jk'        => $request->input('jk'),
-                'umur'      => $request->input('umur'),
-                'alamat'    => $request->input('alamat'),
-                'jaminan'   => $request->input('jaminan'),
-                'tagihan'   => $request->input('tagihan'),
-                'bayar'     => $request->input('bayar'),
-                'kembalian' => $request->input('kembalian'),
-                'petugas'   => $request->input('petugas'),
+                'notrans'    => $request->input('notrans'),
+                'norm'       => $request->input('norm'),
+                'nama'       => $request->input('nama'),
+                'jk'         => $request->input('jk'),
+                'umur'       => $request->input('umur'),
+                'alamat'     => $request->input('alamat'),
+                'jaminan'    => $request->input('jaminan'),
+                'tagihan'    => 0,
+                'bayar'      => 0,
+                'kembalian'  => 0,
+                'petugas'    => "Nasirin",
+                'created_at' => $createdAt,
             ];
+            // dd($req);
             $this->saveOrUpdateKunjungan($req);
             return response()->json(['message' => 'Kunjungan berhasil diproses...!!'], 200);
         }
@@ -408,17 +427,19 @@ class KasirController extends Controller
 
         $dataKunjungan = KasirTransModel::firstOrNew(['notrans' => $notrans]);
         $dataKunjungan->fill([
-            'norm'      => $request['norm'],
-            'nama'      => $request['nama'],
-            'jk'        => $request['jk'],
-            'umur'      => $request['umur'],
-            'alamat'    => $request['alamat'],
-            'jaminan'   => $request['jaminan'],
-            'tagihan'   => str_replace(['Rp', '.', ',', ' '], '', $request['tagihan']),
-            'bayar'     => str_replace(['Rp', '.', ',', ' '], '', $request['bayar']),
-            'kembalian' => str_replace(['Rp', '.', ',', ' '], '', $request['kembalian']),
-            'petugas'   => $request['petugas'],
+            'norm'       => $request['norm'],
+            'nama'       => $request['nama'],
+            'jk'         => $request['jk'],
+            'umur'       => $request['umur'],
+            'alamat'     => $request['alamat'],
+            'jaminan'    => $request['jaminan'],
+            'tagihan'    => str_replace(['Rp', '.', ',', ' '], '', $request['tagihan']),
+            'bayar'      => str_replace(['Rp', '.', ',', ' '], '', $request['bayar']),
+            'kembalian'  => str_replace(['Rp', '.', ',', ' '], '', $request['kembalian']),
+            'petugas'    => $request['petugas'],
+            'created_at' => $request['created_at'],
         ]);
+        // dd($dataKunjungan);
         $dataKunjungan->save();
 
         return $dataKunjungan;
