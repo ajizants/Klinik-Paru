@@ -47,9 +47,9 @@
                             <form id="form-password">
                                 <div class="form-group form-row">
                                     <input type="text" class="col-1 form-control" id="id_user" name="id_user"
-                                        value="{{ Auth::user()->id }}" readonly>
+                                        value="{{ Auth::user()->id ?? '' }}" readonly>
                                     <input type="text" class="col form-control" id="nama_user" name="nama_user"
-                                        value="{{ Auth::user()->name }}" readonly>
+                                        value="{{ Auth::user()->name ?? 'Tamu' }}" readonly>
                                 </div>
 
                                 <div class="form-group">

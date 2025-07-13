@@ -276,12 +276,28 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-row d-flex justify-content-end">
+                            {{-- <div class="form-row d-flex justify-content-end">
                                 <div class="col-auto">
                                     <a class="btn btn-danger" id="tblBatal" onclick="batal();">Batal</a>
                                 </div>
                                 <div class="col-auto">
                                     <a class="btn btn-success" id="tblSimpan" onclick="selesai();">Selesai</a>
+                                </div>
+                            </div> --}}
+
+                            <div class="form-row d-flex justify-content-betwen">
+                                <div class="col-6">
+                                    <a type="button" class="btn btn-info" data-toggle="modal"
+                                        data-target="#spirometriModal" onclick="setSpiroForm();">Input Hasil
+                                        Spirometri</a>
+                                </div>
+                                <div class="col-6 form-row d-flex justify-content-end">
+                                    <div class="col-auto">
+                                        <a class="btn btn-danger" id="tblBatal" onclick="batal();">Batal</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a class="btn btn-success" id="tblSimpan" onclick="selesai();">Selesai</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

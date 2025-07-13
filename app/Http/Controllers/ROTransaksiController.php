@@ -13,6 +13,7 @@ use App\Models\ROJenisMesin;
 use App\Models\RoProyeksiModel;
 use App\Models\ROTransaksiHasilModel;
 use App\Models\ROTransaksiModel;
+use App\Models\SpirometriModel;
 use App\Models\TransPetugasModel;
 use Carbon\Carbon;
 use function PHPUnit\Framework\isEmpty;
@@ -144,65 +145,67 @@ class ROTransaksiController extends Controller
     }
     public function rontgenHasil($id)
     {
-        $title    = 'Hasil Penunjang';
+        $title = 'Hasil Penunjang';
+
         $appUrlRo = env('APP_URLRO');
         $norm     = str_pad($id, 6, '0', STR_PAD_LEFT); // Normalize ID to 6 digits
 
         $hasilRo = "";
-        try {
-            $hasilRo = RoHasilModel::when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
-                return $query->where('norm', $norm); // Filter by norm if valid
-            })
-                ->get();
-            foreach ($hasilRo as $item) {
-                $norm = $item->norm;
-                $tgl  = $item->tanggal;
-                // dd($item->tanggal);
-                $item['hasilBacaan'] = 'RO Tidak Dibacakan';
+        // try {
+        //     $hasilRo = RoHasilModel::when($norm !== null && $norm !== '' && $norm !== '000000', function ($query) use ($norm) {
+        //         return $query->where('norm', $norm); // Filter by norm if valid
+        //     })
+        //         ->get();
+        //     // $hasilRo = ROTransaksiHasilModel::where('norm', $norm)->get();
+        //     if ($hasilRo->isEmpty()) {
+        //         $hasilRo = "Data Foto Thorax pada Pasien dengan Norm: <u><b>" . $norm . "</b></u> tidak ditemukan,<br> Jika pasien melakukan Foto Thorax di KKPM, silahkan Menghubungi Bagian Radiologi. Terima Kasih...";
+        //     } else {
+        //         foreach ($hasilRo as $item) {
+        //             $norm = $item->norm;
+        //             $tgl  = $item->tanggal;
+        //             // dd($item->tanggal);
+        //             $item['hasilBacaan'] = 'RO Tidak Dibacakan';
 
-                $bacaan = ROBacaan::where('norm', $norm)
-                    ->where('tanggal_ro', $tgl)
-                    ->first();
-                // dd($bacaan);
-                if ($bacaan) {
-                    $item['hasilBacaan'] = $bacaan->bacaan_radiolog;
-                }
+        //             $bacaan = ROBacaan::where('norm', $norm)
+        //                 ->where('tanggal_ro', $tgl)
+        //                 ->first();
+        //             // dd($bacaan);
+        //             if ($bacaan) {
+        //                 $item['hasilBacaan'] = $bacaan->bacaan_radiolog;
+        //             }
+        //         }
+        //     }
 
-            }
-
-            if ($hasilRo->isEmpty()) {
-                $hasilRo = "Data Foto Thorax pada Pasien dengan Norm: <u><b>" . $norm . "</b></u> tidak ditemukan,<br> Jika pasien melakukan Foto Thorax di KKPM, silahkan Menghubungi Bagian Radiologi. Terima Kasih...";
-            }
-        } catch (\Exception $e) {
-            $hasilRo = "Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.";
-            // return response()->json([
-            //     'message' => 'Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.',
-            //     'status' => 500,
-            // ], 500, [], JSON_PRETTY_PRINT);
-        }
-        // $hasilRo = "Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.";
+        // } catch (\Exception $e) {
+        //     $hasilRo = "Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.";
+        //     // return response()->json([
+        //     //     'message' => 'Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.',
+        //     //     'status' => 500,
+        //     // ], 500, [], JSON_PRETTY_PRINT);
+        // }
+        $hasilRo = "Terjadi kesalahan saat mengakses database. Silahkan hubungi radiologi untuk menghidupkan server.";
 
         try {
             $hasilLab = LaboratoriumHasilModel::with('pasien', 'pemeriksaan', 'petugas.biodata', 'dokter.biodata')
                 ->where('norm', $norm) // Filter by norm using a LIKE condition
                 ->get();
-            if ($hasilLab->isEmpty()) {
+            // return response()->json($hasilLab, 200, [], JSON_PRETTY_PRINT);
+            if ($hasilLab->isEmpty() || $hasilLab == null || $hasilLab == []) {
                 $hasilLab = "Data Hasil Laboratorium pada Pasien dengan Norm: <u><b>" . $norm . "</b></u> tidak ditemukan,
                     <br> Jika pasien melakukan Pemeriksaan Lab di KKPM, silahkan Menghubungi Bagian Laboratorium.
                     <br> Dengan catatan pemeriksaan dilakukan Setelah Tanggal : <u><b>18 Juli 2024</b></u>, sebelum tanggal tersebut data tidak ada di sistem. Terima Kasih...";
-            }
-            // dd($hasilLab); // Debug: Dump and Die
-            foreach ($hasilLab as $item) {
-                if (in_array($item->idLayanan, [130, 131, 214])) {
-                    // dd($item->hasil);
-                    if ($item->no_iden_sediaan !== null) {
-                        $item['hasil'] = $item->hasil . " <br> " .
-                        substr($item->tgl_hasil, 2, 2) . "/K3302730/" .
-                        $item->kode_tcm . "/" . $item->no_iden_sediaan;
-
+            } else {
+                // dd($hasilLab); // Debug: Dump and Die
+                foreach ($hasilLab as $item) {
+                    if (in_array($item->idLayanan, [130, 131, 214])) {
+                        // dd($item->hasil);
+                        if ($item->no_iden_sediaan !== null) {
+                            $item['hasil'] = $item->hasil . " <br> " .
+                            substr($item->tgl_hasil, 2, 2) . "/K3302730/" .
+                            $item->kode_tcm . "/" . $item->no_iden_sediaan;
+                        }
                     }
                 }
-
             }
 
         } catch (\Exception $e) {
@@ -214,18 +217,25 @@ class ROTransaksiController extends Controller
             // ], 500, [], JSON_PRETTY_PRINT);
         }
 
-        return view('RO.Hasil.main', compact('appUrlRo', 'hasilRo', 'hasilLab'))->with([
+        $dataSpirometri = SpirometriModel::with('biodataPetugas', 'biodataDokter')
+            ->where('norm', $norm)
+            ->get();
+        $hasilSpiro = view('IGD.Trans.tabelHasilSpiro', compact('dataSpirometri'))->render();
+
+        return view('RO.Hasil.main', compact('appUrlRo', 'hasilRo', 'hasilLab', 'hasilSpiro'))->with([
             'title' => $title,
         ]);
     }
 
     public function roHasil()
     {
-        $title    = 'Hasil Penunjang';
-        $appUrlRo = env('APP_URLRO');
-        $hasilRo  = "Silahkan Ketikan No RM dan tekan Enter/Klik Tombol Cari";
-        $hasilLab = "Silahkan Ketikan No RM dan tekan Enter/Klik Tombol Cari";
-        return view('RO.Hasil.main', compact('appUrlRo', 'hasilRo', 'hasilLab'))->with([
+        $title          = 'Hasil Penunjang';
+        $appUrlRo       = env('APP_URLRO');
+        $hasilRo        = "Silahkan Ketikan No RM dan tekan Enter/Klik Tombol Cari";
+        $hasilLab       = "Silahkan Ketikan No RM dan tekan Enter/Klik Tombol Cari";
+        $dataSpirometri = [];
+        $hasilSpiro     = view('IGD.Trans.tabelHasilSpiro', compact('dataSpirometri'))->render();
+        return view('RO.Hasil.main', compact('appUrlRo', 'hasilRo', 'hasilLab', 'hasilSpiro'))->with([
             'title' => $title,
 
         ]);

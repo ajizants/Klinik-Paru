@@ -21,7 +21,7 @@
                 </li>
                 <li class="nav-item d-none d-sm-inline-block" style="display: none">
                     <input type="text" class="form-control form-control-navbar" placeholder="Search" id='roleUser'
-                        value="{{ Auth::user()->role }}" hidden>
+                        value="{{ Auth::user()->role ?? 'User' }}" hidden>
                 </li>
             </ul>
 
@@ -58,7 +58,7 @@
                 <!-- Messages Dropdown Menu -->
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="fa-solid fa-user"></i> <b class="mx-1">{{ Auth::user()->name }}</b>
+                        <i class="fa-solid fa-user"></i> <b class="mx-1">{{ Auth::user()->name ?? 'User' }}</b>
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         <a href="#" class="dropdown-item">
@@ -67,31 +67,47 @@
                                 <img src="{{ asset('img/user1.webp') }}" alt="User Avatar"
                                     class="img-size-50 mr-3 img-circle">
                                 <div class="media-body">
-                                    <h3 class="dropdown-item-title">
-                                        <b>{{ Auth::user()->name }}</b>
-                                        @php
-                                            $email = Auth::user()->email;
-                                            $email = explode('@', $email);
-                                            $nip = $email[0];
-                                        @endphp
-                                        <br>
-                                        <input style="border: 0;" id="user_nip" value="{{ $nip }}" readonly>
-                                        <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                                    </h3>
-                                    <p class="text-sm">Wis Rampung Lik...?</p>
+                                    @if (Auth::user() == null)
+                                        <h3 class="dropdown-item-title">
+                                            <span class="float-right text-sm text-danger"><i
+                                                    class="fas fa-star"></i></span>
+                                        </h3>
+                                    @else
+                                        <h3 class="dropdown-item-title">
+                                            <b>{{ Auth::user()->name ?? 'Tamu' }}</b>
+                                            @php
+                                                $email = Auth::user()->email ?? 'guest@example.com';
+                                                $email = explode('@', $email);
+                                                $nip = $email[0];
+                                            @endphp
+                                            <br>
+                                            <input style="border: 0;" id="user_nip" value="{{ $nip }}"
+                                                readonly>
+                                            <span class="float-right text-sm text-danger"><i
+                                                    class="fas fa-star"></i></span>
+                                        </h3>
+                                        <p class="text-sm">Wis Rampung Lik...?</p>
+                                    @endif
                                 </div>
                             </div>
                             <!-- Message End -->
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                            Logout
-                        </a>
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#modal-password">
-                            <i class="fa-solid fa-lock mr-2 text-gray-400"></i>
-                            Ubah Password
-                        </a>
+                        @if (Auth::user() == null)
+                            <a class="dropdown-item" href="/">
+                                <i class="fas fa-sign-in-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Login
+                            </a>
+                        @else
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Logout
+                            </a>
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#modal-password">
+                                <i class="fa-solid fa-lock mr-2 text-gray-400"></i>
+                                Ubah Password
+                            </a>
+                        @endif
                     </div>
                 </li>
                 <li class="nav-item">
@@ -103,7 +119,8 @@
         </nav>
 
 
-        <div class="modal fade" id="modal-jadwal" tabindex="-1" aria-labelledby="modal-jadwalLabel" aria-hidden="true">
+        <div class="modal fade" id="modal-jadwal" tabindex="-1" aria-labelledby="modal-jadwalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">

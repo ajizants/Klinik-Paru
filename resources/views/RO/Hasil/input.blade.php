@@ -51,5 +51,19 @@
                 </div>
             </div>
         </div>
+        <!-- Hasil Spirometri -->
+        <div class="card shadow mb-4">
+            <a href="#cardHasilSpiro" class="d-block card-header py-1 bg-info text-center text-dark font-weight-bold"
+                data-toggle="collapse" role="button" aria-expanded="true" aria-controls="cardHasilSpiro">
+                Hasil Spirometri
+            </a>
+            <div class="collapse show" id="cardHasilSpiro">
+                <div class="card-body p-2">
+                    <div class="container-fluid" id="divHasilSpiro">
+                        {!! $hasilSpiro !!}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

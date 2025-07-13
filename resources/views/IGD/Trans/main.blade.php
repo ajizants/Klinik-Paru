@@ -56,4 +56,6 @@
             }
         });
     </script>
+
+    @include('IGD.Trans.modalSpiro')
 @endsection

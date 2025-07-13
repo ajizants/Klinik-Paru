@@ -319,3 +319,19 @@ function searchByRM(norm) {
         },
     });
 }
+
+function antrianSpiro(tgl) {
+    $.ajax({
+        url: "/api/spiro/antrian",
+        type: "get",
+        data: { tgl: tgl },
+        dataType: "json",
+        success: function (response) {
+            $("#divAntrianSpiro").html(response);
+            $("#tabelAntrianSpiro").DataTable();
+        },
+        error: function (xhr) {
+            // Handle error
+        },
+    });
+}

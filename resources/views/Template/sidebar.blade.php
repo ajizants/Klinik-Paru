@@ -5,6 +5,20 @@
             width="30" height="30">
         <span class="brand-text font-weight-light text-md"><b>KKPM</b></span>
     </a>
+    {{-- @php
+        use App\Models\User;
+        use Illuminate\Support\Facades\Auth;
+
+        if (Auth::user() === null) {
+            $guestUser = User::firstOrCreate(
+                ['name' => 'Guest'],
+                ['email' => 'guest@example.com', 'password' => bcrypt('guest123'), 'role' => 'guest'],
+            );
+            Auth::loginUsingId($guestUser->id);
+        }
+        // dump(Auth::user());
+    @endphp --}}
+
 
     <!-- Sidebar -->
     <div class="sidebar font-weight-bold">
@@ -112,7 +126,7 @@
                 @php
                     $roleIGD = ['admin', '', 'igd', 'nurse', 'dokter', 'perawat'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleIGD)) non-aktif @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role ?? 'guest', $roleIGD)) non-aktif @endif">
                     <a href="" class="nav-link">
                         <i class="fa-solid fa-truck-medical nav-icon"></i>
                         <p>Ruang Tindakan <i class="right fas fa-angle-left"></i></p>
@@ -143,7 +157,7 @@
                 @php
                     $roleDots = ['admin', '', 'dots', 'perawat'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleDots)) non-aktif @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role ?? 'guest', $roleDots)) non-aktif @endif">
                     <a href="" class="nav-link">
                         <i class="nav-icon fa-solid fa-hand-holding-medical"></i>
                         <p>Dots Center <i class="right fas fa-angle-left"></i></p>
@@ -168,7 +182,7 @@
                 @php
                     $roleGizi = ['admin', '', 'gizi'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleGizi)) non-aktif @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role ?? 'guest', $roleGizi)) non-aktif @endif">
                     <a href="" class="nav-link">
                         <i class="fa-brands fa-nutritionix nav-icon"></i>
                         <p>Gizi <i class="right fas fa-angle-left"></i></p>
@@ -199,7 +213,7 @@
                 @php
                     $roleFar = ['admin', '', 'farmasi'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleFar)) non-aktif @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role ?? 'guest', $roleFar)) non-aktif @endif">
                     <a href="" class="nav-link">
                         <i class="fa-solid fa-pills nav-icon"></i>
                         <p>Farmasi <i class="right fas fa-angle-left"></i></p>
@@ -218,7 +232,7 @@
                 @php
                     $roleLab = ['admin', '', 'lab'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleLab)) non-aktif @endif"> <a href=""
+                <li class="nav-item @if (!in_array(Auth::user()->role ?? 'guest', $roleLab)) non-aktif @endif"> <a href=""
                         class="nav-link">
                         <i class="fa-solid fa-microscope nav-icon"></i>
                         <p>Laboratorium <i class="right fas fa-angle-left"></i></p>
@@ -261,7 +275,7 @@
                 @php
                     $roleRO = ['admin', '', 'ro'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleRO)) non-aktif @endif"> <a href=""
+                <li class="nav-item @if (!in_array(Auth::user()->role ?? 'guest', $roleRO)) non-aktif @endif"> <a href=""
                         class="nav-link">
                         <i class="nav-icon fa-solid fa-circle-radiation"></i>
                         <p>Radiologi <i class="right fas fa-angle-left"></i></p>
@@ -298,7 +312,7 @@
                 @php
                     $roleKasir = ['admin', '', 'kasir'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleKasir)) non-aktif @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role ?? 'guest', $roleKasir)) non-aktif @endif">
                     <a href="" class="nav-link">
                         <i class="fa-solid fa-cash-register nav-icon"></i>
                         <p>Kasir <i class="right fas fa-angle-left"></i></p>
@@ -347,31 +361,31 @@
                                 <p>Cuti Pegawai</p>
                             </a>
                         </li>
-                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleTu)) non-aktif @endif">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role ?? 'guest', $roleTu)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('Gudang/ATK') }}">
                                 <i class="fa-solid fa-warehouse nav-icon"></i>
                                 <p>Gudang ATK</p>
                             </a>
                         </li>
-                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleTu)) non-aktif @endif">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role ?? 'guest', $roleTu)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('TataUsaha/surat') }}">
                                 <i class="fa-solid fa-envelope nav-icon"></i>
                                 <p>Surat Umum</p>
                             </a>
                         </li>
-                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleTu)) non-aktif @endif">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role ?? 'guest', $roleTu)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('/TataUsaha/belanja') }}">
                                 <i class="fa-solid fa-money-bill-1-wave nav-icon"></i>
                                 <p>Belanja</p>
                             </a>
                         </li>
-                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleTu)) non-aktif @endif">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role ?? 'guest', $roleTu)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('TataUsaha/report') }}">
                                 <i class="fa-solid fa-cart-flatbed nav-icon"></i>
                                 <p>Laporan Belanja</p>
                             </a>
                         </li>
-                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role, $roleTu)) non-aktif @endif">
+                        <li class="nav-item ml-4 @if (!in_array(Auth::user()->role ?? 'guest', $roleTu)) non-aktif @endif">
                             <a class="nav-link" href="{{ url('/kasir/master') }}">
                                 <i class="fa-solid fa-database nav-icon"></i>
                                 <p>Master Data Layanan</p>
@@ -384,14 +398,14 @@
                 @php
                     $roleSurat = ['admin', 'igd', 'nakes', 'dokter', 'perawat'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleSurat)) non-aktif @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role ?? 'guest', $roleSurat)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/surat/medis') }}">
                         <i class="fa-solid fa-envelope nav-icon"></i>
                         <p>Surat Medis</p>
                     </a>
                 </li>
 
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleSurat)) non-aktif @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role ?? 'guest', $roleSurat)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/jadwal') }}">
                         <i class="fa-solid fa-calendar-days nav-icon"></i>
                         <p>Jadwal Karyawan</p>
@@ -400,9 +414,9 @@
 
                 <!-- Hasil Penunjang -->
                 @php
-                    $roleHasilPenunjang = ['tamu', 'igd', 'admin', 'nakes', 'dokter', 'perawat', 'ro'];
+                    $roleHasilPenunjang = ['tamu', 'guest', 'igd', 'admin', 'nakes', 'dokter', 'perawat', 'ro'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleHasilPenunjang)) non-aktif @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role ?? 'guest', $roleHasilPenunjang)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/RO/Hasil') }}">
                         <i class="fa-solid fa-x-ray nav-icon"></i>
                         <p>Hasil Penunjang</p>
@@ -412,7 +426,7 @@
                 @php
                     $roleHasilPenunjang = ['tamu', 'promkes', 'admin', 'nakes', 'dokter', 'perawat'];
                 @endphp
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleHasilPenunjang)) non-aktif @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role ?? 'guest', $roleHasilPenunjang)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/Promkes') }}">
                         <i class="fa-solid fa-laptop-medical nav-icon"></i>
                         <p>Promkes</p>
@@ -451,13 +465,13 @@
                     $roleDokter = ['admin', 'igd', 'dokter', 'perawat'];
                     $rolePegawai = ['pegawai'];
                 @endphp
-                <li class="nav-item @if (in_array(Auth::user()->role, $rolePegawai)) non-aktif @endif">
+                <li class="nav-item @if (in_array(Auth::user()->role ?? 'guest', $rolePegawai)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/Riwayat/Pasien') }}">
                         <i class="fa-solid fa-book-medical nav-icon"></i>
                         <p>Riwayat Pasien</p>
                     </a>
                 </li>
-                <li class="nav-item @if (!in_array(Auth::user()->role, $roleDokter)) non-aktif @endif">
+                <li class="nav-item @if (!in_array(Auth::user()->role ?? 'guest', $roleDokter)) non-aktif @endif">
                     <a class="nav-link" href="{{ url('/Diagnosa/Mapping') }}">
                         <i class="fa-solid fa-book-medical nav-icon"></i>
                         <p>Mapping Dx Medis</p>

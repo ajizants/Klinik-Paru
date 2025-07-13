@@ -21,6 +21,9 @@
                     <a type="button" class="nav-link" onclick=" toggleSections('#dAntrian')"><b>Antrian
                             All</b></a>
                 </li>
+                <li class="nav-item">
+                    <a type="button" class="nav-link" onclick=" toggleSections('#tab_1')"><b>Spirometri</b></a>
+                </li>
                 <div class="input-group col d-flex justify-content-start ml-5">
                     <input type="date" class="form-control col-sm-2 bg bg-warning" id="tanggal"
                         value="{{ old('date') }}" required onchange="updateAntrian();">
@@ -38,6 +41,9 @@
             @include('Template.Table.belumUpload')
             @include('Template.Table.selesai')
             @include('Template.Table.all')
+            <div id="tab_1" style="display: none">
+                <div id="divAntrianSpiro"></div>
+            </div>
         </div>
     </div>
 </div>

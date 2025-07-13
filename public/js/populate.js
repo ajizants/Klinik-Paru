@@ -29,6 +29,7 @@ function handleNoData(ruang) {
     const dataArray = getNoDataMessage();
     drawDataTable(dataArray, ruang, "#dataAntrian");
     drawDataTable(dataArray, ruang, "#dataSelesai");
+    drawDataTable(dataArray, ruang, "#dataSelesai");
     if (ruang === "ro") {
         drawDataTable(dataArray, ruang, "#daftarUpload");
         drawDataTable(dataArray, ruang, "#dataKonsul");
@@ -442,7 +443,7 @@ function getNoDataMessage() {
 //         </div>`;
 // }
 function getPenunjangText(item) {
-    console.log("🚀 ~ getPenunjangText ~ item:", item);
+    // console.log("🚀 ~ getPenunjangText ~ item:", item);
 
     const statusLab = item.statusLab ?? "Belum";
     const statusRO = item.statusRO ?? "Belum";
@@ -468,13 +469,41 @@ function fetchDataAntrianAll(tanggal, ruang, callback) {
         url: "/api/antrian/kominfo",
         type: "post",
         data: { tanggal, ruang },
-        success: callback,
+        success: function (res) {
+            $("#loadingSpinner").hide();
+
+            // Cek jika server mengembalikan pesan error dalam JSON
+            if (res.error) {
+                Toast.fire({
+                    icon: "error",
+                    title: res.error || "Data tidak ditemukan",
+                });
+                handleNoData(ruang); // kosongkan atau sembunyikan UI jika perlu
+                return;
+            }
+
+            // Jika tidak error, jalankan callback
+            if (typeof callback === "function") {
+                callback(res);
+            }
+        },
         error: function (xhr) {
+            $("#loadingSpinner").hide();
             console.error("Error fetching data:", xhr);
+            Toast.fire({
+                icon: "error",
+                title: "Gagal mengakses server",
+            });
+            handleNoData(ruang);
         },
     });
 }
 
+function handleNoDataAll(ruang) {
+    $(`#tabel-${ruang}`).html(
+        `<tr><td colspan="99" class="text-center text-muted">Tidak ada data</td></tr>`
+    );
+}
 function initializeDataTable(selector, data, columns, ruang) {
     // console.log("🚀 ~ initializeDataTable ~ ruang:", ruang);
     // console.log("🚀 ~ initializeDataTable ~ columns:", columns);
@@ -1231,9 +1260,6 @@ function setTransaksi(button, ruang) {
             cariTsLab(norm, tgl, ruang);
             $("#umur").val(umur);
             getNoSampel();
-            // if (cekIgd == true) {
-            //     cekTransLain(notrans);
-            // }
 
             break;
         case "ro":

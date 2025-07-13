@@ -48,7 +48,6 @@ Route::get('lte', [HomeController::class, 'lte'])->name('lte');
 
 Route::get('verif/{id}', [VerifController::class, 'verif'])->name('verif');
 
-Route::get('RO/Hasil', [ROTransaksiController::class, 'roHasil'])->name('roHasil');
 Route::get('RO/Hasil/{id}', [ROTransaksiController::class, 'rontgenHasil'])->name('rontgenHasil');
 
 //display tunggu
@@ -68,6 +67,7 @@ Route::post('pemesanan', [PendaftaranOnlineController::class, 'store'])->name('p
 
 //menu
 Route::middleware('auth')->group(function () {
+    Route::get('RO/Hasil', [ROTransaksiController::class, 'roHasil'])->name('roHasil');
     Route::get('surat/medis', [SuratController::class, 'index'])->name('suratMedis');
 
     //pendaftaran
@@ -116,7 +116,7 @@ Route::middleware('auth')->group(function () {
     Route::get('Gizi/Riwayat', [HomeController::class, 'riwayatGizi'])->name('riwayatGizi')->middleware('role:gizi');
 
     //riwayat diagnosa
-    Route::get('Riwayat/Pasien', [HomeController::class, 'riwayatKunjungan'])->name('riwayatKunjungan')->middleware('role:dokter,perawat,dots,igd,farmasi');
+    Route::get('Riwayat/Pasien', [HomeController::class, 'riwayatKunjungan'])->name('riwayatKunjungan')->middleware('role:dokter,perawat,dots,igd,farmasi,guest');
     Route::get('Diagnosa/Mapping', [HomeController::class, 'mappingDx'])->name('mappingDx')->middleware('role:dokter,perawat');
 
     //analisis data

@@ -10,8 +10,13 @@ class IGDTransModel extends Model
     use HasFactory;
     protected $connection = 'mysql';
 
-    protected $table = 't_kunjungan_tindakan';
+    protected $table      = 't_kunjungan_tindakan';
     protected $primaryKey = 'id';
+
+    public function pasien()
+    {
+        return $this->belongsTo(PasienModel::class, 'norm', 'norm');
+    }
 
     public function tindakan()
     {
@@ -44,6 +49,10 @@ class IGDTransModel extends Model
         return $this->belongsTo(KunjunganWaktuSelesai::class, 'notrans', 'notrans');
     }
 
+    public function hasilSpiro()
+    {
+        return $this->hasOne(SpirometriModel::class, 'notrans', 'notrans');
+    }
     protected $fillable = [
         'norm',
         'notrans',
@@ -67,14 +76,14 @@ class IGDTransModel extends Model
 
         foreach ($dataIgd as $item) {
             $pelaksana = $item->pelaksana;
-            $biodata = $pelaksana->biodata ?? null;
+            $biodata   = $pelaksana->biodata ?? null;
 
             if ($biodata) {
                 $gelar_d = $pelaksana->gelar_d ?? '';
-                $nama = $biodata->nama ?? '';
+                $nama    = $biodata->nama ?? '';
                 $gelar_b = $pelaksana->gelar_b ?? '';
 
-                $namaLengkap = trim("{$gelar_d} {$nama} {$gelar_b}");
+                $namaLengkap   = trim("{$gelar_d} {$nama} {$gelar_b}");
                 $namaPetugas[] = ['nama' => $namaLengkap];
             }
         }
@@ -84,7 +93,7 @@ class IGDTransModel extends Model
 
     public function cariPoinTotal($request)
     {
-        $mulaiTgl = $request->input('mulaiTgl');
+        $mulaiTgl   = $request->input('mulaiTgl');
         $selesaiTgl = $request->input('selesaiTgl');
 
         $query = DB::table(DB::raw('(

@@ -221,6 +221,8 @@ function selesai() {
 function updateAntrian() {
     antrian("igd");
     antrianAll("igd");
+    const tgl = $("#tanggal").val();
+    antrianSpiro(tgl);
 }
 let namaPetugasSebelumnya;
 
