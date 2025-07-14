@@ -36,16 +36,16 @@
                                     </tr>
                                     <tr>
                                         <th class="text-center" style="background-color: darkgray;">FEV1(L)</th>
-                                        <td class="text-center">{{ $item->pred_fvc }}</td>
-                                        <td class="text-center">{{ $item->value_fvc }}</td>
-                                        <td class="text-center">{{ $item->pred_fvc_2 }}</td>
+                                        <td class="text-center">{{ $item->pred_fev1 }}</td>
+                                        <td class="text-center">{{ $item->value_fev1 }}</td>
+                                        <td class="text-center">{{ $item->pred_fev1_2 }}</td>
 
                                     </tr>
                                     <tr>
                                         <th class="text-center" style="background-color: darkgray;">FEV1/FVC(%)</th>
-                                        <td class="text-center">{{ $item->pred_fvc }}</td>
-                                        <td class="text-center">{{ $item->value_fvc }}</td>
-                                        <td class="text-center">{{ $item->pred_fvc_2 }}</td>
+                                        <td class="text-center">{{ $item->pred_fev1_fvc }}</td>
+                                        <td class="text-center">{{ $item->value_fev1_fvc }}</td>
+                                        <td class="text-center">{{ $item->pred_fev1_fvc_2 }}</td>
 
                                     </tr>
                                 </tbody>
