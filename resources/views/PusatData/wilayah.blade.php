@@ -55,7 +55,7 @@
                         id="tablePendaftaranPerKecamatanTahunan">
                         <thead class="bg bg-info">
                             <tr>
-                                <th>Bulan</th>
+                                <th>Tahun</th>
                                 <th>Kode Kab</th>
                                 <th>Kabupaten</th>
                                 <th>Kode Kec</th>
