@@ -16,20 +16,44 @@
         </tr>
     </thead>
     <tbody>
+        @php
+            $email = Auth::user()->email;
+            $email = explode('@', $email);
+            $nip = $email[0];
+
+        @endphp
         @forelse($dataCuti as $index => $cuti)
             <tr>
                 <td>
                     @if (in_array(Auth::user()->role, ['admin', 'tu']))
-                        <button class="mt-2 btn btn-success btn-sm"
-                            onclick="persetujuanCuti({{ $cuti->id }}, 1)">Setujui</button>
-                        <button class="mt-2 btn btn-warning btn-sm"
-                            onclick="persetujuanCuti({{ $cuti->id }}, 2)">Tolak</button>
-                        <button class="mt-2 btn btn-danger btn-sm"
-                            onclick="hapusPermohonanCuti({{ $cuti->id }})">Hapus</button>
-                        <a class="mt-2 btn btn-primary btn-sm" href="/tu/cuti/cetak/{{ $cuti->id }}"
-                            target="_blank">Cetak</a>
+                        @if ($cuti->persetujuan == 0)
+                            <button class="mt-2 btn btn-danger btn-sm"
+                                onclick="hapusPermohonanCuti({{ $cuti->id }})">Hapus</button>
+                            <button class="mt-2 btn btn-warning btn-sm"
+                                onclick="editPermohonanCuti({{ $cuti->id }})">Edit</button>
+                            <button class="mt-2 btn bg-orange btn-sm"
+                                onclick="persetujuanCuti({{ $cuti->id }}, 2)">Tolak</button>
+                            <button class="mt-2 btn btn-success btn-sm"
+                                onclick="persetujuanCuti({{ $cuti->id }}, 1)">Setujui</button>
+                        @else
+                            <button class="mt-2 btn btn-danger btn-sm"
+                                onclick="hapusPermohonanCuti({{ $cuti->id }})">Hapus</button>
+                            <button class="mt-2 btn btn-warning btn-sm"
+                                onclick="editPermohonanCuti({{ $cuti->id }})">Edit</button>
+                            <button class="mt-2 btn bg-orange btn-sm"
+                                onclick="persetujuanCuti({{ $cuti->id }}, 2)">Tolak</button>
+                            <a class="mt-2 btn btn-primary btn-sm" href="/tu/cuti/cetak/{{ $cuti->id }}"
+                                target="_blank">Cetak</a>
+                        @endif
                     @else
-                        {{ $index + 1 }}
+                        @if ($nip == $cuti->nip && $cuti->persetujuan == 0)
+                            <button class="mt-2 btn btn-warning btn-sm"
+                                onclick="editPermohonanCuti({{ $cuti->id }})">Edit</button>
+                            <button class="mt-2 btn btn-danger btn-sm"
+                                onclick="hapusPermohonanCuti({{ $cuti->id }})">Hapus</button>
+                        @else
+                            {{ $index + 1 }}
+                        @endif
                     @endif
                 </td>
                 <td>
@@ -51,6 +75,7 @@
                 <td>{{ $cuti->created_at->format('d-m-Y') }}</td>
             </tr>
         @empty
+
         @endforelse
     </tbody>
 </table>

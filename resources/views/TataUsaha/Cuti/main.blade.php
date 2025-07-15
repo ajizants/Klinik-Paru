@@ -22,7 +22,9 @@
         </ul>
     </div>
     @include('TataUsaha.Cuti.input')
-    @include('TataUsaha.Cuti.modal')
+    <div id="divModalPermohonanCuti">
+        @include('TataUsaha.Cuti.modal')
+    </div>
 
     <!-- my script -->
     <script src="{{ asset('js/template.js') }}"></script>
@@ -122,6 +124,18 @@
             })
         }
 
+        function showFormCuti() {
+            $.ajax({
+                url: "/tu/cuti/form",
+                type: "GET",
+                success: function(data) {
+                    console.log("🚀 ~ showFormCuti ~ data:", data)
+                    $('#divModalPermohonanCuti').html(data);
+                    $('#modal-pengajuanCuti').modal('show');
+                }
+            })
+        }
+
         function persetujuanCuti(id, persetujuan) {
             tampilkanLoading('Sedangan Menyetujui Cuti...');
             $.ajax({
@@ -132,7 +146,7 @@
                     generateTabelPermohonanCuti(data.html);
                     generateTabelSisaCuti(sisaCutiAll);
                     tampilkanInfoCuti(data.sisaCuti);
-                    Swal.close();
+                    // Swal.close();
                 }
             })
         }
@@ -154,7 +168,7 @@
                             generateTabelPermohonanCuti(data.html);
                             generateTabelSisaCuti(sisaCutiAll);
                             tampilkanInfoCuti(data.sisaCuti);
-                            Swal.close();
+                            // Swal.close();
                         },
                         error: function(xhr) {
                             tampilkanEror(xhr.response)
@@ -162,6 +176,66 @@
                     })
                 }
             })
+        }
+
+        function editPermohonanCuti(id) {
+            Swal.fire({
+                title: 'Apakah anda yakin ingin mengupdate data ini?',
+                showCancelButton: true,
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Tidak',
+                showLoaderOnConfirm: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/tu/cuti/edit/" + id,
+                        type: "GET",
+                        success: function(res) {
+                            Swal.close();
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Data berhasil diambil'
+                            })
+                            $('#divModalPermohonanCuti').html(res.data);
+                            $('#modal-pengajuanCuti').modal('show');
+
+                        },
+                        error: function(xhr) {
+                            tampilkanEror(xhr.response)
+                        }
+                    })
+                }
+            })
+        }
+
+        function updatePermohonan(id) {
+            const formData = new FormData(document.getElementById('formCuti'));
+            formData.append('id', id);
+            fetch('/tu/cuti/update/' + id, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                    body: formData
+                })
+                .then(async res => {
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        throw data; // lempar pesan dari server (misalnya 422)
+                    }
+
+                    tampilkanSukses(data.message || 'Pengajuan cuti berhasil dikirim.');
+                    // formData.reset();
+                    $('#modal-pengajuanCuti').modal('hide');
+                    generateTabelPermohonanCuti(data.html);
+                    generateTabelSisaCuti(sisaCutiAll);
+                    tampilkanInfoCuti(sisaCutiUser);
+                })
+                .catch(err => {
+                    console.error(err);
+                    tampilkanEror(err.message || "Terjadi kesalahan saat mengirim pengajuan cuti.");
+                });
         }
 
         function generateTabelPermohonanCuti(data) {
@@ -181,8 +255,8 @@
                 "searching": true,
                 "paging": true,
                 "order": [
-                    // [1, "asc"],
-                    [1, "desc"],
+                    [0, "dsc"],
+                    // [1, "desc"],
                     [7, "desc"],
                 ],
             });

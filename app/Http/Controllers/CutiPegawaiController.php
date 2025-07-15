@@ -139,6 +139,32 @@ class CutiPegawaiController extends Controller
         return $dataPegawai;
     }
 
+    private function cekTabrakan(array $params)
+    {
+        $nip            = $params['nip'];
+        $tglMulaiBaru   = $params['tgl_mulai'];
+        $tglSelesaiBaru = $params['tgl_selesai'];
+        $id             = $params['id'] ?? null;
+
+        $cekTabrakan = DB::table('peg_t_cuti')
+            ->where('nip', $nip)
+            ->when($id, function ($query, $id) {
+                // Abaikan record yang sedang diedit
+                $query->where('id', '!=', $id);
+            })
+            ->where(function ($query) use ($tglMulaiBaru, $tglSelesaiBaru) {
+                $query->whereBetween('tgl_mulai', [$tglMulaiBaru, $tglSelesaiBaru])
+                    ->orWhereBetween('tgl_selesai', [$tglMulaiBaru, $tglSelesaiBaru])
+                    ->orWhere(function ($q) use ($tglMulaiBaru, $tglSelesaiBaru) {
+                        $q->where('tgl_mulai', '<=', $tglMulaiBaru)
+                            ->where('tgl_selesai', '>=', $tglSelesaiBaru);
+                    });
+            })
+            ->exists();
+
+        return $cekTabrakan;
+    }
+
     public function ajukanCuti(Request $request)
     {
         if ($request->input('tgl_mulai') > $request->input('tgl_selesai')) {
@@ -163,19 +189,9 @@ class CutiPegawaiController extends Controller
         ];
 
         // Cek apakah ada cuti yang bertabrakan
-        $cekTabrakan = DB::table('peg_t_cuti')
-            ->where('nip', $nip)
-            ->where(function ($query) use ($tglMulaiBaru, $tglSelesaiBaru) {
-                $query->whereBetween('tgl_mulai', [$tglMulaiBaru, $tglSelesaiBaru])
-                    ->orWhereBetween('tgl_selesai', [$tglMulaiBaru, $tglSelesaiBaru])
-                    ->orWhere(function ($q) use ($tglMulaiBaru, $tglSelesaiBaru) {
-                        $q->where('tgl_mulai', '<=', $tglMulaiBaru)
-                            ->where('tgl_selesai', '>=', $tglSelesaiBaru);
-                    });
-            })
-            ->exists();
+        $cekTabrakan = $this->cekTabrakan($request->all());
 
-        if ($cekTabrakan) {
+        if ($cekTabrakan === true) {
             switch ($roleUser) {
                 case 'admin' || 'tu':
                     $dataCuti = $this->dataCutiPegawai();
@@ -380,8 +396,87 @@ class CutiPegawaiController extends Controller
         $html = view('TataUsaha.Cuti.tambahanTabel', compact('dataTambahanCuti'))->render();
         return $html;
     }
+    public function formCuti()
+    {
+        $pegawai = vPegawaiModel::whereNot('stat_pns', 'PENSIUNAN')->orderBy('nama')->get();
+        $email   = Auth::user()->email;
+        $nip     = explode('@', $email)[0];
 
-    public function update($id, $persetujuan)
+        return view('TataUsaha.Cuti.modal', compact('pegawai', 'nip'))->render();
+    }
+    public function show(CutiPegawai $cutiPegawai)
+    {
+        // Load relasi pegawai
+        $cutiPegawai->load('pegawai');
+        $pegawai = vPegawaiModel::whereNot('stat_pns', 'PENSIUNAN')->orderBy('nama')->get();
+        // return $cutiPegawai;
+        if (! $cutiPegawai) {
+            return response()->json([
+                'message' => 'Data cuti tidak ditemukan.',
+                'success' => false,
+            ], 404);
+        }
+
+        $html = view('TataUsaha.Cuti.modal', compact('cutiPegawai', 'pegawai'))->render();
+
+        return response()->json([
+            'message' => 'Data cuti ditemukan.',
+            'success' => true,
+            'data'    => $html,
+        ]);
+    }
+
+    public function update(Request $request, CutiPegawai $cutiPegawai)
+    {
+        $user     = Auth::user();
+        $roleUser = $user->role;
+        $nip      = explode('@', $user->email)[0];
+        $params   = [
+            'nip' => $nip,
+        ];
+        // Cek apakah ada cuti yang bertabrakan
+        $cekTabrakan = $this->cekTabrakan($request->all());
+        // dd($cekTabrakan);
+        if ($cekTabrakan === true) {
+            switch ($roleUser) {
+                case 'admin' || 'tu':
+                    $dataCuti = $this->dataCutiPegawai();
+                    break;
+                default:
+                    $dataCuti = $this->dataCutiPegawai($params);
+                    break;
+            }
+            return response()->json([
+                'message' => 'Pengajuan cuti ini bertabrakan dengan tanggal pengajuan sebelumnya.',
+                'html'    => view('TataUsaha.Cuti.permohonanCutiTabel', compact('dataCuti', 'user'))->render(),
+            ], 422);
+        }
+
+        $cutiPegawai->update($request->all());
+
+        switch ($roleUser) {
+            case 'admin' || 'tu':
+                $dataCuti = $this->dataCutiPegawai();
+                break;
+            default:
+                $dataCuti = $this->dataCutiPegawai($params);
+                break;
+        }
+        $html = view('TataUsaha.Cuti.permohonanCutiTabel', compact('dataCuti'))->render();
+
+        $sisaCutiUser    = $this->dataSisaCuti($nip);
+        $dataSisaCutiAll = $this->dataSisaCuti();
+        // return $dataSisaCutiAll;
+        $sisaCutiAll = view('TataUsaha.Cuti.sisaCutiTabel', compact('dataSisaCutiAll'))->render();
+        return response()->json([
+            'message'     => 'Permohonan cuti berhasil diubah.',
+            'html'        => $html,
+            'sisaCuti'    => $sisaCutiUser,
+            'sisaCutiAll' => $sisaCutiAll,
+        ], 200);
+    }
+
+    public function persetujuan($id, $persetujuan)
     {
         CutiPegawai::where('id', $id)->update(['persetujuan' => $persetujuan]);
 

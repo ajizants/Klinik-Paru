@@ -21,8 +21,7 @@
                                     </div>
                                     <input type="text" id="nip_cuti" name="nip_cuti" value="{{ $nip }}"
                                         hidden>
-                                    <button type="button" class="mx-2 btn btn-warning" data-toggle="modal"
-                                        data-target="#modal-pengajuanCuti">
+                                    <button type="button" class="mx-2 btn btn-warning" onclick="showFormCuti();">
                                         Ajukan Cuti
                                     </button>
                                     <button type="button" class="mx-2 btn btn-success" data-toggle="modal"

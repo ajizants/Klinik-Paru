@@ -21,12 +21,13 @@
                             <label for="nip">NIP</label>
                             @if (Auth::user()->role == 'pegawai')
                                 <input type="text" class="form-control form-control-sm" id="nip" name="nip"
-                                    value="{{ $nip }}" readonly required>
+                                    value="{{ $nip ?? $cutiPegawai->nip }}" readonly required>
                             @else
                                 <select name="nip" class="form-control select2bs4" id="nip">
                                     <option value="">-- Pilih Pegawai --</option>
                                     @foreach ($pegawai as $user)
                                         <option value="{{ $user->nip }}" {{-- pilih nip yang sama --}}
+                                            @php $nip=$cutiPegawai->nip??$nip; @endphp
                                             @if ($user->nip == $nip) selected @endif
                                             data-nama="{{ $user->gelar_d }} {{ $user->nama }} {{ $user->gelar_b }}">
                                             {{ $user->gelar_d }} {{ $user->nama }}
@@ -51,48 +52,73 @@
 
                         <div class="form-group col">
                             <label for="nama">Nama Petugas</label>
-                            <input type="text" class="form-control form-control-sm" id="nama" name="nama"
-                                value="{{ Auth::user()->name }}" readonly>
+                            @if (isset($cutiPegawai->pegawai))
+                                <input type="text" class="form-control form-control-sm" id="nama" name="nama"
+                                    value="{{ $cutiPegawai->pegawai->gelar_d ?? '' }} {{ $cutiPegawai->pegawai->nama ?? '' }} {{ $cutiPegawai->pegawai->gelar_b ?? '' }} "
+                                    readonly>
+                            @else
+                                <input type="text" class="form-control form-control-sm" id="nama" name="nama"
+                                    value="{{ Auth::user()->name }}" readonly>
+                            @endif
+                            <input type="text" name="id" id="idCuti" value="{{ $cutiPegawai->id ?? '' }}"
+                                readonly hidden>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col">
                             <label for="tgl_mulai">Tanggal Mulai</label>
                             <input type="date" class="form-control" id="tgl_mulai" name="tgl_mulai"
-                                value="{{ date('Y-m-d') }}" required>
+                                value="{{ $cutiPegawai->tgl_mulai ?? date('Y-m-d') }}" required>
                         </div>
 
                         <div class="form-group col">
                             <label for="tgl_selesai">Tanggal Selesai</label>
                             <input type="date" class="form-control" id="tgl_selesai" name="tgl_selesai"
-                                value="{{ date('Y-m-d') }}" required>
+                                value="{{ $cutiPegawai->tgl_selesai ?? date('Y-m-d') }}" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col">
                             <label for="alasan">Alasan</label>
+                            @php
+                                $listAlasan = [
+                                    'Cuti Tahunan',
+                                    'Cuti Besar',
+                                    'Cuti Alasan Penting',
+                                    'Cuti Melahirkan',
+                                    'Cuti Sakit',
+                                    'Cuti Bersama',
+                                    'Dinas Luar',
+                                ];
+                            @endphp
+
                             <select class="form-control" id="alasan" name="alasan" required>
                                 <option value="">-- Pilih Alasan --</option>
-                                <option value="Cuti Tahunan">Cuti Tahunan</option>
-                                <option value="Cuti Besar">Cuti Besar</option>
-                                <option value="Cuti Alasan Penting">Cuti Alasan Penting</option>
-                                <option value="Cuti Melahirkan">Cuti Melahirkan</option>
-                                <option value="Cuti Sakit">Cuti Sakit</option>
-                                <option value="Cuti Bersama">Cuti Bersama</option>
-                                <option value="Dinas Luar">Dinas Luar</option>
+                                @foreach ($listAlasan as $alasan)
+                                    <option value="{{ $alasan }}"
+                                        {{ old('alasan', $cutiPegawai->alasan ?? '') == $alasan ? 'selected' : '' }}>
+                                        {{ $alasan }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
 
                         <div class="form-group col">
                             <label for="keterangan">Keterangan</label>
-                            <input type="text" class="form-control" id="keterangan" name="keterangan" required>
+                            <input type="text" class="form-control" id="keterangan" name="keterangan"
+                                value="{{ $cutiPegawai->keterangan ?? '' }}" required>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary" onclick="ajukanCuti()">Simpan</button>
+                @if (isset($cutiPegawai->pegawai))
+                    <button type="button" class="btn btn-primary"
+                        onclick="updatePermohonan({{ $cutiPegawai->id }})">Update</button>
+                @else
+                    <button type="button" class="btn btn-primary" onclick="ajukanCuti()">Simpan</button>
+                @endif
             </div>
         </div>
     </div>
