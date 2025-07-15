@@ -288,7 +288,7 @@ class PegawaiController extends Controller
               </div>';
 
         // Tempat Lahir
-        $form .= '<div class="form-group col-6 col-md-auto col-sm-1">
+        $form .= '<div class="form-group col-6 col-md-auto">
                 <label for="tempat_lahir">Tempat Lahir</label>
                 <input type="text" class="form-control form-control-sm" id="tempat_lahir" name="tempat_lahir" value="' . htmlspecialchars($pegawai->biodata->tempat_lahir, ENT_QUOTES, 'UTF-8') . '" >
               </div>';
@@ -299,15 +299,28 @@ class PegawaiController extends Controller
                 <input type="date" class="form-control form-control-sm" id="tgl_lahir" name="tgl_lahir" value="' . $pegawai->biodata->tgl_lahir . '" >
               </div>';
 
-        // Alamat
-        $form .= '<div class="form-group col-6 col-md-4">
-                <label for="alamat">Alamat Lengkap</label>
-                <input type="text" class="form-control form-control-sm" id="alamat" name="alamat"  value="' . htmlspecialchars($pegawai->biodata->alamat, ENT_QUOTES, 'UTF-8') . '"/>
+        // Status Kawin
+        $form .= '<div class="form-group col-6 col-md-auto">
+                <label for="status_kawin">Status Kawin</label>
+                <select class="form-control form-control-sm" id="status_kawin" name="status_kawin">
+                    <option value="KAWIN"' . ($pegawai->biodata->status_kawin == 'KAWIN' ? ' selected' : '') . '>KAWIN</option>
+                    <option value="BELUM KAWIN"' . ($pegawai->biodata->status_kawin == 'BELUM KAWIN' ? ' selected' : '') . '>BELUM KAWIN</option>
+                    <option value="CERAI HIDUP"' . ($pegawai->biodata->status_kawin == 'CERAI HIDUP' ? ' selected' : '') . '>CERAI HIDUP</option>
+                    <option value="CERAI MATI"' . ($pegawai->biodata->status_kawin == 'CERAI MATI' ? ' selected' : '') . '>CERAI MATI</option>
+
+                </select>
               </div>';
+
         // NO HP
         $form .= '<div class="form-group col-6 col-md-auto">
                 <label for="noHp">Nomor HP</label>
                 <input type="text" class="form-control form-control-sm" id="noHp" name="noHp"  value="' . $pegawai->noHp . '"/>
+              </div>';
+
+        // Alamat
+        $form .= '<div class="form-group col-6 col-md-5">
+                <label for="alamat">Alamat Lengkap</label>
+                <input type="text" class="form-control form-control-sm" id="alamat" name="alamat"  value="' . htmlspecialchars($pegawai->biodata->alamat, ENT_QUOTES, 'UTF-8') . '"/>
               </div>';
 
         // Status PNS
@@ -323,17 +336,6 @@ class PegawaiController extends Controller
                 </select>
               </div>';
 
-        // Status Kawin
-        $form .= '<div class="form-group col-6 col-md-auto">
-                <label for="status_kawin">Status Kawin</label>
-                <select class="form-control form-control-sm" id="status_kawin" name="status_kawin">
-                    <option value="KAWIN"' . ($pegawai->biodata->status_kawin == 'KAWIN' ? ' selected' : '') . '>KAWIN</option>
-                    <option value="BELUM KAWIN"' . ($pegawai->biodata->status_kawin == 'BELUM KAWIN' ? ' selected' : '') . '>BELUM KAWIN</option>
-                    <option value="CERAI HIDUP"' . ($pegawai->biodata->status_kawin == 'CERAI HIDUP' ? ' selected' : '') . '>CERAI HIDUP</option>
-                    <option value="CERAI MATI"' . ($pegawai->biodata->status_kawin == 'CERAI MATI' ? ' selected' : '') . '>CERAI MATI</option>
-
-                </select>
-              </div>';
         // Gelar Depan
         $form .= '<div class="form-group col-4 col-md-1">
                 <label for="gelar_d">Gelar Depan</label>
@@ -341,7 +343,7 @@ class PegawaiController extends Controller
               </div>';
 
         // Gelar Belakang
-        $form .= '<div class="form-group col-4 col-md-1">
+        $form .= '<div class="form-group col-4 col-md-auto">
                 <label for="gelar_b">Gelar Belakang</label>
                 <input type="text" class="form-control form-control-sm" id="gelar_b" name="gelar_b" value="' . htmlspecialchars($pegawai->gelar_b, ENT_QUOTES, 'UTF-8') . '" >
               </div>';
