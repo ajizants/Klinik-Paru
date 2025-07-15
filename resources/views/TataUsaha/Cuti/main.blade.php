@@ -19,6 +19,9 @@
             <li class="nav-item">
                 <a type="button" class="nav-link " onclick="toggleSections('#tab_3'); "><b>Sisa Cuti</b></a>
             </li>
+            <li class="nav-item">
+                <a type="button" class="nav-link " onclick="toggleSections('#tab_4'); "><b>Hari Libur Tahunan</b></a>
+            </li>
         </ul>
     </div>
     @include('TataUsaha.Cuti.input')
@@ -37,6 +40,7 @@
         let sisaCutiUser = @json($sisaCutiUser);
         let sisaCutiAll = @json($sisaCutiAll);
         let cutiTambahan = @json($cutiTambahan);
+        let hariLibur = @json($hariLibur);
         // console.log("🚀 ~ cutiTambahan:", cutiTambahan)
 
         window.addEventListener("load", function() {
@@ -72,7 +76,7 @@
             generateTabelSisaCuti(sisaCutiAll);
             $('#dataCutiWa').html(cutiHariIni);
             tampilkanInfoCuti(sisaCutiUser);
-
+            generateTabelHariLibur(hariLibur);
         });
 
         function cariDataCuti(bulan) {
@@ -286,6 +290,24 @@
             // console.log("🚀 ~ generateTabelSisaCuti ~ generateTabelSisaCuti:", generateTabelSisaCuti)
             $('#divTabelDaftarSisaCuti').html(data);
             $('#tabelDaftarSisaCuti').DataTable({
+                "destroy": true,
+                "lengthChange": true,
+                "pageLength": 5,
+                "lengthMenu": [5, 10, 25, 50],
+                "info": true,
+                "autoWidth": false,
+                "searching": true,
+                "paging": true,
+                "order": [
+                    [1, "asc"]
+                ],
+            });
+        }
+
+        function generateTabelHariLibur(data) {
+            // console.log("🚀 ~ generateTabelSisaCuti ~ generateTabelSisaCuti:", generateTabelSisaCuti)
+            $('#divTabelDaftarHariLibur').html(data);
+            $('#TabelDaftarHariLibur').DataTable({
                 "destroy": true,
                 "lengthChange": true,
                 "pageLength": 5,

@@ -229,3 +229,55 @@
                         </div>
                     </div>
                 </div>
+                <div class="container-fluid mt-1" id="tab_4" style="display: none;">
+                    <div class="card card-warning">
+                        <div class="card-header text-light">
+                            <h6 class="card-title font-weight-bold">Daftar Hari Libur Dalam Satu Tahun </h6>
+                        </div>
+                        <div class="card-body shadow">
+
+                            <div class="form-group form-row">
+                                <div class="col-md-2">
+                                    <select name="tahun_hari_libur" id="tahun_hari_libur" class="form-control">
+                                        <option value="">--Tahun--</option>
+                                        @php
+                                            $tahun = date('Y');
+                                            for ($i = 2024; $i <= $tahun; $i++) {
+                                                $selected = $i == $tahun ? 'selected' : '';
+                                                echo '<option value="' . $i . '" ' . $selected . '>' . $i . '</option>';
+                                            }
+                                        @endphp
+                                    </select>
+                                </div>
+                                <button type="button" class="btn btn-success col-3 col-md-auto m-2"
+                                    onclick="cariDataHariLibur($('#tahun_hari_libur').val()); $('#tahunLibur').text($('#tahun_hari_libur').val());">Perbaharui</button>
+
+                                <button type="button" class="btn btn-primary col-5 col-md-auto m-2"
+                                    data-toggle="modal" data-target="#modalHariLibur">Tambah Hari Libur</button>
+
+                            </div>
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="font-weight-bold text-center mt-4 underline">Daftar Hari Libur di Tahun
+                                        <span id="tahunLibur">{{ date('Y') }}</span>
+                                    </h4>
+                                    <div class="table-responsive pt-2 px-2" id="divTabelDaftarHariLibur">
+                                        <table class="table table-bordered table-hover dataTable dtr-inline"
+                                            id="TabelDaftarHariLibur" cellspacing="0">
+                                            <thead class="bg bg-warning table-bordered">
+                                                <tr>
+                                                    <th>Aksi</th>
+                                                    <th>Tanggal</th>
+                                                    <th>Keterangan</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table-bordered">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>

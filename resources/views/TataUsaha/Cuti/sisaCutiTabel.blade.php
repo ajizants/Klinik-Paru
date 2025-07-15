@@ -3,6 +3,7 @@
         <tr>
             <th>#</th>
             <th>Nama</th>
+            <th>Total Sisa Cuti</th>
             <th>Sisa Cuti {{ date('Y') }}</th>
             <th>Sisa Cuti {{ date('Y') - 1 }}</th>
             <th>Sisa Cuti {{ date('Y') - 2 }}</th>
@@ -10,7 +11,6 @@
             <th>Permohonan Cuti</th>
             <th>Cuti Disetujui</th>
             <th>Cuti Ditolak</th>
-            <th>Sisa Cuti</th>
         </tr>
     </thead>
     <tbody>
@@ -29,14 +29,17 @@
                     @endif
                 </td>
                 <td>{{ $cuti->nama ?? '-' }}<br>Nip. {{ $cuti->nip }}</td>
-                <td>{{ $cuti->sisaCuti }} hari</td>
+                <td>{{ $cuti->jumlahSisaCuti }} hari</td>
+                <td>{{ $cuti->jatah_cuti }} hari</td>
+                <td>{{ $cuti->sisa_1 }} hari</td>
+                <td>{{ $cuti->sisa_2 }} hari</td>
+                {{-- <td>{{ $cuti->sisaCuti }} hari</td>
                 <td>{{ $cuti->sisaCuti_1 }} hari</td>
-                <td>{{ $cuti->sisaCuti_2 }} hari</td>
+                <td>{{ $cuti->sisaCuti_2 }} hari</td> --}}
                 <td>{{ $cuti->jumlahCutiTambahan }} hari</td>
                 <td>{{ $cuti->jumlahCutiDiambil }} hari</td>
                 <td>{{ $cuti->jumlahCutiDisetujui }} hari</td>
                 <td>{{ $cuti->jumlahCutiDitolak }} hari</td>
-                <td>{{ $cuti->jumlahSisaCuti }} hari</td>
             </tr>
         @empty
             <tr>
@@ -49,24 +52,20 @@
 
 <script>
     function editSisaCuti(nip, nama, sisaCuti, sisaCuti_1, sisaCuti_2) {
-        console.log("🚀 ~ editSisaCuti ~ sisaCuti_2:", sisaCuti_2)
-        console.log("🚀 ~ editSisaCuti ~ sisaCuti_1:", sisaCuti_1)
-        console.log("🚀 ~ editSisaCuti ~ sisaCuti:", sisaCuti)
-        console.log("🚀 ~ editSisaCuti ~ nip:", nip)
-        const thn = "{{ date('Y') }}";
-        const thn1 = "{{ date('Y') - 1 }}";
-        const thn2 = "{{ date('Y') - 2 }}";
+        const thn = new Date().getFullYear();
+        const thn1 = thn - 1;
+        const thn2 = thn - 2;
+
         Swal.fire({
             title: "Edit Sisa Cuti",
             html: `
-            <h4 calss="swal2-title">${nama}</h4>
-            <label for="jatah_cuti" class="swal2-label">Masukkan jumlah sisa cuti ${thn}:</label>
-            <input id="jatah_cuti" type="number" class="swal2-input" placeholder="Contoh: 50000" value="${sisaCuti}">
-            <label for="sisa_1" class="swal2-label">Masukkan jumlah sisa cuti ${thn1}:</label>
-            <input id="sisa_1" type="number" class="swal2-input" placeholder="Contoh: 50000" value="${sisaCuti_1}">
-            <label for="sisa_2" class="swal2-label">Masukkan jumlah sisa cuti ${thn2}:</label>
-            <input id="sisa_2" type="number" class="swal2-input" placeholder="Contoh: 50000" value="${sisaCuti_2}">
-            <input id="nip" readonly hidden type="number" class="swal2-input" placeholder="Contoh: 50000" value="${nip}">
+            <h4 class="swal2-title">${nama}</h4>
+            <label for="jatah_cuti" class="swal2-label">Sisa cuti ${thn}:</label>
+            <input id="jatah_cuti" type="number" class="swal2-input" value="${sisaCuti}" min="0">
+            <label for="sisa_1" class="swal2-label">Sisa cuti ${thn1}:</label>
+            <input id="sisa_1" type="number" class="swal2-input" value="${sisaCuti_1}" min="0">
+            <label for="sisa_2" class="swal2-label">Sisa cuti ${thn2}:</label>
+            <input id="sisa_2" type="number" class="swal2-input" value="${sisaCuti_2}" min="0">
         `,
             icon: "warning",
             showCancelButton: true,
@@ -75,53 +74,50 @@
             confirmButtonText: "Simpan",
             cancelButtonText: "Batal",
             preConfirm: () => {
-                const jatah_cuti = document.getElementById("jatah_cuti").value;
-                const sisa_1 = document.getElementById("sisa_1").value;
-                const sisa_2 = document.getElementById("sisa_2").value;
-                const nip = document.getElementById("nip").value;
+                const jatah_cuti = parseInt(document.getElementById("jatah_cuti").value) || 0;
+                const sisa_1 = parseInt(document.getElementById("sisa_1").value) || 0;
+                const sisa_2 = parseInt(document.getElementById("sisa_2").value) || 0;
 
-                if (!jatah_cuti || !sisa_1 || !sisa_2 || !nip) {
-                    Swal.showValidationMessage(
-                        "Jumlah sisa cuti wajib diisi!"
-                    );
+                if (jatah_cuti < 0 || sisa_1 < 0 || sisa_2 < 0) {
+                    Swal.showValidationMessage("Angka tidak boleh negatif");
+                    return false;
                 }
 
                 return {
                     jatah_cuti,
                     sisa_1,
-                    sisa_2,
-                    nip
-                }
+                    sisa_2
+                };
             },
         }).then((result) => {
-            return;
             if (result.isConfirmed) {
-                const jatah_cuti = result.value.jatah_cuti;
-                const sisa_1 = result.value.sisa_1;
-                const sisa_2 = result.value.sisa_2;
-                const nip = result.value.nip;
+                const {
+                    jatah_cuti,
+                    sisa_1,
+                    sisa_2
+                } = result.value;
 
-                // Kirim data melalui AJAX
                 $.ajax({
-                    url: "/tu/cuti/sisa/edit" + nip,
-                    type: "post",
+                    url: `/tu/cuti/sisa/edit/${nip}`,
+                    type: "POST",
                     data: {
                         jatah_cuti: jatah_cuti,
-                        sisa_1: sisa_1,
-                        sisa_2: sisa_2
+                        jatah_cuti_1: sisa_1,
+                        jatah_cuti_2: sisa_2,
                     },
                     success: function(response) {
-                        // console.log("🚀 ~ setorkan ~ response:", response);
-                        if (response.status == "success") {
+                        if (response.status === "success") {
                             tampilkanSukses(response.message);
+                            generateTabelPermohonanCuti(response.html);
                             generateTabelSisaCuti(response.sisaCutiAll);
+                            tampilkanInfoCuti(response.sisaCuti);
                         } else {
                             tampilkanEror(response.message);
                         }
                     },
                     error: function(xhr) {
-                        console.log("🚀 ~ setorkan ~ xhr:", xhr);
-                        tampilkanEror(xhr);
+                        tampilkanEror("Terjadi kesalahan saat menyimpan.");
+                        console.error(xhr);
                     },
                 });
             }

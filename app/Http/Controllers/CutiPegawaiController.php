@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CutiPegawai;
 use App\Models\CutiTambahan;
+use App\Models\HariLibur;
 use App\Models\PegawaiModel;
 use App\Models\Vpegawai;
 use App\Models\vPegawaiModel;
@@ -45,6 +46,99 @@ class CutiPegawaiController extends Controller
         return $query->get();
     }
 
+    // private function dataSisaCuti($nip = null)
+    // {
+    //     $query = Vpegawai::with('cuti', 'cutiTambahan')->whereNot('stat_pns', 'PENSIUNAN');
+    //     if ($nip) {
+    //         $query->where('nip', $nip);
+    //     }
+
+    //     // Ambil hari libur dari tabel
+    //     $hariLibur = DB::table('hari_libur')->pluck('tanggal')->map(function ($tanggal) {
+    //         return Carbon::parse($tanggal)->toDateString();
+    //     })->toArray();
+
+    //     $dataPegawai = $query->get();
+
+    //     foreach ($dataPegawai as $key) {
+    //         $jumlahCuti          = 0;
+    //         $jumlahCutiDisetujui = 0;
+    //         $jumlahCutiDitolak   = 0;
+    //         $jumlahCutiTambahan  = 0;
+
+    //         foreach ($key->cuti as $cuti) {
+    //             // Hanya hitung cuti tahunan (misal ID jenis cuti = 1)
+    //             if ($cuti->alasan !== 'Cuti Tahunan') {
+    //                 continue;
+    //             }
+
+    //             $mulai   = Carbon::parse($cuti->tgl_mulai);
+    //             $selesai = Carbon::parse($cuti->tgl_selesai);
+
+    //             $hariCuti = 0;
+
+    //             // Loop per hari, cek apakah hari itu bukan Minggu dan bukan hari libur
+    //             for ($tanggal = $mulai->copy(); $tanggal->lte($selesai); $tanggal->addDay()) {
+    //                 $isMinggu    = $tanggal->dayOfWeek == Carbon::SUNDAY;
+    //                 $isHariLibur = in_array($tanggal->toDateString(), $hariLibur);
+
+    //                 if (! $isMinggu && ! $isHariLibur) {
+    //                     $hariCuti++;
+    //                 }
+    //             }
+
+    //             $jumlahCuti += $hariCuti;
+
+    //             if ($cuti->persetujuan == 1) {
+    //                 $jumlahCutiDisetujui += $hariCuti;
+    //             }
+    //             if ($cuti->persetujuan == 2) {
+    //                 $jumlahCutiDitolak += $hariCuti;
+    //             }
+    //         }
+
+    //         foreach ($key->cutiTambahan as $cuti) {
+    //             // Hanya hitung cuti tahunan (misal ID jenis cuti = 1)
+    //             $jumlahCutiTambahan += $cuti->jumlah_tambahan;
+    //         }
+
+    //         $key['jumlahCutiDiambil']   = $jumlahCuti;
+    //         $key['jumlahCutiDitolak']   = $jumlahCutiDitolak;
+    //         $key['jumlahCutiTambahan']  = $jumlahCutiTambahan;
+    //         $key['jumlahCutiDisetujui'] = $jumlahCutiDisetujui;
+
+    //         $key['jumlahCutiDisetujui'] = $jumlahCutiDisetujui;
+
+    //         // Step 1: Kurangi dari sisaCuti_2 (2 tahun lalu)
+    //         if ($jumlahCutiDisetujui <= $key->sisa_2) {
+    //             $key['sisaCuti_2'] = $key->sisa_2 - $jumlahCutiDisetujui;
+    //             $jumlahSisa        = 0;
+    //         } else {
+    //             $key['sisaCuti_2'] = 0;
+    //             $jumlahSisa        = $jumlahCutiDisetujui - $key->sisa_2;
+    //         }
+
+    //         // Step 2: Kurangi dari sisaCuti_1 (1 tahun lalu)
+    //         if ($jumlahSisa <= $key->sisa_1) {
+    //             $key['sisaCuti_1'] = $key->sisa_1 - $jumlahSisa;
+    //             $jumlahSisa        = 0;
+    //         } else {
+    //             $key['sisaCuti_1'] = 0;
+    //             $jumlahSisa        = $jumlahSisa - $key->sisa_1;
+    //         }
+
+    //         // Step 3: Kurangi dari jatahCuti (tahun ini)
+    //         if ($jumlahSisa <= $key->jatah_cuti) {
+    //             $key['sisaCuti'] = $key->jatah_cuti - $jumlahSisa;
+    //         } else {
+    //             $key['sisaCuti'] = 0; // atau bisa buat warning kalau cuti melebihi kuota
+    //         }
+
+    //         $key['jumlahSisaCuti'] = ($key->jatah_cuti + $key->tambahan_cuti + $key->jumlahCutiTambahan) - $jumlahCutiDisetujui;
+    //     }
+
+    //     return $dataPegawai;
+    // }
     private function dataSisaCuti($nip = null)
     {
         $query = Vpegawai::with('cuti', 'cutiTambahan')->whereNot('stat_pns', 'PENSIUNAN');
@@ -52,88 +146,98 @@ class CutiPegawaiController extends Controller
             $query->where('nip', $nip);
         }
 
-        // Ambil hari libur dari tabel
+        // Ambil hari libur
         $hariLibur = DB::table('hari_libur')->pluck('tanggal')->map(function ($tanggal) {
             return Carbon::parse($tanggal)->toDateString();
         })->toArray();
 
         $dataPegawai = $query->get();
 
-        foreach ($dataPegawai as $key) {
-            $jumlahCuti          = 0;
-            $jumlahCutiDisetujui = 0;
-            $jumlahCutiDitolak   = 0;
-            $jumlahCutiTambahan  = 0;
+        foreach ($dataPegawai as $pegawai) {
+            // dd($pegawai);
+            // Inisialisasi jumlah
+            $jumlahCutiDisetujui        = 0;
+            $jumlahCutiDitolak          = 0;
+            $jumlahCutiDiambil          = 0;
+            $jumlahCutiTahunanDisetujui = 0;
+            $jumlahCutiTambahan         = 0;
 
-            foreach ($key->cuti as $cuti) {
-                // Hanya hitung cuti tahunan (misal ID jenis cuti = 1)
-                if ($cuti->alasan !== 'Cuti Tahunan') {
-                    continue;
-                }
-
-                $mulai   = Carbon::parse($cuti->tgl_mulai);
-                $selesai = Carbon::parse($cuti->tgl_selesai);
-
+            // Hitung cuti dari tabel peg_t_cuti
+            foreach ($pegawai->cuti as $cuti) {
+                $mulai    = Carbon::parse($cuti->tgl_mulai);
+                $selesai  = Carbon::parse($cuti->tgl_selesai);
                 $hariCuti = 0;
 
-                // Loop per hari, cek apakah hari itu bukan Minggu dan bukan hari libur
+                // Hitung hari kerja
                 for ($tanggal = $mulai->copy(); $tanggal->lte($selesai); $tanggal->addDay()) {
-                    $isMinggu    = $tanggal->dayOfWeek == Carbon::SUNDAY;
-                    $isHariLibur = in_array($tanggal->toDateString(), $hariLibur);
-
-                    if (! $isMinggu && ! $isHariLibur) {
+                    if ($tanggal->dayOfWeek !== Carbon::SUNDAY && ! in_array($tanggal->toDateString(), $hariLibur)) {
                         $hariCuti++;
                     }
                 }
 
-                $jumlahCuti += $hariCuti;
+                // Akumulasi semua jenis cuti
+                $jumlahCutiDiambil += $hariCuti;
 
                 if ($cuti->persetujuan == 1) {
                     $jumlahCutiDisetujui += $hariCuti;
+
+                    // Tambahkan ke cuti tahunan disetujui jika memang alasannya "Cuti Tahunan"
+                    if ($cuti->alasan === 'Cuti Tahunan') {
+                        $jumlahCutiTahunanDisetujui += $hariCuti;
+                    }
                 }
+
                 if ($cuti->persetujuan == 2) {
                     $jumlahCutiDitolak += $hariCuti;
                 }
             }
 
-            foreach ($key->cutiTambahan as $cuti) {
-                // Hanya hitung cuti tahunan (misal ID jenis cuti = 1)
-                $jumlahCutiTambahan += $cuti->jumlah_tambahan;
+            // Hitung tambahan cuti dari tabel cutiTambahan
+            foreach ($pegawai->cutiTambahan as $tambahan) {
+                $jumlahCutiTambahan += $tambahan->jumlah_tambahan;
             }
 
-            $key['jumlahCutiDiambil']   = $jumlahCuti;
-            $key['jumlahCutiDitolak']   = $jumlahCutiDitolak;
-            $key['jumlahCutiTambahan']  = $jumlahCutiTambahan;
-            $key['jumlahCutiDisetujui'] = $jumlahCutiDisetujui;
+            // Simpan nilai akumulasi ke objek
+            $pegawai['jumlahCutiDiambil']   = $jumlahCutiDiambil;
+            $pegawai['jumlahCutiDisetujui'] = $jumlahCutiDisetujui;
+            $pegawai['jumlahCutiDitolak']   = $jumlahCutiDitolak;
+            $pegawai['jumlahCutiTambahan']  = $jumlahCutiTambahan;
 
-            $key['jumlahCutiDisetujui'] = $jumlahCutiDisetujui;
+            // ===== Hitung sisa cuti tahunan berdasarkan cuti tahunan disetujui =====
+            $sisa                      = $jumlahCutiTahunanDisetujui;
+            $sisa                      = $jumlahCutiTahunanDisetujui;
+            $jatahCuti                 = $pegawai->jatah_cuti + $pegawai->sisa_1 + $pegawai->sisa_2 + $pegawai->jumlahCutiTambahan;
+            $pegawai['jumlahSisaCuti'] = $jatahCuti - $sisa;
 
-            // Step 1: Kurangi dari sisaCuti_2 (2 tahun lalu)
-            if ($jumlahCutiDisetujui <= $key->sisa_2) {
-                $key['sisaCuti_2'] = $key->sisa_2 - $jumlahCutiDisetujui;
-                $jumlahSisa        = 0;
+            // Step 1: Kurangi dari sisa 2 tahun lalu
+            if ($sisa <= $pegawai->sisa_2) {
+                $pegawai['sisaCuti_2'] = $pegawai->sisa_2 - $sisa;
+                $sisa                  = 0;
             } else {
-                $key['sisaCuti_2'] = 0;
-                $jumlahSisa        = $jumlahCutiDisetujui - $key->sisa_2;
+                $pegawai['sisaCuti_2'] = 0;
+                $sisa -= $pegawai->sisa_2;
             }
 
-            // Step 2: Kurangi dari sisaCuti_1 (1 tahun lalu)
-            if ($jumlahSisa <= $key->sisa_1) {
-                $key['sisaCuti_1'] = $key->sisa_1 - $jumlahSisa;
-                $jumlahSisa        = 0;
+            // Step 2: Kurangi dari sisa 1 tahun lalu
+            if ($sisa <= $pegawai->sisa_1) {
+                $pegawai['sisaCuti_1'] = $pegawai->sisa_1 - $sisa;
+                $sisa                  = 0;
             } else {
-                $key['sisaCuti_1'] = 0;
-                $jumlahSisa        = $jumlahSisa - $key->sisa_1;
+                $pegawai['sisaCuti_1'] = 0;
+                $sisa -= $pegawai->sisa_1;
             }
 
-            // Step 3: Kurangi dari jatahCuti (tahun ini)
-            if ($jumlahSisa <= $key->jatah_cuti) {
-                $key['sisaCuti'] = $key->jatah_cuti - $jumlahSisa;
+            // Step 3: Kurangi dari jatah cuti tahun ini
+            if ($sisa <= $pegawai->jatah_cuti) {
+                $pegawai['sisaCuti'] = $pegawai->jatah_cuti - $sisa;
             } else {
-                $key['sisaCuti'] = 0; // atau bisa buat warning kalau cuti melebihi kuota
+                $pegawai['sisaCuti'] = 0;
             }
 
-            $key['jumlahSisaCuti'] = ($key->jatah_cuti + $key->tambahan_cuti + $key->jumlahCutiTambahan) - $jumlahCutiDisetujui;
+            // Hitung total sisa cuti secara agregat
+            if ($nip != null) {
+                $pegawai['jumlahSisaCuti'] = $pegawai->jatah_cuti + $pegawai->tambahan_cuti + $jumlahCutiTambahan - $jumlahCutiTahunanDisetujui;
+            }
         }
 
         return $dataPegawai;
@@ -386,7 +490,10 @@ class CutiPegawaiController extends Controller
         $pegawai = vPegawaiModel::whereNot('stat_pns', 'PENSIUNAN')->orderBy('nama')->get();
         // return $pegawai;
 
-        return view('TataUsaha.Cuti.main', compact('pegawai', 'dataPengajuanCuti', 'cutiHariIni', 'sisaCutiUser', 'sisaCutiAll', 'pegawai', 'cutiTambahan'))->with('title', $title);
+        $hariLiburs = HariLibur::whereYear('tanggal', now()->year)->get();
+        $hariLibur  = view('TataUsaha.Cuti.tabelHariLibur', compact('hariLiburs'))->render();
+
+        return view('TataUsaha.Cuti.main', compact('pegawai', 'dataPengajuanCuti', 'cutiHariIni', 'sisaCutiUser', 'sisaCutiAll', 'pegawai', 'cutiTambahan', 'hariLibur'))->with('title', $title);
     }
 
     private function getCutiTambahan()
@@ -553,11 +660,63 @@ class CutiPegawaiController extends Controller
         }
     }
 
-    public function eidtSisaCuti($nip)
+    public function updateSisaCuti(Request $request, $nip)
     {
-        $data = Vpegawai::where('nip', $nip)->first();
-        return $data;
+        // Validasi input
+        $validated = $request->validate([
+            'jatah_cuti'   => 'required|integer|min:0',
+            'jatah_cuti_1' => 'required|integer|min:0',
+            'jatah_cuti_2' => 'required|integer|min:0',
+        ]);
+
+        // Ambil data pegawai
+        $pegawai = PegawaiModel::with('biodata')->where('nip', $nip)->first();
+
+        if (! $pegawai) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Pegawai tidak ditemukan.',
+            ], 404);
+        }
+
+        // Update data
+        $pegawai->jatah_cuti   = $validated['jatah_cuti'];
+        $pegawai->jatah_cuti_1 = $validated['jatah_cuti_1']; // disimpan sebagai sisa tahun lalu
+        $pegawai->jatah_cuti_2 = $validated['jatah_cuti_2']; // disimpan sebagai sisa 2 tahun lalu
+        $pegawai->save();
+
+        // Ambil ulang data setelah penghapusan
+        $user     = Auth::user();
+        $roleUser = $user->role;
+        $nip      = explode('@', $user->email)[0];
+        $params   = [
+            // 'tgl_mulai'   => $tgl_mulai,
+            // 'tgl_selesai' => $tgl_selesai,
+            'nip' => $nip,
+        ];
+        switch ($roleUser) {
+            case 'admin' || 'tu':
+                $dataCuti = $this->dataCutiPegawai();
+                break;
+            default:
+                $dataCuti = $this->dataCutiPegawai($params);
+                break;
+        }
+        $html = view('TataUsaha.Cuti.permohonanCutiTabel', compact('dataCuti'))->render();
+
+        $sisaCutiUser    = $this->dataSisaCuti($nip);
+        $dataSisaCutiAll = $this->dataSisaCuti();
+        // return $dataSisaCutiAll;
+        $sisaCutiAll = view('TataUsaha.Cuti.sisaCutiTabel', compact('dataSisaCutiAll'))->render();
+
+        return response()->json([
+            'message'     => 'Data cuti berhasil dihapus.',
+            'html'        => $html,
+            'sisaCuti'    => $sisaCutiUser,
+            'sisaCutiAll' => $sisaCutiAll,
+        ]);
     }
+
     public function cetak($id)
     {
         $title    = 'Cetak Form Cuti';

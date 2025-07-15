@@ -157,50 +157,64 @@
                         <td class="px-2 py-[0.15rem] border border-black text-nowrap">Mulai Tgl</td>
 
                         <td class="px-2 py-[0.15rem] border border-black text-center">
-                            @php
-                                $tanggalList = [];
-                                $bulan = null;
-                                for ($date = $startCopy->copy(); $date <= $end; $date->addDay()) {
-                                    if (!$date->isSunday()) {
-                                        $tanggalList[] = $date->format('d');
-                                        $bulan = $date->locale('id')->isoFormat('MMMM Y');
+                            @if ($data->alasan == 'Cuti Tahunan' || $data->alasan == 'Cuti Sakit')
+                                @php
+                                    $tanggalList = [];
+                                    $bulan = null;
+                                    for ($date = $startCopy->copy(); $date <= $end; $date->addDay()) {
+                                        if (!$date->isSunday()) {
+                                            $tanggalList[] = $date->format('d');
+                                            $bulan = $date->locale('id')->isoFormat('MMMM Y');
+                                        }
                                     }
-                                }
-                                echo implode(', ', $tanggalList) . ' ' . $bulan;
-                            @endphp
+                                    echo implode(', ', $tanggalList) . ' ' . $bulan;
+                                @endphp
+                            @else
+                                {{ \Carbon\Carbon::parse($data->tgl_mulai)->locale('id')->isoFormat('D MMMM Y') }}
+                            @endif
                         </td>
 
-                        <td class="px-2 py-[0.15rem] border border-black w-8 text-nowrap">dan</td>
+                        <td class="px-2 py-[0.15rem] border border-black w-8 text-nowrap">
+                            @if ($data->alasan == 'Cuti Tahunan' || $data->alasan == 'Cuti Sakit')
+                                dan
+                            @else
+                                sampai Tgl
+                            @endif
+                        </td>
 
                         {{-- Tampilkan tanggal bulan berbeda jika rentang mencakup lebih dari satu bulan --}}
                         <td class="px-2 py-[0.15rem] min-w-16 border border-black text-center">
-                            @php
-                                $datesInLastMonth = [];
-                                $lastMonth = null;
+                            @if ($data->alasan == 'Cuti Tahunan' || $data->alasan == 'Cuti Sakit')
+                                @php
+                                    $datesInLastMonth = [];
+                                    $lastMonth = null;
 
-                                // Ambil tanggal aktif (bukan hari Minggu)
-                                $filteredDates = collect();
-                                for ($d = $startCopy->copy(); $d <= $end; $d->addDay()) {
-                                    if (!$d->isSunday()) {
-                                        $filteredDates->push($d->copy());
+                                    // Ambil tanggal aktif (bukan hari Minggu)
+                                    $filteredDates = collect();
+                                    for ($d = $startCopy->copy(); $d <= $end; $d->addDay()) {
+                                        if (!$d->isSunday()) {
+                                            $filteredDates->push($d->copy());
+                                        }
                                     }
-                                }
 
-                                // Cek apakah ada lebih dari 1 bulan
-                                $months = $filteredDates->map(fn($d) => $d->format('m'))->unique();
-                                if ($months->count() > 1) {
-                                    $lastMonth = $filteredDates->last()->format('m');
-                                    $bulan = $filteredDates->last()->locale('id')->isoFormat('MMMM Y');
-                                    $datesInLastMonth = $filteredDates
-                                        ->filter(fn($d) => $d->format('m') === $lastMonth)
-                                        ->map(fn($d) => $d->format('d'))
-                                        ->toArray();
+                                    // Cek apakah ada lebih dari 1 bulan
+                                    $months = $filteredDates->map(fn($d) => $d->format('m'))->unique();
+                                    if ($months->count() > 1) {
+                                        $lastMonth = $filteredDates->last()->format('m');
+                                        $bulan = $filteredDates->last()->locale('id')->isoFormat('MMMM Y');
+                                        $datesInLastMonth = $filteredDates
+                                            ->filter(fn($d) => $d->format('m') === $lastMonth)
+                                            ->map(fn($d) => $d->format('d'))
+                                            ->toArray();
 
-                                    echo implode(', ', $datesInLastMonth) . ' ' . $bulan;
-                                } else {
-                                    echo '-';
-                                }
-                            @endphp
+                                        echo implode(', ', $datesInLastMonth) . ' ' . $bulan;
+                                    } else {
+                                        echo '-';
+                                    }
+                                @endphp
+                            @else
+                                {{ \Carbon\Carbon::parse($data->tgl_selesai)->locale('id')->isoFormat('D MMMM Y') }}
+                            @endif
                         </td>
 
                     </tr>
