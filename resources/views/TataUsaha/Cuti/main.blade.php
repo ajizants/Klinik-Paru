@@ -339,7 +339,7 @@
                                             <p class="mb-1 col-md">NIP/NIK:<br><strong> ${item.nip}</strong>
                                         </div>
                                         <div class="form-row">
-                                            <p class="mb-1 col">Jatah Cuti:<br><strong> ${item.jatah_cuti} hari</strong>
+                                            <p class="mb-1 col">Jatah Cuti:<br><strong> ${item.totalJatahCuti} hari</strong>
                                                 <p class="mb-1 col">Tambahan Cuti:<br><strong> ${item.jumlahCutiTambahan} hari</strong>
                                             </div>
                                         <div class="form-row">
@@ -348,7 +348,7 @@
                                         </div>
                                         <div class="form-row">
                                             <p class="mb-0 col">Ditolak:<br><strong> ${item.jumlahCutiDitolak} hari</strong>
-                                            <p class="mb-0 col">Sisa Cuti:<br><strong> ${item.jumlahSisaCuti} hari</strong>
+                                            <p class="mb-0 col">Sisa Cuti:<br><strong> ${item.jumlahSisaCutiTahunan} hari</strong>
                                         </div>
                                     </div>
                                 </div>

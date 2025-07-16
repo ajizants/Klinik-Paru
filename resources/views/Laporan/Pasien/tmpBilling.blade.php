@@ -57,7 +57,7 @@
 
                         <!-- Alamat -->
                         <div class="w-[10%]">No. SEP</div>
-                        <div class="w-[5%] text-center"></div>
+                        <div class="w-[5%] text-center">:</div>
                         <div class="w-[50%]">{{ $detailSuratKontrol['sep']['noSep'] ?? $detailSEP['noSep'] }}</div>
                     </div>
                 </div>

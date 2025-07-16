@@ -4,9 +4,11 @@
             <th>#</th>
             <th>Nama</th>
             <th>Total Sisa Cuti</th>
-            <th>Sisa Cuti {{ date('Y') }}</th>
-            <th>Sisa Cuti {{ date('Y') - 1 }}</th>
-            <th>Sisa Cuti {{ date('Y') - 2 }}</th>
+            @if (in_array(Auth::user()->role, ['admin', 'tu']))
+                <th>Sisa Cuti {{ date('Y') }}</th>
+                <th>Sisa Cuti {{ date('Y') - 1 }}</th>
+                <th>Sisa Cuti {{ date('Y') - 2 }}</th>
+            @endif
             <th>Tambahan Cuti</th>
             <th>Permohonan Cuti</th>
             <th>Cuti Disetujui</th>
@@ -30,9 +32,11 @@
                 </td>
                 <td>{{ $cuti->nama ?? '-' }}<br>Nip. {{ $cuti->nip }}</td>
                 <td>{{ $cuti->jumlahSisaCuti }} hari</td>
-                <td>{{ $cuti->jatah_cuti }} hari</td>
-                <td>{{ $cuti->sisa_1 }} hari</td>
-                <td>{{ $cuti->sisa_2 }} hari</td>
+                @if (in_array(Auth::user()->role, ['admin', 'tu']))
+                    <td>{{ $cuti->jatah_cuti }} hari</td>
+                    <td>{{ $cuti->sisa_1 }} hari</td>
+                    <td>{{ $cuti->sisa_2 }} hari</td>
+                @endif
                 {{-- <td>{{ $cuti->sisaCuti }} hari</td>
                 <td>{{ $cuti->sisaCuti_1 }} hari</td>
                 <td>{{ $cuti->sisaCuti_2 }} hari</td> --}}

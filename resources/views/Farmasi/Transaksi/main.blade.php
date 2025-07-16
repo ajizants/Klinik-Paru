@@ -869,7 +869,131 @@
         });
     </script>
 
+    <script>
+        function simpanDataFarmasi() {
+            var dataTerpilih = [];
+            var norm = $("#norm_bpjs").val();
+            var nama = $("#nama_bpjs").val();
+            var alamat = "";
+            var jaminan = "";
+            var notrans = $("#notrans_bpjs").val();
+            var umur = "";
+            var jk = "";
+            var tgltrans = $("#tgltrans_bpjs").val();
+            var totalObat = $("#obat_bpjs").val();
+            var totalBMHP = $("#bmhp_bpjs").val();
+            var totalObatKronis = $("#obatKronis_bpjs").val();
+            const idObat = 2;
+            const idBMHP = 229;
+            const idObatKronis = 228;
 
+            // Validasi data input
+            if (!norm || !notrans || !tgltrans) {
+                var dataKurang = [];
+                if (!norm) dataKurang.push("No RM ");
+                if (!notrans) dataKurang.push("Nomor Transaksi ");
+                if (!tgltrans) dataKurang.push("Tanggal Transaksi ");
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Data Tidak Lengkap!",
+                    text: dataKurang.join(", ") + " Belum Diisi.",
+                });
+
+                if (!norm) $("#norm_bpjs").focus();
+                else if (!notrans) $("#notrans_bpjs").focus();
+                else if (!tgltrans) $("#tgltrans_bpjs").focus();
+                return; // Hentikan fungsi
+            }
+
+            dataTerpilih = [{
+                    idLayanan: idObat,
+                    norm: norm,
+                    notrans: notrans,
+                    qty: 1,
+                    harga: totalObat,
+                    jaminan: jaminan,
+                },
+                {
+                    idLayanan: idBMHP,
+                    norm: norm,
+                    notrans: notrans,
+                    qty: 1,
+                    harga: totalBMHP,
+                    jaminan: jaminan,
+                },
+                {
+                    idLayanan: idObatKronis,
+                    norm: norm,
+                    notrans: notrans,
+                    qty: 1,
+                    harga: totalObatKronis,
+                    jaminan: jaminan,
+                },
+            ]
+
+            console.log(dataTerpilih);
+            // return;
+
+            // return {
+            //     idLayanan: id,
+            //     norm: norm,
+            //     notrans: notrans,
+            //     qty: qty,
+            //     harga: harga,
+            //     jaminan: jaminan,
+            // };
+
+
+            // Kirim data ke server
+            fetch("/api/kasir/item/add", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        notrans: notrans,
+                        norm: norm,
+                        nama: nama,
+                        umur: umur,
+                        jk: jk,
+                        alamat: alamat,
+                        jaminan: jaminan,
+                        tgltrans: tgltrans,
+                        dataTerpilih: dataTerpilih,
+                    }),
+                })
+                .then((response) => {
+                    if (!response.ok) {
+                        console.log("Response status:", response.status);
+                        console.log("Response status text:", response.message);
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log(data);
+                    Swal.fire({
+                        icon: "success",
+                        title: data.message,
+                    });
+                    var notrans = $("#notrans").val();
+                    riwayat(notrans);
+                    $('table thead input[type="checkbox"]').prop("checked", false);
+                    $('table tbody input[type="checkbox"]').prop("checked", false);
+                })
+                .catch((error) => {
+                    console.error(
+                        "There has been a problem with your fetch operation:",
+                        error
+                    );
+                    Swal.fire({
+                        icon: "error",
+                        title: "Terjadi masalah: " + error.message,
+                    });
+                });
+        }
+    </script>
 
     <div class="modal fade" id="modal-resep">
         <div class="modal-dialog modal-xl">
@@ -1037,7 +1161,8 @@
                         </form>
                     </div>
                     <div class="modal-footer justify-content-end">
-                        <button type="button" class="btn btn-primary" data-dismiss="modalInputObat">Simpan</button>
+                        {{-- <button type="button" class="btn btn-primary">Simpan</button> --}}
+                        <button type="button" class="btn btn-primary" onclick="simpanDataFarmasi();">Simpan</button>
                     </div>
                 </div>
             </div>

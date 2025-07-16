@@ -38,12 +38,12 @@ Route::get('SuratKontrol/cetak/{no_SuratKontrol}/{norm}', [ApiKominfoController:
 
 Route::get('rujukan/cetak/{tgl}/{norm}', [ApiKominfoController::class, 'suratRujukan']);
 
-Route::get('billing/cetak/{no_sep}', [ApiKominfoController::class, 'cetakBilling']);
 Route::get('rujukan_baru/cetak/{tgl}/{norm}', [ApiKominfoController::class, 'suratRujukanBaru']);
 Route::get('prb/cetak/{tgl}/{norm}', [ApiKominfoController::class, 'suratPRB']);
 
-Route::get('billing/sep/cetak/{no_sep}', [ApiKominfoController::class, 'cetakSEPBilling']);
-Route::get('billing/suratkontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakBillingSuratKontrol']);
+// Route::get('billing/cetak/{no_sep}', [ApiKominfoController::class, 'cetakBilling']);
+// Route::get('billing/sep/cetak/{no_sep}', [ApiKominfoController::class, 'cetakSEPBilling']);
+// Route::get('billing/suratkontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakBillingSuratKontrol']);
 
 Route::get('laporan/dokter_periksa/{tahun}/{bln}', [ApiKominfoController::class, 'getJumlahPemeriksaanDokter']);
 

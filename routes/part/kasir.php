@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiKominfoController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\KasirPenutupanKasController;
 use App\Http\Controllers\KasirSetoranController;
@@ -53,5 +54,10 @@ Route::post('/kasir/penutupanKas/ubah', [KasirPenutupanKasController::class, 'up
 Route::delete('/kasir/penutupanKas/delete', [KasirPenutupanKasController::class, 'destroy']);
 Route::get('/kasir/penutupanKas/cetak/{id}/{tgl}', [KasirPenutupanKasController::class, 'cetakRegPenutupan']);
 Route::get('tutupKas/{bln}/{tahun}', [KasirPenutupanKasController::class, 'cetakRegTupan']);
+
+//Billing BPJS
+Route::get('billing/cetak/{no_sep}', [ApiKominfoController::class, 'cetakBilling']);
+Route::get('billing/sep/cetak/{no_sep}', [ApiKominfoController::class, 'cetakSEPBilling']);
+Route::get('billing/suratkontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakBillingSuratKontrol']);
 
 // });

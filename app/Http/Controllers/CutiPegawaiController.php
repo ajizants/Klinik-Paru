@@ -168,9 +168,20 @@ class CutiPegawaiController extends Controller
                 $selesai  = Carbon::parse($cuti->tgl_selesai);
                 $hariCuti = 0;
 
-                // Hitung hari kerja
-                for ($tanggal = $mulai->copy(); $tanggal->lte($selesai); $tanggal->addDay()) {
-                    if ($tanggal->dayOfWeek !== Carbon::SUNDAY && ! in_array($tanggal->toDateString(), $hariLibur)) {
+                // Hitung hari kerja atau semua hari tergantung alasan cuti
+                if ($cuti->alasan === 'Cuti Tahunan' || $cuti->alasan === 'Cuti Sakit') {
+                    // Hitung hanya hari kerja (bukan Minggu dan bukan hari libur)
+                    for ($tanggal = $mulai->copy(); $tanggal->lte($selesai); $tanggal->addDay()) {
+                        if (
+                            $tanggal->dayOfWeek !== Carbon::SUNDAY &&
+                            ! in_array($tanggal->toDateString(), $hariLibur)
+                        ) {
+                            $hariCuti++;
+                        }
+                    }
+                } else {
+                    // Hitung semua hari (termasuk Minggu dan hari libur)
+                    for ($tanggal = $mulai->copy(); $tanggal->lte($selesai); $tanggal->addDay()) {
                         $hariCuti++;
                     }
                 }
@@ -204,10 +215,12 @@ class CutiPegawaiController extends Controller
             $pegawai['jumlahCutiTambahan']  = $jumlahCutiTambahan;
 
             // ===== Hitung sisa cuti tahunan berdasarkan cuti tahunan disetujui =====
-            $sisa                      = $jumlahCutiTahunanDisetujui;
-            $sisa                      = $jumlahCutiTahunanDisetujui;
-            $jatahCuti                 = $pegawai->jatah_cuti + $pegawai->sisa_1 + $pegawai->sisa_2 + $pegawai->jumlahCutiTambahan;
-            $pegawai['jumlahSisaCuti'] = $jatahCuti - $sisa;
+            $sisa                             = $jumlahCutiTahunanDisetujui;
+            $sisa                             = $jumlahCutiTahunanDisetujui;
+            $jatahCuti                        = $pegawai->jatah_cuti + $pegawai->sisa_1 + $pegawai->sisa_2 + $pegawai->jumlahCutiTambahan;
+            $pegawai['totalJatahCuti']        = $jatahCuti;
+            $pegawai['jumlahSisaCuti']        = $jatahCuti - $sisa;
+            $pegawai['jumlahSisaCutiTahunan'] = $jatahCuti - $sisa;
 
             // Step 1: Kurangi dari sisa 2 tahun lalu
             if ($sisa <= $pegawai->sisa_2) {
@@ -478,7 +491,8 @@ class CutiPegawaiController extends Controller
 
         $cutiHariIni = view('TataUsaha.Cuti.wa', compact('dataCutiWa', 'tanggal'))->render();
 
-        $sisaCutiUser    = $this->dataSisaCuti($nip);
+        $sisaCutiUser = $this->dataSisaCuti($nip);
+        // return $sisaCutiUser;
         $dataSisaCutiAll = $this->dataSisaCuti();
         // return $dataSisaCutiAll;
         $sisaCutiAll = view('TataUsaha.Cuti.sisaCutiTabel', compact('dataSisaCutiAll'))->render();
