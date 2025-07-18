@@ -204,6 +204,30 @@
                                     // className: "col-3"
                                 },
                                 {
+                                    data: "status_kasir",
+                                    className: "text-center",
+                                    render: function(data, type, row) {
+                                        const statusClasses = {
+                                            Sudah: "success",
+                                            Belum: "danger",
+                                            default: "secondary",
+                                        };
+
+                                        const norm = row.pasien_no_rm;
+                                        return `<div class="badge badge-${
+                                                statusClasses[data] || statusClasses.default
+                                            }">Kasir: ${data}</div><br> <br>
+                                            <div class="badge badge-${
+                                                statusClasses[row.status_obat] ||
+                                                statusClasses.default
+                                            }">Obat: ${row.status_obat}</div><br> <br>
+                                            <a type="button" class="btn btn-sm btn-info mr-2 mb-2"
+                                            href="/kasir/norm/${norm}/${
+                                                row.tanggal
+                                            }" target="_blank" placeholder="Transaksi Kasir">Input Kasir</a>`;
+                                    },
+                                },
+                                {
                                     data: "antrean_nomor"
                                 },
                                 {
@@ -263,7 +287,7 @@
                         })
                         .buttons()
                         .container()
-                        .appendTo("#report_wrapper .col-md-6:eq(0)");
+                        .appendTo("#tableSEP_wrapper .col-md-6:eq(0)");
                     Swal.close();
                     setTimeout(function() {
                         prosesCariDataLaporan = false;

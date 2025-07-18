@@ -338,6 +338,16 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                     resume = "hidden";
                 }
 
+                var tgl = item.tanggal;
+                // ambil bulan dan taun format mmyy
+                var bulan = tgl.substring(5, 7);
+                var tahun = tgl.substring(2, 4);
+                var tglFormat = bulan + tahun;
+                item.noSep =
+                    item.no_sep == ""
+                        ? ""
+                        : "1111R002" + tglFormat + "V000" + item.no_sep;
+
                 const checkIn = item.check_in == "success" ? "Edit" : "Belum";
                 const disabled = item.statusDaftar == "lime" ? "disabled" : "";
                 const daftar =
@@ -365,13 +375,20 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                             <button type="button" class="btn btn-sm btn-info mr-2 mb-2"
                                     onclick="cetakBiodata('${item.pasien_no_rm}')" placeholder="Cetak">Biodata</button>
                             <a type="button" class="btn btn-sm btn-warning mr-2 mb-2" placeholder="Resume"
-                                    href="/api/resume/${item.pasien_no_rm}/${item.tanggal}" target="_blank">Resume</a>
+                                    href="/api/resume/${item.pasien_no_rm}/${item.tanggal}" target="_blank">Resume</a>                                    
+                            <a type="button" class="btn btn-sm btn-warning mt-2 col" placeholder="Billing BPJS"
+                                    href="/api/billing/cetak/${item.noSep}" target="_blank" >Billing</a>                        
                             `;
                 if (item.check_in == "danger") {
                     item.status = "Belum";
                 } else {
                     item.status = "Selesai";
                 }
+                item.pasienModif =
+                    item.pasien_nama +
+                    "<br>( <strong>" +
+                    item.jenis_kelamin_nama +
+                    "</strong> )";
             });
 
             $("#report")
@@ -379,39 +396,93 @@ function reportPendaftaran(tglAwal, tglAkhir) {
                     data: pendaftaran,
                     columns: [
                         { data: "aksi", className: "col-3" },
+                        {
+                            data: "status_pulang",
+                            render: function (data, type, row) {
+                                const statusClasses = {
+                                    "Sudah Pulang": "success",
+                                    "Belum Pulang": "danger",
+                                    default: "secondary",
+                                };
+                                const statusClass = {
+                                    Sudah: "success",
+                                    Belum: "danger",
+                                    default: "secondary",
+                                };
+                                return `<div class="badge badge-${row.check_in}
+                                }">Pendaftaran: ${row.status}</div><br><br>
+                                <div class="badge badge-${
+                                    statusClasses[data] || statusClasses.default
+                                }">${data}</div>
+                                `;
+                            },
+                        },
+                        {
+                            data: "status_kasir",
+                            className: "text-center",
+                            render: function (data, type, row) {
+                                const statusClasses = {
+                                    Sudah: "success",
+                                    Belum: "danger",
+                                    default: "secondary",
+                                };
+
+                                const norm = row.pasien_no_rm;
+                                return `<div class="badge badge-${
+                                    statusClasses[data] || statusClasses.default
+                                }">Kasir: ${data}</div><br> <br>
+                                <div class="badge badge-${
+                                    statusClasses[row.status_obat] ||
+                                    statusClasses.default
+                                }">Obat: ${row.status_obat}</div><br> <br>
+                                <a type="button" class="btn btn-sm btn-info mr-2 mb-2"
+                                   href="/kasir/norm/${norm}/${
+                                    row.tanggal
+                                }" target="_blank" placeholder="Transaksi Kasir">Input Kasir</a>
+                                 <a type="button"
+                                    class="btn btn-sm bg-orange mt-2 col"
+                                    href="/api/billing_resume?no_rm=${
+                                        row.pasien_no_rm
+                                    }&tgl=${row.tanggal}&no_sep=${row.noSep}"
+                                    target="_blank">
+                                    Billing & Resume
+                                </a>
+                                `;
+                            },
+                        },
                         { data: "antrean_nomor" },
                         { data: "tanggal" },
                         { data: "no_sep" },
                         { data: "penjamin_nama" },
-                        { data: "daftar_by" },
+                        // { data: "daftar_by" },
                         { data: "pasien_lama_baru" },
                         { data: "pasien_no_rm" },
-                        { data: "pasien_nama", className: "col-2" },
-                        { data: "jenis_kelamin_nama" },
+                        { data: "pasienModif", className: "col-2" },
+                        // { data: "jenis_kelamin_nama" },
                         { data: "pasien_umur" },
                         { data: "pasien_alamat", className: "col-2" },
-                        { data: "poli_nama" },
+                        // { data: "poli_nama" },
                         { data: "dokter_nama", className: "col-2" },
-                        {
-                            data: "status",
-                            render: function (data) {
-                                const statusClasses = {
-                                    Belum: "danger",
-                                    Selesai: "success",
-                                    default: "secondary",
-                                };
-                                return `<div class="badge badge-${
-                                    statusClasses[data] || statusClasses.default
-                                }">${data}</div>`;
-                            },
-                        },
+                        // {
+                        //     data: "status",
+                        //     render: function (data) {
+                        //         const statusClasses = {
+                        //             Belum: "danger",
+                        //             Selesai: "success",
+                        //             default: "secondary",
+                        //         };
+                        //         return `<div class="badge badge-${
+                        //             statusClasses[data] || statusClasses.default
+                        //         }">${data}</div>`;
+                        //     },
+                        // },
                     ],
                     autoWidth: false,
                     lengthChange: false,
-                    order: [
-                        [14, "asc"],
-                        [1, "asc"],
-                    ],
+                    // order: [
+                    //     [14, "asc"],
+                    //     [1, "asc"],
+                    // ],
                     buttons: [
                         {
                             extend: "excelHtml5",

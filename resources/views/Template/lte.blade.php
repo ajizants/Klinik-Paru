@@ -81,7 +81,15 @@
             //     theme: "monokai"
             //   });
         })
+
+        $(document).ready(function() {
+            $('a[data-toggle="pill"]').on('shown.bs.tab', function(e) {
+                e.target // tab yang diaktifkan
+                e.relatedTarget // tab yang sebelumnya aktif
+            });
+        });
     </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/panzoom/panzoom.umd.js"></script>
 

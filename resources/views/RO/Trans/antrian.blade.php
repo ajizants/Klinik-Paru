@@ -26,14 +26,16 @@
                     <a type="button" class="nav-link " onclick="toggleSections('#dAntrian');"><b>Antrian
                             All</b></a>
                 </li>
-                <div class="input-group col d-flex justify-content-end mr-5">
-                    <input type="date" class="form-control col-sm-2 bg bg-warning" id="tanggal"
-                        value="{{ old('date') }}" required onchange="updateAntrian();">
-                    <div class="input-group-addon btn btn-danger">
-                        <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top"
-                            title="Update Pasien Hari ini" id="cariantrian" onclick="updateAntrian();"></span>
+                <li class="nav-item">
+                    <div class="input-group col-sm">
+                        <input type="date" class="form-control  bg bg-warning" id="tanggal"
+                            value="{{ old('date') }}" required onchange="updateAntrian();">
+                        <div class="input-group-addon btn btn-danger">
+                            <span class="fa-solid fa-rotate" data-toggle="tooltip" data-placement="top"
+                                title="Update Pasien Hari ini" id="cariantrian" onclick="updateAntrian();"></span>
+                        </div>
                     </div>
-                </div>
+                </li>
             </ul>
 
             @include('Template.Table.tunggu')

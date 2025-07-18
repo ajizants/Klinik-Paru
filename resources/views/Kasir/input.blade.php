@@ -24,8 +24,9 @@
                                                     :</label>
                                                 <div class="col-sm-2 input-group" style="overflow: hidden;">
                                                     <input type="text" name="norm" id="norm"
-                                                        class="form-control" placeholder="No RM" maxlength="6"
-                                                        pattern="[0-9]{6}" required />
+                                                        value="{{ $data['pasien_no_rm'] ?? '' }}" class="form-control"
+                                                        placeholder="No RM" maxlength="6" pattern="[0-9]{6}"
+                                                        required />
                                                     <button class="btn btn-warning"
                                                         onclick="obatSajaIdentitas()">Obat</button>
                                                 </div>
@@ -34,21 +35,29 @@
                                                     :</label>
                                                 <div class="col-sm-2">
                                                     <input type="text" id="layanan" class="form-control bg-white"
-                                                        placeholder="BPJS/UMUM" />
+                                                        placeholder="BPJS/UMUM"
+                                                        value="{{ $data['penjamin_nama'] ?? '' }}" />
                                                 </div>
                                                 <label for="nama"
                                                     class="col-sm-1 col-form-label font-weight-bold  mb-0">Nama
                                                     :</label>
                                                 <div class="col-sm-3">
                                                     <input type="text" id="nama" class="form-control bg-white"
-                                                        placeholder="Nama Pasien">
+                                                        placeholder="Nama Pasien"
+                                                        value="{{ $data['pasien_nama'] ?? '' }}">
                                                 </div>
                                                 <div class="col-sm-2">
+                                                    @php
+                                                        $jk = $data['jenis_kelamin_nama'] ?? '';
+                                                    @endphp
                                                     <Select type="text" id="jk" class="form-control bg-white"
                                                         placeholder="JK">
-                                                        <option value="">--JK--</option>
-                                                        <option value="L">Laki-Laki</option>
-                                                        <option value="P">Perempuan</option>
+                                                        <option @if ($jk == '') selected @endif
+                                                            value="">--JK--</option>
+                                                        <option @if ($jk == 'L') selected @endif
+                                                            value="L">Laki-Laki</option>
+                                                        <option @if ($jk == 'P') selected @endif
+                                                            value="P">Perempuan</option>
                                                     </Select>
                                                 </div>
                                             </div>
@@ -58,25 +67,31 @@
                                                     :</label>
                                                 <div class="col-sm-2">
                                                     <input type="date" id="tgltrans" class="form-control bg-white"
-                                                        placeholder="Tanggal Transaksi" />
+                                                        placeholder="Tanggal Transaksi"
+                                                        value="{{ $data['tanggal'] ?? '' }}" />
                                                 </div>
                                                 <label for="notrans"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">NoTran
                                                     :</label>
                                                 <div class="col-sm-2">
                                                     <input type="text" id="notrans" class="form-control bg-white"
-                                                        placeholder="Nomor Transaksi" required />
+                                                        placeholder="Nomor Transaksi" required
+                                                        value="{{ $data['no_reg'] ?? '' }}" />
                                                 </div>
                                                 <label for="alamat"
                                                     class="col-sm-1 col-form-label font-weight-bold mb-0">Alamat
                                                     :</label>
                                                 <div class="col-sm-3">
                                                     <input id="alamat" class="form-control bg-white"
-                                                        placeholder="Alamat Pasien" />
+                                                        placeholder="Alamat Pasien"
+                                                        value="{{ $data['pasien_alamat'] ?? '' }}" />
                                                 </div>
                                                 <div class="col-sm-2">
                                                     <input type="text" id="umur" class="form-control bg-white"
-                                                        placeholder="Umur">
+                                                        placeholder="Umur" value="{{ $data['pasien_umur'] ?? '' }}" />
+                                                    <input type="text" id="dokterPendaftaran"
+                                                        class="form-control bg-white" placeholder="dokterPendaftaran"
+                                                        value="{{ $data['dokter_nama'] ?? '' }}" />
                                                 </div>
                                             </div>
                                         </div>

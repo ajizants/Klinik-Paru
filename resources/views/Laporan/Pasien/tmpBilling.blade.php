@@ -5,16 +5,16 @@
     </div>
     <!-- Teks di tengah -->
     <div class="w-[100%] text-center mb-1">
-        <p class="text-md mb-0">PEMERINTAH KABUPATEN BANYUMAS</p>
-        <p class="text-md font-semibold mb-0">DINAS KESEHATAN</p>
-        <p class="text-md font-bold mb-0">KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A</p>
-        <p class="text-xs">Jln. A. Yani Nomor 33 Purwokerto Timur, Banyumas, Jawa Tengah</p>
-        <p class="text-xs">Kode Pos 53111, Telepon (0281) 635658, Pos-el bkpm_purwokerto@yahoo.com</p>
+        <p class="text-xs mb-0">PEMERINTAH KABUPATEN BANYUMAS</p>
+        <p class="text-xs font-semibold mb-0">DINAS KESEHATAN</p>
+        <p class="text-xs font-bold mb-0">KLINIK UTAMA KESEHATAN PARU MASYARAKAT KELAS A</p>
+        <p style="font-size: 7px;">Jln. A. Yani Nomor 33 Purwokerto Timur, Banyumas, Jawa Tengah</p>
+        <p style="font-size: 7px;">Kode Pos 53111, Telepon (0281) 635658, Pos-el bkpm_purwokerto@yahoo.com</p>
     </div>
 </div>
 <!-- Garis bawah tebal -->
 <div class="w-full border-t-4 border-black mt-[2px]"></div>
-<table class="w-full table-auto">
+<table class="w-full table-auto text-sm">
     <tbody>
         <tr>
             <td class="text-left pt-2">
@@ -32,33 +32,30 @@
             <td colspan="2">
                 <div class="flex flex-wrap gap-y-1 text-sm">
                     <div class="flex w-full">
-                        <!-- No. RM -->
-                        <div class="w-[10%]">No. RM</div>
-                        <div class="w-[5%] text-center">:</div>
-                        <div class="w-[20%]">
+                        <div class="w-[20%]">No. RM</div>
+                        <div class="w-[35%]">:
                             {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['peserta']['mr']['noMR'] ?? $detailSEP['peserta']['noMr'] }}
                         </div>
 
                         <!-- Nama -->
-                        <div class="w-[10%]">Nama</div>
-                        <div class="w-[5%] text-center">:</div>
-                        <div class="w-[50%]">
+                        <div class="w-[15%]">Nama</div>
+                        <div class="w-[50%]">:
                             {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['peserta']['nama'] ?? $detailSEP['peserta']['nama'] }}
                         </div>
                     </div>
 
                     <div class="flex w-full">
                         <!-- Tgl. Lahir -->
-                        <div class="w-[10%]">Tgl. Lahir</div>
-                        <div class="w-[5%] text-center">:</div>
-                        <div class="w-[20%]">
+                        <div class="w-[20%]">Tgl. Lahir</div>
+                        {{-- <div class="w-[5%] text-center">:</div> --}}
+                        <div class="w-[35%]">:
                             {{ $detailSuratKontrol['sep']['data_rujukan']['rujukan']['peserta']['tglLahir'] ?? $detailSEP['peserta']['tglLahir'] }}
                         </div>
 
                         <!-- Alamat -->
-                        <div class="w-[10%]">No. SEP</div>
-                        <div class="w-[5%] text-center">:</div>
-                        <div class="w-[50%]">{{ $detailSuratKontrol['sep']['noSep'] ?? $detailSEP['noSep'] }}</div>
+                        <div class="w-[15%]">No. SEP</div>
+                        {{-- <div class="w-[5%] text-center">:</div> --}}
+                        <div class="w-[50%]">: {{ $detailSuratKontrol['sep']['noSep'] ?? $detailSEP['noSep'] }}</div>
                     </div>
                 </div>
             </td>
@@ -68,7 +65,7 @@
 @php
     $no = 1;
 @endphp
-<table class="w-full table-auto mt-2">
+<table class="w-full table-auto mt-2 text-sm">
     <tbody>
         <tr class="border-b border-black">
             <td class="text-left">
@@ -184,13 +181,14 @@
             <td class="text-center">:</td>
             <td class="text-center">Rp.</td>
             @php
-                $totalTagihan = 50000 + $totalLab + $totalRo + $totalTindakan + $totalObat + $totalObatKronis;
+                $totalTagihan =
+                    50000 + $totalLab + $totalRo + $totalTindakan + $totalObat + $totalObatKronis + $totalbmhp;
             @endphp
             <td class="text-right"> {{ number_format($totalTagihan, 0, ',', '.') . ',-' }}</td>
         </tr>
     </tbody>
 </table>
-<div class="flex justify-end mx-20 mt-4">
+<div class="flex justify-end mx-20 mt-4 text-md">
     <div>
         <div>
             Penerima

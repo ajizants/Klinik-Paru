@@ -834,6 +834,7 @@ async function reportKunjungan(tglAwal, tglAkhir) {
         body: JSON.stringify({
             tglAwal: tglAwal,
             tglAkhir: tglAkhir,
+            layanan: "UMUM",
         }),
     })
         .then((response) => {

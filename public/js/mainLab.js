@@ -7,7 +7,7 @@ var Toast = Swal.mixin({
 
 let table; // Declare the DataTable variable outside the function
 function tabelPemeriksaan(itemPemeriksaan, item, pilihSemuaId) {
-    console.log("🚀 ~ itemPemeriksaan ~ itemPemeriksaan:", itemPemeriksaan);
+    // console.log("🚀 ~ itemPemeriksaan ~ itemPemeriksaan:", itemPemeriksaan);
     if ($.fn.DataTable.isDataTable("#tabelPemeriksaan")) {
         table.clear().destroy();
     }
@@ -288,7 +288,38 @@ function simpan() {
             });
         }
 
-        console.log(dataTerpilih);
+        if ($("#160").is(":checked")) {
+            // alert("160");
+            dataTerpilih.push(
+                {
+                    idLayanan: 233,
+                    norm: norm,
+                    notrans: notrans,
+                    hasil: "",
+                },
+                {
+                    idLayanan: 234,
+                    norm: norm,
+                    notrans: notrans,
+                    hasil: "",
+                },
+                {
+                    idLayanan: 235,
+                    norm: norm,
+                    notrans: notrans,
+                    hasil: "",
+                },
+                {
+                    idLayanan: 236,
+                    norm: norm,
+                    notrans: notrans,
+                    hasil: "",
+                }
+            );
+        }
+
+        // console.log(dataTerpilih);
+        // return;
         fetch("/api/addTransaksiLab", {
             method: "POST",
             headers: {
@@ -320,7 +351,7 @@ function simpan() {
                 return response.json();
             })
             .then((data) => {
-                console.log(data);
+                // console.log(data);
                 var massage = data.message;
                 Swal.fire({
                     icon: "success",
@@ -348,11 +379,11 @@ function simpan() {
 }
 
 function tampilkanOrder(notrans) {
-    console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
+    // console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
     var notrans = notrans ? notrans : $("#notrans").val();
-    console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
+    // console.log("🚀 ~ dataTindakan ~ notrans:", notrans);
     var tgl = $("#tgltrans").val();
-    console.log("🚀 ~ tampilkanOrder ~ tgl:", tgl);
+    // console.log("🚀 ~ tampilkanOrder ~ tgl:", tgl);
     $.ajax({
         url: "/api/cariTsLab",
         type: "post",
@@ -364,7 +395,7 @@ function tampilkanOrder(notrans) {
             }
 
             data = response;
-            console.log("🚀 ~ dataLab ~ data:", data);
+            // console.log("🚀 ~ dataLab ~ data:", data);
             data.forEach((item, index) => {
                 item.actions = `<a class="delete"
                                         data-id="${item.idLab}"
@@ -558,7 +589,7 @@ async function cariTsLab(norm, tgl, ruang) {
         } else {
             const data = await response.json();
             let noSampel = data.no_sampel;
-            console.log("🚀 ~ cariTsLab ~ noSampel:", noSampel);
+            // console.log("🚀 ~ cariTsLab ~ noSampel:", noSampel);
 
             if (noSampel == null || noSampel == "") {
                 getNoSampel();
@@ -566,7 +597,7 @@ async function cariTsLab(norm, tgl, ruang) {
                 $("#no_sampel").val(noSampel);
             }
 
-            console.log("🚀 ~ cariTsLab ~ data:", data);
+            // console.log("🚀 ~ cariTsLab ~ data:", data);
             $("#norm").val(data.norm);
             $("#nama").val(data.nama);
             $("#nik").val(data.nik);
@@ -636,7 +667,7 @@ function dataLab(data, tgl) {
     }
 
     data = data.pemeriksaan;
-    console.log("🚀 ~ dataLab ~ data:", data);
+    // console.log("🚀 ~ dataLab ~ data:", data);
     data.forEach((item, index) => {
         item.actions = `<a class="delete"
                                 data-id="${item.idLab}"
@@ -691,7 +722,7 @@ function resetForm(message) {
     const notrans = document.getElementById("notrans").value;
     const tglTrans = document.getElementById("tgltrans").value;
     const norm = document.getElementById("norm").value;
-    console.log("🚀 ~ resetForm ~ notrans:", notrans);
+    // console.log("🚀 ~ resetForm ~ notrans:", notrans);
     if (message != "trans") {
         antrian("lab");
     } else {
@@ -725,7 +756,7 @@ function resetForm(message) {
     //     }
     // });
 
-    console.log(msgSelesai);
+    // console.log(msgSelesai);
     // Toast.fire({
     //     icon: "success",
     //     title: message + "\n Maturnuwun...!!!",

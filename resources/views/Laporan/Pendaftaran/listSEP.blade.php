@@ -71,6 +71,7 @@
                             <tr>
                                 <th class="col-2">Aksi</th>
                                 <th>Urut</th>
+                                <th>Urut</th>
                                 <th>Tanggal</th>
                                 <th>Detail SEP</th>
                                 <th>Detai Surat Kontrol</th>

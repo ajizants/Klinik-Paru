@@ -31,23 +31,25 @@
                     <tr>
                         <th>Urut</th>
                         <th>Tanggal</th>
-                        <th>Penjamin</th>
+                        {{-- <th>Penjamin</th> --}}
                         <th>No. RM</th>
                         <th class="col-2">Nama Pasien</th>
-                        <th>Desa</th>
-                        <th>RT/RW</th>
+                        <th>Alamat Lengkap</th>
+                        {{-- <th>Desa</th> --}}
+                        {{-- <th>RT/RW</th>
                         <th>Kecamatan</th>
-                        <th>Kabupaten</th>
+                        <th>Kabupaten</th> --}}
+                        <th class="col-3">Dokter</th>
                         <th>ICD X 1</th>
                         <th>DX 1</th>
                         <th>ICD X 2</th>
                         <th>DX 2</th>
                         <th>ICD X 3</th>
                         <th>DX 3</th>
-                        <th class="col-3">Dokter</th>
-                        <th class="px-0 col-3">Status</th>
-                        <th class="px-0 col-3">DS</th>
-                        <th class="px-0 col-3">RTL</th>
+                        <th class="col-3">DS</th>
+                        <th class="col-3">Status</th>
+                        <th class="col-3">RTL</th>
+                        <th class="col-3">Obat</th>
                     </tr>
                 </thead>
                 <tbody class="table-bordered border-warning">

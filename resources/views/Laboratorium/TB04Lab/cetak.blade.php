@@ -288,23 +288,42 @@
                             </td>
                             <td class="text-center"></td>
                         @else
+                            @php
+                                if (!function_exists('formatHasil')) {
+                                    function formatHasil($hasil)
+                                    {
+                                        $merah = ['+1', '+2', '+3', '+1-9'];
+
+                                        if (in_array($hasil, $merah)) {
+                                            return '<span style="color: red;">' .
+                                                str_replace('+', '+ ', $hasil) .
+                                                '</span>';
+                                        }
+
+                                        return e($hasil);
+                                    }
+                                }
+
+                                if (!function_exists('formatNegatifMerah')) {
+                                    function formatNegatifMerah($hasil)
+                                    {
+                                        if ($hasil === 'Negatif') {
+                                            return e($hasil);
+                                        }
+
+                                        return '<span style="color: red;">' . e($hasil) . '</span>';
+                                    }
+                                }
+                            @endphp
+
                             <td class="p-1 text-center">
-                                @if ($item['tb04'][0]['hasil'] == '+1')
-                                    <span style="color: red;">1 +</span>
-                                @elseif($item['tb04'][0]['hasil'] == '+2')
-                                    <span style="color: red;">2 +</span>
-                                @elseif($item['tb04'][0]['hasil'] == '+3')
-                                    <span style="color: red;">3 +</span>
-                                @elseif($item['tb04'][0]['hasil'] == '+1-9')
-                                    <span style="color: red;">+ 1-9</span>
-                                @else
-                                    {{ $item['tb04'][0]['hasil'] }}
-                                @endif
+                                {!! formatHasil($item['tb04'][0]['hasil'] ?? '') !!}
                             </td>
+
                             <td class="p-1 text-center">
-                                {{ $item['tb04'][1]['hasil'] ?? '' }}
-                                {{-- {{ $item['tb04'][1]['idLayanan'] ?? '' }} --}}
+                                {!! formatHasil($item['tb04'][1]['hasil'] ?? '') !!}
                             </td>
+
                             <td class="text-center">-</td>
                             <td class="text-center">-</td>
                             <td class="text-center">-</td>

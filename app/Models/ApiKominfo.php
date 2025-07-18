@@ -174,6 +174,78 @@ class ApiKominfo extends Model
             return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
         }
     }
+    public function get_master_obat($namaObat)
+    {
+        $client = new Client();
+        $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+
+        if (! $cookie) {
+            // Authenticate if no cookie is found
+            $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+            $cookie        = $loginResponse['cookies'][0] ?? null;
+
+            if ($cookie) {
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/");
+            } else {
+                return response()->json(['message' => 'Login gagal'], 401);
+            }
+        }
+
+        $url = env('BASR_URL_KOMINFO', '') . '/data_obat/get_data';
+
+        // Format request sesuai dengan yang Anda inginkan
+        $columns = [];
+        for ($i = 0; $i < 3; $i++) { // Sesuaikan jumlah kolom sesuai kebutuhan
+            $columns[] = [
+                'data'       => ($i === 0) ? '' : 'id',
+                'name'       => '',
+                'searchable' => true,
+                'orderable'  => false,
+                'search'     => ['value' => '', 'regex' => false],
+            ];
+        }
+
+        try {
+            $response = $client->request('POST', $url, [
+                'headers'     => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Cookie'       => $cookie,
+                ],
+                'form_params' => [
+                    'columns'          => $columns,
+                    'start'            => 0,
+                    'length'           => 100,
+                    'search'           => [
+                        'value' => '',
+                        'regex' => false,
+                    ],
+                    'nama_obat_filter' => $namaObat ?? '',
+                    'pasien_nama'      => $nama ?? '',
+                    'pasien_no_rm'     => $norm ?? '',
+
+                ],
+            ]);
+
+            // Check if response is successful
+            if ($response->getStatusCode() !== 200) {
+                Log::error('Error response body: ' . (string) $response->getBody());
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
+
+            $body = (string) $response->getBody();
+            $data = json_decode($body, true);
+            $data = $data['data'];
+            return $data;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            // Handle request errors
+            Log::error('Request Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
+        } catch (\Exception $e) {
+            // Handle unexpected errors
+            Log::error('Unexpected Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
+        }
+    }
 
     public function get_assesment_awal(array $params)
     {

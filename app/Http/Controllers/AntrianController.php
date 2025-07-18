@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\KasirAddModel;
 use App\Models\KasirTransModel;
 use App\Models\KominfoModel;
 use App\Models\KunjunganModel;
@@ -264,7 +265,10 @@ class AntrianController extends Controller
             $tanggal = $list['tanggal'];
             $kasir   = KasirTransModel::where('norm', $norm)
                 ->whereDate('created_at', $tanggal)->first();
+            $obat = KasirAddModel::where('norm', $norm)
+                ->whereDate('created_at', $tanggal)->first();
             $list['status_kasir'] = ! $kasir ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+            $list['status_obat']  = ! $obat ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
             $pulang               = KunjunganWaktuSelesai::where('notrans', $list['no_reg'])->first();
             // dd($pulang);
             $list['status_pulang'] = ! $pulang || ! $pulang['waktu_selesai_farmasi'] ? 'Belum Pulang' : 'Sudah Pulang';

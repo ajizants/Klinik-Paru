@@ -145,10 +145,29 @@ function processDataArray(dataArray, ruang, tableId) {
         item.index = index + 1;
         switch (ruang) {
             case "dots":
-                item.nmDiagnosa = item.diagnosa[0]?.nama_diagnosa || "";
+                item.nmDiagnosa =
+                    "- " +
+                    [
+                        item.diagnosa[0]?.nama_diagnosa,
+                        item.diagnosa[1]?.nama_diagnosa,
+                        item.diagnosa[2]?.nama_diagnosa,
+                    ]
+                        .filter(Boolean)
+                        .join(";<br> - ");
+
                 break;
             case "ro":
                 item.asktind = generateAsktindString(item.radiologi);
+                item.nmDiagnosa =
+                    "- " +
+                    [
+                        item.diagnosa[0]?.nama_diagnosa,
+                        item.diagnosa[1]?.nama_diagnosa,
+                        item.diagnosa[2]?.nama_diagnosa,
+                    ]
+                        .filter(Boolean)
+                        .join(";<br> - ");
+
                 break;
             case "igd":
                 item.asktind = generateAsktindString(item.tindakan, true);
@@ -397,13 +416,21 @@ function getColumnsForRuang(ruang, tableId) {
                 data: "nmDiagnosa",
                 title: "Diagnosa",
                 className: "p-2 col-4",
-                title: "Diagnosa",
             },
         ],
         ro: [{ data: "asktind", title: "Permintaan", className: "p-2 col-3" }],
         igd: [{ data: "asktind", title: "Permintaan", className: "p-2 col-4" }],
         lab: [{ data: "asktind", title: "Permintaan", className: "p-2 col-4" }],
     };
+
+    // Tambahkan kolom nmDiagnosa ke extraColumns.ro jika kondisi terpenuhi
+    if (ruang === "ro" && tableId === "#dataKonsul") {
+        extraColumns.ro.unshift({
+            data: "nmDiagnosa",
+            title: "Diagnosa",
+            className: "p-2 col-4",
+        });
+    }
 
     // Gabungkan semua kolom dan kembalikan hasilnya
     return [...aksiColumns, ...commonColumns, ...(extraColumns[ruang] || [])];

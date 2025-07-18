@@ -155,14 +155,96 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
+                        @if (Auth::user()->role == 'admin')
+                            <div class="container-fluid">
+                                <div class="card card-danger" id="cardHematologi">
+                                    {{-- <div class="card card-danger" id="cardHematologi" style="display: none;"> --}}
+                                    <div class="card-header">
+                                        <h4 class="card-title">Form Input Hasil Hematologi</h4>
+                                    </div>
+                                    <form class="form-horizontal" id="formHasilHematolgi">
+                                        @csrf
+                                        <div class="card-body">
+                                            <div class="form-row">
+                                                <div class="form-group col">
+                                                    <label for="hb" class="font-weight-bold">Hemoglobin:</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" inputmode="numeric" id="hb"
+                                                            step="1" class="form-control"
+                                                            placeholder="Hemoglobin">
+                                                        <div class="input-group-append">
+                                                            <div class="input-group-text">gr/dl</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col">
+                                                    <label for="wbc" class="font-weight-bold">WBC:</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" inputmode="numeric" id="wbc"
+                                                            step="1" class="form-control" placeholder="WBC">
+                                                        <div class="input-group-append">
+                                                            <div class="input-group-text">10<sup>3</sup>/Ul</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col">
+                                                    <label for="rbc" class="font-weight-bold">RBC:</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" inputmode="numeric" id="rbc"
+                                                            step="1" class="form-control" placeholder="RBC">
+                                                        <div class="input-group-append">
+                                                            <div class="input-group-text">10<sup>6</sup>/Ul</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col">
+                                                    <label for="plt"
+                                                        class="font-weight-bold">PLT/TROMBOSIT:</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" inputmode="numeric" id="plt"
+                                                            step="1" class="form-control"
+                                                            placeholder="PLT/TROMBOSIT">
+                                                        <div class="input-group-append">
+                                                            <div class="input-group-text">10<sup>3</sup>/Ul</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="card-footer form-row d-flex justify-content-end aligment-items-center">
+                                        <div class="col-auto">
+                                            <a class="btn btn-success" id="tblSimpan"
+                                                onclick="simpanHematologi();">Simpan</a>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a class="btn btn-danger" id="tblBatal"
+                                                onclick="resetForm('Transaksi dibatalkan');">Batal</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
 
                 <script>
                     async function dataLab(pemeriksaan, notrans) {
+                        // console.log("🚀 ~ pemeriksaan:", pemeriksaan)
+
+                        const roleUser = "{{ Auth::user()->role }}";
+                        // console.log("🚀 ~ roleUser:", roleUser)
+                        if (roleUser == 'admin') {
+                            const adaHematologi = pemeriksaan.some(item => item.idLayanan == 160);
+                            if (adaHematologi) {
+                                document.getElementById("cardHematologi").style.display = "block";
+                            } else {
+                                document.getElementById("cardHematologi").style.display = "none";
+                            }
+                        }
+
                         const analisResponse = await fetch("/api/analis", {
                             method: "GET",
                             headers: {
@@ -444,5 +526,101 @@
                             paging: false,
                         });
                         scrollToInputSection();
+                    }
+
+                    function simpanHematologi() {
+                        const norm = $("#norm").val();
+                        const notrans = $("#notrans").val();
+                        const tglTrans = $("#tgltrans").val();
+                        const hb = $('#hb').val();
+                        const wbc = $('#wbc').val();
+                        const rbc = $('#rbc').val();
+                        const plt = $('#plt').val();
+
+                        const dataTerpilih = [];
+
+                        if (!norm || !notrans) {
+                            const dataKurang = [];
+                            if (!norm) dataKurang.push("No RM");
+                            if (!notrans) dataKurang.push("Nomor Transaksi");
+
+                            Swal.fire({
+                                icon: "error",
+                                title: `Data Tidak Lengkap...!!! ${dataKurang.join(
+                                    ", "
+                                )} Belum Diisi`,
+                            });
+                            return;
+                        }
+
+
+                        if (hb !== "") {
+                            dataTerpilih.push({
+                                idLayanan: 233,
+                                norm: norm,
+                                notrans: notrans,
+                                hasil: hb,
+                            });
+                        }
+
+                        if (wbc !== "") {
+                            dataTerpilih.push({
+                                idLayanan: 234,
+                                norm: norm,
+                                notrans: notrans,
+                                hasil: wbc,
+                            });
+                        }
+
+                        if (rbc !== "") {
+                            dataTerpilih.push({
+                                idLayanan: 235,
+                                norm: norm,
+                                notrans: notrans,
+                                hasil: rbc,
+                            });
+                        }
+
+                        if (plt !== "") {
+                            dataTerpilih.push({
+                                idLayanan: 236,
+                                norm: norm,
+                                notrans: notrans,
+                                hasil: plt,
+                            });
+                        }
+                        console.log(dataTerpilih);
+
+                        $.ajax({
+                            url: "/api/hasilHematologi",
+                            type: "POST",
+                            data: {
+                                dataTerpilih: dataTerpilih,
+                                tglTrans: tglTrans
+                            },
+                            success: function(response) {
+                                if (response.status === "success") {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Data Berhasil Disimpan",
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Terjadi Kesalahan",
+                                        text: "Gagal menyimpan data: " + response.message,
+                                    });
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("Error:", error);
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Terjadi Kesalahan",
+                                    text: "Gagal menyimpan data: " + error,
+                                });
+                            }
+                        });
+
                     }
                 </script>

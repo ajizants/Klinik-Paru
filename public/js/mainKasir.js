@@ -18,7 +18,8 @@ function validateAndSubmit() {
 
     var error = false;
     const hargaObat = $("#harga_2").val();
-    if (hargaObat == 1) {
+    const cexBoxObat = $("#2").is(":checked");
+    if (cexBoxObat && hargaObat == 1) {
         Swal.fire({
             icon: "error",
             title: "Harga Obat belum diisi/salah",
@@ -444,8 +445,11 @@ function handleError(
     document.getElementById("form_pembayaran").reset();
     cariTagihan(norm, tgltrans);
     // checkedPemeriksaan(1);
-    if (includePemeriksaan2) {
-        checkedPemeriksaan(2);
+    const layanan = $("#layanan").val();
+    if (layanan === "UMUM") {
+        if (includePemeriksaan2) {
+            checkedPemeriksaan(2);
+        }
     }
     handleDokterPemeriksaan(dokter);
 }
@@ -622,6 +626,20 @@ function resetForm(message) {
     scrollToTop();
 }
 
+function pendaftaranKair() {
+    console.log("🚀 ~ pendaftaranKair ~ pendaftaranKair:", pendaftaranKair);
+    var notrans = $("#notrans").val();
+    var norm = $("#norm").val();
+    var tgltrans = $("#tgltrans").val();
+    var dokter = $("#dokterPendaftaran").val();
+    //  var dokter = $("#dokter").val();
+    if (notrans !== "" && norm !== "" && tgltrans !== "" && dokter !== "") {
+        riwayat(notrans, norm, tgltrans, dokter);
+    } else {
+        tampilkanEror("Silahkan pilih pasien terlebih dahulu");
+    }
+}
+
 $(document).ready(function () {
     antrianAll("kasir");
     setTodayDate();
@@ -637,6 +655,14 @@ $(document).ready(function () {
         antrianAll("kasir");
     }, 150000);
     tabelPemeriksaan(itemPemeriksaan, "item", "pilih-semua");
+
+    if (
+        $("#norm").val() !== "" &&
+        $("#notrans").val() !== "" &&
+        $("#layanan").val() !== ""
+    ) {
+        pendaftaranKair();
+    }
 });
 
 $(document).on("select2:open", () => {

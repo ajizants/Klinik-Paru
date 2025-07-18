@@ -92,6 +92,7 @@ Route::middleware('auth')->group(function () {
 
     //Kasir
     Route::get('kasir', [KasirController::class, 'kasir'])->name('kasir')->middleware('role:kasir');
+    Route::get('kasir/norm/{norm}/{tanggal}', [KasirController::class, 'kasirRM'])->name('kasirRM');
     Route::get('kasir/master', [KasirController::class, 'masterKasir'])->name('kasir')->middleware('role:kasir');
     Route::get('kasir/report', [KasirController::class, 'rekapKasir'])->name('rekapKasir')->middleware('role:kasir');
     Route::get('kasir/pendapatan/lain', [KasirController::class, 'pendapatanLain'])->name('rekapKasir')->middleware('role:kasir');
@@ -116,7 +117,7 @@ Route::middleware('auth')->group(function () {
     Route::get('Gizi/Riwayat', [HomeController::class, 'riwayatGizi'])->name('riwayatGizi')->middleware('role:gizi');
 
     //riwayat diagnosa
-    Route::get('Riwayat/Pasien', [HomeController::class, 'riwayatKunjungan'])->name('riwayatKunjungan')->middleware('role:dokter,perawat,dots,igd,farmasi,guest');
+    Route::get('Riwayat/Pasien', [HomeController::class, 'riwayatKunjungan'])->name('riwayatKunjungan')->middleware('role:dokter,perawat,dots,igd,farmasi,guest,nurse');
     Route::get('Diagnosa/Mapping', [HomeController::class, 'mappingDx'])->name('mappingDx')->middleware('role:dokter,perawat');
 
     //analisis data

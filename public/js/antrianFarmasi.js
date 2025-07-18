@@ -35,6 +35,8 @@ function processResponseFar(response) {
         }
         let warnaBtn =
             item.status_pulang === "Sudah Pulang" ? "danger" : "secondary";
+        let warnaBtnObat =
+            item.status_obat === "Sudah Selesai" ? "secondary" : "lime";
         const commonAttributes = `
         data-norm="${item.pasien_no_rm}"
         data-nama="${item.pasien_nama}"
@@ -78,7 +80,7 @@ function processResponseFar(response) {
             `;
         const bpjsBtn = `
             <a type="button" ${commonAttributes} onclick="isiObat(this)"
-                class="btn bg-lime"
+                class="btn bg-${warnaBtnObat}"
                 data-toggle="tooltip" data-placement="top" title="Isi Obat">
                 <i class="fa-solid fa-tablets"></i>
             </a>
@@ -120,17 +122,60 @@ function processResponseFar(response) {
 }
 
 function isiObat(btn) {
-    console.log("🚀 ~ isiObat ~ btn:", btn);
-    $("#norm_bpjs").val(btn.getAttribute("data-norm"));
-    $("#layanan_bpjs").val(btn.getAttribute("data-layanan"));
-    $("#nama_bpjs").val(btn.getAttribute("data-nama"));
-    $("#tgltrans_bpjs").val(btn.getAttribute("data-tgltrans"));
-    $("#notrans_bpjs").val(btn.getAttribute("data-notrans"));
+    const norm = btn.getAttribute("data-norm");
+    const layanan = btn.getAttribute("data-layanan");
+    const nama = btn.getAttribute("data-nama");
+    const tgltrans = btn.getAttribute("data-tgltrans");
+    const notrans = btn.getAttribute("data-notrans");
 
+    // Isi input form terlebih dahulu
+    $("#norm_bpjs").val(norm);
+    $("#layanan_bpjs").val(layanan);
+    $("#nama_bpjs").val(nama);
+    $("#tgltrans_bpjs").val(tgltrans);
+    $("#notrans_bpjs").val(notrans);
+
+    // Tampilkan modal lebih awal agar user tidak menunggu diam
     $("#modalInputObat").modal("show");
+
+    const requestData = { notrans, tgltrans };
+
+    $.ajax({
+        url: "/api/kasir/kunjungan/item",
+        type: "POST",
+        data: requestData,
+        success: function (response) {
+            const data = response || [];
+
+            let totalObat = "";
+            let totalBMHP = "";
+            let totalObatKronis = "";
+
+            data.forEach((item) => {
+                const id = parseInt(item.idLayanan);
+                if (id === 2) totalObat = item.totalHarga;
+                else if (id === 229) totalBMHP = item.totalHarga;
+                else if (id === 228) totalObatKronis = item.totalHarga;
+            });
+
+            $("#obat_bpjs").val(totalObat);
+            $("#bmhp_bpjs").val(totalBMHP);
+            $("#obatKronis_bpjs").val(totalObatKronis);
+        },
+        error: function (xhr, status, error) {
+            console.error("Gagal mengambil data kunjungan:", error);
+            handleErrorKasir();
+        },
+    });
 }
 
-function simpanTagihan() {
+function handleErrorKasir() {
+    $("#obat_bpjs").val("");
+    $("#bmhp_bpjs").val("");
+    $("#obatKronis_bpjs").val("");
+}
+
+function simpanDataFarmasi() {
     const notrans = $("#notrans_bpjs").val();
     const norm = $("#norm_bpjs").val();
     const jaminan = $("#layanan_bpjs").val();
@@ -176,7 +221,7 @@ function simpanTagihan() {
     }
 
     // Kirim data ke server
-    fetch("/api/kasir/item/add", {
+    fetch("/api/farmasi/item/add", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -189,6 +234,7 @@ function simpanTagihan() {
             jk: "",
             alamat: "",
             jaminan: jaminan,
+            tgltrans: tgltrans,
             dataTerpilih: dataTerpilih,
         }),
     })
@@ -239,6 +285,7 @@ function dwrawTableFar(data, idTable) {
     if ($.fn.DataTable.isDataTable(idTable)) {
         $(idTable).DataTable().destroy();
     }
+
     $(idTable).DataTable({
         data: data,
         destroy: true,
@@ -260,6 +307,16 @@ function dwrawTableFar(data, idTable) {
                         statusClasses[data] || statusClasses.default
                     }">${data}</div>`;
                 },
+            },
+            {
+                data: "status_obat",
+                render: function (data) {
+                    const backgroundColor =
+                        data === "Tidak Ada Transaksi" ? "danger" : "success";
+                    return `<div class="badge badge-${backgroundColor}">${data}</div>`;
+                },
+                className: "p-2",
+                title: "Status Obat",
             },
             // { data: "keterangan", className: "p-2", title: "Status Kominfo" },
             { data: "antrean_nomor", className: "p-2", title: "Urut" },

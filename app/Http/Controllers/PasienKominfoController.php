@@ -25,25 +25,6 @@ class PasienKominfoController extends Controller
         $koneksi     = new KominfoModel();
 
         $noAtian = $koneksi->ambilNoRequest($penjamin_id);
-        // $noAtian = [
-        //     'code' => 200,
-        //     'message' => 'Berhasil mengambil nomor antrean!',
-        //     'data' => [
-        //         'no_reg' => '2025053000011',
-        //         'antrean_angka' => '011',
-        //         'antrean_estimasi_dilayani' => 1748566500,
-        //         'penjamin_id' => '1',
-        //         'daftar_by' => 'OTS',
-        //         'tanggal' => '2025-05-30',
-        //         'sesi_id' => 1,
-        //         'antrean_estimasi_dilayani_tampil' => '2025-05-30 07:55:00',
-        //         'antrean_menunggu' => 0,
-        //         'antrean_nomor' => '011',
-        //         'tanggal_tampil' => 'Jumat, 30 Mei 2025 08:05:03 WIB',
-        //         'penjamin_nama' => 'UMUM',
-        //         'antrean_menunggu_tampil' => '',
-        //     ],
-        // ];
 
         return response()->json($noAtian);
     }
@@ -1193,6 +1174,121 @@ class PasienKominfoController extends Controller
         return response()->json($data);
     }
 
+    // public function antrianAll(Request $request)
+    // {
+    //     if (! $request->has('tanggal')) {
+    //         return response()->json(['error' => 'Tanggal Belum Di Isi'], 400);
+    //     }
+
+    //     $tanggal = $request->input('tanggal', date('Y-m-d'));
+    //     $ruang   = $request->input('ruang');
+    //     $params  = [
+    //         'tanggal_awal'  => $tanggal,
+    //         'tanggal_akhir' => $tanggal,
+    //         'no_rm'         => '',
+    //     ];
+    //     $model = new KominfoModel();
+    //     $data  = $model->pendaftaranRequest($params);
+
+    //     // return $data;
+    //     //jika respon {"error":"Error decoding JSON response: Syntax error"}
+    //     if (isset($data['error'])) {
+    //         return response()->json(['error' => $data['error']], 500);
+    //     }
+
+    //     if (! isset($data) || ! is_array($data)) {
+    //         return response()->json(['error' => 'Invalid data format'], 500);
+    //     }
+
+    //     if (isset($request['tes'])) {
+    //         return response()->json($data);
+    //     }
+
+    //     $filteredData = array_values(array_filter($data, function ($d) {
+    //         // return $d['pasien_nama'] !== 0;
+    //         // return $d['no_trans'] !== 0;
+    //         return $d['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
+    //     }));
+
+    //     $doctorNipMap = [
+    //         'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
+    //         'dr. Agil Dananjaya, Sp.P'                  => '9',
+    //         'dr. Filly Ulfa Kusumawardani'              => '198907252019022004',
+    //         'dr. Sigit Dwiyanto'                        => '198903142022031005',
+    //     ];
+    //     $tes = $filteredData;
+
+    //     foreach ($filteredData as &$item) {
+    //         $norm        = $item['pasien_no_rm'];
+    //         $dokter_nama = $item['dokter_nama'];
+
+    //         try {
+    //             switch ($ruang) {
+    //                 case 'ro':
+    //                     $tsRo = ROTransaksiModel::where('norm', $norm)
+    //                         ->whereDate('tgltrans', $tanggal)->first();
+    //                     // $foto = ROTransaksiHasilModel::where('norm', $norm)
+    //                     $foto = RoHasilModel::where('norm', $norm)
+    //                         ->whereDate('tanggal', $tanggal)->first();
+    //                     $item['status'] = ! $tsRo && ! $foto ? 'Tidak Ada Transaksi' :
+    //                     ($tsRo && ! $foto ? 'Belum Upload Foto Thorax' : 'Sudah Selesai');
+    //                     break;
+
+    //                 case 'igd':
+    //                     $ts = IGDTransModel::with('transbmhp')->where('norm', $norm)
+    //                         ->whereDate('created_at', $tanggal)->first();
+    //                     $item['status'] = ! $ts ? 'Tidak Ada Transaksi' :
+    //                     ($ts->transbmhp == null ? 'Belum Ada Transaksi BMHP' : 'Sudah Selesai');
+    //                     break;
+
+    //                 case 'dots':
+    //                     $ts = DotsTransModel::where('norm', $norm)
+    //                         ->whereDate('created_at', $tanggal)->first();
+    //                     $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+    //                     break;
+
+    //                 case 'lab':
+    //                     $ts = LaboratoriumKunjunganModel::where('norm', $norm)
+    //                         ->whereDate('created_at', $tanggal)->first();
+    //                     $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+    //                     break;
+    //                 case 'kasir':
+    //                     $ts = KasirTransModel::where('norm', $norm)
+    //                         ->whereDate('created_at', $tanggal)->first();
+    //                     $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+    //                     break;
+    //                 case 'farmasi':
+    //                     $ts = KasirTransModel::where('norm', $norm)
+    //                         ->whereDate('created_at', $tanggal)->first();
+    //                     $pulang = KunjunganWaktuSelesai::where('norm', $norm)
+    //                         ->whereDate('created_at', $tanggal)->first();
+    //                     $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
+    //                     $item['button'] = $pulang->waktu_selesai_farmasi !== null ? 'success' : 'warning';
+    //                     break;
+
+    //                 default:
+    //                     $item['status'] = 'Unknown ruang';
+    //             }
+    //         } catch (\Exception $e) {
+    //             Log::error('Database connection failed: ' . $e->getMessage());
+    //             $item['status'] = 'Database connection error';
+    //         }
+
+    //         $item['nip_dokter'] = $doctorNipMap[$dokter_nama] ?? 'Unknown';
+    //     }
+
+    //     return response()->json([
+    //         'metadata' => [
+    //             'message' => 'Data Pasien Ditemukan',
+    //             'code'    => 200,
+    //         ],
+    //         'response' => [
+    //             'data' => $filteredData,
+    //             // 'data' => $tes,
+    //         ],
+    //     ]);
+    // }
+
     public function antrianAll(Request $request)
     {
         if (! $request->has('tanggal')) {
@@ -1201,16 +1297,16 @@ class PasienKominfoController extends Controller
 
         $tanggal = $request->input('tanggal', date('Y-m-d'));
         $ruang   = $request->input('ruang');
-        $params  = [
+
+        $params = [
             'tanggal_awal'  => $tanggal,
             'tanggal_akhir' => $tanggal,
             'no_rm'         => '',
         ];
+
         $model = new KominfoModel();
         $data  = $model->pendaftaranRequest($params);
 
-        // return $data;
-        //jika respon {"error":"Error decoding JSON response: Syntax error"}
         if (isset($data['error'])) {
             return response()->json(['error' => $data['error']], 500);
         }
@@ -1219,14 +1315,12 @@ class PasienKominfoController extends Controller
             return response()->json(['error' => 'Invalid data format'], 500);
         }
 
-        if (isset($request['tes'])) {
+        if ($request->has('tes')) {
             return response()->json($data);
         }
 
-        $filteredData = array_values(array_filter($data, function ($d) {
-            // return $d['pasien_nama'] !== 0;
-            return $d['no_trans'] !== 0;
-            //     return $d['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
+        $filteredData = array_values(array_filter($data, function ($item) {
+            return $item['keterangan'] === 'SELESAI DIPANGGIL LOKET PENDAFTARAN';
         }));
 
         $doctorNipMap = [
@@ -1235,102 +1329,65 @@ class PasienKominfoController extends Controller
             'dr. Filly Ulfa Kusumawardani'              => '198907252019022004',
             'dr. Sigit Dwiyanto'                        => '198903142022031005',
         ];
-        $tes = $filteredData;
 
         foreach ($filteredData as &$item) {
-            $norm        = $item['pasien_no_rm'];
-            $dokter_nama = $item['dokter_nama'];
+            $norm               = $item['pasien_no_rm'];
+            $dokterNama         = $item['dokter_nama'];
+            $item['nip_dokter'] = $doctorNipMap[$dokterNama] ?? 'Unknown';
 
-            // // Cari di tungguLab
-            // $lab               = collect($tungguLab)->firstWhere('norm', $norm);
-            // $item['statusLab'] = $lab['status'] ?? null;
-
-            // // Cari di tungguRo
-            // $ro               = collect($tungguRo)->firstWhere('norm', $norm);
-            // $item['statusRO'] = $ro['status'] ?? null;
             try {
-                switch ($ruang) {
-                    case 'ro':
-                        $tsRo = ROTransaksiModel::where('norm', $norm)
-                            ->whereDate('tgltrans', $tanggal)->first();
-                        // $foto = ROTransaksiHasilModel::where('norm', $norm)
-                        $foto = RoHasilModel::where('norm', $norm)
-                            ->whereDate('tanggal', $tanggal)->first();
-                        $item['status'] = ! $tsRo && ! $foto ? 'Tidak Ada Transaksi' :
-                        ($tsRo && ! $foto ? 'Belum Upload Foto Thorax' : 'Sudah Selesai');
-                        break;
-
-                    case 'igd':
-                        $ts = IGDTransModel::with('transbmhp')->where('norm', $norm)
-                            ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' :
-                        ($ts->transbmhp == null ? 'Belum Ada Transaksi BMHP' : 'Sudah Selesai');
-                        break;
-
-                    case 'dots':
-                        $ts = DotsTransModel::where('norm', $norm)
-                            ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
-                        break;
-
-                    case 'lab':
-                        $ts = LaboratoriumKunjunganModel::where('norm', $norm)
-                            ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
-                        break;
-                    case 'kasir':
-                        $ts = KasirTransModel::where('norm', $norm)
-                            ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
-                        break;
-                    case 'farmasi':
-                        $ts = KasirTransModel::where('norm', $norm)
-                            ->whereDate('created_at', $tanggal)->first();
-                        $pulang = KunjunganWaktuSelesai::where('norm', $norm)
-                            ->whereDate('created_at', $tanggal)->first();
-                        $item['status'] = ! $ts ? 'Tidak Ada Transaksi' : 'Sudah Selesai';
-                        $item['button'] = $pulang->waktu_selesai_farmasi !== null ? 'success' : 'warning';
-                        break;
-
-                    default:
-                        $item['status'] = 'Unknown ruang';
-                }
+                $item['status'] = $this->getStatusByRuang($ruang, $norm, $tanggal, $item);
             } catch (\Exception $e) {
-                Log::error('Database connection failed: ' . $e->getMessage());
+                Log::error('Database error: ' . $e->getMessage());
                 $item['status'] = 'Database connection error';
             }
-
-            $item['nip_dokter'] = $doctorNipMap[$dokter_nama] ?? 'Unknown';
         }
 
         return response()->json([
-            'metadata' => [
-                'message' => 'Data Pasien Ditemukan',
-                'code'    => 200,
-            ],
-            'response' => [
-                'data' => $filteredData,
-                // 'data' => $tes,
-            ],
+            'metadata' => ['message' => 'Data Pasien Ditemukan', 'code' => 200],
+            'response' => ['data' => $filteredData],
         ]);
     }
 
-    // public function newPasien(Request $request)
-    // {
-    //     if ($request->has('no_rm')) {
-    //         $no_rm = $request->input('no_rm');
-    //         $model = new KominfoModel();
+    protected function getStatusByRuang($ruang, $norm, $tanggal, &$item)
+    {
+        switch ($ruang) {
+            case 'ro':
+                $tsRo = ROTransaksiModel::where('norm', $norm)->whereDate('tgltrans', $tanggal)->first();
+                $foto = RoHasilModel::where('norm', $norm)->whereDate('tanggal', $tanggal)->first();
+                return ! $tsRo && ! $foto
+                ? 'Tidak Ada Transaksi'
+                : ($tsRo && ! $foto ? 'Belum Upload Foto Thorax' : 'Sudah Selesai');
 
-    //         // Panggil metode untuk melakukan request
-    //         $data = $model->pasienRequest($no_rm);
+            case 'igd':
+                $ts = IGDTransModel::with('transbmhp')->where('norm', $norm)->whereDate('created_at', $tanggal)->first();
+                return ! $ts
+                ? 'Tidak Ada Transaksi'
+                : ($ts->transbmhp === null ? 'Belum Ada Transaksi BMHP' : 'Sudah Selesai');
 
-    //         // Tampilkan data (atau lakukan apa pun yang diperlukan)
-    //         return response()->json($data);
-    //     } else {
-    //         // Jika parameter 'tanggal' tidak disediakan, kembalikan respons error
-    //         return response()->json(['error' => 'No RM Belum Di Isi'], 400);
-    //     }
-    // }
+            case 'dots':
+                $ts = DotsTransModel::where('norm', $norm)->whereDate('created_at', $tanggal)->first();
+                return $ts ? 'Sudah Selesai' : 'Tidak Ada Transaksi';
+
+            case 'lab':
+                $ts = LaboratoriumKunjunganModel::where('norm', $norm)->whereDate('created_at', $tanggal)->first();
+                return $ts ? 'Sudah Selesai' : 'Tidak Ada Transaksi';
+
+            case 'kasir':
+                $ts = KasirTransModel::where('norm', $norm)->whereDate('created_at', $tanggal)->first();
+                return $ts ? 'Sudah Selesai' : 'Tidak Ada Transaksi';
+
+            case 'farmasi':
+                $ts             = KasirTransModel::where('norm', $norm)->whereDate('created_at', $tanggal)->first();
+                $pulang         = KunjunganWaktuSelesai::where('norm', $norm)->whereDate('created_at', $tanggal)->first();
+                $item['button'] = $pulang && $pulang->waktu_selesai_farmasi !== null ? 'success' : 'warning';
+                return $ts ? 'Sudah Selesai' : 'Tidak Ada Transaksi';
+
+            default:
+                return 'Unknown ruang';
+        }
+    }
+
     public function newPasien(Request $request)
     {
         if ($request->has('no_rm')) {
@@ -1522,74 +1579,6 @@ class PasienKominfoController extends Controller
         return response()->json($result);
     }
 
-    // public function kunjungan(Request $request)
-    // {
-    //     // Ambil parameter dari req
-    //     $params = $request->only(['tanggal_awal', 'tanggal_akhir', 'no_rm']);
-    //     $model  = new KominfoModel();
-    //     $data   = $model->cpptRequest($params);
-    //     if (isset($data['response']['data']) && is_array($data['response']['data'])) {
-    //         // Filter data, jika tindakan kosong maka skip
-    //         $nowDate = Carbon::now()->format('Y-m-d');
-
-    //         $filteredData = array_filter($data['response']['data'], function ($item) use ($nowDate) {
-    //             return $item['tanggal'] <= $nowDate;
-    //         });
-
-    //         // Update the 'data' key with the filtered data
-    //         $data = $filteredData;
-    //     } else {
-    //         // Handle the case where 'response' or 'data' key is not present
-    //         $data = [];
-    //     }
-
-    //     // return $data;
-    //     $riwayat = [];
-    //     foreach ($data as $item) {
-    //         $dataLab  = LaboratoriumHasilModel::with('pemeriksaan')->where('notrans', $item['no_reg'])->get();
-    //         $hasilLab = [];
-    //         foreach ($dataLab as $lab) {
-    //             $hasilLab[] = [
-    //                 'pemeriksaan' => $lab->pemeriksaan->nmLayanan,
-    //                 'nilaiNormal' => $lab->pemeriksaan->normal,
-    //                 'hasil'       => $lab->hasil,
-    //             ];
-    //         }
-    //         $alamat = $item['kelurahan_nama'] . ', ' . $item['pasien_rt'] . '/' . $item['pasien_rw'] . ', ' . $item['kecamatan_nama'] . ', ' . $item['kabupaten_nama'] . ', ' . $item['provinsi_nama'];
-
-    //         $riwayat[] = [
-    //             'tanggal'            => $item['tanggal'],
-    //             'dokter_nama'        => $item['dokter_nama'],
-    //             'pasien_nama'        => $item['pasien_nama'],
-    //             'pasien_no_rm'       => $item['pasien_no_rm'],
-    //             'pasien_tgl_lahir'   => $item['pasien_tgl_lahir'],
-    //             'umur'               => $item['umur'],
-    //             'antrean_nomor'      => $item['antrean_nomor'],
-    //             'penjamin_nama'      => $item['penjamin_nama'],
-    //             'jenis_kelamin_nama' => $item['jenis_kelamin_nama'],
-    //             'alamat'             => $alamat,
-    //             'dx1'                => $item['diagnosa'][0]['nama_diagnosa'] ?? '',
-    //             'dx2'                => $item['diagnosa'][1]['nama_diagnosa'] ?? '',
-    //             'dx3'                => $item['diagnosa'][2]['nama_diagnosa'] ?? '',
-    //             'ds'                 => $item['subjek'] ?? '',
-    //             'do'                 => $item['objek_data_objektif'] ?? '',
-    //             'td'                 => $item['objek_tekanan_darah'] ?? '',
-    //             'bb'                 => $item['objek_bb'] ?? '',
-    //             'nadi'               => $item['objek_nadi'] ?? '',
-    //             'suhu'               => $item['objek_suhu'] ?? '',
-    //             'rr'                 => $item['objek_rr'] ?? '',
-    //             'tindakan'           => $item['tindakan'],
-    //             'radiologi'          => $item['radiologi'],
-    //             'obat'               => $item['resep_obat'],
-    //             'laboratorium'       => $item['laboratorium'],
-    //             'hasilLab'           => $hasilLab,
-    //         ];
-    //     }
-
-    //     // return response()->json($data);
-    //     return response()->json($riwayat);
-    // }
-
     public function kunjungan(Request $request)
     {
         // Ambil parameter dari request
@@ -1685,213 +1674,344 @@ class PasienKominfoController extends Controller
         return response()->json($riwayat);
     }
 
+    // public function newCpptRequest(Request $request)
+    // {
+    //     // Ambil parameter dari req
+    //     $params = $request->only(['tanggal_awal', 'tanggal_akhir', 'no_rm', 'ruang']);
+    //     $ruang  = $params['ruang'] ?? '';
+
+    //     $model = new KominfoModel();
+    //     $data  = $model->cpptRequest($params);
+    //     // return $data;
+
+    //     if (isset($data['response']['data']) && is_array($data['response']['data'])) {
+    //         $filteredData = array_filter(array_map(function ($d) use ($ruang) {
+    //             $d['status']      = 'belum';
+    //             $d['status_obat'] = $d['resep_obat'] == [] ? 'Obat Belum' : 'Obat Sudah';
+
+    //             if ($ruang === 'igd') {
+
+    //                 // $ts = IGDTransModel::with('transbmhp')->where('norm', $d['pasien_no_rm'])
+    //                 //     ->whereDate('created_at', $d['tanggal'])->first();
+    //                 // $d['status'] = !$ts ? 'belum' :
+    //                 // ($ts->transbmhp == null ? 'Belum Ada Transaksi BMHP' : 'sudah');
+
+    //                 // foreach ($filteredData as $d) {
+    //                 // dd($d);
+    //                 $notrans = $d['tanggal'] < date('Y-m-d') ? $d['no_trans'] : $d['no_reg'];
+    //                 $check   = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
+    //                 // dd($check);
+    //                 // jika $check null
+    //                 $checkigd = $check->waktu_selesai_igd ?? null;
+    //                 // dd($igd);
+
+    //                 $d['igd_selesai'] = $checkigd == null ? 'danger' : 'success';
+    //                 // dd($d['igd_selesai']);
+    //                 // }
+
+    //                 $jumlahPermintaan = count($d['tindakan']);
+
+    //                 $igd = IGDTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->get();
+    //                 // dd($igd);
+    //                 $jumlahIgd = count($igd);
+    //                 if ($jumlahIgd < $jumlahPermintaan) {
+    //                     $d['status'] = 'belum';
+    //                 } else {
+    //                     $d['status'] = 'sudah';
+    //                 }
+    //                 $d['jmlPerminttanIgd'] = $jumlahPermintaan;
+    //                 $d['jmlIgd']           = $jumlahIgd;
+    //                 if (empty($d['tindakan']) && $jumlahIgd == 0) {
+    //                     return null;
+    //                 }
+
+    //             } elseif ($ruang === 'dots') {
+    //                 // $dots            = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
+    //                 // $d['status']     = $dots ? 'sudah' : 'belum';
+    //                 // $hasTuberculosis = false;
+    //                 // if (isset($d['diagnosa'][0])) {
+    //                 //     $hasTuberculosis = false;
+
+    //                 //     // Loop hanya untuk dx1 sampai dx5 (maksimal 5 diagnosa)
+    //                 //     for ($i = 0; $i < min(5, count($d['diagnosa'])); $i++) {
+    //                 //         $dx = $d['diagnosa'][$i];
+
+    //                 //         if (stripos($dx['nama_diagnosa'], 'tb') !== false ||
+    //                 //             (stripos($dx['nama_diagnosa'], 'tuberculosis') !== false &&
+    //                 //                 stripos($dx['nama_diagnosa'], 'Observation for suspected tuberculosis') === false)) {
+    //                 //             $hasTuberculosis = true;
+    //                 //             break;
+    //                 //         }
+    //                 //     }
+
+    //                 //     // Jika tidak ada diagnosis Tuberculosis, kembalikan null
+    //                 //     if (! $hasTuberculosis) {
+    //                 //         return null;
+    //                 //     }
+
+    //                 //     // Cek status di DotsTransModel
+    //                 //     $tb          = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
+    //                 //     $d['status'] = $tb ? 'sudah' : 'belum';
+
+    //                 // } else {
+    //                 //     // Handle case where there is no diagnosis
+    //                 //     return null;
+    //                 // }
+
+    //                 $dots        = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
+    //                 $d['status'] = $dots ? 'sudah' : 'belum';
+
+    //                 $hasOAT = false;
+
+    //                 if (! empty($d['resep_obat'])) {
+    //                     foreach ($d['resep_obat'] as $resep) {
+    //                         if (! empty($resep['resep_obat_detail'])) {
+    //                             foreach ($resep['resep_obat_detail'] as $obat) {
+    //                                 $namaObat = strtolower($obat['nama_obat']);
+    //                                 if (strpos($namaObat, 'oat') !== false || strpos($namaObat, 'rifampisin') !== false) {
+    //                                     $hasOAT = true;
+    //                                     break 2; // keluar dari 2 loop sekaligus
+    //                                 }
+    //                             }
+    //                         }
+    //                     }
+
+    //                     if (! $hasOAT) {
+    //                         return null; // tidak mengandung OAT atau RIFAMPISIN
+    //                     }
+
+    //                     // Jika ada, ambil status DOTS lagi (boleh di-skip kalau sudah di atas)
+    //                     $tb          = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
+    //                     $d['status'] = $tb ? 'sudah' : 'belum';
+
+    //                 } else {
+    //                     return null; // tidak ada resep_obat sama sekali
+    //                 }
+
+    //             } elseif ($ruang === 'ro') {
+    //                 $tsRo = ROTransaksiModel::where('norm', $d['pasien_no_rm'])
+    //                     ->whereDate('tgltrans', $d['tanggal'])->first();
+    //                 $foto = RoHasilModel::where('norm', $d['pasien_no_rm'])
+    //                     ->whereDate('tanggal', $d['tanggal'])->first();
+    //                 $d['status'] = ! $tsRo && ! $foto ? 'belum' :
+    //                 ($tsRo && ! $foto ? 'Belum Upload Foto Thorax' : 'sudah');
+    //                 // Cek di $d['radiologi'] apakah ada layanan "Konsultasi dokter Radiologi"
+    //                 $d['permintaan_konsul'] = false;
+    //                 if (! empty($d['radiologi'])) {
+    //                     foreach ($d['radiologi'] as $radiologi) {
+    //                         if (isset($radiologi['layanan']) && $radiologi['layanan'] === 'Konsultasi dokter Radiologi') {
+    //                             $d['permintaan_konsul'] = true;
+    //                             break;
+    //                         }
+    //                     }
+    //                 }
+    //                 $status_konsul = KunjunganWaktuSelesai::where('notrans', $d['no_reg'])->first();
+
+    //                 $d['status_konsul'] = $status_konsul && $status_konsul->konsul_ro ? 'sudah' : 'belum';
+
+    //                 if (empty($d['radiologi'])) {
+    //                     return null;
+    //                 }
+
+    //             } elseif ($ruang === 'lab') {
+    //                 $jumlahPermintaan = count($d['laboratorium']);
+    //                 // $lab              = LaboratoriumKunjunganModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
+    //                 $jumlahLab = count(LaboratoriumHasilModel::whereDate('created_at', $d['tanggal'])
+    //                         ->where('norm', $d['pasien_no_rm'])
+    //                         ->whereNot('idLayanan', 214)->get());
+    //                 // $d['status']      = $lab ? 'sudah' : 'belum';
+    //                 if ($jumlahLab < $jumlahPermintaan) {
+    //                     $d['status'] = 'belum';
+    //                 } else {
+    //                     $d['status'] = 'sudah';
+    //                 }
+    //                 if (empty($d['laboratorium'])) {
+    //                     return null;
+    //                 }
+
+    //             }
+
+    //             $doctorNipMap = [
+    //                 'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
+    //                 'dr. Agil Dananjaya, Sp.P'                  => '9',
+    //                 'dr. Filly Ulfa Kusumawardani'              => '198907252019022004',
+    //                 'dr. Sigit Dwiyanto'                        => '198903142022031005',
+    //             ];
+
+    //             $d['nip_dokter'] = $doctorNipMap[$d['dokter_nama']] ?? 'Unknown';
+
+    //             return $d;
+    //         }, $data['response']['data']));
+
+    //         if (! empty($filteredData)) {
+    //             return response()->json([
+    //                 'metadata' => [
+    //                     'message' => 'Data Pasien Ditemukan',
+    //                     'code'    => 200,
+    //                 ],
+    //                 'response' => [
+    //                     'data' => array_values($filteredData),
+    //                 ],
+    //             ]);
+    //         } else {
+    //             $errorMessages = [
+    //                 'IGD' => 'Tidak ada data permintaan Tindakan',
+    //                 'lab' => 'Tidak ada data permintaan Laboratorium',
+    //                 'ro'  => 'Tidak ada data permintaan Radiologi',
+    //             ];
+
+    //             return response()->json(['error' => $errorMessages[$ruang] ?? 'Tidak ada data ditemukan'], 404);
+    //         }
+    //     } else {
+    //         if (empty($data['response']['data'])) {
+    //             return response()->json([
+    //                 'metadata' => [
+    //                     'message' => 'Data Tidak Ditemukan',
+    //                     'code'    => 404,
+    //                 ],
+    //             ], 404);
+    //         }
+    //     }
+
+    //     return response()->json(['error' => 'Internal Server Error'], 500);
+    // }
+
     public function newCpptRequest(Request $request)
     {
-        // Ambil parameter dari req
         $params = $request->only(['tanggal_awal', 'tanggal_akhir', 'no_rm', 'ruang']);
         $ruang  = $params['ruang'] ?? '';
 
         $model = new KominfoModel();
         $data  = $model->cpptRequest($params);
-        // return $data;
 
-        if (isset($data['response']['data']) && is_array($data['response']['data'])) {
-            $filteredData = array_filter(array_map(function ($d) use ($ruang) {
-                $d['status']      = 'belum';
-                $d['status_obat'] = $d['resep_obat'] == [] ? 'Obat Belum' : 'Obat Sudah';
-
-                if ($ruang === 'igd') {
-
-                    // $ts = IGDTransModel::with('transbmhp')->where('norm', $d['pasien_no_rm'])
-                    //     ->whereDate('created_at', $d['tanggal'])->first();
-                    // $d['status'] = !$ts ? 'belum' :
-                    // ($ts->transbmhp == null ? 'Belum Ada Transaksi BMHP' : 'sudah');
-
-                    // foreach ($filteredData as $d) {
-                    // dd($d);
-                    $notrans = $d['tanggal'] < date('Y-m-d') ? $d['no_trans'] : $d['no_reg'];
-                    $check   = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
-                    // dd($check);
-                    // jika $check null
-                    $checkigd = $check->waktu_selesai_igd ?? null;
-                    // dd($igd);
-
-                    $d['igd_selesai'] = $checkigd == null ? 'danger' : 'success';
-                    // dd($d['igd_selesai']);
-                    // }
-
-                    $jumlahPermintaan = count($d['tindakan']);
-
-                    $igd = IGDTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->get();
-                    // dd($igd);
-                    $jumlahIgd = count($igd);
-                    if ($jumlahIgd < $jumlahPermintaan) {
-                        $d['status'] = 'belum';
-                    } else {
-                        $d['status'] = 'sudah';
-                    }
-                    $d['jmlPerminttanIgd'] = $jumlahPermintaan;
-                    $d['jmlIgd']           = $jumlahIgd;
-                    if (empty($d['tindakan']) && $jumlahIgd == 0) {
-                        return null;
-                    }
-
-                } elseif ($ruang === 'dots') {
-                    $dots            = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
-                    $d['status']     = $dots ? 'sudah' : 'belum';
-                    $hasTuberculosis = false;
-                    if (isset($d['diagnosa'][0])) {
-                        $hasTuberculosis = false;
-
-                        // Loop hanya untuk dx1 sampai dx5 (maksimal 5 diagnosa)
-                        for ($i = 0; $i < min(5, count($d['diagnosa'])); $i++) {
-                            $dx = $d['diagnosa'][$i];
-
-                            if (stripos($dx['nama_diagnosa'], 'tb') !== false ||
-                                (stripos($dx['nama_diagnosa'], 'tuberculosis') !== false &&
-                                    stripos($dx['nama_diagnosa'], 'Observation for suspected tuberculosis') === false)) {
-                                $hasTuberculosis = true;
-                                break;
-                            }
-                        }
-
-                        // Jika tidak ada diagnosis Tuberculosis, kembalikan null
-                        if (! $hasTuberculosis) {
-                            return null;
-                        }
-
-                        // Cek status di DotsTransModel
-                        $tb          = DotsTransModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
-                        $d['status'] = $tb ? 'sudah' : 'belum';
-
-                    } else {
-                        // Handle case where there is no diagnosis
-                        return null;
-                    }
-
-                } elseif ($ruang === 'ro') {
-                    $tsRo = ROTransaksiModel::where('norm', $d['pasien_no_rm'])
-                        ->whereDate('tgltrans', $d['tanggal'])->first();
-                    $foto = RoHasilModel::where('norm', $d['pasien_no_rm'])
-                        ->whereDate('tanggal', $d['tanggal'])->first();
-                    $d['status'] = ! $tsRo && ! $foto ? 'belum' :
-                    ($tsRo && ! $foto ? 'Belum Upload Foto Thorax' : 'sudah');
-                    // Cek di $d['radiologi'] apakah ada layanan "Konsultasi dokter Radiologi"
-                    $d['permintaan_konsul'] = false;
-                    if (! empty($d['radiologi'])) {
-                        foreach ($d['radiologi'] as $radiologi) {
-                            if (isset($radiologi['layanan']) && $radiologi['layanan'] === 'Konsultasi dokter Radiologi') {
-                                $d['permintaan_konsul'] = true;
-                                break;
-                            }
-                        }
-                    }
-                    $status_konsul = KunjunganWaktuSelesai::where('notrans', $d['no_reg'])->first();
-
-                    $d['status_konsul'] = $status_konsul && $status_konsul->konsul_ro ? 'sudah' : 'belum';
-
-                    if (empty($d['radiologi'])) {
-                        return null;
-                    }
-
-                } elseif ($ruang === 'lab') {
-                    $jumlahPermintaan = count($d['laboratorium']);
-                    // $lab              = LaboratoriumKunjunganModel::whereDate('created_at', $d['tanggal'])->where('norm', $d['pasien_no_rm'])->first();
-                    $jumlahLab = count(LaboratoriumHasilModel::whereDate('created_at', $d['tanggal'])
-                            ->where('norm', $d['pasien_no_rm'])
-                            ->whereNot('idLayanan', 214)->get());
-                    // $d['status']      = $lab ? 'sudah' : 'belum';
-                    if ($jumlahLab < $jumlahPermintaan) {
-                        $d['status'] = 'belum';
-                    } else {
-                        $d['status'] = 'sudah';
-                    }
-                    if (empty($d['laboratorium'])) {
-                        return null;
-                    }
-
-                }
-
-                $doctorNipMap = [
-                    'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
-                    'dr. Agil Dananjaya, Sp.P'                  => '9',
-                    'dr. Filly Ulfa Kusumawardani'              => '198907252019022004',
-                    'dr. Sigit Dwiyanto'                        => '198903142022031005',
-                ];
-
-                $d['nip_dokter'] = $doctorNipMap[$d['dokter_nama']] ?? 'Unknown';
-
-                return $d;
-            }, $data['response']['data']));
-
-            if (! empty($filteredData)) {
-                return response()->json([
-                    'metadata' => [
-                        'message' => 'Data Pasien Ditemukan',
-                        'code'    => 200,
-                    ],
-                    'response' => [
-                        'data' => array_values($filteredData),
-                    ],
-                ]);
-            } else {
-                $errorMessages = [
-                    'IGD' => 'Tidak ada data permintaan Tindakan',
-                    'lab' => 'Tidak ada data permintaan Laboratorium',
-                    'ro'  => 'Tidak ada data permintaan Radiologi',
-                ];
-
-                return response()->json(['error' => $errorMessages[$ruang] ?? 'Tidak ada data ditemukan'], 404);
-            }
-        } else {
-            if (empty($data['response']['data'])) {
-                return response()->json([
-                    'metadata' => [
-                        'message' => 'Data Tidak Ditemukan',
-                        'code'    => 404,
-                    ],
-                ], 404);
-            }
+        if (! isset($data['response']['data']) || ! is_array($data['response']['data'])) {
+            return response()->json([
+                'metadata' => ['message' => 'Data Tidak Ditemukan', 'code' => 404],
+            ], 404);
         }
 
-        return response()->json(['error' => 'Internal Server Error'], 500);
+        $filteredData = array_filter(array_map(function ($d) use ($ruang) {
+            $d['status']      = 'belum';
+            $d['status_obat'] = empty($d['resep_obat']) ? 'Obat Belum' : 'Obat Sudah';
+
+            switch ($ruang) {
+                case 'igd':
+                    return $this->processIGD($d);
+                case 'dots':
+                    return $this->processDOTS($d);
+                case 'ro':
+                    return $this->processRO($d);
+                case 'lab':
+                    return $this->processLab($d);
+                default:
+                    return null;
+            }
+        }, $data['response']['data']));
+
+        if (! empty($filteredData)) {
+            return response()->json([
+                'metadata' => ['message' => 'Data Pasien Ditemukan', 'code' => 200],
+                'response' => ['data' => array_values($filteredData)],
+            ]);
+        }
+
+        $errorMessages = [
+            'IGD' => 'Tidak ada data permintaan Tindakan',
+            'lab' => 'Tidak ada data permintaan Laboratorium',
+            'ro'  => 'Tidak ada data permintaan Radiologi',
+        ];
+
+        return response()->json(['error' => $errorMessages[$ruang] ?? 'Tidak ada data ditemukan'], 404);
     }
 
-    // public function rekapPoin(Request $request)
-    // {
-    //     $params = $request->only(['tanggal_awal', 'tanggal_akhir']);
+    protected function processIGD(array $d)
+    {
+        $notrans          = $d['tanggal'] < date('Y-m-d') ? $d['no_trans'] : $d['no_reg'];
+        $check            = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
+        $d['igd_selesai'] = $check?->waktu_selesai_igd ? 'success' : 'danger';
 
-    //     $model = new KominfoModel();
+        $jumlahPermintaan = count($d['tindakan']);
+        $jumlahIgd        = IGDTransModel::whereDate('created_at', $d['tanggal'])
+            ->where('norm', $d['pasien_no_rm'])->count();
 
-    //     // Ambil data dari model
-    //     $data = $model->poinRequest($params);
+        $d['status']           = $jumlahIgd < $jumlahPermintaan ? 'belum' : 'sudah';
+        $d['jmlPerminttanIgd'] = $jumlahPermintaan;
+        $d['jmlIgd']           = $jumlahIgd;
 
-    //     // Step 1: Filter data (hilangkan entri "Ruang Poli")
-    //     $filteredData = array_filter($data['response']['data'], function ($item) {
-    //         return $item['ruang_nama'] !== 'Ruang Poli';
-    //     });
+        return ($jumlahIgd === 0 && empty($d['tindakan'])) ? null : $this->attachNip($d);
+    }
 
-    //     // Step 2: Mapping nama ruang
-    //     $namaBaru = [
-    //         'Ruang Tensi 1' => 'Timbang dan Tensi',
-    //         'Petugas Assessment Awal' => 'Anamnesa pasien baru',
-    //         'Ruang Poli (Perawat Poli)' => 'Asisten dokter',
-    //         'Ruang Poli (Dokter CPPT)' => 'Pemeriksaan dokter',
-    //         // Tambahkan mapping lainnya jika ada
-    //     ];
+    protected function processDOTS(array $d)
+    {
+        if (empty($d['resep_obat']) || ! $this->checkObatOAT($d['resep_obat'])) {
+            return null;
+        }
 
-    //     $mappedData = array_map(function ($item) use ($namaBaru) {
-    //         if (isset($namaBaru[$item['ruang_nama']])) {
-    //             $item['ruang_nama'] = $namaBaru[$item['ruang_nama']];
-    //         }
-    //         return $item;
-    //     }, $filteredData);
+        $dots = DotsTransModel::whereDate('created_at', $d['tanggal'])
+            ->where('norm', $d['pasien_no_rm'])->first();
 
-    //     // Step 3: Replace data asli dengan yang sudah difilter dan dimapping
-    //     $data['response']['data'] = array_values($mappedData); // array_values agar reindex array numerik
+        $d['status'] = $dots ? 'sudah' : 'belum';
+        return $this->attachNip($d);
+    }
 
-    //     return response()->json($data);
-    // }
+    protected function processRO(array $d)
+    {
+        $tsRo = ROTransaksiModel::where('norm', $d['pasien_no_rm'])
+            ->whereDate('tgltrans', $d['tanggal'])->first();
+
+        $foto = RoHasilModel::where('norm', $d['pasien_no_rm'])
+            ->whereDate('tanggal', $d['tanggal'])->first();
+
+        $d['status'] = ! $tsRo && ! $foto ? 'belum' :
+        ($tsRo && ! $foto ? 'Belum Upload Foto Thorax' : 'sudah');
+
+        $d['permintaan_konsul'] = collect($d['radiologi'] ?? [])
+            ->contains(fn($r) => $r['layanan'] === 'Konsultasi dokter Radiologi');
+
+        $konsul             = KunjunganWaktuSelesai::where('notrans', $d['no_reg'])->first();
+        $d['status_konsul'] = $konsul?->konsul_ro ? 'sudah' : 'belum';
+
+        return empty($d['radiologi']) ? null : $this->attachNip($d);
+    }
+
+    protected function processLab(array $d)
+    {
+        $jumlahPermintaan = count($d['laboratorium']);
+        $jumlahLab        = LaboratoriumHasilModel::whereDate('created_at', $d['tanggal'])
+            ->where('norm', $d['pasien_no_rm'])
+            ->whereNot('idLayanan', 214)
+            ->count();
+
+        $d['status'] = $jumlahLab < $jumlahPermintaan ? 'belum' : 'sudah';
+
+        return empty($d['laboratorium']) ? null : $this->attachNip($d);
+    }
+
+    protected function checkObatOAT(array $resepObat): bool
+    {
+        foreach ($resepObat as $resep) {
+            foreach ($resep['resep_obat_detail'] ?? [] as $obat) {
+                $nama = strtolower($obat['nama_obat'] ?? '');
+                if (str_contains($nama, 'oat') || str_contains($nama, 'rifampisin')) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected function attachNip(array $d): array
+    {
+        $doctorNipMap = [
+            'dr. Cempaka Nova Intani, Sp.P, FISR., MM.' => '198311142011012002',
+            'dr. Agil Dananjaya, Sp.P'                  => '9',
+            'dr. Filly Ulfa Kusumawardani'              => '198907252019022004',
+            'dr. Sigit Dwiyanto'                        => '198903142022031005',
+        ];
+
+        $d['nip_dokter'] = $doctorNipMap[$d['dokter_nama']] ?? 'Unknown';
+        return $d;
+    }
 
     public function rekapPoin(Request $request)
     {

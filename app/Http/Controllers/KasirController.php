@@ -28,6 +28,27 @@ class KasirController extends Controller
         // return $layanan;
         return view('Kasir.main', compact('layanan'))->with('title', $title);
     }
+    public function kasirRM($norm, $tanggal)
+    {
+        $title   = 'KASIR';
+        $layanan = LayananModel::where('status', 'like', '%1%')
+            ->orderBy('grup', 'asc')
+            ->orderBy('kelas', 'asc')
+            ->get();
+        $model  = new KominfoModel();
+        $params = [
+            'no_rm'         => $norm,
+            'tanggal_awal'  => $tanggal,
+            'tanggal_akhir' => $tanggal,
+        ];
+        // return $params;
+        $data = $model->pendaftaranRequest($params);
+        // return $data;
+
+        $filtered = array_filter($data, fn($item) => ($item['keterangan'] ?? '') === 'SELESAI DIPANGGIL LOKET PENDAFTARAN');
+        $data     = collect($filtered)->first();
+        return view('Kasir.main', compact('layanan', 'data'))->with('title', $title);
+    }
     public function masterKasir()
     {
         $title = 'Master Kasir';
@@ -241,7 +262,7 @@ class KasirController extends Controller
         }
     }
 
-    public function addTagihan(Request $request)
+    public function addTagihanFarmasi(Request $request)
     {
         $dataTerpilih = $request->input('dataTerpilih');
 
@@ -251,6 +272,13 @@ class KasirController extends Controller
 
         try {
             DB::beginTransaction();
+            $tglNow   = Carbon::now()->format('Y-m-d');
+            $tglTrans = Carbon::parse($request->input('tgltrans'))->format('Y-m-d');
+            if ($tglNow > $tglTrans) {
+                $createdAt = Carbon::parse($request->input('tgltrans') . ' ' . Carbon::now()->format('H:i:s'));
+            } else {
+                $createdAt = Carbon::now();
+            }
 
             $dataToInsert = collect($dataTerpilih)
                 ->filter(fn($data) => isset($data['idLayanan'], $data['notrans']))
@@ -261,7 +289,95 @@ class KasirController extends Controller
                     'qty'        => $data['qty'] ?? 1,
                     'totalHarga' => $data['harga'],
                     'jaminan'    => $data['jaminan'],
-                    'created_at' => now(),
+                    'created_at' => $createdAt,
+                    'updated_at' => now(),
+                ])->toArray();
+
+            if (empty($dataToInsert)) {
+                return response()->json(['message' => 'Data tidak lengkap'], 400);
+            }
+
+            // KasirAddModel::insert($dataToInsert);
+            $tagihan = 0;
+            foreach ($dataToInsert as $data) {
+                KasirAddModel::updateOrInsert(
+                    [
+                        'notrans'   => $data['notrans'],
+                        'idLayanan' => $data['idLayanan'],
+                    ],
+                    [
+                        'norm'       => $data['norm'],
+                        'qty'        => $data['qty'],
+                        'totalHarga' => $data['totalHarga'],
+                        'jaminan'    => $data['jaminan'],
+                        'updated_at' => $data['updated_at'],
+                        'created_at' => $data['created_at'],
+                    ]
+                );
+            }
+
+            // if ($request->input('notrans')) {
+            //     $dataKasir = KasirAddModel::where('notrans', $request->input('notrans'))->get();
+            //     foreach ($dataKasir as $data) {
+            //         $tagihan += $data->totalHarga;
+            //     }
+
+            //     // dd($createdAt);
+            //     $req = [
+            //         'notrans'    => $request->input('notrans'),
+            //         'norm'       => $request->input('norm'),
+            //         'nama'       => $request->input('nama'),
+            //         'jk'         => $request->input('jk'),
+            //         'umur'       => $request->input('umur'),
+            //         'alamat'     => $request->input('alamat'),
+            //         'jaminan'    => $request->input('jaminan'),
+            //         'tagihan'    => $tagihan,
+            //         'bayar'      => 0,
+            //         'kembalian'  => 0,
+            //         'petugas'    => "Nasirin",
+            //         'created_at' => $createdAt,
+            //     ];
+            //     $this->saveOrUpdateKunjungan($req);
+            // }
+
+            DB::commit();
+            Log::info('Transaksi berhasil disimpan: ' . json_encode($dataToInsert));
+
+            return response()->json(['message' => 'Transaksi berhasil disimpan'], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Terjadi kesalahan: ' . $e->getMessage());
+            return response()->json(['message' => 'Kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
+    public function addTagihan(Request $request)
+    {
+        $dataTerpilih = $request->input('dataTerpilih');
+
+        if (! is_array($dataTerpilih) || empty($dataTerpilih)) {
+            return response()->json(['message' => 'Data terpilih tidak valid atau kosong'], 400);
+        }
+
+        try {
+            DB::beginTransaction();
+            $tglNow   = Carbon::now()->format('Y-m-d');
+            $tglTrans = Carbon::parse($request->input('tgltrans'))->format('Y-m-d');
+            if ($tglNow > $tglTrans) {
+                $createdAt = Carbon::parse($request->input('tgltrans') . ' ' . Carbon::now()->format('H:i:s'));
+            } else {
+                $createdAt = Carbon::now();
+            }
+
+            $dataToInsert = collect($dataTerpilih)
+                ->filter(fn($data) => isset($data['idLayanan'], $data['notrans']))
+                ->map(fn($data) => [
+                    'notrans'    => $data['notrans'],
+                    'norm'       => $data['norm'] ?? null,
+                    'idLayanan'  => $data['idLayanan'],
+                    'qty'        => $data['qty'] ?? 1,
+                    'totalHarga' => $data['harga'],
+                    'jaminan'    => $data['jaminan'],
+                    'created_at' => $createdAt,
                     'updated_at' => now(),
                 ])->toArray();
 
@@ -272,13 +388,7 @@ class KasirController extends Controller
             KasirAddModel::insert($dataToInsert);
 
             if ($request->input('notrans')) {
-                $tglNow   = Carbon::now()->format('Y-m-d');
-                $tglTrans = Carbon::parse($request->input('tgltrans'))->format('Y-m-d');
-                if ($tglNow > $tglTrans) {
-                    $createdAt = Carbon::parse($request->input('tgltrans') . ' ' . Carbon::now()->format('H:i:s'));
-                } else {
-                    $createdAt = Carbon::now();
-                }
+
                 // dd($createdAt);
                 $req = [
                     'notrans'    => $request->input('notrans'),
@@ -462,6 +572,16 @@ class KasirController extends Controller
         $notrans = $request->input('notrans');
         // return response()->json(['message' => 'Data tidak ditemukan'], 404);
         $data = KasirTransModel::with(['item.layanan'])->where('notrans', $notrans)->first();
+        if ($data == null) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
+    public function kunjunganItem(Request $request)
+    {
+        $notrans = $request->input('notrans');
+        // return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        $data = KasirAddModel::where('notrans', $notrans)->get();
         if ($data == null) {
             return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
@@ -733,9 +853,11 @@ class KasirController extends Controller
         $norm     = $request->input('norm');
         $tglAwal  = $request->input('tglAwal', now()->toDateString());
         $tglAkhir = $request->input('tglAkhir', now()->toDateString());
+        $layanan  = $request->input('layanan');
 
         $data = KasirTransModel::with('item.layanan')
             ->where('norm', 'like', '%' . $norm . '%')
+            ->where('jaminan', 'like', '%' . $layanan . '%')
             ->whereBetween('created_at', [
                 \Carbon\Carbon::parse($tglAwal)->startOfDay(),
                 \Carbon\Carbon::parse($tglAkhir)->endOfDay(),

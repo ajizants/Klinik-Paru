@@ -2,11 +2,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApiKominfo;
+use App\Models\DiagnosaMapModel;
+use App\Models\IGDTransModel;
 use App\Models\KasirTransModel;
 use App\Models\KominfoModel;
+use App\Models\LaboratoriumHasilModel;
+use App\Models\ROTransaksiModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ApiKominfoController extends Controller
 {
@@ -359,6 +364,164 @@ class ApiKominfoController extends Controller
         return $pdf->stream($judul . '.pdf'); // Generate the PDF with the converted PNG QR code
 
     }
+
+    public function resumePasien(Request $request)
+    {
+        // $validator = Validators::make($request->all(), [
+        //     'no_rm'  => 'required',
+        //     'tgl'    => 'required|date',
+        //     'no_sep' => 'required',
+        // ]);
+
+        // if ($validator->fails()) {
+        //     return response()->json($validator->errors(), 400);
+        // }
+
+        ['no_rm' => $no_rm, 'tgl' => $tgl, 'no_sep' => $no_sep] = $request->only(['no_rm', 'tgl', 'no_sep']);
+        $params                                                 = ['no_rm' => $no_rm, 'tanggal_awal' => $tgl, 'tanggal_akhir' => $tgl];
+
+        try {
+            $dataTagihan = $this->getDataTagihan($no_rm, $tgl);
+            if ($dataTagihan['data'] === null) {
+                return response()->json(['message' => 'Data tagihan tidak ditemukan, silahkan lakukan transaksi kasir terlebih dahulu'], 404);
+            }
+            $client      = new KominfoModel();
+            $dataCPPT    = $client->cpptRequest($params);
+            $kunjungan   = $client->pendaftaranRequest($params)[0]['rs_paru_pasien_lama_baru'] ?? '-';
+            $dataCpptArr = $dataCPPT['response']['data'] ?? [];
+
+            $resumePasien = new \stdClass();
+            if (is_array($dataCpptArr) && count($dataCpptArr) > 0) {
+                $resumePasien = (object) ($dataCpptArr[0]['id_cppt'] == null && isset($dataCpptArr[1])
+                    ? $dataCpptArr[1]
+                    : $dataCpptArr[0]);
+            }
+
+            $obats = collect($resumePasien->resep_obat ?? [])->map(fn($obat) => [
+                'no_resep' => $obat['no_resep'],
+                'aturan'   => "{$obat['signa_1']} X {$obat['signa_2']} {$obat['aturan_pakai']}",
+                'nm_obat'  => $obat['resep_obat_detail'],
+            ])->toArray();
+
+            $dxs = collect($resumePasien->diagnosa ?? [])->map(function ($dx) {
+                $dxMap = DiagnosaMapModel::where('kdDx', $dx['kode_diagnosa'])->first();
+                return [
+                    'kode_diagnosa' => $dx['kode_diagnosa'],
+                    'nama_diagnosa' => $dx['nama_diagnosa'],
+                    'nmDx'          => $dxMap->mapping ?? $dx['nama_diagnosa'],
+                ];
+            })->toArray();
+
+            $alamat = implode(', ', array_filter([
+                ucwords(strtolower($resumePasien->kelurahan_nama ?? '')) . ' RT ' . $resumePasien->pasien_rt . '/' . $resumePasien->pasien_rw,
+                ucwords(strtolower($resumePasien->kecamatan_nama ?? '')),
+                ucwords(strtolower($resumePasien->kabupaten_nama ?? '')),
+                ucwords(strtolower($resumePasien->provinsi_nama ?? '')),
+            ]));
+
+            $dataRo = ROTransaksiModel::with('film', 'foto', 'proyeksi')
+                ->where('norm', $no_rm)
+                ->where('tgltrans', $tgl)
+                ->first();
+
+            $ro = $dataRo ? [
+                'noReg'     => $dataRo->noreg,
+                'tglRo'     => Carbon::parse($dataRo->tgltrans)->format('d-m-Y'),
+                'jenisFoto' => $dataRo->foto->nmFoto ?? '-',
+                'proyeksi'  => $dataRo->proyeksi->proyeksi ?? '-',
+            ] : [];
+
+            $dataLab = LaboratoriumHasilModel::with('pemeriksaan')
+                ->where('norm', $no_rm)
+                ->whereDate('created_at', Carbon::parse($tgl))
+                ->get();
+
+            $lab = $dataLab->map(function ($item) use ($dataLab) {
+                return [
+                    'idLab'       => $item->idLab,
+                    'idLayanan'   => $item->idLayanan,
+                    'tanggal'     => Carbon::parse($item->created_at)->format('d-m-Y'),
+                    'hasil'       => $item->hasil,
+                    'pemeriksaan' => str_replace(' (Stik)', '', $item->pemeriksaan->nmLayanan),
+                    'satuan'      => $item->pemeriksaan->satuan,
+                    'normal'      => $item->pemeriksaan->normal,
+                    'totalItem'   => $dataLab->count(),
+                ];
+            })->toArray();
+
+            $dataTindakan = IGDTransModel::with('tindakan', 'transbmhp.bmhp')
+                ->where('norm', $no_rm)
+                ->whereDate('created_at', Carbon::parse($tgl))
+                ->get();
+
+            $tindakan = $dataTindakan->map(function ($item) use ($dataTindakan) {
+                $bmhp = collect($item->transbmhp)->map(fn($b) => [
+                    'jumlah'  => $b->jml,
+                    'nmBmhp'  => $b->bmhp->nmObat ?? '-',
+                    'sediaan' => $b->sediaan,
+                ])->toArray();
+
+                return [
+                    'id'        => $item->id,
+                    'kdTind'    => $item->kdTind,
+                    'tanggal'   => Carbon::parse($item->created_at)->format('d-m-Y'),
+                    'tindakan'  => preg_replace('/\s?\(.*?\)/', '', $item->tindakan->nmTindakan ?? "Tidak ada Tindakan"),
+                    'bmhp'      => $bmhp,
+                    'totalItem' => $dataTindakan->count(),
+                ];
+            })->toArray();
+
+            // Get Detail SEP + Tagihan
+            $detailSEP = $client->getDetailSEP($no_sep)['data'] ?? [];
+
+            $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?data='
+            . urlencode($detailSEP['peserta']['noKartu'] ?? '') . '&size=100x100';
+
+            // return [
+            //     'resumePasien'    => $resumePasien,
+            //     'alamat'          => $alamat,
+            //     'kunjungan'       => $kunjungan,
+            //     'detailSEP'       => $detailSEP,
+            //     'dataTagihan'     => $dataTagihan,
+            //     'obats'           => $obats,
+            //     'dxs'             => $dxs,
+            //     'ro'              => $dataTagihan['ro'],
+            //     'lab'             => $dataTagihan['lab'],
+            //     'tindakan'        => $dataTagihan['tindakan'],
+            //     'totalLab'        => $dataTagihan['totalLab'],
+            //     'totalRo'         => $dataTagihan['totalRo'],
+            //     'totalTindakan'   => $dataTagihan['totalTindakan'],
+            //     'totalObat'       => $dataTagihan['totalObat'],
+            //     'obat'            => $dataTagihan['obat'],
+            //     'totalObatKronis' => $dataTagihan['totalObatKronis'],
+            //     'totalbmhp'       => $dataTagihan['totalbmhp'],
+            // ];
+            return view('Laporan.Pasien.resumeBilling', [
+                'resumePasien'    => $resumePasien,
+                'alamat'          => $alamat,
+                'kunjungan'       => $kunjungan,
+                'detailSEP'       => $detailSEP,
+                'dataTagihan'     => $dataTagihan,
+                'obats'           => $obats,
+                'dxs'             => $dxs,
+                'ro'              => $dataTagihan['ro'],
+                'lab'             => $dataTagihan['lab'],
+                'tindakan'        => $dataTagihan['tindakan'],
+                'totalLab'        => $dataTagihan['totalLab'],
+                'totalRo'         => $dataTagihan['totalRo'],
+                'totalTindakan'   => $dataTagihan['totalTindakan'],
+                'totalObat'       => $dataTagihan['totalObat'],
+                'obat'            => $dataTagihan['obat'],
+                'totalObatKronis' => $dataTagihan['totalObatKronis'],
+                'totalbmhp'       => $dataTagihan['totalbmhp'],
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Gagal memuat resume pasien: ' . $e->getMessage());
+            return response()->json(['message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function getDataTagihan($norm, $tglKunjungan)
     {
 
@@ -859,6 +1022,15 @@ class ApiKominfoController extends Controller
         return $data;
         // return response()->json($assesment_awal);
         return view('Laporan.Pasien.asesmentAwal', compact('assesment_awal_html'));
+    }
+    public function get_master_obat(Request $request)
+    {
+        $namaObat = $request->input('namaObat') ?? '';
+        $api      = new ApiKominfo();
+        $data     = $api->get_master_obat($namaObat);
+
+        return $data;
+
     }
 
     // public function jumlahPetugas(Request $request)

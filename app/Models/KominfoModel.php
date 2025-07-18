@@ -7,7 +7,6 @@ use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class KominfoModel extends Model
@@ -213,167 +212,103 @@ class KominfoModel extends Model
         }
 
     }
+
     public function pendaftaranRequest(array $params)
     {
-        $client = new Client();
-
-        // URL endpoint API yang ingin diakses
-        $url = 'https://kkpm.banyumaskab.go.id/api_kkpm/v1/pendaftaran/data_pendaftaran';
-
-        // Username dan password untuk basic auth
+        $client   = new Client();
+        $url      = 'https://kkpm.banyumaskab.go.id/api_kkpm/v1/pendaftaran/data_pendaftaran';
         $username = env('API_USERNAME', '');
         $password = env('API_PASSWORD', '');
 
-        // dd($params);
-
         try {
-            // Lakukan permintaan POST dengan otentikasi dasar
             $response = $client->request('POST', $url, [
                 'auth'        => [$username, $password],
                 'form_params' => $params,
-                'headers'     => [
-                    'Content-Type' => 'application/x-www-form-urlencoded',
-                ],
+                'headers'     => ['Content-Type' => 'application/x-www-form-urlencoded'],
             ]);
 
-            // Ambil body response
-            $body = $response->getBody();
-            // Konversi response body ke array
-            $data = json_decode($body, true);
-            // dd($data);
-            //tangani jika code 201, meta data, data tidak ditemukan
+            $data = json_decode($response->getBody(), true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception('Error decoding JSON response: ' . json_last_error_msg());
+            }
+
             if ($data['metadata']['code'] == 201) {
                 return [
                     'error' => $data['metadata']['message'],
                     'code'  => $data['metadata']['code'],
                 ];
             }
-            // Periksa apakah data berhasil di-decode menjadi array
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new \Exception('Error decoding JSON response: ' . json_last_error_msg());
-            }
 
-            $res = array_map(function ($d) {
-                $statusPulang = ! is_null($d["loket_farmasi_menunggu_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
-                // $statusPulang = !is_null($d["ruang_poli_selesai_waktu"]) ? "Sudah Pulang" : "Belum Pulang";
-                $alamat = $d['kelurahan_nama'] . ', ' .
-                    $d['pasien_rt'] . '/' .
-                    $d['pasien_rw'] . ', ' .
-                    $d['kecamatan_nama'] . ', ' .
-                    $d['kabupaten_nama'];
-                $alamatMin = $d['kelurahan_nama'] . ', ' .
-                    $d['kecamatan_nama'];
-                $alamatPang = 'Desa ' . $d['kelurahan_nama'] . ', Kecamatan ' .
-                    $d['kecamatan_nama'];
-                $notrans = $d['tanggal'] < '2024-12-19' ? $d['no_trans'] : $d['no_reg'];
-                $check   = KunjunganWaktuSelesai::where('notrans', $notrans)->first();
-                // jika $check null
-                $checkRm = $check->waktu_selesai_rm ?? null;
-                $igd     = $check->waktu_selesai_igd ?? null;
+            $pendaftarans = collect($data['response']['data']);
 
-                $checkIn    = $checkRm == null ? 'danger' : 'success';
-                $noSep      = $check->no_sep ?? "";
-                $checkInIGD = $igd == null ? 'danger' : 'success';
+            // Ambil semua no_trans dan no_rm dari response
+            $noTransList = $pendaftarans->pluck('no_trans')->merge($pendaftarans->pluck('no_reg'))->unique()->filter();
+            $normList    = $pendaftarans->pluck('pasien_no_rm')->unique()->filter();
 
-                $pendaftaranLocal = KunjunganModel::where('norm', $d['pasien_no_rm'])
-                    ->whereDate('tgltrans', $d['tanggal'])
-                    ->first();
-                // dd($pendaftaranLocal);
-                $results = DB::table('t_kunjungan')
-                    ->where('norm', '026601')
-                    ->select('norm', 'tgltrans')
-                    ->orderBy('tgltrans', 'desc')
-                    ->limit(10)
-                    ->get();
+            // Ambil semua data sekali query
+            $kunjunganWaktuSelesai = KunjunganWaktuSelesai::whereIn('notrans', $noTransList)->get()->keyBy('notrans');
+            $kasirList             = KasirTransModel::whereIn('notrans', $noTransList)->get()->keyBy('notrans');
+            $obatList              = KasirAddModel::whereIn('notrans', $noTransList)->where('idLayanan', '2')->get()->groupBy('notrans');
+            $pendaftaranLocalList  = KunjunganModel::whereIn('norm', $normList)->whereDate('tgltrans', $params['tanggal_awal'] ?? date('Y-m-d'))->get()->keyBy('norm');
 
-                // dd($results);
+            // Ambil status lab dan RO
+            $tanggal   = $params['tanggal_awal'] ?? date('Y-m-d');
+            $tungguLab = collect((new LaboratoriumKunjunganModel())->tungguLab($tanggal))->keyBy('norm');
+            $tungguRo  = collect((new ROTransaksiModel())->tungguRo($tanggal))->keyBy('norm');
 
-                $cekDaftar = $pendaftaranLocal != null || $pendaftaranLocal != "" ? 'lime' : 'warning';
-                $konsulRo  = ($check && $check->konsul_ro == 1) ? "success" : "danger";
+            $result = $pendaftarans->map(function ($d) use (
+                $kunjunganWaktuSelesai,
+                $kasirList,
+                $obatList,
+                $pendaftaranLocalList,
+                $tungguLab,
+                $tungguRo
+            ) {
+                $no_trans = $d['tanggal'] < '2024-12-19' ? $d['no_trans'] : $d['no_reg'];
+                $check    = $kunjunganWaktuSelesai[$no_trans] ?? null;
+
+                $alamat     = $d['kelurahan_nama'] . ', ' . $d['pasien_rt'] . '/' . $d['pasien_rw'] . ', ' . $d['kecamatan_nama'] . ', ' . $d['kabupaten_nama'];
+                $alamatMin  = $d['kelurahan_nama'] . ', ' . $d['kecamatan_nama'];
+                $alamatPang = 'Desa ' . $d['kelurahan_nama'] . ', Kecamatan ' . $d['kecamatan_nama'];
 
                 return [
-                    "check_in"                 => $checkIn,
-                    "statusDaftar"             => $cekDaftar,
-                    "igd_selesai"              => $checkInIGD,
-                    "status_pulang"            => $statusPulang,
-                    "konsul_ro"                => $konsulRo,
-                    "no_sep"                   => $noSep,
-                    "no_reg"                   => $d["no_reg"] ?? 0,
-                    "id"                       => $d["id"] ?? 0,
-                    "no_trans"                 => $d["no_trans"] ?? 0,
-                    "antrean_nomor"            => $d["antrean_nomor"] ?? 0,
-                    "tanggal"                  => $d["tanggal"] ?? 0,
-                    "penjamin_nama"            => $d["penjamin_nama"] ?? 0,
-                    "penjamin_nomor"           => $d["penjamin_nomor"] ?? 0,
-                    "jenis_kunjungan_nama"     => $d["jenis_kunjungan_nama"] ?? 0,
-                    "nomor_referensi"          => $d["nomor_referensi"] ?? 0,
-                    "pasien_nik"               => $d["pasien_nik"] ?? 0,
-                    "pasien_nama"              => $d["pasien_nama"] ?? 0,
-                    "pasien_no_rm"             => $d["pasien_no_rm"] ?? 0,
-                    "pasien_tgl_lahir"         => $d["pasien_tgl_lahir"] ?? 0,
-                    "jenis_kelamin_nama"       => $d["jenis_kelamin_nama"] ?? 0,
-                    "pasien_lama_baru"         => $d["pasien_lama_baru"] ?? 0,
-                    "rs_paru_pasien_lama_baru" => $d["rs_paru_pasien_lama_baru"] ?? 0,
-                    "poli_nama"                => $d["poli_nama"] ?? 0,
-                    "poli_sub_nama"            => $d["poli_sub_nama"] ?? 0,
-                    "dokter_nama"              => $d["dokter_nama"] ?? 0,
-                    "daftar_by"                => $d["daftar_by"] ?? 0,
-                    "waktu_daftar"             => $d["waktu_daftar"] ?? 0,
-                    "waktu_verifikasi"         => $d["waktu_verifikasi"] ?? 0,
-                    "admin_pendaftaran"        => $d["admin_pendaftaran"] ?? 0,
-                    "log_id"                   => $d["log_id"] ?? 0,
-                    "keterangan"               => $d["keterangan"] ?? 0,
-                    "keterangan_urutan"        => $d["keterangan_urutan"] ?? 0,
-                    "pasien_umur"              => ($d["pasien_umur_tahun"] ?? 0) . " Thn " . ($d["pasien_umur_bulan"] ?? 0) . " Bln ",
-                    "pasien_umur_tahun"        => $d["pasien_umur_tahun"] ?? 0,
-                    "pasien_umur_bulan"        => $d["pasien_umur_bulan"] ?? 0,
-                    "pasien_umur_hari"         => $d["pasien_umur_hari"] ?? 0,
-                    "pasien_alamat"            => $alamat ?? 0,
-                    "pasien_alamat_min"        => $alamatMin ?? 0,
-                    "pasien_alamat_pang"       => $alamatPang ?? 0,
+                    "check_in"           => $check && $check->waktu_selesai_rm ? 'success' : 'danger',
+                    "igd_selesai"        => $check && $check->waktu_selesai_igd ? 'success' : 'danger',
+                    "status_pulang"      => ! is_null($d["loket_farmasi_menunggu_waktu"]) ? "Sudah Pulang" : "Belum Pulang",
+                    "status_kasir"       => $kasirList->has($no_trans) ? 'Sudah' : 'Belum',
+                    "status_obat"        => $obatList->has($no_trans) ? 'Sudah' : 'Belum',
+                    "statusDaftar"       => $pendaftaranLocalList->has($d['pasien_no_rm']) ? 'lime' : 'warning',
+                    "konsul_ro"          => $check && $check->konsul_ro == 1 ? "success" : "danger",
+                    "no_sep"             => $check->no_sep ?? '',
+                    "pasien_alamat"      => $alamat,
+                    "pasien_alamat_min"  => $alamatMin,
+                    "pasien_alamat_pang" => $alamatPang,
+                    "statusLab"          => $tungguLab[$d['pasien_no_rm']]['status'] ?? null,
+                    "statusRO"           => $tungguRo[$d['pasien_no_rm']]['status'] ?? null,
+                    // Tambahkan data lainnya langsung
+                ] + collect($d)->only([
+                    'no_reg', 'id', 'no_trans', 'antrean_nomor', 'tanggal', 'penjamin_nama', 'penjamin_nomor',
+                    'jenis_kunjungan_nama', 'nomor_referensi', 'pasien_nik', 'pasien_nama', 'pasien_no_rm',
+                    'pasien_tgl_lahir', 'jenis_kelamin_nama', 'pasien_lama_baru', 'rs_paru_pasien_lama_baru',
+                    'poli_nama', 'poli_sub_nama', 'dokter_nama', 'daftar_by', 'waktu_daftar',
+                    'waktu_verifikasi', 'admin_pendaftaran', 'log_id', 'keterangan', 'keterangan_urutan',
+                    'pasien_umur_tahun', 'pasien_umur_bulan', 'pasien_umur_hari',
+                ])->toArray() + [
+                    'pasien_umur' => ($d["pasien_umur_tahun"] ?? 0) . " Thn " . ($d["pasien_umur_bulan"] ?? 0) . " Bln",
                 ];
-            }, $data['response']['data']);
+            });
 
-            $no_rm = $params['no_rm'];
-            if (! empty($no_rm)) {
-                // dd($no_rm);
-                // Filter data berdasarkan no_rm
-                $res = array_filter($res, function ($d) use ($no_rm) {
-                    return $d['pasien_no_rm'] === $no_rm;
-                });
+            if (! empty($params['no_rm'])) {
+                $result = $result->where('pasien_no_rm', $params['no_rm'])->values();
             }
 
-            $res = array_values($res); // Re-index the array
-
-            $tanggal = $params['tanggal_awal'] ?? date('Y-m-d');
-            // dd($tanggal);
-            $kunjunganLab = new LaboratoriumKunjunganModel();
-            $tungguLab    = $kunjunganLab->tungguLab($tanggal);
-
-            $kunjunganRo = new ROTransaksiModel();
-            $tungguRo    = $kunjunganRo->tungguRo($tanggal);
-
-            // Tambahkan statusLab dan statusRO jika norm ditemukan
-            foreach ($res as &$pendaftar) {
-                $rm = $pendaftar['pasien_no_rm'];
-
-                // Cari di tungguLab
-                $lab                    = collect($tungguLab)->firstWhere('norm', $rm);
-                $pendaftar['statusLab'] = $lab['status'] ?? null;
-
-                // Cari di tungguRo
-                $ro                    = collect($tungguRo)->firstWhere('norm', $rm);
-                $pendaftar['statusRO'] = $ro['status'] ?? null;
-            }
-            // $res = array_values($res);
-            // dd($res);
-            return array_values($res);
+            return $result->values()->toArray();
         } catch (\Exception $e) {
-            // Tangani kesalahan
             return ['error' => $e->getMessage()];
         }
-
     }
+
     public function cpptRequestAll(array $params)
     {
         // Inisialisasi klien GuzzleHTTP
@@ -2130,6 +2065,90 @@ class KominfoModel extends Model
             return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
         }
     }
+    // public function getDataSEP($params)
+    // {
+    //     $client = new Client();
+    //     $cookie = $_COOKIE['kominfo_cookie'] ?? null;
+    //     $tglSep = $params["tanggal_awal"] . ' - ' . $params["tanggal_akhir"];
+
+    //     if (! $cookie) {
+    //         // Authenticate if no cookie is found
+    //         $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
+    //         $cookie        = $loginResponse['cookies'][0] ?? null;
+
+    //         if ($cookie) {
+    //             setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+    //         } else {
+    //             return response()->json(['message' => 'Login gagal'], 401);
+    //         }
+    //     }
+
+    //     // $url = env('BASR_URL_KOMINFO', '') . '/sep/get_dataSEP'; //lama
+    //     $url = env('BASR_URL_KOMINFO', '') . '/sep/get_data';
+
+    //     // Format request sesuai dengan yang Anda inginkan
+    //     $columns = [];
+    //     for ($i = 0; $i < 3; $i++) { // Sesuaikan jumlah kolom sesuai kebutuhan
+    //         $columns[] = [
+    //             'data'       => ($i === 0) ? '' : 'id',
+    //             'name'       => '',
+    //             'searchable' => true,
+    //             'orderable'  => false,
+    //             'search'     => ['value' => '', 'regex' => false],
+    //         ];
+    //     }
+
+    //     try {
+    //         $response = $client->request('POST', $url, [
+    //             'headers'     => [
+    //                 'Content-Type' => 'application/x-www-form-urlencoded',
+    //                 'Cookie'       => $cookie,
+    //             ],
+    //             'form_params' => [
+    //                 'draw'               => 2,
+    //                 'columns'            => $columns,
+    //                 'start'              => 0,
+    //                 'length'             => 100,
+    //                 'search'             => [
+    //                     'value' => '',
+    //                     'regex' => false,
+    //                 ],
+    //                 'tanggal'            => $tglSep,
+    //                 'antrean_nomor'      => '',
+    //                 'no_reg'             => '',
+    //                 'daftar_by'          => '',
+    //                 'penjamin_id'        => 2,
+    //                 'nomor_referensi'    => '',
+    //                 'penjamin_nomor'     => '',
+    //                 'jenis_kunjungan_id' => '',
+    //                 'pasien'             => '',
+    //                 'pasien_nik'         => '',
+    //                 'no_sep'             => '',
+    //                 'tanggal_sep'        => $tglSep,
+    //             ],
+    //         ]);
+
+    //         // Check if response is successful
+    //         if ($response->getStatusCode() !== 200) {
+    //             Log::error('Error response body: ' . (string) $response->getBody());
+    //             return response()->json(['error' => 'Internal Server Error'], 500);
+    //         }
+
+    //         $body = (string) $response->getBody();
+    //         $data = json_decode($body, true);
+
+    //         return $data;
+    //     } catch (\GuzzleHttp\Exception\RequestException $e) {
+    //         // Handle request errors
+    //         Log::error('Request Error: ' . $e->getMessage());
+    //         return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
+    //     } catch (\Exception $e) {
+    //         // Handle unexpected errors
+    //         Log::error('Unexpected Error: ' . $e->getMessage());
+    //         return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
+    //     }
+    // }
+
     public function getDataSEP($params)
     {
         $client = new Client();
@@ -2137,23 +2156,20 @@ class KominfoModel extends Model
         $tglSep = $params["tanggal_awal"] . ' - ' . $params["tanggal_akhir"];
 
         if (! $cookie) {
-            // Authenticate if no cookie is found
             $loginResponse = $this->login(env('USERNAME_KOMINFO', ''), env('PASSWORD_KOMINFO', ''));
             $cookie        = $loginResponse['cookies'][0] ?? null;
 
             if ($cookie) {
-                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/"); // Set cookie in the browser
+                setcookie('kominfo_cookie', $cookie, time() + (86400 * 30), "/");
             } else {
                 return response()->json(['message' => 'Login gagal'], 401);
             }
         }
 
-        // $url = env('BASR_URL_KOMINFO', '') . '/sep/get_dataSEP'; //lama
         $url = env('BASR_URL_KOMINFO', '') . '/sep/get_data';
 
-        // Format request sesuai dengan yang Anda inginkan
         $columns = [];
-        for ($i = 0; $i < 3; $i++) { // Sesuaikan jumlah kolom sesuai kebutuhan
+        for ($i = 0; $i < 3; $i++) {
             $columns[] = [
                 'data'       => ($i === 0) ? '' : 'id',
                 'name'       => '',
@@ -2170,48 +2186,62 @@ class KominfoModel extends Model
                     'Cookie'       => $cookie,
                 ],
                 'form_params' => [
-                    'draw'               => 2,
-                    'columns'            => $columns,
-                    'start'              => 0,
-                    'length'             => 100,
-                    'search'             => [
-                        'value' => '',
-                        'regex' => false,
-                    ],
-                    'tanggal'            => $tglSep,
-                    'antrean_nomor'      => '',
-                    'no_reg'             => '',
-                    'daftar_by'          => '',
-                    'penjamin_id'        => 2,
-                    'nomor_referensi'    => '',
-                    'penjamin_nomor'     => '',
-                    'jenis_kunjungan_id' => '',
-                    'pasien'             => '',
-                    'pasien_nik'         => '',
-                    'no_sep'             => '',
-                    'tanggal_sep'        => $tglSep,
+                    'draw'        => 2,
+                    'columns'     => $columns,
+                    'start'       => 0,
+                    'length'      => 100,
+                    'search'      => ['value' => '', 'regex' => false],
+                    'tanggal'     => $tglSep,
+                    'tanggal_sep' => $tglSep,
+                    'penjamin_id' => 2,
                 ],
             ]);
 
-            // Check if response is successful
             if ($response->getStatusCode() !== 200) {
                 Log::error('Error response body: ' . (string) $response->getBody());
                 return response()->json(['error' => 'Internal Server Error'], 500);
             }
 
-            $body = (string) $response->getBody();
-            $data = json_decode($body, true);
+            $data = json_decode((string) $response->getBody(), true);
+            $list = collect($data['data'] ?? []);
+
+            // Ambil no_trans & norm dari data
+            $noTransList = $list->pluck('no_reg')->filter()->unique();
+            $normList    = $list->pluck('pasien_no_rm')->filter()->unique();
+
+            // Ambil semua data lokal sekaligus
+            $waktuSelesaiList = KunjunganWaktuSelesai::whereIn('notrans', $noTransList)->get()->keyBy('notrans');
+            // dd($waktuSelesaiList);
+            $kasirList  = KasirTransModel::whereIn('notrans', $noTransList)->get()->keyBy('notrans');
+            $obatList   = KasirAddModel::whereIn('notrans', $noTransList)->where('idLayanan', '2')->get()->groupBy('notrans');
+            $daftarList = KunjunganModel::whereIn('norm', $normList)->get()->groupBy('norm');
+
+            // Tambahkan status-status ke setiap item
+            $data['data'] = $list->map(function ($d) use ($waktuSelesaiList, $kasirList, $obatList, $daftarList) {
+                $no_trans = $d['no_reg'] ?? null;
+                $norm     = $d['pasien_no_rm'] ?? null;
+                $check    = $waktuSelesaiList[$no_trans] ?? null;
+
+                return array_merge($d, [
+                    'check_in'     => $check && $check->waktu_selesai_rm ? 'success' : 'danger',
+                    'igd_selesai'  => $check && $check->waktu_selesai_igd ? 'success' : 'danger',
+                    'status_kasir' => $kasirList->has($no_trans) ? 'Sudah' : 'Belum',
+                    'status_obat'  => $obatList->has($no_trans) ? 'Sudah' : 'Belum',
+                    'statusDaftar' => isset($daftarList[$norm]) ? 'lime' : 'warning',
+                    'konsul_ro'    => $check && $check->konsul_ro == 1 ? 'success' : 'danger',
+                ]);
+            })->values()->toArray();
+
             return $data;
         } catch (\GuzzleHttp\Exception\RequestException $e) {
-            // Handle request errors
             Log::error('Request Error: ' . $e->getMessage());
             return response()->json(['error' => 'Terjadi kesalahan saat menghubungi server.'], 500);
         } catch (\Exception $e) {
-            // Handle unexpected errors
             Log::error('Unexpected Error: ' . $e->getMessage());
             return response()->json(['error' => 'Terjadi kesalahan yang tidak terduga.'], 500);
         }
     }
+
     public function getDetailSEP($no_sep)
     {
         $client = new Client();

@@ -47,8 +47,8 @@
         }
 
         function cariJumlah(tglAwal, tglAkhir) {
-            console.log("🚀 ~ cariJumlah ~ tglAkhir:", tglAkhir)
-            console.log("🚀 ~ cariJumlah ~ tglAwal:", tglAwal)
+            // console.log("🚀 ~ cariJumlah ~ tglAkhir:", tglAkhir)
+            // console.log("🚀 ~ cariJumlah ~ tglAwal:", tglAwal)
 
             Swal.fire({
                 icon: "info",
@@ -104,12 +104,32 @@
                         // Menambahkan tombol aksi
                         item.aksi =
                             `<p>${item.pasien_no_rm}</p>
+                            <p>${item.penjamin_nama}</p>
                             <button type="button" class="btn btn-primary mr-2"
                                     onclick="cariDataPasien('${item.pasien_no_rm}')" placeholder="Lihat">
                                     Rincian
                             </button>`;
 
                         item.rtrw = item.pasien_rt + "/" + item.pasien_rw;
+                        item.alamatLengkap = item.kelurahan_nama + " " + item.rtrw + " " + item
+                            .kecamatan_nama + " " + item.kabupaten_nama
+                        let obatHtml = `
+                                        <div>
+                                            <table border="0" style="width:100%; border-collapse:collapse;">                                                
+                                                <tbody>`;
+
+                        item.resep_obat.forEach(obat => {
+                            obat.resep_obat_detail.forEach(detail => {
+                                let aturan = obat.aturan_pakai || "";
+                                obatHtml += `
+                                                <tr>
+                                                    <td>${detail.nama_obat}</td>
+                                                </tr>`;
+                            });
+                        });
+
+                        obatHtml += `</tbody></table></div>`;
+                        item.dataObats = obatHtml;
                     });
 
 
@@ -121,9 +141,9 @@
                             {
                                 data: "tanggal"
                             },
-                            {
-                                data: "penjamin_nama"
-                            },
+                            // {
+                            //     data: "penjamin_nama"
+                            // },
                             {
                                 data: "aksi"
                             },
@@ -132,16 +152,20 @@
                                 className: "col-2"
                             },
                             {
-                                data: "kelurahan_nama"
+                                data: "alamatLengkap"
                             },
+                            // {
+                            //     data: "rtrw"
+                            // },
+                            // {
+                            //     data: "kecamatan_nama"
+                            // },
+                            // {
+                            //     data: "kabupaten_nama"
+                            // },
                             {
-                                data: "rtrw"
-                            },
-                            {
-                                data: "kecamatan_nama"
-                            },
-                            {
-                                data: "kabupaten_nama"
+                                data: "dokter_nama",
+                                className: "col-3"
                             },
                             {
                                 data: "diagnosa",
@@ -203,30 +227,32 @@
                                     }
                                 }
                             },
+
                             {
-                                data: "dokter_nama",
-                                className: "col-3"
+                                data: "subjek",
+                                className: "col-3",
+                                label: "Data Subjektif"
                             },
                             {
                                 data: null, // gunakan null karena kita render manual
-                                className: "px-0 col-3",
+                                className: "col-3",
                                 label: "Status Pulang",
                                 render: function(data, type, row) {
                                     return `${row.ket_status_pasien_pulang} (${row.status_pasien_pulang})`;
                                 }
                             },
                             {
-                                data: "subjek",
-                                className: "px-0 col-3",
-                                label: "Data Subjektif"
+                                data: "rencana_tindak_lanjut",
+                                className: "col-3",
+                                label: "RTL"
                             },
                             {
-                                data: "rencana_tindak_lanjut",
-                                className: "px-0 col-3",
-                                label: "RTL"
+                                data: "dataObats",
+                                className: "col-3",
+                                label: "Obat"
                             }
                         ],
-                        autoWidth: true,
+                        autoWidth: false,
                         order: [
                             [1, "asc"],
                             [0, "asc"]

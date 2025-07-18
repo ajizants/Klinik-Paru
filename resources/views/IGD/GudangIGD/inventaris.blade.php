@@ -9,6 +9,13 @@
         <a class="nav-link bg-danger" id="iTind"><b>TINDAKAN</b></a>
     </li>
 </ul>
+<div>
+    <div class="form-group col-auto p-0" id="inputdata">
+        <span><a href="#" id="input" class="btn btn-success d-flex justify-content-center">Input Obat dan
+                BMHP</a>
+        </span>
+    </div>
+</div>
 <div class="card shadow mb-4" id="dTind">
     <!-- Card Header - Accordion -->
     <div class="d-block card-header py-1 bg bg-info">

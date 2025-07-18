@@ -75,6 +75,7 @@ Route::post('lab/laporan/kunjungan', [LaboratoriumController::class, 'rekapKunju
 Route::post('lab/laporan/kunjungan/item', [LaboratoriumController::class, 'rekapKunjunganLabItem']);
 
 Route::post('addHasilLab', [LaboratoriumController::class, 'addHasil']);
+Route::post('hasilHematologi', [LaboratoriumController::class, 'hasilHematologi']);
 Route::post('cariRiwayatLab', [LaboratoriumController::class, 'riwayat']);
 
 Route::get('/status/penujang/{tgl}', [AntrianController::class, 'statusPenujang']);

@@ -32,7 +32,7 @@ async function cariTsLab(norm, tgl, task) {
     norm = norm || $("#norm").val();
     tgl = tgl || $("#tanggal").val();
     var requestData = { norm: norm, tgl: tgl };
-
+    $("#tgltrans").val(tgl);
     Swal.fire({
         icon: "info",
         title: "Sedang mencarikan data pasien...!!!",
@@ -233,6 +233,7 @@ function simpan() {
 
 function resetForm(message) {
     document.getElementById("form_identitas").reset();
+    document.getElementById("formHasilHematolgi").reset();
 
     document.getElementById("statusSwitch").checked = false; // Uncheck the switch
     document.getElementById("statusLabel").textContent = "Belum"; // Update the text

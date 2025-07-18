@@ -12,8 +12,10 @@ Route::get('layanan', [KasirController::class, 'Layanan']);
 Route::post('layanan/update', [KasirController::class, 'updateLayanan']);
 Route::post('layanan/add', [KasirController::class, 'add']);
 Route::post('layanan/delete', [KasirController::class, 'delete']);
+
 Route::post('tagihan', [KasirController::class, 'tagihan']);
 Route::post('kasir/item/add', [KasirController::class, 'addTagihan']);
+Route::post('farmasi/item/add', [KasirController::class, 'addTagihanFarmasi']);
 Route::post('kasir/item/delete', [KasirController::class, 'deleteTagihan']);
 Route::post('kasir/tagihan/order', [KasirController::class, 'order']);
 Route::post('kasir/transaksi', [KasirController::class, 'addTransaksi']);
@@ -28,6 +30,7 @@ Route::post('pendapatanLain/delete', [KasirSetoranController::class, 'setoranDel
 
 // Laporan Ksirs
 Route::post('kasir/kunjungan', [KasirController::class, 'kunjungan']);
+Route::post('kasir/kunjungan/item', [KasirController::class, 'kunjunganItem']);
 Route::post('kasir/rekap', [KasirController::class, 'rekapKunjungan']);
 Route::get('/pendapatan/{tahun}', [KasirController::class, 'pendapatan']);
 Route::get('/pendapatanTgl/{tgl}', [KasirController::class, 'pendapatanTgl']);
@@ -59,5 +62,6 @@ Route::get('tutupKas/{bln}/{tahun}', [KasirPenutupanKasController::class, 'cetak
 Route::get('billing/cetak/{no_sep}', [ApiKominfoController::class, 'cetakBilling']);
 Route::get('billing/sep/cetak/{no_sep}', [ApiKominfoController::class, 'cetakSEPBilling']);
 Route::get('billing/suratkontrol/cetak/{no_SuratKontrol}', [ApiKominfoController::class, 'cetakBillingSuratKontrol']);
+Route::get('billing_resume', [ApiKominfoController::class, 'resumePasien']);
 
 // });

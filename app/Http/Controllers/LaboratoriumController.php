@@ -807,7 +807,7 @@ class LaboratoriumController extends Controller
      */
     public function addTransaksi(Request $request)
     {
-        // dd($request->all());wis
+        // dd($request->all());
         // Mendapatkan dataTerpilih dari permintaan
         $dataTerpilih = $request->input('dataTerpilih');
 
@@ -1012,6 +1012,79 @@ class LaboratoriumController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
+            DB::rollback(); // Rollback transaksi jika terjadi kesalahan
+            Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
+            return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function hasilhematologi(Request $request)
+    {
+        // dd($request->all());
+        // Mendapatkan dataTerpilih dari permintaan
+        $dataTerpilih = $request->input('dataTerpilih');
+
+        // Validasi bahwa dataTerpilih harus array dan tidak boleh kosong
+        if (! is_array($dataTerpilih) || empty($dataTerpilih)) {
+            return response()->json([
+                'message' => 'Data terpilih tidak valid atau kosong',
+            ], 400);
+        }
+
+                                                        // $dokter          = $request->input('dokter');
+                                                        // $petugas         = $request->input('petugas');
+        $tglTrans        = $request->input('tgltrans'); // Assuming tglTrans is in 'Y-m-d' format
+        $currentDateTime = Carbon::now();               // Get current date and time
+        $today           = $currentDateTime->format('Y-m-d');
+
+        // Check if today's date is not the same as tglTrans
+        if ($today !== $tglTrans) {
+            // Create a Carbon instance using tglTrans and the current time
+            $tanggal = Carbon::parse($tglTrans)->setTimeFrom($currentDateTime);
+        } else {
+            // Use the current date and time
+            $tanggal = $currentDateTime;
+        }
+
+        try {
+            // Memulai transaksi database
+            DB::beginTransaction();
+
+            $dataToInsert = [];
+
+            foreach ($dataTerpilih as $data) {
+                if (isset($data['idLayanan']) && isset($data['notrans'])) {
+                    $entry = [
+                        'notrans'    => $data['notrans'],
+                        'norm'       => $data['norm'],
+                        'idLayanan'  => $data['idLayanan'],
+                        'tgl_hasil'  => $data['tgl_hasil'],
+                        'hasil'      => $data['hasil'],
+                        'created_at' => $tanggal,
+                        'updated_at' => $tanggal,
+                    ];
+                    $dataToInsert[] = $entry;
+                } else {
+                    return response()->json([
+                        'message' => 'Data tidak lengkap',
+                    ], 500);
+                }
+            }
+            // Simpan data permintaan laborat ke database
+            LaboratoriumHasilModel::insert($dataToInsert);
+            //tambahkan log data yang di simpan ke db
+
+            DB::commit();
+
+            // Extract notrans and tujuan from the request
+
+            return response()->json([
+                'message' => 'Data berhasil disimpan',
+                'data'    => $dataToInsert,
+                'success' => true,
+            ]);
+        } catch (\Exception $e) {
+                            // Rollback transaksi database jika terjadi kesalahan
             DB::rollback(); // Rollback transaksi jika terjadi kesalahan
             Log::error('Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
             return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);

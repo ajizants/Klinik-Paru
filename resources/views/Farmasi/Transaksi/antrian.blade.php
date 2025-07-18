@@ -70,6 +70,7 @@
                             <tr>
                                 <th>Aksi</th>
                                 <th>Status Pulang</th>
+                                <th>Status Obat</th>
                                 <th>Urut</th>
                                 <th>Wkatu Masuk</th>
                                 <th>NoRM</th>

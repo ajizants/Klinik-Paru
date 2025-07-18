@@ -7,20 +7,22 @@
             <thead class="bg bg-teal table-bordered border-warning">
                 <tr>
                     <th>Aksi</th>
+                    <th>Status Kunjungan</th>
+                    <th>Status Kasir</th>
                     <th>Urut</th>
                     <th>Tanggal</th>
                     <th>No SEP</th>
                     <th>Penjamin</th>
-                    <th>Daftar By</th>
+                    {{-- <th>Daftar By</th> --}}
                     <th>Ket</th>
                     <th>No. RM</th>
                     <th class="col-2">Nama Pasien</th>
-                    <th>JK</th>
+                    {{-- <th>JK</th> --}}
                     <th>Umur</th>
                     <th class="col-3">Alamat</th>
-                    <th>Poli</th>
+                    {{-- <th>Poli</th> --}}
                     <th class="col-3">Dokter</th>
-                    <th>Status</th>
+                    {{-- <th>Status RM</th> --}}
                 </tr>
             </thead>
             <tbody class="table-bordered border-warning">

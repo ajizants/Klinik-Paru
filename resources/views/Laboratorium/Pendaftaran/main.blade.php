@@ -13,7 +13,7 @@
     <script src="{{ asset('js/mainLab.js') }}"></script>
     <script>
         const itemPemeriksaan = @json($layananLab);
-        console.log("🚀 ~ layanan:", itemPemeriksaan)
+        // console.log("🚀 ~ layanan:", itemPemeriksaan)
 
         socketIO.on("reload", (msg) => {
             if (msg == "paru_loket_laboratorium") {
