@@ -1,6 +1,6 @@
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link active" type="button" id="ikunjungan"
+                        <a class="nav-link active bg-blue" type="button" id="ikunjungan"
                             onclick="toggleSections('#hasilPemeriksaan');">
                             <b>Laporan Hasil Pemeriksaan</b>
                         </a>
@@ -23,6 +23,11 @@
                     <li class="nav-item">
                         <a class="nav-link" type="button" onclick="toggleSections('#tab_1');">
                             <b>Laporan TB 04</b>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" type="button" onclick="toggleSections('#tab_2');">
+                            <b>Laporan Jumlah Pemeriksaan (NEW)</b>
                         </a>
                     </li>
 
@@ -114,7 +119,7 @@
                                             style="width:100%" cellspacing="0"></table>
                                     </div>
                                 </div>
-                                <!-- Jumlah Periksa -->
+                                <!-- Jumlah TB04 -->
                                 <div class="container-fluid" id="tab_1" style="display:none;">
                                     {{-- <div id="cariTb04">
                                         <a class="btn btn-success d-flex justify-content-center mx-2"
@@ -157,6 +162,20 @@
                                     </script>
 
                                 </div>
+
+                                <!-- Jumlah Periksa NEW-->
+                                <div class="container-fluid" id="tab_2" style="display:none;">
+                                    <div id="cariPenjamin">
+                                        <a class="btn btn-success d-flex justify-content-center mx-2"
+                                            onclick="reportJumlahPemeriksaanSingle();">
+                                            Cari Laporan Jumlah Pemeriksaan (NEW)
+                                        </a>
+                                    </div>
+                                    <div class="table-responsive pt-2 px-2">
+                                        <div class="" id="divTabelJmlPemeriksaanNew"></div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

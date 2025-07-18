@@ -1394,6 +1394,53 @@ class LaboratoriumController extends Controller
 
         return response()->json($labHasilPemeriksaan, 200, [], JSON_PRETTY_PRINT);
     }
+    public function jumlah_pemeriksaan_single(Request $request)
+    {
+        $mulaiTgl   = $request->input('tglAwal', now()->toDateString());
+        $selesaiTgl = $request->input('tglAkhir', now()->toDateString());
+
+        $rawData = DB::table('t_kunjungan_lab_hasil')
+            ->select(
+                DB::raw('COUNT(t_kunjungan_lab_hasil.idLab) AS jumlah'),
+                'kasir_m_layanan.nmLayanan AS nama_layanan',
+                'kasir_m_layanan.idLayanan AS kode_layanan',
+                DB::raw('DATE(t_kunjungan_lab_hasil.created_at) AS tanggal')
+            )
+            ->join('kasir_m_layanan', 't_kunjungan_lab_hasil.idLayanan', '=', 'kasir_m_layanan.idLayanan')
+            ->join('t_kunjungan_lab', 't_kunjungan_lab_hasil.notrans', '=', 't_kunjungan_lab.notrans')
+            ->whereBetween(DB::raw('DATE(t_kunjungan_lab_hasil.created_at)'), [$mulaiTgl, $selesaiTgl])
+            ->groupBy('tanggal', 'kasir_m_layanan.idLayanan', 'kasir_m_layanan.nmLayanan')
+            ->get();
+
+        $jumlahData  = [];
+        $layananList = [];
+        $tanggalList = [];
+
+        foreach ($rawData as $row) {
+            $jumlahData[$row->tanggal][$row->nama_layanan] = $row->jumlah;
+            $layananList[$row->nama_layanan]               = true;
+            $tanggalList[$row->tanggal]                    = true;
+        }
+
+        // Urutkan tanggal dan layanan
+        ksort($jumlahData);
+        $layananList = array_keys($layananList);
+        $tanggalList = array_keys($tanggalList);
+
+        $tabel = view('Laboratorium.Laporan.jumlahPemeriksaan', [
+            'jumlahData'  => $jumlahData,
+            'layananList' => $layananList,
+            'tanggalList' => $tanggalList,
+            'tglAwal'     => $mulaiTgl,
+            'tglAkhir'    => $selesaiTgl,
+        ])->render();
+        // return $tabel;
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil diambil',
+            'tabel'   => $tabel,
+        ], 200, [], JSON_PRETTY_PRINT);
+    }
 
     public function waktu_pemeriksaan(Request $request)
     {

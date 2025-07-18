@@ -63,6 +63,7 @@ Route::post('hasil/antrian', [LaboratoriumController::class, 'antrianHasil']);
 Route::post('rekap/Kunjungan_Lab', [LaboratoriumController::class, 'rekapKunjungan']);
 Route::post('rekap/lab/poin', [LaboratoriumController::class, 'poinPetugas']);
 Route::post('rekap/lab/jumlah_pemeriksaan', [LaboratoriumController::class, 'jumlah_pemeriksaan']);
+Route::post('rekap/lab/jumlah_pemeriksaan_single', [LaboratoriumController::class, 'jumlah_pemeriksaan_single']);
 Route::post('rekap/lab/waktu_pemeriksaan', [LaboratoriumController::class, 'waktu_pemeriksaan']);
 Route::get('lab/cetakPermintaan/{notras}/{norm}/{tgl}', [LaboratoriumController::class, 'cetakPermintaan']);
 

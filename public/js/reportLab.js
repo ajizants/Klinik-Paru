@@ -863,6 +863,67 @@ function reportJumlahPemeriksaan() {
         },
     });
 }
+function reportJumlahPemeriksaanSingle() {
+    var tglAwal = document.getElementById("tglAwal").value;
+    var tglAkhir = document.getElementById("tglAkhir").value;
+
+    $("#divTabelJmlPemeriksaanNew").html("");
+
+    $.ajax({
+        url: "/api/rekap/lab/jumlah_pemeriksaan_single",
+        type: "post",
+        data: {
+            tglAwal: tglAwal,
+            tglAkhir: tglAkhir,
+        },
+        success: function (response) {
+            console.log(
+                "🚀 ~ reportJumlahPemeriksaanSingle ~ response:",
+                response
+            );
+            var tabel = response.tabel;
+            $("#divTabelJmlPemeriksaanNew").html(tabel);
+            // divTabelJmlPemeriksaanNew
+
+            // Initialize DataTable
+            var table = $("#tabelJmlPemeriksaanNew").DataTable({
+                order: [[0, "asc"]],
+                lengthChange: false,
+                autoWidth: true,
+                buttons: [
+                    {
+                        extend: "copyHtml5",
+                        text: "Salin",
+                    },
+                    {
+                        extend: "excel",
+                        text: "Export to Excel",
+                        title:
+                            "Laporan Hasil Pemeriksaan Lab " +
+                            tglAwal +
+                            " s.d. " +
+                            tglAkhir,
+                        filename:
+                            "Laporan Hasil Pemeriksaan Lab " +
+                            tglAwal +
+                            " s.d. " +
+                            tglAkhir,
+                    },
+                    "colvis", // Button to show/hide columns
+                ],
+            });
+
+            // Append buttons to the DataTable
+            table
+                .buttons()
+                .container()
+                .appendTo("#tabelJmlPemeriksaanNew_wrapper .col-md-6:eq(0)");
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        },
+    });
+}
 
 function waktuPemeriksaan() {
     //tabelWaktuLayanan
